@@ -48,6 +48,21 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
+    def get_otp(self) -> str:
+        """
+        Get a one-time password (OTP) for an Agent so it can authenticate with the Island
+
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the Island
+        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
+                                       Island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
+                                             Island due to an error on the server
+        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the Island
+        :raises IslandAPIError: If an unexpected error occurs while attempting to get an OTP
+        :return: The OTP
+        """
+
+    @abstractmethod
     def get_agent_plugin(
         self, operating_system: OperatingSystem, plugin_type: AgentPluginType, plugin_name: str
     ) -> AgentPlugin:

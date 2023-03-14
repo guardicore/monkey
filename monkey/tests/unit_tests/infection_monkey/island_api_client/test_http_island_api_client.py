@@ -146,6 +146,27 @@ def test_island_api_client__unhandled_exceptions():
         api_client.get_agent_signals(agent_id=AGENT_ID)
 
 
+def _build_client_with_json_response(response):
+    client_stub = MagicMock()
+    client_stub.get.return_value.json.return_value = response
+    return build_api_client(client_stub)
+
+
+def test_island_api_client_get_otp():
+    expected_otp = "secret_otp"
+    api_client = _build_client_with_json_response({"otp": expected_otp})
+
+    assert api_client.get_otp() == expected_otp
+
+
+def test_island_api_client_get_otp__incorrect_response():
+    expected_otp = "secret_otp"
+    api_client = _build_client_with_json_response({"otpP": expected_otp})
+
+    with pytest.raises(IslandAPIResponseParsingError):
+        api_client.get_otp()
+
+
 def test_island_api_client__handled_exceptions():
     http_client_stub = MagicMock()
     http_client_stub.get = MagicMock(side_effect=json.JSONDecodeError)
