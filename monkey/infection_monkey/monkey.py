@@ -114,6 +114,8 @@ class InfectionMonkey:
         self._manager = context.Manager()
 
         self._opts = self._get_arguments(args)
+        # TODO read the otp from an env variable
+        self._otp = "hard-coded-otp"
 
         self._ipc_logger_queue = ipc_logger_queue
 
@@ -171,7 +173,8 @@ class InfectionMonkey:
     def _connect_to_island_api(self) -> Tuple[SocketAddress, IIslandAPIClient]:
         logger.debug(f"Trying to wake up with servers: {', '.join(map(str, self._opts.servers))}")
         server_clients = find_available_island_apis(
-            self._opts.servers, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
+            self._opts.servers,
+            HTTPIslandAPIClientFactory(self._agent_event_serializer_registry, self._otp),
         )
 
         server, island_api_client = self._select_server(server_clients)

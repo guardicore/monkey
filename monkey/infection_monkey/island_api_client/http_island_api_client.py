@@ -45,16 +45,33 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     """
 
     def __init__(
-        self, agent_event_serializer_registry: AgentEventSerializerRegistry, http_client: HTTPClient
+        self,
+        agent_event_serializer_registry: AgentEventSerializerRegistry,
+        http_client: HTTPClient,
+        otp: str,
     ):
         self._agent_event_serializer_registry = agent_event_serializer_registry
         self.http_client = http_client
+        self._otp = otp
 
     def connect(
         self,
         island_server: SocketAddress,
     ):
-        self.http_client.connect(island_server)
+        try:
+            self.http_client.set_server(island_server)
+            self.http_client.get("?action=is-up")
+        except Exception as err:
+            logger.debug(f"Connection to {island_server} failed: {err}")
+            self.http_client.set_server(None)
+            raise err
+
+        auth_token = self._get_authentication_token()
+        self.http_client.set_authentication_token(auth_token)
+
+    def _get_authentication_token(self) -> str:
+        response = self.http_client.post("agent-otp-login", {"otp": self._otp})
+        return response.json()["token"]
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value
@@ -65,6 +82,11 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     def get_otp(self) -> str:
         response = self.http_client.get("agent-otp")
         return response.json()["otp"]
+
+    @handle_response_parsing_errors
+    def get_authentication_token(self, otp: str) -> str:
+        response = self.http_client.post("agent-otp-login", {"otp": otp})
+        return response.json()["token"]
 
     @handle_response_parsing_errors
     def get_agent_plugin(
