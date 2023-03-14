@@ -44,5 +44,19 @@ NOTE: This script is intended to be run from a clean VM. You can also manually
 remove build artifacts by running `docker/clean.sh`
 
 ### Running the Docker Image
-The build script will produce a `.tgz` file in `./dist/`. See
-`docker/DOCKER_README.md` for instructions on running the docker image.
+The build script will produce a `.tgz` file in `./dist/`.
+To load the `.tgz` file:
+
+1. Extract the Monkey Island Docker tarball:
+    ```bash
+    tar -xvzf InfectionMonkey-docker-v2.0.0.tgz
+    ```
+
+1. Load the Monkey Island Docker image:
+
+    ```bash
+    sudo docker load -i InfectionMonkey-docker-v2.0.0.tar
+    ```
+
+For more information on how to run your local Monkey Island Docker image,  see
+[https://techdocs.akamai.com/infection-monkey/docs/docker/](https://techdocs.akamai.com/infection-monkey/docs/docker/).
