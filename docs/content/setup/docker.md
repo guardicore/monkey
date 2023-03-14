@@ -58,7 +58,7 @@ been signed by a private certificate authority.
         --interactive \
         --name monkey-island \
         --network=host \
-        infectionmonkey/monkey-island:VERSION
+        infectionmonkey/monkey-island:latest
     ```
 
 ### 4. Accessing Monkey Island
@@ -83,7 +83,7 @@ sudo docker run \
     --network=host \
     --user "$(id -u ${USER}):$(id -g ${USER})" \
     --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-    infectionmonkey/monkey-island:VERSION --setup-only
+    infectionmonkey/monkey-island:latest --setup-only
 ```
 1. Move your `server_config.json` file to `./monkey_island_data` directory.
 1. Run the container with a mounted volume, specify the path to the `server_config.json`:
@@ -94,7 +94,7 @@ sudo docker run \
     --network=host \
     --user "$(id -u ${USER}):$(id -g ${USER})" \
     --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-    infectionmonkey/monkey-island:VERSION --server-config="/monkey_island_data/server_config.json"
+    infectionmonkey/monkey-island:latest --server-config="/monkey_island_data/server_config.json"
 ```
 
 ### Start Monkey Island with user-provided certificate
@@ -129,7 +129,7 @@ private certificate authority.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        infection-monkey/monkey-island:VERSION --setup-only --server-config="/monkey_island_data/server_config.json"
+        infection-monkey/monkey-island:latest --setup-only --server-config="/monkey_island_data/server_config.json"
     ```
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
@@ -151,7 +151,7 @@ private certificate authority.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        infectionmonkey/monkey-island:VERSION --setup-only --server-config="/monkey_island_data/server_config.json"
+        infectionmonkey/monkey-island:latest --setup-only --server-config="/monkey_island_data/server_config.json"
     ```
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
