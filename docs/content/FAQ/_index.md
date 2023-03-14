@@ -133,7 +133,7 @@ To reset the credentials, you'll need to perform a complete factory reset:
     sudo docker run \
         --name monkey-island \
         --network=host \
-        guardicore/monkey-island:VERSION
+        infectionmonkey/monkey-island:latest
     ```
 1. Go to the Monkey Island's URL and create a new account.
 

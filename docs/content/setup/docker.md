@@ -20,16 +20,10 @@ The Infection Monkey Docker container works on Linux only. It is not compatible 
     sudo docker pull mongo:6.0
     ```
 
-1. Extract the Monkey Island Docker tarball:
+1. Pull the Monkey Island Docker image:
 
     ```bash
-    tar -xvzf InfectionMonkey-docker-v2.0.0.tgz
-    ```
-
-1. Load the Monkey Island Docker image:
-
-    ```bash
-    sudo docker load -i InfectionMonkey-docker-v2.0.0.tar
+    sudo docker pull infectionmonkey/monkey_island:latest
     ```
 
 ### 2. Start MongoDB
@@ -64,7 +58,7 @@ been signed by a private certificate authority.
         --interactive \
         --name monkey-island \
         --network=host \
-        guardicore/monkey-island:VERSION
+        infectionmonkey/monkey-island:latest
     ```
 
 ### 4. Accessing Monkey Island
@@ -89,7 +83,7 @@ sudo docker run \
     --network=host \
     --user "$(id -u ${USER}):$(id -g ${USER})" \
     --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-    guardicore/monkey-island:VERSION --setup-only
+    infectionmonkey/monkey-island:latest --setup-only
 ```
 1. Move your `server_config.json` file to `./monkey_island_data` directory.
 1. Run the container with a mounted volume, specify the path to the `server_config.json`:
@@ -100,7 +94,7 @@ sudo docker run \
     --network=host \
     --user "$(id -u ${USER}):$(id -g ${USER})" \
     --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-    guardicore/monkey-island:VERSION --server-config="/monkey_island_data/server_config.json"
+    infectionmonkey/monkey-island:latest --server-config="/monkey_island_data/server_config.json"
 ```
 
 ### Start Monkey Island with user-provided certificate
@@ -135,7 +129,7 @@ private certificate authority.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:VERSION --setup-only --server-config="/monkey_island_data/server_config.json"
+        infection-monkey/monkey-island:latest --setup-only --server-config="/monkey_island_data/server_config.json"
     ```
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
@@ -157,7 +151,7 @@ private certificate authority.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:VERSION --setup-only --server-config="/monkey_island_data/server_config.json"
+        infectionmonkey/monkey-island:latest --setup-only --server-config="/monkey_island_data/server_config.json"
     ```
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
@@ -186,7 +180,7 @@ to store data in the `monkey-mongo` container.
 UnicodeDecodeError: 'utf-8' codec can't decode byte 0xee in position 0: invalid continuation byte
 ```
 
-Starting a new container from the `guardicore/monkey-island:VERSION` image
+Starting a new container from the `infectionmonkey/monkey-island:VERSION` image
 generates a new secret key for storing sensitive information in MongoDB. If you
 have an old database instance running (from a previous instance of Infection
 Monkey), the data stored in the `monkey-mongo` container has been encrypted
