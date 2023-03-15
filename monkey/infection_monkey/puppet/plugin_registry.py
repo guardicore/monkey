@@ -9,7 +9,7 @@ from serpentarium import MultiUsePlugin, PluginLoader, PluginThreadName, SingleU
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.exploit import IAgentBinaryRepository
+from infection_monkey.exploit import IAgentBinaryRepository, IAgentOTPProvider
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIRequestError
 from infection_monkey.network import TCPPortSelector
@@ -34,6 +34,7 @@ class PluginRegistry:
         agent_event_publisher: IAgentEventPublisher,
         propagation_credentials_repository: IPropagationCredentialsRepository,
         tcp_port_selector: TCPPortSelector,
+        otp_provider: IAgentOTPProvider,
     ):
         """
         `self._registry` looks like -
@@ -54,6 +55,7 @@ class PluginRegistry:
         self._agent_event_publisher = agent_event_publisher
         self._propagation_credentials_repository = propagation_credentials_repository
         self._tcp_port_selector = tcp_port_selector
+        self._otp_provider = otp_provider
 
         self._agent_id = get_agent_id()
         self._lock = RLock()
