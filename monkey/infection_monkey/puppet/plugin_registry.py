@@ -83,6 +83,7 @@ class PluginRegistry:
             agent_event_publisher=self._agent_event_publisher,
             propagation_credentials_repository=self._propagation_credentials_repository,
             tcp_port_selector=self._tcp_port_selector,
+            otp_provider=self._otp_provider,
         )
 
         self.load_plugin(plugin_type, plugin_name, multiprocessing_plugin)
