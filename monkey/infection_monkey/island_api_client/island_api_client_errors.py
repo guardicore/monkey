@@ -6,6 +6,12 @@ class IslandAPIError(Exception):
     pass
 
 
+class UnconnectedClientError(IslandAPIError):
+    """
+    Raise if the client is used before it got connected
+    """
+
+
 class IslandAPITimeoutError(IslandAPIError):
     """
     Raised when the API request hits a timeout
