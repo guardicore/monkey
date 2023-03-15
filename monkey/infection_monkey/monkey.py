@@ -47,9 +47,9 @@ from infection_monkey.credential_collectors import (
     SSHCredentialCollector,
 )
 from infection_monkey.exploit import (
-    IslandAPIAgentOTPProvider,
     CachingAgentBinaryRepository,
     ExploiterWrapper,
+    IslandAPIAgentOTPProvider,
 )
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
 from infection_monkey.exploit.mssqlexec import MSSQLExploiter
