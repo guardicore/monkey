@@ -39,11 +39,14 @@ copy_server_config_to_build_dir() {
 build_package() {
   local version=$1
   local dist_dir=$2
+  local is_release_build=$3
   pushd ./docker
 
   tar_name="$DOCKER_DIR/InfectionMonkey-docker-$version.tar"
 
   build_docker_image_tar "$DOCKER_IMAGE_NAME:$version" "$tar_name"
+
+  push_docker_island_to_hub "$DOCKER_IMAGE_NAME:$version" "$tar_name" "$is_release_build"
 
   tgz_name="$DOCKER_DIR/InfectionMonkey-docker-$version.tgz"
   build_docker_image_tgz "$tar_name" "$tgz_name"
@@ -56,6 +59,19 @@ build_package() {
 build_docker_image_tar() {
   sudo docker build . -t "$1"
   sudo docker save "$1" > "$2"
+}
+
+push_docker_island_to_hub() {
+    local docker_image_name=$1
+    local tar_name=$2
+    local is_release_build=$3
+
+    if [ "$is_release_build" == true ]; then
+       log_message "Pushing Monkey Island Beta to DockerHub"
+       sudo docker load -i $tar_name
+       sudo docker tag "$docker_image_name" "$docker_image_name-beta"
+       sudo docker push "$docker_image_name-beta"
+    fi
 }
 
 build_docker_image_tgz() {
