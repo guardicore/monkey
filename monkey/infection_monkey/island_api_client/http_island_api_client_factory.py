@@ -6,6 +6,7 @@ from . import (
     HTTPIslandAPIClient,
     IIslandAPIClient,
 )
+from .http_client import HTTPClient
 
 
 class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
@@ -15,5 +16,5 @@ class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
 
     def create_island_api_client(self) -> IIslandAPIClient:
         return ConfigurationValidatorDecorator(
-            HTTPIslandAPIClient(self._agent_event_serializer_registry, self._otp)
+            HTTPIslandAPIClient(self._agent_event_serializer_registry, HTTPClient(), self._otp)
         )

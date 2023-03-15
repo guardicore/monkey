@@ -2,7 +2,7 @@ import functools
 import json
 import logging
 from pprint import pformat
-from typing import Any, Dict, List, Optional, Sequence, TypeGuard
+from typing import Any, Dict, List, Sequence
 
 import requests
 
@@ -60,41 +60,46 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     def __init__(
         self,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
+        http_client: HTTPClient,
         otp: str,
     ):
         self._agent_event_serializer_registry = agent_event_serializer_registry
+        self.http_client = http_client
         self._otp = otp
-        self._http_client: Optional[HTTPClient] = None
 
     def connect(
         self,
         island_server: SocketAddress,
     ):
         try:
-            self.http_client = HTTPClient(island_server)
+            self.http_client.server_url = f"{island_server}/api"
             self.http_client.get("?action=is-up")
         except Exception as err:
             logger.debug(f"Connection to {island_server} failed: {err}")
-            self.http_client = None
+            self.http_client.server_url = None
             raise err
 
-        auth_token = self._get_authentication_token()
-        self.http_client.set_authentication_token(auth_token)
+        try:
+            auth_token = self._get_authentication_token()
+        except Exception as err:
+            logger.debug("Authentication failed")
+            raise err
+
+        self.http_client.additional_headers = {"Authentication-Token": auth_token}
 
     def _get_authentication_token(self) -> str:
-        response = self.http_client.post("agent-otp-login", {"otp": self._otp})
+        response = self.http_client.post("/agent-otp-login", {"otp": self._otp})
         return response.json()["token"]
 
     @ensure_client_connected
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value
-        response = self.http_client.get(f"agent-binaries/{os_name}")
+        response = self.http_client.get(f"/agent-binaries/{os_name}")
         return response.content
 
-    @ensure_client_connected
     @handle_response_parsing_errors
     def get_otp(self) -> str:
-        response = self.http_client.get("agent-otp")
+        response = self.http_client.get("/agent-otp")
         return response.json()["otp"]
 
     @ensure_client_connected
@@ -103,7 +108,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self, operating_system: OperatingSystem, plugin_type: AgentPluginType, plugin_name: str
     ) -> AgentPlugin:
         response = self.http_client.get(
-            f"agent-plugins/{operating_system.value}/{plugin_type.value}/{plugin_name}"
+            f"/agent-plugins/{operating_system.value}/{plugin_type.value}/{plugin_name}"
         )
 
         return AgentPlugin(**response.json())
@@ -113,21 +118,25 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     def get_agent_plugin_manifest(
         self, plugin_type: AgentPluginType, plugin_name: str
     ) -> AgentPluginManifest:
-        response = self.http_client.get(f"agent-plugins/{plugin_type.value}/{plugin_name}/manifest")
+        response = self.http_client.get(
+            f"/agent-plugins/{plugin_type.value}/{plugin_name}/manifest"
+        )
 
         return AgentPluginManifest(**response.json())
 
     @ensure_client_connected
     @handle_response_parsing_errors
     def get_agent_signals(self, agent_id: str) -> AgentSignals:
-        response = self.http_client.get(f"agent-signals/{agent_id}", timeout=SHORT_REQUEST_TIMEOUT)
+        response = self.http_client.get(f"/agent-signals/{agent_id}", timeout=SHORT_REQUEST_TIMEOUT)
 
         return AgentSignals(**response.json())
 
     @ensure_client_connected
     @handle_response_parsing_errors
     def get_agent_configuration_schema(self) -> Dict[str, Any]:
-        response = self.http_client.get("agent-configuration-schema", timeout=SHORT_REQUEST_TIMEOUT)
+        response = self.http_client.get(
+            "/agent-configuration-schema", timeout=SHORT_REQUEST_TIMEOUT
+        )
         schema = response.json()
 
         return schema
@@ -135,7 +144,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @ensure_client_connected
     @handle_response_parsing_errors
     def get_config(self) -> AgentConfiguration:
-        response = self.http_client.get("agent-configuration", timeout=SHORT_REQUEST_TIMEOUT)
+        response = self.http_client.get("/agent-configuration", timeout=SHORT_REQUEST_TIMEOUT)
 
         config_dict = response.json()
         logger.debug(f"Received configuration:\n{pformat(config_dict, sort_dicts=False)}")
@@ -145,21 +154,21 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @ensure_client_connected
     @handle_response_parsing_errors
     def get_credentials_for_propagation(self) -> Sequence[Credentials]:
-        response = self.http_client.get("propagation-credentials", timeout=SHORT_REQUEST_TIMEOUT)
+        response = self.http_client.get("/propagation-credentials", timeout=SHORT_REQUEST_TIMEOUT)
 
         return [Credentials(**credentials) for credentials in response.json()]
 
     @ensure_client_connected
     def register_agent(self, agent_registration_data: AgentRegistrationData):
         self.http_client.post(
-            "agents",
+            "/agents",
             agent_registration_data.dict(simplify=True),
             SHORT_REQUEST_TIMEOUT,
         )
 
     @ensure_client_connected
     def send_events(self, events: Sequence[AbstractAgentEvent]):
-        self.http_client.post("agent-events", self._serialize_events(events))
+        self.http_client.post("/agent-events", self._serialize_events(events))
 
     def _serialize_events(self, events: Sequence[AbstractAgentEvent]) -> JSONSerializable:
         serialized_events: List[JSONSerializable] = []
@@ -176,15 +185,11 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @ensure_client_connected
     def send_heartbeat(self, agent_id: AgentID, timestamp: float):
         data = AgentHeartbeat(timestamp=timestamp).dict(simplify=True)
-        self.http_client.post(f"agent/{agent_id}/heartbeat", data)
+        self.http_client.post(f"/agent/{agent_id}/heartbeat", data)
 
     @ensure_client_connected
     def send_log(self, agent_id: AgentID, log_contents: str):
         self.http_client.put(
-            f"agent-logs/{agent_id}",
+            f"/agent-logs/{agent_id}",
             log_contents,
         )
-
-
-def _is_connected(client: Optional[HTTPClient]) -> TypeGuard[HTTPClient]:
-    return bool(client)

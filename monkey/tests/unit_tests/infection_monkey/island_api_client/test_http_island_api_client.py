@@ -6,6 +6,7 @@ from uuid import UUID
 import pytest
 import requests
 from tests.common.example_agent_configuration import AGENT_CONFIGURATION
+from tests.data_for_tests.otp import OTP
 from tests.data_for_tests.propagation_credentials import CREDENTIALS_DICTS
 from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
     FAKE_AGENT_MANIFEST_DICT,
@@ -82,7 +83,7 @@ def agent_event_serializer_registry():
 
 
 def build_api_client(http_client):
-    return HTTPIslandAPIClient(agent_event_serializer_registry(), http_client)
+    return HTTPIslandAPIClient(agent_event_serializer_registry(), http_client, OTP)
 
 
 def _build_client_with_json_response(response):
@@ -101,7 +102,7 @@ def test_island_api_client__get_agent_binary():
     api_client = build_api_client(http_client_stub)
 
     assert api_client.get_agent_binary(os) == fake_binary
-    assert http_client_stub.get.called_with("agent-binaries/linux")
+    assert http_client_stub.get.called_with("/agent-binaries/linux")
 
 
 def test_island_api_client_send_events__serialization():
@@ -132,7 +133,7 @@ def test_island_api_client_send_events__serialization():
 
     api_client.send_events(events=events_to_send)
 
-    assert client_spy.post.call_args[0] == ("agent-events", expected_json)
+    assert client_spy.post.call_args[0] == ("/agent-events", expected_json)
 
 
 def test_island_api_client_send_events__serialization_failed():

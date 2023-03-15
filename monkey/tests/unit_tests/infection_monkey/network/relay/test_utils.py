@@ -1,5 +1,6 @@
 import pytest
 import requests_mock
+from tests.data_for_tests.otp import OTP
 
 from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.types import SocketAddress
@@ -21,7 +22,7 @@ servers = [SERVER_1, SERVER_2, SERVER_3, SERVER_4]
 
 @pytest.fixture
 def island_api_client_factory():
-    return HTTPIslandAPIClientFactory(AgentEventSerializerRegistry())
+    return HTTPIslandAPIClientFactory(AgentEventSerializerRegistry(), OTP)
 
 
 @pytest.mark.parametrize(
@@ -41,6 +42,7 @@ def test_find_available_island_apis(
     with requests_mock.Mocker() as mock:
         for server, response in server_response_pairs:
             mock.get(f"https://{server}/api?action=is-up", **response)
+            mock.post(f"https://{server}/api/agent-otp-login", json={"token": "fake-token"})
 
         available_apis = find_available_island_apis(servers, island_api_client_factory)
 
@@ -57,7 +59,9 @@ def test_find_available_island_apis__multiple_successes(island_api_client_factor
     available_servers = [SERVER_2, SERVER_3]
     with requests_mock.Mocker() as mock:
         mock.get(f"https://{SERVER_1}/api?action=is-up", exc=IslandAPIConnectionError)
+        mock.post(f"https://{SERVER_1}/api/agent-otp-login", json={"token": "fake-token"})
         for server in available_servers:
+            mock.post(f"https://{server}/api/agent-otp-login", json={"token": "fake-token"})
             mock.get(f"https://{server}/api?action=is-up", text="")
 
         available_apis = find_available_island_apis(servers, island_api_client_factory)

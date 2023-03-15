@@ -8,7 +8,7 @@ from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
-from common.types import JSONSerializable, SocketAddress
+from common.types import JSONSerializable
 
 from .island_api_client_errors import (
     IslandAPIConnectionError,
@@ -55,16 +55,30 @@ def handle_island_errors(fn):
 
 
 class HTTPClient:
-    def __init__(self, server: SocketAddress, retries=RETRIES):
+    def __init__(self, retries=RETRIES):
         self._session = requests.Session()
         retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
-        self._api_url: Optional[str] = None
-        self._additional_headers: Dict[str, Any] = {}
-        self._api_url = f"https://{server}/api"
+        self._server_url: Optional[str] = None
+        self._additional_headers = None
 
-    def set_authentication_token(self, auth_token: str):
-        self._additional_headers["Authentication-Token"] = auth_token
+    @property
+    def server_url(self):
+        return self._server_url
+
+    @server_url.setter
+    def server_url(self, endpoint: Optional[str]):
+        if endpoint:
+            endpoint = f"https://{endpoint}"
+        self._server_url = endpoint
+
+    @property
+    def additional_headers(self):
+        return self._additional_headers
+
+    @additional_headers.setter
+    def additional_headers(self, headers: Dict[str, Any]):
+        self._additional_headers = headers
 
     def get(
         self,
@@ -111,13 +125,9 @@ class HTTPClient:
         *args,
         **kwargs,
     ) -> requests.Response:
-        if self._api_url is None:
-            raise RuntimeError(
-                "HTTP client is not connected to the Island server,"
-                "establish a connection with 'connect()' before "
-                "attempting to send any requests"
-            )
-        url = f"{self._api_url}/{endpoint}".strip("/")
+        if self._server_url is None:
+            raise RuntimeError("HTTP client does not have a server URL set")
+        url = f"{self._server_url}{endpoint}".strip("/")
         logger.debug(f"{request_type.name} {url}, timeout={timeout}")
 
         method = getattr(self._session, str.lower(request_type.name))
