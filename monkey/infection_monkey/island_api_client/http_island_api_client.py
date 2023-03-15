@@ -47,23 +47,22 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     def __init__(
         self,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
-        http_client: HTTPClient,
         otp: str,
     ):
         self._agent_event_serializer_registry = agent_event_serializer_registry
-        self.http_client = http_client
         self._otp = otp
+        self.http_client = None
 
     def connect(
         self,
         island_server: SocketAddress,
     ):
         try:
-            self.http_client.set_server(island_server)
+            self.http_client = HTTPClient(island_server)
             self.http_client.get("?action=is-up")
         except Exception as err:
             logger.debug(f"Connection to {island_server} failed: {err}")
-            self.http_client.set_server(None)
+            self.http_client = None
             raise err
 
         auth_token = self._get_authentication_token()

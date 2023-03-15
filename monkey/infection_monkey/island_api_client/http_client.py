@@ -55,14 +55,12 @@ def handle_island_errors(fn):
 
 
 class HTTPClient:
-    def __init__(self, retries=RETRIES):
+    def __init__(self, server: SocketAddress, retries=RETRIES):
         self._session = requests.Session()
         retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
         self._api_url: Optional[str] = None
         self._additional_headers = {}
-
-    def set_server(self, server: SocketAddress):
         self._api_url = f"https://{server}/api"
 
     def set_authentication_token(self, auth_token: str):
