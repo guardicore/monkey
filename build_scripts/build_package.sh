@@ -222,7 +222,7 @@ setup_build_dir "$agent_binary_dir" "$monkey_repo" "$deployment_type" "$is_relea
 
 monkey_version=$(format_version "$monkey_version" "$commit_id")
 
-build_package "$monkey_version" "$DIST_DIR"
+build_package "$monkey_version" "$DIST_DIR" "$is_release_build"
 
 cleanup "$monkey_version"
 
