@@ -60,7 +60,7 @@ class HTTPClient:
         retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
         self._api_url: Optional[str] = None
-        self._additional_headers = {}
+        self._additional_headers: Dict[str, Any] = {}
         self._api_url = f"https://{server}/api"
 
     def set_authentication_token(self, auth_token: str):
