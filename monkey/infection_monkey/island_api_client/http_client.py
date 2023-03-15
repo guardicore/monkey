@@ -60,13 +60,13 @@ class HTTPClient:
         retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
         self._api_url: Optional[str] = None
-        self._headers = {}
+        self._additional_headers = {}
 
     def set_server(self, server: SocketAddress):
         self._api_url = f"https://{server}/api"
 
     def set_authentication_token(self, auth_token: str):
-        self._headers["Authentication-Token"] = auth_token
+        self._additional_headers["Authentication-Token"] = auth_token
 
     def get(
         self,
@@ -124,7 +124,7 @@ class HTTPClient:
 
         method = getattr(self._session, str.lower(request_type.name))
         response = method(
-            url, *args, timeout=timeout, verify=False, headers=self._headers, **kwargs
+            url, *args, timeout=timeout, verify=False, headers=self._additional_headers, **kwargs
         )
         response.raise_for_status()
 
