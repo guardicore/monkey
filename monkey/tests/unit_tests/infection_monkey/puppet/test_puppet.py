@@ -29,6 +29,7 @@ def mock_plugin_registry() -> PluginRegistry:
         MagicMock(),
         MagicMock(),
         MagicMock(),
+        MagicMock(),
     )
 
 

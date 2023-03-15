@@ -46,6 +46,7 @@ def plugin(monkeypatch) -> Plugin:
         agent_event_publisher=MagicMock(),
         agent_binary_repository=MagicMock(),
         tcp_port_selector=MagicMock(),
+        otp_provider=MagicMock(),
     )
 
 
@@ -86,6 +87,7 @@ def test_run__exploit_host_raises_exception(monkeypatch, plugin: Plugin):
         agent_event_publisher=MagicMock(),
         agent_binary_repository=MagicMock(),
         tcp_port_selector=MagicMock(),
+        otp_provider=MagicMock(),
     )
     result = plugin.run(
         host=TARGET_HOST,

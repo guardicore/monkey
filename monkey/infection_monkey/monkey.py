@@ -46,7 +46,11 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
-from infection_monkey.exploit import CachingAgentBinaryRepository, ExploiterWrapper
+from infection_monkey.exploit import (
+    IslandAPIAgentOTPProvider,
+    CachingAgentBinaryRepository,
+    ExploiterWrapper,
+)
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
 from infection_monkey.exploit.mssqlexec import MSSQLExploiter
 from infection_monkey.exploit.powershell import PowerShellExploiter
@@ -342,18 +346,21 @@ class InfectionMonkey:
             manager=self._manager,
         )
 
+        plugin_source_extractor = PluginSourceExtractor(self._plugin_dir)
         plugin_loader = PluginLoader(
             self._plugin_dir, partial(configure_child_process_logger, self._ipc_logger_queue)
         )
+        otp_provider = IslandAPIAgentOTPProvider(self._island_api_client)
         plugin_registry = PluginRegistry(
             operating_system,
             self._island_api_client,
-            PluginSourceExtractor(self._plugin_dir),
+            plugin_source_extractor,
             plugin_loader,
             agent_binary_repository,
             self._agent_event_publisher,
             self._propagation_credentials_repository,
-            tcp_port_selector=self._tcp_port_selector,
+            self._tcp_port_selector,
+            otp_provider,
         )
         plugin_compatability_verifier = PluginCompatabilityVerifier(
             self._island_api_client, HARD_CODED_EXPLOITER_MANIFESTS
@@ -377,7 +384,7 @@ class InfectionMonkey:
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "ssh", SSHFingerprinter())
 
         exploit_wrapper = ExploiterWrapper(
-            self._agent_event_queue, agent_binary_repository, self._tcp_port_selector
+            self._agent_event_queue, agent_binary_repository, self._tcp_port_selector, otp_provider
         )
 
         puppet.load_plugin(
