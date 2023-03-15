@@ -384,7 +384,7 @@ class InfectionMonkey:
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "ssh", SSHFingerprinter())
 
         exploit_wrapper = ExploiterWrapper(
-            self._agent_event_queue, agent_binary_repository, self._tcp_port_selector
+            self._agent_event_queue, agent_binary_repository, self._tcp_port_selector, otp_provider
         )
 
         puppet.load_plugin(
