@@ -66,7 +66,7 @@ class HTTPClient:
         self._api_url = f"https://{server}/api"
 
     def set_authentication_token(self, auth_token: str):
-        self._headers = {"Authentication-Token": auth_token}
+        self._headers["Authentication-Token"] = auth_token
 
     def get(
         self,
@@ -123,7 +123,9 @@ class HTTPClient:
         logger.debug(f"{request_type.name} {url}, timeout={timeout}")
 
         method = getattr(self._session, str.lower(request_type.name))
-        response = method(url, *args, timeout=timeout, verify=False, headers=self.headers, **kwargs)
+        response = method(
+            url, *args, timeout=timeout, verify=False, headers=self._headers, **kwargs
+        )
         response.raise_for_status()
 
         return response
