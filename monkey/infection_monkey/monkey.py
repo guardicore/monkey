@@ -46,7 +46,11 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
-from infection_monkey.exploit import CachingAgentBinaryRepository, ExploiterWrapper
+from infection_monkey.exploit import (
+    IslandAPIAgentOTPProvider,
+    CachingAgentBinaryRepository,
+    ExploiterWrapper,
+)
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
 from infection_monkey.exploit.mssqlexec import MSSQLExploiter
 from infection_monkey.exploit.powershell import PowerShellExploiter
@@ -342,6 +346,7 @@ class InfectionMonkey:
             manager=self._manager,
         )
 
+        otp_provider = IslandAPIAgentOTPProvider(self._island_api_client)
         plugin_loader = PluginLoader(
             self._plugin_dir, partial(configure_child_process_logger, self._ipc_logger_queue)
         )
