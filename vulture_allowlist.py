@@ -8,7 +8,7 @@ from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.types import Lock, NetworkPort, PluginName
-from infection_monkey.exploit.i_otp_provider import IAgentOTPProvider
+from infection_monkey.exploit import AgentOTPProvider
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import generate_brute_force_credentials, secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
@@ -144,4 +144,4 @@ secret_type_filter
 
 # Remove after #3077
 http_island_api_client.get_otp
-IAgentOTPProvider
+AgentOTPProvider
