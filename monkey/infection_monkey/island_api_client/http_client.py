@@ -1,6 +1,7 @@
 import functools
 import logging
 from enum import Enum, auto
+from http import HTTPStatus
 from typing import Any, Dict, Optional
 
 import requests
@@ -11,6 +12,7 @@ from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from common.types import JSONSerializable
 
 from .island_api_client_errors import (
+    IslandAPIAuthenticationError,
     IslandAPIConnectionError,
     IslandAPIError,
     IslandAPIRequestError,
@@ -40,12 +42,17 @@ def handle_island_errors(fn):
         except (requests.exceptions.ConnectionError, requests.exceptions.TooManyRedirects) as err:
             raise IslandAPIConnectionError(err)
         except requests.exceptions.HTTPError as err:
+            if err.response.status_code in [
+                HTTPStatus.UNAUTHORIZED.value,
+                HTTPStatus.FORBIDDEN.value,
+            ]:
+                raise IslandAPIAuthenticationError(err)
             if 400 <= err.response.status_code < 500:
                 raise IslandAPIRequestError(err)
-            elif 500 <= err.response.status_code < 600:
+            if 500 <= err.response.status_code < 600:
                 raise IslandAPIRequestFailedError(err)
-            else:
-                raise IslandAPIError(err)
+
+            raise IslandAPIError(err)
         except TimeoutError as err:
             raise IslandAPITimeoutError(err)
         except Exception as err:
@@ -68,9 +75,8 @@ class HTTPClient:
 
     @server_url.setter
     def server_url(self, server_url: Optional[str]):
-        if server_url:
-            if not server_url.startswith("https://"):
-                raise RuntimeError("Only HTTPS protocol is supported by HTTPClient")
+        if server_url is not None and not server_url.startswith("https://"):
+            raise ValueError("Only HTTPS protocol is supported by HTTPClient")
         self._server_url = server_url
 
     def get(

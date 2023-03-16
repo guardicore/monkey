@@ -64,16 +64,10 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             self._http_client.server_url = f"https://{island_server}/api/"
             self._http_client.get(params={"action": "is-up"})
         except Exception as err:
-            logger.debug(f"Connection to {island_server} failed: {err}")
             self._http_client.server_url = None
             raise err
 
-        try:
-            auth_token = self._get_authentication_token()
-        except Exception as err:
-            logger.error("Agent authentication failed")
-            raise err
-
+        auth_token = self._get_authentication_token()
         self._http_client.additional_headers = {HTTPIslandAPIClient.TOKEN_HEADER_KEY: auth_token}
 
     def _get_authentication_token(self) -> str:

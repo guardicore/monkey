@@ -12,6 +12,7 @@ from infection_monkey.island_api_client import (
     IslandAPIError,
     IslandAPITimeoutError,
 )
+from infection_monkey.island_api_client.island_api_client_errors import IslandAPIAuthenticationError
 from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST
 from infection_monkey.utils.threading import (
     ThreadSafeIterator,
@@ -71,6 +72,8 @@ def _check_if_island_server(
         logger.error(f"Unable to connect to server/relay {server}: {err}")
     except IslandAPITimeoutError as err:
         logger.error(f"Timed out while connecting to server/relay {server}: {err}")
+    except IslandAPIAuthenticationError as err:
+        logger.error(f"Authentication to the {server} failed: {err}")
     except IslandAPIError as err:
         logger.error(
             f"Exception encountered when trying to connect to server/relay {server}: {err}"
