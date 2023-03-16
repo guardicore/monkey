@@ -100,7 +100,7 @@ def test_connect__connection_error():
 
     with pytest.raises(RuntimeError):
         api_client.connect(SERVER)
-    assert api_client.http_client.server_url is None
+    assert api_client._http_client.server_url is None
 
 
 def test_connect__authentication_error():
@@ -110,7 +110,7 @@ def test_connect__authentication_error():
     api_client = build_api_client(http_client_stub)
     with pytest.raises(RuntimeError):
         api_client.connect(SERVER)
-    assert api_client.http_client.server_url is not None
+    assert api_client._http_client.server_url is not None
 
 
 def test_connect():
@@ -123,9 +123,9 @@ def test_connect():
 
     api_client.connect(SERVER)
 
-    assert api_client.http_client.server_url is not None
+    assert api_client._http_client.server_url is not None
     assert (
-        api_client.http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY]
+        api_client._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY]
         == fake_auth_token
     )
 
