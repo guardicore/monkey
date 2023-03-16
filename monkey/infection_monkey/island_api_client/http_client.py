@@ -60,7 +60,7 @@ class HTTPClient:
         retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
         self._server_url: Optional[str] = None
-        self._additional_headers = None
+        self._additional_headers: Optional[Dict[str, Any]] = None
 
     @property
     def server_url(self):
