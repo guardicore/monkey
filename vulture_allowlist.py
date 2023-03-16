@@ -6,6 +6,7 @@ from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
+from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit import IslandAPIAgentOTPProvider
@@ -14,7 +15,6 @@ from infection_monkey.exploit.tools import generate_brute_force_credentials, sec
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.island_api_client import http_island_api_client
-from infection_monkey.monkey import AGENT_OTP_ENVIRONMENT_VARIABLE
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Agent, IslandMode, Machine
