@@ -14,6 +14,7 @@ from infection_monkey.exploit.tools import generate_brute_force_credentials, sec
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.island_api_client import http_island_api_client
+from infection_monkey.monkey import AGENT_OTP_ENVIRONMENT_VARIABLE
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Agent, IslandMode, Machine
@@ -145,3 +146,4 @@ secret_type_filter
 # Remove after #3077
 http_island_api_client.get_otp
 IslandAPIAgentOTPProvider
+AGENT_OTP_ENVIRONMENT_VARIABLE
