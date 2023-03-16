@@ -17,7 +17,7 @@ from common.types import AgentID, JSONSerializable, SocketAddress
 
 from . import IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient
-from .island_api_client_errors import IslandAPIResponseParsingError, UnconnectedClientError
+from .island_api_client_errors import IslandAPIResponseParsingError
 
 logger = logging.getLogger(__name__)
 
@@ -35,19 +35,6 @@ def handle_response_parsing_errors(fn):
             KeyError,
         ) as err:
             raise IslandAPIResponseParsingError(err)
-
-    return wrapper
-
-
-def ensure_client_connected(fn):
-    @functools.wraps(fn)
-    def wrapper(self, *args, **kwargs):
-        if self.http_client is not None:
-            return fn(self, *args, **kwargs)
-        else:
-            raise UnconnectedClientError(
-                f"The client can't {fn.__name__}" f" because it's not connected to any server."
-            )
 
     return wrapper
 
@@ -91,7 +78,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         response = self.http_client.post("/agent-otp-login", {"otp": self._otp})
         return response.json()["token"]
 
-    @ensure_client_connected
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value
         response = self.http_client.get(f"/agent-binaries/{os_name}")
@@ -102,7 +88,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         response = self.http_client.get("/agent-otp")
         return response.json()["otp"]
 
-    @ensure_client_connected
     @handle_response_parsing_errors
     def get_agent_plugin(
         self, operating_system: OperatingSystem, plugin_type: AgentPluginType, plugin_name: str
@@ -113,7 +98,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return AgentPlugin(**response.json())
 
-    @ensure_client_connected
     @handle_response_parsing_errors
     def get_agent_plugin_manifest(
         self, plugin_type: AgentPluginType, plugin_name: str
@@ -124,14 +108,12 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return AgentPluginManifest(**response.json())
 
-    @ensure_client_connected
     @handle_response_parsing_errors
     def get_agent_signals(self, agent_id: str) -> AgentSignals:
         response = self.http_client.get(f"/agent-signals/{agent_id}", timeout=SHORT_REQUEST_TIMEOUT)
 
         return AgentSignals(**response.json())
 
-    @ensure_client_connected
     @handle_response_parsing_errors
     def get_agent_configuration_schema(self) -> Dict[str, Any]:
         response = self.http_client.get(
@@ -141,7 +123,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return schema
 
-    @ensure_client_connected
     @handle_response_parsing_errors
     def get_config(self) -> AgentConfiguration:
         response = self.http_client.get("/agent-configuration", timeout=SHORT_REQUEST_TIMEOUT)
@@ -151,14 +132,12 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return AgentConfiguration(**config_dict)
 
-    @ensure_client_connected
     @handle_response_parsing_errors
     def get_credentials_for_propagation(self) -> Sequence[Credentials]:
         response = self.http_client.get("/propagation-credentials", timeout=SHORT_REQUEST_TIMEOUT)
 
         return [Credentials(**credentials) for credentials in response.json()]
 
-    @ensure_client_connected
     def register_agent(self, agent_registration_data: AgentRegistrationData):
         self.http_client.post(
             "/agents",
@@ -166,7 +145,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             SHORT_REQUEST_TIMEOUT,
         )
 
-    @ensure_client_connected
     def send_events(self, events: Sequence[AbstractAgentEvent]):
         self.http_client.post("/agent-events", self._serialize_events(events))
 
@@ -182,12 +160,10 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return serialized_events
 
-    @ensure_client_connected
     def send_heartbeat(self, agent_id: AgentID, timestamp: float):
         data = AgentHeartbeat(timestamp=timestamp).dict(simplify=True)
         self.http_client.post(f"/agent/{agent_id}/heartbeat", data)
 
-    @ensure_client_connected
     def send_log(self, agent_id: AgentID, log_contents: str):
         self.http_client.put(
             f"/agent-logs/{agent_id}",
