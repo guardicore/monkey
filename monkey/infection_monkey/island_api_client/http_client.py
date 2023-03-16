@@ -127,7 +127,7 @@ class HTTPClient:
     ) -> requests.Response:
         if self._server_url is None:
             raise RuntimeError("HTTP client does not have a server URL set")
-        url = f"{self._server_url}{endpoint}".strip("/")
+        url = f"{self._server_url.strip('/')}/{endpoint.strip('/')}".strip("/")
         logger.debug(f"{request_type.name} {url}, timeout={timeout}")
 
         method = getattr(self._session, str.lower(request_type.name))
