@@ -60,7 +60,7 @@ class HTTPClient:
         retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
         self._server_url: Optional[str] = None
-        self._additional_headers: Optional[Dict[str, Any]] = None
+        self.additional_headers: Optional[Dict[str, Any]] = None
 
     @property
     def server_url(self):
@@ -72,14 +72,6 @@ class HTTPClient:
             if not server_url.startswith("https://"):
                 raise RuntimeError("Only HTTPS protocol is supported by HTTPClient")
         self._server_url = server_url
-
-    @property
-    def additional_headers(self):
-        return self._additional_headers
-
-    @additional_headers.setter
-    def additional_headers(self, headers: Dict[str, Any]):
-        self._additional_headers = headers
 
     def get(
         self,
@@ -133,7 +125,7 @@ class HTTPClient:
 
         method = getattr(self._session, str.lower(request_type.name))
         response = method(
-            url, *args, timeout=timeout, verify=False, headers=self._additional_headers, **kwargs
+            url, *args, timeout=timeout, verify=False, headers=self.additional_headers, **kwargs
         )
         response.raise_for_status()
 
