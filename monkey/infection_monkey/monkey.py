@@ -101,6 +101,9 @@ logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
 
 
+AGENT_OTP_ENVIRONMENT_VARIABLE = "IM_OTP"
+
+
 class InfectionMonkey:
     def __init__(self, args, ipc_logger_queue: multiprocessing.Queue, log_path: Path):
         logger.info("Agent is initializing...")
@@ -114,8 +117,7 @@ class InfectionMonkey:
         self._manager = context.Manager()
 
         self._opts = self._get_arguments(args)
-        # TODO read the otp from an env variable
-        self._otp = "hard-coded-otp"
+        self._otp = self._get_otp()
 
         self._ipc_logger_queue = ipc_logger_queue
 
@@ -168,6 +170,16 @@ class InfectionMonkey:
         InfectionMonkey._log_arguments(opts)
 
         return opts
+
+    @staticmethod
+    def _get_otp():
+        try:
+            return os.environ[AGENT_OTP_ENVIRONMENT_VARIABLE]
+        except KeyError:
+            raise Exception(
+                f"Couldn't find {AGENT_OTP_ENVIRONMENT_VARIABLE} environmental variable."
+                f"Without an OTP the agent will fail to authenticate!"
+            )
 
     # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
     def _connect_to_island_api(self) -> Tuple[SocketAddress, IIslandAPIClient]:
