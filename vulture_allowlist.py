@@ -12,7 +12,12 @@ from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit import IslandAPIAgentOTPProvider
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
-from infection_monkey.exploit.tools import generate_brute_force_credentials, secret_type_filter
+from infection_monkey.exploit.tools import (
+    RemoteCommandExecutionError,
+    RemoteFileCopyError,
+    generate_brute_force_credentials,
+    secret_type_filter,
+)
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.island_api_client import http_island_api_client
@@ -142,6 +147,8 @@ User.email
 # Remove after #2952
 generate_brute_force_credentials
 secret_type_filter
+RemoteCommandExecutionError
+RemoteFileCopyError
 
 SMBOptions.agent_binary_upload_timeout
 SMBOptions.smb_connect_timeout
