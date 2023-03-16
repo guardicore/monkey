@@ -82,7 +82,7 @@ class HTTPClient:
 
     def get(
         self,
-        endpoint: str,
+        endpoint: str = "",
         params: Optional[Dict[str, Any]] = None,
         timeout=MEDIUM_REQUEST_TIMEOUT,
         *args,
@@ -94,7 +94,7 @@ class HTTPClient:
 
     def post(
         self,
-        endpoint: str,
+        endpoint: str = "",
         data: Optional[JSONSerializable] = None,
         timeout=MEDIUM_REQUEST_TIMEOUT,
         *args,
@@ -106,7 +106,7 @@ class HTTPClient:
 
     def put(
         self,
-        endpoint: str,
+        endpoint: str = "",
         data: Optional[JSONSerializable] = None,
         timeout=MEDIUM_REQUEST_TIMEOUT,
         *args,

@@ -62,7 +62,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     ):
         try:
             self._http_client.server_url = f"{island_server}/api/"
-            self._http_client.get("", params={"action": "is-up"})
+            self._http_client.get(params={"action": "is-up"})
         except Exception as err:
             logger.debug(f"Connection to {island_server} failed: {err}")
             self._http_client.server_url = None
