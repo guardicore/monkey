@@ -101,6 +101,9 @@ logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
 
 
+AGENT_OTP_ENVIRONMENT_VARIABLE = "IM_OTP"
+
+
 class InfectionMonkey:
     def __init__(self, args, ipc_logger_queue: multiprocessing.Queue, log_path: Path):
         logger.info("Agent is initializing...")
