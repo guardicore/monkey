@@ -59,7 +59,6 @@ def test_find_available_island_apis__multiple_successes(island_api_client_factor
     available_servers = [SERVER_2, SERVER_3]
     with requests_mock.Mocker() as mock:
         mock.get(f"https://{SERVER_1}/api?action=is-up", exc=IslandAPIConnectionError)
-        mock.post(f"https://{SERVER_1}/api/agent-otp-login", json={"token": "fake-token"})
         for server in available_servers:
             mock.post(f"https://{server}/api/agent-otp-login", json={"token": "fake-token"})
             mock.get(f"https://{server}/api?action=is-up", text="")
