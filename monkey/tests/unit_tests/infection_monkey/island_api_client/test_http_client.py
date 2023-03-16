@@ -35,7 +35,7 @@ def request_mock_instance():
 @pytest.fixture
 def connected_client(request_mock_instance):
     http_client = HTTPClient()
-    http_client.server_url = f"{SERVER}/api"
+    http_client.server_url = f"https://{SERVER}/api"
     request_mock_instance.get(ISLAND_URI)
     return http_client
 
