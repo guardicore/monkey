@@ -82,7 +82,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         try:
             auth_token = self._get_authentication_token()
         except Exception as err:
-            logger.debug("Authentication failed")
+            logger.error("Agent authentication failed")
             raise err
 
         self.http_client.additional_headers = {"Authentication-Token": auth_token}
