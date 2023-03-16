@@ -44,6 +44,8 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     A client for the Island's HTTP API
     """
 
+    TOKEN_HEADER_KEY = "Authentication-Token"
+
     def __init__(
         self,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
@@ -72,7 +74,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             logger.error("Agent authentication failed")
             raise err
 
-        self.http_client.additional_headers = {"Authentication-Token": auth_token}
+        self.http_client.additional_headers = {HTTPIslandAPIClient.TOKEN_HEADER_KEY: auth_token}
 
     def _get_authentication_token(self) -> str:
         response = self.http_client.post("/agent-otp-login", {"otp": self._otp})
