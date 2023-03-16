@@ -92,6 +92,44 @@ def _build_client_with_json_response(response):
     return build_api_client(client_stub)
 
 
+def test_connect__connection_error():
+    http_client_stub = MagicMock()
+    http_client_stub.get = MagicMock(side_effect=RuntimeError)
+
+    api_client = build_api_client(http_client_stub)
+
+    with pytest.raises(RuntimeError):
+        api_client.connect(SERVER)
+    assert api_client.http_client.server_url is None
+
+
+def test_connect__authentication_error():
+    http_client_stub = MagicMock()
+    http_client_stub.get = MagicMock()
+    http_client_stub.post = MagicMock(side_effect=RuntimeError)
+    api_client = build_api_client(http_client_stub)
+    with pytest.raises(RuntimeError):
+        api_client.connect(SERVER)
+    assert api_client.http_client.server_url is not None
+
+
+def test_connect():
+    fake_auth_token = "fake_auth_token"
+    http_client_stub = MagicMock()
+    http_client_stub.get = MagicMock()
+    http_client_stub.post = MagicMock()
+    http_client_stub.post.return_value.json.return_value = {"token": fake_auth_token}
+    api_client = build_api_client(http_client_stub)
+
+    api_client.connect(SERVER)
+
+    assert api_client.http_client.server_url is not None
+    assert (
+        api_client.http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY]
+        == fake_auth_token
+    )
+
+
 def test_island_api_client__get_agent_binary():
     fake_binary = b"agent-binary"
     os = OperatingSystem.LINUX
