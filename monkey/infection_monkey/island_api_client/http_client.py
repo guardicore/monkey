@@ -67,10 +67,11 @@ class HTTPClient:
         return self._server_url
 
     @server_url.setter
-    def server_url(self, endpoint: Optional[str]):
-        if endpoint:
-            endpoint = f"https://{endpoint}"
-        self._server_url = endpoint
+    def server_url(self, server_url: Optional[str]):
+        if server_url:
+            if not server_url.startswith("https://"):
+                raise RuntimeError("Only HTTPS protocol is supported by HTTPClient")
+        self._server_url = server_url
 
     @property
     def additional_headers(self):

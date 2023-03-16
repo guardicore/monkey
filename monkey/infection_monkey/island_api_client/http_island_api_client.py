@@ -61,7 +61,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         island_server: SocketAddress,
     ):
         try:
-            self._http_client.server_url = f"{island_server}/api/"
+            self._http_client.server_url = f"https://{island_server}/api/"
             self._http_client.get(params={"action": "is-up"})
         except Exception as err:
             logger.debug(f"Connection to {island_server} failed: {err}")

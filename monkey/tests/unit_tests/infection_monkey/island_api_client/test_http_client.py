@@ -56,6 +56,13 @@ def test_http_client__error_handling(
         connected_client.get(PROPAGATION_CREDENTIALS_ENDPOINT)
 
 
+def test_http_client__unsupported_protocol():
+    client = HTTPClient()
+
+    with pytest.raises(RuntimeError):
+        client.server_url = "http://1.1.1.1:5000"
+
+
 @pytest.mark.parametrize(
     "status_code, expected_error",
     [
