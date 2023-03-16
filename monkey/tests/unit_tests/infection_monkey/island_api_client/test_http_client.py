@@ -15,15 +15,16 @@ from infection_monkey.island_api_client import (
     IslandAPITimeoutError,
 )
 from infection_monkey.island_api_client.http_client import RETRIES, HTTPClient
+from infection_monkey.island_api_client.island_api_client_errors import IslandAPIAuthenticationError
 
 SERVER = SocketAddress(ip="1.1.1.1", port=9999)
 AGENT_ID = UUID("80988359-a1cd-42a2-9b47-5b94b37cd673")
 
 ISLAND_URI = f"https://{SERVER}/api?action=is-up"
-LOG_ENDPOINT = f"agent-logs/{AGENT_ID}"
-ISLAND_SEND_LOG_URI = f"https://{SERVER}/api/{LOG_ENDPOINT}"
-PROPAGATION_CREDENTIALS_ENDPOINT = "propagation-credentials"
-ISLAND_GET_PROPAGATION_CREDENTIALS_URI = f"https://{SERVER}/api/{PROPAGATION_CREDENTIALS_ENDPOINT}"
+LOG_ENDPOINT = f"/agent-logs/{AGENT_ID}"
+ISLAND_SEND_LOG_URI = f"https://{SERVER}/api{LOG_ENDPOINT}"
+PROPAGATION_CREDENTIALS_ENDPOINT = "/propagation-credentials"
+ISLAND_GET_PROPAGATION_CREDENTIALS_URI = f"https://{SERVER}/api{PROPAGATION_CREDENTIALS_ENDPOINT}"
 
 
 @pytest.fixture
@@ -35,8 +36,8 @@ def request_mock_instance():
 @pytest.fixture
 def connected_client(request_mock_instance):
     http_client = HTTPClient()
+    http_client.server_url = f"https://{SERVER}/api"
     request_mock_instance.get(ISLAND_URI)
-    http_client.connect(SERVER)
     return http_client
 
 
@@ -56,10 +57,20 @@ def test_http_client__error_handling(
         connected_client.get(PROPAGATION_CREDENTIALS_ENDPOINT)
 
 
+@pytest.mark.parametrize("server", ["http://1.1.1.1:5000", ""])
+def test_http_client__unsupported_protocol(server):
+    client = HTTPClient()
+
+    with pytest.raises(ValueError):
+        client.server_url = server
+
+
 @pytest.mark.parametrize(
     "status_code, expected_error",
     [
-        (401, IslandAPIRequestError),
+        (401, IslandAPIAuthenticationError),
+        (403, IslandAPIAuthenticationError),
+        (400, IslandAPIRequestError),
         (501, IslandAPIRequestFailedError),
     ],
 )
@@ -93,7 +104,7 @@ def test_http_client__unconnected():
 def test_http_client__retries(monkeypatch):
     http_client = HTTPClient()
     # skip the connect method
-    http_client._api_url = f"https://{SERVER}/api"
+    http_client._server_url = f"https://{SERVER}/api"
     mock_send = MagicMock(side_effect=ConnectTimeoutError)
     # requests_mock can't be used for this, because it mocks higher level than we are testing
     monkeypatch.setattr("urllib3.connectionpool.HTTPSConnectionPool._validate_conn", mock_send)

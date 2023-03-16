@@ -30,6 +30,14 @@ class IslandAPIRequestError(IslandAPIError):
     pass
 
 
+class IslandAPIAuthenticationError(IslandAPIError):
+    """
+    Raised when the authentication to the API failed
+    """
+
+    pass
+
+
 class IslandAPIRequestFailedError(IslandAPIError):
     """
     Raised when the API request fails due to an error on the server

@@ -10,13 +10,11 @@ from .http_client import HTTPClient
 
 
 class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
-    def __init__(
-        self,
-        agent_event_serializer_registry: AgentEventSerializerRegistry,
-    ):
+    def __init__(self, agent_event_serializer_registry: AgentEventSerializerRegistry, otp: str):
         self._agent_event_serializer_registry = agent_event_serializer_registry
+        self._otp = otp
 
     def create_island_api_client(self) -> IIslandAPIClient:
         return ConfigurationValidatorDecorator(
-            HTTPIslandAPIClient(self._agent_event_serializer_registry, HTTPClient())
+            HTTPIslandAPIClient(self._agent_event_serializer_registry, HTTPClient(), self._otp)
         )
