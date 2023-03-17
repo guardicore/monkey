@@ -1,6 +1,6 @@
 from tests.data_for_tests.otp import OTP
 
-from infection_monkey.monkey import AGENT_OTP_ENVIRONMENT_VARIABLE, InfectionMonkey
+from infection_monkey.model import AGENT_OTP_ENVIRONMENT_VARIABLE, InfectionMonkey
 
 
 def test_get_otp(monkeypatch):

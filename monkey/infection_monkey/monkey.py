@@ -63,6 +63,7 @@ from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
+from infection_monkey.model import AGENT_OTP_ENVIRONMENT_VARIABLE
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.relay import TCPRelay
@@ -99,9 +100,6 @@ from .plugin_event_forwarder import PluginEventForwarder
 
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
-
-
-AGENT_OTP_ENVIRONMENT_VARIABLE = "INFECTION_MONKEY_AGENT_OTP"
 
 
 class InfectionMonkey:
