@@ -119,7 +119,7 @@ def _configure_queue_listener(
         "%(asctime)s [%(process)d:%(threadName)s:%(levelname)s] %(module)s.%("
         "funcName)s.%(lineno)d: %(message)s"
     )
-    formatter = logging.Formatter(log_format)
+    formatter = OTPFormatter(log_format)
 
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
