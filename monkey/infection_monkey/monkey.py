@@ -30,12 +30,13 @@ from common.agent_events import (
 )
 from common.agent_plugins import AgentPluginType
 from common.agent_registration_data import AgentRegistrationData
+from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
 from common.types import NetworkPort, SocketAddress
 from common.utils.argparse_types import positive_int
-from common.utils.code_utils import secure_generate_random_string
+from common.utils.code_utils import del_key, secure_generate_random_string
 from common.utils.file_utils import create_secure_directory
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
@@ -95,6 +96,7 @@ from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
 
 from .heart import Heart
+from .model import OTP_FLAG
 from .plugin_event_forwarder import PluginEventForwarder
 
 logger = logging.getLogger(__name__)
@@ -114,8 +116,7 @@ class InfectionMonkey:
         self._manager = context.Manager()
 
         self._opts = self._get_arguments(args)
-        # TODO read the otp from an env variable
-        self._otp = "hard-coded-otp"
+        self._otp = self._get_otp()
 
         self._ipc_logger_queue = ipc_logger_queue
 
@@ -168,6 +169,26 @@ class InfectionMonkey:
         InfectionMonkey._log_arguments(opts)
 
         return opts
+
+    @staticmethod
+    def _get_otp():
+        # No need for a constant, this is a feature flag that will be removed.
+        if OTP_FLAG not in os.environ:
+            return "PLACEHOLDER_OTP"
+
+        try:
+            otp = os.environ[AGENT_OTP_ENVIRONMENT_VARIABLE]
+        except KeyError:
+            raise Exception(
+                f"Couldn't find {AGENT_OTP_ENVIRONMENT_VARIABLE} environmental variable."
+                f"Without an OTP the agent will fail to authenticate!"
+            )
+
+        # SECURITY: There's no need to leave this floating around in a place as visible as
+        # environment variables for any longer than necessary.
+        del_key(os.environ, AGENT_OTP_ENVIRONMENT_VARIABLE)
+
+        return otp
 
     # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
     def _connect_to_island_api(self) -> Tuple[SocketAddress, IIslandAPIClient]:
