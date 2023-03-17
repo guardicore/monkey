@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import PurePath
 
 from common.credentials import Credentials
 
@@ -33,7 +34,7 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def copy_file(self, file: bytes, dest: str):
+    def copy_file(self, file: bytes, dest: PurePath):
         """
         :param file: File to copy
         :param dest: Destination path
@@ -42,7 +43,7 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def get_writable_paths(self) -> list[str]:
+    def get_writable_paths(self) -> list[PurePath]:
         """
         :return: List of available paths into which files can be copied
         """
