@@ -1,3 +1,5 @@
+# TODO: This should be moved out of infection_monkey.model and into a more appropriate place, such
+# as infection_monkey.consts
 AGENT_OTP_ENVIRONMENT_VARIABLE = "INFECTION_MONKEY_AGENT_OTP"
 
 MONKEY_ARG = "m0nk3y"
