@@ -3,7 +3,8 @@ import os
 import pytest
 from tests.data_for_tests.otp import OTP
 
-from infection_monkey.model import AGENT_OTP_ENVIRONMENT_VARIABLE, OTP_FLAG
+from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
+from infection_monkey.model import OTP_FLAG
 from infection_monkey.monkey import InfectionMonkey
 
 

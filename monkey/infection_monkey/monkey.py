@@ -30,6 +30,7 @@ from common.agent_events import (
 )
 from common.agent_plugins import AgentPluginType
 from common.agent_registration_data import AgentRegistrationData
+from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
@@ -63,7 +64,6 @@ from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
-from infection_monkey.model import AGENT_OTP_ENVIRONMENT_VARIABLE, OTP_FLAG
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.relay import TCPRelay
@@ -96,6 +96,7 @@ from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
 
 from .heart import Heart
+from .model import OTP_FLAG
 from .plugin_event_forwarder import PluginEventForwarder
 
 logger = logging.getLogger(__name__)
