@@ -6,7 +6,7 @@ from typing import Any, Dict
 from flask.sessions import SecureCookieSessionInterface
 from flask_mongoengine import MongoEngine
 from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security, UserDatastore
-from wtforms import StringField, ValidationError
+from wtforms import StringField
 
 from common.utils.file_utils import open_new_securely_permissioned_file
 from monkey_island.cc.mongo_consts import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT, MONGO_URL
@@ -44,19 +44,12 @@ def setup_authentication(app, data_dir: Path):
 
     _create_roles(user_datastore)
 
-    # Only one user can be registered in the Island, so we need a custom validator
-    def validate_no_user_exists_already(_, field):
-        if user_datastore.find_user():
-            raise ValidationError("A user already exists. Only a single user can be registered.")
-
     class CustomConfirmRegisterForm(ConfirmRegisterForm):
         # We don't use the email, but the field is required by ConfirmRegisterForm.
         # Email validators need to be overriden, otherwise an error about invalid email is raised.
         # Added custom validator to the email field because we have to override
         # email validators anyway.
-        email = StringField(
-            "Email", default="dummy@dummy.com", validators=[validate_no_user_exists_already]
-        )
+        email = StringField("Email", default="dummy@dummy.com", validators=[])
 
         def to_dict(self, only_user):
             registration_dict = super().to_dict(only_user)

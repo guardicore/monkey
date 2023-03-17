@@ -36,6 +36,17 @@ def test_register_failed(
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
+def test_register__already_registered(
+    monkeypatch, make_registration_request, mock_authentication_facade: AuthenticationFacade
+):
+    mock_authentication_facade.needs_registration.return_value = False
+
+    response = make_registration_request("{}")
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json["errors"]
+
+
 def test_register_successful(
     monkeypatch, make_registration_request, mock_authentication_facade: AuthenticationFacade
 ):
