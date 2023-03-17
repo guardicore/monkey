@@ -63,7 +63,7 @@ from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
-from infection_monkey.model import AGENT_OTP_ENVIRONMENT_VARIABLE
+from infection_monkey.model import AGENT_OTP_ENVIRONMENT_VARIABLE, OTP_FLAG
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.relay import TCPRelay
@@ -171,6 +171,10 @@ class InfectionMonkey:
 
     @staticmethod
     def _get_otp():
+        # No need for a constant, this is a feature flag that will be removed.
+        if OTP_FLAG not in os.environ:
+            return "PLACEHOLDER_OTP"
+
         try:
             return os.environ[AGENT_OTP_ENVIRONMENT_VARIABLE]
         except KeyError:
