@@ -30,6 +30,10 @@ class Register(AbstractResource):
 
         """
         try:
+            if not self._authentication_facade.needs_registration():
+                return {
+                    "errors": ["A user already exists. Only a single user can be registered."]
+                }, HTTPStatus.CONFLICT
             username, password = get_username_password_from_request(request)
             response: ResponseValue = register()
         except Exception:
