@@ -30,4 +30,4 @@ Pre-commit is a multi-language package manager for pre-commit hooks. It will run
 
 Our CI system runs the same checks when pull requests are submitted. This system may report that the build has failed if the pre-commit hooks have not been run or all issues have not been resolved.
 
-To install and configure pre-commit, run `pip install --user pre-commit`. Next, go to the top level directory of this repository and run `pre-commit install -t pre-commit -t pre-push`. Pre-commit will now run automatically whenever you `git commit`.
+To install and configure pre-commit, run `pip install --user pre-commit`. Next, go to the top level directory of this repository and run `pre-commit install -t pre-commit -t pre-push -t prepare-commit-msg`. Pre-commit will now run automatically whenever you `git commit`.

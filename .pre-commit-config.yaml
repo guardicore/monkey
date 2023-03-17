@@ -59,3 +59,7 @@ repos:
     rev: v2.7
     hooks:
       - id: vulture
+  - repo: https://github.com/mssalvatore/merge-issue-number-hook
+    rev: v1.0.0
+    hooks:
+      - id: merge-issue-number

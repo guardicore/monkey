@@ -26,7 +26,7 @@ log_message() {
 configure_precommit() {
     $1 -m pip install --user pre-commit
     pushd "$2"
-    $HOME/.local/bin/pre-commit install -t pre-commit -t pre-push
+    $HOME/.local/bin/pre-commit install -t pre-commit -t pre-push -t prepare-commit-msg
     popd
 }
 
