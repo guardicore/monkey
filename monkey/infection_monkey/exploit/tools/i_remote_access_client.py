@@ -42,7 +42,7 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def get_available_paths(self) -> list[str]:
+    def get_writable_paths(self) -> list[str]:
         """
         :return: List of available paths into which files can be copied
         """
