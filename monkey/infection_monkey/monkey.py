@@ -35,7 +35,7 @@ from common.network.network_utils import get_my_ip_addresses, get_network_interf
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
 from common.types import NetworkPort, SocketAddress
 from common.utils.argparse_types import positive_int
-from common.utils.code_utils import secure_generate_random_string
+from common.utils.code_utils import del_key, secure_generate_random_string
 from common.utils.file_utils import create_secure_directory
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
@@ -176,12 +176,18 @@ class InfectionMonkey:
             return "PLACEHOLDER_OTP"
 
         try:
-            return os.environ[AGENT_OTP_ENVIRONMENT_VARIABLE]
+            otp = os.environ[AGENT_OTP_ENVIRONMENT_VARIABLE]
         except KeyError:
             raise Exception(
                 f"Couldn't find {AGENT_OTP_ENVIRONMENT_VARIABLE} environmental variable."
                 f"Without an OTP the agent will fail to authenticate!"
             )
+
+        # SECURITY: There's no need to leave this floating around in a place as visible as
+        # environment variables for any longer than necessary.
+        del_key(os.environ, AGENT_OTP_ENVIRONMENT_VARIABLE)
+
+        return otp
 
     # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
     def _connect_to_island_api(self) -> Tuple[SocketAddress, IIslandAPIClient]:

@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from tests.data_for_tests.otp import OTP
 
@@ -13,6 +15,7 @@ def configure_environment_variables(monkeypatch):
 
 def test_get_otp(monkeypatch):
     assert InfectionMonkey._get_otp() == OTP
+    assert AGENT_OTP_ENVIRONMENT_VARIABLE not in os.environ
 
 
 def test_get_otp__no_otp(monkeypatch):
