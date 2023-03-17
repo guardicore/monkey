@@ -15,8 +15,10 @@ def test_get_otp(monkeypatch):
     assert InfectionMonkey._get_otp() == OTP
 
 
-def test_get_otp__no_opt(monkeypatch):
-    assert InfectionMonkey._get_otp() == OTP
+def test_get_otp__no_otp(monkeypatch):
+    monkeypatch.delenv(AGENT_OTP_ENVIRONMENT_VARIABLE)
+    with pytest.raises(Exception):
+        InfectionMonkey._get_otp()
 
 
 def test_get_otp__feature_flag_disabled(monkeypatch):
