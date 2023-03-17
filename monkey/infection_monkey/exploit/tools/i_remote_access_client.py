@@ -4,18 +4,26 @@ from common.credentials import Credentials
 
 
 class RemoteAuthenticationError(Exception):
+    """Raised when authentication fails"""
+
     pass
 
 
 class RemoteFileCopyError(Exception):
+    """Raised when a remote file copy operation fails"""
+
     pass
 
 
 class RemoteCommandExecutionError(Exception):
+    """Raised when a remote command fails to execute"""
+
     pass
 
 
 class IRemoteAccessClient(ABC):
+    """An interface for clients that execute remote commands"""
+
     @abstractmethod
     def login(self, credentials: Credentials):
         """
@@ -36,7 +44,7 @@ class IRemoteAccessClient(ABC):
     @abstractmethod
     def get_available_paths(self) -> list[str]:
         """
-        :return: List of available paths
+        :return: List of available paths into which files can be copied
         """
         pass
 
