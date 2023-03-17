@@ -101,7 +101,7 @@ logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
 
 
-AGENT_OTP_ENVIRONMENT_VARIABLE = "IM_OTP"
+AGENT_OTP_ENVIRONMENT_VARIABLE = "INFECTION_MONKEY_AGENT_OTP"
 
 
 class InfectionMonkey:
