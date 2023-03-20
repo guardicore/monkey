@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import PurePath
 
+from common import OperatingSystem
 from common.credentials import Credentials
 
 
@@ -36,6 +37,16 @@ class IRemoteAccessClient(ABC):
         """
         :param credentials: Credentials to use for login
         :raises RemoteAuthenticationError: If login failed
+        """
+        pass
+
+    @abstractmethod
+    def get_os(self) -> OperatingSystem:
+        """
+        Queries the remote host for the operating system and returns it
+
+        :return: The operating system of the remote host
+        :raises RemoteAccessClientError: If the operating system could not be determined
         """
         pass
 
