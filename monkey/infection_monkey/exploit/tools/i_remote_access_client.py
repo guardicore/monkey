@@ -50,8 +50,12 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def execute(self, command: str):
+    def execute_detached(self, command: str):
         """
+        Execute a command on the remote host
+
+        This command will be executed in a detached process.
+
         :param command: Command to execute
         :raises RemoteCommandExecutionError: If execution failed
         """
