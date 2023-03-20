@@ -4,19 +4,25 @@ from pathlib import PurePath
 from common.credentials import Credentials
 
 
-class RemoteAuthenticationError(Exception):
+class RemoteAccessClientError(Exception):
+    """Raised when the IRemoteAccessClient encounters an error"""
+
+    pass
+
+
+class RemoteAuthenticationError(RemoteAccessClientError):
     """Raised when authentication fails"""
 
     pass
 
 
-class RemoteFileCopyError(Exception):
+class RemoteFileCopyError(RemoteAccessClientError):
     """Raised when a remote file copy operation fails"""
 
     pass
 
 
-class RemoteCommandExecutionError(Exception):
+class RemoteCommandExecutionError(RemoteAccessClientError):
     """Raised when a remote command fails to execute"""
 
     pass
