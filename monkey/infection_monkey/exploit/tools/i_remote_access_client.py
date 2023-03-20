@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import PurePath
-from typing import Collection
+from typing import Collection, MutableSet
 
 from common import OperatingSystem
 from common.credentials import Credentials
@@ -34,11 +34,14 @@ class IRemoteAccessClient(ABC):
     """An interface for clients that execute remote commands"""
 
     @abstractmethod
-    def login(self, credentials: Credentials):
+    def login(self, credentials: Credentials, tags: MutableSet[str]):
         """
         Establish an authenticated session with the remote host
 
+        The `tags` argument will be updated with the techniques used to login.
+
         :param credentials: Credentials to use for login
+        :param tags: Tags describing the techniques used to login
         :raises RemoteAuthenticationError: If login failed
         """
         pass
@@ -54,12 +57,15 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def copy_file(self, file: bytes, dest: PurePath):
+    def copy_file(self, file: bytes, dest: PurePath, tags: MutableSet[str]):
         """
         Copy a file to the remote host
 
+        The `tags` argument will be updated with the techniques used to copy the file.
+
         :param file: File to copy
         :param dest: Destination path
+        :param tags: Tags describing the techniques used to copy the file
         :raises RemoteFileCopyError: If copy failed
         """
         pass
@@ -74,14 +80,17 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def execute_detached(self, command: str):
+    def execute_detached(self, command: str, tags: MutableSet[str]):
         """
         Execute a command on the remote host in a detached process
 
         The command will be executed in a detached process, which allows the client to disconnect
         from the remote host while allowing the command to continue running.
 
+        The `tags` argument will be updated with the techniques used to execute the command.
+
         :param command: Command to execute
+        :param tags: Tags describing the techniques used to execute the command
         :raises RemoteCommandExecutionError: If execution failed
         """
         pass
