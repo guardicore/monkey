@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import PurePath
+from typing import Collection
 
 from common import OperatingSystem
 from common.credentials import Credentials
@@ -64,7 +65,7 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def get_writable_paths(self) -> list[PurePath]:
+    def get_writable_paths(self) -> Collection[PurePath]:
         """
         Query the remote host and return a collection of writable paths
 
