@@ -45,6 +45,10 @@ class MonkeyIslandRequests:
             verify=False,
         )
 
+        if resp.status_code == 409:
+            # A user has already been registered
+            return
+
         if resp.status_code == 400:
             raise InvalidRequestError()
 
