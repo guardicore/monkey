@@ -12,5 +12,5 @@ class SecretVariable(ISecretVariable):
         else:
             raise NotImplementedError("SecretVariable only supports string values.")
 
-    def get_secret_value(self) -> str:
+    def get_secret_value(self) -> Any:
         return self._secret_value.get_secret_value()
