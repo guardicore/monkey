@@ -61,7 +61,11 @@ from infection_monkey.exploit.wmiexec import WmiExploiter
 from infection_monkey.exploit.zerologon import ZerologonExploiter
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
-from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
+from infection_monkey.island_api_client import (
+    AbstractIslandAPIClientFactory,
+    HTTPIslandAPIClientFactory,
+    IIslandAPIClient,
+)
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.network import TCPPortSelector
@@ -190,15 +194,19 @@ class InfectionMonkey:
 
         return otp
 
-    # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
     def _connect_to_island_api(self) -> Tuple[SocketAddress, IIslandAPIClient]:
         logger.debug(f"Trying to wake up with servers: {', '.join(map(str, self._opts.servers))}")
         server_clients = find_available_island_apis(
             self._opts.servers,
-            HTTPIslandAPIClientFactory(self._agent_event_serializer_registry, self._otp),
         )
 
-        server, island_api_client = self._select_server(server_clients)
+        http_island_api_client_factory = HTTPIslandAPIClientFactory(
+            self._agent_event_serializer_registry
+        )
+
+        server, island_api_client = self._select_server(
+            server_clients, http_island_api_client_factory
+        )
 
         if server and island_api_client:
             logger.info(f"Using {server} to communicate with the Island")
@@ -217,11 +225,19 @@ class InfectionMonkey:
         return server, island_api_client
 
     def _select_server(
-        self, server_clients: IslandAPISearchResults
+        self,
+        island_api_statuses: IslandAPISearchResults,
+        island_api_client_factory: AbstractIslandAPIClientFactory,
     ) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
         for server in self._opts.servers:
-            if server_clients[server] is not None:
-                return server, server_clients[server]
+            if island_api_statuses[server]:
+                try:
+                    island_api_client = island_api_client_factory.create_island_api_client(server)
+                    island_api_client.login(self._otp)
+
+                    return server, island_api_client
+                except Exception as err:
+                    logger.warning(f"Failed to connect and authenticate to {server}: {err}")
 
         return None, None
 
