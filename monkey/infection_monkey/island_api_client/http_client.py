@@ -62,22 +62,15 @@ def handle_island_errors(fn):
 
 
 class HTTPClient:
-    def __init__(self, retries=RETRIES):
+    def __init__(self, server_url: str, retries=RETRIES):
+        if not server_url.startswith("https://"):
+            raise ValueError("Only HTTPS protocol is supported by HTTPClient")
+        self._server_url = server_url
+
         self._session = requests.Session()
         retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
-        self._server_url: Optional[str] = None
-        self.additional_headers: Optional[Dict[str, Any]] = None
-
-    @property
-    def server_url(self):
-        return self._server_url
-
-    @server_url.setter
-    def server_url(self, server_url: Optional[str]):
-        if server_url is not None and not server_url.startswith("https://"):
-            raise ValueError("Only HTTPS protocol is supported by HTTPClient")
-        self._server_url = server_url
+        self.additional_headers: Dict[str, Any] = {}
 
     def get(
         self,

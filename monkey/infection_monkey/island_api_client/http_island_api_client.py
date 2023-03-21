@@ -13,7 +13,7 @@ from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
-from common.types import AgentID, JSONSerializable, SocketAddress
+from common.types import AgentID, JSONSerializable
 
 from . import IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient
@@ -50,28 +50,17 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
         http_client: HTTPClient,
-        otp: str,
     ):
         self._agent_event_serializer_registry = agent_event_serializer_registry
         self._http_client = http_client
-        self._otp = otp
 
-    def connect(
-        self,
-        island_server: SocketAddress,
-    ):
-        try:
-            self._http_client.server_url = f"https://{island_server}/api/"
-            self._http_client.get(params={"action": "is-up"})
-        except Exception as err:
-            self._http_client.server_url = None
-            raise err
+    @handle_response_parsing_errors
+    def login(self, otp: str):
+        auth_token = self._get_authentication_token(otp)
+        self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
 
-        auth_token = self._get_authentication_token()
-        self._http_client.additional_headers = {HTTPIslandAPIClient.TOKEN_HEADER_KEY: auth_token}
-
-    def _get_authentication_token(self) -> str:
-        response = self._http_client.post("/agent-otp-login", {"otp": self._otp})
+    def _get_authentication_token(self, otp: str) -> str:
+        response = self._http_client.post("/agent-otp-login", {"otp": otp})
         return response.json()["token"]
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:

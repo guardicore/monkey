@@ -1,4 +1,5 @@
 from common.agent_event_serializers import AgentEventSerializerRegistry
+from common.types import SocketAddress
 
 from . import (
     AbstractIslandAPIClientFactory,
@@ -10,11 +11,12 @@ from .http_client import HTTPClient
 
 
 class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
-    def __init__(self, agent_event_serializer_registry: AgentEventSerializerRegistry, otp: str):
+    def __init__(self, agent_event_serializer_registry: AgentEventSerializerRegistry):
         self._agent_event_serializer_registry = agent_event_serializer_registry
-        self._otp = otp
 
-    def create_island_api_client(self) -> IIslandAPIClient:
+    def create_island_api_client(self, server: SocketAddress) -> IIslandAPIClient:
         return ConfigurationValidatorDecorator(
-            HTTPIslandAPIClient(self._agent_event_serializer_registry, HTTPClient(), self._otp)
+            HTTPIslandAPIClient(
+                self._agent_event_serializer_registry, HTTPClient(f"https://{server}/api")
+            )
         )
