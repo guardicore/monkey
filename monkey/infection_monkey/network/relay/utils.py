@@ -45,10 +45,10 @@ def _find_island_server(
 ):
     with suppress(StopIteration):
         server = next(servers)
-        server_results[server] = _check_if_island_server(server)
+        server_results[server] = _server_is_island(server)
 
 
-def _check_if_island_server(server: SocketAddress) -> bool:
+def _server_is_island(server: SocketAddress) -> bool:
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
