@@ -10,12 +10,12 @@ from infection_monkey.monkey import InfectionMonkey
 
 @pytest.fixture(autouse=True)
 def configure_environment_variables(monkeypatch):
-    monkeypatch.setenv(AGENT_OTP_ENVIRONMENT_VARIABLE, OTP)
+    monkeypatch.setenv(AGENT_OTP_ENVIRONMENT_VARIABLE, OTP.get_secret_value())
     monkeypatch.setenv(OTP_FLAG, True)
 
 
 def test_get_otp(monkeypatch):
-    assert InfectionMonkey._get_otp() == OTP
+    assert InfectionMonkey._get_otp().get_secret_value() == OTP.get_secret_value()
     assert AGENT_OTP_ENVIRONMENT_VARIABLE not in os.environ
 
 
@@ -32,4 +32,4 @@ def test_get_otp__feature_flag_disabled(monkeypatch):
         pass
 
     # No need for a constant, this code is testing a feature flag that will be removed.
-    assert InfectionMonkey._get_otp() == "PLACEHOLDER_OTP"
+    assert InfectionMonkey._get_otp().get_secret_value() == "PLACEHOLDER_OTP"

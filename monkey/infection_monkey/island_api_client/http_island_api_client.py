@@ -13,6 +13,7 @@ from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
+from common.types.otp import OTP
 from common.types import AgentID, JSONSerializable
 
 from . import IIslandAPIClient, IslandAPIRequestError
@@ -55,11 +56,11 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._http_client = http_client
 
     @handle_response_parsing_errors
-    def login(self, otp: str):
+    def login(self, otp: OTP):
         auth_token = self._get_authentication_token(otp)
         self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
 
-    def _get_authentication_token(self, otp: str) -> str:
+    def _get_authentication_token(self, otp: OTP) -> str:
         response = self._http_client.post("/agent-otp-login", {"otp": otp})
         return response.json()["token"]
 
