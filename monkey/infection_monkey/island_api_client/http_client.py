@@ -158,6 +158,10 @@ class HTTPClient:
         response = method(
             url, *args, timeout=timeout, verify=False, headers=self.additional_headers, **kwargs
         )
+
+        if disable_retries:
+            self._session.adapters[url].close()
+
         response.raise_for_status()
 
         return response
