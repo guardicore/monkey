@@ -18,7 +18,6 @@ import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
-import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
 import {SCHEMA} from '../../services/configuration/configSchema.js';
 import {
@@ -332,7 +331,6 @@ class ConfigurePageComponent extends AuthComponent {
       selectedSection: this.state.selectedSection
     })
     formProperties['schema'] = displayedSchema
-    formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
     formProperties['onChange'] = this.onChange;
     formProperties['onFocus'] = this.resetLastAction;
     formProperties['transformErrors'] = transformErrors;
