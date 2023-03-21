@@ -23,7 +23,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
         WarningType.NONE : WarningType.SINGLE;
       return <InfoPane title={''}
                        body={activePlugin.content}
-                       link={activePlugin.content.props.schema.link}
+                       link={activePlugin.content.props.schema.link_to_documentation}
                        warningType={pluginWarningType}/>
     }
     return <InfoPane title={props.schema.title}
