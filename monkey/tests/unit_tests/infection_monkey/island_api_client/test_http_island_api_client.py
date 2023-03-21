@@ -106,7 +106,7 @@ def test_login__connection_error():
         api_client.login(OTP)
 
 
-def test_connect():
+def test_login():
     auth_token = "auth_token"
     http_client_stub = MagicMock()
     http_client_stub.post = MagicMock()
@@ -116,6 +116,16 @@ def test_connect():
     api_client.login(OTP)
 
     assert http_client_stub.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] == auth_token
+
+
+def test_login__bad_response():
+    http_client_stub = MagicMock()
+    http_client_stub.post = MagicMock()
+    http_client_stub.post.return_value.json.return_value = {"abc": 123}
+    api_client = build_api_client(http_client_stub)
+
+    with pytest.raises(IslandAPIResponseParsingError):
+        api_client.login(OTP)
 
 
 def test_island_api_client__get_agent_binary():

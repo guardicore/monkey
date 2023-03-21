@@ -54,10 +54,8 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._agent_event_serializer_registry = agent_event_serializer_registry
         self._http_client = http_client
 
-    def login(
-        self,
-        otp: str,
-    ):
+    @handle_response_parsing_errors
+    def login(self, otp: str):
         auth_token = self._get_authentication_token(otp)
         self._http_client.additional_headers = {HTTPIslandAPIClient.TOKEN_HEADER_KEY: auth_token}
 
