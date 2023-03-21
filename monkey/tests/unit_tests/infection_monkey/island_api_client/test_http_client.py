@@ -115,6 +115,20 @@ def test_http_client__retries(monkeypatch):
     assert mock_send.call_count == RETRIES + 1
 
 
+def test_http_client__disable_retries(monkeypatch):
+    http_client = HTTPClient()
+    # skip the connect method
+    http_client._server_url = f"https://{SERVER}/api"
+    mock_send = MagicMock(side_effect=ConnectTimeoutError)
+    # requests_mock can't be used for this, because it mocks higher level than we are testing
+    monkeypatch.setattr("urllib3.connectionpool.HTTPSConnectionPool._validate_conn", mock_send)
+
+    with pytest.raises(IslandAPIConnectionError):
+        http_client.get(LOG_ENDPOINT, disable_retries=True)
+
+    assert mock_send.call_count == 1
+
+
 def test_http_client__additional_args(monkeypatch, connected_client):
     get = MagicMock()
     monkeypatch.setattr("requests.Session.get", get)
