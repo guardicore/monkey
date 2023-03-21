@@ -84,11 +84,18 @@ class HTTPClient:
         endpoint: str = "",
         params: Optional[Dict[str, Any]] = None,
         timeout=MEDIUM_REQUEST_TIMEOUT,
+        disable_retries=False,
         *args,
         **kwargs,
     ) -> requests.Response:
         return self._send_request(
-            RequestMethod.GET, endpoint, params=params, timeout=timeout, *args, **kwargs
+            RequestMethod.GET,
+            endpoint,
+            params=params,
+            timeout=timeout,
+            disable_retries=disable_retries,
+            *args,
+            **kwargs,
         )
 
     def post(
@@ -96,11 +103,18 @@ class HTTPClient:
         endpoint: str = "",
         data: Optional[JSONSerializable] = None,
         timeout=MEDIUM_REQUEST_TIMEOUT,
+        disable_retries=False,
         *args,
         **kwargs,
     ) -> requests.Response:
         return self._send_request(
-            RequestMethod.POST, endpoint, json=data, timeout=timeout, *args, **kwargs
+            RequestMethod.POST,
+            endpoint,
+            json=data,
+            timeout=timeout,
+            disable_retries=disable_retries,
+            *args,
+            **kwargs,
         )
 
     def put(
@@ -108,11 +122,18 @@ class HTTPClient:
         endpoint: str = "",
         data: Optional[JSONSerializable] = None,
         timeout=MEDIUM_REQUEST_TIMEOUT,
+        disable_retries=False,
         *args,
         **kwargs,
     ) -> requests.Response:
         return self._send_request(
-            RequestMethod.PUT, endpoint, json=data, timeout=timeout, *args, **kwargs
+            RequestMethod.PUT,
+            endpoint,
+            json=data,
+            timeout=timeout,
+            disable_retries=disable_retries,
+            *args,
+            **kwargs,
         )
 
     @handle_island_errors
@@ -121,6 +142,7 @@ class HTTPClient:
         request_type: RequestMethod,
         endpoint: str,
         timeout=MEDIUM_REQUEST_TIMEOUT,
+        disable_retries=False,
         *args,
         **kwargs,
     ) -> requests.Response:
@@ -128,6 +150,9 @@ class HTTPClient:
             raise RuntimeError("HTTP client does not have a server URL set")
         url = f"{self._server_url.strip('/')}/{endpoint.strip('/')}".strip("/")
         logger.debug(f"{request_type.name} {url}, timeout={timeout}")
+
+        if disable_retries:
+            self._session.mount(url, HTTPAdapter(max_retries=0))
 
         method = getattr(self._session, str.lower(request_type.name))
         response = method(
