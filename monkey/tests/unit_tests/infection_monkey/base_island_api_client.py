@@ -5,12 +5,12 @@ from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.credentials import Credentials
-from common.types import AgentID, SocketAddress
+from common.types import AgentID
 from infection_monkey.island_api_client import IIslandAPIClient
 
 
 class BaseIslandAPIClient(IIslandAPIClient):
-    def connect(self, island_server: SocketAddress):
+    def login(self, otp: str):
         pass
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:

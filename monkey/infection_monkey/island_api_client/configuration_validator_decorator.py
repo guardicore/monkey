@@ -7,7 +7,7 @@ from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.credentials import Credentials
-from common.types import AgentID, SocketAddress
+from common.types import AgentID
 
 from . import IIslandAPIClient, IslandAPIError
 
@@ -25,8 +25,8 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
     def __init__(self, island_api_client: IIslandAPIClient):
         self._island_api_client = island_api_client
 
-    def connect(self, island_server: SocketAddress):
-        return self._island_api_client.connect(island_server)
+    def login(self, otp: str):
+        return self._island_api_client.login(otp)
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         return self._island_api_client.get_agent_binary(operating_system)

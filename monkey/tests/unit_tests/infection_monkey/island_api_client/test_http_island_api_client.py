@@ -25,7 +25,11 @@ from common.agent_plugins import AgentPluginType
 from common.base_models import InfectionMonkeyBaseModel
 from common.credentials import Credentials
 from common.types import SocketAddress
-from infection_monkey.island_api_client import HTTPIslandAPIClient, IslandAPIRequestError
+from infection_monkey.island_api_client import (
+    HTTPIslandAPIClient,
+    IslandAPIError,
+    IslandAPIRequestError,
+)
 from infection_monkey.island_api_client.island_api_client_errors import (
     IslandAPIResponseParsingError,
 )
@@ -83,7 +87,7 @@ def agent_event_serializer_registry():
 
 
 def build_api_client(http_client):
-    return HTTPIslandAPIClient(agent_event_serializer_registry(), http_client, OTP)
+    return HTTPIslandAPIClient(agent_event_serializer_registry(), http_client)
 
 
 def _build_client_with_json_response(response):
@@ -92,42 +96,26 @@ def _build_client_with_json_response(response):
     return build_api_client(client_stub)
 
 
-def test_connect__connection_error():
+def test_login__connection_error():
     http_client_stub = MagicMock()
-    http_client_stub.get = MagicMock(side_effect=RuntimeError)
+    http_client_stub.post = MagicMock(side_effect=IslandAPIError)
 
     api_client = build_api_client(http_client_stub)
 
-    with pytest.raises(RuntimeError):
-        api_client.connect(SERVER)
-    assert api_client._http_client.server_url is None
-
-
-def test_connect__authentication_error():
-    http_client_stub = MagicMock()
-    http_client_stub.get = MagicMock()
-    http_client_stub.post = MagicMock(side_effect=RuntimeError)
-    api_client = build_api_client(http_client_stub)
-    with pytest.raises(RuntimeError):
-        api_client.connect(SERVER)
-    assert api_client._http_client.server_url is not None
+    with pytest.raises(IslandAPIError):
+        api_client.login(OTP)
 
 
 def test_connect():
-    fake_auth_token = "fake_auth_token"
+    auth_token = "auth_token"
     http_client_stub = MagicMock()
-    http_client_stub.get = MagicMock()
     http_client_stub.post = MagicMock()
-    http_client_stub.post.return_value.json.return_value = {"token": fake_auth_token}
+    http_client_stub.post.return_value.json.return_value = {"token": auth_token}
     api_client = build_api_client(http_client_stub)
 
-    api_client.connect(SERVER)
+    api_client.login(OTP)
 
-    assert api_client._http_client.server_url is not None
-    assert (
-        api_client._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY]
-        == fake_auth_token
-    )
+    assert http_client_stub.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] == auth_token
 
 
 def test_island_api_client__get_agent_binary():

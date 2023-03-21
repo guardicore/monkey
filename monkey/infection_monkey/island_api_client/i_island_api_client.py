@@ -6,7 +6,7 @@ from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.credentials import Credentials
-from common.types import AgentID, SocketAddress
+from common.types import AgentID
 
 
 class IIslandAPIClient(ABC):
@@ -15,19 +15,19 @@ class IIslandAPIClient(ABC):
     """
 
     @abstractmethod
-    def connect(self, island_server: SocketAddress):
+    def login(self, otp: str):
         """
         Connect to the island's API
 
-        :param island_server: The socket address of the API
-        :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
-        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
-                                       island due to an issue in the request sent from the client
-        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
-                                             island due to an error on the server
-        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
-        :raises IslandAPIError: If an unexpected error occurs while attempting to connect to the
-                                island
+        :param otp: A one-time password used to authenticate with the Island API
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the Island
+        :raises IslandAPIRequestError: If an error occurs while attempting to login to the
+                                       Island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to login to the
+                                             Island API due to an error on the server
+        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the Island
+        :raises IslandAPIError: If an unexpected error occurs while attempting to login to the
+                                Island API
         """
 
     @abstractmethod
