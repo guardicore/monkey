@@ -57,7 +57,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_response_parsing_errors
     def login(self, otp: str):
         auth_token = self._get_authentication_token(otp)
-        self._http_client.additional_headers = {HTTPIslandAPIClient.TOKEN_HEADER_KEY: auth_token}
+        self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
 
     def _get_authentication_token(self, otp: str) -> str:
         response = self._http_client.post("/agent-otp-login", {"otp": otp})

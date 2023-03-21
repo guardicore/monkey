@@ -70,7 +70,7 @@ class HTTPClient:
         self._session = requests.Session()
         retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
-        self.additional_headers: Optional[Dict[str, Any]] = None
+        self.additional_headers: Dict[str, Any] = {}
 
     def get(
         self,
