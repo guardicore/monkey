@@ -4,6 +4,7 @@ import {NavLink} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo';
+import {faSignOut} from '@fortawesome/free-solid-svg-icons/faSignOut';
 import '../styles/components/SideNav.scss';
 import {CompletedSteps} from './side-menu/CompletedSteps';
 import {isReportRoute, IslandRoutes} from './Main';
@@ -19,7 +20,8 @@ type Props = {
   completedSteps: CompletedSteps,
   defaultReport: string,
   header?: ReactFragment,
-  onStatusChange: () => void
+  onStatusChange: () => void,
+  onLogout: () => void,
 };
 
 
@@ -29,6 +31,7 @@ const SideNavComponent = ({
                             defaultReport,
                             header = null,
                             onStatusChange,
+                            onLogout,
                           }: Props) => {
 
   const [showResetModal, setShowResetModal] = useState(false);
@@ -105,6 +108,13 @@ const SideNavComponent = ({
                      className={getNavLinkClass()}>
           Events
         </NavLink></li>
+        <li><Button variant={null} className={`${getNavLinkClass()} logout-button`}
+                    onClick={onLogout} >
+          <span className='number' style={{'marginRight': '6px'}}>
+            <FontAwesomeIcon icon={faSignOut}/>
+          </span>
+          Logout
+        </Button></li>
       </ul>
 
       <Logo/>

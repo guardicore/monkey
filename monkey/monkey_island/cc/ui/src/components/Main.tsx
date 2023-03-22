@@ -227,7 +227,9 @@ class AppComponent extends AuthComponent {
                                onStatusChange: this.updateStatus,
                                islandMode: this.state.islandMode,
                                defaultReport: this.getDefaultReport(),
-                               sideNavHeader: this.getIslandModeTitle()}
+                               sideNavHeader: this.getIslandModeTitle(),
+                               onLogout: () => {this.auth.logout()
+                                 .then(() => this.updateStatus())}};
 
     return (
       <Router>

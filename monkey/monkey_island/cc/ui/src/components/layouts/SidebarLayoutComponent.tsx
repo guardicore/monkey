@@ -9,6 +9,7 @@ const SidebarLayoutComponent = ({component: Component,
                                   defaultReport = '',
                                   sideNavHeader = (<></>),
                                   onStatusChange = () => {},
+                                  onLogout = () => {},
                                   ...other
                                 }) => {
     return (
@@ -18,7 +19,8 @@ const SidebarLayoutComponent = ({component: Component,
                             completedSteps={completedSteps}
                             defaultReport={defaultReport}
                             header={sideNavHeader}
-                            onStatusChange={onStatusChange}/>
+                            onStatusChange={onStatusChange}
+                            onLogout={onLogout}/>
         </Col>}
         <Component onStatusChange={onStatusChange} {...other} />
       </Row>
