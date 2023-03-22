@@ -14,12 +14,14 @@ SET_OTP_WINDOWS = "set %(agent_otp_environment_variable)s=%(agent_otp)s &&"
 CMD_EXE = "cmd.exe"
 CMD_CARRY_OUT = "/c"
 CMD_PREFIX = CMD_EXE + " " + CMD_CARRY_OUT
-DROPPER_CMDLINE_WINDOWS = "%s %%(dropper_path)s %s" % (
+DROPPER_CMDLINE_WINDOWS = "%s %s %%(dropper_path)s %s" % (
     CMD_PREFIX,
+    SET_OTP_WINDOWS,
     DROPPER_ARG,
 )
-MONKEY_CMDLINE_WINDOWS = "%s %%(monkey_path)s %s" % (
+MONKEY_CMDLINE_WINDOWS = "%s %s %%(monkey_path)s %s" % (
     CMD_PREFIX,
+    SET_OTP_WINDOWS,
     MONKEY_ARG,
 )
 
