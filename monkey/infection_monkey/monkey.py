@@ -183,7 +183,7 @@ class InfectionMonkey:
             otp = SecretVariable(os.environ[AGENT_OTP_ENVIRONMENT_VARIABLE])
         except KeyError:
             raise Exception(
-                f"Couldn't find {AGENT_OTP_ENVIRONMENT_VARIABLE} environmental variable."
+                f"Couldn't find {AGENT_OTP_ENVIRONMENT_VARIABLE} environmental variable. "
                 f"Without an OTP the agent will fail to authenticate!"
             )
 
