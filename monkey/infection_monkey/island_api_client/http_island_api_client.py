@@ -13,12 +13,12 @@ from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
-from common.types.otp import OTP
 from common.types import AgentID, JSONSerializable
+from common.types.otp import OTP
 
 from . import IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient
-from .island_api_client_errors import IslandAPIResponseParsingError
+from .island_api_client_errors import IslandAPIAuthenticationError, IslandAPIResponseParsingError
 
 logger = logging.getLogger(__name__)
 
@@ -61,8 +61,14 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
 
     def _get_authentication_token(self, otp: OTP) -> str:
-        response = self._http_client.post("/agent-otp-login", {"otp": otp})
-        return response.json()["token"]
+        try:
+            response = self._http_client.post("/agent-otp-login", {"otp": otp.get_secret_value()})
+            return response.json()["token"]
+        except Exception:
+            # We need to catch all exceptions here because we don't want to leak the OTP
+            raise IslandAPIAuthenticationError(
+                "HTTPIslandAPIClient failed to " "authenticate to the Island."
+            )
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value

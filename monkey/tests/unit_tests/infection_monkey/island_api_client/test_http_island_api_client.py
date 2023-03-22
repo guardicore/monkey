@@ -31,6 +31,7 @@ from infection_monkey.island_api_client import (
     IslandAPIRequestError,
 )
 from infection_monkey.island_api_client.island_api_client_errors import (
+    IslandAPIAuthenticationError,
     IslandAPIResponseParsingError,
 )
 
@@ -125,7 +126,7 @@ def test_login__bad_response():
     http_client_stub.post.return_value.json.return_value = {"abc": 123}
     api_client = build_api_client(http_client_stub)
 
-    with pytest.raises(IslandAPIResponseParsingError):
+    with pytest.raises(IslandAPIAuthenticationError):
         api_client.login(OTP)
 
 
