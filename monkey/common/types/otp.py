@@ -1,5 +1,5 @@
 from typing import TypeAlias
 
-from common.utils.secret_variable import SecretVariable
+from common.utils.i_secret_variable import ISecretVariable
 
-OTP: TypeAlias = SecretVariable
+OTP: TypeAlias = ISecretVariable
