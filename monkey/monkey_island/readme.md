@@ -113,7 +113,7 @@
 
 1. Install npm and node by running:
     - `sudo apt-get install curl`
-    - `curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -`
+    - `curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -`
     - `sudo apt-get install -y nodejs`
 
 1. Build Monkey Island frontend
