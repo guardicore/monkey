@@ -1,10 +1,10 @@
-const REG_EXP_VALIDATORS = [
-    {expression: /[()[\]{};`'"]/gmi, expectedTestResult: false},
-    {expression: /^([^\w]*)(unsafe|javascript|vbscript|app|admin|icloud-sharing|icloud-vetting|help|aim|facetime-audio|applefeedback|ibooks|macappstore|udoc|ts|st|x-apple-helpbasic)/gmi, expectedTestResult: false},
-    {expression: /^(?:\(?:\(?:ht)tps?\):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$)\)/gmi, expectedTestResult: true}
-];
+const REG_EXP_VALIDATORS = Object.freeze([
+    {expression: /[()[\]{};`'"<>]/gmi, expectedTestResult: false},
+    {expression: /^([^\w]*)(script|unsafe|javascript|vbscript|app|admin|icloud-sharing|icloud-vetting|help|aim|facetime-audio|applefeedback|ibooks|macappstore|udoc|ts|st|x-apple-helpbasic)/gmi, expectedTestResult: false},
+    {expression: /^(?:(?:(?:f|ht)tps?):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/gmi, expectedTestResult: true}
+]);
 
-const GENERAL_UNSAFE_STRINGS = ['javascript:']
+const GENERAL_UNSAFE_STRINGS = Object.freeze(['javascript:']);
 
 export const sanitizeURI = (uri) => {
   const EMPTY_URI = '';
@@ -17,7 +17,7 @@ export const sanitizeURI = (uri) => {
     }
   }
 
-  for(let i=0; i<GENERAL_UNSAFE_STRINGS.length; i++){
+  for(let i=0; i < GENERAL_UNSAFE_STRINGS.length; i++){
     if(uri.indexOf(GENERAL_UNSAFE_STRINGS[i]) !== -1){
       return EMPTY_URI;
     }
