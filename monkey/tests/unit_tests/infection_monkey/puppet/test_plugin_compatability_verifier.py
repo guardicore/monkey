@@ -4,11 +4,11 @@ from unittest.mock import MagicMock
 
 import pytest
 from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
-    FAKE_LINK,
     FAKE_MANIFEST_OBJECT,
     FAKE_NAME,
     FAKE_NAME2,
     FAKE_TYPE,
+    URL,
 )
 
 from common import OperatingSystem
@@ -17,7 +17,7 @@ from infection_monkey.i_puppet import TargetHost
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 from infection_monkey.puppet import PluginCompatabilityVerifier
 
-FAKE_NAME3 = "BogusExploiter"
+FAKE_NAME3 = "http://www.BogusExploiter.com"
 
 FAKE_MANIFEST_OBJECT_2 = AgentPluginManifest(
     name=FAKE_NAME2,
@@ -26,7 +26,7 @@ FAKE_MANIFEST_OBJECT_2 = AgentPluginManifest(
     target_operating_systems=(OperatingSystem.WINDOWS,),
     title="Some exploiter title",
     version="1.0.0",
-    link_to_documentation=FAKE_LINK,
+    link_to_documentation=URL,
 )
 
 FAKE_HARD_CODED_PLUGIN_MANIFESTS = {

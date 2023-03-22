@@ -13,7 +13,7 @@ FAKE_TYPE = "Exploiter"
 FAKE_OPERATING_SYSTEMS = ["linux"]
 FAKE_SUPPORTED_OPERATING_SYSTEMS = ["linux", "windows"]
 FAKE_TITLE = "Remote Desktop Protocol exploiter"
-FAKE_LINK = "www.beefface.com"
+URL = "http://www.beefface.com"
 
 FAKE_AGENT_MANIFEST_DICT_IN: Dict[str, Any] = {
     "name": FAKE_NAME,
@@ -22,7 +22,7 @@ FAKE_AGENT_MANIFEST_DICT_IN: Dict[str, Any] = {
     "target_operating_systems": FAKE_OPERATING_SYSTEMS,
     "title": FAKE_TITLE,
     "version": "1.0.0",
-    "link_to_documentation": FAKE_LINK,
+    "link_to_documentation": URL,
 }
 
 FAKE_AGENT_MANIFEST_DICT_OUT: Dict[str, Any] = copy.deepcopy(FAKE_AGENT_MANIFEST_DICT_IN)
@@ -37,7 +37,7 @@ FAKE_AGENT_MANIFEST_DICT = {
     "target_operating_systems": [OperatingSystem.LINUX],
     "title": FAKE_TITLE,
     "version": "1.0.0",
-    "link_to_documentation": FAKE_LINK,
+    "link_to_documentation": URL,
 }
 
 FAKE_MANIFEST_OBJECT = AgentPluginManifest(
@@ -47,7 +47,7 @@ FAKE_MANIFEST_OBJECT = AgentPluginManifest(
     target_operating_systems=FAKE_OPERATING_SYSTEMS,
     title=FAKE_TITLE,
     version="1.0.0",
-    link_to_documentation=FAKE_LINK,
+    link_to_documentation=URL,
 )
 
 
@@ -89,7 +89,7 @@ def test_agent_plugin_manifest__invalid_name(name):
             target_operating_systems=FAKE_OPERATING_SYSTEMS,
             title=FAKE_TITLE,
             version="1.0.0",
-            link_to_documentation=FAKE_LINK,
+            link_to_documentation=URL,
         )
 
 
@@ -119,7 +119,37 @@ def test_agent_plugin_manifest__invalid_version(version):
             target_operating_systems=FAKE_OPERATING_SYSTEMS,
             title=FAKE_TITLE,
             version=version,
-            link_to_documentation=FAKE_LINK,
+            link_to_documentation=URL,
+        )
+
+
+@pytest.mark.parametrize(
+    "link",
+    [
+        "some_text.com",
+        "ftp://adfascxz",
+        "www.not_link.com",
+        "1s221312312",
+        "some_string",
+        "hTTps:/localhost.com",
+        "ttp://asdfawaszawersz",
+        "'https:////www.localhost.com",
+        "http://$(some_malicious_command).com",
+        "http://example.com/\" onclick=\"alert('XSS!')",
+        'http://"><img src=x onerror=alert()',
+        "<script>alert(/XSS/)</script>",
+    ],
+)
+def test_agent_plugin_manifest__invalid_link(link):
+    with pytest.raises(ValueError):
+        AgentPluginManifest(
+            name=FAKE_NAME,
+            plugin_type=FAKE_TYPE,
+            supported_operating_systems=FAKE_SUPPORTED_OPERATING_SYSTEMS,
+            target_operating_systems=FAKE_OPERATING_SYSTEMS,
+            title=FAKE_TITLE,
+            version="1.0.0",
+            link_to_documentation=link,
         )
 
 
