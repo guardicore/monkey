@@ -9,6 +9,7 @@ import argparse
 import logging
 import logging.handlers
 import os
+import re
 import sys
 import tempfile
 import time
@@ -19,10 +20,26 @@ from typing import Sequence, Tuple, Union
 
 # dummy import for pyinstaller
 # noinspection PyUnresolvedReferences
+from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.version import get_version
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
+
+
+class OTPFormatter(logging.Formatter):
+    """
+    Formatter that replaces OTPs in log messages with asterisks
+    """
+
+    def format(self, record):
+        otp_regex = re.compile(f"{AGENT_OTP_ENVIRONMENT_VARIABLE}=[a-zA-Z0-9]*")
+        otp_replacement = f"{AGENT_OTP_ENVIRONMENT_VARIABLE}={'*' * 6}"
+
+        original_log_message = logging.Formatter.format(self, record)
+        formatted_log_message = re.sub(otp_regex, otp_replacement, original_log_message)
+
+        return formatted_log_message
 
 
 def main():
@@ -102,7 +119,7 @@ def _configure_queue_listener(
         "%(asctime)s [%(process)d:%(threadName)s:%(levelname)s] %(module)s.%("
         "funcName)s.%(lineno)d: %(message)s"
     )
-    formatter = logging.Formatter(log_format)
+    formatter = OTPFormatter(log_format)
 
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)

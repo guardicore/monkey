@@ -35,9 +35,11 @@ from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, Queued
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
 from common.types import NetworkPort, SocketAddress
+from common.types.otp import OTP
 from common.utils.argparse_types import positive_int
 from common.utils.code_utils import del_key, secure_generate_random_string
 from common.utils.file_utils import create_secure_directory
+from common.utils.secret_variable import SecretVariable
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
     add_stolen_credentials_to_propagation_credentials_repository,
@@ -175,13 +177,13 @@ class InfectionMonkey:
         return opts
 
     @staticmethod
-    def _get_otp():
+    def _get_otp() -> OTP:
         # No need for a constant, this is a feature flag that will be removed.
         if OTP_FLAG not in os.environ:
-            return "PLACEHOLDER_OTP"
+            return SecretVariable("PLACEHOLDER_OTP")
 
         try:
-            otp = os.environ[AGENT_OTP_ENVIRONMENT_VARIABLE]
+            otp = SecretVariable(os.environ[AGENT_OTP_ENVIRONMENT_VARIABLE])
         except KeyError:
             raise Exception(
                 f"Couldn't find {AGENT_OTP_ENVIRONMENT_VARIABLE} environmental variable."
