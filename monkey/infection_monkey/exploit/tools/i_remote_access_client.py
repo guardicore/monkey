@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import PurePath
-from typing import Collection, MutableSet
+from typing import Collection, Set
 
 from common import OperatingSystem
 from common.credentials import Credentials
@@ -34,7 +34,7 @@ class IRemoteAccessClient(ABC):
     """An interface for clients that execute remote commands"""
 
     @abstractmethod
-    def login(self, credentials: Credentials, tags: MutableSet[str]):
+    def login(self, credentials: Credentials, tags: Set[str]):
         """
         Establish an authenticated session with the remote host
 
@@ -57,7 +57,7 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def copy_file(self, file: bytes, dest: PurePath, tags: MutableSet[str]):
+    def copy_file(self, file: bytes, dest: PurePath, tags: Set[str]):
         """
         Copy a file to the remote host
 
@@ -80,7 +80,7 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def execute_detached(self, command: str, tags: MutableSet[str]):
+    def execute_detached(self, command: str, tags: Set[str]):
         """
         Execute a command on the remote host in a detached process
 
