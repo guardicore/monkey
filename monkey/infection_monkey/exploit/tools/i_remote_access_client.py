@@ -80,17 +80,17 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def execute_detached(self, command: str, tags: Set[str]):
+    def execute_agent(self, agent_binary_path: PurePath, tags: Set[str]):
         """
-        Execute a command on the remote host in a detached process
+        Execute the agent on the remote host in a detached process
 
-        The command will be executed in a detached process, which allows the client to disconnect
-        from the remote host while allowing the command to continue running.
+        The agent will be executed in a detached process, which allows the client to disconnect
+        from the remote host while allowing the agent to continue running.
 
         The `tags` argument will be updated with the techniques used to execute the command.
 
-        :param command: Command to execute
-        :param tags: Tags describing the techniques used to execute the command
+        :param agent_binary_path: The path of the agent binary on the remote system
+        :param tags: Tags describing the techniques used to execute the agent
         :raises RemoteCommandExecutionError: If execution failed
         """
         pass
