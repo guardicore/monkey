@@ -1,5 +1,4 @@
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
-from agent_plugins.exploiters.smb.smb_options import SMBOptions
 from flask_security import Security
 
 from common import DIContainer
@@ -12,12 +11,7 @@ from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit import IslandAPIAgentOTPProvider
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
-from infection_monkey.exploit.tools import (
-    RemoteCommandExecutionError,
-    RemoteFileCopyError,
-    generate_brute_force_credentials,
-    secret_type_filter,
-)
+from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.island_api_client import http_island_api_client
@@ -144,19 +138,7 @@ User.roles
 User.get_by_id
 User.email
 
-# Remove after #2952
-generate_brute_force_credentials
 secret_type_filter
-RemoteCommandExecutionError
-RemoteFileCopyError
-
-SMBOptions.agent_binary_upload_timeout
-SMBOptions.smb_connect_timeout
-
-SMBOptions.agent_binary_upload_timeout
-SMBOptions.use_kerberos
-SMBOptions.rpc_connect_timeout
-SMBOptions.smb_connect_timeout
 
 # Remove after #3077
 http_island_api_client.get_otp
