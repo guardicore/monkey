@@ -1,4 +1,5 @@
 import threading
+from copy import deepcopy
 from unittest.mock import MagicMock
 
 import pytest
@@ -10,7 +11,7 @@ from common.event_queue import IAgentEventQueue
 
 @pytest.fixture
 def ransomware_options_dict(ransomware_file_extension):
-    options = RANSOMWARE_OPTIONS
+    options = deepcopy(RANSOMWARE_OPTIONS)
     options["encryption"]["file_extension"] = ransomware_file_extension
     return options
 
