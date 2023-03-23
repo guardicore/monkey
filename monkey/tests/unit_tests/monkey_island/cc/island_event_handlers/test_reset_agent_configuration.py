@@ -8,7 +8,7 @@ from monkey_island.cc.services import IAgentConfigurationService
 
 @pytest.fixture
 def agent_configuration(default_agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    return default_agent_configuration.copy()
+    return default_agent_configuration
 
 
 @pytest.fixture

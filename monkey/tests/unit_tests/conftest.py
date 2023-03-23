@@ -1,4 +1,5 @@
 import sys
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -63,4 +64,4 @@ def plugin_data_dir(data_for_tests_dir) -> Path:
 
 @pytest.fixture
 def default_agent_configuration() -> AgentConfiguration:
-    return DEFAULT_AGENT_CONFIGURATION
+    return deepcopy(DEFAULT_AGENT_CONFIGURATION)
