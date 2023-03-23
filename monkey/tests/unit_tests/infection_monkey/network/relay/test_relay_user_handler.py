@@ -27,10 +27,10 @@ def test_potential_user_removed_on_matching_user_added(handler):
 
 
 def test_potential_users_time_out():
-    handler = RelayUserHandler(new_client_timeout=0.001)
+    handler = RelayUserHandler(new_client_timeout=0.0001)
 
     handler.add_potential_user(USER_ADDRESS)
-    sleep(0.01)
+    sleep(0.02)
 
     assert not handler.has_potential_users()
 
