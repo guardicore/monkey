@@ -9,8 +9,8 @@ const EMPTY_URI = '';
 
 export const sanitizeURI = (uri) => {
   for(let i=0; i < URL_REGEX_VALIDATORS.length; i++){
-    const regTest = new RegExp(URL_REGEX_VALIDATORS[i].expression);
-    if(regTest.test(uri) !== URL_REGEX_VALIDATORS[i].expectedTestResult) {
+    if(URL_REGEX_VALIDATORS[i].expression.test(uri) !== URL_REGEX_VALIDATORS[i].expectedTestResult) {
+      console.log(`Suspicious URI was detected and deleted: "${uri}"`)
       return EMPTY_URI;
     }
   }
