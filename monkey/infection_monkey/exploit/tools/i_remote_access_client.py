@@ -49,7 +49,7 @@ class IRemoteAccessClient(ABC):
     @abstractmethod
     def get_os(self) -> OperatingSystem:
         """
-        Query the remote host for its operating system
+        Return the operating system of the remote host
 
         :return: The operating system of the remote host
         :raises RemoteAccessClientError: If the operating system could not be determined
