@@ -58,6 +58,7 @@ types-python-dateutil = "*"
 mypy = "*"
 types-pytz = "*"
 types-pyyaml = "*"
+pytest-xdist = "*"
 
 [requires]
 python_version = "3.11"
