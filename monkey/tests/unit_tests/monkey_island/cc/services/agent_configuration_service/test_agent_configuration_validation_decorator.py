@@ -1,7 +1,6 @@
 import pytest
 from tests.monkey_island import InMemoryAgentConfigurationRepository, InMemoryAgentPluginRepository
 
-from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION
 from common.base_models import MutableInfectionMonkeyBaseModel
 from monkey_island.cc.repositories import IAgentPluginRepository, RetrievalError
 from monkey_island.cc.services import PluginConfigurationValidationError
@@ -69,15 +68,16 @@ def test_get_configuration_raise_retrieval_error(
 
 
 def test_update_configuration_validated(
+    default_agent_configuration,
     in_memory_agent_configuration_repository,
     in_memory_agent_plugin_repository,
     agent_configuration_repository,
 ):
-    agent_configuration_repository.update_configuration(DEFAULT_AGENT_CONFIGURATION)
+    agent_configuration_repository.update_configuration(default_agent_configuration)
 
     expected_configuration = in_memory_agent_configuration_repository.get_configuration()
 
-    assert DEFAULT_AGENT_CONFIGURATION == expected_configuration
+    assert default_agent_configuration == expected_configuration
 
 
 def test_update_configuration_raise_plugin_configuration_validation_error(
