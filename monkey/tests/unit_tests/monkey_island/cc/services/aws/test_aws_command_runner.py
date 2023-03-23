@@ -11,7 +11,7 @@ from monkey_island.cc.services.aws.aws_command_runner import (
     start_infection_monkey_agent,
 )
 
-TIMEOUT = 0.03
+TIMEOUT = 0.1
 INSTANCE_ID = "BEEFFACE"
 ISLAND_IP = "127.0.0.1"
 
