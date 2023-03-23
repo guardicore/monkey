@@ -1,16 +1,16 @@
-import {EMPTY_URI, GENERAL_UNSAFE_STRINGS, REG_EXP_VALIDATORS} from './uriSanitizer.constants';
+const URL_REGEX_VALIDATORS = Object.freeze([
+  {expression: /[()[\]{};`'"<>]/gmi, expectedTestResult: false},
+  {expression: /^([^\w]*)(script|unsafe|javascript|vbscript|app|admin|icloud-sharing|icloud-vetting|help|aim|facetime-audio|applefeedback|ibooks|macappstore|udoc|ts|st|x-apple-helpbasic)/gmi, expectedTestResult: false},
+  {expression: /^(?:(?:ht)tps?:|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/gmi, expectedTestResult: true},
+  {expression: /(javascript:)/gmi, expectedTestResult: false}
+]);
+
+const EMPTY_URI = '';
 
 export const sanitizeURI = (uri) => {
-  const validators =  REG_EXP_VALIDATORS;
-  for(let i=0; i < validators.length; i++){
-    const regTest = new RegExp(validators[i].expression);
-    if(regTest.test(uri) !== validators[i].expectedTestResult) {
-      return EMPTY_URI;
-    }
-  }
-
-  for(let i=0; i < GENERAL_UNSAFE_STRINGS.length; i++){
-    if(uri.indexOf(GENERAL_UNSAFE_STRINGS[i]) !== -1){
+  for(let i=0; i < URL_REGEX_VALIDATORS.length; i++){
+    const regTest = new RegExp(URL_REGEX_VALIDATORS[i].expression);
+    if(regTest.test(uri) !== URL_REGEX_VALIDATORS[i].expectedTestResult) {
       return EMPTY_URI;
     }
   }
