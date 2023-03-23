@@ -75,6 +75,7 @@ def plugin(
         agent_event_publisher=MagicMock(),
         agent_binary_repository=MagicMock(),
         propagation_credentials_repository=propagation_credentials_repository,
+        otp_provider=MagicMock(),
     )
 
 
@@ -219,6 +220,7 @@ def test_run__exploit_host_raises_exception(
         agent_event_publisher=MagicMock(),
         agent_binary_repository=MagicMock(),
         propagation_credentials_repository=propagation_credentials_repository,
+        otp_provider=MagicMock(),
     )
     result = plugin.run(
         host=target_host,
