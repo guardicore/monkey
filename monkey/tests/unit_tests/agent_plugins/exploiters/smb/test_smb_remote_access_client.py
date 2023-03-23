@@ -26,7 +26,6 @@ from infection_monkey.exploit.tools import (
 from infection_monkey.i_puppet import TargetHost
 
 EXPLOITER_TAGS = {"smb-exploiter", "unit-test"}
-COMMAND = "command"
 CREDENTIALS: List[Credentials] = []
 DESTINATION_PATH = PureWindowsPath("C:\\destination_path")
 FILE = b"file content"
@@ -37,6 +36,10 @@ SHARED_RESOURECES = (
     ShareInfo("share4", PureWindowsPath("invalid_path"), current_uses=50, max_uses=100),
 )
 TARGET_HOST = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.WINDOWS)
+
+
+def stub_command_builder(*args, **kwargs):
+    return "command"
 
 
 @pytest.fixture
@@ -58,7 +61,7 @@ def mock_agent_binary_repository() -> IAgentBinaryRepository:
 
 @pytest.fixture
 def smb_remote_access_client(mock_smb_client) -> SMBRemoteAccessClient:
-    return SMBRemoteAccessClient(TARGET_HOST, SMBOptions(), mock_smb_client)
+    return SMBRemoteAccessClient(TARGET_HOST, SMBOptions(), stub_command_builder, mock_smb_client)
 
 
 def test_login__succeeds(
@@ -90,7 +93,7 @@ def test_execute__fails_if_not_authenticated(
     tags = EXPLOITER_TAGS.copy()
 
     with pytest.raises(RemoteCommandExecutionError):
-        smb_remote_access_client.execute_detached(COMMAND, tags)
+        smb_remote_access_client.execute_agent(DESTINATION_PATH, tags)
 
     assert tags == EXPLOITER_TAGS
 
@@ -104,7 +107,7 @@ def test_execute__fails_if_command_not_executed(
     smb_remote_access_client.login(FULL_CREDENTIALS[0], set())
 
     with pytest.raises(RemoteCommandExecutionError):
-        smb_remote_access_client.execute_detached(COMMAND, tags)
+        smb_remote_access_client.execute_agent(DESTINATION_PATH, tags)
 
     assert tags == EXPLOITER_TAGS.union(EXECUTION_TAGS)
 
@@ -116,7 +119,7 @@ def test_execute__succeeds(
     tags = EXPLOITER_TAGS.copy()
 
     smb_remote_access_client.login(FULL_CREDENTIALS[0], set())
-    smb_remote_access_client.execute_detached(COMMAND, tags)
+    smb_remote_access_client.execute_agent(DESTINATION_PATH, tags)
 
     assert tags == EXPLOITER_TAGS.union(EXECUTION_TAGS)
 
@@ -191,7 +194,9 @@ def test_copy_file__success(
     assert tags == EXPLOITER_TAGS.union(SHARE_DISCOVERY_TAGS, COPY_FILE_TAGS)
 
 
-def test_get_writable_paths(mock_smb_client: SMBClient, smb_remote_access_client: SMBRemoteAccessClient):
+def test_get_writable_paths(
+    mock_smb_client: SMBClient, smb_remote_access_client: SMBRemoteAccessClient
+):
     mock_smb_client.query_shared_resources.return_value = SHARED_RESOURECES
     writable_paths = smb_remote_access_client.get_writable_paths()
 
