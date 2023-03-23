@@ -153,6 +153,11 @@ RemoteFileCopyError
 SMBOptions.agent_binary_upload_timeout
 SMBOptions.smb_connect_timeout
 
+SMBOptions.agent_binary_upload_timeout
+SMBOptions.use_kerberos
+SMBOptions.rpc_connect_timeout
+SMBOptions.smb_connect_timeout
+
 # Remove after #3077
 http_island_api_client.get_otp
 IslandAPIAgentOTPProvider
