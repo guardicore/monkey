@@ -57,143 +57,143 @@ def mock_agent_binary_repository() -> IAgentBinaryRepository:
 
 
 @pytest.fixture
-def smb_exploit_client(mock_smb_client) -> SMBRemoteAccessClient:
+def smb_remote_access_client(mock_smb_client) -> SMBRemoteAccessClient:
     return SMBRemoteAccessClient(TARGET_HOST, SMBOptions(), mock_smb_client)
 
 
 def test_login__succeeds(
-    smb_exploit_client: SMBRemoteAccessClient,
+    smb_remote_access_client: SMBRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
 
-    smb_exploit_client.login(FULL_CREDENTIALS[0], tags)
+    smb_remote_access_client.login(FULL_CREDENTIALS[0], tags)
 
     assert tags == EXPLOITER_TAGS.union(LOGIN_TAGS)
 
 
 def test_login__fails(
     mock_smb_client: SMBClient,
-    smb_exploit_client: SMBRemoteAccessClient,
+    smb_remote_access_client: SMBRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
     mock_smb_client.connect_with_user.side_effect = Exception()
 
     with pytest.raises(RemoteAuthenticationError):
-        smb_exploit_client.login(FULL_CREDENTIALS[0], tags)
+        smb_remote_access_client.login(FULL_CREDENTIALS[0], tags)
 
     assert tags == EXPLOITER_TAGS.union(LOGIN_TAGS)
 
 
 def test_execute__fails_if_not_authenticated(
-    smb_exploit_client: SMBRemoteAccessClient,
+    smb_remote_access_client: SMBRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
 
     with pytest.raises(RemoteCommandExecutionError):
-        smb_exploit_client.execute_detached(COMMAND, tags)
+        smb_remote_access_client.execute_detached(COMMAND, tags)
 
     assert tags == EXPLOITER_TAGS
 
 
 def test_execute__fails_if_command_not_executed(
     mock_smb_client: SMBClient,
-    smb_exploit_client: SMBRemoteAccessClient,
+    smb_remote_access_client: SMBRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
     mock_smb_client.run_service.side_effect = Exception("file")
-    smb_exploit_client.login(FULL_CREDENTIALS[0], set())
+    smb_remote_access_client.login(FULL_CREDENTIALS[0], set())
 
     with pytest.raises(RemoteCommandExecutionError):
-        smb_exploit_client.execute_detached(COMMAND, tags)
+        smb_remote_access_client.execute_detached(COMMAND, tags)
 
     assert tags == EXPLOITER_TAGS.union(EXECUTION_TAGS)
 
 
 def test_execute__succeeds(
     mock_smb_client: SMBClient,
-    smb_exploit_client: SMBRemoteAccessClient,
+    smb_remote_access_client: SMBRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
 
-    smb_exploit_client.login(FULL_CREDENTIALS[0], set())
-    smb_exploit_client.execute_detached(COMMAND, tags)
+    smb_remote_access_client.login(FULL_CREDENTIALS[0], set())
+    smb_remote_access_client.execute_detached(COMMAND, tags)
 
     assert tags == EXPLOITER_TAGS.union(EXECUTION_TAGS)
 
 
 def test_copy_file__fails_if_not_authenticated(
     mock_smb_client: SMBClient,
-    smb_exploit_client: SMBRemoteAccessClient,
+    smb_remote_access_client: SMBRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
     mock_smb_client.connected.return_value = False
 
     with pytest.raises(RemoteFileCopyError):
-        smb_exploit_client.copy_file(FILE, DESTINATION_PATH, tags)
+        smb_remote_access_client.copy_file(FILE, DESTINATION_PATH, tags)
 
     assert tags == EXPLOITER_TAGS
 
 
 def test_copy_file__fails_if_no_shares_found(
     mock_smb_client: SMBClient,
-    smb_exploit_client: SMBRemoteAccessClient,
+    smb_remote_access_client: SMBRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
     mock_smb_client.query_shared_resources.return_value = ()
-    smb_exploit_client.login(FULL_CREDENTIALS[0], set())
+    smb_remote_access_client.login(FULL_CREDENTIALS[0], set())
 
     with pytest.raises(RemoteFileCopyError):
-        smb_exploit_client.copy_file(FILE, DESTINATION_PATH, tags)
+        smb_remote_access_client.copy_file(FILE, DESTINATION_PATH, tags)
 
     assert tags == EXPLOITER_TAGS.union(SHARE_DISCOVERY_TAGS)
 
 
 def test_copy_file__fails_if_unable_to_connect_to_share(
     mock_smb_client: SMBClient,
-    smb_exploit_client: SMBRemoteAccessClient,
+    smb_remote_access_client: SMBRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
     mock_smb_client.query_shared_resources.return_value = SHARED_RESOURECES
     mock_smb_client.connect_to_share.side_effect = Exception("failed")
-    smb_exploit_client.login(FULL_CREDENTIALS[0], set())
+    smb_remote_access_client.login(FULL_CREDENTIALS[0], set())
 
     with pytest.raises(RemoteFileCopyError):
-        smb_exploit_client.copy_file(FILE, DESTINATION_PATH, tags)
+        smb_remote_access_client.copy_file(FILE, DESTINATION_PATH, tags)
 
     assert tags == EXPLOITER_TAGS.union(SHARE_DISCOVERY_TAGS)
 
 
 def test_copy_file__fails_if_unable_to_send_file(
     mock_smb_client: SMBClient,
-    smb_exploit_client: SMBRemoteAccessClient,
+    smb_remote_access_client: SMBRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
     mock_smb_client.query_shared_resources.return_value = SHARED_RESOURECES
     mock_smb_client.send_file.side_effect = Exception("file")
-    smb_exploit_client.login(FULL_CREDENTIALS[0], set())
+    smb_remote_access_client.login(FULL_CREDENTIALS[0], set())
 
     with pytest.raises(RemoteFileCopyError):
-        smb_exploit_client.copy_file(FILE, DESTINATION_PATH, tags)
+        smb_remote_access_client.copy_file(FILE, DESTINATION_PATH, tags)
 
     assert tags == EXPLOITER_TAGS.union(SHARE_DISCOVERY_TAGS, COPY_FILE_TAGS)
 
 
 def test_copy_file__success(
     mock_smb_client: SMBClient,
-    smb_exploit_client: SMBRemoteAccessClient,
+    smb_remote_access_client: SMBRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
     mock_smb_client.query_shared_resources.return_value = SHARED_RESOURECES
-    smb_exploit_client.login(FULL_CREDENTIALS[0], set())
+    smb_remote_access_client.login(FULL_CREDENTIALS[0], set())
 
-    smb_exploit_client.copy_file(FILE, DESTINATION_PATH, tags)
+    smb_remote_access_client.copy_file(FILE, DESTINATION_PATH, tags)
 
     assert tags == EXPLOITER_TAGS.union(SHARE_DISCOVERY_TAGS, COPY_FILE_TAGS)
 
 
-def test_get_writable_paths(mock_smb_client: SMBClient, smb_exploit_client: SMBRemoteAccessClient):
+def test_get_writable_paths(mock_smb_client: SMBClient, smb_remote_access_client: SMBRemoteAccessClient):
     mock_smb_client.query_shared_resources.return_value = SHARED_RESOURECES
-    writable_paths = smb_exploit_client.get_writable_paths()
+    writable_paths = smb_remote_access_client.get_writable_paths()
 
     assert len(writable_paths) == 2
     assert SHARED_RESOURECES[0].path in writable_paths
