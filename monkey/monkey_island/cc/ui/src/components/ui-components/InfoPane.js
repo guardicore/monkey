@@ -44,7 +44,7 @@ function getLinkButton(props) {
     const sanitizedLink = sanitizeURI(props.link);
 
     return (
-      <Button variant={'link'} className={'pane-link'} href={sanitizedLink}>
+      <Button variant={'link'} className={'pane-link'} href={sanitizedLink} target='_blank'>
          <FontAwesomeIcon icon={faQuestionCircle}/>
        </Button>
      )
