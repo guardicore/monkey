@@ -4,13 +4,16 @@ import pytest
 
 from common.credentials import Credentials, SSHKeypair, Username
 from common.event_queue import IAgentEventQueue
+from common.types import AgentID
 from infection_monkey.credential_collectors import SSHCredentialCollector
+
+AGENT_ID = AgentID("ed077054-a316-479a-a99d-75bb378c0a6e")
 
 
 def patch_ssh_handler(ssh_creds, monkeypatch):
     monkeypatch.setattr(
         "infection_monkey.credential_collectors.ssh_collector.ssh_handler.get_ssh_info",
-        lambda _: ssh_creds,
+        lambda _, __: ssh_creds,
     )
 
 
@@ -19,7 +22,9 @@ def patch_ssh_handler(ssh_creds, monkeypatch):
 )
 def test_ssh_credentials_empty_results(monkeypatch, ssh_creds):
     patch_ssh_handler(ssh_creds, monkeypatch)
-    collected = SSHCredentialCollector(MagicMock(spec=IAgentEventQueue)).collect_credentials()
+    collected = SSHCredentialCollector(
+        MagicMock(spec=IAgentEventQueue), AGENT_ID
+    ).collect_credentials()
     assert not collected
 
 
@@ -64,5 +69,7 @@ def test_ssh_info_result_parsing(monkeypatch):
         Credentials(identity=username3, secret=None),
         Credentials(identity=None, secret=ssh_keypair3),
     ]
-    collected = SSHCredentialCollector(MagicMock(spec=IAgentEventQueue)).collect_credentials()
+    collected = SSHCredentialCollector(
+        MagicMock(spec=IAgentEventQueue), AGENT_ID
+    ).collect_credentials()
     assert expected == collected
