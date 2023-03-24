@@ -4,9 +4,9 @@ from typing import Dict, Mapping, Sequence
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials
 from common.types import Event, NetworkPort
-from infection_monkey.i_puppet.target_host import TargetHost
 
-from . import ExploiterResultData, FingerprintData, PingScanData, PortScanData
+from . import ExploiterResultData, FingerprintData, PingScanData
+from .target_host import PortScanDataDict, TargetHost
 
 
 class UnknownPluginError(Exception):
@@ -58,7 +58,7 @@ class IPuppet(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def scan_tcp_ports(
         self, host: str, ports: Sequence[NetworkPort], timeout: float = 3
-    ) -> Dict[NetworkPort, PortScanData]:
+    ) -> PortScanDataDict:
         """
         Scans a list of TCP ports on a remote host
 
@@ -74,7 +74,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         name: str,
         host: str,
         ping_scan_data: PingScanData,
-        port_scan_data: Dict[NetworkPort, PortScanData],
+        port_scan_data: PortScanDataDict,
         options: Dict,
     ) -> FingerprintData:
         """

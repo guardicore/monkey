@@ -13,7 +13,7 @@ from infection_monkey.i_puppet import (
     IncompatibleOperatingSystemError,
     IPuppet,
     PingScanData,
-    PortScanData,
+    PortScanDataDict,
     TargetHost,
 )
 from infection_monkey.puppet import PluginCompatabilityVerifier
@@ -50,7 +50,7 @@ class Puppet(IPuppet):
 
     def scan_tcp_ports(
         self, host: str, ports: Sequence[NetworkPort], timeout: float = CONNECTION_TIMEOUT
-    ) -> Dict[NetworkPort, PortScanData]:
+    ) -> PortScanDataDict:
         return network_scanning.scan_tcp_ports(host, ports, timeout, self._agent_event_queue)
 
     def fingerprint(
@@ -58,7 +58,7 @@ class Puppet(IPuppet):
         name: str,
         host: str,
         ping_scan_data: PingScanData,
-        port_scan_data: Dict[NetworkPort, PortScanData],
+        port_scan_data: PortScanDataDict,
         options: Dict,
     ) -> FingerprintData:
         try:
