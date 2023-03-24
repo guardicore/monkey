@@ -1,5 +1,4 @@
 import logging
-from http import HTTPStatus
 
 from flask import Response, make_response
 from flask.typing import ResponseValue
@@ -30,7 +29,5 @@ class Logout(AbstractResource):
 
         if not isinstance(response, Response):
             return responses.make_response_to_invalid_request()
-        if response.status_code == HTTPStatus.OK:
-            self._authentication_facade.handle_successful_logout()
 
         return make_response(response)

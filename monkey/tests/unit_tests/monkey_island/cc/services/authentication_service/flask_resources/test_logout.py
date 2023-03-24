@@ -45,7 +45,6 @@ def test_logout_failed(
     monkeypatch.setattr(FLASK_LOGOUT_IMPORT, lambda: logout_response)
     response = make_logout_request(TEST_REQUEST)
 
-    mock_authentication_facade.handle_successful_logout.assert_not_called()
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
@@ -62,4 +61,3 @@ def test_logout_successful(
     response = make_logout_request("")
 
     assert response.status_code == HTTPStatus.OK
-    mock_authentication_facade.handle_successful_logout.assert_called_once()

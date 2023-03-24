@@ -72,15 +72,6 @@ def test_handle_successful_registration(
     )
 
 
-def test_handle_sucessful_logout(
-    mock_repository_encryptor: ILockableEncryptor,
-    authentication_facade: AuthenticationFacade,
-):
-    authentication_facade.handle_successful_logout()
-
-    mock_repository_encryptor.lock.assert_called_once()
-
-
 def test_handle_sucessful_login(
     mock_repository_encryptor: ILockableEncryptor,
     authentication_facade: AuthenticationFacade,
