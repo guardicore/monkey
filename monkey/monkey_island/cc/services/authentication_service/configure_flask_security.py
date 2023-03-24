@@ -8,11 +8,10 @@ from flask_mongoengine import MongoEngine
 from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security, UserDatastore
 from wtforms import StringField
 
-from common import DIContainer
 from common.utils.file_utils import open_new_securely_permissioned_file
 from monkey_island.cc.mongo_consts import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT, MONGO_URL
 
-from . import AccountRole, register_resources
+from . import AccountRole
 from .role import Role
 from .user import User
 
@@ -20,12 +19,7 @@ SECRET_FILE_NAME = ".flask_security_configuration.json"
 AUTH_EXPIRATION_TIME = 30 * 60  # 30 minutes authentication token expiration time
 
 
-def setup_authentication(app, api, data_dir: Path, container: DIContainer):
-    datastore = _configure_flask_security(app, data_dir)
-    register_resources(api, container, datastore)
-
-
-def _configure_flask_security(app, data_dir: Path) -> MongoEngineUserDatastore:
+def configure_flask_security(app, data_dir: Path) -> MongoEngineUserDatastore:
     _setup_flask_mongo(app)
 
     flask_security_config = _generate_flask_security_configuration(data_dir)

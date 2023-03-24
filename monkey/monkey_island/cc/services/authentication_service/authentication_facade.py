@@ -1,4 +1,4 @@
-from flask_security import MongoEngineUserDatastore
+from flask_security import UserDatastore
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
@@ -16,7 +16,7 @@ class AuthenticationFacade:
         self,
         repository_encryptor: ILockableEncryptor,
         island_event_queue: IIslandEventQueue,
-        user_datastore: MongoEngineUserDatastore,
+        user_datastore: UserDatastore,
     ):
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
