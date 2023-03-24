@@ -7,10 +7,10 @@ import pytest
 import infection_monkey.network_scanning.ping_scanner  # noqa: F401
 from common import OperatingSystem
 from common.agent_events import PingScanEvent
+from common.types import AgentID
 from infection_monkey.i_puppet import PingScanData
 from infection_monkey.network_scanning import ping
 from infection_monkey.network_scanning.ping_scanner import EMPTY_PING_SCAN
-from infection_monkey.utils.ids import get_agent_id
 
 LINUX_SUCCESS_OUTPUT = """
 PING 192.168.1.1 (192.168.1.1) 56(84) bytes of data.
@@ -55,6 +55,7 @@ ttl=2d2!
 
 
 TIMESTAMP = 123.321
+AGENT_ID = AgentID("a15111d3-e150-4ad5-a9b6-34f9d3a3105b")
 
 
 @pytest.fixture(autouse=True)
@@ -104,7 +105,7 @@ TIMEOUT = 1.0
 
 def _get_ping_scan_event(result: PingScanData):
     return PingScanEvent(
-        source=get_agent_id(),
+        source=AGENT_ID,
         target=HOST_IP,
         timestamp=TIMESTAMP,
         tags=frozenset(),
@@ -116,7 +117,7 @@ def _get_ping_scan_event(result: PingScanData):
 @pytest.mark.usefixtures("set_os_linux")
 def test_linux_ping_success(patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue):
     patch_subprocess_running_ping_with_ping_output(LINUX_SUCCESS_OUTPUT)
-    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue, AGENT_ID)
     event = _get_ping_scan_event(result)
 
     assert result.response_received
@@ -130,7 +131,7 @@ def test_linux_ping_no_response(
     patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue
 ):
     patch_subprocess_running_ping_with_ping_output(LINUX_NO_RESPONSE_OUTPUT)
-    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue, AGENT_ID)
     event = _get_ping_scan_event(result)
 
     assert not result.response_received
@@ -144,7 +145,7 @@ def test_windows_ping_success(
     patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue
 ):
     patch_subprocess_running_ping_with_ping_output(WINDOWS_SUCCESS_OUTPUT)
-    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue, AGENT_ID)
     event = _get_ping_scan_event(result)
 
     assert result.response_received
@@ -158,7 +159,7 @@ def test_windows_ping_no_response(
     patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue
 ):
     patch_subprocess_running_ping_with_ping_output(WINDOWS_NO_RESPONSE_OUTPUT)
-    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue, AGENT_ID)
     event = _get_ping_scan_event(result)
 
     assert not result.response_received
@@ -171,7 +172,7 @@ def test_malformed_ping_command_response(
     patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue
 ):
     patch_subprocess_running_ping_with_ping_output(MALFORMED_OUTPUT)
-    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue, AGENT_ID)
     event = _get_ping_scan_event(result)
 
     assert not result.response_received
@@ -182,7 +183,7 @@ def test_malformed_ping_command_response(
 
 @pytest.mark.usefixtures("patch_subprocess_running_ping_to_raise_timeout_expired")
 def test_timeout_expired(mock_agent_event_queue):
-    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue, AGENT_ID)
     event = _get_ping_scan_event(result)
 
     assert not result.response_received
@@ -202,7 +203,7 @@ def ping_command_spy(monkeypatch):
 @pytest.fixture
 def assert_expected_timeout(ping_command_spy, mock_agent_event_queue):
     def inner(timeout_flag, timeout_input, expected_timeout):
-        ping(HOST_IP, timeout_input, mock_agent_event_queue)
+        ping(HOST_IP, timeout_input, mock_agent_event_queue, AGENT_ID)
 
         assert ping_command_spy.call_args is not None
 
@@ -237,5 +238,5 @@ def test_exception_handling(monkeypatch, mock_agent_event_queue):
     monkeypatch.setattr(
         "infection_monkey.network_scanning.ping_scanner._ping", MagicMock(side_effect=Exception)
     )
-    assert ping("abc", 10, mock_agent_event_queue) == EMPTY_PING_SCAN
+    assert ping("abc", 10, mock_agent_event_queue, AGENT_ID) == EMPTY_PING_SCAN
     assert mock_agent_event_queue.publish.call_count == 0

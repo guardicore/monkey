@@ -5,7 +5,7 @@ from common.agent_plugins import AgentPluginType
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from common.credentials import Credentials
 from common.event_queue import IAgentEventQueue
-from common.types import Event, NetworkPort
+from common.types import AgentID, Event, NetworkPort
 from infection_monkey import network_scanning
 from infection_monkey.i_puppet import (
     ExploiterResultData,
@@ -31,10 +31,12 @@ class Puppet(IPuppet):
         agent_event_queue: IAgentEventQueue,
         plugin_registry: PluginRegistry,
         plugin_compatability_verifier: PluginCompatabilityVerifier,
+        agent_id: AgentID,
     ) -> None:
         self._plugin_registry = plugin_registry
         self._agent_event_queue = agent_event_queue
         self._plugin_compatability_verifier = plugin_compatability_verifier
+        self._agent_id = agent_id
 
     def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
         self._plugin_registry.load_plugin(plugin_type, plugin_name, plugin)
@@ -46,12 +48,14 @@ class Puppet(IPuppet):
         return credential_collector.collect_credentials(options)
 
     def ping(self, host: str, timeout: float = CONNECTION_TIMEOUT) -> PingScanData:
-        return network_scanning.ping(host, timeout, self._agent_event_queue)
+        return network_scanning.ping(host, timeout, self._agent_event_queue, self._agent_id)
 
     def scan_tcp_ports(
         self, host: str, ports: Sequence[NetworkPort], timeout: float = CONNECTION_TIMEOUT
     ) -> PortScanDataDict:
-        return network_scanning.scan_tcp_ports(host, ports, timeout, self._agent_event_queue)
+        return network_scanning.scan_tcp_ports(
+            host, ports, timeout, self._agent_event_queue, self._agent_id
+        )
 
     def fingerprint(
         self,
