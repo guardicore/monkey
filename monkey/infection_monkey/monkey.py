@@ -406,7 +406,9 @@ class InfectionMonkey:
         plugin_compatability_verifier = PluginCompatabilityVerifier(
             self._island_api_client, HARD_CODED_EXPLOITER_MANIFESTS
         )
-        puppet = Puppet(self._agent_event_queue, plugin_registry, plugin_compatability_verifier)
+        puppet = Puppet(
+            self._agent_event_queue, plugin_registry, plugin_compatability_verifier, self._agent_id
+        )
 
         puppet.load_plugin(
             AgentPluginType.CREDENTIAL_COLLECTOR,

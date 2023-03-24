@@ -10,9 +10,9 @@ from typing import Tuple
 from common import OperatingSystem
 from common.agent_events import PingScanEvent
 from common.event_queue import IAgentEventQueue
+from common.types import AgentID
 from common.utils.environment import is_windows_os
 from infection_monkey.i_puppet import PingScanData
-from infection_monkey.utils.ids import get_agent_id
 
 TTL_REGEX = re.compile(r"TTL=([0-9]+)\b", re.IGNORECASE)
 LINUX_TTL = 64  # Windows TTL is 128
@@ -22,15 +22,19 @@ EMPTY_PING_SCAN = PingScanData(response_received=False, os=None)
 logger = logging.getLogger(__name__)
 
 
-def ping(host: str, timeout: float, agent_event_queue: IAgentEventQueue) -> PingScanData:
+def ping(
+    host: str, timeout: float, agent_event_queue: IAgentEventQueue, agent_id: AgentID
+) -> PingScanData:
     try:
-        return _ping(host, timeout, agent_event_queue)
+        return _ping(host, timeout, agent_event_queue, agent_id)
     except Exception:
         logger.exception("Unhandled exception occurred while running ping")
         return EMPTY_PING_SCAN
 
 
-def _ping(host: str, timeout: float, agent_event_queue: IAgentEventQueue) -> PingScanData:
+def _ping(
+    host: str, timeout: float, agent_event_queue: IAgentEventQueue, agent_id: AgentID
+) -> PingScanData:
     if is_windows_os():
         timeout = math.floor(timeout * 1000)
 
@@ -39,7 +43,7 @@ def _ping(host: str, timeout: float, agent_event_queue: IAgentEventQueue) -> Pin
     ping_scan_data = _process_ping_command_output(ping_command_output)
     logger.debug(f"{host} - {ping_scan_data}")
 
-    ping_scan_event = _generate_ping_scan_event(host, ping_scan_data, event_timestamp)
+    ping_scan_event = _generate_ping_scan_event(host, ping_scan_data, event_timestamp, agent_id)
     agent_event_queue.publish(ping_scan_event)
 
     return ping_scan_data
@@ -103,10 +107,10 @@ def _build_ping_command(host: str, timeout: float):
 
 
 def _generate_ping_scan_event(
-    host: str, ping_scan_data: PingScanData, event_timestamp: float
+    host: str, ping_scan_data: PingScanData, event_timestamp: float, agent_id: AgentID
 ) -> PingScanEvent:
     return PingScanEvent(
-        source=get_agent_id(),
+        source=agent_id,
         target=IPv4Address(host),
         timestamp=event_timestamp,
         response_received=ping_scan_data.response_received,

@@ -10,10 +10,9 @@ from egg_timer import EggTimer
 
 from common.agent_events import TCPScanEvent
 from common.event_queue import IAgentEventQueue
-from common.types import NetworkPort, PortStatus
+from common.types import AgentID, NetworkPort, PortStatus
 from infection_monkey.i_puppet import PortScanData, PortScanDataDict
 from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT
-from infection_monkey.utils.ids import get_agent_id
 
 logger = logging.getLogger(__name__)
 
@@ -26,9 +25,10 @@ def scan_tcp_ports(
     ports_to_scan: Collection[NetworkPort],
     timeout: float,
     agent_event_queue: IAgentEventQueue,
+    agent_id: AgentID,
 ) -> PortScanDataDict:
     try:
-        return _scan_tcp_ports(host, ports_to_scan, timeout, agent_event_queue)
+        return _scan_tcp_ports(host, ports_to_scan, timeout, agent_event_queue, agent_id)
     except Exception:
         logger.exception("Unhandled exception occurred while trying to scan tcp ports")
         return EMPTY_PORT_SCAN
@@ -39,24 +39,28 @@ def _scan_tcp_ports(
     ports_to_scan: Collection[NetworkPort],
     timeout: float,
     agent_event_queue: IAgentEventQueue,
+    agent_id: AgentID,
 ) -> PortScanDataDict:
     event_timestamp, open_ports = _check_tcp_ports(host, ports_to_scan, timeout)
 
     port_scan_data = _build_port_scan_data(ports_to_scan, open_ports)
 
-    tcp_scan_event = _generate_tcp_scan_event(host, port_scan_data, event_timestamp)
+    tcp_scan_event = _generate_tcp_scan_event(host, port_scan_data, event_timestamp, agent_id)
     agent_event_queue.publish(tcp_scan_event)
 
     return port_scan_data
 
 
 def _generate_tcp_scan_event(
-    host: str, port_scan_data_dict: PortScanDataDict, event_timestamp: float
+    host: str,
+    port_scan_data_dict: PortScanDataDict,
+    event_timestamp: float,
+    agent_id: AgentID,
 ):
     port_statuses = {port: psd.status for port, psd in port_scan_data_dict.items()}
 
     return TCPScanEvent(
-        source=get_agent_id(),
+        source=agent_id,
         target=IPv4Address(host),
         timestamp=event_timestamp,
         ports=port_statuses,

@@ -8,6 +8,7 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAK
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
+from common.types import AgentID
 from infection_monkey.i_puppet import IncompatibleOperatingSystemError, PingScanData, TargetHost
 from infection_monkey.puppet import PluginCompatabilityVerifier, PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
@@ -51,6 +52,7 @@ def puppet(
         agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
         plugin_compatability_verifier=mock_plugin_compatability_verifier,
+        agent_id=AgentID("4277aa81-660b-4673-b96c-443ed525b4d0"),
     )
 
 
