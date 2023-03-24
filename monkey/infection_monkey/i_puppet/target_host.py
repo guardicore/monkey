@@ -1,12 +1,12 @@
 import pprint
 from ipaddress import IPv4Address
-from typing import Dict, Optional
+from typing import Dict, Optional, Set
 
 from pydantic import Field
 
 from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel
-from common.types import NetworkPort
+from common.types import NetworkPort, PortStatus
 
 from . import PortScanData
 
@@ -14,6 +14,14 @@ from . import PortScanData
 class TargetHostPorts(MutableInfectionMonkeyBaseModel):
     tcp_ports: Dict[NetworkPort, PortScanData] = Field(default={})
     udp_ports: Dict[NetworkPort, PortScanData] = Field(default={})
+
+    @property
+    def closed_tcp_ports(self) -> Set[NetworkPort]:
+        return {
+            port
+            for port, port_scan_data in self.tcp_ports.items()
+            if port_scan_data.status == PortStatus.CLOSED
+        }
 
 
 class TargetHost(MutableInfectionMonkeyBaseModel):
