@@ -14,6 +14,7 @@ from tests.utils import is_user_admin
 
 from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
 from common.event_queue import AgentEventSubscriber, IAgentEventQueue
+from common.types import AgentID
 from infection_monkey.payload.ransomware.consts import README_FILE_NAME, README_SRC
 from infection_monkey.payload.ransomware.ransomware import Ransomware
 from infection_monkey.payload.ransomware.ransomware_options import RansomwareOptions
@@ -64,6 +65,7 @@ def build_ransomware(
             file_selector,
             leave_readme,
             agent_event_queue_spy,
+            AgentID("8f53f4fb-2d33-465a-aa9c-de704a7e42b3"),
         )
 
     return inner

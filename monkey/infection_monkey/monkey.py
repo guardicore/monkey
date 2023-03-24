@@ -461,7 +461,9 @@ class InfectionMonkey:
         )
 
         puppet.load_plugin(
-            AgentPluginType.PAYLOAD, "ransomware", RansomwarePayload(self._agent_event_queue)
+            AgentPluginType.PAYLOAD,
+            "ransomware",
+            RansomwarePayload(self._agent_event_queue, self._agent_id),
         )
 
         return puppet
