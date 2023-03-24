@@ -152,7 +152,7 @@ class InfectionMonkey:
             self._island_api_client, self._manager
         )
 
-        self._heart = Heart(self._island_api_client)
+        self._heart = Heart(self._island_api_client, self._agent_id)
         self._heart.start()
 
         self._current_depth = self._opts.depth
