@@ -42,9 +42,9 @@ def test_relay_users_added(handler):
 
 
 def test_relay_users_time_out():
-    handler = RelayUserHandler(client_disconnect_timeout=0.001)
+    handler = RelayUserHandler(client_disconnect_timeout=0.0001)
 
     handler.add_relay_user(USER_ADDRESS)
-    sleep(0.01)
+    sleep(0.02)
 
     assert not handler.has_connected_users()
