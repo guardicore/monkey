@@ -60,12 +60,14 @@ def test_port_scan_data_dict_set__invalid_port(invalid_port):
 
 def test_closed_tcp_ports():
     expected_closed_ports = {2, 4}
-    tcp_ports = {
-        1: PortScanData(port=1, status=PortStatus.OPEN),
-        2: PortScanData(port=2, status=PortStatus.CLOSED),
-        3: PortScanData(port=3, status=PortStatus.OPEN),
-        4: PortScanData(port=4, status=PortStatus.CLOSED),
-    }
+    tcp_ports = PortScanDataDict(
+        {
+            1: PortScanData(port=1, status=PortStatus.OPEN),
+            2: PortScanData(port=2, status=PortStatus.CLOSED),
+            3: PortScanData(port=3, status=PortStatus.OPEN),
+            4: PortScanData(port=4, status=PortStatus.CLOSED),
+        }
+    )
     thp = TargetHostPorts(tcp_ports=tcp_ports)
 
     assert thp.closed_tcp_ports == expected_closed_ports
