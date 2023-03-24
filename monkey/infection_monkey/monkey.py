@@ -402,6 +402,7 @@ class InfectionMonkey:
             self._propagation_credentials_repository,
             self._tcp_port_selector,
             otp_provider,
+            self._agent_id,
         )
         plugin_compatability_verifier = PluginCompatabilityVerifier(
             self._island_api_client, HARD_CODED_EXPLOITER_MANIFESTS
