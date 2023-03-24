@@ -33,14 +33,6 @@ class TargetHostPorts(MutableInfectionMonkeyBaseModel):
     tcp_ports: PortScanDataDict = Field(default_factory=PortScanDataDict)
     udp_ports: PortScanDataDict = Field(default_factory=PortScanDataDict)
 
-    @property
-    def closed_tcp_ports(self) -> Set[NetworkPort]:
-        return {
-            port
-            for port, port_scan_data in self.tcp_ports.items()
-            if port_scan_data.status == PortStatus.CLOSED
-        }
-
 
 class TargetHost(MutableInfectionMonkeyBaseModel):
     class Config(MutableInfectionMonkeyModelConfig):
