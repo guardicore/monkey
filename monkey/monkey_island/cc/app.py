@@ -34,11 +34,7 @@ from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.version import Version
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.services import (
-    register_agent_configuration_resources,
-    register_authentication_resources,
-    setup_authentication,
-)
+from monkey_island.cc.services import register_agent_configuration_resources, setup_authentication
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
@@ -67,14 +63,12 @@ def serve_home():
     return serve_static_file(HOME_FILE)
 
 
-def init_app_config(app, data_dir: Path):
+def init_app_config(app):
     # By default, Flask sorts keys of JSON objects alphabetically.
     # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config["JSON_SORT_KEYS"] = False
 
     app.url_map.strict_slashes = False
-
-    setup_authentication(app, data_dir)
 
 
 def init_app_url_rules(app):
@@ -143,12 +137,11 @@ def init_app(
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
 
-    init_app_config(app, data_dir)
+    init_app_config(app)
     init_app_url_rules(app)
 
-    register_authentication_resources(api, container)
-
     flask_resource_manager = FlaskDIWrapper(api, container)
+    setup_authentication(app, api, data_dir, container)
     init_api_resources(flask_resource_manager)
 
     return app

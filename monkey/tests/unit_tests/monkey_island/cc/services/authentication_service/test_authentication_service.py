@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, call
 
 import pytest
+from flask_security import UserDatastore
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
@@ -31,12 +32,19 @@ def mock_island_event_queue(autouse=True) -> IIslandEventQueue:
 
 
 @pytest.fixture
+def mock_user_datastore(autouse=True) -> UserDatastore:
+    return MagicMock(spec=UserDatastore)
+
+
+@pytest.fixture
 def authentication_facade(
     mock_flask_app,
     mock_repository_encryptor: ILockableEncryptor,
     mock_island_event_queue: IIslandEventQueue,
 ) -> AuthenticationFacade:
-    return AuthenticationFacade(mock_repository_encryptor, mock_island_event_queue)
+    return AuthenticationFacade(
+        mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
+    )
 
 
 def test_needs_registration__true(authentication_facade: AuthenticationFacade):
@@ -70,15 +78,6 @@ def test_handle_successful_registration(
             call(topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET),
         ]
     )
-
-
-def test_handle_sucessful_logout(
-    mock_repository_encryptor: ILockableEncryptor,
-    authentication_facade: AuthenticationFacade,
-):
-    authentication_facade.handle_successful_logout()
-
-    mock_repository_encryptor.lock.assert_called_once()
 
 
 def test_handle_sucessful_login(

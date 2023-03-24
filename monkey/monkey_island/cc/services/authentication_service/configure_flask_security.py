@@ -19,7 +19,7 @@ SECRET_FILE_NAME = ".flask_security_configuration.json"
 AUTH_EXPIRATION_TIME = 30 * 60  # 30 minutes authentication token expiration time
 
 
-def setup_authentication(app, data_dir: Path):
+def configure_flask_security(app, data_dir: Path) -> MongoEngineUserDatastore:
     _setup_flask_mongo(app)
 
     flask_security_config = _generate_flask_security_configuration(data_dir)
@@ -67,6 +67,8 @@ def setup_authentication(app, data_dir: Path):
     app.security._want_json = lambda _request: True
 
     app.session_interface = _disable_session_cookies()
+
+    return user_datastore
 
 
 def _setup_flask_mongo(app):
