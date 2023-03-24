@@ -413,12 +413,12 @@ class InfectionMonkey:
         puppet.load_plugin(
             AgentPluginType.CREDENTIAL_COLLECTOR,
             "MimikatzCollector",
-            MimikatzCredentialCollector(self._agent_event_queue),
+            MimikatzCredentialCollector(self._agent_event_queue, self._agent_id),
         )
         puppet.load_plugin(
             AgentPluginType.CREDENTIAL_COLLECTOR,
             "SSHCollector",
-            SSHCredentialCollector(self._agent_event_queue),
+            SSHCredentialCollector(self._agent_event_queue, self._agent_id),
         )
 
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "http", HTTPFingerprinter())
