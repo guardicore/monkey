@@ -8,8 +8,8 @@ from common.agent_configuration.agent_sub_configurations import (
     NetworkScanConfiguration,
     PluginConfiguration,
 )
-from common.types import Event, NetworkPort, PortStatus
-from infection_monkey.i_puppet import FingerprintData, IPuppet, PingScanData, PortScanData
+from common.types import Event, PortStatus
+from infection_monkey.i_puppet import FingerprintData, IPuppet, PingScanData, PortScanDataDict
 from infection_monkey.network import NetworkAddress
 from infection_monkey.utils.threading import interruptible_iter, run_worker_threads
 
@@ -86,7 +86,7 @@ class IPScanner:
             )
 
     @staticmethod
-    def port_scan_found_open_port(port_scan_data: Dict[NetworkPort, PortScanData]):
+    def port_scan_found_open_port(port_scan_data: PortScanDataDict):
         return any(psd.status == PortStatus.OPEN for psd in port_scan_data.values())
 
     def _run_fingerprinters(
@@ -94,7 +94,7 @@ class IPScanner:
         ip: str,
         fingerprinters: Sequence[PluginConfiguration],
         ping_scan_data: PingScanData,
-        port_scan_data: Dict[NetworkPort, PortScanData],
+        port_scan_data: PortScanDataDict,
         stop: Event,
     ) -> Dict[str, FingerprintData]:
         fingerprint_data = {}

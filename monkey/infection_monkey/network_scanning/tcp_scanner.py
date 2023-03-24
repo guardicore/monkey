@@ -11,14 +11,14 @@ from egg_timer import EggTimer
 from common.agent_events import TCPScanEvent
 from common.event_queue import IAgentEventQueue
 from common.types import NetworkPort, PortStatus
-from infection_monkey.i_puppet import PortScanData
+from infection_monkey.i_puppet import PortScanData, PortScanDataDict
 from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT
 from infection_monkey.utils.ids import get_agent_id
 
 logger = logging.getLogger(__name__)
 
 POLL_INTERVAL = 0.5
-EMPTY_PORT_SCAN: Dict[NetworkPort, PortScanData] = {}
+EMPTY_PORT_SCAN = PortScanDataDict()
 
 
 def scan_tcp_ports(
@@ -26,7 +26,7 @@ def scan_tcp_ports(
     ports_to_scan: Collection[NetworkPort],
     timeout: float,
     agent_event_queue: IAgentEventQueue,
-) -> Dict[NetworkPort, PortScanData]:
+) -> PortScanDataDict:
     try:
         return _scan_tcp_ports(host, ports_to_scan, timeout, agent_event_queue)
     except Exception:
@@ -39,7 +39,7 @@ def _scan_tcp_ports(
     ports_to_scan: Collection[NetworkPort],
     timeout: float,
     agent_event_queue: IAgentEventQueue,
-) -> Dict[NetworkPort, PortScanData]:
+) -> PortScanDataDict:
     event_timestamp, open_ports = _check_tcp_ports(host, ports_to_scan, timeout)
 
     port_scan_data = _build_port_scan_data(ports_to_scan, open_ports)
@@ -51,9 +51,9 @@ def _scan_tcp_ports(
 
 
 def _generate_tcp_scan_event(
-    host: str, port_scan_data: Dict[NetworkPort, PortScanData], event_timestamp: float
+    host: str, port_scan_data_dict: PortScanDataDict, event_timestamp: float
 ):
-    port_statuses = {port: psd.status for port, psd in port_scan_data.items()}
+    port_statuses = {port: psd.status for port, psd in port_scan_data_dict.items()}
 
     return TCPScanEvent(
         source=get_agent_id(),
@@ -65,8 +65,8 @@ def _generate_tcp_scan_event(
 
 def _build_port_scan_data(
     ports_to_scan: Iterable[NetworkPort], open_ports: Mapping[NetworkPort, str]
-) -> Dict[NetworkPort, PortScanData]:
-    port_scan_data = {}
+) -> PortScanDataDict:
+    port_scan_data = PortScanDataDict()
     for port in ports_to_scan:
         if port in open_ports:
             banner = open_ports[port]
