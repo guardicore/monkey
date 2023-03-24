@@ -17,6 +17,14 @@ class PortScanDataDict(UserDict[NetworkPort, PortScanData]):
     def __setitem__(self, key: NetworkPort, value: PortScanData):
         super().__setitem__(key, value)
 
+    @property
+    def closed(self) -> Set[NetworkPort]:
+        return {
+            port
+            for port, port_scan_data in self.data.items()
+            if port_scan_data.status == PortStatus.CLOSED
+        }
+
 
 class TargetHostPorts(MutableInfectionMonkeyBaseModel):
     class Config(MutableInfectionMonkeyModelConfig):
