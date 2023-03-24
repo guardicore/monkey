@@ -9,12 +9,12 @@ from serpentarium import MultiUsePlugin, PluginLoader, PluginThreadName, SingleU
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
 from common.event_queue import IAgentEventPublisher
+from common.types import AgentID
 from infection_monkey.exploit import IAgentBinaryRepository, IAgentOTPProvider
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIRequestError
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
-from infection_monkey.utils.ids import get_agent_id
 
 from . import PluginSourceExtractor
 
@@ -35,6 +35,7 @@ class PluginRegistry:
         propagation_credentials_repository: IPropagationCredentialsRepository,
         tcp_port_selector: TCPPortSelector,
         otp_provider: IAgentOTPProvider,
+        agent_id: AgentID,
     ):
         """
         `self._registry` looks like -
@@ -57,7 +58,7 @@ class PluginRegistry:
         self._tcp_port_selector = tcp_port_selector
         self._otp_provider = otp_provider
 
-        self._agent_id = get_agent_id()
+        self._agent_id = agent_id
         self._lock = RLock()
 
     def get_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> Any:
