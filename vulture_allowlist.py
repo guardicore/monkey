@@ -11,7 +11,7 @@ from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit import IslandAPIAgentOTPProvider
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
-from infection_monkey.exploit.tools import generate_brute_force_credentials, secret_type_filter
+from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.island_api_client import http_island_api_client
@@ -19,6 +19,7 @@ from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Agent, IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
+from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
 # Pydantic configurations are not picked up
@@ -132,15 +133,11 @@ HadoopPlugin
 
 # User model fields
 User.active
-User.password_hash
 User.fs_uniquifier
 User.roles
 User.get_by_id
 User.email
-Role.permissions
 
-# Remove after #2952
-generate_brute_force_credentials
 secret_type_filter
 
 # Remove after #3077
