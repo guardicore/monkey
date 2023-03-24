@@ -1,3 +1,5 @@
+from flask_security import MongoEngineUserDatastore
+
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
@@ -14,9 +16,11 @@ class AuthenticationFacade:
         self,
         repository_encryptor: ILockableEncryptor,
         island_event_queue: IIslandEventQueue,
+        user_datastore: MongoEngineUserDatastore,
     ):
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
+        self._datastore = user_datastore
 
     def needs_registration(self) -> bool:
         """
@@ -25,6 +29,12 @@ class AuthenticationFacade:
         :return: Whether registration is required on the Island
         """
         return not User.objects.first()
+
+    def revoke_all_user_tokens(self, user: User):
+        """
+        Revokes all tokens for a specific user
+        """
+        self._datastore.set_uniquifier(user)
 
     def handle_successful_registration(self, username: str, password: str):
         self._reset_island_data()

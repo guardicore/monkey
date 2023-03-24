@@ -2,6 +2,7 @@ import logging
 
 from flask import Response, make_response
 from flask.typing import ResponseValue
+from flask_login import current_user
 from flask_security.views import logout
 
 from monkey_island.cc.flask_utils import AbstractResource, responses
@@ -23,6 +24,7 @@ class Logout(AbstractResource):
 
     def post(self):
         try:
+            self._authentication_facade.revoke_all_user_tokens(current_user)
             response: ResponseValue = logout()
         except Exception:
             return responses.make_response_to_invalid_request()
