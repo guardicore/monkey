@@ -2,6 +2,7 @@ import logging
 from pprint import pformat
 
 from common.event_queue import IAgentEventQueue
+from common.types import AgentID
 from infection_monkey.utils.bit_manipulators import flip_bits
 
 from . import readme_dropper
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 def build_ransomware(
     options: dict,
     agent_event_queue: IAgentEventQueue,
+    agent_id: AgentID,
 ):
     logger.debug(f"Ransomware configuration:\n{pformat(options)}")
     ransomware_options = RansomwareOptions(options)
@@ -28,7 +30,7 @@ def build_ransomware(
     leave_readme = _build_leave_readme()
 
     return Ransomware(
-        ransomware_options, file_encryptor, file_selector, leave_readme, agent_event_queue
+        ransomware_options, file_encryptor, file_selector, leave_readme, agent_event_queue, agent_id
     )
 
 
