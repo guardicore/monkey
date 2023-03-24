@@ -1,14 +1,21 @@
 import pprint
+from collections import UserDict
 from ipaddress import IPv4Address
 from typing import Dict, Optional, Set
 
-from pydantic import Field
+from pydantic import Field, validate_arguments
 
 from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel
 from common.types import NetworkPort, PortStatus
 
 from . import PortScanData
+
+
+class PortScanDataDict(UserDict[NetworkPort, PortScanData]):
+    @validate_arguments
+    def __setitem__(self, key: NetworkPort, value: PortScanData):
+        super().__setitem__(key, value)
 
 
 class TargetHostPorts(MutableInfectionMonkeyBaseModel):
