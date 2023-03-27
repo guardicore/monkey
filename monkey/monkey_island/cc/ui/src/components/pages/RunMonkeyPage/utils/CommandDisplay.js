@@ -48,7 +48,7 @@ export default function commandDisplay(props) {
               <FontAwesomeIcon icon={faClipboard}/>
             </Button>
           </CopyToClipboard>
-          <code>{selectedCommand.command}</code>
+          <code style={{whiteSpace: 'pre-wrap'}}>{selectedCommand.command}</code>
         </div>
       </Card>
     </div>
