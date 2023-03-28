@@ -16,6 +16,7 @@ GET_LOG_ENDPOINT = "api/agent-logs"
 ISLAND_LOG_ENDPOINT = "api/island/log"
 GET_MACHINES_ENDPOINT = "api/machines"
 GET_AGENT_EVENTS_ENDPOINT = "api/agent-events"
+LOGOUT_ENDPOINT = "api/logout"
 
 LOGGER = logging.getLogger(__name__)
 
@@ -177,3 +178,10 @@ class MonkeyIslandClient(object):
     def is_all_monkeys_dead(self):
         agents = self.get_agents()
         return all((a.stop_time is not None for a in agents))
+
+    def logout(self):
+        if self.requests.post(LOGOUT_ENDPOINT, data=None).ok:
+            LOGGER.info("Logged out of the Island.")
+        else:
+            LOGGER.error("Failed to log out of the Island.")
+            assert False
