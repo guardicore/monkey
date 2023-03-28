@@ -103,6 +103,7 @@ WMI_AND_MIMIKATZ = {
 SMB_PTH = {"europe-west3-a": ["mimikatz-15"]}
 
 GCP_SINGLE_TEST_LIST = {
+    "test_logout": {},
     "test_depth_2_a": DEPTH_2_A,
     "test_depth_1_a": DEPTH_1_A,
     "test_depth_3_a": DEPTH_3_A,

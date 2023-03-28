@@ -88,6 +88,37 @@ def island_client(monkey_island_requests):
     yield island_client_object
 
 
+@pytest.fixture
+def simple_island_client(monkey_island_requests):
+    client_established = False
+    try:
+        island_client_object = MonkeyIslandClient(monkey_island_requests)
+        client_established = island_client_object.get_api_status()
+    except Exception:
+        logging.exception("Got an exception while trying to establish connection to the Island.")
+    finally:
+        if not client_established:
+            pytest.exit("BB tests couldn't establish communication to the island.")
+    yield island_client_object
+
+
+def test_logout(simple_island_client):
+    simple_island_client.login()
+    simple_island_client.logout()
+
+    with pytest.raises(Exception):
+        simple_island_client.get_agents()
+
+    with pytest.raises(Exception):
+        simple_island_client.get_machines()
+
+    with pytest.raises(Exception):
+        simple_island_client.get_island_log()
+
+    with pytest.raises(Exception):
+        simple_island_client.run_monkey_local()
+
+
 # NOTE: These test methods are ordered to give time for the slower zoo machines
 # to boot up and finish starting services.
 @pytest.mark.usefixtures("island_client")
