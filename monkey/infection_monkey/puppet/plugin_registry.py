@@ -134,6 +134,8 @@ class MultiprocessingPluginWrapper(MultiUsePlugin):
         # HERE BE DRAGONS! multiprocessing.Process.start() is not thread-safe on Linux when used
         # with the "spawn" method. See https://github.com/pyinstaller/pyinstaller/issues/7410 for
         # more details.
+        # UPDATE: This has been resolved in PyInstaller 5.8.0. Consider removing this lock, but
+        # leaving a comment here for future reference.
         with MultiprocessingPluginWrapper.process_start_lock:
             logger.debug("Invoking plugin.start()")
             plugin.start(**kwargs)
