@@ -18,7 +18,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 ### Fixed
-- Invalid configuration submit bug. #1301
+- A UI deficiency where invalid configurations could be submitted to the
+  backend. #1301, #2989
 - Notification spam bug. #2731
 - Agent propagator crashes if exploiters malfunction. #2992
 - Configuration order not preserved in debugging output. #2860
