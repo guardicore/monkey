@@ -38,6 +38,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Replaced our bespoke authentication solution with `flask-security-too`.
   #2049, #2157, #3078, #3138
 - Upgraded 3rd-party dependencies. #2705, #2970, #2865, #3125
+- Fixed a potential XSS issue in exploiter plugins. #3081
 
 ## [2.0.0] - 2023-02-08
 ### Added
