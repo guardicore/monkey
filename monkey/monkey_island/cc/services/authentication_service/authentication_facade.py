@@ -30,11 +30,18 @@ class AuthenticationFacade:
         """
         return not User.objects.first()
 
-    def revoke_all_user_tokens(self, user: User):
+    def revoke_all_tokens_for_user(self, user: User):
         """
         Revokes all tokens for a specific user
         """
         self._datastore.set_uniquifier(user)
+
+    def revoke_all_tokens_for_all_users(self):
+        """
+        Revokes all tokens for all users
+        """
+        for user in User.objects:
+            self.revoke_all_tokens_for_user(user)
 
     def handle_successful_registration(self, username: str, password: str):
         self._reset_island_data()

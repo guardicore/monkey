@@ -24,7 +24,7 @@ class Logout(AbstractResource):
 
     def post(self):
         try:
-            self._authentication_facade.revoke_all_user_tokens(current_user)
+            self._authentication_facade.revoke_all_tokens_for_user(current_user)
             response: ResponseValue = logout()
         except Exception:
             return responses.make_response_to_invalid_request()
