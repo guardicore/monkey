@@ -6,7 +6,6 @@ from urllib3 import disable_warnings
 
 from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials
-from common.types import AgentID
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 
@@ -27,8 +26,7 @@ def handle_island_api_errors(func):
 
 
 class ControlChannel(IControlChannel):
-    def __init__(self, server: str, agent_id: AgentID, api_client: IIslandAPIClient):
-        self._agent_id = agent_id
+    def __init__(self, server: str, api_client: IIslandAPIClient):
         self._control_channel_server = server
         self._island_api_client = api_client
 
@@ -37,7 +35,7 @@ class ControlChannel(IControlChannel):
         if not self._control_channel_server:
             logger.error("Agent should stop because it can't connect to the C&C server.")
             return True
-        agent_signals = self._island_api_client.get_agent_signals(self._agent_id)
+        agent_signals = self._island_api_client.get_agent_signals()
         return agent_signals.terminate is not None
 
     @handle_island_api_errors

@@ -7,7 +7,6 @@ from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.credentials import Credentials
-from common.types import AgentID
 
 from . import IIslandAPIClient, IslandAPIError
 
@@ -46,8 +45,8 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
     ) -> AgentPluginManifest:
         return self._island_api_client.get_agent_plugin_manifest(plugin_type, plugin_name)
 
-    def get_agent_signals(self, agent_id: AgentID) -> AgentSignals:
-        return self._island_api_client.get_agent_signals(agent_id)
+    def get_agent_signals(self) -> AgentSignals:
+        return self._island_api_client.get_agent_signals()
 
     def get_agent_configuration_schema(self) -> Dict[str, Any]:
         return self._island_api_client.get_agent_configuration_schema()
@@ -72,8 +71,8 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
     def send_events(self, events: Sequence[AbstractAgentEvent]):
         return self._island_api_client.send_events(events)
 
-    def send_heartbeat(self, agent_id: AgentID, timestamp: float):
-        return self._island_api_client.send_heartbeat(agent_id, timestamp)
+    def send_heartbeat(self, timestamp: float):
+        return self._island_api_client.send_heartbeat(timestamp)
 
-    def send_log(self, agent_id: AgentID, log_contents: str):
-        return self._island_api_client.send_log(agent_id, log_contents)
+    def send_log(self, log_contents: str):
+        return self._island_api_client.send_log(log_contents)

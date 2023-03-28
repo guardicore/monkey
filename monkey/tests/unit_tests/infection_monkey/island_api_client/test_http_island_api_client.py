@@ -88,7 +88,7 @@ def agent_event_serializer_registry():
 
 
 def build_api_client(http_client):
-    return HTTPIslandAPIClient(agent_event_serializer_registry(), http_client)
+    return HTTPIslandAPIClient(agent_event_serializer_registry(), http_client, AGENT_ID)
 
 
 def _build_client_with_json_response(response):
@@ -205,7 +205,7 @@ def test_island_api_client__unhandled_exceptions():
     api_client = build_api_client(http_client_stub)
 
     with pytest.raises(OSError):
-        api_client.get_agent_signals(agent_id=AGENT_ID)
+        api_client.get_agent_signals()
 
 
 def test_island_api_client_get_otp():
@@ -229,7 +229,7 @@ def test_island_api_client__handled_exceptions():
     api_client = build_api_client(http_client_stub)
 
     with pytest.raises(IslandAPIResponseParsingError):
-        api_client.get_agent_signals(agent_id=AGENT_ID)
+        api_client.get_agent_signals()
 
 
 def test_island_api_client_get_agent_plugin_manifest():
@@ -259,7 +259,7 @@ def test_island_api_client_get_agent_signals(timestamp):
     expected_agent_signals = AgentSignals(terminate=timestamp)
     api_client = _build_client_with_json_response({"terminate": timestamp})
 
-    actual_agent_signals = api_client.get_agent_signals(agent_id=AGENT_ID)
+    actual_agent_signals = api_client.get_agent_signals()
 
     assert actual_agent_signals == expected_agent_signals
 
@@ -269,7 +269,7 @@ def test_island_api_client_get_agent_signals__bad_json(timestamp):
     api_client = _build_client_with_json_response({"terminate": timestamp, "discombobulate": 20})
 
     with pytest.raises(IslandAPIResponseParsingError):
-        api_client.get_agent_signals(agent_id=AGENT_ID)
+        api_client.get_agent_signals()
 
 
 def test_island_api_client_get_agent_configuration_schema():

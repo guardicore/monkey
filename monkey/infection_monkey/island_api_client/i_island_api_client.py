@@ -6,7 +6,6 @@ from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.credentials import Credentials
-from common.types import AgentID
 
 
 class IIslandAPIClient(ABC):
@@ -105,11 +104,10 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_agent_signals(self, agent_id: AgentID) -> AgentSignals:
+    def get_agent_signals(self) -> AgentSignals:
         """
-        Gets an agent's signals from the island
+        Gets the agent's signals from the island
 
-        :param agent_id: ID of the agent whose signals should be retrieved
         :raises IslandAPIAuthenticationError: If the client is not authorized to access this
                                               endpoint
         :raises IslandAPIConnectionError: If the client could not connect to the island
@@ -197,11 +195,10 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def send_heartbeat(self, agent_id: AgentID, timestamp: float):
+    def send_heartbeat(self, timestamp: float):
         """
         Send a "heartbeat" to the Island to indicate that the agent is still alive
 
-        :param agent_id: The ID of the agent who is sending a heartbeat
         :param timestamp: The timestamp of the agent's heartbeat
         :raises IslandAPIAuthenticationError: If the client is not authorized to access this
                                               endpoint
@@ -216,11 +213,10 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def send_log(self, agent_id: AgentID, log_contents: str):
+    def send_log(self, log_contents: str):
         """
         Send the contents of the agent's log to the island
 
-        :param agent_id: The ID of the agent whose logs are being sent
         :param log_contents: The contents of the agent's log
         :raises IslandAPIAuthenticationError: If the client is not authorized to access this
                                               endpoint

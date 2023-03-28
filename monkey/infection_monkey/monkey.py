@@ -142,9 +142,7 @@ class InfectionMonkey:
         self._island_address, self._island_api_client = self._connect_to_island_api()
         self._register_agent()
 
-        self._control_channel = ControlChannel(
-            str(self._island_address), self._agent_id, self._island_api_client
-        )
+        self._control_channel = ControlChannel(str(self._island_address), self._island_api_client)
         self._legacy_propagation_credentials_repository = (
             AggregatingPropagationCredentialsRepository(self._control_channel)
         )
@@ -202,7 +200,7 @@ class InfectionMonkey:
         )
 
         http_island_api_client_factory = HTTPIslandAPIClientFactory(
-            self._agent_event_serializer_registry
+            self._agent_event_serializer_registry, self._agent_id
         )
 
         server, island_api_client = self._select_server(
@@ -553,7 +551,7 @@ class InfectionMonkey:
         except FileNotFoundError:
             logger.exception(f"Log file {self._log_path} is not found.")
 
-        self._island_api_client.send_log(self._agent_id, log_contents)
+        self._island_api_client.send_log(log_contents)
 
     def _delete_plugin_dir(self):
         if not self._plugin_dir.exists():
