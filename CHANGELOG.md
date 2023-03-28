@@ -34,6 +34,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   execute a DoS attack against agents. #2817
 - Replaced our bespoke authentication solution with `flask-security-too`.
   #2049, #2157, #3078, #3138
+- Upgraded 3rd-party dependencies. #2705, #2970, #2865, #3125
 
 ## [2.0.0] - 2023-02-08
 ### Added
