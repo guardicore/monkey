@@ -14,6 +14,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Migrated the hard-coded SMB exploiter to a plugin. #2952
+- Python version from 3.7 to 3.11.2. #2705
 
 ### Removed
 ### Fixed
