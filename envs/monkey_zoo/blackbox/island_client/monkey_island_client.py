@@ -6,7 +6,7 @@ from typing import List, Mapping, Optional, Sequence
 
 from common.credentials import Credentials
 from common.types import AgentID, MachineID
-from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
+from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 from monkey_island.cc.models import Agent, Machine, TerminateAllAgents
 
@@ -26,8 +26,8 @@ def avoid_race_condition(func):
 
 
 class MonkeyIslandClient(object):
-    def __init__(self, server_address):
-        self.requests = MonkeyIslandRequests(server_address)
+    def __init__(self, requests: IMonkeyIslandRequests):
+        self.requests = requests
 
     def get_api_status(self):
         return self.requests.get("api")
