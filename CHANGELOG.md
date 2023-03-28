@@ -13,6 +13,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `POST /api/agent-otp-login` endpoint. #3076
 
 ### Changed
+- Migrated the hard-coded SMB exploiter to a plugin. #2952
+
 ### Removed
 ### Fixed
 - Invalid configuration submit bug. #1301
