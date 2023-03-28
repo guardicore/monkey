@@ -224,13 +224,14 @@ class Propagator:
         self, exploiter_name: str, host: TargetHost, result: ExploiterResultData
     ):
         if result.propagation_success:
-            logger.info(f"Successfully propagated to {host} using {exploiter_name}")
+            logger.info(f"Successfully propagated to {host.ip} using {exploiter_name}")
         elif result.exploitation_success:
             logger.info(
-                f"Successfully exploited (but did not propagate to) {host} using {exploiter_name}"
+                f"Successfully exploited (but did not propagate to) {host.ip} using "
+                f"{exploiter_name}"
             )
         else:
             logger.info(
-                f"Failed to exploit or propagate to {host} using {exploiter_name}: "
+                f"Failed to exploit or propagate to {host.ip} using {exploiter_name}: "
                 f"{result.error_message}"
             )
