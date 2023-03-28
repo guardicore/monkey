@@ -16,7 +16,7 @@ def setup_authentication(app, api, data_dir: Path, container: DIContainer):
     authentication_facade = _build_authentication_facade(container, datastore)
     register_resources(api, authentication_facade)
     # revoke all old tokens so that the user has to log in again on startup
-    authentication_facade.revoke_all_tokens_for_island_role_users()
+    authentication_facade.revoke_all_tokens_for_all_users()
 
 
 def _build_authentication_facade(container: DIContainer, user_datastore: UserDatastore):

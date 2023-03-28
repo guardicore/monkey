@@ -4,7 +4,6 @@ from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
-from .account_role import AccountRole
 from .user import User
 
 
@@ -37,14 +36,12 @@ class AuthenticationFacade:
         """
         self._datastore.set_uniquifier(user)
 
-    def revoke_all_tokens_for_island_role_users(self):
+    def revoke_all_tokens_for_all_users(self):
         """
-        Revokes all tokens for users which have the ISLAND_INTERFACE role
+        Revokes all tokens for all users
         """
-        island_role = self._datastore.find_or_create_role(name=AccountRole.ISLAND_INTERFACE.name)
         for user in User.objects:
-            if island_role in user.roles:
-                self.revoke_all_tokens_for_user(user)
+            self.revoke_all_tokens_for_user(user)
 
     def handle_successful_registration(self, username: str, password: str):
         self._reset_island_data()
