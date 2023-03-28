@@ -215,11 +215,10 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def send_log(self, agent_id: AgentID, log_contents: str):
+    def send_log(self, log_contents: str):
         """
         Send the contents of the agent's log to the island
 
-        :param agent_id: The ID of the agent whose logs are being sent
         :param log_contents: The contents of the agent's log
         :raises IslandAPIAuthenticationError: If the client is not authorized to access this
                                               endpoint

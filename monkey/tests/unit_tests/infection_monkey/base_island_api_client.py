@@ -5,7 +5,6 @@ from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.credentials import Credentials
-from common.types import AgentID
 from infection_monkey.island_api_client import IIslandAPIClient
 
 
@@ -48,5 +47,5 @@ class BaseIslandAPIClient(IIslandAPIClient):
     def send_heartbeat(self, timestamp: float):
         pass
 
-    def send_log(self, agent_id: AgentID, log_contents: str):
+    def send_log(self, log_contents: str):
         pass

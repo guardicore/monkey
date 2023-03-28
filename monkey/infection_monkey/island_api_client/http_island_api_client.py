@@ -160,8 +160,8 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         data = AgentHeartbeat(timestamp=timestamp).dict(simplify=True)
         self._http_client.post(f"/agent/{self._agent_id}/heartbeat", data)
 
-    def send_log(self, agent_id: AgentID, log_contents: str):
+    def send_log(self, log_contents: str):
         self._http_client.put(
-            f"/agent-logs/{agent_id}",
+            f"/agent-logs/{self._agent_id}",
             log_contents,
         )

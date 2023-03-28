@@ -553,7 +553,7 @@ class InfectionMonkey:
         except FileNotFoundError:
             logger.exception(f"Log file {self._log_path} is not found.")
 
-        self._island_api_client.send_log(self._agent_id, log_contents)
+        self._island_api_client.send_log(log_contents)
 
     def _delete_plugin_dir(self):
         if not self._plugin_dir.exists():
