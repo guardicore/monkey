@@ -26,7 +26,7 @@ class BaseIslandAPIClient(IIslandAPIClient):
     ) -> AgentPluginManifest:
         pass
 
-    def get_agent_signals(self, agent_id: str) -> AgentSignals:
+    def get_agent_signals(self) -> AgentSignals:
         pass
 
     def get_agent_configuration_schema(self) -> Dict[str, Any]:

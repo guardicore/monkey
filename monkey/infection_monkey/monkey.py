@@ -142,9 +142,7 @@ class InfectionMonkey:
         self._island_address, self._island_api_client = self._connect_to_island_api()
         self._register_agent()
 
-        self._control_channel = ControlChannel(
-            str(self._island_address), self._agent_id, self._island_api_client
-        )
+        self._control_channel = ControlChannel(str(self._island_address), self._island_api_client)
         self._legacy_propagation_credentials_repository = (
             AggregatingPropagationCredentialsRepository(self._control_channel)
         )

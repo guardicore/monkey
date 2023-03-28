@@ -103,9 +103,9 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return AgentPluginManifest(**response.json())
 
     @handle_response_parsing_errors
-    def get_agent_signals(self, agent_id: str) -> AgentSignals:
+    def get_agent_signals(self) -> AgentSignals:
         response = self._http_client.get(
-            f"/agent-signals/{agent_id}", timeout=SHORT_REQUEST_TIMEOUT
+            f"/agent-signals/{self._agent_id}", timeout=SHORT_REQUEST_TIMEOUT
         )
 
         return AgentSignals(**response.json())

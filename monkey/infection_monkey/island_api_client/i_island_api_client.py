@@ -6,7 +6,6 @@ from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.credentials import Credentials
-from common.types import AgentID
 
 
 class IIslandAPIClient(ABC):
@@ -105,11 +104,10 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_agent_signals(self, agent_id: AgentID) -> AgentSignals:
+    def get_agent_signals(self) -> AgentSignals:
         """
-        Gets an agent's signals from the island
+        Gets the agent's signals from the island
 
-        :param agent_id: ID of the agent whose signals should be retrieved
         :raises IslandAPIAuthenticationError: If the client is not authorized to access this
                                               endpoint
         :raises IslandAPIConnectionError: If the client could not connect to the island
