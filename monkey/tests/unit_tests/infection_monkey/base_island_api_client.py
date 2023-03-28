@@ -45,7 +45,7 @@ class BaseIslandAPIClient(IIslandAPIClient):
     def send_events(self, events: Sequence[AbstractAgentEvent]):
         pass
 
-    def send_heartbeat(self, agent: AgentID, timestamp: float):
+    def send_heartbeat(self, timestamp: float):
         pass
 
     def send_log(self, agent_id: AgentID, log_contents: str):

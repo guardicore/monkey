@@ -72,8 +72,8 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
     def send_events(self, events: Sequence[AbstractAgentEvent]):
         return self._island_api_client.send_events(events)
 
-    def send_heartbeat(self, agent_id: AgentID, timestamp: float):
-        return self._island_api_client.send_heartbeat(agent_id, timestamp)
+    def send_heartbeat(self, timestamp: float):
+        return self._island_api_client.send_heartbeat(timestamp)
 
     def send_log(self, agent_id: AgentID, log_contents: str):
         return self._island_api_client.send_log(agent_id, log_contents)

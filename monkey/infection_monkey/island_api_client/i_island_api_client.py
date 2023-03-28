@@ -197,11 +197,10 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def send_heartbeat(self, agent_id: AgentID, timestamp: float):
+    def send_heartbeat(self, timestamp: float):
         """
         Send a "heartbeat" to the Island to indicate that the agent is still alive
 
-        :param agent_id: The ID of the agent who is sending a heartbeat
         :param timestamp: The timestamp of the agent's heartbeat
         :raises IslandAPIAuthenticationError: If the client is not authorized to access this
                                               endpoint

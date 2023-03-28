@@ -51,9 +51,11 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
         http_client: HTTPClient,
+        agent_id: AgentID,
     ):
         self._agent_event_serializer_registry = agent_event_serializer_registry
         self._http_client = http_client
+        self._agent_id = agent_id
 
     @handle_response_parsing_errors
     def login(self, otp: OTP):
@@ -154,9 +156,9 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return serialized_events
 
-    def send_heartbeat(self, agent_id: AgentID, timestamp: float):
+    def send_heartbeat(self, timestamp: float):
         data = AgentHeartbeat(timestamp=timestamp).dict(simplify=True)
-        self._http_client.post(f"/agent/{agent_id}/heartbeat", data)
+        self._http_client.post(f"/agent/{self._agent_id}/heartbeat", data)
 
     def send_log(self, agent_id: AgentID, log_contents: str):
         self._http_client.put(

@@ -88,7 +88,7 @@ def agent_event_serializer_registry():
 
 
 def build_api_client(http_client):
-    return HTTPIslandAPIClient(agent_event_serializer_registry(), http_client)
+    return HTTPIslandAPIClient(agent_event_serializer_registry(), http_client, AGENT_ID)
 
 
 def _build_client_with_json_response(response):
