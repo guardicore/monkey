@@ -22,6 +22,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - A bug in the Hadoop exploiter that resulted in speculative execution of
   multiple agents. #2758
 - Formatting of the manual run command when copy/pasting from the web UI. #3115
+- A bug where plugins received an incorrect agent ID. #3119
 
 ### Security
 - Fixed plaintext private key in SSHKey pair list in UI. #2950
