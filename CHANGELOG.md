@@ -32,6 +32,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - MongoDB version from 4.x to 6.0.4. #2706
 - Replaced the `SystemSingleton` component, which could allow local users to
   execute a DoS attack against agents. #2817
+- Replaced our bespoke authentication solution with `flask-security-too`.
+  #2049, #2157, #3078, #3138
 
 ## [2.0.0] - 2023-02-08
 ### Added
