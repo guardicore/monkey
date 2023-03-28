@@ -11,12 +11,14 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add an option to the Hadoop exploiter to try all discovered HTTP ports. #2136
 - `GET /api/agent-otp`. #3076
 - `POST /api/agent-otp-login` endpoint. #3076
+- A smarter brute-forcing strategy for SMB exploiter. #3039
 
 ### Changed
 - Migrated the hard-coded SMB exploiter to a plugin. #2952
 - Python version from 3.7 to 3.11.2. #2705
 
 ### Removed
+
 ### Fixed
 - A UI deficiency where invalid configurations could be submitted to the
   backend. #1301, #2989
