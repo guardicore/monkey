@@ -21,6 +21,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Configuration order not preserved in debugging output. #2860
 - A bug in the Hadoop exploiter that resulted in speculative execution of
   multiple agents. #2758
+- Formatting of the manual run command when copy/pasting from the web UI. #3115
 
 ### Security
 - Fixed plaintext private key in SSHKey pair list in UI. #2950
