@@ -31,4 +31,4 @@ def _revoke_old_tokens(user_datastore: UserDatastore, authentication_facade: Aut
     island_role = user_datastore.find_or_create_role(name=AccountRole.ISLAND_INTERFACE.name)
     for user in User.objects:
         if island_role in user.roles:
-            authentication_facade.revoke_all_user_tokens(user)
+            authentication_facade.revoke_all_tokens_for_user(user)

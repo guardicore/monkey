@@ -30,7 +30,7 @@ class AuthenticationFacade:
         """
         return not User.objects.first()
 
-    def revoke_all_user_tokens(self, user: User):
+    def revoke_all_tokens_for_user(self, user: User):
         """
         Revokes all tokens for a specific user
         """
