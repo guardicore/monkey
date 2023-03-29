@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, call
 
 import pytest
 from flask_security import UserDatastore
+from tests.common import StubDIContainer
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
@@ -9,6 +10,7 @@ from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
 )
+from monkey_island.cc.services.authentication_service.setup import setup_authentication
 from monkey_island.cc.services.authentication_service.user import User
 
 USERNAME = "user1"
@@ -106,3 +108,16 @@ def test_revoke_all_tokens_for_all_users(
 
     assert mock_user_datastore.set_uniquifier.call_count == len(USERS)
     [mock_user_datastore.set_uniquifier.assert_any_call(user) for user in USERS]
+
+
+def test_setup_authentication__revokes_tokens(
+    mock_island_event_queue: IIslandEventQueue,
+    mock_repository_encryptor: ILockableEncryptor,
+    mock_authentication_facade: AuthenticationFacade,
+):
+    container = StubDIContainer()
+    container.register_instance(ILockableEncryptor, mock_repository_encryptor)
+    container.register_instance(IIslandEventQueue, mock_island_event_queue)
+    setup_authentication(MagicMock(), mock_authentication_facade)
+
+    assert mock_authentication_facade.revoke_all_tokens_for_all_users.called
