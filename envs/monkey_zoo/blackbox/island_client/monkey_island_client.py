@@ -179,6 +179,14 @@ class MonkeyIslandClient(object):
         agents = self.get_agents()
         return all((a.stop_time is not None for a in agents))
 
+    def login(self):
+        try:
+            self.requests.login()
+            LOGGER.info("Logged into the Island.")
+        except Exception:
+            LOGGER.error("Failed to log into the Island.")
+            assert False
+
     def logout(self):
         if self.requests.post(LOGOUT_ENDPOINT, data=None).ok:
             LOGGER.info("Logged out of the Island.")
