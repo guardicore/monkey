@@ -14,6 +14,11 @@ from monkey_island.cc.services.authentication_service.user import User
 USERNAME = "user1"
 PASSWORD = "test"
 PASSWORD_HASH = "$2b$12$yQzymz55fRvm8rApg7erluIvIAKSFSDrNIOIrOlxC4sXsDSkeu9z2"
+USERS = [
+    User(username="user1", password="test1", fs_uniquifier="a"),
+    User(username="user2", password="test2", fs_uniquifier="b"),
+    User(username="user3", password="test3", fs_uniquifier="c"),
+]
 
 
 # Some tests have these fixtures as arguments even though `autouse=True`, because
@@ -41,6 +46,7 @@ def authentication_facade(
     mock_flask_app,
     mock_repository_encryptor: ILockableEncryptor,
     mock_island_event_queue: IIslandEventQueue,
+    mock_user_datastore: UserDatastore,
 ) -> AuthenticationFacade:
     return AuthenticationFacade(
         mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
@@ -89,3 +95,14 @@ def test_handle_sucessful_login(
     mock_repository_encryptor.unlock.assert_called_once()
     assert mock_repository_encryptor.unlock.call_args[0][0] != USERNAME
     assert mock_repository_encryptor.unlock.call_args[0][0] != PASSWORD
+
+
+def test_revoke_all_tokens_for_all_users(
+    mock_user_datastore: UserDatastore,
+    authentication_facade: AuthenticationFacade,
+):
+    [user.save() for user in USERS]
+    authentication_facade.revoke_all_tokens_for_all_users()
+
+    assert mock_user_datastore.set_uniquifier.call_count == len(USERS)
+    [mock_user_datastore.set_uniquifier.assert_any_call(user) for user in USERS]
