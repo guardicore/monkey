@@ -1,7 +1,7 @@
 import os
 import re
 from collections.abc import Callable
-from typing import Set, Type
+from typing import Set, Tuple, Type
 
 import flask_restful
 import mongomock
@@ -39,7 +39,34 @@ def create_empty_tmp_file(tmpdir: str) -> Callable:
     return inner
 
 
-def init_mock_security_app():
+def init_mock_security_app() -> Tuple[Flask, flask_restful.Api]:
+    app, api = init_mock_app()
+    user_datastore = init_mock_datastore()
+
+    island_role = user_datastore.find_or_create_role(name=AccountRole.ISLAND_INTERFACE.name)
+    app.security = Security(app, user_datastore)
+    ds = app.security.datastore
+    with app.app_context():
+        ds.create_user(
+            email="unittest@me.com", username="test", password="password", roles=[island_role]
+        )
+        ds.commit()
+
+    set_current_user(app, ds, "unittest@me.com")
+
+    return app, api
+
+
+def init_mock_datastore() -> MongoEngineUserDatastore:
+    db = MongoEngine()
+    db.disconnect(alias="default")
+    db_name = insecure_generate_random_string(8)
+    db.connect(db_name, mongo_client_class=mongomock.MongoClient)
+
+    return MongoEngineUserDatastore(db, User, Role)
+
+
+def init_mock_app() -> Tuple[Flask, flask_restful.Api]:
     app = Flask(__name__)
 
     app.config["SECRET_KEY"] = "test_key"
@@ -67,25 +94,6 @@ def init_mock_security_app():
     api.representations = {"application/json": output_json}
 
     monkey_island.cc.app.init_app_url_rules(app)
-
-    db = MongoEngine()
-    db.disconnect(alias="default")
-    db_name = insecure_generate_random_string(8)
-    db.connect(db_name, mongo_client_class=mongomock.MongoClient)
-
-    user_datastore = MongoEngineUserDatastore(db, User, Role)
-
-    island_role = user_datastore.find_or_create_role(name=AccountRole.ISLAND_INTERFACE.name)
-    app.security = Security(app, user_datastore)
-    ds = app.security.datastore
-    with app.app_context():
-        ds.create_user(
-            email="unittest@me.com", username="test", password="password", roles=[island_role]
-        )
-        ds.commit()
-
-    set_current_user(app, ds, "unittest@me.com")
-
     return app, api
 
 
