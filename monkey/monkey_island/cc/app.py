@@ -3,9 +3,11 @@ from pathlib import Path
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
+from flask_security import UserDatastore
 from werkzeug.exceptions import NotFound
 
 from common import DIContainer
+from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.flask_utils import FlaskDIWrapper
 from monkey_island.cc.resources import (
     AgentBinaries,
@@ -34,7 +36,11 @@ from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.version import Version
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services import register_agent_configuration_resources, setup_authentication
+from monkey_island.cc.services.authentication_service.authentication_facade import (
+    AuthenticationFacade,
+)
 from monkey_island.cc.services.authentication_service.configure_flask_security import (
     configure_flask_security,
 )
@@ -145,7 +151,14 @@ def init_app(
 
     flask_resource_manager = FlaskDIWrapper(api, container)
     datastore = configure_flask_security(app, data_dir)
-    setup_authentication(api, datastore, container)
+    authentication_facade = _build_authentication_facade(container, datastore)
+    setup_authentication(api, authentication_facade)
     init_api_resources(flask_resource_manager)
 
     return app
+
+
+def _build_authentication_facade(container: DIContainer, user_datastore: UserDatastore):
+    repository_encryptor = container.resolve(ILockableEncryptor)
+    island_event_queue = container.resolve(IIslandEventQueue)
+    return AuthenticationFacade(repository_encryptor, island_event_queue, user_datastore)
