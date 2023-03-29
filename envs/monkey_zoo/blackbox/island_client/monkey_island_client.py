@@ -6,7 +6,7 @@ from typing import List, Mapping, Optional, Sequence
 
 from common.credentials import Credentials
 from common.types import AgentID, MachineID
-from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
+from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 from monkey_island.cc.models import Agent, Machine, TerminateAllAgents
 
@@ -16,6 +16,7 @@ GET_LOG_ENDPOINT = "api/agent-logs"
 ISLAND_LOG_ENDPOINT = "api/island/log"
 GET_MACHINES_ENDPOINT = "api/machines"
 GET_AGENT_EVENTS_ENDPOINT = "api/agent-events"
+LOGOUT_ENDPOINT = "api/logout"
 
 LOGGER = logging.getLogger(__name__)
 
@@ -26,8 +27,8 @@ def avoid_race_condition(func):
 
 
 class MonkeyIslandClient(object):
-    def __init__(self, server_address):
-        self.requests = MonkeyIslandRequests(server_address)
+    def __init__(self, requests: IMonkeyIslandRequests):
+        self.requests = requests
 
     def get_api_status(self):
         return self.requests.get("api")
@@ -177,3 +178,18 @@ class MonkeyIslandClient(object):
     def is_all_monkeys_dead(self):
         agents = self.get_agents()
         return all((a.stop_time is not None for a in agents))
+
+    def login(self):
+        try:
+            self.requests.login()
+            LOGGER.info("Logged into the Island.")
+        except Exception:
+            LOGGER.error("Failed to log into the Island.")
+            assert False
+
+    def logout(self):
+        if self.requests.post(LOGOUT_ENDPOINT, data=None).ok:
+            LOGGER.info("Logged out of the Island.")
+        else:
+            LOGGER.error("Failed to log out of the Island.")
+            assert False

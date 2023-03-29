@@ -1,12 +1,24 @@
 import logging
 import os
+from http import HTTPStatus
 from time import sleep
 
 import pytest
 
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
-from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
+from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
+from envs.monkey_zoo.blackbox.island_client.monkey_island_client import (
+    GET_AGENTS_ENDPOINT,
+    GET_MACHINES_ENDPOINT,
+    ISLAND_LOG_ENDPOINT,
+    LOGOUT_ENDPOINT,
+    MonkeyIslandClient,
+)
+from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
+from envs.monkey_zoo.blackbox.island_client.reauthorizing_monkey_island_requests import (
+    ReauthorizingMonkeyIslandRequests,
+)
 from envs.monkey_zoo.blackbox.island_client.test_configuration_parser import get_target_ips
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 from envs.monkey_zoo.blackbox.test_configurations import (
@@ -63,11 +75,17 @@ def wait_machine_bootup():
     sleep(MACHINE_BOOTUP_WAIT_SECONDS)
 
 
+@pytest.fixture
+def monkey_island_requests(island) -> IMonkeyIslandRequests:
+    return MonkeyIslandRequests(island)
+
+
 @pytest.fixture(scope="class")
-def island_client(island):
+def island_client(monkey_island_requests):
     client_established = False
     try:
-        island_client_object = MonkeyIslandClient(island)
+        requests = ReauthorizingMonkeyIslandRequests(monkey_island_requests)
+        island_client_object = MonkeyIslandClient(requests)
         client_established = island_client_object.get_api_status()
     except Exception:
         logging.exception("Got an exception while trying to establish connection to the Island.")
@@ -75,6 +93,34 @@ def island_client(island):
         if not client_established:
             pytest.exit("BB tests couldn't establish communication to the island.")
     yield island_client_object
+
+
+@pytest.mark.parametrize(
+    "authenticated_endpoint",
+    [
+        GET_AGENTS_ENDPOINT,
+        ISLAND_LOG_ENDPOINT,
+        GET_MACHINES_ENDPOINT,
+    ],
+)
+def test_logout(monkey_island_requests, authenticated_endpoint):
+    # Prove that we can't access authenticated endpoints without logging in
+    resp = monkey_island_requests.get(authenticated_endpoint)
+    assert resp.status_code == HTTPStatus.UNAUTHORIZED
+
+    # Prove that we can access authenticated endpoints after logging in
+    monkey_island_requests.login()
+    resp = monkey_island_requests.get(authenticated_endpoint)
+    assert resp.ok
+
+    # Log out - NOTE: This is an "out-of-band" call to logout. DO NOT call
+    # `monkey_island_request.logout()`. This could allow implementation details of the
+    # MonkeyIslandRequests class to cause false positives.
+    monkey_island_requests.post(LOGOUT_ENDPOINT, data=None)
+
+    # Prove that we can't access authenticated endpoints after logging out
+    resp = monkey_island_requests.get(authenticated_endpoint)
+    assert resp.status_code == HTTPStatus.UNAUTHORIZED
 
 
 # NOTE: These test methods are ordered to give time for the slower zoo machines
