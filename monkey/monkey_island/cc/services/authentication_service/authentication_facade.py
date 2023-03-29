@@ -1,9 +1,12 @@
+from typing import Dict
+
 from flask_security import UserDatastore
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
+from .token_service import TokenService
 from .user import User
 
 
@@ -17,10 +20,12 @@ class AuthenticationFacade:
         repository_encryptor: ILockableEncryptor,
         island_event_queue: IIslandEventQueue,
         user_datastore: UserDatastore,
+        token_service: TokenService,
     ):
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
         self._datastore = user_datastore
+        self._token_service = token_service
 
     def needs_registration(self) -> bool:
         """
@@ -35,6 +40,12 @@ class AuthenticationFacade:
         Revokes all tokens for a specific user
         """
         self._datastore.set_uniquifier(user)
+
+    def generate_user_tokens(self, user: User) -> Dict[str, str]:
+        """
+        Generates new tokens for a specific user
+        """
+        return self._token_service.generate_token_pair(user.fs_uniquifier)
 
     def revoke_all_tokens_for_all_users(self):
         """

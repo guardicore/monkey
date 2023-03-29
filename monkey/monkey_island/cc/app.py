@@ -3,7 +3,7 @@ from pathlib import Path
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
-from flask_security import UserDatastore
+from flask_security import Security
 from werkzeug.exceptions import NotFound
 
 from common import DIContainer
@@ -44,6 +44,7 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
 from monkey_island.cc.services.authentication_service.configure_flask_security import (
     configure_flask_security,
 )
+from monkey_island.cc.services.authentication_service.token_service import TokenService
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
@@ -158,7 +159,10 @@ def init_app(
     return app
 
 
-def _build_authentication_facade(container: DIContainer, user_datastore: UserDatastore):
+def _build_authentication_facade(container: DIContainer, security: Security):
     repository_encryptor = container.resolve(ILockableEncryptor)
     island_event_queue = container.resolve(IIslandEventQueue)
-    return AuthenticationFacade(repository_encryptor, island_event_queue, user_datastore)
+    refresh_token_service = TokenService(security)
+    return AuthenticationFacade(
+        repository_encryptor, island_event_queue, security.datastore, refresh_token_service
+    )

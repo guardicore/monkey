@@ -11,6 +11,7 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
+from monkey_island.cc.services.authentication_service.token_service import TokenService
 from monkey_island.cc.services.authentication_service.user import User
 
 USERNAME = "user1"
@@ -44,6 +45,11 @@ def mock_user_datastore(autouse=True) -> UserDatastore:
 
 
 @pytest.fixture
+def mock_token_service(autouse=True) -> UserDatastore:
+    return MagicMock(spec=TokenService)
+
+
+@pytest.fixture
 def authentication_facade(
     mock_flask_app,
     mock_repository_encryptor: ILockableEncryptor,
@@ -51,7 +57,7 @@ def authentication_facade(
     mock_user_datastore: UserDatastore,
 ) -> AuthenticationFacade:
     return AuthenticationFacade(
-        mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
+        mock_repository_encryptor, mock_island_event_queue, mock_user_datastore, mock_token_service
     )
 
 

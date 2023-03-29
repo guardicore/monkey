@@ -3,6 +3,7 @@ from http import HTTPStatus
 
 from flask import Response, make_response, request
 from flask.typing import ResponseValue
+from flask_login import current_user
 from flask_security.views import login
 
 from monkey_island.cc.flask_utils import AbstractResource, responses
@@ -37,6 +38,9 @@ class Login(AbstractResource):
         try:
             username, password = get_username_password_from_request(request)
             response: ResponseValue = login()
+            # TODO send these back
+            _tokens = self._authentication_facade.generate_user_tokens(current_user)
+            del _tokens
         except Exception:
             return responses.make_response_to_invalid_request()
 
