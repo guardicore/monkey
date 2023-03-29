@@ -1,6 +1,7 @@
-from uuid import getnode, uuid4
+from uuid import uuid4
 
 from common.types import AgentID, HardwareID
+from common.utils.environment import get_hardware_id
 
 
 def get_agent_id() -> AgentID:
@@ -14,4 +15,4 @@ def get_agent_id() -> AgentID:
 
 def get_machine_id() -> HardwareID:
     """Get an integer that uniquely defines the machine the agent is running on"""
-    return getnode()
+    return get_hardware_id()
