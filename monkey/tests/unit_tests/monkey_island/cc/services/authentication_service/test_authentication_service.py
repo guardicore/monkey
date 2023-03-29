@@ -11,7 +11,9 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
-from monkey_island.cc.services.authentication_service.token_service import TokenService
+from monkey_island.cc.services.authentication_service.refresh_token_manager import (
+    RefreshTokenManager,
+)
 from monkey_island.cc.services.authentication_service.user import User
 
 USERNAME = "user1"
@@ -46,7 +48,7 @@ def mock_user_datastore(autouse=True) -> UserDatastore:
 
 @pytest.fixture
 def mock_token_service(autouse=True) -> UserDatastore:
-    return MagicMock(spec=TokenService)
+    return MagicMock(spec=RefreshTokenManager)
 
 
 @pytest.fixture

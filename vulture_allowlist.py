@@ -19,7 +19,9 @@ from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Agent, IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
-from monkey_island.cc.services.authentication_service.token_service import TokenService
+from monkey_island.cc.services.authentication_service.refresh_token_manager import (
+    RefreshTokenManager,
+)
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
@@ -147,4 +149,4 @@ IslandAPIAgentOTPProvider
 AGENT_OTP_ENVIRONMENT_VARIABLE
 
 # Remove after #3137
-TokenService.refresh_tokens
+RefreshTokenManager.validate_refresh_token

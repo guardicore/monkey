@@ -44,7 +44,9 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
 from monkey_island.cc.services.authentication_service.configure_flask_security import (
     configure_flask_security,
 )
-from monkey_island.cc.services.authentication_service.token_service import TokenService
+from monkey_island.cc.services.authentication_service.refresh_token_manager import (
+    RefreshTokenManager,
+)
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
@@ -162,7 +164,7 @@ def init_app(
 def _build_authentication_facade(container: DIContainer, security: Security):
     repository_encryptor = container.resolve(ILockableEncryptor)
     island_event_queue = container.resolve(IIslandEventQueue)
-    refresh_token_service = TokenService(security)
+    refresh_token_service = RefreshTokenManager(security)
     return AuthenticationFacade(
         repository_encryptor, island_event_queue, security.datastore, refresh_token_service
     )

@@ -39,7 +39,7 @@ class Login(AbstractResource):
             username, password = get_username_password_from_request(request)
             response: ResponseValue = login()
             # TODO send these back
-            _tokens = self._authentication_facade.generate_user_tokens(current_user)
+            _tokens = self._authentication_facade.generate_refresh_token(current_user)
             del _tokens
         except Exception:
             return responses.make_response_to_invalid_request()
