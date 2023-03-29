@@ -12,6 +12,9 @@ class ReauthorizingMonkeyIslandRequests(IMonkeyIslandRequests):
     def get_token_from_server(self):
         return self.requests.get_token_from_server()
 
+    def login(self):
+        self.requests.login()
+
     class _Decorators:
         @classmethod
         def refresh_auth_token(cls, request_function):
@@ -20,7 +23,7 @@ class ReauthorizingMonkeyIslandRequests(IMonkeyIslandRequests):
                 # noinspection PyArgumentList
                 resp = request_function(self, *args, **kwargs)
                 if resp.status_code == HTTPStatus.UNAUTHORIZED:
-                    self.token = self.get_token_from_server()
+                    self.requests.login()
                     resp = request_function(self, *args, **kwargs)
 
                 return resp

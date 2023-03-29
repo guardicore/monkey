@@ -25,6 +25,9 @@ class MonkeyIslandRequests(IMonkeyIslandRequests):
         except InvalidRequestError:
             return self.get_token_from_server()
 
+    def login(self):
+        self.token = self.get_token_from_server()
+
     def get_token_from_server(self):
         resp = requests.post(  # noqa: DUO123
             self.addr + "api/login",

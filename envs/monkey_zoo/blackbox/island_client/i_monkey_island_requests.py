@@ -8,6 +8,10 @@ class IMonkeyIslandRequests(ABC):
         pass
 
     @abstractmethod
+    def login(self):
+        pass
+
+    @abstractmethod
     def get(self, url, data=None):
         pass
 
