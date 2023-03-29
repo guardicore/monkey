@@ -35,6 +35,9 @@ from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.version import Version
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import register_agent_configuration_resources, setup_authentication
+from monkey_island.cc.services.authentication_service.configure_flask_security import (
+    configure_flask_security,
+)
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
@@ -141,7 +144,8 @@ def init_app(
     init_app_url_rules(app)
 
     flask_resource_manager = FlaskDIWrapper(api, container)
-    setup_authentication(app, api, data_dir, container)
+    datastore = configure_flask_security(app, data_dir)
+    setup_authentication(api, datastore, container)
     init_api_resources(flask_resource_manager)
 
     return app

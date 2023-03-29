@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from flask_security import UserDatastore
 
 from common import DIContainer
@@ -8,11 +6,9 @@ from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from . import register_resources
 from .authentication_facade import AuthenticationFacade
-from .configure_flask_security import configure_flask_security
 
 
-def setup_authentication(app, api, data_dir: Path, container: DIContainer):
-    datastore = configure_flask_security(app, data_dir)
+def setup_authentication(api, datastore: UserDatastore, container: DIContainer):
     authentication_facade = _build_authentication_facade(container, datastore)
     register_resources(api, authentication_facade)
     # revoke all old tokens so that the user has to log in again on startup
