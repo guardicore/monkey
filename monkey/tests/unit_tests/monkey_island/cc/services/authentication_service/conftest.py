@@ -19,6 +19,8 @@ from monkey_island.cc.services.authentication_service.flask_resources import (
 @pytest.fixture
 def mock_authentication_facade():
     mock_service = MagicMock(spec=AuthenticationFacade)
+    mock_service.generate_refresh_token = MagicMock()
+    mock_service.generate_refresh_token.return_value = "refresh_token"
 
     return mock_service
 

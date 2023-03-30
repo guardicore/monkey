@@ -13,6 +13,14 @@ USERNAME = "test_user"
 PASSWORD = "test_password"
 TEST_REQUEST = f'{{"username": "{USERNAME}", "password": "{PASSWORD}"}}'
 FLASK_LOGIN_IMPORT = "monkey_island.cc.services.authentication_service.flask_resources.login.login"
+LOGIN_RESPONSE_DATA = (
+    b'{"response": {"user": {"authentication_token": "abcdefg"}, "csrf_token": "hijklmnop"}}'
+)
+LOGIN_RESPONSE = Response(
+    response=LOGIN_RESPONSE_DATA,
+    status=HTTPStatus.OK,
+    mimetype="application/json",
+)
 
 
 @pytest.fixture
@@ -28,12 +36,7 @@ def make_login_request(flask_client):
 def test_credential_parsing(
     monkeypatch, make_login_request, mock_authentication_facade: AuthenticationFacade
 ):
-    monkeypatch.setattr(
-        FLASK_LOGIN_IMPORT,
-        lambda: Response(
-            status=HTTPStatus.OK,
-        ),
-    )
+    monkeypatch.setattr(FLASK_LOGIN_IMPORT, lambda: LOGIN_RESPONSE)
 
     make_login_request(TEST_REQUEST)
     mock_authentication_facade.handle_successful_login.assert_called_with(USERNAME, PASSWORD)
@@ -45,12 +48,7 @@ def test_empty_credentials(make_login_request, mock_authentication_facade: Authe
 
 
 def test_login_successful(make_login_request, monkeypatch):
-    monkeypatch.setattr(
-        FLASK_LOGIN_IMPORT,
-        lambda: Response(
-            status=HTTPStatus.OK,
-        ),
-    )
+    monkeypatch.setattr(FLASK_LOGIN_IMPORT, lambda: LOGIN_RESPONSE)
 
     response = make_login_request(TEST_REQUEST)
 
@@ -104,12 +102,7 @@ def test_login_invalid_request(
 def test_login_error(
     monkeypatch, make_login_request, mock_authentication_facade: AuthenticationFacade
 ):
-    monkeypatch.setattr(
-        FLASK_LOGIN_IMPORT,
-        lambda: Response(
-            status=HTTPStatus.OK,
-        ),
-    )
+    monkeypatch.setattr(FLASK_LOGIN_IMPORT, lambda: LOGIN_RESPONSE)
     mock_authentication_facade.handle_successful_login = MagicMock(side_effect=Exception())
 
     response = make_login_request(TEST_REQUEST)
