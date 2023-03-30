@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from flask_security import UserDatastore
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
@@ -41,6 +43,20 @@ class AuthenticationFacade:
         Revokes all tokens for a specific user
         """
         self._datastore.set_uniquifier(user)
+
+    def generate_new_token_pair(self, refresh_token: Token) -> Tuple[Token, Token]:
+        """
+        Generates a new access token and refresh, given a valid refresh token
+
+        :param refresh_token: Refresh token
+        :raise Exception: If the refresh token is invalid
+        :return: Tuple of the new access token and refresh token
+        """
+        user_uniquifier = self._refresh_token_validator.get_token_payload(refresh_token)
+        user = User.objects.get(fs_uniquifier=user_uniquifier)
+        new_access_token = user.get_auth_token()
+        new_refresh_token = self._token_generator.generate_token(user_uniquifier)
+        return new_access_token, new_refresh_token
 
     def generate_refresh_token(self, user: User) -> Token:
         """

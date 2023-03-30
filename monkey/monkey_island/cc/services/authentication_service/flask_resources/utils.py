@@ -40,6 +40,9 @@ def include_auth_token(func):
     return decorated_function
 
 
+REFRESH_TOKEN_KEY_NAME = "refresh_token"
+
+
 def add_refresh_token_to_response(response: Response, refresh_token: Token) -> Response:
     """
     Returns a copy of the response object with the refresh token added to it
@@ -49,6 +52,6 @@ def add_refresh_token_to_response(response: Response, refresh_token: Token) -> R
     :return: A Flask Response object
     """
     new_data = deepcopy(response.json)
-    new_data["response"]["user"]["refresh_token"] = refresh_token
+    new_data["response"]["user"][REFRESH_TOKEN_KEY_NAME] = refresh_token
     response.data = json.dumps(new_data).encode()
     return response
