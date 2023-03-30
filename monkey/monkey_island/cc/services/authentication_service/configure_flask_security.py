@@ -17,8 +17,8 @@ from .user import User
 
 SECRET_FILE_NAME = ".flask_security_configuration.json"
 AUTH_EXPIRATION_TIME = 30 * 60  # 30 minutes
-# Refresh token lives for 30 minutes longer than auth token
-REFRESH_TOKEN_EXPIRATION_DELTA = 30 * 60  # 30 minutes
+# Refresh token lives for 3 minutes longer than auth token
+REFRESH_TOKEN_EXPIRATION_DELTA = 3 * 60  # 3 minutes
 
 
 def configure_flask_security(app, data_dir: Path) -> Security:
