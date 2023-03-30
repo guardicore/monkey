@@ -43,7 +43,6 @@ def generate_refresh_token(
     token_service = RefreshTokenManager(app.security)
     freezer.move_to(generation_time)
     refresh_token = token_service.generate_refresh_token(payload)
-    freezer.move_to(generation_time)
     return refresh_token, token_service
 
 
