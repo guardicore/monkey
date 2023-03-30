@@ -75,12 +75,12 @@ def wait_machine_bootup():
     sleep(MACHINE_BOOTUP_WAIT_SECONDS)
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def monkey_island_requests(island) -> IMonkeyIslandRequests:
     return MonkeyIslandRequests(island)
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="class", autouse=True)
 def island_client(monkey_island_requests):
     client_established = False
     try:
@@ -125,7 +125,6 @@ def test_logout(monkey_island_requests, authenticated_endpoint):
 
 # NOTE: These test methods are ordered to give time for the slower zoo machines
 # to boot up and finish starting services.
-@pytest.mark.usefixtures("island_client")
 # noinspection PyUnresolvedReferences
 class TestMonkeyBlackbox:
     @staticmethod
