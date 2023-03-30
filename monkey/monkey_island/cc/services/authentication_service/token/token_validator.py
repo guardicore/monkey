@@ -12,5 +12,7 @@ class TokenValidator:
         """
         Validates a token
         :param token: A token to validate
+        :raises BadSignature: If the token is invalid
+        :raises SignatureExpired: If the token has expired
         """
         self._token_serializer.loads(token, max_age=self._token_expiration)
