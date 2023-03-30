@@ -42,8 +42,11 @@ def include_auth_token(func):
 
 def add_refresh_token_to_response(response: Response, refresh_token: Token) -> Response:
     """
-    Adds a refresh token to the response
+    Returns a copy of the response object with the refresh token added to it
+
     :param response: A Flask Response object
+    :param refresh_token: Refresh token to add to the response
+    :return: A Flask Response object
     """
     new_data = deepcopy(response.json)
     new_data["response"]["user"]["refresh_token"] = refresh_token
