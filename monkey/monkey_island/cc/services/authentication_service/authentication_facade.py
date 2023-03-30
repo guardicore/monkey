@@ -3,8 +3,9 @@ from flask_security import UserDatastore
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
+from monkey_island.cc.services.authentication_service.token.token_generator import TokenGenerator
 
-from .refresh_token_manager import RefreshToken, RefreshTokenManager
+from .token import Token, TokenValidator
 from .user import User
 
 
@@ -18,12 +19,14 @@ class AuthenticationFacade:
         repository_encryptor: ILockableEncryptor,
         island_event_queue: IIslandEventQueue,
         user_datastore: UserDatastore,
-        refresh_token_manager: RefreshTokenManager,
+        token_generator: TokenGenerator,
+        refresh_token_validator: TokenValidator,
     ):
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
         self._datastore = user_datastore
-        self._refresh_token_manager = refresh_token_manager
+        self._token_generator = token_generator
+        self._refresh_token_validator = refresh_token_validator
 
     def needs_registration(self) -> bool:
         """
@@ -39,11 +42,11 @@ class AuthenticationFacade:
         """
         self._datastore.set_uniquifier(user)
 
-    def generate_refresh_token(self, user: User) -> RefreshToken:
+    def generate_refresh_token(self, user: User) -> Token:
         """
         Generates a refresh token for a specific user
         """
-        return self._refresh_token_manager.generate_refresh_token(user.fs_uniquifier)
+        return self._token_generator.generate_token(user.fs_uniquifier)
 
     def revoke_all_tokens_for_all_users(self):
         """

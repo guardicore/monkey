@@ -11,9 +11,7 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
-from monkey_island.cc.services.authentication_service.refresh_token_manager import (
-    RefreshTokenManager,
-)
+from monkey_island.cc.services.authentication_service.token import TokenGenerator, TokenValidator
 from monkey_island.cc.services.authentication_service.user import User
 
 USERNAME = "user1"
@@ -32,23 +30,28 @@ USERS = [
 
 
 @pytest.fixture
-def mock_repository_encryptor(autouse=True) -> ILockableEncryptor:
+def mock_repository_encryptor() -> ILockableEncryptor:
     return MagicMock(spec=ILockableEncryptor)
 
 
 @pytest.fixture
-def mock_island_event_queue(autouse=True) -> IIslandEventQueue:
+def mock_island_event_queue() -> IIslandEventQueue:
     return MagicMock(spec=IIslandEventQueue)
 
 
 @pytest.fixture
-def mock_user_datastore(autouse=True) -> UserDatastore:
+def mock_user_datastore() -> UserDatastore:
     return MagicMock(spec=UserDatastore)
 
 
 @pytest.fixture
-def mock_token_service(autouse=True) -> UserDatastore:
-    return MagicMock(spec=RefreshTokenManager)
+def mock_token_generator() -> UserDatastore:
+    return MagicMock(spec=TokenGenerator)
+
+
+@pytest.fixture
+def mock_token_validator() -> UserDatastore:
+    return MagicMock(spec=TokenValidator)
 
 
 @pytest.fixture
@@ -57,9 +60,15 @@ def authentication_facade(
     mock_repository_encryptor: ILockableEncryptor,
     mock_island_event_queue: IIslandEventQueue,
     mock_user_datastore: UserDatastore,
+    mock_token_generator: TokenGenerator,
+    mock_token_validator: TokenValidator,
 ) -> AuthenticationFacade:
     return AuthenticationFacade(
-        mock_repository_encryptor, mock_island_event_queue, mock_user_datastore, mock_token_service
+        mock_repository_encryptor,
+        mock_island_event_queue,
+        mock_user_datastore,
+        mock_token_generator,
+        mock_token_validator,
     )
 
 
