@@ -16,10 +16,12 @@ from .role import Role
 from .user import User
 
 SECRET_FILE_NAME = ".flask_security_configuration.json"
-AUTH_EXPIRATION_TIME = 30 * 60  # 30 minutes authentication token expiration time
+AUTH_EXPIRATION_TIME = 30 * 60  # 30 minutes
+# Refresh token lives for 3 minutes longer than auth token
+REFRESH_TOKEN_EXPIRATION_DELTA = 3 * 60  # 3 minutes
 
 
-def configure_flask_security(app, data_dir: Path) -> MongoEngineUserDatastore:
+def configure_flask_security(app, data_dir: Path) -> Security:
     _setup_flask_mongo(app)
 
     flask_security_config = _generate_flask_security_configuration(data_dir)
@@ -31,6 +33,9 @@ def configure_flask_security(app, data_dir: Path) -> MongoEngineUserDatastore:
     app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
 
     app.config["SECURITY_TOKEN_MAX_AGE"] = AUTH_EXPIRATION_TIME
+    # This is a custom configuration parameter that we use
+    # It shows how much time the refresh token is valid after the auth token expires
+    app.config["SECURITY_REFRESH_TOKEN_TIMEDELTA"] = REFRESH_TOKEN_EXPIRATION_DELTA
     app.config["SECURITY_RETURN_GENERIC_RESPONSES"] = True
     # Ignore CSRF, because we don't store tokens in cookies
     app.config["WTF_CSRF_CHECK_DEFAULT"] = False
@@ -68,7 +73,7 @@ def configure_flask_security(app, data_dir: Path) -> MongoEngineUserDatastore:
 
     app.session_interface = _disable_session_cookies()
 
-    return user_datastore
+    return app.security
 
 
 def _setup_flask_mongo(app):

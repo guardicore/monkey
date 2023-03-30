@@ -17,8 +17,9 @@ from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.island_api_client import http_island_api_client
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
-from monkey_island.cc.models import Agent, IslandMode, Machine
+from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
+from monkey_island.cc.services.authentication_service.token import TokenValidator
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
@@ -144,3 +145,7 @@ secret_type_filter
 http_island_api_client.get_otp
 IslandAPIAgentOTPProvider
 AGENT_OTP_ENVIRONMENT_VARIABLE
+
+# Remove after #3137
+TokenValidator.validate_token
+_refresh_token_validator

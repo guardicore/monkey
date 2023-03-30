@@ -59,6 +59,7 @@ mypy = "*"
 types-pytz = "*"
 types-pyyaml = "*"
 pytest-xdist = "*"
+pytest-freezer = "*"
 
 [requires]
 python_version = "3.11"
