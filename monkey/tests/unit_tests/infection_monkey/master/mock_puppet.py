@@ -169,7 +169,7 @@ class MockPuppet(IPuppet):
         options: Dict,
         interrupt: Event,
     ) -> ExploiterResultData:
-        logger.debug(f"exploit_hosts({name}, {host}, {options})")
+        logger.debug(f"exploit_hosts({name}, {host.ip}, {options})")
         info_wmi = {
             "display_name": "WMI",
             "started": "2021-11-25T15:57:06.307696",

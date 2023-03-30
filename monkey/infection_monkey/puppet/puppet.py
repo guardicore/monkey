@@ -85,7 +85,7 @@ class Puppet(IPuppet):
     ) -> ExploiterResultData:
         if self._plugin_compatability_verifier.verify_exploiter_compatibility(name, host) is False:
             raise IncompatibleOperatingSystemError(
-                f'The exploiter, "{name}", is not compatible with the operating system on {host}'
+                f'The exploiter, "{name}", is not compatible with the operating system on {host.ip}'
             )
         exploiter = self._plugin_registry.get_plugin(AgentPluginType.EXPLOITER, name)
         exploiter_result_data = exploiter.run(
