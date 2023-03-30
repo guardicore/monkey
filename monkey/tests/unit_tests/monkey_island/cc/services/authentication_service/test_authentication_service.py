@@ -116,6 +116,46 @@ def test_handle_sucessful_login(
     assert mock_repository_encryptor.unlock.call_args[0][0] != PASSWORD
 
 
+def test_generate_new_token_pair__generates_tokens(
+    mock_token_generator: TokenGenerator,
+    mock_token_validator: TokenValidator,
+    authentication_facade: AuthenticationFacade,
+):
+    refresh_token = "original_token"
+    user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
+    user.save()
+    mock_token_generator.generate_token.return_value = "new_token"
+    mock_token_validator.get_token_payload.return_value = "a"
+    access_token, new_refresh_token = authentication_facade.generate_new_token_pair(refresh_token)
+
+    assert new_refresh_token != refresh_token
+    assert access_token != refresh_token
+    assert access_token != new_refresh_token
+
+
+def test_generate_new_token_pair__fails_if_user_does_not_exist(
+    authentication_facade: AuthenticationFacade,
+):
+    user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
+    refresh_token = authentication_facade.generate_refresh_token(user)
+
+    with pytest.raises(Exception):
+        authentication_facade.generate_new_token_pair(refresh_token)
+
+
+def test_generate_new_token_pair__fails_if_refresh_token_expired(
+    mock_token_validator: TokenValidator,
+    authentication_facade: AuthenticationFacade,
+):
+    user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
+    user.save()
+    refresh_token = authentication_facade.generate_refresh_token(user)
+    mock_token_validator.get_token_payload.side_effect = Exception()
+
+    with pytest.raises(Exception):
+        authentication_facade.generate_new_token_pair(refresh_token)
+
+
 def test_revoke_all_tokens_for_all_users(
     mock_user_datastore: UserDatastore,
     authentication_facade: AuthenticationFacade,
