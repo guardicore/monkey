@@ -13,6 +13,7 @@ from monkey_island.cc.services.authentication_service.flask_resources import (
     Logout,
     Register,
     RegistrationStatus,
+    Token,
 )
 
 REFRESH_TOKEN = "refresh_token"
@@ -45,6 +46,7 @@ def get_mock_auth_app(authentication_facade: AuthenticationFacade):
     )
     api.add_resource(AgentOTP, *AgentOTP.urls)
     api.add_resource(AgentOTPLogin, *AgentOTPLogin.urls)
+    api.add_resource(Token, *Token.urls, resource_class_args=(authentication_facade,))
 
     return app
 
