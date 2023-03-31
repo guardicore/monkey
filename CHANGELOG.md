@@ -12,6 +12,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `GET /api/agent-otp`. #3076
 - `POST /api/agent-otp-login` endpoint. #3076
 - A smarter brute-forcing strategy for SMB exploiter. #3039
+- `POST api/token` endpoint. #3181
 
 ### Changed
 - Migrated the hard-coded SMB exploiter to a plugin. #2952
