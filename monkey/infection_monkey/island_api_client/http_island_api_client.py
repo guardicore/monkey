@@ -2,7 +2,7 @@ import functools
 import json
 import logging
 from pprint import pformat
-from typing import Any, Dict, List, Sequence
+from typing import Any, Dict, List, Sequence, Tuple
 
 import requests
 
@@ -57,15 +57,20 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._http_client = http_client
         self._agent_id = agent_id
 
+        self._refresh_token = ""
+
     @handle_response_parsing_errors
     def login(self, otp: OTP):
-        auth_token = self._get_authentication_token(otp)
-        self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
+        auth_token, refresh_token = self._get_tokens(otp)
 
-    def _get_authentication_token(self, otp: OTP) -> str:
+        self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
+        self._refresh_token = refresh_token
+
+    def _get_tokens(self, otp: OTP) -> Tuple[str]:
         try:
             response = self._http_client.post("/agent-otp-login", {"otp": otp.get_secret_value()})
-            return response.json()["token"]
+            response_json = response.json()
+            return response_json["authentication_token"], response_json["refresh_token"]
         except Exception:
             # We need to catch all exceptions here because we don't want to leak the OTP
             raise IslandAPIAuthenticationError(
