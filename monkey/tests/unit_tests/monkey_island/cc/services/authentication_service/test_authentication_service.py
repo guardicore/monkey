@@ -143,7 +143,7 @@ def test_generate_new_token_pair__fails_if_user_does_not_exist(
         authentication_facade.generate_new_token_pair(refresh_token)
 
 
-def test_generate_new_token_pair__fails_if_refresh_token_expired(
+def test_generate_new_token_pair__fails_if_token_invalid(
     mock_token_validator: TokenValidator,
     authentication_facade: AuthenticationFacade,
 ):
