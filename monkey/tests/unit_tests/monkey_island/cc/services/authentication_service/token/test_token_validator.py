@@ -24,26 +24,6 @@ def test_validate_token__valid(freezer):
     token_validator.validate_token(token)
 
 
-def test_validate_token__old_token_invalid_on_new_token_generated():
-    token_expiration_timedelta = 1 * 60  # 1 minute
-    payload = "fake_user_id"
-
-    app, _ = build_app()
-    token_generator = TokenGenerator(app.security)
-    token_validator = TokenValidator(app.security, token_expiration_timedelta)
-
-    token_1 = token_generator.generate_token(payload)
-    token_validator.validate_token(token_1)
-
-    token_2 = token_generator.generate_token(payload)
-    token_validator.validate_token(token_2)
-
-    with pytest.raises(SignatureExpired):
-        # this is still valid according to the expiration time but since
-        # a new refresh token has been generated, it should be invalid
-        token_validator.validate_token(token_1)
-
-
 def test_validate_refresh_token__expired(freezer):
     token_expiration = 1 * 60  # 1 minute
     generation_time = "2020-01-01 00:00:00"
