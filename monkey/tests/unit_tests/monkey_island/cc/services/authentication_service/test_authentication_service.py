@@ -136,11 +136,12 @@ def test_generate_new_token_pair__generates_tokens(
 def test_generate_new_token_pair__fails_if_user_does_not_exist(
     authentication_facade: AuthenticationFacade,
 ):
-    user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
-    refresh_token = authentication_facade.generate_refresh_token(user)
+    nonexistent_user = User(username="_", password="_", fs_uniquifier="bogus")
+    bogus_token = authentication_facade.generate_refresh_token(nonexistent_user)
+    authentication_facade._datastore.find_user = MagicMock(return_value=None)
 
     with pytest.raises(Exception):
-        authentication_facade.generate_new_token_pair(refresh_token)
+        authentication_facade.generate_new_token_pair(bogus_token)
 
 
 def test_generate_new_token_pair__fails_if_token_invalid(
