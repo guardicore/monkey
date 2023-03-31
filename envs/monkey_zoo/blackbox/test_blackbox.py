@@ -131,6 +131,31 @@ def test_logout(island, authenticated_endpoint):
     assert resp.status_code == HTTPStatus.UNAUTHORIZED
 
 
+def test_logout_invalidates_all_tokens(island):
+    monkey_island_requests_1 = MonkeyIslandRequests(island)
+    monkey_island_requests_2 = MonkeyIslandRequests(island)
+
+    monkey_island_requests_1.login()
+    monkey_island_requests_2.login()
+
+    # Prove that we can access authenticated endpoints after logging in
+    resp_1 = monkey_island_requests_1.get(GET_AGENTS_ENDPOINT)
+    resp_2 = monkey_island_requests_2.get(GET_AGENTS_ENDPOINT)
+    assert resp_1.ok
+    assert resp_2.ok
+
+    # Log out - NOTE: This is an "out-of-band" call to logout. DO NOT call
+    # `monkey_island_request.logout()`. This could allow implementation details of the
+    # MonkeyIslandRequests class to cause false positives.
+    # NOTE: Logout is ONLY called on monkey_island_requests_1. This is to prove that
+    # monkey_island_requests_2 also gets logged out.
+    monkey_island_requests_1.post(LOGOUT_ENDPOINT, data=None)
+
+    # Prove monkey_island_requests_2 can't authenticate after monkey_island_requests_1 logs out.
+    resp = monkey_island_requests_2.get(GET_AGENTS_ENDPOINT)
+    assert resp.status_code == HTTPStatus.UNAUTHORIZED
+
+
 # NOTE: These test methods are ordered to give time for the slower zoo machines
 # to boot up and finish starting services.
 # noinspection PyUnresolvedReferences
