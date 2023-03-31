@@ -3,6 +3,7 @@ import json
 from flask import make_response, request
 from flask_login import current_user
 
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME
 from monkey_island.cc.flask_utils import AbstractResource, responses
 
 from ..authentication_facade import AuthenticationFacade
@@ -36,7 +37,7 @@ class AgentOTPLogin(AbstractResource):
                 refresh_token = self._authentication_facade.generate_refresh_token(current_user)
 
                 response = make_response(
-                    {"response": {"user": {"authentication_token": "supersecrettoken"}}}
+                    {"response": {"user": {ACCESS_TOKEN_KEY_NAME: "supersecrettoken"}}}
                 )
                 response = add_refresh_token_to_response(response, refresh_token)
 
