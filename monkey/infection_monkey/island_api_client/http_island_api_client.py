@@ -41,6 +41,20 @@ def handle_response_parsing_errors(fn):
     return wrapper
 
 
+def handle_authentication_token_expiration(fn):
+    @functools.wraps(fn)
+    def wrapper(self, *args, **kwargs):
+        try:
+            return fn(self, *args, **kwargs)
+        except IslandAPIAuthenticationError:
+            # try again after refreshing tokens
+            # something else is wrong if this still doesn't work, let the issue be raised
+            self.refresh_tokens()
+            return fn(self, *args, **kwargs)
+
+    return wrapper
+
+
 class HTTPIslandAPIClient(IIslandAPIClient):
     """
     A client for the Island's HTTP API
