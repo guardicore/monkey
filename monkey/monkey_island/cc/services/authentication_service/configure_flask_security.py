@@ -16,7 +16,7 @@ from .role import Role
 from .user import User
 
 SECRET_FILE_NAME = ".flask_security_configuration.json"
-ACCESS_TOKEN_LIFETIME = 15 * 60  # 15 minutes
+ACCESS_TOKEN_TTL = 15 * 60  # 15 minutes
 # Refresh token lives for 3 minutes longer than auth token
 REFRESH_TOKEN_EXPIRATION_DELTA = 3 * 60  # 3 minutes
 
@@ -32,7 +32,7 @@ def configure_flask_security(app, data_dir: Path) -> Security:
     app.config["SECURITY_REGISTERABLE"] = True
     app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
 
-    app.config["SECURITY_TOKEN_MAX_AGE"] = ACCESS_TOKEN_LIFETIME
+    app.config["SECURITY_TOKEN_MAX_AGE"] = ACCESS_TOKEN_TTL
     # This is a custom configuration parameter that we use
     # It shows how much time the refresh token is valid after the auth token expires
     app.config["SECURITY_REFRESH_TOKEN_TIMEDELTA"] = REFRESH_TOKEN_EXPIRATION_DELTA
