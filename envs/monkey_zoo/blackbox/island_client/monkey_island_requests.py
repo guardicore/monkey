@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 from typing import Dict
 
 import requests
@@ -35,11 +36,11 @@ class MonkeyIslandRequests(IMonkeyIslandRequests):
             verify=False,
         )
 
-        if resp.status_code == 409:
+        if resp.status_code == HTTPStatus.CONFLICT:
             # A user has already been registered
-            return
+            return self.get_token_from_server()
 
-        if resp.status_code == 400:
+        if resp.status_code == HTTPStatus.BAD_REQUEST:
             raise InvalidRequestError()
 
         token = resp.json()["response"]["user"]["authentication_token"]
