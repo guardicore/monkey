@@ -75,25 +75,31 @@ def wait_machine_bootup():
     sleep(MACHINE_BOOTUP_WAIT_SECONDS)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def monkey_island_requests(island) -> IMonkeyIslandRequests:
     return MonkeyIslandRequests(island)
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="session")
 def island_client(monkey_island_requests):
     client_established = False
     try:
         requests = ReauthorizingMonkeyIslandRequests(monkey_island_requests)
         island_client_object = MonkeyIslandClient(requests)
         client_established = island_client_object.get_api_status()
-        island_client_object.register()
     except Exception:
         logging.exception("Got an exception while trying to establish connection to the Island.")
     finally:
         if not client_established:
             pytest.exit("BB tests couldn't establish communication to the island.")
+
     yield island_client_object
+
+
+@pytest.fixture(autouse=True, scope="session")
+def register(island_client):
+    logging.info("Registering a new user")
+    island_client.register()
 
 
 @pytest.mark.parametrize(
@@ -104,7 +110,8 @@ def island_client(monkey_island_requests):
         GET_MACHINES_ENDPOINT,
     ],
 )
-def test_logout(monkey_island_requests, authenticated_endpoint):
+def test_logout(island, authenticated_endpoint):
+    monkey_island_requests = MonkeyIslandRequests(island)
     # Prove that we can't access authenticated endpoints without logging in
     resp = monkey_island_requests.get(authenticated_endpoint)
     assert resp.status_code == HTTPStatus.UNAUTHORIZED
