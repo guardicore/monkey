@@ -9,7 +9,11 @@ from flask_security.views import register
 from monkey_island.cc.flask_utils import AbstractResource, responses
 
 from ..authentication_facade import AuthenticationFacade
-from .utils import get_username_password_from_request, include_auth_token
+from .utils import (
+    add_refresh_token_to_response,
+    get_username_password_from_request,
+    include_auth_token,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +41,8 @@ class Register(AbstractResource):
                 }, HTTPStatus.CONFLICT
             username, password = get_username_password_from_request(request)
             response: ResponseValue = register()
-            # TODO send these back
-            _tokens = self._authentication_facade.generate_refresh_token(current_user)
-            del _tokens
+            refresh_token = self._authentication_facade.generate_refresh_token(current_user)
+            response = add_refresh_token_to_response(response, refresh_token)
         except Exception:
             return responses.make_response_to_invalid_request()
 

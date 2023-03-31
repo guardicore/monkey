@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from flask import Response
+from tests.unit_tests.monkey_island.cc.services.authentication_service.conftest import REFRESH_TOKEN
 
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
@@ -14,6 +15,14 @@ PASSWORD = "test_password"
 TEST_REQUEST = f'{{"username": "{USERNAME}", "password": "{PASSWORD}"}}'
 FLASK_REGISTER_IMPORT = (
     "monkey_island.cc.services.authentication_service.flask_resources.register.register"
+)
+REGISTER_RESPONSE_DATA = (
+    b'{"response": {"user": {"authentication_token": "abcdefg"}, "csrf_token": "hijklmnop"}}'
+)
+REGISTER_RESPONSE = Response(
+    response=REGISTER_RESPONSE_DATA,
+    status=HTTPStatus.OK,
+    mimetype="application/json",
 )
 
 
@@ -50,16 +59,12 @@ def test_register__already_registered(
 def test_register_successful(
     monkeypatch, make_registration_request, mock_authentication_facade: AuthenticationFacade
 ):
-    monkeypatch.setattr(
-        FLASK_REGISTER_IMPORT,
-        lambda: Response(
-            status=HTTPStatus.OK,
-        ),
-    )
+    monkeypatch.setattr(FLASK_REGISTER_IMPORT, lambda: REGISTER_RESPONSE)
 
     response = make_registration_request(TEST_REQUEST)
 
     assert response.status_code == HTTPStatus.OK
+    assert response.json["response"]["user"]["refresh_token"] == REFRESH_TOKEN
     mock_authentication_facade.handle_successful_registration.assert_called_with(USERNAME, PASSWORD)
 
 
@@ -94,10 +99,7 @@ def test_register_invalid_request(
 def test_register_error(
     monkeypatch, make_registration_request, mock_authentication_facade: AuthenticationFacade
 ):
-    monkeypatch.setattr(
-        FLASK_REGISTER_IMPORT,
-        lambda: Response(status=HTTPStatus.OK),
-    )
+    monkeypatch.setattr(FLASK_REGISTER_IMPORT, lambda: REGISTER_RESPONSE)
 
     mock_authentication_facade.handle_successful_registration = MagicMock(side_effect=Exception())
 
