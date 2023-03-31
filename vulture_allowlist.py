@@ -24,6 +24,7 @@ from monkey_island.cc.repositories import (
     MongoAgentEventRepository,
     MongoOTPRepository,
 )
+from monkey_island.cc.services.authentication_service.otp import OTPGenerator
 from monkey_island.cc.services.authentication_service.token import TokenValidator
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
@@ -160,3 +161,4 @@ IOTPRepository.insert_otp
 IOTPRepository.get_expiration
 IOTPRepository.reset
 MongoOTPRepository
+OTPGenerator.generate_otp
