@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 from typing import Dict
 
 import requests
@@ -17,6 +18,9 @@ class InvalidRequestError(Exception):
 class MonkeyIslandRequests(IMonkeyIslandRequests):
     def __init__(self, server_address):
         self.addr = f"https://{server_address}/"
+        self.token = None
+
+    def register(self):
         self.token = self._try_get_token_from_server()
 
     def _try_get_token_from_server(self):
@@ -24,6 +28,23 @@ class MonkeyIslandRequests(IMonkeyIslandRequests):
             return self._try_set_island_to_credentials()
         except InvalidRequestError:
             return self.get_token_from_server()
+
+    def _try_set_island_to_credentials(self):
+        resp = requests.post(  # noqa: DUO123
+            self.addr + "api/register",
+            json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
+            verify=False,
+        )
+
+        if resp.status_code == HTTPStatus.CONFLICT:
+            # A user has already been registered
+            return self.get_token_from_server()
+
+        if resp.status_code == HTTPStatus.BAD_REQUEST:
+            raise InvalidRequestError()
+
+        token = resp.json()["response"]["user"]["authentication_token"]
+        return token
 
     def login(self):
         self.token = self.get_token_from_server()
@@ -34,23 +55,6 @@ class MonkeyIslandRequests(IMonkeyIslandRequests):
             json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
             verify=False,
         )
-
-        if resp.status_code == 400:
-            raise InvalidRequestError()
-
-        token = resp.json()["response"]["user"]["authentication_token"]
-        return token
-
-    def _try_set_island_to_credentials(self):
-        resp = requests.post(  # noqa: DUO123
-            self.addr + "api/register",
-            json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
-            verify=False,
-        )
-
-        if resp.status_code == 409:
-            # A user has already been registered
-            return
 
         if resp.status_code == 400:
             raise InvalidRequestError()

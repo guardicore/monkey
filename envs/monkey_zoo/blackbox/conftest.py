@@ -35,7 +35,7 @@ def gcp_machines_to_start(request: pytest.FixtureRequest) -> Mapping[str, Collec
     machines_to_start: Dict[str, Set[str]] = {}
 
     enabled_tests = (test.originalname for test in request.node.items)
-    machines_for_enabled_tests = (GCP_SINGLE_TEST_LIST[test] for test in enabled_tests)
+    machines_for_enabled_tests = (GCP_SINGLE_TEST_LIST.get(test, {}) for test in enabled_tests)
 
     for machine_dict in machines_for_enabled_tests:
         for zone, machines in machine_dict.items():

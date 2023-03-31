@@ -12,6 +12,9 @@ class ReauthorizingMonkeyIslandRequests(IMonkeyIslandRequests):
     def get_token_from_server(self):
         return self.requests.get_token_from_server()
 
+    def register(self):
+        self.requests.register()
+
     def login(self):
         self.requests.login()
 

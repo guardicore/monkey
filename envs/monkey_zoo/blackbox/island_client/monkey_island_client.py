@@ -179,6 +179,13 @@ class MonkeyIslandClient(object):
         agents = self.get_agents()
         return all((a.stop_time is not None for a in agents))
 
+    def register(self):
+        try:
+            self.requests.register()
+            LOGGER.info("Successfully registered a user with the Island.")
+        except Exception:
+            LOGGER.error("Failed to register a user with the Island.")
+
     def login(self):
         try:
             self.requests.login()
