@@ -109,10 +109,15 @@ def test_login__connection_error():
 
 def test_login():
     auth_token = "auth_token"
+    refresh_token = "refresh_token"
+
     http_client_stub = MagicMock()
     http_client_stub.additional_headers = {}
     http_client_stub.post = MagicMock()
-    http_client_stub.post.return_value.json.return_value = {"token": auth_token}
+    http_client_stub.post.return_value.json.return_value = {
+        "authentication_token": auth_token,
+        "refresh_token": refresh_token,
+    }
     api_client = build_api_client(http_client_stub)
 
     api_client.login(OTP)
@@ -132,10 +137,15 @@ def test_login__bad_response():
 
 def test_login__does_not_overwrite_additional_headers():
     auth_token = "auth_token"
+    refresh_token = "refresh_token"
+
     http_client_stub = MagicMock()
     http_client_stub.additional_headers = {"Some-Header": "some value"}
     http_client_stub.post = MagicMock()
-    http_client_stub.post.return_value.json.return_value = {"token": auth_token}
+    http_client_stub.post.return_value.json.return_value = {
+        "authentication_token": auth_token,
+        "refresh_token": refresh_token,
+    }
     api_client = build_api_client(http_client_stub)
 
     api_client.login(OTP)
