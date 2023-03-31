@@ -6,6 +6,7 @@ from flask_login import current_user
 from monkey_island.cc.flask_utils import AbstractResource, responses
 
 from ..authentication_facade import AuthenticationFacade
+from .utils import add_refresh_token_to_response
 
 
 class AgentOTPLogin(AbstractResource):
@@ -32,11 +33,14 @@ class AgentOTPLogin(AbstractResource):
             cred_dict = json.loads(request.data)
             otp = cred_dict.get("otp", "")
             if self._validate_otp(otp):
-                response_data = {"authentication_token": "supersecrettoken"}
-                response_data["refresh_token"] = self._authentication_facade.generate_refresh_token(
-                    current_user
+                refresh_token = self._authentication_facade.generate_refresh_token(current_user)
+
+                response = make_response(
+                    {"response": {"user": {"authentication_token": "supersecrettoken"}}}
                 )
-                return make_response(response_data)
+                response = add_refresh_token_to_response(response, refresh_token)
+
+                return response
 
         except Exception:
             pass
