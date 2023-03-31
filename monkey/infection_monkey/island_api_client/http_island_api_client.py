@@ -77,6 +77,17 @@ class HTTPIslandAPIClient(IIslandAPIClient):
                 "HTTPIslandAPIClient failed to authenticate to the Island."
             )
 
+    def refresh_tokens(self):
+        response = self._http_client.post("/token", {"refresh_token": self._refresh_token})
+        tokens_in_response = response.json()["response"]["user"]
+        auth_token, refresh_token = (
+            tokens_in_response["authentication_token"],
+            tokens_in_response["refresh_token"],
+        )
+
+        self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
+        self._refresh_token = refresh_token
+
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value
         response = self._http_client.get(f"/agent-binaries/{os_name}")
