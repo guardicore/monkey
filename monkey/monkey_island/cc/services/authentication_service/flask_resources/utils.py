@@ -8,6 +8,9 @@ from werkzeug.datastructures import ImmutableMultiDict
 
 from monkey_island.cc.services.authentication_service.token import Token
 
+REFRESH_TOKEN_KEY_NAME = "refresh_token"
+ACCESS_TOKEN_KEY_NAME = "authentication_token"
+
 
 def get_username_password_from_request(_request: Request) -> Tuple[str, str]:
     """
@@ -38,9 +41,6 @@ def include_auth_token(func):
         return func(*args, **kwargs)
 
     return decorated_function
-
-
-REFRESH_TOKEN_KEY_NAME = "refresh_token"
 
 
 def add_refresh_token_to_response(response: Response, refresh_token: Token) -> Response:
