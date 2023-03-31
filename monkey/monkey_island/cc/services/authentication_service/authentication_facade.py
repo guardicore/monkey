@@ -52,11 +52,18 @@ class AuthenticationFacade:
         :raise Exception: If the refresh token is invalid
         :return: Tuple of the new access token and refresh token
         """
-        user_uniquifier = self._refresh_token_validator.get_token_payload(refresh_token)
-        user = User.objects.get(fs_uniquifier=user_uniquifier)
+        user = self._get_refresh_token_owner(refresh_token)
         new_access_token = user.get_auth_token()
-        new_refresh_token = self._token_generator.generate_token(user_uniquifier)
+        new_refresh_token = self._token_generator.generate_token(user.fs_uniquifier)
         return new_access_token, new_refresh_token
+
+    def _get_refresh_token_owner(self, refresh_token: Token) -> User:
+        self._refresh_token_validator.validate_token(refresh_token)
+        user_uniquifier = self._refresh_token_validator.get_token_payload(refresh_token)
+        user = self._datastore.find_user(fs_uniquifier=user_uniquifier)
+        if not user:
+            raise Exception("Invalid refresh token")
+        return user
 
     def generate_refresh_token(self, user: User) -> Token:
         """
