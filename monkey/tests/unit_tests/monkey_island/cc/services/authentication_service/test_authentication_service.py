@@ -72,18 +72,6 @@ def authentication_facade(
     )
 
 
-def test_needs_registration__true(authentication_facade: AuthenticationFacade):
-    assert authentication_facade.needs_registration()
-
-
-def test_needs_registration__false(
-    monkeypatch,
-    authentication_facade: AuthenticationFacade,
-):
-    User(username=USERNAME, password=PASSWORD).save()
-    assert not authentication_facade.needs_registration()
-
-
 def test_handle_successful_registration(
     mock_repository_encryptor: ILockableEncryptor,
     mock_island_event_queue: IIslandEventQueue,

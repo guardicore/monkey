@@ -7,6 +7,7 @@ from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.token.token_generator import TokenGenerator
 
+from . import AccountRole
 from .token import Token, TokenValidator
 from .user import User
 
@@ -36,7 +37,10 @@ class AuthenticationFacade:
 
         :return: Whether registration is required on the Island
         """
-        return not User.objects.first()
+        island_api_user_role = self._datastore.find_or_create_role(
+            name=AccountRole.ISLAND_INTERFACE.name
+        )
+        return not self._datastore.find_user(roles=[island_api_user_role])
 
     def revoke_all_tokens_for_user(self, user: User):
         """
