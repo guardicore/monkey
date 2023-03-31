@@ -69,7 +69,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         except Exception:
             # We need to catch all exceptions here because we don't want to leak the OTP
             raise IslandAPIAuthenticationError(
-                "HTTPIslandAPIClient failed to " "authenticate to the Island."
+                "HTTPIslandAPIClient failed to authenticate to the Island."
             )
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
