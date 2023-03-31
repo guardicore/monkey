@@ -7,6 +7,7 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
 )
 from monkey_island.cc.services.authentication_service.flask_resources.token import Token
 from monkey_island.cc.services.authentication_service.flask_resources.utils import (
+    ACCESS_TOKEN_KEY_NAME,
     REFRESH_TOKEN_KEY_NAME,
 )
 
@@ -39,8 +40,8 @@ def test_token__provides_refreshed_token(
     response = request_token(REQUEST)
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json["response"]["user"]["refresh_token"] == NEW_REFRESH_TOKEN
-    assert response.json["response"]["user"]["access_token"] == NEW_AUTHENTICATION_TOKEN
+    assert response.json["response"]["user"][REFRESH_TOKEN_KEY_NAME] == NEW_REFRESH_TOKEN
+    assert response.json["response"]["user"][ACCESS_TOKEN_KEY_NAME] == NEW_AUTHENTICATION_TOKEN
 
 
 def test_token__fails_if_refresh_token_is_invalid(

@@ -6,7 +6,7 @@ from flask import request
 from monkey_island.cc.flask_utils import AbstractResource, responses
 
 from ..authentication_facade import AuthenticationFacade
-from .utils import REFRESH_TOKEN_KEY_NAME
+from .utils import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,10 @@ class Token(AbstractResource):
             )
             response = {
                 "response": {
-                    "user": {"access_token": access_token, REFRESH_TOKEN_KEY_NAME: refresh_token}
+                    "user": {
+                        ACCESS_TOKEN_KEY_NAME: access_token,
+                        REFRESH_TOKEN_KEY_NAME: refresh_token,
+                    }
                 }
             }
             return response, HTTPStatus.OK
