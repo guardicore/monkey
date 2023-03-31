@@ -5,7 +5,7 @@ from flask_security import UserDatastore
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
-from monkey_island.cc.services.authentication_service.token.token_generator import TokenGenerator
+from monkey_island.cc.services.authentication_service.token import TokenGenerator, TokenType
 
 from . import AccountRole
 from .token import Token, TokenValidator
@@ -62,7 +62,7 @@ class AuthenticationFacade:
         return new_access_token, new_refresh_token
 
     def _get_refresh_token_owner(self, refresh_token: Token) -> User:
-        self._refresh_token_validator.validate_token(refresh_token)
+        self._refresh_token_validator.validate_token(refresh_token, token_type=TokenType.REFRESH)
         user_uniquifier = self._refresh_token_validator.get_token_payload(refresh_token)
         user = self._datastore.find_user(fs_uniquifier=user_uniquifier)
         if not user:

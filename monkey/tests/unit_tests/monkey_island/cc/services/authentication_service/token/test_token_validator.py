@@ -5,7 +5,10 @@ from tests.unit_tests.monkey_island.cc.services.authentication_service.token.con
 )
 
 from monkey_island.cc.services.authentication_service.token import TokenValidator
-from monkey_island.cc.services.authentication_service.token.token_generator import TokenGenerator
+from monkey_island.cc.services.authentication_service.token.token_generator import (
+    TokenGenerator,
+    TokenType,
+)
 
 
 def test_validate_token__valid(freezer):
@@ -50,6 +53,18 @@ def test_validate_refresh_token__invalid():
 
     with pytest.raises(BadData):
         token_validator.validate_token(invalid_token)
+
+
+def test_validate_refresh_token__invalid_token_type():
+    provided_token_type = "access"
+    validated_token_type = TokenType.REFRESH
+    app, _ = build_app()
+    token_generator = TokenGenerator(app.security)
+    token = token_generator.generate_token("bogus", token_type=provided_token_type)
+    token_validator = TokenValidator(app.security, 100)
+
+    with pytest.raises(Exception):
+        token_validator.validate_token(token, token_type=validated_token_type)
 
 
 def test_get_token_payload():

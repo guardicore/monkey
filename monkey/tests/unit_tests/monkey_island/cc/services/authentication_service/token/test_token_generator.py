@@ -9,7 +9,10 @@ def test_generate_token(freezer):
     generation_time = "2020-01-01 00:00:00"
     payload = "fake_user_id"
     # Since time and payload are static the token is static
-    expected_token = "ImZha2VfdXNlcl9pZCI.XgvhAA.qZjpQeZVPgG29Q6geXhW22mcU_4"
+    expected_token = (
+        "eyJwYXlsb2FkIjoiZmFrZV91c2VyX2lkIiwidHlwZSI6InJlZnJlc2gifQ."
+        "XgvhAA.Gmy2VSpLaTjQCQ2EchjJbZsfIls"
+    )
 
     app, _ = build_app()
     token_generator = TokenGenerator(app.security)
