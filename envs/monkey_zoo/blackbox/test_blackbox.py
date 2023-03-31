@@ -80,13 +80,14 @@ def monkey_island_requests(island) -> IMonkeyIslandRequests:
     return MonkeyIslandRequests(island)
 
 
-@pytest.fixture(scope="class", autouse=True)
+@pytest.fixture(scope="class")
 def island_client(monkey_island_requests):
     client_established = False
     try:
         requests = ReauthorizingMonkeyIslandRequests(monkey_island_requests)
         island_client_object = MonkeyIslandClient(requests)
         client_established = island_client_object.get_api_status()
+        island_client_object.register()
     except Exception:
         logging.exception("Got an exception while trying to establish connection to the Island.")
     finally:
