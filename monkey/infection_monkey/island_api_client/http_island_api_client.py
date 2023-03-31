@@ -2,9 +2,10 @@ import functools
 import json
 import logging
 from pprint import pformat
-from typing import Any, Dict, List, Sequence, Tuple
+from typing import Any, Dict, List, Sequence
 
 import requests
+from flask import Response
 
 from common import AgentHeartbeat, AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
@@ -61,24 +62,16 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_response_parsing_errors
     def login(self, otp: OTP):
-        auth_token, refresh_token = self._get_tokens(otp)
-
-        self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
-        self._refresh_token = refresh_token
-
-    def _get_tokens(self, otp: OTP) -> Tuple[str]:
         try:
             response = self._http_client.post("/agent-otp-login", {"otp": otp.get_secret_value()})
-            response_json = response.json()
-            return response_json["authentication_token"], response_json["refresh_token"]
+            self._update_tokens_from_response(response)
         except Exception:
             # We need to catch all exceptions here because we don't want to leak the OTP
             raise IslandAPIAuthenticationError(
                 "HTTPIslandAPIClient failed to authenticate to the Island."
             )
 
-    def refresh_tokens(self):
-        response = self._http_client.post("/token", {"refresh_token": self._refresh_token})
+    def _update_tokens_from_response(self, response: Response):
         tokens_in_response = response.json()["response"]["user"]
         auth_token, refresh_token = (
             tokens_in_response["authentication_token"],
@@ -87,6 +80,10 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
         self._refresh_token = refresh_token
+
+    def refresh_tokens(self):
+        response = self._http_client.post("/token", {"refresh_token": self._refresh_token})
+        self._update_tokens_from_response(response)
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value
