@@ -75,6 +75,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._refresh_token = ""
 
     @handle_response_parsing_errors
+    @handle_authentication_token_expiration
     def login(self, otp: OTP):
         try:
             response = self._http_client.post("/agent-otp-login", {"otp": otp.get_secret_value()})
@@ -95,21 +96,25 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
         self._refresh_token = refresh_token
 
+    @handle_response_parsing_errors
     def refresh_tokens(self):
         response = self._http_client.post("/token", {"refresh_token": self._refresh_token})
         self._update_tokens_from_response(response)
 
+    @handle_authentication_token_expiration
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value
         response = self._http_client.get(f"/agent-binaries/{os_name}")
         return response.content
 
     @handle_response_parsing_errors
+    @handle_authentication_token_expiration
     def get_otp(self) -> str:
         response = self._http_client.get("/agent-otp")
         return response.json()["otp"]
 
     @handle_response_parsing_errors
+    @handle_authentication_token_expiration
     def get_agent_plugin(
         self, operating_system: OperatingSystem, plugin_type: AgentPluginType, plugin_name: str
     ) -> AgentPlugin:
@@ -120,6 +125,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return AgentPlugin(**response.json())
 
     @handle_response_parsing_errors
+    @handle_authentication_token_expiration
     def get_agent_plugin_manifest(
         self, plugin_type: AgentPluginType, plugin_name: str
     ) -> AgentPluginManifest:
@@ -130,6 +136,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return AgentPluginManifest(**response.json())
 
     @handle_response_parsing_errors
+    @handle_authentication_token_expiration
     def get_agent_signals(self) -> AgentSignals:
         response = self._http_client.get(
             f"/agent-signals/{self._agent_id}", timeout=SHORT_REQUEST_TIMEOUT
@@ -138,6 +145,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return AgentSignals(**response.json())
 
     @handle_response_parsing_errors
+    @handle_authentication_token_expiration
     def get_agent_configuration_schema(self) -> Dict[str, Any]:
         response = self._http_client.get(
             "/agent-configuration-schema", timeout=SHORT_REQUEST_TIMEOUT
@@ -147,6 +155,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return schema
 
     @handle_response_parsing_errors
+    @handle_authentication_token_expiration
     def get_config(self) -> AgentConfiguration:
         response = self._http_client.get("/agent-configuration", timeout=SHORT_REQUEST_TIMEOUT)
 
@@ -156,11 +165,13 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return AgentConfiguration(**config_dict)
 
     @handle_response_parsing_errors
+    @handle_authentication_token_expiration
     def get_credentials_for_propagation(self) -> Sequence[Credentials]:
         response = self._http_client.get("/propagation-credentials", timeout=SHORT_REQUEST_TIMEOUT)
 
         return [Credentials(**credentials) for credentials in response.json()]
 
+    @handle_authentication_token_expiration
     def register_agent(self, agent_registration_data: AgentRegistrationData):
         self._http_client.post(
             "/agents",
@@ -168,6 +179,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             SHORT_REQUEST_TIMEOUT,
         )
 
+    @handle_authentication_token_expiration
     def send_events(self, events: Sequence[AbstractAgentEvent]):
         self._http_client.post("/agent-events", self._serialize_events(events))
 
@@ -183,10 +195,12 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return serialized_events
 
+    @handle_authentication_token_expiration
     def send_heartbeat(self, timestamp: float):
         data = AgentHeartbeat(timestamp=timestamp).dict(simplify=True)
         self._http_client.post(f"/agent/{self._agent_id}/heartbeat", data)
 
+    @handle_authentication_token_expiration
     def send_log(self, log_contents: str):
         self._http_client.put(
             f"/agent-logs/{self._agent_id}",
