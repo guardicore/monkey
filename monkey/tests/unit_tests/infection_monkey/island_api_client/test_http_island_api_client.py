@@ -115,8 +115,12 @@ def test_login():
     http_client_stub.additional_headers = {}
     http_client_stub.post = MagicMock()
     http_client_stub.post.return_value.json.return_value = {
-        "authentication_token": auth_token,
-        "refresh_token": refresh_token,
+        "response": {
+            "user": {
+                "authentication_token": auth_token,
+                "refresh_token": refresh_token,
+            }
+        }
     }
     api_client = build_api_client(http_client_stub)
 
@@ -143,8 +147,12 @@ def test_login__does_not_overwrite_additional_headers():
     http_client_stub.additional_headers = {"Some-Header": "some value"}
     http_client_stub.post = MagicMock()
     http_client_stub.post.return_value.json.return_value = {
-        "authentication_token": auth_token,
-        "refresh_token": refresh_token,
+        "response": {
+            "user": {
+                "authentication_token": auth_token,
+                "refresh_token": refresh_token,
+            }
+        }
     }
     api_client = build_api_client(http_client_stub)
 
