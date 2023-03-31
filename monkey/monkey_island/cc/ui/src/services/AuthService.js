@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 
 export function getErrors(errors) {
@@ -17,8 +16,13 @@ export default class AuthService {
   REGISTRATION_API_ENDPOINT = '/api/register';
   REGISTRATION_STATUS_API_ENDPOINT = '/api/registration-status';
 
-  TOKEN_NAME_IN_LOCALSTORAGE = 'authentication_token';
-  TOKEN_NAME_IN_RESPONSE = 'authentication_token';
+  REFRESH_AUTH_TOKEN_ENDPOINT = '/api/refresh-authentication-token'
+
+  AUTH_TOKEN_NAME_IN_LOCALSTORAGE = 'authentication_token';
+  AUTH_TOKEN_NAME_IN_RESPONSE = 'authentication_token';
+
+  REFRESH_TOKEN_NAME_IN_LOCALSTORAGE = 'refresh_token';
+  REFRESH_TOKEN_NAME_IN_RESPONSE = 'refresh_token';
 
   login = (username, password) => {
     return this._login(username, password);
@@ -29,15 +33,64 @@ export default class AuthService {
       .then(response => response.json())
       .then(response => {
         if(response.meta.code === 200){
-          this._removeToken();
+          this._removeTokens(
+            [this.AUTH_TOKEN_NAME_IN_LOCALSTORAGE,
+             this.REFRESH_TOKEN_NAME_IN_LOCALSTORAGE]
+          );
         }
         return response;
       });
   }
 
   authFetch = (url, options) => {
-    return this._authFetch(url, options);
+    return this._authFetch(url, options).then(res => {
+      if(res.status === 401){
+        this._refreshAuthToken();
+        return this._authFetch(url, options);
+      }
+      return res;
+    });
   };
+
+  _refreshAuthToken = () => {
+    let refreshToken = this._getToken(this.REFRESH_TOKEN_NAME_IN_LOCALSTORAGE);
+    if (refreshToken) {
+      this._fetchNewTokenPair()
+        .then(response => response.json().then(data => ({status: response.status, body: data})))
+        .then(object => {
+          if(object.status === 200) {
+            this._setTokenPairFromResponseObject(object);
+          } else if (object.status === 401) {
+            this._removeTokens(
+              [this.AUTH_TOKEN_NAME_IN_LOCALSTORAGE,
+               this.REFRESH_TOKEN_NAME_IN_LOCALSTORAGE]
+            );
+          }
+        })
+    }
+  }
+
+  _fetchNewTokenPair = () => {
+    const options = {
+      method: 'POST',
+      // https://stackoverflow.com/questions/11508463/javascript-set-object-key-by-variable
+      body: JSON.stringify({
+        [this.REFRESH_TOKEN_NAME_IN_RESPONSE]: this._getToken(this.REFRESH_TOKEN_NAME_IN_LOCALSTORAGE)
+      }),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    }
+    return fetch(this.REFRESH_AUTH_TOKEN_ENDPOINT, options);
+  }
+
+  _setTokenPairFromResponseObject = (object) => {
+    let authToken = this._getTokenFromResponse(this.AUTH_TOKEN_NAME_IN_RESPONSE, object.body);
+    let refreshToken = this._getTokenFromResponse(this.REFRESH_TOKEN_NAME_IN_RESPONSE, object.body);
+
+    this._setTokenPair(authToken, refreshToken);
+  }
 
   _login = (username, password) => {
     return this._authFetch(this.LOGIN_ENDPOINT, {
@@ -48,12 +101,16 @@ export default class AuthService {
       })
     }).then(response => response.json())
       .then(res => {
-        let token = this._getTokenFromResponse(res);
-        if (token !== undefined) {
-          this._setToken(token);
+        let authToken = this._getTokenFromResponse(this.AUTH_TOKEN_NAME_IN_RESPONSE, res);
+        let refreshToken = this._getTokenFromResponse(this.REFRESH_TOKEN_NAME_IN_RESPONSE, res);
+        if (authToken !== undefined && refreshToken !== undefined) {
+          this._setTokenPair(authToken, refreshToken);
           return {result: true};
         } else {
-          this._removeToken();
+          this._removeTokens(
+          [this.AUTH_TOKEN_NAME_IN_LOCALSTORAGE,
+           this.REFRESH_TOKEN_NAME_IN_LOCALSTORAGE]
+          );
           return {result: false, errors: res['response']['errors']};
         }
       })
@@ -81,8 +138,8 @@ export default class AuthService {
     })
   };
 
-  _getTokenFromResponse= (response) => {
-    return _.get(response, 'response.user.'+this.TOKEN_NAME_IN_RESPONSE, undefined);
+  _getTokenFromResponse = (tokenName, responseObject) => {
+    return responseObject?.response?.user?.[tokenName];
   }
 
   _authFetch = (url, options = {}) => {
@@ -92,7 +149,7 @@ export default class AuthService {
     };
 
     if (this.loggedIn()) {
-      headers['Authentication-Token'] = this._getToken();
+      headers['Authentication-Token'] = this._getToken(this.AUTH_TOKEN_NAME_IN_LOCALSTORAGE);
     }
 
     if (Object.prototype.hasOwnProperty.call(options, 'headers')) {
@@ -109,7 +166,7 @@ export default class AuthService {
           res.clone().json().then(res_json => {
             console.log('Got 401 from server while trying to authFetch: ' + JSON.stringify(res_json));
           });
-          this._removeToken();
+          this._removeTokens([this.AUTH_TOKEN_NAME_IN_LOCALSTORAGE]);
         }
         return res;
       })
@@ -125,20 +182,23 @@ export default class AuthService {
   };
 
   loggedIn() {
-    const token = this._getToken();
+    const token = this._getToken(this.AUTH_TOKEN_NAME_IN_LOCALSTORAGE);
     return (token !== null);
   }
 
-  _setToken(idToken) {
-    localStorage.setItem(this.TOKEN_NAME_IN_LOCALSTORAGE, idToken);
+  _setTokenPair(authToken, refreshToken) {
+    localStorage.setItem(this.AUTH_TOKEN_NAME_IN_LOCALSTORAGE, authToken);
+    localStorage.setItem(this.REFRESH_TOKEN_NAME_IN_LOCALSTORAGE, refreshToken);
   }
 
-  _removeToken() {
-    localStorage.removeItem(this.TOKEN_NAME_IN_LOCALSTORAGE);
+  _removeTokens(tokenNameArray) {
+      tokenNameArray?.forEach(tokenName => {
+        localStorage.removeItem(tokenName);
+      })
   }
 
-  _getToken() {
-    return localStorage.getItem(this.TOKEN_NAME_IN_LOCALSTORAGE)
+  _getToken(tokenName) {
+    return localStorage.getItem(tokenName)
   }
 
 }
