@@ -7,6 +7,7 @@ from .login import Login
 from .logout import Logout
 from .register import Register
 from .registration_status import RegistrationStatus
+from .token import Token
 
 
 def register_resources(api: flask_restful.Api, authentication_facade: AuthenticationFacade):
@@ -18,3 +19,4 @@ def register_resources(api: flask_restful.Api, authentication_facade: Authentica
     api.add_resource(Logout, *Logout.urls, resource_class_args=(authentication_facade,))
     api.add_resource(AgentOTP, *AgentOTP.urls)
     api.add_resource(AgentOTPLogin, *AgentOTPLogin.urls)
+    api.add_resource(Token, *Token.urls, resource_class_args=(authentication_facade,))
