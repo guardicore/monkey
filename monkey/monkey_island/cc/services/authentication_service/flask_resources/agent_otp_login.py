@@ -1,8 +1,11 @@
 import json
 
 from flask import make_response, request
+from flask_login import current_user
 
 from monkey_island.cc.flask_utils import AbstractResource, responses
+
+from ..authentication_facade import AuthenticationFacade
 
 
 class AgentOTPLogin(AbstractResource):
@@ -14,9 +17,13 @@ class AgentOTPLogin(AbstractResource):
 
     urls = ["/api/agent-otp-login"]
 
+    def __init__(self, authentication_facade: AuthenticationFacade):
+        self._authentication_facade = authentication_facade
+
     def post(self):
         """
-        Gets the one-time password from the request, and returns an authentication token
+        Gets the one-time password from the request,
+        and returns an authentication token and a refresh token
 
         :return: Authentication token in the response body
         """
@@ -25,7 +32,12 @@ class AgentOTPLogin(AbstractResource):
             cred_dict = json.loads(request.data)
             otp = cred_dict.get("otp", "")
             if self._validate_otp(otp):
-                return make_response({"token": "supersecrettoken"})
+                response_data = {"authentication_token": "supersecrettoken"}
+                response_data["refresh_token"] = self._authentication_facade.generate_refresh_token(
+                    current_user
+                )
+                return make_response(response_data)
+
         except Exception:
             pass
 
