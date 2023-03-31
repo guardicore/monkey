@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class Token(AbstractResource):
     """
-    A resource for user authentication
+    A resource for refreshing tokens
     """
 
     urls = ["/api/token"]
@@ -25,8 +25,7 @@ class Token(AbstractResource):
         """
         Accepts a refresh token and returns a new token pair
 
-        :return: Access token in the response body
-        :raises IncorrectCredentialsError: If credentials are invalid
+        :return: Response with new token pair or an invalid request response
         """
         try:
             old_refresh_token = request.json[REFRESH_TOKEN_KEY_NAME]
