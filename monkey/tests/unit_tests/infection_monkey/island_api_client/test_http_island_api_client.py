@@ -23,6 +23,7 @@ from common.agent_event_serializers import (
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPluginType
 from common.base_models import InfectionMonkeyBaseModel
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
 from common.credentials import Credentials
 from common.types import SocketAddress
 from infection_monkey.island_api_client import (
@@ -117,8 +118,8 @@ def test_login():
     http_client_stub.post.return_value.json.return_value = {
         "response": {
             "user": {
-                "authentication_token": auth_token,
-                "refresh_token": refresh_token,
+                ACCESS_TOKEN_KEY_NAME: auth_token,
+                REFRESH_TOKEN_KEY_NAME: refresh_token,
             }
         }
     }
@@ -149,8 +150,8 @@ def test_login__does_not_overwrite_additional_headers():
     http_client_stub.post.return_value.json.return_value = {
         "response": {
             "user": {
-                "authentication_token": auth_token,
-                "refresh_token": refresh_token,
+                ACCESS_TOKEN_KEY_NAME: auth_token,
+                REFRESH_TOKEN_KEY_NAME: refresh_token,
             }
         }
     }
