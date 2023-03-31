@@ -4,7 +4,7 @@ import random
 import secrets
 import string
 from threading import Event, Thread
-from typing import Any, Callable, Dict, Iterable, List, MutableMapping, Optional, Type, TypeVar
+from typing import Any, Callable, Iterable, List, MutableMapping, Optional, TypeVar
 
 T = TypeVar("T")
 
@@ -24,15 +24,6 @@ def apply_filters(filters: Iterable[Callable[[T], bool]], iterable: Iterable[T])
         filtered_iterable = filter(f, filtered_iterable)
 
     return filtered_iterable
-
-
-class Singleton(type):
-    _instances: Dict[Type, type] = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
 
 
 def queue_to_list(q: queue.Queue) -> List[Any]:
