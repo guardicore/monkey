@@ -1,10 +1,15 @@
 from pymongo import MongoClient
 
+from monkey_island.cc.repositories import (
+    MONGO_OBJECT_ID_KEY,
+    RemovalError,
+    RetrievalError,
+    StorageError,
+    UnknownRecordError,
+)
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
-from . import IOTPRepository
-from .consts import MONGO_OBJECT_ID_KEY
-from .errors import RemovalError, RetrievalError, StorageError, UnknownRecordError
+from .i_otp_repository import IOTPRepository
 
 
 class MongoOTPRepository(IOTPRepository):

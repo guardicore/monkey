@@ -5,13 +5,13 @@ import mongomock
 import pytest
 
 from monkey_island.cc.repositories import (
-    IOTPRepository,
-    MongoOTPRepository,
     RemovalError,
     RetrievalError,
     StorageError,
     UnknownRecordError,
 )
+from monkey_island.cc.services.authentication_service.i_otp_repository import IOTPRepository
+from monkey_island.cc.services.authentication_service.mongo_otp_repository import MongoOTPRepository
 
 
 @dataclass

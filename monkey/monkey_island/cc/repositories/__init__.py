@@ -1,4 +1,5 @@
 from .errors import RemovalError, RepositoryError, RetrievalError, StorageError, UnknownRecordError
+from .consts import MONGO_OBJECT_ID_KEY
 
 
 from .i_file_repository import FileNotFoundError, IFileRepository
@@ -11,7 +12,6 @@ from .i_node_repository import INodeRepository
 from .i_agent_event_repository import IAgentEventRepository
 from .i_agent_log_repository import IAgentLogRepository
 from .i_agent_plugin_repository import IAgentPluginRepository
-from .i_otp_repository import IOTPRepository
 
 
 from .local_storage_file_repository import LocalStorageFileRepository
@@ -30,7 +30,6 @@ from .mongo_machine_repository import MongoMachineRepository
 from .mongo_agent_repository import MongoAgentRepository
 from .mongo_node_repository import MongoNodeRepository
 from .mongo_agent_event_repository import MongoAgentEventRepository
-from .mongo_otp_repository import MongoOTPRepository
 from .file_agent_log_repository import FileAgentLogRepository
 from .file_agent_plugin_repository import FileAgentPluginRepository
 
