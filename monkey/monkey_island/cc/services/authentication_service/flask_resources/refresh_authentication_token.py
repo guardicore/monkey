@@ -11,12 +11,12 @@ from .utils import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
 logger = logging.getLogger(__name__)
 
 
-class Token(AbstractResource):
+class RefreshAuthenticationToken(AbstractResource):
     """
     A resource for refreshing tokens
     """
 
-    urls = ["/api/token"]
+    urls = ["/api/refresh-authentication-token"]
 
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
