@@ -16,10 +16,3 @@ class TokenValidator:
         :raises SignatureExpired: If the token has expired
         """
         self._token_serializer.loads(token, max_age=self._token_expiration)
-
-    def get_token_payload(self, token: Token) -> str:
-        """
-        Returns the payload of a token
-        :param token: Token to get the payload of
-        """
-        return str(self._token_serializer.loads(token, max_age=self._token_expiration))

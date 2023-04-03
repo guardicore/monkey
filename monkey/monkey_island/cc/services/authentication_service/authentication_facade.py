@@ -8,7 +8,7 @@ from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.token.token_generator import TokenGenerator
 
 from . import AccountRole
-from .token import Token, TokenValidator
+from .token import Token, TokenParser, TokenValidator
 from .user import User
 
 
@@ -24,12 +24,14 @@ class AuthenticationFacade:
         user_datastore: UserDatastore,
         token_generator: TokenGenerator,
         refresh_token_validator: TokenValidator,
+        token_parser: TokenParser,
     ):
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
         self._datastore = user_datastore
         self._token_generator = token_generator
         self._refresh_token_validator = refresh_token_validator
+        self._token_parser = token_parser
 
     def needs_registration(self) -> bool:
         """
@@ -63,7 +65,7 @@ class AuthenticationFacade:
 
     def _get_refresh_token_owner(self, refresh_token: Token) -> User:
         self._refresh_token_validator.validate_token(refresh_token)
-        user_uniquifier = self._refresh_token_validator.get_token_payload(refresh_token)
+        user_uniquifier = self._token_parser.parse(refresh_token).payload
         user = self._datastore.find_user(fs_uniquifier=user_uniquifier)
         if not user:
             raise Exception("Invalid refresh token")

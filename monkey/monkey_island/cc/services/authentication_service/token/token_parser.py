@@ -1,0 +1,34 @@
+from dataclasses import dataclass
+from typing import Any, Dict
+from flask_security import Security
+
+from .types import Token
+
+@dataclass
+class ParsedToken:
+    token: Token
+    expiration_time: int
+    payload: str
+
+
+class TokenValidationError(Exception):
+    """ Raise when an invalid token is encountered """
+
+
+class TokenParser:
+    def __init__(self, security: Security, token_expiration: int):
+        self._token_serializer = security.remember_token_serializer
+        self._token_expiration = token_expiration  # in seconds
+
+    def parse(self, token: Token) -> ParsedToken:
+        """
+        Parses a token and returns a data structure with its components
+
+        :param token: The token to parse
+        :return: The parsed token
+        :raises TokenValidationError: If the token could not be parsed
+        """
+        try:
+            return ParsedToken(token=token, expiration_time=self._token_expiration, payload=str(self._token_serializer.loads(token, max_age=self._token_expiration)))
+        except Exception:
+            raise TokenValidationError("Token is invalid, could not parse")

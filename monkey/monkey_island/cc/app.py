@@ -44,7 +44,11 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
 from monkey_island.cc.services.authentication_service.configure_flask_security import (
     configure_flask_security,
 )
-from monkey_island.cc.services.authentication_service.token import TokenGenerator, TokenValidator
+from monkey_island.cc.services.authentication_service.token import (
+    TokenGenerator,
+    TokenParser,
+    TokenValidator,
+)
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
@@ -162,16 +166,20 @@ def init_app(
 def _build_authentication_facade(container: DIContainer, security: Security):
     repository_encryptor = container.resolve(ILockableEncryptor)
     island_event_queue = container.resolve(IIslandEventQueue)
+
     token_generator = TokenGenerator(security)
     refresh_token_expiration = (
         security.app.config["SECURITY_TOKEN_MAX_AGE"]
         + security.app.config["SECURITY_REFRESH_TOKEN_TIMEDELTA"]
     )
     refresh_token_validator = TokenValidator(security, refresh_token_expiration)
+    token_parser = TokenParser(security, refresh_token_expiration)
+
     return AuthenticationFacade(
         repository_encryptor,
         island_event_queue,
         security.datastore,
         token_generator,
         refresh_token_validator,
+        token_parser,
     )
