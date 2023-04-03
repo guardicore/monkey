@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from typing import Any, Dict
+
 from flask_security import Security
 
 from .types import Token
+
 
 @dataclass
 class ParsedToken:
@@ -12,7 +13,7 @@ class ParsedToken:
 
 
 class TokenValidationError(Exception):
-    """ Raise when an invalid token is encountered """
+    """Raise when an invalid token is encountered"""
 
 
 class TokenParser:
@@ -29,6 +30,10 @@ class TokenParser:
         :raises TokenValidationError: If the token could not be parsed
         """
         try:
-            return ParsedToken(token=token, expiration_time=self._token_expiration, payload=str(self._token_serializer.loads(token, max_age=self._token_expiration)))
+            return ParsedToken(
+                token=token,
+                expiration_time=self._token_expiration,
+                payload=str(self._token_serializer.loads(token, max_age=self._token_expiration)),
+            )
         except Exception:
             raise TokenValidationError("Token is invalid, could not parse")
