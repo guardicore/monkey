@@ -63,6 +63,14 @@ def test_insert_otp__prevents_duplicates(otp_repository: IOTPRepository):
         otp_repository.insert_otp(OTPS[0].otp, OTPS[0].expiration_time)
 
 
+def test_insert_otp__prevents_duplicate_otp_with_differing_expiration(
+    otp_repository: IOTPRepository,
+):
+    otp_repository.insert_otp(OTPS[0].otp, 11)
+    with pytest.raises(StorageError):
+        otp_repository.insert_otp(OTPS[0].otp, 99)
+
+
 def test_insert_otp__raises_storage_error_if_error_occurs(
     error_raising_otp_repository: IOTPRepository,
 ):
