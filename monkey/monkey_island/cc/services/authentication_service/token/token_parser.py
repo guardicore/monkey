@@ -13,15 +13,17 @@ class TokenValidationError(Exception):
 
 class ParsedToken(InfectionMonkeyBaseModel):
     raw_token: Token
-    expiration_time: int
     user_uniquifier: str
+    expiration_time: int
     _token_serializer: Serializer = PrivateAttr()
 
-    def __init__(self, token_serializer: Serializer, *, raw_token: Token, **data):
+    def __init__(self, token_serializer: Serializer, *, raw_token: Token, expiration_time: int):
         self._token_serializer = token_serializer
 
-        user_uniquifier = self._token_serializer.loads(raw_token)
-        super().__init__(raw_token=raw_token, user_uniquifier=user_uniquifier, **data)
+        user_uniquifier = self._token_serializer.loads(raw_token, max_age=expiration_time)
+        super().__init__(
+            raw_token=raw_token, user_uniquifier=user_uniquifier, expiration_time=expiration_time
+        )
 
     def is_expired(self) -> bool:
         try:
@@ -52,3 +54,5 @@ class TokenParser:
             )
         except BadSignature:
             raise TokenValidationError("Invalid token signature")
+        except SignatureExpired:
+            raise TokenValidationError("Token has expired")

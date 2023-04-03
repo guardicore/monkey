@@ -36,7 +36,25 @@ def test_parse__expired_token(freezer):
     token_parser = TokenParser(app.security, token_expiration)
     freezer.move_to(validation_time)
 
+    with pytest.raises(TokenValidationError):
+        token_parser.parse(token)
+
+
+def test_parse__is_expired(freezer):
+    token_expiration = 1 * 60  # 1 minute
+    generation_time = "2020-01-01 00:00:00"
+    validation_time = "2020-01-01 00:03:30"
+    payload = "fake_user_id"
+
+    app, _ = build_app()
+    token_generator = TokenGenerator(app.security)
+    freezer.move_to(generation_time)
+    token = token_generator.generate_token(payload)
+    token_parser = TokenParser(app.security, token_expiration)
     parsed_token = token_parser.parse(token)
+
+    assert not parsed_token.is_expired()
+    freezer.move_to(validation_time)
     assert parsed_token.is_expired()
 
 
