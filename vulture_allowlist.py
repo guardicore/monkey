@@ -157,6 +157,7 @@ _refresh_token_validator
 
 # Remove after #3078
 OTP.expiration_time
-IOTPRepository.save_otp
-IOTPRepository.delete_otp
+IOTPRepository.insert_otp
+IOTPRepository.get_expiration
+IOTPRepository.reset
 MongoOTPRepository

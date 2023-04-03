@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-from monkey_island.cc.models import OTP
+from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from . import IOTPRepository
 from .consts import MONGO_OBJECT_ID_KEY
@@ -8,33 +8,34 @@ from .errors import RemovalError, RetrievalError, StorageError, UnknownRecordErr
 
 
 class MongoOTPRepository(IOTPRepository):
-    def __init__(self, mongo_client: MongoClient):
+    def __init__(
+        self,
+        mongo_client: MongoClient,
+        encryptor: ILockableEncryptor,
+    ):
+        self._encryptor = encryptor
         self._otp_collection = mongo_client.monkey_island.otp
         self._otp_collection.create_index("otp", unique=True)
-        self._otp_collection.create_index("expiration_time", expireAfterSeconds=0)
 
-    def save_otp(self, otp: OTP):
+    def insert_otp(self, otp: str, expiration: float):
         try:
-            # Do we need to encrypt OTPs?
-            self._otp_collection.insert_one(otp.dict(simplify=True))
+            encrypted_otp = self._encryptor.encrypt(otp.encode())
+            self._otp_collection.insert_one({"otp": encrypted_otp, "expiration_time": expiration})
         except Exception as err:
             raise StorageError(f"Error updating otp: {err}")
 
-    def get_otp(self, otp: str) -> OTP:
+    def get_expiration(self, otp: str) -> float:
         try:
-            otp_dict = self._otp_collection.find_one({"otp": otp}, {MONGO_OBJECT_ID_KEY: False})
+            encrypted_otp = self._encryptor.encrypt(otp.encode())
+            otp_dict = self._otp_collection.find_one(
+                {"otp": encrypted_otp}, {MONGO_OBJECT_ID_KEY: False}
+            )
         except Exception as err:
             raise RetrievalError(f"Error retrieving otp: {err}")
 
         if otp_dict is None:
             raise UnknownRecordError("OTP not found")
-        return OTP(**otp_dict)
-
-    def delete_otp(self, otp: str):
-        try:
-            self._otp_collection.delete_one({"otp": otp})
-        except Exception as err:
-            raise RemovalError(f"Error deleting otp: {err}")
+        return otp_dict["expiration_time"]
 
     def reset(self):
         try:

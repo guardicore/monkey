@@ -1,9 +1,9 @@
+from dataclasses import dataclass
 from unittest.mock import MagicMock
 
 import mongomock
 import pytest
 
-from monkey_island.cc.models import OTP
 from monkey_island.cc.repositories import (
     IOTPRepository,
     MongoOTPRepository,
@@ -13,6 +13,13 @@ from monkey_island.cc.repositories import (
     UnknownRecordError,
 )
 
+
+@dataclass
+class OTP:
+    otp: str
+    expiration_time: float
+
+
 OTPS = (
     OTP(otp="test_otp_1", expiration_time=1),
     OTP(otp="test_otp_2", expiration_time=2),
@@ -21,16 +28,8 @@ OTPS = (
 
 
 @pytest.fixture
-def empty_otp_repository() -> IOTPRepository:
-    return MongoOTPRepository(mongomock.MongoClient())
-
-
-@pytest.fixture
-def otp_repository() -> IOTPRepository:
-    client = mongomock.MongoClient()
-    client.monkey_island.otp.insert_many((o.dict(simplify=True) for o in OTPS))
-    otp_repository = MongoOTPRepository(client)
-    return otp_repository
+def otp_repository(repository_encryptor) -> IOTPRepository:
+    return MongoOTPRepository(mongomock.MongoClient(), repository_encryptor)
 
 
 @pytest.fixture
@@ -47,66 +46,58 @@ def error_raising_mongo_client() -> mongomock.MongoClient:
 
 
 @pytest.fixture
-def error_raising_otp_repository(error_raising_mongo_client) -> IOTPRepository:
-    return MongoOTPRepository(error_raising_mongo_client)
+def error_raising_otp_repository(
+    error_raising_mongo_client, repository_encryptor
+) -> IOTPRepository:
+    return MongoOTPRepository(error_raising_mongo_client, repository_encryptor)
 
 
-def test_save_otp(empty_otp_repository: IOTPRepository):
-    otp = OTP(otp="test_otp", expiration_time=1)
-    empty_otp_repository.save_otp(otp)
-    assert empty_otp_repository.get_otp("test_otp") == otp
+def test_insert_otp(otp_repository: IOTPRepository):
+    otp_repository.insert_otp("test_otp", 1)
+    assert otp_repository.get_expiration("test_otp") == 1
 
 
-def test_save_otp__prevents_duplicates(otp_repository: IOTPRepository):
+def test_insert_otp__prevents_duplicates(otp_repository: IOTPRepository):
+    otp_repository.insert_otp(OTPS[0].otp, OTPS[0].expiration_time)
     with pytest.raises(StorageError):
-        otp_repository.save_otp(OTPS[0])
+        otp_repository.insert_otp(OTPS[0].otp, OTPS[0].expiration_time)
 
 
-def test_save_otp__raises_storage_error_if_error_occurs(
+def test_insert_otp__raises_storage_error_if_error_occurs(
     error_raising_otp_repository: IOTPRepository,
 ):
     with pytest.raises(StorageError):
-        error_raising_otp_repository.save_otp(OTP(otp="test_otp", expiration_time=1))
+        error_raising_otp_repository.insert_otp("test_otp", 1)
 
 
-def test_get_otp__raises_unknown_record_error_if_otp_does_not_exist(
-    empty_otp_repository: IOTPRepository,
+def test_get_expiration__raises_unknown_record_error_if_otp_does_not_exist(
+    otp_repository: IOTPRepository,
 ):
     with pytest.raises(UnknownRecordError):
-        empty_otp_repository.get_otp("test_otp")
+        otp_repository.get_expiration("test_otp")
 
 
-def test_get_otp__returns_otp_if_otp_exists(otp_repository: IOTPRepository):
-    assert otp_repository.get_otp(OTPS[0].otp) == OTPS[0]
+def test_get_expiration__returns_expiration_if_otp_exists(otp_repository: IOTPRepository):
+    otp_repository.insert_otp(OTPS[0].otp, OTPS[0].expiration_time)
+    assert otp_repository.get_expiration(OTPS[0].otp) == OTPS[0].expiration_time
 
 
-def test_get_otp__raises_retrieval_error_if_error_occurs(
+def test_get_expiration__raises_retrieval_error_if_error_occurs(
     error_raising_otp_repository: IOTPRepository,
 ):
     with pytest.raises(RetrievalError):
-        error_raising_otp_repository.get_otp("test_otp")
-
-
-def test_delete_otp__deletes_otp_if_otp_exists(otp_repository: IOTPRepository):
-    otp_repository.delete_otp(OTPS[0].otp)
-
-    with pytest.raises(UnknownRecordError):
-        otp_repository.get_otp(OTPS[0].otp)
-
-
-def test_delete_otp__raises_removal_error_if_error_occurs(
-    error_raising_otp_repository: IOTPRepository,
-):
-    with pytest.raises(RemovalError):
-        error_raising_otp_repository.delete_otp("test_otp")
+        error_raising_otp_repository.get_expiration("test_otp")
 
 
 def test_reset__deletes_all_otp(otp_repository: IOTPRepository):
+    for o in OTPS:
+        otp_repository.insert_otp(o.otp, o.expiration_time)
+
     otp_repository.reset()
 
     for o in OTPS:
         with pytest.raises(UnknownRecordError):
-            otp_repository.get_otp(o.otp)
+            otp_repository.get_expiration(o.otp)
 
 
 def test_reset__raises_removal_error_if_error_occurs(error_raising_otp_repository: IOTPRepository):
