@@ -1,9 +1,11 @@
 import logging
 from http import HTTPStatus
 
-from flask import request
+from flask import make_response, request
+from itsdangerous import BadSignature, SignatureExpired
 
 from monkey_island.cc.flask_utils import AbstractResource, responses
+from monkey_island.cc.services.authentication_service.token.token_parser import TokenValidationError
 
 from ..authentication_facade import AuthenticationFacade
 from .utils import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
@@ -41,5 +43,7 @@ class RefreshAuthenticationToken(AbstractResource):
                 }
             }
             return response, HTTPStatus.OK
+        except (BadSignature, SignatureExpired, TokenValidationError):
+            return make_response({}, HTTPStatus.UNAUTHORIZED)
         except Exception:
             return responses.make_response_to_invalid_request()

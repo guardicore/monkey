@@ -13,6 +13,7 @@ from monkey_island.cc.services.authentication_service.flask_resources.utils impo
     ACCESS_TOKEN_KEY_NAME,
     REFRESH_TOKEN_KEY_NAME,
 )
+from monkey_island.cc.services.authentication_service.token.token_parser import TokenValidationError
 
 REQUEST_AUTHENTICATION_TOKEN = "my_authentication_token"
 REQUEST_REFRESH_TOKEN = "my_refresh_token"
@@ -57,7 +58,7 @@ def test_token__fails_if_refresh_token_is_invalid(
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
-@pytest.mark.parametrize("exception", [BadSignature, SignatureExpired])
+@pytest.mark.parametrize("exception", [BadSignature, SignatureExpired, TokenValidationError])
 def test_token__fails_refresh_token(
     exception, request_token, mock_authentication_facade: AuthenticationFacade
 ):
