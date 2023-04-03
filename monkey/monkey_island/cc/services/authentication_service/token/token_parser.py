@@ -6,7 +6,7 @@ from .types import Token
 
 
 class ParsedToken(InfectionMonkeyBaseModel):
-    token: Token
+    raw_token: Token
     expiration_time: int
     user_uniquifier: str
 
@@ -30,7 +30,7 @@ class TokenParser:
         """
         try:
             return ParsedToken(
-                token=token,
+                raw_token=token,
                 expiration_time=self._token_expiration,
                 user_uniquifier=str(
                     self._token_serializer.loads(token, max_age=self._token_expiration)

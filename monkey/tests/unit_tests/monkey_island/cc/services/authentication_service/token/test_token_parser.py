@@ -18,7 +18,7 @@ def test_parse():
     token = token_generator.generate_token(user_uniquifier)
     parsed_token = token_parser.parse(token)
 
-    assert parsed_token.token == token
+    assert parsed_token.raw_token == token
     assert parsed_token.expiration_time == token_expiration_timedelta
     assert parsed_token.user_uniquifier == user_uniquifier
 
