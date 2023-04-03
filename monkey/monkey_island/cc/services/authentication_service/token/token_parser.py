@@ -11,6 +11,14 @@ class TokenValidationError(Exception):
     """Raise when an invalid token is encountered"""
 
 
+class InvalidTokenSignatureError(TokenValidationError):
+    """Raise when a token's signature is invalid"""
+
+
+class ExpiredTokenError(TokenValidationError):
+    """Raise when a token has expired"""
+
+
 class ParsedToken(InfectionMonkeyBaseModel):
     raw_token: Token
     user_uniquifier: str
@@ -52,7 +60,8 @@ class TokenParser:
                 raw_token=token,
                 expiration_time=self._token_expiration,
             )
-        except BadSignature:
-            raise TokenValidationError("Invalid token signature")
         except SignatureExpired:
-            raise TokenValidationError("Token has expired")
+            # NOTE: SignatureExpired is a subclass of BadSignature; this clause must come first.
+            raise ExpiredTokenError("Token has expired")
+        except BadSignature:
+            raise InvalidTokenSignatureError("Invalid token signature")
