@@ -2,7 +2,10 @@ import time
 from unittest.mock import MagicMock
 
 from monkey_island.cc.services.authentication_service.i_otp_repository import IOTPRepository
-from monkey_island.cc.services.authentication_service.otp import OTP_EXPIRATION_TIME, OTPGenerator
+from monkey_island.cc.services.authentication_service.otp_generator import (
+    OTP_EXPIRATION_TIME,
+    OTPGenerator,
+)
 
 
 def test_otp_generator__saves_otp():
