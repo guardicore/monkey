@@ -1,16 +1,22 @@
+import string
+import time
 from typing import Tuple
 
 from flask_security import UserDatastore
 
+from common.utils.code_utils import secure_generate_random_string
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
 
 from . import AccountRole
+from .i_otp_repository import IOTPRepository
 from .token_parser import ParsedToken, TokenParser
 from .types import Token
 from .user import User
+
+OTP_EXPIRATION_TIME = 2 * 60  # 2 minutes
 
 
 class AuthenticationFacade:
@@ -25,12 +31,14 @@ class AuthenticationFacade:
         user_datastore: UserDatastore,
         token_generator: TokenGenerator,
         token_parser: TokenParser,
+        otp_repository: IOTPRepository,
     ):
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
         self._datastore = user_datastore
         self._token_generator = token_generator
         self._token_parser = token_parser
+        self._otp_repository = otp_repository
 
     def needs_registration(self) -> bool:
         """
@@ -70,6 +78,22 @@ class AuthenticationFacade:
         if not user:
             raise Exception("Invalid refresh token")
         return user
+
+    def generate_otp(self) -> str:
+        """
+        Generates a new OTP
+
+        The generated OTP is saved to the `IOTPRepository`
+        :return: The generated OTP
+        """
+        otp_value = self._generate_otp()
+        expiration_time = time.monotonic() + OTP_EXPIRATION_TIME
+        self._otp_repository.insert_otp(otp_value, expiration_time)
+
+        return otp_value
+
+    def _generate_otp(self) -> str:
+        return secure_generate_random_string(32, string.ascii_letters + string.digits + "._-")
 
     def generate_refresh_token(self, user: User) -> Token:
         """
