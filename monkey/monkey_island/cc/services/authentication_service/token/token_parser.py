@@ -1,12 +1,11 @@
-from dataclasses import dataclass
-
 from flask_security import Security
+
+from common.base_models import InfectionMonkeyBaseModel
 
 from .types import Token
 
 
-@dataclass
-class ParsedToken:
+class ParsedToken(InfectionMonkeyBaseModel):
     token: Token
     expiration_time: int
     payload: str
