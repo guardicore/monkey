@@ -17,7 +17,7 @@ from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.island_api_client import http_island_api_client
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
-from monkey_island.cc.models import OTP, IslandMode, Machine
+from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import (
     IAgentEventRepository,
     IOTPRepository,
@@ -156,7 +156,6 @@ TokenValidator.validate_token
 _refresh_token_validator
 
 # Remove after #3078
-OTP.expiration_time
 IOTPRepository.insert_otp
 IOTPRepository.get_expiration
 IOTPRepository.reset
