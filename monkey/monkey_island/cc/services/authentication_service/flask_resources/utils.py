@@ -8,6 +8,9 @@ from werkzeug.datastructures import ImmutableMultiDict
 
 from monkey_island.cc.services.authentication_service.token import Token
 
+REFRESH_TOKEN_KEY_NAME = "refresh_token"
+ACCESS_TOKEN_KEY_NAME = "authentication_token"
+
 
 def get_username_password_from_request(_request: Request) -> Tuple[str, str]:
     """
@@ -49,6 +52,6 @@ def add_refresh_token_to_response(response: Response, refresh_token: Token) -> R
     :return: A Flask Response object
     """
     new_data = deepcopy(response.json)
-    new_data["response"]["user"]["refresh_token"] = refresh_token
+    new_data["response"]["user"][REFRESH_TOKEN_KEY_NAME] = refresh_token
     response.data = json.dumps(new_data).encode()
     return response
