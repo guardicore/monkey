@@ -8,7 +8,7 @@ from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.token.token_generator import TokenGenerator
 
 from . import AccountRole
-from .token import Token, TokenParser
+from .token import ParsedToken, Token, TokenParser
 from .user import User
 
 
@@ -53,17 +53,19 @@ class AuthenticationFacade:
         Generates a new access token and refresh, given a valid refresh token
 
         :param refresh_token: Refresh token
-        :raise Exception: If the refresh token is invalid
+        :raise TokenValidationError: If the refresh token is invalid or expired
         :return: Tuple of the new access token and refresh token
         """
-        user = self._get_refresh_token_owner(refresh_token)
+        parsed_refresh_token = self._token_parser.parse(refresh_token)
+        user = self._get_refresh_token_owner(parsed_refresh_token)
+
         new_access_token = user.get_auth_token()
         new_refresh_token = self._token_generator.generate_token(user.fs_uniquifier)
+
         return new_access_token, new_refresh_token
 
-    def _get_refresh_token_owner(self, refresh_token: Token) -> User:
-        user_uniquifier = self._token_parser.parse(refresh_token).user_uniquifier
-        user = self._datastore.find_user(fs_uniquifier=user_uniquifier)
+    def _get_refresh_token_owner(self, refresh_token: ParsedToken) -> User:
+        user = self._datastore.find_user(fs_uniquifier=refresh_token.user_uniquifier)
         if not user:
             raise Exception("Invalid refresh token")
         return user
