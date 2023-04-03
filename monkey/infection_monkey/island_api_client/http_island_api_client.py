@@ -76,7 +76,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._refresh_token = ""
 
     @handle_response_parsing_errors
-    @handle_authentication_token_expiration
     def login(self, otp: OTP):
         try:
             response = self._http_client.post("/agent-otp-login", {"otp": otp.get_secret_value()})
