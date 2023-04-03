@@ -5,7 +5,9 @@ import pytest
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
 )
-from monkey_island.cc.services.authentication_service.flask_resources.token import Token
+from monkey_island.cc.services.authentication_service.flask_resources.refresh_authentication_token import (  # noqa: E501
+    RefreshAuthenticationToken,
+)
 from monkey_island.cc.services.authentication_service.flask_resources.utils import (
     ACCESS_TOKEN_KEY_NAME,
     REFRESH_TOKEN_KEY_NAME,
@@ -21,7 +23,7 @@ NEW_REFRESH_TOKEN = "new_refresh_token"
 
 @pytest.fixture
 def request_token(flask_client):
-    url = Token.urls[0]
+    url = RefreshAuthenticationToken.urls[0]
 
     def inner(request_body):
         return flask_client.post(url, json=request_body, follow_redirects=True)
