@@ -73,6 +73,7 @@ def authentication_facade(
 
 
 def test_needs_registration__true(authentication_facade: AuthenticationFacade):
+    authentication_facade._datastore.find_user.return_value = False
     assert authentication_facade.needs_registration()
 
 
@@ -80,7 +81,7 @@ def test_needs_registration__false(
     monkeypatch,
     authentication_facade: AuthenticationFacade,
 ):
-    User(username=USERNAME, password=PASSWORD).save()
+    authentication_facade._datastore.find_user.return_value = True
     assert not authentication_facade.needs_registration()
 
 
