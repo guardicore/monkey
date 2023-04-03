@@ -11,11 +11,7 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
-from monkey_island.cc.services.authentication_service.token import (
-    TokenGenerator,
-    TokenParser,
-    TokenValidator,
-)
+from monkey_island.cc.services.authentication_service.token import TokenGenerator, TokenParser
 from monkey_island.cc.services.authentication_service.user import User
 
 USERNAME = "user1"
@@ -54,11 +50,6 @@ def mock_token_generator() -> TokenGenerator:
 
 
 @pytest.fixture
-def mock_token_validator() -> TokenValidator:
-    return MagicMock(spec=TokenValidator)
-
-
-@pytest.fixture
 def mock_token_parser() -> TokenParser:
     return MagicMock(spec=TokenParser)
 
@@ -70,7 +61,6 @@ def authentication_facade(
     mock_island_event_queue: IIslandEventQueue,
     mock_user_datastore: UserDatastore,
     mock_token_generator: TokenGenerator,
-    mock_token_validator: TokenValidator,
     mock_token_parser: TokenParser,
 ) -> AuthenticationFacade:
     return AuthenticationFacade(
@@ -78,7 +68,6 @@ def authentication_facade(
         mock_island_event_queue,
         mock_user_datastore,
         mock_token_generator,
-        mock_token_validator,
         mock_token_parser,
     )
 
