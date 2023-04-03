@@ -1,4 +1,6 @@
 from flask_security import Security
+from itsdangerous import Serializer, SignatureExpired
+from pydantic import PrivateAttr
 
 from common.base_models import InfectionMonkeyBaseModel
 
@@ -9,6 +11,18 @@ class ParsedToken(InfectionMonkeyBaseModel):
     raw_token: Token
     expiration_time: int
     user_uniquifier: str
+    _token_serializer: Serializer = PrivateAttr()
+
+    def __init__(self, token_serializer: Serializer, **data):
+        self._token_serializer = token_serializer
+        super().__init__(**data)
+
+    def is_expired(self) -> bool:
+        try:
+            self._token_serializer.loads(self.raw_token, max_age=self.expiration_time)
+            return False
+        except SignatureExpired:
+            return True
 
 
 class TokenValidationError(Exception):
@@ -30,10 +44,12 @@ class TokenParser:
         """
         try:
             return ParsedToken(
+                token_serializer=self._token_serializer,
                 raw_token=token,
                 expiration_time=self._token_expiration,
                 user_uniquifier=str(
-                    self._token_serializer.loads(token, max_age=self._token_expiration)
+                    # self._token_serializer.loads(token, max_age=self._token_expiration)
+                    self._token_serializer.loads(token)
                 ),
             )
         except Exception:
