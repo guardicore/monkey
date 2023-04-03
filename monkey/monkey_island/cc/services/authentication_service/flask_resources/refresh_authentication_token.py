@@ -4,7 +4,7 @@ from http import HTTPStatus
 from flask import make_response, request
 
 from monkey_island.cc.flask_utils import AbstractResource, responses
-from monkey_island.cc.services.authentication_service.token.token_parser import TokenValidationError
+from monkey_island.cc.services.authentication_service.token import TokenValidationError
 
 from ..authentication_facade import AuthenticationFacade
 from .utils import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
