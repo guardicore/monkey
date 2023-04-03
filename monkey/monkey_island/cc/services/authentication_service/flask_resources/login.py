@@ -37,7 +37,6 @@ class Login(AbstractResource):
         returns an access token
 
         :return: Access token in the response body
-        :raises IncorrectCredentialsError: If credentials are invalid
         """
         try:
             username, password = get_username_password_from_request(request)
