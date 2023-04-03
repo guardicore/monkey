@@ -11,7 +11,11 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
-from monkey_island.cc.services.authentication_service.token import TokenGenerator, TokenValidator
+from monkey_island.cc.services.authentication_service.token import (
+    TokenGenerator,
+    TokenParser,
+    TokenValidator,
+)
 from monkey_island.cc.services.authentication_service.user import User
 
 USERNAME = "user1"
@@ -45,13 +49,18 @@ def mock_user_datastore() -> UserDatastore:
 
 
 @pytest.fixture
-def mock_token_generator() -> UserDatastore:
+def mock_token_generator() -> TokenGenerator:
     return MagicMock(spec=TokenGenerator)
 
 
 @pytest.fixture
-def mock_token_validator() -> UserDatastore:
+def mock_token_validator() -> TokenValidator:
     return MagicMock(spec=TokenValidator)
+
+
+@pytest.fixture
+def mock_token_parser() -> TokenParser:
+    return MagicMock(spec=TokenParser)
 
 
 @pytest.fixture
@@ -62,6 +71,7 @@ def authentication_facade(
     mock_user_datastore: UserDatastore,
     mock_token_generator: TokenGenerator,
     mock_token_validator: TokenValidator,
+    mock_token_parser: TokenParser,
 ) -> AuthenticationFacade:
     return AuthenticationFacade(
         mock_repository_encryptor,
@@ -69,6 +79,7 @@ def authentication_facade(
         mock_user_datastore,
         mock_token_generator,
         mock_token_validator,
+        mock_token_parser,
     )
 
 
@@ -119,13 +130,13 @@ def test_handle_sucessful_login(
 
 def test_generate_new_token_pair__generates_tokens(
     mock_token_generator: TokenGenerator,
-    mock_token_validator: TokenValidator,
+    mock_token_parser: TokenParser,
     authentication_facade: AuthenticationFacade,
 ):
     user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
     user.save()
     mock_token_generator.generate_token.return_value = "new_token"
-    mock_token_validator.get_token_payload.return_value = "a"
+    mock_token_parser.parse.return_value.payload = "a"
 
     access_token = user.get_auth_token()
     refresh_token = "original_refresh_token"
@@ -151,13 +162,13 @@ def test_generate_new_token_pair__fails_if_user_does_not_exist(
 
 
 def test_generate_new_token_pair__fails_if_token_invalid(
-    mock_token_validator: TokenValidator,
+    mock_token_parser: TokenParser,
     authentication_facade: AuthenticationFacade,
 ):
     user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
     user.save()
     refresh_token = authentication_facade.generate_refresh_token(user)
-    mock_token_validator.get_token_payload.side_effect = Exception()
+    mock_token_parser.parse.side_effect = Exception()
 
     with pytest.raises(Exception):
         authentication_facade.generate_new_token_pair(refresh_token)
