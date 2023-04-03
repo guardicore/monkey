@@ -1,8 +1,6 @@
-from tests.unit_tests.monkey_island.cc.services.authentication_service.token.conftest import (
-    build_app,
-)
+from tests.unit_tests.monkey_island.cc.services.authentication_service.conftest import build_app
 
-from monkey_island.cc.services.authentication_service.token.token_generator import TokenGenerator
+from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
 
 
 def test_generate_token(freezer):

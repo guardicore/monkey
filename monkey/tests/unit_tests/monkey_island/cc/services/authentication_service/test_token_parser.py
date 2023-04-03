@@ -1,12 +1,11 @@
 import pytest
-from tests.unit_tests.monkey_island.cc.services.authentication_service.token.conftest import (
-    build_app,
-)
+from tests.unit_tests.monkey_island.cc.services.authentication_service.conftest import build_app
 
-from monkey_island.cc.services.authentication_service.token import TokenGenerator, TokenParser
-from monkey_island.cc.services.authentication_service.token.token_parser import (
+from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
+from monkey_island.cc.services.authentication_service.token_parser import (
     ExpiredTokenError,
     InvalidTokenSignatureError,
+    TokenParser,
 )
 
 

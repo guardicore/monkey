@@ -1,7 +1,15 @@
+from typing import Tuple
 from unittest.mock import MagicMock
 
 import pytest
-from tests.unit_tests.monkey_island.conftest import init_mock_security_app
+from flask import Flask
+from flask_restful import Api
+from flask_security import Security
+from tests.unit_tests.monkey_island.conftest import (
+    init_mock_app,
+    init_mock_datastore,
+    init_mock_security_app,
+)
 
 from monkey_island.cc.services.authentication_service import register_resources
 from monkey_island.cc.services.authentication_service.authentication_facade import (
@@ -38,3 +46,10 @@ def get_mock_auth_app(authentication_facade: AuthenticationFacade):
 def flask_client(build_flask_client, mock_authentication_facade):
     with build_flask_client() as flask_client:
         yield flask_client
+
+
+def build_app() -> Tuple[Flask, Api]:
+    app, api = init_mock_app()
+    user_datastore = init_mock_datastore()
+    app.security = Security(app, user_datastore)
+    return app, api

@@ -5,7 +5,7 @@ from flask import make_response, request
 
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
 from monkey_island.cc.flask_utils import AbstractResource, responses
-from monkey_island.cc.services.authentication_service.token import TokenValidationError
+from monkey_island.cc.services.authentication_service.token_parser import TokenValidationError
 
 from ..authentication_facade import AuthenticationFacade
 

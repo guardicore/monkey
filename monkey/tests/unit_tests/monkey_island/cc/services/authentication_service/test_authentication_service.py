@@ -11,8 +11,8 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
-from monkey_island.cc.services.authentication_service.token import (
-    TokenGenerator,
+from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
+from monkey_island.cc.services.authentication_service.token_parser import (
     TokenParser,
     TokenValidationError,
 )

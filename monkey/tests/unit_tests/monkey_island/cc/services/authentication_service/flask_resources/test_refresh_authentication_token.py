@@ -9,7 +9,7 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
 from monkey_island.cc.services.authentication_service.flask_resources.refresh_authentication_token import (  # noqa: E501
     RefreshAuthenticationToken,
 )
-from monkey_island.cc.services.authentication_service.token.token_parser import (
+from monkey_island.cc.services.authentication_service.token_parser import (
     ExpiredTokenError,
     InvalidTokenSignatureError,
     TokenValidationError,

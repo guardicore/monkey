@@ -5,10 +5,11 @@ from flask_security import UserDatastore
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
-from monkey_island.cc.services.authentication_service.token.token_generator import TokenGenerator
+from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
 
 from . import AccountRole
-from .token import ParsedToken, Token, TokenParser
+from .token_parser import ParsedToken, TokenParser
+from .types import Token
 from .user import User
 
 

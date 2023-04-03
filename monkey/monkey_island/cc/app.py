@@ -44,7 +44,8 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
 from monkey_island.cc.services.authentication_service.configure_flask_security import (
     configure_flask_security,
 )
-from monkey_island.cc.services.authentication_service.token import TokenGenerator, TokenParser
+from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
+from monkey_island.cc.services.authentication_service.token_parser import TokenParser
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
