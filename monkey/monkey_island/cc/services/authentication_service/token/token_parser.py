@@ -1,10 +1,14 @@
 from flask_security import Security
-from itsdangerous import Serializer, SignatureExpired
+from itsdangerous import BadSignature, Serializer, SignatureExpired
 from pydantic import PrivateAttr
 
 from common.base_models import InfectionMonkeyBaseModel
 
 from .types import Token
+
+
+class TokenValidationError(Exception):
+    """Raise when an invalid token is encountered"""
 
 
 class ParsedToken(InfectionMonkeyBaseModel):
@@ -13,9 +17,11 @@ class ParsedToken(InfectionMonkeyBaseModel):
     user_uniquifier: str
     _token_serializer: Serializer = PrivateAttr()
 
-    def __init__(self, token_serializer: Serializer, **data):
+    def __init__(self, token_serializer: Serializer, *, raw_token: Token, **data):
         self._token_serializer = token_serializer
-        super().__init__(**data)
+
+        user_uniquifier = self._token_serializer.loads(raw_token)
+        super().__init__(raw_token=raw_token, user_uniquifier=user_uniquifier, **data)
 
     def is_expired(self) -> bool:
         try:
@@ -23,10 +29,6 @@ class ParsedToken(InfectionMonkeyBaseModel):
             return False
         except SignatureExpired:
             return True
-
-
-class TokenValidationError(Exception):
-    """Raise when an invalid token is encountered"""
 
 
 class TokenParser:
@@ -47,10 +49,6 @@ class TokenParser:
                 token_serializer=self._token_serializer,
                 raw_token=token,
                 expiration_time=self._token_expiration,
-                user_uniquifier=str(
-                    # self._token_serializer.loads(token, max_age=self._token_expiration)
-                    self._token_serializer.loads(token)
-                ),
             )
-        except Exception:
-            raise TokenValidationError("Token is invalid, could not parse")
+        except BadSignature:
+            raise TokenValidationError("Invalid token signature")
