@@ -11,7 +11,11 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
-from monkey_island.cc.services.authentication_service.token import TokenGenerator, TokenParser
+from monkey_island.cc.services.authentication_service.token import (
+    TokenGenerator,
+    TokenParser,
+    TokenValidationError,
+)
 from monkey_island.cc.services.authentication_service.user import User
 
 USERNAME = "user1"
@@ -157,9 +161,9 @@ def test_generate_new_token_pair__fails_if_token_invalid(
     user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
     user.save()
     refresh_token = authentication_facade.generate_refresh_token(user)
-    mock_token_parser.parse.side_effect = Exception()
+    mock_token_parser.parse.side_effect = TokenValidationError()
 
-    with pytest.raises(Exception):
+    with pytest.raises(TokenValidationError):
         authentication_facade.generate_new_token_pair(refresh_token)
 
 
