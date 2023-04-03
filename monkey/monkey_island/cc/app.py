@@ -3,11 +3,9 @@ from pathlib import Path
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
-from flask_security import Security
 from werkzeug.exceptions import NotFound
 
 from common import DIContainer
-from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.flask_utils import FlaskDIWrapper
 from monkey_island.cc.resources import (
     AgentBinaries,
@@ -36,17 +34,7 @@ from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.version import Version
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services import register_agent_configuration_resources, setup_authentication
-from monkey_island.cc.services.authentication_service.authentication_facade import (
-    AuthenticationFacade,
-)
-from monkey_island.cc.services.authentication_service.configure_flask_security import (
-    configure_flask_security,
-)
-from monkey_island.cc.services.authentication_service.mongo_otp_repository import MongoOTPRepository
-from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
-from monkey_island.cc.services.authentication_service.token_parser import TokenParser
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
@@ -139,7 +127,7 @@ def init_app(
     data_dir: Path,
 ):
     """
-    Simple docstirng for init_app
+    Simple docstring for init_app
 
     :param mongo_url: A url
     :param container: Dependency injection container
@@ -152,31 +140,8 @@ def init_app(
     init_app_config(app)
     init_app_url_rules(app)
 
+    setup_authentication(api, app, container, data_dir)
     flask_resource_manager = FlaskDIWrapper(api, container)
-    datastore = configure_flask_security(app, data_dir)
-    authentication_facade = _build_authentication_facade(container, datastore)
-    setup_authentication(api, authentication_facade)
     init_api_resources(flask_resource_manager)
 
     return app
-
-
-def _build_authentication_facade(container: DIContainer, security: Security):
-    repository_encryptor = container.resolve(ILockableEncryptor)
-    island_event_queue = container.resolve(IIslandEventQueue)
-
-    token_generator = TokenGenerator(security)
-    refresh_token_expiration = (
-        security.app.config["SECURITY_TOKEN_MAX_AGE"]
-        + security.app.config["SECURITY_REFRESH_TOKEN_TIMEDELTA"]
-    )
-    token_parser = TokenParser(security, refresh_token_expiration)
-
-    return AuthenticationFacade(
-        repository_encryptor,
-        island_event_queue,
-        security.datastore,
-        token_generator,
-        token_parser,
-        container.resolve(MongoOTPRepository),
-    )
