@@ -9,18 +9,18 @@ from monkey_island.cc.services.authentication_service.token.token_parser import 
 
 def test_parse():
     token_expiration_timedelta = 1 * 60  # 1 minute
-    payload = "fake_user_id"
+    user_uniquifier = "fake_user_id"
 
     app, _ = build_app()
     token_generator = TokenGenerator(app.security)
     token_parser = TokenParser(app.security, token_expiration_timedelta)
 
-    token = token_generator.generate_token(payload)
+    token = token_generator.generate_token(user_uniquifier)
     parsed_token = token_parser.parse(token)
 
     assert parsed_token.token == token
     assert parsed_token.expiration_time == token_expiration_timedelta
-    assert parsed_token.payload == payload
+    assert parsed_token.user_uniquifier == user_uniquifier
 
 
 def test_parse__expired_token(freezer):

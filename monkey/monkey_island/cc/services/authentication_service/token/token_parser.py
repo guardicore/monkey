@@ -8,7 +8,7 @@ from .types import Token
 class ParsedToken(InfectionMonkeyBaseModel):
     token: Token
     expiration_time: int
-    payload: str
+    user_uniquifier: str
 
 
 class TokenValidationError(Exception):
@@ -32,7 +32,9 @@ class TokenParser:
             return ParsedToken(
                 token=token,
                 expiration_time=self._token_expiration,
-                payload=str(self._token_serializer.loads(token, max_age=self._token_expiration)),
+                user_uniquifier=str(
+                    self._token_serializer.loads(token, max_age=self._token_expiration)
+                ),
             )
         except Exception:
             raise TokenValidationError("Token is invalid, could not parse")

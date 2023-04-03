@@ -65,7 +65,7 @@ class AuthenticationFacade:
 
     def _get_refresh_token_owner(self, refresh_token: Token) -> User:
         self._refresh_token_validator.validate_token(refresh_token)
-        user_uniquifier = self._token_parser.parse(refresh_token).payload
+        user_uniquifier = self._token_parser.parse(refresh_token).user_uniquifier
         user = self._datastore.find_user(fs_uniquifier=user_uniquifier)
         if not user:
             raise Exception("Invalid refresh token")
