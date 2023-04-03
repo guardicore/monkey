@@ -121,16 +121,21 @@ def test_generate_new_token_pair__generates_tokens(
     mock_token_validator: TokenValidator,
     authentication_facade: AuthenticationFacade,
 ):
-    refresh_token = "original_token"
     user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
     user.save()
     mock_token_generator.generate_token.return_value = "new_token"
     mock_token_validator.get_token_payload.return_value = "a"
-    access_token, new_refresh_token = authentication_facade.generate_new_token_pair(refresh_token)
 
-    assert new_refresh_token != refresh_token
+    access_token = user.get_auth_token()
+    refresh_token = "original_refresh_token"
+    new_access_token, new_refresh_token = authentication_facade.generate_new_token_pair(
+        refresh_token
+    )
+
     assert access_token != refresh_token
-    assert access_token != new_refresh_token
+    assert new_access_token != new_refresh_token
+    assert new_access_token != access_token
+    assert new_refresh_token != refresh_token
 
 
 def test_generate_new_token_pair__fails_if_user_does_not_exist(
