@@ -1,7 +1,6 @@
 import json
 
 from flask import make_response, request
-from flask_login import current_user
 
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME
 from monkey_island.cc.flask_utils import AbstractResource, responses
@@ -34,7 +33,7 @@ class AgentOTPLogin(AbstractResource):
             cred_dict = json.loads(request.data)
             otp = cred_dict.get("otp", "")
             if self._validate_otp(otp):
-                refresh_token = self._authentication_facade.generate_refresh_token(current_user)
+                refresh_token = "refreshtoken"
 
                 response = make_response(
                     {"response": {"user": {ACCESS_TOKEN_KEY_NAME: "supersecrettoken"}}}
