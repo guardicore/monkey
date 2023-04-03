@@ -48,9 +48,12 @@ def handle_authentication_token_expiration(fn):
         try:
             return fn(self, *args, **kwargs)
         except IslandAPIAuthenticationError:
-            # try again after refreshing tokens
-            # something else is wrong if this still doesn't work, let the issue be raised
+            logger.debug("Authentication token expired. Refreshing...")
             self.refresh_tokens()
+
+            # try again after refreshing tokens
+            # something else is wrong if this still doesn't work, let the error be raised
+            logger.debug("Authentication token refreshed, retrying request...")
             return fn(self, *args, **kwargs)
 
     return wrapper
