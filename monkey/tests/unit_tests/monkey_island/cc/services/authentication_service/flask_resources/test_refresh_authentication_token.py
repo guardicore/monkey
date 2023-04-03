@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 import pytest
+from itsdangerous import BadSignature, SignatureExpired
 
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
@@ -54,3 +55,14 @@ def test_token__fails_if_refresh_token_is_invalid(
     response = request_token(REQUEST)
 
     assert response.status_code == HTTPStatus.BAD_REQUEST
+
+
+@pytest.mark.parametrize("exception", [BadSignature, SignatureExpired])
+def test_token__fails_refresh_token(
+    exception, request_token, mock_authentication_facade: AuthenticationFacade
+):
+    mock_authentication_facade.generate_new_token_pair.side_effect = exception("SomeMessage")
+
+    response = request_token(REQUEST)
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
