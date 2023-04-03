@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 
+from .types import OTP
+
 
 class IOTPRepository(ABC):
     """A repository used to store and retrieve `OTP`s"""
 
     @abstractmethod
-    def insert_otp(self, otp: str, expiration: float):
+    def insert_otp(self, otp: OTP, expiration: float):
         """
         Insert an OTP into the repository
 
@@ -15,7 +17,7 @@ class IOTPRepository(ABC):
         """
 
     @abstractmethod
-    def get_expiration(self, otp: str) -> float:
+    def get_expiration(self, otp: OTP) -> float:
         """
         Get the expiration time of a given OTP
 

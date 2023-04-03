@@ -6,6 +6,7 @@ from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME
 from monkey_island.cc.flask_utils import AbstractResource, responses
 
 from ..authentication_facade import AuthenticationFacade
+from ..types import OTP
 from .utils import add_refresh_token_to_response
 
 
@@ -47,5 +48,5 @@ class AgentOTPLogin(AbstractResource):
 
         return responses.make_response_to_invalid_request()
 
-    def _validate_otp(self, otp: str):
+    def _validate_otp(self, otp: OTP):
         return len(otp) > 0

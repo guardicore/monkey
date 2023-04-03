@@ -10,6 +10,7 @@ from monkey_island.cc.repositories import (
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from .i_otp_repository import IOTPRepository
+from .types import OTP
 
 
 class MongoOTPRepository(IOTPRepository):
@@ -22,14 +23,14 @@ class MongoOTPRepository(IOTPRepository):
         self._otp_collection = mongo_client.monkey_island.otp
         self._otp_collection.create_index("otp", unique=True)
 
-    def insert_otp(self, otp: str, expiration: float):
+    def insert_otp(self, otp: OTP, expiration: float):
         try:
             encrypted_otp = self._encryptor.encrypt(otp.encode())
             self._otp_collection.insert_one({"otp": encrypted_otp, "expiration_time": expiration})
         except Exception as err:
             raise StorageError(f"Error updating otp: {err}")
 
-    def get_expiration(self, otp: str) -> float:
+    def get_expiration(self, otp: OTP) -> float:
         try:
             encrypted_otp = self._encryptor.encrypt(otp.encode())
             otp_dict = self._otp_collection.find_one(
