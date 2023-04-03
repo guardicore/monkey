@@ -5,6 +5,7 @@ import pytest
 from flask import Response
 from tests.unit_tests.monkey_island.cc.services.authentication_service.conftest import REFRESH_TOKEN
 
+from common.common_consts.token_keys import REFRESH_TOKEN_KEY_NAME
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
 )
@@ -64,7 +65,7 @@ def test_register_successful(
     response = make_registration_request(TEST_REQUEST)
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json["response"]["user"]["refresh_token"] == REFRESH_TOKEN
+    assert response.json["response"]["user"][REFRESH_TOKEN_KEY_NAME] == REFRESH_TOKEN
     mock_authentication_facade.handle_successful_registration.assert_called_with(USERNAME, PASSWORD)
 
 

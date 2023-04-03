@@ -6,10 +6,8 @@ from typing import Tuple
 from flask import Request, Response, request
 from werkzeug.datastructures import ImmutableMultiDict
 
+from common.common_consts.token_keys import REFRESH_TOKEN_KEY_NAME
 from monkey_island.cc.services.authentication_service.token import Token
-
-REFRESH_TOKEN_KEY_NAME = "refresh_token"
-ACCESS_TOKEN_KEY_NAME = "authentication_token"
 
 
 def get_username_password_from_request(_request: Request) -> Tuple[str, str]:

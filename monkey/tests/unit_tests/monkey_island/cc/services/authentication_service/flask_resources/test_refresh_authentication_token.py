@@ -2,15 +2,12 @@ from http import HTTPStatus
 
 import pytest
 
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.flask_resources.refresh_authentication_token import (  # noqa: E501
     RefreshAuthenticationToken,
-)
-from monkey_island.cc.services.authentication_service.flask_resources.utils import (
-    ACCESS_TOKEN_KEY_NAME,
-    REFRESH_TOKEN_KEY_NAME,
 )
 from monkey_island.cc.services.authentication_service.token.token_parser import (
     ExpiredTokenError,

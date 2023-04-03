@@ -3,11 +3,11 @@ from http import HTTPStatus
 
 from flask import make_response, request
 
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
 from monkey_island.cc.flask_utils import AbstractResource, responses
 from monkey_island.cc.services.authentication_service.token import TokenValidationError
 
 from ..authentication_facade import AuthenticationFacade
-from .utils import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
 
 logger = logging.getLogger(__name__)
 
