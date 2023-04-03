@@ -4,6 +4,7 @@ from http import HTTPStatus
 from time import sleep
 
 import pytest
+import requests
 
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
@@ -154,6 +155,15 @@ def test_logout_invalidates_all_tokens(island):
     # Prove monkey_island_requests_2 can't authenticate after monkey_island_requests_1 logs out.
     resp = monkey_island_requests_2.get(GET_AGENTS_ENDPOINT)
     assert resp.status_code == HTTPStatus.UNAUTHORIZED
+
+
+def test_agent_otp_rate_limit(island):
+    for _ in range(0, 10):
+        response = requests.get(f"https://{island}/api/agent-otp", verify=False)  # noqa: DUO123
+        assert response.status_code == HTTPStatus.OK
+
+    response = requests.get(f"https://{island}/api/agent-otp", verify=False)  # noqa: DUO123
+    assert response.status_code == HTTPStatus.TOO_MANY_REQUESTS
 
 
 # NOTE: These test methods are ordered to give time for the slower zoo machines

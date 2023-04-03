@@ -3,10 +3,13 @@ from pathlib import Path
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from werkzeug.exceptions import NotFound
 
 from common import DIContainer
 from monkey_island.cc.flask_utils import FlaskDIWrapper
+from monkey_island.cc.mongo_consts import MONGO_URL
 from monkey_island.cc.resources import (
     AgentBinaries,
     AgentEvents,
@@ -67,6 +70,11 @@ def init_app_config(app):
     # By default, Flask sorts keys of JSON objects alphabetically.
     # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config["JSON_SORT_KEYS"] = False
+
+    mongo_url = "".join(MONGO_URL.rpartition("/")[0])
+    app.config["RATELIMIT_HEADERS_ENABLED"] = True
+    app.config["RATELIMIT_STRATEGY"] = "moving-window"
+    app.config["RATELIMIT_STORAGE_URI"] = mongo_url
 
     app.url_map.strict_slashes = False
 
@@ -140,7 +148,11 @@ def init_app(
     init_app_config(app)
     init_app_url_rules(app)
 
-    setup_authentication(api, app, container, data_dir)
+    limiter = Limiter(
+        get_remote_address,
+        app=app,
+    )
+    setup_authentication(api, app, container, data_dir, limiter)
     flask_resource_manager = FlaskDIWrapper(api, container)
     init_api_resources(flask_resource_manager)
 
