@@ -10,6 +10,9 @@ from monkey_island.cc.flask_utils import AbstractResource
 from ..i_otp_generator import IOTPGenerator
 
 
+MAX_OTP_REQUESTS_PER_SECOND = 50
+
+
 class AgentOTP(AbstractResource):
     """
     A resource for requesting an Agent's one-time password
@@ -32,7 +35,9 @@ class AgentOTP(AbstractResource):
         with AgentOTP.lock:
             if AgentOTP.limiter is None:
                 AgentOTP.limiter = limiter.limit(
-                    "10/second", key_func=get_remote_address, per_method=True
+                    f"{MAX_OTP_REQUESTS_PER_SECOND}/second",
+                    key_func=get_remote_address,
+                    per_method=True,
                 )
 
         self._otp_generator = otp_generator

@@ -39,6 +39,9 @@ from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
     start_machines,
     stop_machines,
 )
+from monkey_island.cc.services.authentication_service.flask_resources.agent_otp import (
+    MAX_OTP_REQUESTS_PER_SECOND,
+)
 
 DEFAULT_TIMEOUT_SECONDS = 2 * 60 + 30
 MACHINE_BOOTUP_WAIT_SECONDS = 30
@@ -162,7 +165,7 @@ def test_logout_invalidates_all_tokens(island):
 
 
 def test_agent_otp_rate_limit(island):
-    for _ in range(0, 10):
+    for _ in range(0, MAX_OTP_REQUESTS_PER_SECOND):
         response = requests.get(f"https://{island}/api/agent-otp", verify=False)  # noqa: DUO123
         assert response.status_code == HTTPStatus.OK
 
