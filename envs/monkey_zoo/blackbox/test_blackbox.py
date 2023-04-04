@@ -49,7 +49,11 @@ LOGGER = logging.getLogger(__name__)
 
 @pytest.fixture(autouse=True, scope="session")
 def GCPHandler(request, no_gcp, gcp_machines_to_start):
-    if not no_gcp:
+    if no_gcp:
+        return
+    if len(gcp_machines_to_start) == 0:
+        LOGGER.info("No GCP machines to start.")
+    else:
         LOGGER.info(f"MACHINES TO START: {gcp_machines_to_start}")
 
         try:
