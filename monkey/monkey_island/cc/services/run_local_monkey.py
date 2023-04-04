@@ -11,7 +11,7 @@ from typing import Sequence
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from monkey_island.cc.repositories import IAgentBinaryRepository, RetrievalError
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
-from monkey_island.cc.services.authentication_service.types import OTP
+from monkey_island.cc.services.authentication_service import OTP
 
 logger = logging.getLogger(__name__)
 
