@@ -1,8 +1,10 @@
 from unittest.mock import MagicMock
 
-from monkey_island.cc.services.authentication_service import AuthenticationServiceOTPGenerator
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
+)
+from monkey_island.cc.services.authentication_service.authentication_service_otp_generator import (
+    AuthenticationServiceOTPGenerator,
 )
 
 
