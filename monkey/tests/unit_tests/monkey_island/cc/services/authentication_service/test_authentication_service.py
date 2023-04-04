@@ -1,3 +1,4 @@
+import time
 from unittest.mock import MagicMock, call
 
 import pytest
@@ -8,8 +9,10 @@ from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.authentication_facade import (
+    OTP_EXPIRATION_TIME,
     AuthenticationFacade,
 )
+from monkey_island.cc.services.authentication_service.i_otp_repository import IOTPRepository
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
 from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
 from monkey_island.cc.services.authentication_service.token_parser import (
@@ -59,6 +62,11 @@ def mock_token_parser() -> TokenParser:
 
 
 @pytest.fixture
+def mock_otp_repository() -> IOTPRepository:
+    return MagicMock(spec=IOTPRepository)
+
+
+@pytest.fixture
 def authentication_facade(
     mock_flask_app,
     mock_repository_encryptor: ILockableEncryptor,
@@ -66,6 +74,7 @@ def authentication_facade(
     mock_user_datastore: UserDatastore,
     mock_token_generator: TokenGenerator,
     mock_token_parser: TokenParser,
+    mock_otp_repository: IOTPRepository,
 ) -> AuthenticationFacade:
     return AuthenticationFacade(
         mock_repository_encryptor,
@@ -73,6 +82,7 @@ def authentication_facade(
         mock_user_datastore,
         mock_token_generator,
         mock_token_parser,
+        mock_otp_repository,
     )
 
 
@@ -176,6 +186,24 @@ def test_revoke_all_tokens_for_all_users(
 
     assert mock_user_datastore.set_uniquifier.call_count == len(USERS)
     [mock_user_datastore.set_uniquifier.assert_any_call(user) for user in USERS]
+
+
+def test_generate_otp__saves_otp(
+    authentication_facade: AuthenticationFacade, mock_otp_repository: IOTPRepository
+):
+    otp = authentication_facade.generate_otp()
+
+    assert mock_otp_repository.insert_otp.called_once_with(otp)
+
+
+def test_generate_otp__uses_expected_expiration_time(
+    freezer, authentication_facade: AuthenticationFacade, mock_otp_repository: IOTPRepository
+):
+    authentication_facade.generate_otp()
+
+    expiration_time = mock_otp_repository.insert_otp.call_args[0][1]
+    expected_expiration_time = time.monotonic() + OTP_EXPIRATION_TIME
+    assert expiration_time == expected_expiration_time
 
 
 def test_setup_authentication__revokes_tokens(
