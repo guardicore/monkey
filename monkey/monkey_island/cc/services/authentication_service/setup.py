@@ -18,7 +18,6 @@ from .token_parser import TokenParser
 def setup_authentication(api, app: Flask, container: DIContainer, data_dir: Path):
     security = configure_flask_security(app, data_dir)
     authentication_facade = _build_authentication_facade(container, security)
-    container.register_instance(AuthenticationFacade, authentication_facade)
     register_resources(api, authentication_facade)
 
     # revoke all old tokens so that the user has to log in again on startup
