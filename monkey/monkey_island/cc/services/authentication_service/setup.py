@@ -7,11 +7,11 @@ from common import DIContainer
 from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
+from . import IOTPGenerator
 from .authentication_facade import AuthenticationFacade
 from .authentication_service_otp_generator import AuthenticationServiceOTPGenerator
 from .configure_flask_security import configure_flask_security
 from .flask_resources import register_resources
-from .i_otp_generator import IOTPGenerator
 from .mongo_otp_repository import MongoOTPRepository
 from .token_generator import TokenGenerator
 from .token_parser import TokenParser
