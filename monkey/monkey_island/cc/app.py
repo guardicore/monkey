@@ -44,6 +44,7 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
 from monkey_island.cc.services.authentication_service.configure_flask_security import (
     configure_flask_security,
 )
+from monkey_island.cc.services.authentication_service.mongo_otp_repository import MongoOTPRepository
 from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
 from monkey_island.cc.services.authentication_service.token_parser import TokenParser
 from monkey_island.cc.services.representations import output_json
@@ -177,4 +178,5 @@ def _build_authentication_facade(container: DIContainer, security: Security):
         security.datastore,
         token_generator,
         token_parser,
+        container.resolve(MongoOTPRepository),
     )
