@@ -8,8 +8,10 @@ from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from .authentication_facade import AuthenticationFacade
+from .authentication_service_otp_generator import AuthenticationServiceOTPGenerator
 from .configure_flask_security import configure_flask_security
 from .flask_resources import register_resources
+from .i_otp_generator import IOTPGenerator
 from .mongo_otp_repository import MongoOTPRepository
 from .token_generator import TokenGenerator
 from .token_parser import TokenParser
@@ -17,8 +19,12 @@ from .token_parser import TokenParser
 
 def setup_authentication(api, app: Flask, container: DIContainer, data_dir: Path):
     security = configure_flask_security(app, data_dir)
+
     authentication_facade = _build_authentication_facade(container, security)
-    register_resources(api, authentication_facade)
+    otp_generator = AuthenticationServiceOTPGenerator(authentication_facade)
+    container.register_instance(IOTPGenerator, otp_generator)
+
+    register_resources(api, authentication_facade, otp_generator)
 
     # revoke all old tokens so that the user has to log in again on startup
     authentication_facade.revoke_all_tokens_for_all_users()

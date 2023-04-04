@@ -11,7 +11,7 @@ from tests.unit_tests.monkey_island.conftest import (
     init_mock_security_app,
 )
 
-from monkey_island.cc.services.authentication_service import register_resources
+from monkey_island.cc.services.authentication_service import IOTPGenerator, register_resources
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
 )
@@ -29,16 +29,26 @@ def mock_authentication_facade():
 
 
 @pytest.fixture
-def build_flask_client(mock_authentication_facade):
+def mock_otp_generator() -> IOTPGenerator:
+    mog = MagicMock(spec=IOTPGenerator)
+
+    return mog
+
+
+@pytest.fixture
+def build_flask_client(
+    mock_authentication_facade: AuthenticationFacade,
+    mock_otp_generator: IOTPGenerator,
+):
     def inner():
-        return get_mock_auth_app(mock_authentication_facade).test_client()
+        return get_mock_auth_app(mock_authentication_facade, mock_otp_generator).test_client()
 
     return inner
 
 
-def get_mock_auth_app(authentication_facade: AuthenticationFacade):
+def get_mock_auth_app(authentication_facade: AuthenticationFacade, otp_generator: IOTPGenerator):
     app, api = init_mock_security_app()
-    register_resources(api, authentication_facade)
+    register_resources(api, authentication_facade, otp_generator)
     return app
 
 
