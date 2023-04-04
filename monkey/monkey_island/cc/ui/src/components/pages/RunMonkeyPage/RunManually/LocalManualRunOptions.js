@@ -6,7 +6,8 @@ import GenerateLocalWindowsPowershell from '../commands/local_windows_powershell
 import GenerateLocalLinuxWget from '../commands/local_linux_wget';
 import GenerateLocalLinuxCurl from '../commands/local_linux_curl';
 import CommandDisplay from '../utils/CommandDisplay';
-import {Form} from 'react-bootstrap';
+import {Button, Form} from 'react-bootstrap';
+import IslandHttpClient, { APIEndpoint } from '../../../IslandHttpClient';
 
 
 const LocalManualRunOptions = (props) => {
@@ -23,14 +24,19 @@ const getContents = (props) => {
     [OS_TYPES.LINUX_64]: 'Linux 64bit'
   }
 
+  const [otp, setOtp] = useState('');
   const [osType, setOsType] = useState(OS_TYPES.WINDOWS_64);
   const [selectedIp, setSelectedIp] = useState(props.ips[0]);
   const [customUsername, setCustomUsername] = useState('');
   const [commands, setCommands] = useState(generateCommands());
 
+
+  useEffect(() => {
+    getOtp();
+  }, [])
   useEffect(() => {
     setCommands(generateCommands());
-  }, [osType, selectedIp, customUsername])
+  }, [osType, selectedIp, customUsername, otp])
 
   function setIp(index) {
     setSelectedIp(props.ips[index]);
@@ -45,12 +51,18 @@ const getContents = (props) => {
     }
   }
 
+  function getOtp() {
+    IslandHttpClient.get(APIEndpoint.agent_otp).then(res =>{
+      setOtp(res.body.otp);
+    });
+  }
+
   function generateCommands() {
     if (osType === OS_TYPES.WINDOWS_64) {
-      return [{type: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, customUsername)}]
+      return [{type: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, customUsername, otp)}]
     } else {
-      return [{type: 'CURL', command: GenerateLocalLinuxCurl(selectedIp, customUsername)},
-        {type: 'WGET', command: GenerateLocalLinuxWget(selectedIp, customUsername)}]
+      return [{type: 'CURL', command: GenerateLocalLinuxCurl(selectedIp, customUsername, otp)},
+        {type: 'WGET', command: GenerateLocalLinuxWget(selectedIp, customUsername, otp)}]
     }
   }
 
@@ -72,6 +84,7 @@ const getContents = (props) => {
         </div>
       </div>
       <CommandDisplay commands={commands}/>
+      <Button style={{'float': 'right'}} title="Copy to Clipboard" onClick={getOtp}>Re-generate</Button>
     </>
   )
 }
