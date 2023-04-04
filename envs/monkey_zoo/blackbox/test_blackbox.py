@@ -1,6 +1,7 @@
 import logging
 import os
 from http import HTTPStatus
+from threading import Thread
 from time import sleep
 
 import pytest
@@ -165,12 +166,24 @@ def test_logout_invalidates_all_tokens(island):
 
 
 def test_agent_otp_rate_limit(island):
-    for _ in range(0, MAX_OTP_REQUESTS_PER_SECOND):
-        response = requests.get(f"https://{island}/api/agent-otp", verify=False)  # noqa: DUO123
-        assert response.status_code == HTTPStatus.OK
+    threads = []
+    response_codes = []
+    agent_otp_endpoint = f"https://{island}/api/agent-otp"
 
-    response = requests.get(f"https://{island}/api/agent-otp", verify=False)  # noqa: DUO123
-    assert response.status_code == HTTPStatus.TOO_MANY_REQUESTS
+    def make_request():
+        response = requests.get(agent_otp_endpoint, verify=False)  # noqa: DUO123
+        response_codes.append(response.status_code)
+
+    for _ in range(0, MAX_OTP_REQUESTS_PER_SECOND + 1):
+        t = Thread(target=make_request, daemon=True)
+        t.start()
+        threads.append(t)
+
+    for t in threads:
+        t.join()
+
+    assert response_codes.count(HTTPStatus.OK) == MAX_OTP_REQUESTS_PER_SECOND
+    assert response_codes.count(HTTPStatus.TOO_MANY_REQUESTS) == 1
 
 
 # NOTE: These test methods are ordered to give time for the slower zoo machines
