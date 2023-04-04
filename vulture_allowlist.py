@@ -9,12 +9,10 @@ from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonke
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.types import Lock, NetworkPort, PluginName
-from infection_monkey.exploit import IslandAPIAgentOTPProvider
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
-from infection_monkey.island_api_client import http_island_api_client
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
@@ -24,7 +22,6 @@ from monkey_island.cc.repositories import (
     MongoAgentEventRepository,
     MongoOTPRepository,
 )
-from monkey_island.cc.services.authentication_service.token import TokenValidator
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
@@ -145,15 +142,6 @@ User.get_by_id
 User.email
 
 secret_type_filter
-
-# Remove after #3077
-http_island_api_client.get_otp
-IslandAPIAgentOTPProvider
-AGENT_OTP_ENVIRONMENT_VARIABLE
-
-# Remove after #3137
-TokenValidator.validate_token
-_refresh_token_validator
 
 # Remove after #3078
 IOTPRepository.insert_otp
