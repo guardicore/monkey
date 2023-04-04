@@ -13,6 +13,9 @@ class AgentOTP(AbstractResource):
 
     urls = ["/api/agent-otp"]
 
+    def __init__(self, otp_generator: IOTPGenerator):
+        self._otp_generator = otp_generator
+
     def get(self):
         """
         Requests an Agent's one-time password

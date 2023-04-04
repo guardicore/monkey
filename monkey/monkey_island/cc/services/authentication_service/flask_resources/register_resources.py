@@ -17,7 +17,9 @@ def register_resources(api: flask_restful.Api, authentication_facade: Authentica
     )
     api.add_resource(Login, *Login.urls, resource_class_args=(authentication_facade,))
     api.add_resource(Logout, *Logout.urls, resource_class_args=(authentication_facade,))
-    api.add_resource(AgentOTP, *AgentOTP.urls)
+    # TODO: Get OTPGenerator after #3187 and #3190
+    otp_generator = None
+    api.add_resource(AgentOTP, *AgentOTP.urls, resource_class_args=(otp_generator,))
     api.add_resource(
         AgentOTPLogin,
         *AgentOTPLogin.urls,
