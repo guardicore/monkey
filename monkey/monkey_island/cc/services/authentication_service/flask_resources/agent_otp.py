@@ -48,7 +48,7 @@ class AgentOTP(AbstractResource):
 
         :return: One-time password in the response body
         """
-        if not AgentOTP.limiter:
+        if AgentOTP.limiter is None:
             raise RuntimeError("limiter has not been initialized")
         try:
             with AgentOTP.limiter:
