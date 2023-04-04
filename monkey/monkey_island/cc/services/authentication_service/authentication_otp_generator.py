@@ -1,7 +1,9 @@
 from .authentication_facade import AuthenticationFacade
+from .i_otp_generator import IOTPGenerator
+from .types import OTP
 
 
-class OTPGenerator:
+class AuthenticationOTPGenerator(IOTPGenerator):
     """
     Generates OTPs
     """
@@ -9,7 +11,7 @@ class OTPGenerator:
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
-    def generate_otp(self) -> str:
+    def generate_otp(self) -> OTP:
         """
         Generates a new OTP
         """
