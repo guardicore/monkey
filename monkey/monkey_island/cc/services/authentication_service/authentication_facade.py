@@ -13,7 +13,7 @@ from monkey_island.cc.services.authentication_service.token_generator import Tok
 from . import AccountRole
 from .i_otp_repository import IOTPRepository
 from .token_parser import ParsedToken, TokenParser
-from .types import Token
+from .types import OTP, Token
 from .user import User
 
 OTP_EXPIRATION_TIME = 2 * 60  # 2 minutes
@@ -79,21 +79,17 @@ class AuthenticationFacade:
             raise Exception("Invalid refresh token")
         return user
 
-    def generate_otp(self) -> str:
+    def generate_otp(self) -> OTP:
         """
         Generates a new OTP
 
         The generated OTP is saved to the `IOTPRepository`
-        :return: The generated OTP
         """
-        otp_value = self._generate_otp()
+        otp = secure_generate_random_string(32, string.ascii_letters + string.digits + "._-")
         expiration_time = time.monotonic() + OTP_EXPIRATION_TIME
-        self._otp_repository.insert_otp(otp_value, expiration_time)
+        self._otp_repository.insert_otp(otp, expiration_time)
 
-        return otp_value
-
-    def _generate_otp(self) -> str:
-        return secure_generate_random_string(32, string.ascii_letters + string.digits + "._-")
+        return otp
 
     def generate_refresh_token(self, user: User) -> Token:
         """
