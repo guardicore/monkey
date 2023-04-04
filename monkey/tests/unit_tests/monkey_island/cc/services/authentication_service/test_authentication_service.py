@@ -1,6 +1,9 @@
 import time
+from pathlib import Path
 from unittest.mock import MagicMock, call
 
+import mongomock
+import pymongo
 import pytest
 from flask_security import UserDatastore
 from tests.common import StubDIContainer
@@ -181,11 +184,13 @@ def test_revoke_all_tokens_for_all_users(
     mock_user_datastore: UserDatastore,
     authentication_facade: AuthenticationFacade,
 ):
-    [user.save() for user in USERS]
+    for user in USERS:
+        user.save(force_insert=True)
     authentication_facade.revoke_all_tokens_for_all_users()
 
     assert mock_user_datastore.set_uniquifier.call_count == len(USERS)
-    [mock_user_datastore.set_uniquifier.assert_any_call(user) for user in USERS]
+    for user in USERS:
+        mock_user_datastore.set_uniquifier.assert_any_call(user)
 
 
 def test_generate_otp__saves_otp(
@@ -206,14 +211,35 @@ def test_generate_otp__uses_expected_expiration_time(
     assert expiration_time == expected_expiration_time
 
 
+# mongomock.MongoClient is not a pymongo.MongoClient. This class allows us to register a
+# mongomock.MongoClient as a pymongo.MongoClient with the StubDIContainer.
+class MockMongoClient(mongomock.MongoClient, pymongo.MongoClient):
+    pass
+
+
 def test_setup_authentication__revokes_tokens(
+    monkeypatch,
+    mock_flask_app,
+    mock_user_datastore: UserDatastore,
     mock_island_event_queue: IIslandEventQueue,
     mock_repository_encryptor: ILockableEncryptor,
-    mock_authentication_facade: AuthenticationFacade,
 ):
+    for user in USERS:
+        user.save(force_insert=True)
+
+    mock_security = MagicMock()
+    mock_security.datastore = mock_user_datastore
+    monkeypatch.setattr(
+        "monkey_island.cc.services.authentication_service.setup.configure_flask_security",
+        lambda *args: mock_security,
+    )
+
     container = StubDIContainer()
     container.register_instance(ILockableEncryptor, mock_repository_encryptor)
     container.register_instance(IIslandEventQueue, mock_island_event_queue)
-    setup_authentication(MagicMock(), mock_authentication_facade)
+    container.register_instance(pymongo.MongoClient, MockMongoClient())
+    setup_authentication(MagicMock(), MagicMock(), container, Path("data_dir"))
 
-    assert mock_authentication_facade.revoke_all_tokens_for_all_users.called
+    assert mock_user_datastore.set_uniquifier.call_count == len(USERS)
+    for user in USERS:
+        mock_user_datastore.set_uniquifier.assert_any_call(user)
