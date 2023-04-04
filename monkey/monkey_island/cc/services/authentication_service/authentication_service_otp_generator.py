@@ -3,7 +3,7 @@ from .i_otp_generator import IOTPGenerator
 from .types import OTP
 
 
-class AuthenticationOTPGenerator(IOTPGenerator):
+class AuthenticationServiceOTPGenerator(IOTPGenerator):
     """
     Generates OTPs
     """
