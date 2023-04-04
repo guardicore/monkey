@@ -185,7 +185,7 @@ def test_revoke_all_tokens_for_all_users(
     authentication_facade: AuthenticationFacade,
 ):
     for user in USERS:
-        user.save()
+        user.save(force_insert=True)
     authentication_facade.revoke_all_tokens_for_all_users()
 
     assert mock_user_datastore.set_uniquifier.call_count == len(USERS)
@@ -225,7 +225,7 @@ def test_setup_authentication__revokes_tokens(
     mock_repository_encryptor: ILockableEncryptor,
 ):
     for user in USERS:
-        user.save()
+        user.save(force_insert=True)
 
     mock_security = MagicMock()
     mock_security.datastore = mock_user_datastore
