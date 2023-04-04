@@ -101,7 +101,9 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_response_parsing_errors
     def refresh_tokens(self):
-        response = self._http_client.post("/token", {REFRESH_TOKEN_KEY_NAME: self._refresh_token})
+        response = self._http_client.post(
+            "/refresh-authentication-token", {REFRESH_TOKEN_KEY_NAME: self._refresh_token}
+        )
         self._update_tokens_from_response(response)
 
     @handle_authentication_token_expiration
