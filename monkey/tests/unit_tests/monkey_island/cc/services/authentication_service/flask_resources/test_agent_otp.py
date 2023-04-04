@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import Callable
 
 import pytest
@@ -22,5 +23,5 @@ def test_agent_otp__successful(make_otp_request: Callable, mock_otp_generator: I
     mock_otp_generator.generate_otp.return_value = OTP
     response = make_otp_request()
 
-    assert response.status_code == 200
+    assert response.status_code == HTTPStatus.OK
     assert response.json["otp"] == OTP
