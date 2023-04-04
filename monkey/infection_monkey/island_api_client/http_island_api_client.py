@@ -1,6 +1,7 @@
 import functools
 import json
 import logging
+from http import HTTPStatus
 from pprint import pformat
 from typing import Any, Dict, List, Sequence
 
@@ -20,7 +21,11 @@ from common.types.otp import OTP
 
 from . import IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient
-from .island_api_client_errors import IslandAPIAuthenticationError, IslandAPIResponseParsingError
+from .island_api_client_errors import (
+    IslandAPIAuthenticationError,
+    IslandAPIRequestLimitExceededError,
+    IslandAPIResponseParsingError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -116,6 +121,8 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_authentication_token_expiration
     def get_otp(self) -> str:
         response = self._http_client.get("/agent-otp")
+        if response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
+            raise IslandAPIRequestLimitExceededError("Too many requests to get OTP.")
         return response.json()["otp"]
 
     @handle_response_parsing_errors

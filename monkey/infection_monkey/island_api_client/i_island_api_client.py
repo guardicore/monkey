@@ -61,6 +61,7 @@ class IIslandAPIClient(ABC):
                                        Island due to an issue in the request sent from the client
         :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
                                              Island due to an error on the server
+        :raises IslandAPIRequestLimitExceededError: If the request limit for OTPs has been exceeded
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the Island
         :raises IslandAPIError: If an unexpected error occurs while attempting to get an OTP
         :return: The OTP
