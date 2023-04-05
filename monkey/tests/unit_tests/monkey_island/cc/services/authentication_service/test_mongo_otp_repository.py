@@ -134,3 +134,8 @@ def test_set_used(otp_repository: IOTPRepository):
 def test_set_used__storage_error(error_raising_otp_repository: IOTPRepository):
     with pytest.raises(StorageError):
         error_raising_otp_repository.set_used("test_otp")
+
+
+def test_set_used__unknown_record_error(otp_repository: IOTPRepository):
+    with pytest.raises(UnknownRecordError):
+        otp_repository.set_used("test_otp")
