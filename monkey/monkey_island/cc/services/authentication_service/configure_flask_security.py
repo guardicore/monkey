@@ -52,8 +52,6 @@ def configure_flask_security(app, data_dir: Path) -> Security:
     class CustomConfirmRegisterForm(ConfirmRegisterForm):
         # We don't use the email, but the field is required by ConfirmRegisterForm.
         # Email validators need to be overriden, otherwise an error about invalid email is raised.
-        # Added custom validator to the email field because we have to override
-        # email validators anyway.
         email = StringField("Email", default="dummy@dummy.com", validators=[])
 
         def to_dict(self, only_user):
