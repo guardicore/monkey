@@ -31,9 +31,20 @@ class IOTPRepository(ABC):
         """
         Get the expiration time of a given OTP
 
-        :param otp: OTP for which to get the expiration time
+        :param otp: The OTP for which to get the expiration time
         :return: The time that the OTP expires
         :raises RetrievalError: If an error occurs while attempting to retrieve the expiration time
+        :raises UnknownRecordError: If the OTP was not found
+        """
+
+    @abstractmethod
+    def otp_is_used(self, otp: OTP) -> bool:
+        """
+        Check if the OTP has already been used
+
+        :param otp: The OTP to check
+        :return: Whether the OTP has been used
+        :raises RetrievalError: If an error occurs while attempting to retrieve the OTP's usage
         :raises UnknownRecordError: If the OTP was not found
         """
 
