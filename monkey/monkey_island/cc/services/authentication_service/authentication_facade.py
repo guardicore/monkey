@@ -1,5 +1,6 @@
 import string
 import time
+from threading import Lock
 from typing import Tuple
 
 from flask_security import UserDatastore
@@ -40,6 +41,7 @@ class AuthenticationFacade:
         self._token_generator = token_generator
         self._token_parser = token_parser
         self._otp_repository = otp_repository
+        self._otp_read_lock = Lock()
 
     def needs_registration(self) -> bool:
         """
@@ -106,21 +108,24 @@ class AuthenticationFacade:
         return self._token_generator.generate_token(user.fs_uniquifier)
 
     def authorize_otp(self, otp: OTP) -> bool:
-        try:
-            otp_is_used = self._otp_repository.otp_is_used(otp)
-            # When this method is called, that constitutes the OTP being "used".
-            # Set it as used ASAP.
-            self._otp_repository.set_used(otp)
+        # SECURITY: This method must not run concurrently, otherwise there could be TOCTOU errors,
+        # resulting in an OTP being used twice.
+        with self._otp_read_lock:
+            try:
+                otp_is_used = self._otp_repository.otp_is_used(otp)
+                # When this method is called, that constitutes the OTP being "used".
+                # Set it as used ASAP.
+                self._otp_repository.set_used(otp)
 
-            if otp_is_used:
+                if otp_is_used:
+                    return False
+
+                if not self._otp_ttl_elapsed(otp):
+                    return True
+
                 return False
-
-            if not self._otp_ttl_elapsed(otp):
-                return True
-
-            return False
-        except UnknownRecordError:
-            return False
+            except UnknownRecordError:
+                return False
 
     def _otp_ttl_elapsed(self, otp: OTP) -> bool:
         return self._otp_repository.get_expiration(otp) < time.monotonic()
