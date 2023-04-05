@@ -1,5 +1,6 @@
 import json
 import string
+from http import HTTPStatus
 
 from flask import make_response, request
 from flask_security import RegisterForm
@@ -22,12 +23,12 @@ class AgentOTPLogin(AbstractResource):
     A client may authenticate with the Island by providing a one-time password.
     """
 
-    urls = ["/api/agent-otp-login/<uuid:agent_id>"]
+    urls = ["/api/agent-otp-login"]
 
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
-    def post(self, agent_id: AgentID):
+    def post(self):
         """
         Gets the one-time password from the request,
         and returns an authentication token and a refresh token
@@ -36,6 +37,17 @@ class AgentOTPLogin(AbstractResource):
         :param agent_id: The ID of the Agent trying to log in
         :return: Authentication token in the response body
         """
+        try:
+            agent_id_argument = request.json["agent_id"]
+            agent_id = AgentID(agent_id_argument)
+        except ValueError as err:
+            return make_response(
+                f'Invalid agent ID "{agent_id_argument}": {err}', HTTPStatus.BAD_REQUEST
+            )
+        except KeyError as err:
+            return make_response(f"Missing argument {err}", HTTPStatus.BAD_REQUEST)
+        except TypeError:
+            return make_response("Could not parse the login request", HTTPStatus.BAD_REQUEST)
 
         try:
             otp = json.loads(request.data).get("otp", "")
