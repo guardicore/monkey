@@ -46,6 +46,7 @@ def error_raising_mongo_client() -> mongomock.MongoClient:
     client.monkey_island = MagicMock(spec=mongomock.Database)
     client.monkey_island.otp = MagicMock(spec=mongomock.Collection)
     client.monkey_island.otp.insert_one = MagicMock(side_effect=Exception("insert failed"))
+    client.monkey_island.otp.update_one = MagicMock(side_effect=Exception("insert failed"))
     client.monkey_island.otp.find_one = MagicMock(side_effect=Exception("find failed"))
     client.monkey_island.otp.delete_one = MagicMock(side_effect=Exception("delete failed"))
     client.monkey_island.otp.drop = MagicMock(side_effect=Exception("drop failed"))
@@ -128,3 +129,8 @@ def test_set_used(otp_repository: IOTPRepository):
 
     otp_repository.set_used(otp)
     assert otp_repository.otp_is_used(otp)
+
+
+def test_set_used__storage_error(error_raising_otp_repository: IOTPRepository):
+    with pytest.raises(StorageError):
+        error_raising_otp_repository.set_used("test_otp")
