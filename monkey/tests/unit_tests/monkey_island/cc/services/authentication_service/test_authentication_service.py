@@ -211,6 +211,50 @@ def test_generate_otp__uses_expected_expiration_time(
     assert expiration_time == expected_expiration_time
 
 
+def test_mark_otp_as_used(
+    authentication_facade: AuthenticationFacade, mock_otp_repository: IOTPRepository
+):
+    otp = "secret"
+    authentication_facade.mark_otp_as_used(otp)
+
+    assert mock_otp_repository.update_otp.called_once_with(otp, {"used": True})
+
+
+TIME = "2020-01-01 00:00:00"
+TIME_FLOAT = 1577836800.0
+
+
+@pytest.mark.parametrize(
+    "otp_is_used_return_value, get_expiration_return_value, otp_is_valid_expected_value",
+    [
+        (False, TIME_FLOAT - 1, False),  # not used, after expiration time
+        (True, TIME_FLOAT - 1, False),  # used, after expiration time
+        (False, TIME_FLOAT, True),  # not used, at expiration time
+        (True, TIME_FLOAT, False),  # used, at expiration time
+        (False, TIME_FLOAT + 1, True),  # not used, before expiration time
+        (True, TIME_FLOAT + 1, False),  # used, before expiration time
+    ],
+)
+def test_otp_is_valid(
+    authentication_facade: AuthenticationFacade,
+    mock_otp_repository: IOTPRepository,
+    freezer,
+    otp_is_used_return_value: bool,
+    get_expiration_return_value: int,
+    otp_is_valid_expected_value: bool,
+):
+    otp = "secret"
+
+    freezer.move_to(TIME)
+
+    mock_otp_repository.otp_is_used.return_value = otp_is_used_return_value
+    mock_otp_repository.get_expiration.return_value = get_expiration_return_value
+
+    assert authentication_facade.otp_is_valid(otp) == otp_is_valid_expected_value
+    assert mock_otp_repository.otp_is_used.called_once_with(otp)
+    assert mock_otp_repository.get_expiration.called_once_with(otp)
+
+
 # mongomock.MongoClient is not a pymongo.MongoClient. This class allows us to register a
 # mongomock.MongoClient as a pymongo.MongoClient with the StubDIContainer.
 class MockMongoClient(mongomock.MongoClient, pymongo.MongoClient):
