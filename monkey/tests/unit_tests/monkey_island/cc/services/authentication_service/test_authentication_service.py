@@ -199,7 +199,7 @@ def test_generate_otp__saves_otp(
 ):
     otp = authentication_facade.generate_otp()
 
-    assert mock_otp_repository.insert_otp.called_once_with(otp)
+    mock_otp_repository.insert_otp.assert_called_once_with(otp)
 
 
 def test_generate_otp__uses_expected_expiration_time(
@@ -218,7 +218,7 @@ def test_mark_otp_as_used(
     otp = "secret"
     authentication_facade.mark_otp_as_used(otp)
 
-    assert mock_otp_repository.set_used.called_once_with(otp)
+    mock_otp_repository.set_used.assert_called_once_with(otp)
 
 
 TIME = "2020-01-01 00:00:00"
