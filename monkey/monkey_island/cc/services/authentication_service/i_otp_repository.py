@@ -17,6 +17,16 @@ class IOTPRepository(ABC):
         """
 
     @abstractmethod
+    def update_otp(self, otp: OTP, **kwargs):
+        """
+        Update an OTP in the repository
+
+        :param otp: The OTP to update
+        :param **kwargs: The fields to update
+        :raises StorageError: If an error occurs while attempting to update the OTP
+        """
+
+    @abstractmethod
     def get_expiration(self, otp: OTP) -> float:
         """
         Get the expiration time of a given OTP
