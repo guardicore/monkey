@@ -9,7 +9,6 @@ from monkey_island.cc.flask_utils import AbstractResource
 
 from ..i_otp_generator import IOTPGenerator
 
-
 MAX_OTP_REQUESTS_PER_SECOND = 50
 
 
