@@ -34,8 +34,7 @@ from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
-from common.types import NetworkPort, SocketAddress
-from common.types.otp import OTP
+from common.types import OTP, NetworkPort, SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.code_utils import del_key, secure_generate_random_string
 from common.utils.file_utils import create_secure_directory
