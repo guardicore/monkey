@@ -142,3 +142,14 @@ def test_set_used__storage_error(
 def test_set_used__unknown_record_error(otp_repository: IOTPRepository):
     with pytest.raises(UnknownRecordError):
         otp_repository.set_used("test_otp")
+
+
+def test_set_used__idempotent(otp_repository: IOTPRepository):
+    otp = "test_otp"
+    otp_repository.insert_otp(otp, 1)
+
+    otp_repository.set_used(otp)
+    otp_repository.set_used(otp)
+    otp_repository.set_used(otp)
+
+    assert otp_repository.otp_is_used(otp)
