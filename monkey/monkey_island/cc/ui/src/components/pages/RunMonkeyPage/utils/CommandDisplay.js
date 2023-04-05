@@ -44,7 +44,7 @@ export default function commandDisplay(props) {
       <Card>
         <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
           <CopyToClipboard text={selectedCommand.command} className="pull-right btn-sm">
-            <Button style={{margin: '-0.5em'}} title="Copy to Clipboard">
+            <Button style={{margin: '-0.5em'}} title="Copy to Clipboard" onClick={props.onCopy}>
               <FontAwesomeIcon icon={faClipboard}/>
             </Button>
           </CopyToClipboard>

@@ -83,7 +83,7 @@ const getContents = (props) => {
           </Form>
         </div>
       </div>
-      <CommandDisplay commands={commands}/>
+      <CommandDisplay commands={commands} onCopy={getOtp} />
         <Col lg={{span:3, offset: 9}} md={{span:4, offset: 8}} sm={{span:4, offset: 8}} xs={12}>
           <Button style={{'float': 'right'}} title="Refresh OTP" onClick={getOtp}>Refresh OTP</Button>
         </Col>
