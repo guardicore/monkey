@@ -97,6 +97,9 @@ class AuthenticationFacade:
         """
         return self._token_generator.generate_token(user.fs_uniquifier)
 
+    def mark_otp_as_used(self, otp: OTP):
+        self._otp_repository.update_otp(otp, {"used": True})
+
     def revoke_all_tokens_for_all_users(self):
         """
         Revokes all tokens for all users
