@@ -4,6 +4,7 @@ from typing import Any, Mapping
 from bson.objectid import ObjectId
 from pymongo import MongoClient
 
+from common.types import OTP
 from monkey_island.cc.repositories import (
     MONGO_OBJECT_ID_KEY,
     RemovalError,
@@ -14,7 +15,6 @@ from monkey_island.cc.repositories import (
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from .i_otp_repository import IOTPRepository
-from .types import OTP
 
 
 class MongoOTPRepository(IOTPRepository):
@@ -29,7 +29,7 @@ class MongoOTPRepository(IOTPRepository):
 
     def insert_otp(self, otp: OTP, expiration: float):
         try:
-            encrypted_otp = self._encryptor.encrypt(otp.encode())
+            encrypted_otp = self._encryptor.encrypt(otp.get_secret_value().encode())
             self._otp_collection.insert_one(
                 {"otp": encrypted_otp, "expiration_time": expiration, "used": False}
             )
@@ -71,8 +71,10 @@ class MongoOTPRepository(IOTPRepository):
 
     @lru_cache
     def _get_otp_object_id(self, otp: OTP) -> ObjectId:
+        otp_str = otp.get_secret_value()
+
         try:
-            encrypted_otp = self._encryptor.encrypt(otp.encode())
+            encrypted_otp = self._encryptor.encrypt(otp_str.encode())
             otp_dict = self._otp_collection.find_one({"otp": encrypted_otp}, [MONGO_OBJECT_ID_KEY])
         except Exception as err:
             raise RetrievalError(f"Error retrieving OTP: {err}")
