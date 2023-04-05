@@ -1,5 +1,6 @@
 import string
 from http import HTTPStatus
+from typing import Tuple
 
 from flask import make_response, request
 from flask_security import RegisterForm
@@ -36,23 +37,9 @@ class AgentOTPLogin(AbstractResource):
         :return: Authentication token and refresh token in the response body
         """
         try:
-            try:
-                agent_id_argument = request.json["agent_id"]
-                agent_id = AgentID(agent_id_argument)
-            except ValueError as err:
-                return make_response(
-                    f'Invalid agent ID "{agent_id_argument}": {err}', HTTPStatus.BAD_REQUEST
-                )
-
-            try:
-                otp_argument = request.json["otp"]
-                otp = OTP(otp_argument)
-            except ValueError as err:
-                return make_response(f'Invalid OTP "{otp_argument}": {err}', HTTPStatus.BAD_REQUEST)
-        except KeyError as err:
-            return make_response(f"Missing argument {err}", HTTPStatus.BAD_REQUEST)
-        except TypeError:
-            return make_response("Could not parse the login request", HTTPStatus.BAD_REQUEST)
+            agent_id, otp = self._get_request_arguments(request.json)
+        except Exception as err:
+            return make_response(str(err), HTTPStatus.BAD_REQUEST)
 
         if not self._validate_otp(otp):
             return make_response({}, HTTPStatus.UNAUTHORIZED)
@@ -78,6 +65,28 @@ class AgentOTPLogin(AbstractResource):
                 }
             }
         )
+
+    def _get_request_arguments(self, request_data) -> Tuple[AgentID, OTP]:
+        try:
+            try:
+                agent_id_argument = request_data["agent_id"]
+                agent_id = AgentID(agent_id_argument)
+            except ValueError as err:
+                raise ValueError(f'Invalid Agent ID "{agent_id_argument}": {err}')
+
+            try:
+                otp_argument = request_data["otp"]
+                otp = OTP(otp_argument)
+            except ValueError as err:
+                raise ValueError(f'Invalid OTP "{otp_argument}": {err}')
+
+        except KeyError as err:
+            raise KeyError(f"Missing argument: {err}")
+
+        except TypeError:
+            raise TypeError("Could not parse the login request")
+
+        return agent_id, otp
 
     def _validate_otp(self, otp: OTP):
         return len(otp) > 0
