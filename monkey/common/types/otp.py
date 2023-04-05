@@ -1,5 +1,5 @@
 from typing import TypeAlias
 
-from common.utils.i_secret_variable import ISecretVariable
+from pydantic import SecretStr
 
-OTP: TypeAlias = ISecretVariable
+OTP: TypeAlias = SecretStr
