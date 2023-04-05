@@ -1,3 +1,5 @@
+from typing import Any, Mapping
+
 from pymongo import MongoClient
 
 from monkey_island.cc.repositories import (
@@ -40,19 +42,14 @@ class MongoOTPRepository(IOTPRepository):
             raise StorageError(f"Error updating OTP: {err}")
 
     def get_expiration(self, otp: OTP) -> float:
-        try:
-            encrypted_otp = self._encryptor.encrypt(otp.encode())
-            otp_dict = self._otp_collection.find_one(
-                {"otp": encrypted_otp}, {MONGO_OBJECT_ID_KEY: False}
-            )
-        except Exception as err:
-            raise RetrievalError(f"Error retrieving OTP: {err}")
-
-        if otp_dict is None:
-            raise UnknownRecordError("OTP not found")
+        otp_dict = self._get_otp_document(otp)
         return otp_dict["expiration_time"]
 
     def otp_is_used(self, otp: OTP) -> bool:
+        otp_dict = self._get_otp_document(otp)
+        return otp_dict["used"]
+
+    def _get_otp_document(self, otp: OTP) -> Mapping[str, Any]:
         try:
             encrypted_otp = self._encryptor.encrypt(otp.encode())
             otp_dict = self._otp_collection.find_one(
@@ -64,7 +61,7 @@ class MongoOTPRepository(IOTPRepository):
         if otp_dict is None:
             raise UnknownRecordError("OTP not found")
 
-        return otp_dict["used"]
+        return otp_dict
 
     def reset(self):
         try:
