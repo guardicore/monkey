@@ -60,3 +60,10 @@ def test_agent_otp_login__unauthorized(agent_otp_login):
     response = agent_otp_login({"agent_id": AGENT_ID, "otp": ""})
 
     assert response.status_code == 401
+
+
+def test_unexpected_error(mock_authentication_facade, agent_otp_login):
+    mock_authentication_facade.generate_refresh_token.side_effect = Exception("Unexpected error")
+    response = agent_otp_login({"agent_id": AGENT_ID, "otp": "password"})
+
+    assert response.status_code == 500
