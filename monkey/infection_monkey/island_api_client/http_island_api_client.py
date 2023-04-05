@@ -86,7 +86,9 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_response_parsing_errors
     def login(self, otp: OTP):
         try:
-            response = self._http_client.post("/agent-otp-login", {"otp": otp.get_secret_value()})
+            response = self._http_client.post(
+                "/agent-otp-login", {"agent_id": str(self._agent_id), "otp": otp.get_secret_value()}
+            )
             self._update_tokens_from_response(response)
         except Exception:
             # We need to catch all exceptions here because we don't want to leak the OTP
