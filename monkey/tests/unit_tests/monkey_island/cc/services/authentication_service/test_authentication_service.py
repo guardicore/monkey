@@ -253,6 +253,7 @@ def test_otp_is_valid(
     assert authentication_facade.otp_is_valid(otp) == otp_is_valid_expected_value
     assert mock_otp_repository.otp_is_used.called_once_with(otp)
     assert mock_otp_repository.get_expiration.called_once_with(otp)
+    mock_otp_repository.set_used.assert_called_once()
 
 
 # mongomock.MongoClient is not a pymongo.MongoClient. This class allows us to register a

@@ -109,9 +109,14 @@ class AuthenticationFacade:
 
     def otp_is_valid(self, otp: OTP) -> bool:
         otp_is_used = self._otp_repository.otp_is_used(otp)
-        expiration_time = self._otp_repository.get_expiration(otp)
+        # When this method is called, that constitutes the OTP being "used". Set it as such ASAP.
+        self._otp_repository.set_used(otp)
 
-        if otp_is_used or expiration_time < time.monotonic():
+        if otp_is_used:
+            return False
+
+        expiration_time = self._otp_repository.get_expiration(otp)
+        if expiration_time < time.monotonic():
             return False
 
         return True
