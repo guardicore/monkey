@@ -1,4 +1,5 @@
 import json
+import string
 
 from flask import make_response, request
 from flask_security import RegisterForm
@@ -44,7 +45,7 @@ class AgentOTPLogin(AbstractResource):
                 agent_user = register_user(
                     RegisterForm(
                         username=str(agent_id),
-                        password=secure_generate_random_string(32),
+                        password=secure_generate_random_string(32, string.printable),
                         roles=[AccountRole.AGENT.name],
                     )
                 )
