@@ -1,4 +1,4 @@
-const AGENT_OTP_ENVIRONMENT_VARIABLE = 'MONKEY_OTP'
+import { AGENT_OTP_ENVIRONMENT_VARIABLE } from './consts';
 
 export default function generateLocalLinuxCurl(ip, username, otp) {
   let command = `curl https://${ip}:5000/api/agent-binaries/linux -k `

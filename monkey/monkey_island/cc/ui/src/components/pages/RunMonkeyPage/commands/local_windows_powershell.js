@@ -1,4 +1,4 @@
-const AGENT_OTP_ENVIRONMENT_VARIABLE = 'MONKEY_OTP'
+import {AGENT_OTP_ENVIRONMENT_VARIABLE} from './consts';
 
 function getAgentDownloadCommand(ip, otp) {
   return `$execCmd = @"\r\n`
