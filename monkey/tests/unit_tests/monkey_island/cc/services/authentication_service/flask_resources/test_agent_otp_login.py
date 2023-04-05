@@ -56,15 +56,16 @@ def test_invalid_json(flask_client):
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
-def test_unauthorized(agent_otp_login):
+def test_unauthorized(mock_authentication_facade, agent_otp_login):
     # TODO: Update this test when OTP validation is implemented.
-    response = agent_otp_login({"agent_id": AGENT_ID, "otp": ""})
+    mock_authentication_facade.authorize_otp.return_value = False
+    response = agent_otp_login({"agent_id": AGENT_ID, "otp": "password"})
 
     assert response.status_code == HTTPStatus.UNAUTHORIZED
 
 
 def test_unexpected_error(mock_authentication_facade, agent_otp_login):
-    mock_authentication_facade.generate_refresh_token.side_effect = Exception("Unexpected error")
+    mock_authentication_facade.authorize_otp.side_effect = Exception("Unexpected error")
     response = agent_otp_login({"agent_id": AGENT_ID, "otp": "password"})
 
     assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR

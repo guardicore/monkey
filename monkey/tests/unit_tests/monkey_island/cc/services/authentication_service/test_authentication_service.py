@@ -10,6 +10,7 @@ from tests.common import StubDIContainer
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
+from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     OTP_EXPIRATION_TIME,
@@ -198,7 +199,7 @@ def test_generate_otp__saves_otp(
 ):
     otp = authentication_facade.generate_otp()
 
-    assert mock_otp_repository.insert_otp.called_once_with(otp)
+    assert mock_otp_repository.insert_otp.call_args[0][0] == otp
 
 
 def test_generate_otp__uses_expected_expiration_time(
@@ -209,6 +210,53 @@ def test_generate_otp__uses_expected_expiration_time(
     expiration_time = mock_otp_repository.insert_otp.call_args[0][1]
     expected_expiration_time = time.monotonic() + OTP_EXPIRATION_TIME
     assert expiration_time == expected_expiration_time
+
+
+TIME = "2020-01-01 00:00:00"
+TIME_FLOAT = 1577836800.0
+
+
+@pytest.mark.parametrize(
+    "otp_is_used_return_value, get_expiration_return_value, otp_is_valid_expected_value",
+    [
+        (False, TIME_FLOAT - 1, False),  # not used, after expiration time
+        (True, TIME_FLOAT - 1, False),  # used, after expiration time
+        (False, TIME_FLOAT, True),  # not used, at expiration time
+        (True, TIME_FLOAT, False),  # used, at expiration time
+        (False, TIME_FLOAT + 1, True),  # not used, before expiration time
+        (True, TIME_FLOAT + 1, False),  # used, before expiration time
+    ],
+)
+def test_authorize_otp(
+    authentication_facade: AuthenticationFacade,
+    mock_otp_repository: IOTPRepository,
+    freezer,
+    otp_is_used_return_value: bool,
+    get_expiration_return_value: int,
+    otp_is_valid_expected_value: bool,
+):
+    otp = "secret"
+
+    freezer.move_to(TIME)
+
+    mock_otp_repository.otp_is_used.return_value = otp_is_used_return_value
+    mock_otp_repository.get_expiration.return_value = get_expiration_return_value
+
+    assert authentication_facade.authorize_otp(otp) == otp_is_valid_expected_value
+    mock_otp_repository.set_used.assert_called_once()
+
+
+def test_authorize_otp__unknown_otp(
+    authentication_facade: AuthenticationFacade,
+    mock_otp_repository: IOTPRepository,
+):
+    otp = "secret"
+
+    mock_otp_repository.otp_is_used.side_effect = UnknownRecordError(f"Unknown otp {otp}")
+    mock_otp_repository.set_used.side_effect = UnknownRecordError(f"Unknown otp {otp}")
+    mock_otp_repository.get_expiration.side_effect = UnknownRecordError(f"Unknown otp {otp}")
+
+    assert authentication_facade.authorize_otp(otp) is False
 
 
 # mongomock.MongoClient is not a pymongo.MongoClient. This class allows us to register a

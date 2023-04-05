@@ -164,7 +164,7 @@ def test_on_terminate_agents_signal__stores_timestamp(
     agent_signals_service.on_terminate_agents_signal(terminate_all_agents)
 
     expected_value = Simulation(terminate_signal_time=timestamp)
-    assert mock_simulation_repository.save_simulation.called_once_with(expected_value)
+    mock_simulation_repository.save_simulation.assert_called_once_with(expected_value)
 
 
 def test_on_terminate_agents_signal__updates_timestamp(
@@ -180,7 +180,7 @@ def test_on_terminate_agents_signal__updates_timestamp(
     agent_signals_service.on_terminate_agents_signal(terminate_all_agents)
 
     expected_value = Simulation(mode=IslandMode.RANSOMWARE, terminate_signal_time=timestamp)
-    assert mock_simulation_repository.save_simulation.called_once_with(expected_value)
+    mock_simulation_repository.save_simulation.assert_called_once_with(expected_value)
 
 
 def test_terminate_signal__not_set_if_agent_registered_before_another(agent_signals_service):

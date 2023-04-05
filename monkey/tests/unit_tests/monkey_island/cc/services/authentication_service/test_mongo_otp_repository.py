@@ -10,6 +10,7 @@ from monkey_island.cc.repositories import (
     StorageError,
     UnknownRecordError,
 )
+from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.i_otp_repository import IOTPRepository
 from monkey_island.cc.services.authentication_service.mongo_otp_repository import MongoOTPRepository
 
@@ -28,8 +29,15 @@ OTPS = (
 
 
 @pytest.fixture
-def otp_repository(repository_encryptor) -> IOTPRepository:
-    return MongoOTPRepository(mongomock.MongoClient(), repository_encryptor)
+def mongo_client() -> mongomock.MongoClient:
+    return mongomock.MongoClient()
+
+
+@pytest.fixture
+def otp_repository(
+    mongo_client: mongomock.MongoClient, repository_encryptor: ILockableEncryptor
+) -> IOTPRepository:
+    return MongoOTPRepository(mongo_client, repository_encryptor)
 
 
 @pytest.fixture
@@ -38,6 +46,7 @@ def error_raising_mongo_client() -> mongomock.MongoClient:
     client.monkey_island = MagicMock(spec=mongomock.Database)
     client.monkey_island.otp = MagicMock(spec=mongomock.Collection)
     client.monkey_island.otp.insert_one = MagicMock(side_effect=Exception("insert failed"))
+    client.monkey_island.otp.update_one = MagicMock(side_effect=Exception("insert failed"))
     client.monkey_island.otp.find_one = MagicMock(side_effect=Exception("find failed"))
     client.monkey_island.otp.delete_one = MagicMock(side_effect=Exception("delete failed"))
     client.monkey_island.otp.drop = MagicMock(side_effect=Exception("drop failed"))
@@ -111,3 +120,36 @@ def test_reset__deletes_all_otp(otp_repository: IOTPRepository):
 def test_reset__raises_removal_error_if_error_occurs(error_raising_otp_repository: IOTPRepository):
     with pytest.raises(RemovalError):
         error_raising_otp_repository.reset()
+
+
+def test_set_used(otp_repository: IOTPRepository):
+    otp = "test_otp"
+    otp_repository.insert_otp(otp, 1)
+    assert not otp_repository.otp_is_used(otp)
+
+    otp_repository.set_used(otp)
+    assert otp_repository.otp_is_used(otp)
+
+
+def test_set_used__storage_error(
+    error_raising_mongo_client: mongomock.MongoClient, error_raising_otp_repository: IOTPRepository
+):
+    error_raising_mongo_client.monkey_island.otp.find_one.side_effect = None
+    with pytest.raises(StorageError):
+        error_raising_otp_repository.set_used("test_otp")
+
+
+def test_set_used__unknown_record_error(otp_repository: IOTPRepository):
+    with pytest.raises(UnknownRecordError):
+        otp_repository.set_used("test_otp")
+
+
+def test_set_used__idempotent(otp_repository: IOTPRepository):
+    otp = "test_otp"
+    otp_repository.insert_otp(otp, 1)
+
+    otp_repository.set_used(otp)
+    otp_repository.set_used(otp)
+    otp_repository.set_used(otp)
+
+    assert otp_repository.otp_is_used(otp)

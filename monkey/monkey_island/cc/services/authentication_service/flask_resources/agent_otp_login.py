@@ -45,7 +45,7 @@ class AgentOTPLogin(AbstractResource):
         except ArgumentParsingException as err:
             return make_response(str(err), HTTPStatus.BAD_REQUEST)
 
-        if not self._validate_otp(otp):
+        if not self._authentication_facade.authorize_otp(otp):
             return make_response({}, HTTPStatus.UNAUTHORIZED)
 
         agent_user = register_user(
@@ -91,6 +91,3 @@ class AgentOTPLogin(AbstractResource):
             raise ArgumentParsingException("Could not parse the login request")
 
         return agent_id, otp
-
-    def _validate_otp(self, otp: OTP):
-        return len(otp) > 0

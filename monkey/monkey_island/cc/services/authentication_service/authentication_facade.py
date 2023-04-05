@@ -1,5 +1,6 @@
 import string
 import time
+from threading import Lock
 from typing import Tuple
 
 from flask_security import UserDatastore
@@ -7,6 +8,7 @@ from flask_security import UserDatastore
 from common.utils.code_utils import secure_generate_random_string
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
+from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
 
@@ -39,6 +41,7 @@ class AuthenticationFacade:
         self._token_generator = token_generator
         self._token_parser = token_parser
         self._otp_repository = otp_repository
+        self._otp_read_lock = Lock()
 
     def needs_registration(self) -> bool:
         """
@@ -56,6 +59,13 @@ class AuthenticationFacade:
         Revokes all tokens for a specific user
         """
         self._datastore.set_uniquifier(user)
+
+    def revoke_all_tokens_for_all_users(self):
+        """
+        Revokes all tokens for all users
+        """
+        for user in User.objects:
+            self.revoke_all_tokens_for_user(user)
 
     def generate_new_token_pair(self, refresh_token: Token) -> Tuple[Token, Token]:
         """
@@ -97,12 +107,28 @@ class AuthenticationFacade:
         """
         return self._token_generator.generate_token(user.fs_uniquifier)
 
-    def revoke_all_tokens_for_all_users(self):
-        """
-        Revokes all tokens for all users
-        """
-        for user in User.objects:
-            self.revoke_all_tokens_for_user(user)
+    def authorize_otp(self, otp: OTP) -> bool:
+        # SECURITY: This method must not run concurrently, otherwise there could be TOCTOU errors,
+        # resulting in an OTP being used twice.
+        with self._otp_read_lock:
+            try:
+                otp_is_used = self._otp_repository.otp_is_used(otp)
+                # When this method is called, that constitutes the OTP being "used".
+                # Set it as used ASAP.
+                self._otp_repository.set_used(otp)
+
+                if otp_is_used:
+                    return False
+
+                if not self._otp_ttl_elapsed(otp):
+                    return True
+
+                return False
+            except UnknownRecordError:
+                return False
+
+    def _otp_ttl_elapsed(self, otp: OTP) -> bool:
+        return self._otp_repository.get_expiration(otp) < time.monotonic()
 
     def handle_successful_registration(self, username: str, password: str):
         self._reset_island_data()
