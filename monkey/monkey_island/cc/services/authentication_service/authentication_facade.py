@@ -107,6 +107,15 @@ class AuthenticationFacade:
     def mark_otp_as_used(self, otp: OTP):
         self._otp_repository.update_otp(otp, {"used": True})
 
+    def otp_is_valid(self, otp: OTP) -> bool:
+        otp_is_used = self._otp_repository.otp_is_used(otp)
+        expiration_time = self._otp_repository.get_expiration(otp)
+
+        if otp_is_used or expiration_time < time.monotonic():
+            return False
+
+        return True
+
     def handle_successful_registration(self, username: str, password: str):
         self._reset_island_data()
         self._reset_repository_encryptor(username, password)
