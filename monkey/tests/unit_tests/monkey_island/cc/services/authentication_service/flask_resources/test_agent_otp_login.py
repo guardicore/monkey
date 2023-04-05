@@ -35,6 +35,7 @@ def test_agent_otp_login__successful(agent_otp_login):
         {},
         [],
         {"otp": ""},
+        {"agent_id": AGENT_ID},
         {"agent_id": AGENT_ID, "otp": ""},
         {"agent_id": "", "otp": "supersecretpassword"},
         {"agent_id": "1234", "otp": "supersecretpassword"},

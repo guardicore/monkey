@@ -1,4 +1,3 @@
-import json
 import string
 from http import HTTPStatus
 
@@ -38,19 +37,25 @@ class AgentOTPLogin(AbstractResource):
         :return: Authentication token in the response body
         """
         try:
-            agent_id_argument = request.json["agent_id"]
-            agent_id = AgentID(agent_id_argument)
-        except ValueError as err:
-            return make_response(
-                f'Invalid agent ID "{agent_id_argument}": {err}', HTTPStatus.BAD_REQUEST
-            )
+            try:
+                agent_id_argument = request.json["agent_id"]
+                agent_id = AgentID(agent_id_argument)
+            except ValueError as err:
+                return make_response(
+                    f'Invalid agent ID "{agent_id_argument}": {err}', HTTPStatus.BAD_REQUEST
+                )
+
+            try:
+                otp_argument = request.json["otp"]
+                otp = OTP(otp_argument)
+            except ValueError as err:
+                return make_response(f'Invalid OTP "{otp_argument}": {err}', HTTPStatus.BAD_REQUEST)
         except KeyError as err:
             return make_response(f"Missing argument {err}", HTTPStatus.BAD_REQUEST)
         except TypeError:
             return make_response("Could not parse the login request", HTTPStatus.BAD_REQUEST)
 
         try:
-            otp = json.loads(request.data).get("otp", "")
             if self._validate_otp(otp):
                 agent_user = register_user(
                     RegisterForm(
