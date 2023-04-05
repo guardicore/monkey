@@ -84,7 +84,7 @@ const getContents = (props) => {
         </div>
       </div>
       <CommandDisplay commands={commands}/>
-      <Button style={{'float': 'right'}} title="Copy to Clipboard" onClick={getOtp}>Re-generate</Button>
+      <Button style={{'float': 'right'}} title="Re-generate run monkey command" onClick={getOtp}>Re-generate</Button>
     </>
   )
 }
