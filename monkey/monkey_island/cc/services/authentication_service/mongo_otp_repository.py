@@ -52,6 +52,20 @@ class MongoOTPRepository(IOTPRepository):
             raise UnknownRecordError("OTP not found")
         return otp_dict["expiration_time"]
 
+    def otp_is_used(self, otp: OTP) -> bool:
+        try:
+            encrypted_otp = self._encryptor.encrypt(otp.encode())
+            otp_dict = self._otp_collection.find_one(
+                {"otp": encrypted_otp}, {MONGO_OBJECT_ID_KEY: False}
+            )
+        except Exception as err:
+            raise RetrievalError(f"Error retrieving OTP: {err}")
+
+        if otp_dict is None:
+            raise UnknownRecordError("OTP not found")
+
+        return otp_dict["used"]
+
     def reset(self):
         try:
             self._otp_collection.drop()
