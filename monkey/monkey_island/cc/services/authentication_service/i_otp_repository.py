@@ -23,6 +23,7 @@ class IOTPRepository(ABC):
 
         :param otp: The OTP set as "used"
         :raises StorageError: If an error occurs while attempting to update the OTP
+        :raises UnknownRecordError: If the OTP is not found in the repository
         """
 
     @abstractmethod
