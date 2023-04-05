@@ -131,7 +131,10 @@ def test_set_used(otp_repository: IOTPRepository):
     assert otp_repository.otp_is_used(otp)
 
 
-def test_set_used__storage_error(error_raising_otp_repository: IOTPRepository):
+def test_set_used__storage_error(
+    error_raising_mongo_client: mongomock.MongoClient, error_raising_otp_repository: IOTPRepository
+):
+    error_raising_mongo_client.monkey_island.otp.find_one.side_effect = None
     with pytest.raises(StorageError):
         error_raising_otp_repository.set_used("test_otp")
 

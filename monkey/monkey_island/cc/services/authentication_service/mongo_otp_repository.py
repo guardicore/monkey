@@ -37,16 +37,12 @@ class MongoOTPRepository(IOTPRepository):
             raise StorageError(f"Error inserting OTP: {err}")
 
     def set_used(self, otp: OTP):
+        otp_id = self._get_otp_object_id(otp)
+
         try:
-            encrypted_otp = self._encryptor.encrypt(otp.encode())
-            update_result = self._otp_collection.update_one(
-                {"otp": encrypted_otp}, {"$set": {"used": True}}
-            )
+            self._otp_collection.update_one({MONGO_OBJECT_ID_KEY: otp_id}, {"$set": {"used": True}})
         except Exception as err:
             raise StorageError(f"Error updating OTP: {err}")
-
-        if update_result.matched_count == 0:
-            raise UnknownRecordError(f"Unknown OTP: {otp}")
 
     def get_expiration(self, otp: OTP) -> float:
         otp_dict = self._get_otp_document(otp)
