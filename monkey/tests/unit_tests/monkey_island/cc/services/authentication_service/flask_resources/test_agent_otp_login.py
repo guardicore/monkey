@@ -40,13 +40,13 @@ def test_agent_otp_login__successful(agent_otp_login):
         {"agent_id": "1234", "otp": "supersecretpassword"},
     ],
 )
-def test_agent_otp_login__invalid_request(agent_otp_login, data):
+def test_invalid_request(agent_otp_login, data):
     response = agent_otp_login(data)
 
     assert response.status_code == 400
 
 
-def test_agent_otp_login__invalid_json(flask_client):
+def test_invalid_json(flask_client):
     url = get_url_for_resource(AgentOTPLogin)
     invalid_json = "{'key1': 'value1', 'key2: 'value2'}"
 
@@ -55,7 +55,7 @@ def test_agent_otp_login__invalid_json(flask_client):
     assert response.status_code == 400
 
 
-def test_agent_otp_login__unauthorized(agent_otp_login):
+def test_unauthorized(agent_otp_login):
     # TODO: Update this test when OTP validation is implemented.
     response = agent_otp_login({"agent_id": AGENT_ID, "otp": ""})
 
