@@ -7,6 +7,7 @@ from flask_security import UserDatastore
 from common.utils.code_utils import secure_generate_random_string
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
+from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
 
@@ -108,17 +109,21 @@ class AuthenticationFacade:
         self._otp_repository.set_used(otp)
 
     def otp_is_valid(self, otp: OTP) -> bool:
-        otp_is_used = self._otp_repository.otp_is_used(otp)
-        # When this method is called, that constitutes the OTP being "used". Set it as such ASAP.
-        self._otp_repository.set_used(otp)
+        try:
+            otp_is_used = self._otp_repository.otp_is_used(otp)
+            # When this method is called, that constitutes the OTP being "used".
+            # Set it as used ASAP.
+            self._otp_repository.set_used(otp)
 
-        if otp_is_used:
+            if otp_is_used:
+                return False
+
+            if not self._otp_ttl_elapsed(otp):
+                return True
+
             return False
-
-        if not self._otp_ttl_elapsed(otp):
-            return True
-
-        return False
+        except UnknownRecordError:
+            return False
 
     def _otp_ttl_elapsed(self, otp: OTP) -> bool:
         return self._otp_repository.get_expiration(otp) < time.monotonic()

@@ -10,6 +10,7 @@ from tests.common import StubDIContainer
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
+from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     OTP_EXPIRATION_TIME,
@@ -254,6 +255,19 @@ def test_otp_is_valid(
     assert mock_otp_repository.otp_is_used.called_once_with(otp)
     assert mock_otp_repository.get_expiration.called_once_with(otp)
     mock_otp_repository.set_used.assert_called_once()
+
+
+def test_otp_is_valid__unknown_otp(
+    authentication_facade: AuthenticationFacade,
+    mock_otp_repository: IOTPRepository,
+):
+    otp = "secret"
+
+    mock_otp_repository.otp_is_used.side_effect = UnknownRecordError(f"Unknown otp {otp}")
+    mock_otp_repository.set_used.side_effect = UnknownRecordError(f"Unknown otp {otp}")
+    mock_otp_repository.get_expiration.side_effect = UnknownRecordError(f"Unknown otp {otp}")
+
+    assert authentication_facade.otp_is_valid(otp) is False
 
 
 # mongomock.MongoClient is not a pymongo.MongoClient. This class allows us to register a
