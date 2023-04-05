@@ -13,7 +13,6 @@ from monkey_island.cc.services.authentication_service import AccountRole
 
 from ..authentication_facade import AuthenticationFacade
 from ..types import OTP
-from .utils import include_auth_token
 
 
 class AgentOTPLogin(AbstractResource):
@@ -28,7 +27,6 @@ class AgentOTPLogin(AbstractResource):
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
-    @include_auth_token
     def post(self, agent_id: AgentID):
         """
         Gets the one-time password from the request,
