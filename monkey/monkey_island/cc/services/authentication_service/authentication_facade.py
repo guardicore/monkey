@@ -108,7 +108,7 @@ class AuthenticationFacade:
     def mark_otp_as_used(self, otp: OTP):
         self._otp_repository.set_used(otp)
 
-    def otp_is_valid(self, otp: OTP) -> bool:
+    def authorize_otp(self, otp: OTP) -> bool:
         try:
             otp_is_used = self._otp_repository.otp_is_used(otp)
             # When this method is called, that constitutes the OTP being "used".

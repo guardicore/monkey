@@ -236,7 +236,7 @@ TIME_FLOAT = 1577836800.0
         (True, TIME_FLOAT + 1, False),  # used, before expiration time
     ],
 )
-def test_otp_is_valid(
+def test_authorize_otp(
     authentication_facade: AuthenticationFacade,
     mock_otp_repository: IOTPRepository,
     freezer,
@@ -251,13 +251,11 @@ def test_otp_is_valid(
     mock_otp_repository.otp_is_used.return_value = otp_is_used_return_value
     mock_otp_repository.get_expiration.return_value = get_expiration_return_value
 
-    assert authentication_facade.otp_is_valid(otp) == otp_is_valid_expected_value
-    assert mock_otp_repository.otp_is_used.called_once_with(otp)
-    assert mock_otp_repository.get_expiration.called_once_with(otp)
+    assert authentication_facade.authorize_otp(otp) == otp_is_valid_expected_value
     mock_otp_repository.set_used.assert_called_once()
 
 
-def test_otp_is_valid__unknown_otp(
+def test_authorize_otp__unknown_otp(
     authentication_facade: AuthenticationFacade,
     mock_otp_repository: IOTPRepository,
 ):
@@ -267,7 +265,7 @@ def test_otp_is_valid__unknown_otp(
     mock_otp_repository.set_used.side_effect = UnknownRecordError(f"Unknown otp {otp}")
     mock_otp_repository.get_expiration.side_effect = UnknownRecordError(f"Unknown otp {otp}")
 
-    assert authentication_facade.otp_is_valid(otp) is False
+    assert authentication_facade.authorize_otp(otp) is False
 
 
 # mongomock.MongoClient is not a pymongo.MongoClient. This class allows us to register a
