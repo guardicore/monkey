@@ -33,8 +33,7 @@ class AgentOTPLogin(AbstractResource):
         and returns an authentication token and a refresh token
         for a particular Agent
 
-        :param agent_id: The ID of the Agent trying to log in
-        :return: Authentication token in the response body
+        :return: Authentication token and refresh token in the response body
         """
         try:
             try:
