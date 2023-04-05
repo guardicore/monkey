@@ -26,6 +26,22 @@ export default function commandDisplay(props) {
     }
   }, [props.commands]);
 
+  function handleKeyDown(event) {
+    let charCode = String.fromCharCode(event.which).toLowerCase();
+    if ((event.ctrlKey || event.metaKey) && charCode === 'c') {
+      props.onCopy();
+    }
+    if ((event.ctrlKey || event.metaKey) && charCode === 'a') {
+      event.preventDefault();
+      let codeElement = event.target.querySelector('code');
+      let selection = window.getSelection();
+      let range = document.createRange();
+      range.selectNode(codeElement);
+      selection.addRange(range);
+    }
+    console.log(charCode);
+  }
+
   function renderNav() {
     return (
       <Nav variant='tabs' activeKey={selectedCommand.type} onSelect={setSelectedCommandByName}>
@@ -42,7 +58,7 @@ export default function commandDisplay(props) {
     <div className={'command-display'}>
       {renderNav()}
       <Card>
-        <div style={{'overflow': 'auto', 'padding': '0.5em'}}>
+        <div style={{'overflow': 'auto', 'padding': '0.5em'}} onKeyDown={handleKeyDown} tabIndex={-1}>
           <CopyToClipboard text={selectedCommand.command} className="pull-right btn-sm">
             <Button style={{margin: '-0.5em'}} title="Copy to Clipboard" onClick={props.onCopy}>
               <FontAwesomeIcon icon={faClipboard}/>
