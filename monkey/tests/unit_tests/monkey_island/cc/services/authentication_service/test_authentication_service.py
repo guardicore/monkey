@@ -182,6 +182,25 @@ def test_generate_new_token_pair__fails_if_token_invalid(
         authentication_facade.generate_new_token_pair(refresh_token)
 
 
+def test_remove_user__removes_user(
+    mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade
+):
+    user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
+    mock_user_datastore.find_user.return_value = user
+
+    authentication_facade.remove_user(user.username)
+
+    mock_user_datastore.delete_user.assert_called_once_with(user)
+
+
+def test_remove_user__does_nothing_if_user_does_not_exist(
+    mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade
+):
+    mock_user_datastore.find_user = MagicMock(return_value=None)
+
+    authentication_facade.remove_user(USERNAME)
+
+
 def test_revoke_all_tokens_for_all_users(
     mock_user_datastore: UserDatastore,
     authentication_facade: AuthenticationFacade,

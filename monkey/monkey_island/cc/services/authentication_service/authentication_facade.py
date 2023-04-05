@@ -55,6 +55,17 @@ class AuthenticationFacade:
         )
         return not self._datastore.find_user(roles=[island_api_user_role])
 
+    def remove_user(self, username: str):
+        """
+        Unregisters a user, removing all tokens in the process
+
+        :param username: Username of the user to unregister
+        """
+        user = self._datastore.find_user(username=username)
+        if user is not None:
+            self.revoke_all_tokens_for_user(user)  # Redundant?
+            self._datastore.delete_user(user)
+
     def revoke_all_tokens_for_user(self, user: User):
         """
         Revokes all tokens for a specific user
