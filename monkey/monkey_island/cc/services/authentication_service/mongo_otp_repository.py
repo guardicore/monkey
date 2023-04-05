@@ -1,5 +1,7 @@
+from functools import lru_cache
 from typing import Any, Mapping
 
+from bson.objectid import ObjectId
 from pymongo import MongoClient
 
 from monkey_island.cc.repositories import (
@@ -50,18 +52,32 @@ class MongoOTPRepository(IOTPRepository):
         return otp_dict["used"]
 
     def _get_otp_document(self, otp: OTP) -> Mapping[str, Any]:
+        otp_object_id = self._get_otp_object_id(otp)
+
+        try:
+            otp_dict = self._otp_collection.find_one(
+                {"_id": otp_object_id}, {MONGO_OBJECT_ID_KEY: False}
+            )
+        except Exception as err:
+            raise RetrievalError(f"Error retrieving OTP: {err}")
+
+        if otp_dict is None:
+            raise RetrievalError(f"Error retrieving OTP {otp} with ID {otp_object_id}")
+
+        return otp_dict
+
+    @lru_cache
+    def _get_otp_object_id(self, otp: OTP) -> ObjectId:
         try:
             encrypted_otp = self._encryptor.encrypt(otp.encode())
-            otp_dict = self._otp_collection.find_one(
-                {"otp": encrypted_otp}, {MONGO_OBJECT_ID_KEY: False}
-            )
+            otp_dict = self._otp_collection.find_one({"otp": encrypted_otp}, [MONGO_OBJECT_ID_KEY])
         except Exception as err:
             raise RetrievalError(f"Error retrieving OTP: {err}")
 
         if otp_dict is None:
             raise UnknownRecordError("OTP not found")
 
-        return otp_dict
+        return otp_dict[MONGO_OBJECT_ID_KEY]
 
     def reset(self):
         try:
