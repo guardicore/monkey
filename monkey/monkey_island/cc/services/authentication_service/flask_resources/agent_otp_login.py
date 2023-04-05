@@ -51,7 +51,9 @@ class AgentOTPLogin(AbstractResource):
         agent_user = register_user(
             RegisterForm(
                 username=str(agent_id),
-                password=secure_generate_random_string(32, string.printable),
+                password=secure_generate_random_string(
+                    32, string.digits + string.ascii_letters + string.punctuation
+                ),
                 roles=[AccountRole.AGENT.name],
             )
         )
