@@ -64,7 +64,9 @@ class AgentOTPLogin(AbstractResource):
                 )
 
         except Exception:
-            return responses.make_response_to_invalid_request()
+            pass
+
+        return responses.make_response_to_invalid_request()
 
     def _validate_otp(self, otp: OTP):
         return len(otp) > 0
