@@ -14,5 +14,6 @@ class IAgentOTPProvider(metaclass=abc.ABCMeta):
         Get a one-time password (OTP)
 
         :return: An OTP
+        :raises RuntimeError: If an OTP cannot be retrieved
         """
         pass

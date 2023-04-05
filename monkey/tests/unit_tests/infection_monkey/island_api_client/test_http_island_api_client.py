@@ -1,4 +1,5 @@
 import json
+from http import HTTPStatus
 from typing import Dict, List
 from unittest.mock import MagicMock
 from uuid import UUID
@@ -33,6 +34,7 @@ from infection_monkey.island_api_client import (
 )
 from infection_monkey.island_api_client.island_api_client_errors import (
     IslandAPIAuthenticationError,
+    IslandAPIRequestLimitExceededError,
     IslandAPIResponseParsingError,
 )
 
@@ -239,6 +241,17 @@ def test_island_api_client_get_otp__incorrect_response():
     api_client = _build_client_with_json_response({"otpP": expected_otp})
 
     with pytest.raises(IslandAPIResponseParsingError):
+        api_client.get_otp()
+
+
+def test_island_api_client_get_otp__raises_request_limit_exceeded():
+    response_stub = MagicMock()
+    response_stub.status_code = HTTPStatus.TOO_MANY_REQUESTS
+    http_client_stub = MagicMock()
+    http_client_stub.get.return_value = response_stub
+    api_client = build_api_client(http_client_stub)
+
+    with pytest.raises(IslandAPIRequestLimitExceededError):
         api_client.get_otp()
 
 

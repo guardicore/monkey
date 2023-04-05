@@ -1,9 +1,11 @@
 import logging
 import os
 from http import HTTPStatus
+from threading import Thread
 from time import sleep
 
 import pytest
+import requests
 
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
@@ -38,6 +40,9 @@ from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
     start_machines,
     stop_machines,
 )
+from monkey_island.cc.services.authentication_service.flask_resources.agent_otp import (
+    MAX_OTP_REQUESTS_PER_SECOND,
+)
 
 DEFAULT_TIMEOUT_SECONDS = 2 * 60 + 30
 MACHINE_BOOTUP_WAIT_SECONDS = 30
@@ -48,7 +53,11 @@ LOGGER = logging.getLogger(__name__)
 
 @pytest.fixture(autouse=True, scope="session")
 def GCPHandler(request, no_gcp, gcp_machines_to_start):
-    if not no_gcp:
+    if no_gcp:
+        return
+    if len(gcp_machines_to_start) == 0:
+        LOGGER.info("No GCP machines to start.")
+    else:
         LOGGER.info(f"MACHINES TO START: {gcp_machines_to_start}")
 
         try:
@@ -154,6 +163,27 @@ def test_logout_invalidates_all_tokens(island):
     # Prove monkey_island_requests_2 can't authenticate after monkey_island_requests_1 logs out.
     resp = monkey_island_requests_2.get(GET_AGENTS_ENDPOINT)
     assert resp.status_code == HTTPStatus.UNAUTHORIZED
+
+
+def test_agent_otp_rate_limit(island):
+    threads = []
+    response_codes = []
+    agent_otp_endpoint = f"https://{island}/api/agent-otp"
+
+    def make_request():
+        response = requests.get(agent_otp_endpoint, verify=False)  # noqa: DUO123
+        response_codes.append(response.status_code)
+
+    for _ in range(0, MAX_OTP_REQUESTS_PER_SECOND + 1):
+        t = Thread(target=make_request, daemon=True)
+        t.start()
+        threads.append(t)
+
+    for t in threads:
+        t.join()
+
+    assert response_codes.count(HTTPStatus.OK) == MAX_OTP_REQUESTS_PER_SECOND
+    assert response_codes.count(HTTPStatus.TOO_MANY_REQUESTS) == 1
 
 
 # NOTE: These test methods are ordered to give time for the slower zoo machines

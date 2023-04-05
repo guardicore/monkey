@@ -50,3 +50,13 @@ class IslandAPIResponseParsingError(IslandAPIError):
     """
     Raised when IslandAPIClient fails to parse the response
     """
+
+    pass
+
+
+class IslandAPIRequestLimitExceededError(IslandAPIError):
+    """
+    Raised when the API request fails due to rate limiting
+    """
+
+    pass

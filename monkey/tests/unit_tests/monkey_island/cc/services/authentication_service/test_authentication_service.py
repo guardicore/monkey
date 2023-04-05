@@ -238,7 +238,7 @@ def test_setup_authentication__revokes_tokens(
     container.register_instance(ILockableEncryptor, mock_repository_encryptor)
     container.register_instance(IIslandEventQueue, mock_island_event_queue)
     container.register_instance(pymongo.MongoClient, MockMongoClient())
-    setup_authentication(MagicMock(), MagicMock(), container, Path("data_dir"))
+    setup_authentication(MagicMock(), MagicMock(), container, Path("data_dir"), MagicMock())
 
     assert mock_user_datastore.set_uniquifier.call_count == len(USERS)
     for user in USERS:

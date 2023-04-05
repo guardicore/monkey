@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from flask import Flask
+from flask_limiter import Limiter
 from flask_security import Security
 
 from common import DIContainer
@@ -17,14 +18,14 @@ from .token_generator import TokenGenerator
 from .token_parser import TokenParser
 
 
-def setup_authentication(api, app: Flask, container: DIContainer, data_dir: Path):
+def setup_authentication(api, app: Flask, container: DIContainer, data_dir: Path, limiter: Limiter):
     security = configure_flask_security(app, data_dir)
 
     authentication_facade = _build_authentication_facade(container, security)
     otp_generator = AuthenticationServiceOTPGenerator(authentication_facade)
     container.register_instance(IOTPGenerator, otp_generator)
 
-    register_resources(api, authentication_facade, otp_generator)
+    register_resources(api, authentication_facade, otp_generator, limiter)
 
     # revoke all old tokens so that the user has to log in again on startup
     authentication_facade.revoke_all_tokens_for_all_users()

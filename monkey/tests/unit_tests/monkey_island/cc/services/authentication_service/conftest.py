@@ -48,7 +48,7 @@ def build_flask_client(
 
 def get_mock_auth_app(authentication_facade: AuthenticationFacade, otp_generator: IOTPGenerator):
     app, api = init_mock_security_app()
-    register_resources(api, authentication_facade, otp_generator)
+    register_resources(api, authentication_facade, otp_generator, MagicMock())
     return app
 
 
