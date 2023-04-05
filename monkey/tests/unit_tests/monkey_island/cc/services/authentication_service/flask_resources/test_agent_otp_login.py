@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from uuid import UUID
 
 import pytest
@@ -24,7 +25,7 @@ def agent_otp_login(flask_client):
 def test_agent_otp_login__successful(agent_otp_login):
     response = agent_otp_login({"agent_id": AGENT_ID, "otp": "supersecretpassword"})
 
-    assert response.status_code == 200
+    assert response.status_code == HTTPStatus.OK
     assert ACCESS_TOKEN_KEY_NAME in response.json["response"]["user"]
     assert REFRESH_TOKEN_KEY_NAME in response.json["response"]["user"]
 
@@ -43,7 +44,7 @@ def test_agent_otp_login__successful(agent_otp_login):
 def test_invalid_request(agent_otp_login, data):
     response = agent_otp_login(data)
 
-    assert response.status_code == 400
+    assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
 def test_invalid_json(flask_client):
@@ -52,18 +53,18 @@ def test_invalid_json(flask_client):
 
     response = flask_client.post(url, data=invalid_json, follow_redirects=True)
 
-    assert response.status_code == 400
+    assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
 def test_unauthorized(agent_otp_login):
     # TODO: Update this test when OTP validation is implemented.
     response = agent_otp_login({"agent_id": AGENT_ID, "otp": ""})
 
-    assert response.status_code == 401
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
 
 
 def test_unexpected_error(mock_authentication_facade, agent_otp_login):
     mock_authentication_facade.generate_refresh_token.side_effect = Exception("Unexpected error")
     response = agent_otp_login({"agent_id": AGENT_ID, "otp": "password"})
 
-    assert response.status_code == 500
+    assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
