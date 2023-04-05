@@ -26,9 +26,18 @@ class MongoOTPRepository(IOTPRepository):
     def insert_otp(self, otp: OTP, expiration: float):
         try:
             encrypted_otp = self._encryptor.encrypt(otp.encode())
-            self._otp_collection.insert_one({"otp": encrypted_otp, "expiration_time": expiration})
+            self._otp_collection.insert_one(
+                {"otp": encrypted_otp, "expiration_time": expiration, "used": False}
+            )
         except Exception as err:
-            raise StorageError(f"Error updating otp: {err}")
+            raise StorageError(f"Error inserting OTP: {err}")
+
+    def update_otp(self, otp: OTP, **kwargs):
+        try:
+            encrypted_otp = self._encryptor.encrypt(otp.encode())
+            self._otp_collection.update_one({"otp": encrypted_otp}, {"$set": kwargs})
+        except Exception as err:
+            raise StorageError(f"Error updating OTP: {err}")
 
     def get_expiration(self, otp: OTP) -> float:
         try:
@@ -37,7 +46,7 @@ class MongoOTPRepository(IOTPRepository):
                 {"otp": encrypted_otp}, {MONGO_OBJECT_ID_KEY: False}
             )
         except Exception as err:
-            raise RetrievalError(f"Error retrieving otp: {err}")
+            raise RetrievalError(f"Error retrieving OTP: {err}")
 
         if otp_dict is None:
             raise UnknownRecordError("OTP not found")
@@ -47,4 +56,4 @@ class MongoOTPRepository(IOTPRepository):
         try:
             self._otp_collection.drop()
         except Exception as err:
-            raise RemovalError(f"Error resetting the repository: {err}")
+            raise RemovalError(f"Error resetting the OTP repository: {err}")
