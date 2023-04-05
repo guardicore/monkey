@@ -8,7 +8,7 @@ from flask_security.registerable import register_user
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
 from common.types import AgentID
 from common.utils.code_utils import secure_generate_random_string
-from monkey_island.cc.flask_utils import AbstractResource, responses
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 
 from ..authentication_facade import AuthenticationFacade
@@ -82,7 +82,7 @@ class AgentOTPLogin(AbstractResource):
         except Exception:
             pass
 
-        return responses.make_response_to_invalid_request()
+        return make_response({}, HTTPStatus.UNAUTHORIZED)
 
     def _validate_otp(self, otp: OTP):
         return len(otp) > 0

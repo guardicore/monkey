@@ -36,7 +36,6 @@ def test_agent_otp_login__successful(agent_otp_login):
         [],
         {"otp": ""},
         {"agent_id": AGENT_ID},
-        {"agent_id": AGENT_ID, "otp": ""},
         {"agent_id": "", "otp": "supersecretpassword"},
         {"agent_id": "1234", "otp": "supersecretpassword"},
     ],
@@ -54,3 +53,10 @@ def test_agent_otp_login__invalid_json(flask_client):
     response = flask_client.post(url, data=invalid_json, follow_redirects=True)
 
     assert response.status_code == 400
+
+
+def test_agent_otp_login__unauthorized(agent_otp_login):
+    # TODO: Update this test when OTP validation is implemented.
+    response = agent_otp_login({"agent_id": AGENT_ID, "otp": ""})
+
+    assert response.status_code == 401
