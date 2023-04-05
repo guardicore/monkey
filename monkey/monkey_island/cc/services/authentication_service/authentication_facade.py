@@ -57,6 +57,13 @@ class AuthenticationFacade:
         """
         self._datastore.set_uniquifier(user)
 
+    def revoke_all_tokens_for_all_users(self):
+        """
+        Revokes all tokens for all users
+        """
+        for user in User.objects:
+            self.revoke_all_tokens_for_user(user)
+
     def generate_new_token_pair(self, refresh_token: Token) -> Tuple[Token, Token]:
         """
         Generates a new access token and refresh, given a valid refresh token
@@ -99,13 +106,6 @@ class AuthenticationFacade:
 
     def mark_otp_as_used(self, otp: OTP):
         self._otp_repository.update_otp(otp, {"used": True})
-
-    def revoke_all_tokens_for_all_users(self):
-        """
-        Revokes all tokens for all users
-        """
-        for user in User.objects:
-            self.revoke_all_tokens_for_user(user)
 
     def handle_successful_registration(self, username: str, password: str):
         self._reset_island_data()
