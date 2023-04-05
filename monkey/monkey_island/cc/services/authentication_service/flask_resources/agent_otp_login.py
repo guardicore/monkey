@@ -16,6 +16,10 @@ from ..authentication_facade import AuthenticationFacade
 from ..types import OTP
 
 
+class ArgumentParsingException(Exception):
+    pass
+
+
 class AgentOTPLogin(AbstractResource):
     """
     A resource for logging in using an OTP
@@ -38,7 +42,7 @@ class AgentOTPLogin(AbstractResource):
         """
         try:
             agent_id, otp = self._get_request_arguments(request.json)
-        except Exception as err:
+        except ArgumentParsingException as err:
             return make_response(str(err), HTTPStatus.BAD_REQUEST)
 
         if not self._validate_otp(otp):
@@ -72,19 +76,17 @@ class AgentOTPLogin(AbstractResource):
                 agent_id_argument = request_data["agent_id"]
                 agent_id = AgentID(agent_id_argument)
             except ValueError as err:
-                raise ValueError(f'Invalid Agent ID "{agent_id_argument}": {err}')
+                raise ArgumentParsingException(f'Invalid Agent ID "{agent_id_argument}": {err}')
 
             try:
                 otp_argument = request_data["otp"]
                 otp = OTP(otp_argument)
             except ValueError as err:
-                raise ValueError(f'Invalid OTP "{otp_argument}": {err}')
-
+                raise ArgumentParsingException(f'Invalid OTP "{otp_argument}": {err}')
         except KeyError as err:
-            raise KeyError(f"Missing argument: {err}")
-
+            raise ArgumentParsingException(f"Missing argument: {err}")
         except TypeError:
-            raise TypeError("Could not parse the login request")
+            raise ArgumentParsingException("Could not parse the login request")
 
         return agent_id, otp
 
