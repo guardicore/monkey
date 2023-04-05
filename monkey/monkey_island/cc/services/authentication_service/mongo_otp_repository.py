@@ -54,16 +54,17 @@ class MongoOTPRepository(IOTPRepository):
 
     def _get_otp_document(self, otp: OTP) -> Mapping[str, Any]:
         otp_object_id = self._get_otp_object_id(otp)
+        retrieval_error_message = f"Error retrieving OTP {otp} with ID {otp_object_id}"
 
         try:
             otp_dict = self._otp_collection.find_one(
                 {"_id": otp_object_id}, {MONGO_OBJECT_ID_KEY: False}
             )
         except Exception as err:
-            raise RetrievalError(f"Error retrieving OTP: {err}")
+            raise RetrievalError(f"{retrieval_error_message}: {err}")
 
         if otp_dict is None:
-            raise RetrievalError(f"Error retrieving OTP {otp} with ID {otp_object_id}")
+            raise RetrievalError(retrieval_error_message)
 
         return otp_dict
 
