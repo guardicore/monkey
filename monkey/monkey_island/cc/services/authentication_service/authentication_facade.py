@@ -105,7 +105,7 @@ class AuthenticationFacade:
         return self._token_generator.generate_token(user.fs_uniquifier)
 
     def mark_otp_as_used(self, otp: OTP):
-        self._otp_repository.update_otp(otp, {"used": True})
+        self._otp_repository.set_used(otp)
 
     def otp_is_valid(self, otp: OTP) -> bool:
         otp_is_used = self._otp_repository.otp_is_used(otp)

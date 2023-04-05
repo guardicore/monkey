@@ -17,12 +17,11 @@ class IOTPRepository(ABC):
         """
 
     @abstractmethod
-    def update_otp(self, otp: OTP, **kwargs):
+    def set_used(self, otp: OTP):
         """
         Update an OTP in the repository
 
-        :param otp: The OTP to update
-        :param **kwargs: The fields to update
+        :param otp: The OTP set as "used"
         :raises StorageError: If an error occurs while attempting to update the OTP
         """
 

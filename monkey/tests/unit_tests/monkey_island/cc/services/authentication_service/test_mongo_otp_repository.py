@@ -10,6 +10,7 @@ from monkey_island.cc.repositories import (
     StorageError,
     UnknownRecordError,
 )
+from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.i_otp_repository import IOTPRepository
 from monkey_island.cc.services.authentication_service.mongo_otp_repository import MongoOTPRepository
 
@@ -28,8 +29,15 @@ OTPS = (
 
 
 @pytest.fixture
-def otp_repository(repository_encryptor) -> IOTPRepository:
-    return MongoOTPRepository(mongomock.MongoClient(), repository_encryptor)
+def mongo_client() -> mongomock.MongoClient:
+    return mongomock.MongoClient()
+
+
+@pytest.fixture
+def otp_repository(
+    mongo_client: mongomock.MongoClient, repository_encryptor: ILockableEncryptor
+) -> IOTPRepository:
+    return MongoOTPRepository(mongo_client, repository_encryptor)
 
 
 @pytest.fixture
@@ -111,3 +119,12 @@ def test_reset__deletes_all_otp(otp_repository: IOTPRepository):
 def test_reset__raises_removal_error_if_error_occurs(error_raising_otp_repository: IOTPRepository):
     with pytest.raises(RemovalError):
         error_raising_otp_repository.reset()
+
+
+def test_set_used(otp_repository: IOTPRepository):
+    otp = "test_otp"
+    otp_repository.insert_otp(otp, 1)
+    assert not otp_repository.otp_is_used(otp)
+
+    otp_repository.set_used(otp)
+    assert otp_repository.otp_is_used(otp)

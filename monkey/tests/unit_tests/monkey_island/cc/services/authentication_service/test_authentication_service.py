@@ -217,7 +217,7 @@ def test_mark_otp_as_used(
     otp = "secret"
     authentication_facade.mark_otp_as_used(otp)
 
-    assert mock_otp_repository.update_otp.called_once_with(otp, {"used": True})
+    assert mock_otp_repository.set_used.called_once_with(otp)
 
 
 TIME = "2020-01-01 00:00:00"

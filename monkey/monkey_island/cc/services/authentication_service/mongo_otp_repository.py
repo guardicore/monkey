@@ -36,10 +36,10 @@ class MongoOTPRepository(IOTPRepository):
         except Exception as err:
             raise StorageError(f"Error inserting OTP: {err}")
 
-    def update_otp(self, otp: OTP, **kwargs):
+    def set_used(self, otp: OTP):
         try:
             encrypted_otp = self._encryptor.encrypt(otp.encode())
-            self._otp_collection.update_one({"otp": encrypted_otp}, {"$set": kwargs})
+            self._otp_collection.update_one({"otp": encrypted_otp}, {"$set": {"used": True}})
         except Exception as err:
             raise StorageError(f"Error updating OTP: {err}")
 
