@@ -55,30 +55,30 @@ class AgentOTPLogin(AbstractResource):
         except TypeError:
             return make_response("Could not parse the login request", HTTPStatus.BAD_REQUEST)
 
-        if self._validate_otp(otp):
-            agent_user = register_user(
-                RegisterForm(
-                    username=str(agent_id),
-                    password=secure_generate_random_string(32, string.printable),
-                    roles=[AccountRole.AGENT.name],
-                )
+        if not self._validate_otp(otp):
+            return make_response({}, HTTPStatus.UNAUTHORIZED)
+
+        agent_user = register_user(
+            RegisterForm(
+                username=str(agent_id),
+                password=secure_generate_random_string(32, string.printable),
+                roles=[AccountRole.AGENT.name],
             )
+        )
 
-            auth_token = agent_user.get_auth_token()
-            refresh_token = self._authentication_facade.generate_refresh_token(agent_user)
+        auth_token = agent_user.get_auth_token()
+        refresh_token = self._authentication_facade.generate_refresh_token(agent_user)
 
-            return make_response(
-                {
-                    "response": {
-                        "user": {
-                            ACCESS_TOKEN_KEY_NAME: auth_token,
-                            REFRESH_TOKEN_KEY_NAME: refresh_token,
-                        }
+        return make_response(
+            {
+                "response": {
+                    "user": {
+                        ACCESS_TOKEN_KEY_NAME: auth_token,
+                        REFRESH_TOKEN_KEY_NAME: refresh_token,
                     }
                 }
-            )
-
-        return make_response({}, HTTPStatus.UNAUTHORIZED)
+            }
+        )
 
     def _validate_otp(self, otp: OTP):
         return len(otp) > 0
