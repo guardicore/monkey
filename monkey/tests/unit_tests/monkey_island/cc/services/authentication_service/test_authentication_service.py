@@ -212,15 +212,6 @@ def test_generate_otp__uses_expected_expiration_time(
     assert expiration_time == expected_expiration_time
 
 
-def test_mark_otp_as_used(
-    authentication_facade: AuthenticationFacade, mock_otp_repository: IOTPRepository
-):
-    otp = "secret"
-    authentication_facade.mark_otp_as_used(otp)
-
-    mock_otp_repository.set_used.assert_called_once_with(otp)
-
-
 TIME = "2020-01-01 00:00:00"
 TIME_FLOAT = 1577836800.0
 
