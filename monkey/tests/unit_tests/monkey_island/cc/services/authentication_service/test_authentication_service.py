@@ -199,7 +199,7 @@ def test_generate_otp__saves_otp(
 ):
     otp = authentication_facade.generate_otp()
 
-    mock_otp_repository.insert_otp.assert_called_once_with(otp)
+    assert mock_otp_repository.insert_otp.call_args[0][0] == otp
 
 
 def test_generate_otp__uses_expected_expiration_time(
