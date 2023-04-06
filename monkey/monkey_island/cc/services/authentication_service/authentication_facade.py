@@ -43,6 +43,7 @@ class AuthenticationFacade:
         self._token_parser = token_parser
         self._otp_repository = otp_repository
         self._otp_read_lock = Lock()
+        self._user_lock = Lock()
 
     def needs_registration(self) -> bool:
         """
@@ -59,12 +60,15 @@ class AuthenticationFacade:
         """
         Unregisters a user, removing all tokens in the process
 
+        Idempotent. Will not do anything if the user does not exist.
+
         :param username: Username of the user to unregister
         """
-        user = self._datastore.find_user(username=username)
-        if user is not None:
-            self.revoke_all_tokens_for_user(user)
-            self._datastore.delete_user(user)
+        with self._user_lock:
+            user = self._datastore.find_user(username=username)
+            if user is not None:
+                self.revoke_all_tokens_for_user(user)
+                self._datastore.delete_user(user)
 
     def revoke_all_tokens_for_user(self, user: User):
         """
