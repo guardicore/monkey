@@ -63,7 +63,7 @@ class AuthenticationFacade:
         """
         user = self._datastore.find_user(username=username)
         if user is not None:
-            self.revoke_all_tokens_for_user(user)  # Redundant?
+            self.revoke_all_tokens_for_user(user)
             self._datastore.delete_user(user)
 
     def revoke_all_tokens_for_user(self, user: User):
