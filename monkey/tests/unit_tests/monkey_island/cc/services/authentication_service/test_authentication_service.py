@@ -143,6 +143,11 @@ def test_refresh_user_token(
     assert expiration_time == int(time.time() + TOKEN_TTL_SEC)
 
 
+def test_calculate_token_expiration_time(authentication_facade: AuthenticationFacade):
+    now = time.time()
+    assert authentication_facade.calculate_token_expiration_time(now) == int(now + TOKEN_TTL_SEC)
+
+
 def test_remove_user__removes_user(
     mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade
 ):
