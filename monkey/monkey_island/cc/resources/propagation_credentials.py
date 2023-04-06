@@ -33,7 +33,7 @@ class PropagationCredentials(AbstractResource):
         return propagation_credentials, HTTPStatus.OK
 
     @auth_token_required
-    @roles_accepted(AccountRole.AGENT.name, AccountRole.ISLAND_INTERFACE.name)
+    @roles_accepted(AccountRole.ISLAND_INTERFACE.name)
     def put(self, collection=None):
         credentials = [Credentials(**c) for c in request.json]
         if collection == _configured_collection:
