@@ -8,6 +8,8 @@ import GenerateLocalLinuxCurl from '../commands/local_linux_curl';
 import CommandDisplay from '../utils/CommandDisplay';
 import {Button, Form, Col} from 'react-bootstrap';
 import IslandHttpClient, { APIEndpoint } from '../../../IslandHttpClient';
+import { useTimer } from 'react-timer-hook';
+import { CommandExpirationTimer } from '../utils/CommandExpirationTimer';
 
 
 const LocalManualRunOptions = (props) => {
@@ -23,6 +25,12 @@ const getContents = (props) => {
     [OS_TYPES.WINDOWS_64]: 'Windows 64bit',
     [OS_TYPES.LINUX_64]: 'Linux 64bit'
   }
+
+  const {
+    seconds,
+    minutes,
+    restart
+  } = useTimer({ expiryTimestamp: new Date(), onExpire: () => getOtp() });
 
   const [otp, setOtp] = useState('');
   const [osType, setOsType] = useState(OS_TYPES.WINDOWS_64);
@@ -52,8 +60,9 @@ const getContents = (props) => {
   }
 
   function getOtp() {
-    IslandHttpClient.get(APIEndpoint.agent_otp).then(res =>{
+    IslandHttpClient.get(APIEndpoint.agent_otp).then(res => {
       setOtp(res.body.otp);
+      restart(newExpirationTime());
     });
   }
 
@@ -64,6 +73,13 @@ const getContents = (props) => {
       return [{type: 'cURL', command: GenerateLocalLinuxCurl(selectedIp, customUsername, otp)},
         {type: 'Wget', command: GenerateLocalLinuxWget(selectedIp, customUsername, otp)}]
     }
+  }
+
+  function newExpirationTime() {
+    const time = new Date();
+    time.setSeconds(time.getSeconds() + 120);
+    console.log('timeout is now: ' + time);
+    return time;
   }
 
   return (
@@ -84,9 +100,14 @@ const getContents = (props) => {
         </div>
       </div>
       <CommandDisplay commands={commands} onCopy={getOtp} />
-        <Col lg={{span:3, offset: 9}} md={{span:4, offset: 8}} sm={{span:4, offset: 8}} xs={12}>
-          <Button style={{'float': 'right'}} title="Refresh OTP" onClick={getOtp}>Refresh OTP</Button>
-        </Col>
+      <div style={{marginTop: '-0.5em', marginBottom: '0.5em'}}>
+        <CommandExpirationTimer minutes={minutes} seconds={seconds}/>
+      </div>
+      <div style={{textAlign: 'right'}}>
+        <span>
+          <Button title="Copy to Clipboard" onClick={getOtp}>Refresh OTP</Button>
+        </span>
+      </div>
     </>
   )
 }
