@@ -80,13 +80,13 @@ def test_multiple_agents(
     assert agent_2.stop_time == datetime.fromtimestamp(200, tz=pytz.UTC)
     assert agent_3.stop_time == agent_3.start_time
     assert mock_island_event_queue.publish.call_count == 3
-    assert mock_island_event_queue.publish.called_with(
-        IslandEventTopic.AGENT_TIMED_OUT, agent_id=AGENT_ID_1
+    mock_island_event_queue.publish.assert_any_call(
+        IslandEventTopic.AGENT_TIMED_OUT, agent_id=AGENT_ID_3
     )
-    assert mock_island_event_queue.publish.called_with(
+    mock_island_event_queue.publish.assert_any_call(
         IslandEventTopic.AGENT_TIMED_OUT, agent_id=AGENT_ID_2
     )
-    assert mock_island_event_queue.publish.called_with(
+    mock_island_event_queue.publish.assert_any_call(
         IslandEventTopic.AGENT_TIMED_OUT, agent_id=AGENT_ID_3
     )
 
