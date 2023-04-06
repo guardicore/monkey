@@ -5,10 +5,7 @@ from flask_limiter import Limiter
 from flask_security import Security
 
 from common import DIContainer
-from common.agent_events import AbstractAgentEvent, AgentShutdownEvent
-from common.event_queue import IAgentEventQueue
-from common.types import AgentID
-from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
+from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from . import IOTPGenerator
@@ -17,6 +14,7 @@ from .authentication_service_otp_generator import AuthenticationServiceOTPGenera
 from .configure_flask_security import configure_flask_security
 from .flask_resources import register_resources
 from .mongo_otp_repository import MongoOTPRepository
+from .register_event_handlers import register_event_handlers
 from .token_generator import TokenGenerator
 from .token_parser import TokenParser
 
@@ -28,7 +26,7 @@ def setup_authentication(api, app: Flask, container: DIContainer, data_dir: Path
     otp_generator = AuthenticationServiceOTPGenerator(authentication_facade)
     container.register_instance(IOTPGenerator, otp_generator)
 
-    _register_event_handlers(container, authentication_facade)
+    register_event_handlers(container, authentication_facade)
     register_resources(api, authentication_facade, otp_generator, limiter)
 
     # revoke all old tokens so that the user has to log in again on startup
@@ -54,32 +52,3 @@ def _build_authentication_facade(container: DIContainer, security: Security):
         token_parser,
         container.resolve(MongoOTPRepository),
     )
-
-
-def _register_event_handlers(container: DIContainer, authentication_facade: AuthenticationFacade):
-    agent_event_queue = container.resolve(IAgentEventQueue)
-    island_event_queue = container.resolve(IIslandEventQueue)
-
-    agent_event_queue.subscribe_type(
-        AgentShutdownEvent, unregister_agent_on_shutdown(authentication_facade)
-    )
-    island_event_queue.subscribe(
-        IslandEventTopic.AGENT_TIMED_OUT, unregister_agent_on_timeout(authentication_facade)
-    )
-
-
-class unregister_agent_on_shutdown:
-    def __init__(self, authentication_facade: AuthenticationFacade):
-        self._authentication_facade = authentication_facade
-
-    def __call__(self, event: AbstractAgentEvent):
-        agent_id = event.source
-        self._authentication_facade.remove_user(str(agent_id))
-
-
-class unregister_agent_on_timeout:
-    def __init__(self, authentication_facade: AuthenticationFacade):
-        self._authentication_facade = authentication_facade
-
-    def __call__(self, agent_id: AgentID):
-        self._authentication_facade.remove_user(str(agent_id))
