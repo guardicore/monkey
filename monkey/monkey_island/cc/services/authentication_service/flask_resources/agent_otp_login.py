@@ -32,7 +32,7 @@ class AgentOTPLogin(AbstractResource):
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
-    # Can't be secured, used for login
+    # Secured via OTP, not via authentication token.
     @include_auth_token
     def post(self):
         """
