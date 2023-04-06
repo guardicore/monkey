@@ -59,10 +59,10 @@ const getContents = (props) => {
 
   function generateCommands() {
     if (osType === OS_TYPES.WINDOWS_64) {
-      return [{type: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, customUsername, otp)}]
+      return [{type: 'PowerShell', command: GenerateLocalWindowsPowershell(selectedIp, customUsername, otp)}]
     } else {
-      return [{type: 'CURL', command: GenerateLocalLinuxCurl(selectedIp, customUsername, otp)},
-        {type: 'WGET', command: GenerateLocalLinuxWget(selectedIp, customUsername, otp)}]
+      return [{type: 'cURL', command: GenerateLocalLinuxCurl(selectedIp, customUsername, otp)},
+        {type: 'Wget', command: GenerateLocalLinuxWget(selectedIp, customUsername, otp)}]
     }
   }
 
