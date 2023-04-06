@@ -8,6 +8,7 @@ import pytest
 from flask_security import UserDatastore
 from tests.common import StubDIContainer
 
+from common.types import OTP
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.repositories import UnknownRecordError
@@ -235,7 +236,7 @@ def test_authorize_otp(
     get_expiration_return_value: int,
     otp_is_valid_expected_value: bool,
 ):
-    otp = "secret"
+    otp = OTP("secret")
 
     freezer.move_to(TIME)
 
@@ -250,7 +251,7 @@ def test_authorize_otp__unknown_otp(
     authentication_facade: AuthenticationFacade,
     mock_otp_repository: IOTPRepository,
 ):
-    otp = "secret"
+    otp = OTP("secret")
 
     mock_otp_repository.otp_is_used.side_effect = UnknownRecordError(f"Unknown otp {otp}")
     mock_otp_repository.set_used.side_effect = UnknownRecordError(f"Unknown otp {otp}")

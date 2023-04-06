@@ -5,6 +5,7 @@ from typing import Tuple
 
 from flask_security import UserDatastore
 
+from common.types import OTP
 from common.utils.code_utils import secure_generate_random_string
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
@@ -15,7 +16,7 @@ from monkey_island.cc.services.authentication_service.token_generator import Tok
 from . import AccountRole
 from .i_otp_repository import IOTPRepository
 from .token_parser import ParsedToken, TokenParser
-from .types import OTP, Token
+from .types import Token
 from .user import User
 
 OTP_EXPIRATION_TIME = 2 * 60  # 2 minutes
@@ -95,7 +96,7 @@ class AuthenticationFacade:
 
         The generated OTP is saved to the `IOTPRepository`
         """
-        otp = secure_generate_random_string(32, string.ascii_letters + string.digits + "._-")
+        otp = OTP(secure_generate_random_string(32, string.ascii_letters + string.digits + "._-"))
         expiration_time = time.monotonic() + OTP_EXPIRATION_TIME
         self._otp_repository.insert_otp(otp, expiration_time)
 
