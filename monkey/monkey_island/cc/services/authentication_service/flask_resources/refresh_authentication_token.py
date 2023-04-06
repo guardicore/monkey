@@ -25,9 +25,9 @@ class RefreshAuthenticationToken(AbstractResource):
     @auth_token_required
     def post(self):
         """
-        Accepts a refresh token and returns a new token pair
+        Returns a new token for the authenticated user
 
-        :return: Response with new token pair or an invalid request response
+        :return: Response with a new token or an invalid request response
         """
         try:
             new_token = self._authentication_facade.refresh_user_token(current_user)

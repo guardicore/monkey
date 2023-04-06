@@ -16,7 +16,6 @@ from .flask_resources import register_resources
 from .mongo_otp_repository import MongoOTPRepository
 from .register_event_handlers import register_event_handlers
 from .token_generator import TokenGenerator
-from .token_parser import TokenParser
 
 
 def setup_authentication(api, app: Flask, container: DIContainer, data_dir: Path, limiter: Limiter):
@@ -38,17 +37,11 @@ def _build_authentication_facade(container: DIContainer, security: Security):
     island_event_queue = container.resolve(IIslandEventQueue)
 
     token_generator = TokenGenerator(security)
-    refresh_token_expiration = (
-        security.app.config["SECURITY_TOKEN_MAX_AGE"]
-        + security.app.config["SECURITY_REFRESH_TOKEN_TIMEDELTA"]
-    )
-    token_parser = TokenParser(security, refresh_token_expiration)
 
     return AuthenticationFacade(
         repository_encryptor,
         island_event_queue,
         security.datastore,
         token_generator,
-        token_parser,
         container.resolve(MongoOTPRepository),
     )

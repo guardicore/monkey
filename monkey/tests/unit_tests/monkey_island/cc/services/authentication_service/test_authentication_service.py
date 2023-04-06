@@ -21,10 +21,6 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
 from monkey_island.cc.services.authentication_service.i_otp_repository import IOTPRepository
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
 from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
-from monkey_island.cc.services.authentication_service.token_parser import (
-    TokenParser,
-    TokenValidationError,
-)
 from monkey_island.cc.services.authentication_service.user import User
 
 USERNAME = "user1"
@@ -68,11 +64,6 @@ def mock_agent_event_queue() -> IAgentEventQueue:
 
 
 @pytest.fixture
-def mock_token_parser() -> TokenParser:
-    return MagicMock(spec=TokenParser)
-
-
-@pytest.fixture
 def mock_otp_repository() -> IOTPRepository:
     return MagicMock(spec=IOTPRepository)
 
@@ -84,7 +75,6 @@ def authentication_facade(
     mock_island_event_queue: IIslandEventQueue,
     mock_user_datastore: UserDatastore,
     mock_token_generator: TokenGenerator,
-    mock_token_parser: TokenParser,
     mock_otp_repository: IOTPRepository,
 ) -> AuthenticationFacade:
     return AuthenticationFacade(
@@ -92,7 +82,6 @@ def authentication_facade(
         mock_island_event_queue,
         mock_user_datastore,
         mock_token_generator,
-        mock_token_parser,
         mock_otp_repository,
     )
 
@@ -157,52 +146,6 @@ def test_refresh_user_token(
     mock_user_datastore.set_uniquifier.assert_called_once()
     assert mock_user_datastore.set_uniquifier.call_args[0][0].username == user.username
     assert new_access_token != original_access_token
-
-
-def test_generate_new_token_pair__generates_tokens(
-    mock_token_generator: TokenGenerator,
-    mock_token_parser: TokenParser,
-    authentication_facade: AuthenticationFacade,
-):
-    user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
-    user.save()
-    mock_token_generator.generate_token.return_value = "new_token"
-    mock_token_parser.parse.return_value.payload = "a"
-
-    access_token = user.get_auth_token()
-    refresh_token = "original_refresh_token"
-    new_access_token, new_refresh_token = authentication_facade.generate_new_token_pair(
-        refresh_token
-    )
-
-    assert access_token != refresh_token
-    assert new_access_token != new_refresh_token
-    assert new_access_token != access_token
-    assert new_refresh_token != refresh_token
-
-
-def test_generate_new_token_pair__fails_if_user_does_not_exist(
-    authentication_facade: AuthenticationFacade,
-):
-    nonexistent_user = User(username="_", password="_", fs_uniquifier="bogus")
-    bogus_token = authentication_facade.generate_refresh_token(nonexistent_user)
-    authentication_facade._datastore.find_user = MagicMock(return_value=None)
-
-    with pytest.raises(Exception):
-        authentication_facade.generate_new_token_pair(bogus_token)
-
-
-def test_generate_new_token_pair__fails_if_token_invalid(
-    mock_token_parser: TokenParser,
-    authentication_facade: AuthenticationFacade,
-):
-    user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
-    user.save()
-    refresh_token = authentication_facade.generate_refresh_token(user)
-    mock_token_parser.parse.side_effect = TokenValidationError()
-
-    with pytest.raises(TokenValidationError):
-        authentication_facade.generate_new_token_pair(refresh_token)
 
 
 def test_remove_user__removes_user(
