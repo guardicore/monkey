@@ -1,10 +1,11 @@
 import string
+import time
 from http import HTTPStatus
 from typing import Tuple
 
 from flask import make_response, request
 
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, EXPIRATION_TIME_KEY_NAME
 from common.types import OTP, AgentID
 from common.utils.code_utils import secure_generate_random_string
 from monkey_island.cc.flask_utils import AbstractResource
@@ -47,6 +48,7 @@ class AgentOTPLogin(AbstractResource):
         if not self._authentication_facade.authorize_otp(otp):
             return make_response({}, HTTPStatus.UNAUTHORIZED)
 
+        registration_time = int(time.time())
         agent_user = self._authentication_facade.create_user(
             username=str(agent_id),
             password=secure_generate_random_string(
@@ -57,11 +59,15 @@ class AgentOTPLogin(AbstractResource):
 
         auth_token = agent_user.get_auth_token()
 
+        token_expiration_time_sec = self._authentication_facade.calculate_token_expiration_time(
+            registration_time
+        )
         return make_response(
             {
                 "response": {
                     "user": {
                         ACCESS_TOKEN_KEY_NAME: auth_token,
+                        EXPIRATION_TIME_KEY_NAME: token_expiration_time_sec,
                     }
                 }
             }
