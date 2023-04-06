@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 
 from flask import Response, make_response
 from flask.typing import ResponseValue
@@ -9,7 +10,9 @@ from flask_security.views import logout
 from monkey_island.cc.flask_utils import AbstractResource, responses
 from monkey_island.cc.services.authentication_service import AccountRole
 
+from ..account_role import AccountRole
 from ..authentication_facade import AuthenticationFacade
+from ..user import User
 
 logger = logging.getLogger(__name__)
 
@@ -36,4 +39,11 @@ class Logout(AbstractResource):
         if not isinstance(response, Response):
             return responses.make_response_to_invalid_request()
 
+        if response.status_code == HTTPStatus.OK:
+            self._remove_agent_user(current_user)
+
         return make_response(response)
+
+    def _remove_agent_user(self, user: User):
+        if user.has_role(AccountRole.AGENT.name):
+            self._authentication_facade.remove_user(user.username)
