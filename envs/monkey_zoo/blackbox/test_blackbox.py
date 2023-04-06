@@ -7,10 +7,13 @@ from time import sleep
 import pytest
 import requests
 
+from common.types import OTP
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
+from envs.monkey_zoo.blackbox.island_client.agent_requests import AgentRequests
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import (
+    GET_AGENT_EVENTS_ENDPOINT,
     GET_AGENTS_ENDPOINT,
     GET_MACHINES_ENDPOINT,
     ISLAND_LOG_ENDPOINT,
@@ -210,6 +213,63 @@ def test_island__cannot_access_nonisland_endpoints(island):
     )
     assert requests.get(GET_AGENT_SIGNALS_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
     assert requests.post(GET_AGENTS_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
+
+
+GET_AGENT_OTP_ENDPOINT = "/api/agent-otp"
+REQUESTS_AGENT_ID = "00000000-0000-0000-0000-000000000001"
+TERMINATE_AGENTS_ENDPOINT = "/api/agent-signals/terminate-all-agents"
+CLEAR_SIMULATION_DATA_ENDPOINT = "/api/clear-simulation-data"
+MONKEY_EXPLOITATION_ENDPOINT = "/api/exploitations/monkey"
+GET_ISLAND_LOG_ENDPOINT = "/api/island/log"
+ISLAND_MODE_ENDPOINT = "/api/island/mode"
+ISLAND_RUN_ENDPOINT = "/api/local-monkey"
+GET_NODES_ENDPOINT = "/api/nodes"
+PROPAGATION_CREDENTIALS_ENDPOINT = "/api/propagation-credentials"
+GET_RANSOMWARE_REPORT_ENDPOINT = "/api/report/ransomware"
+REMOTE_RUN_ENDPOINT = "/api/remote-monkey"
+GET_REPORT_STATUS_ENDPOINT = "/api/report-generation-status"
+RESET_AGENT_CONFIG_ENDPOINT = "/api/reset-agent-configuration"
+GET_SECURITY_REPORT_ENDPOINT = "/api/report/security"
+GET_ISLAND_VERSION_ENDPOINT = "/api/island/version"
+PUT_AGENT_CONFIG_ENDPOINT = "/api/agent-configuration"
+
+
+def test_agent__cannot_access_nonagent_endpoints(island):
+    island_requests = MonkeyIslandRequests(island)
+    island_requests.login()
+    response = island_requests.get(GET_AGENT_OTP_ENDPOINT)
+    print(f"response: {response.json()}")
+    otp = response.json()["otp"]
+
+    requests = AgentRequests(island, REQUESTS_AGENT_ID, OTP(otp))
+    requests.login()
+
+    assert requests.get(GET_AGENT_EVENTS_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert requests.get(PUT_LOG_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert requests.post(TERMINATE_AGENTS_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
+    assert requests.get(GET_AGENTS_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert (
+        requests.post(CLEAR_SIMULATION_DATA_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
+    )
+    assert requests.get(MONKEY_EXPLOITATION_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert requests.get(GET_ISLAND_LOG_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert requests.get(ISLAND_MODE_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert requests.put(ISLAND_MODE_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
+    assert requests.post(ISLAND_RUN_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
+    assert requests.get(GET_MACHINES_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert requests.get(GET_NODES_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert (
+        requests.put(PROPAGATION_CREDENTIALS_ENDPOINT, data=None).status_code
+        == HTTPStatus.FORBIDDEN
+    )
+    assert requests.get(GET_RANSOMWARE_REPORT_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert requests.get(REMOTE_RUN_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert requests.post(REMOTE_RUN_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
+    assert requests.get(GET_REPORT_STATUS_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert requests.post(RESET_AGENT_CONFIG_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
+    assert requests.get(GET_SECURITY_REPORT_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert requests.get(GET_ISLAND_VERSION_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
+    assert requests.put(PUT_AGENT_CONFIG_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
 
 
 # NOTE: These test methods are ordered to give time for the slower zoo machines
