@@ -31,6 +31,7 @@ USERS = [
     User(username="user3", password="test3", fs_uniquifier="c"),
 ]
 
+TOKEN_TTL_SEC = 10
 
 # Some tests have these fixtures as arguments even though `autouse=True`, because
 # to access the object that a fixture returns, it needs to be specified as an argument.
@@ -75,6 +76,7 @@ def authentication_facade(
         mock_island_event_queue,
         mock_user_datastore,
         mock_otp_repository,
+        TOKEN_TTL_SEC,
     )
 
 
@@ -124,7 +126,7 @@ def test_handle_sucessful_login(
 
 
 def test_refresh_user_token(
-    mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade
+    mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade, freezer
 ):
     def reset_uniquifier(user: User):
         user.fs_uniquifier = "b"
@@ -133,11 +135,12 @@ def test_refresh_user_token(
     user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
 
     original_access_token = user.get_auth_token()
-    new_access_token = authentication_facade.refresh_user_token(user)
+    new_access_token, expiration_time = authentication_facade.refresh_user_token(user)
 
     mock_user_datastore.set_uniquifier.assert_called_once()
     assert mock_user_datastore.set_uniquifier.call_args[0][0].username == user.username
     assert new_access_token != original_access_token
+    assert expiration_time == int(time.time() + TOKEN_TTL_SEC)
 
 
 def test_remove_user__removes_user(

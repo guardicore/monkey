@@ -40,4 +40,5 @@ def _build_authentication_facade(container: DIContainer, security: Security):
         island_event_queue,
         security.datastore,
         container.resolve(MongoOTPRepository),
+        security.app.config["SECURITY_TOKEN_MAX_AGE"],
     )

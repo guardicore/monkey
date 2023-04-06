@@ -1,7 +1,7 @@
 import string
 import time
 from threading import Lock
-from typing import Sequence
+from typing import Sequence, Tuple
 
 from flask_security import UserDatastore
 
@@ -31,11 +31,13 @@ class AuthenticationFacade:
         island_event_queue: IIslandEventQueue,
         user_datastore: UserDatastore,
         otp_repository: IOTPRepository,
+        token_ttl_sec: int,
     ):
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
         self._datastore = user_datastore
         self._otp_repository = otp_repository
+        self._token_ttl_sec = token_ttl_sec
         self._otp_read_lock = Lock()
         self._user_lock = Lock()
 
@@ -89,12 +91,17 @@ class AuthenticationFacade:
 
         return otp
 
-    def refresh_user_token(self, user: User) -> Token:
+    def refresh_user_token(self, user: User) -> Tuple[Token, int]:
         """
         Refreshes the user's authentication token
+
+        :param user: The user to refresh the token for
+        :return: The new token and the time when it will expire (in Unix time)
         """
+        creation_time = time.time()
         self.revoke_all_tokens_for_user(user)
-        return user.get_auth_token()
+
+        return user.get_auth_token(), int(creation_time + self._token_ttl_sec)
 
     def authorize_otp(self, otp: OTP) -> bool:
         # SECURITY: This method must not run concurrently, otherwise there could be TOCTOU errors,

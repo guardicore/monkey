@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import pytest
 
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, EXPIRATION_TIME_KEY_NAME
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
 )
@@ -13,6 +13,7 @@ from monkey_island.cc.services.authentication_service.flask_resources.refresh_au
 REQUEST_AUTHENTICATION_TOKEN = "my_authentication_token"
 
 NEW_AUTHENTICATION_TOKEN = "new_authentication_token"
+EXPIRATION_TIME = 123
 
 
 @pytest.fixture
@@ -28,12 +29,16 @@ def request_token(flask_client):
 def test_token__provides_refreshed_token(
     request_token, mock_authentication_facade: AuthenticationFacade
 ):
-    mock_authentication_facade.refresh_user_token.return_value = NEW_AUTHENTICATION_TOKEN
+    mock_authentication_facade.refresh_user_token.return_value = (
+        NEW_AUTHENTICATION_TOKEN,
+        EXPIRATION_TIME,
+    )
 
     response = request_token()
 
     assert response.status_code == HTTPStatus.OK
     assert response.json["response"]["user"][ACCESS_TOKEN_KEY_NAME] == NEW_AUTHENTICATION_TOKEN
+    assert response.json["response"]["user"][EXPIRATION_TIME_KEY_NAME] == EXPIRATION_TIME
 
 
 def test_token__fails_if_refresh_token_is_invalid(
