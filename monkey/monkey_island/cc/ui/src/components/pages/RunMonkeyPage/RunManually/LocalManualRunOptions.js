@@ -6,7 +6,7 @@ import GenerateLocalWindowsPowershell from '../commands/local_windows_powershell
 import GenerateLocalLinuxWget from '../commands/local_linux_wget';
 import GenerateLocalLinuxCurl from '../commands/local_linux_curl';
 import CommandDisplay from '../utils/CommandDisplay';
-import {Button, Form, Col} from 'react-bootstrap';
+import {Button, Form} from 'react-bootstrap';
 import IslandHttpClient, { APIEndpoint } from '../../../IslandHttpClient';
 import { useTimer } from 'react-timer-hook';
 import { CommandExpirationTimer } from '../utils/CommandExpirationTimer';
