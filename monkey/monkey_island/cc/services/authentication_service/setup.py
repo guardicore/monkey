@@ -7,6 +7,7 @@ from flask_security import Security
 from common import DIContainer
 from common.agent_events import AbstractAgentEvent, AgentShutdownEvent
 from common.event_queue import IAgentEventQueue
+from common.types import AgentID
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
@@ -18,11 +19,6 @@ from .flask_resources import register_resources
 from .mongo_otp_repository import MongoOTPRepository
 from .token_generator import TokenGenerator
 from .token_parser import TokenParser
-
-# TODO:
-# - Subscribe to the agent timeout event
-# - Subscribe to the agent shutdown event
-# - Handle the events by removing the agent user from the datastore
 
 
 def setup_authentication(api, app: Flask, container: DIContainer, data_dir: Path, limiter: Limiter):
@@ -85,5 +81,5 @@ class unregister_agent_on_timeout:
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
-    def __call__(self, agent_id: str):
-        self._authentication_facade.remove_user(agent_id)
+    def __call__(self, agent_id: AgentID):
+        self._authentication_facade.remove_user(str(agent_id))
