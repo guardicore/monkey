@@ -6,7 +6,7 @@ import GenerateLocalWindowsPowershell from '../commands/local_windows_powershell
 import GenerateLocalLinuxWget from '../commands/local_linux_wget';
 import GenerateLocalLinuxCurl from '../commands/local_linux_curl';
 import CommandDisplay from '../utils/CommandDisplay';
-import {Button, Form} from 'react-bootstrap';
+import {Button, Form, Col} from 'react-bootstrap';
 import IslandHttpClient, { APIEndpoint } from '../../../IslandHttpClient';
 
 
@@ -84,7 +84,9 @@ const getContents = (props) => {
         </div>
       </div>
       <CommandDisplay commands={commands}/>
-      <Button style={{'float': 'right'}} title="Re-generate run monkey command" onClick={getOtp}>Re-generate</Button>
+        <Col lg={{span:3, offset: 9}} md={{span:4, offset: 8}} sm={{span:4, offset: 8}} xs={12}>
+          <Button style={{'float': 'right'}} title="Refresh OTP" onClick={getOtp}>Refresh OTP</Button>
+        </Col>
     </>
   )
 }
