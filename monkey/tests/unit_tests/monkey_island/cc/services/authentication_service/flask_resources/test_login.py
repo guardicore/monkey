@@ -3,9 +3,8 @@ from unittest.mock import MagicMock
 
 import pytest
 from flask import Response
-from tests.unit_tests.monkey_island.cc.services.authentication_service.conftest import REFRESH_TOKEN
 
-from common.common_consts.token_keys import REFRESH_TOKEN_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
 )
@@ -55,7 +54,7 @@ def test_login_successful(make_login_request, monkeypatch):
     response = make_login_request(TEST_REQUEST)
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json["response"]["user"][REFRESH_TOKEN_KEY_NAME] == REFRESH_TOKEN
+    assert ACCESS_TOKEN_KEY_NAME in response.json["response"]["user"]
 
 
 def test_login_failure(
