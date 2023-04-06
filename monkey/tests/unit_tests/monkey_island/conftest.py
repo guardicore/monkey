@@ -15,7 +15,6 @@ from common.utils.code_utils import insecure_generate_random_string
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 from monkey_island.cc.services.authentication_service.flask_resources.login import Login
-from monkey_island.cc.services.authentication_service.flask_resources.logout import Logout
 from monkey_island.cc.services.authentication_service.flask_resources.register import Register
 from monkey_island.cc.services.authentication_service.role import Role
 from monkey_island.cc.services.authentication_service.user import User
@@ -107,11 +106,7 @@ def set_current_user(app, ds, email):
     """
 
     def token_cb(request):
-        if (
-            Register.urls[0] in request.url
-            or Logout.urls[0] in request.url
-            or Login.urls[0] in request.url
-        ):
+        if Register.urls[0] in request.url or Login.urls[0] in request.url:
             return
         return ds.find_user(email=email)
 
