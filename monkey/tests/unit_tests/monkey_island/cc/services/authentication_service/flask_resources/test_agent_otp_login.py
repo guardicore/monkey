@@ -6,7 +6,7 @@ import pytest
 from tests.data_for_tests.otp import TEST_OTP
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME
 from monkey_island.cc.services.authentication_service.flask_resources.agent_otp_login import (
     AgentOTPLogin,
 )
@@ -34,7 +34,6 @@ def test_agent_otp_login__successful(mock_authentication_facade, agent_otp_login
 
     assert response.status_code == HTTPStatus.OK
     assert ACCESS_TOKEN_KEY_NAME in response.json["response"]["user"]
-    assert REFRESH_TOKEN_KEY_NAME in response.json["response"]["user"]
 
 
 @pytest.mark.parametrize(

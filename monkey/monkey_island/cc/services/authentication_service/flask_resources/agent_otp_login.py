@@ -4,7 +4,7 @@ from typing import Tuple
 
 from flask import make_response, request
 
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME
 from common.types import OTP, AgentID
 from common.utils.code_utils import secure_generate_random_string
 from monkey_island.cc.flask_utils import AbstractResource
@@ -34,11 +34,10 @@ class AgentOTPLogin(AbstractResource):
     @include_auth_token
     def post(self):
         """
-        Gets the one-time password from the request,
-        and returns an authentication token and a refresh token
-        for a particular Agent
+        Gets the one-time password from the request, and returns an authentication token for a
+        particular Agent
 
-        :return: Authentication token and refresh token in the response body
+        :return: Authentication token in the response body
         """
         try:
             agent_id, otp = self._get_request_arguments(request.json)
@@ -57,14 +56,12 @@ class AgentOTPLogin(AbstractResource):
         )
 
         auth_token = agent_user.get_auth_token()
-        refresh_token = self._authentication_facade.generate_refresh_token(agent_user)
 
         return make_response(
             {
                 "response": {
                     "user": {
                         ACCESS_TOKEN_KEY_NAME: auth_token,
-                        REFRESH_TOKEN_KEY_NAME: refresh_token,
                     }
                 }
             }
