@@ -1,3 +1,3 @@
-from common.utils.secret_variable import SecretVariable
+from common.types import OTP
 
-OTP = SecretVariable("fake_otp")
+TEST_OTP = OTP("test_otp")

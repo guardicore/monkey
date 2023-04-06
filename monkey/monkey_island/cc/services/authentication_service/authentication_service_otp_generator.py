@@ -1,6 +1,7 @@
+from common.types import OTP
+
 from .authentication_facade import AuthenticationFacade
 from .i_otp_generator import IOTPGenerator
-from .types import OTP
 
 
 class AuthenticationServiceOTPGenerator(IOTPGenerator):

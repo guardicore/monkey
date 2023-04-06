@@ -16,8 +16,7 @@ from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginTy
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
 from common.credentials import Credentials
-from common.types import AgentID, JSONSerializable
-from common.types.otp import OTP
+from common.types import OTP, AgentID, JSONSerializable
 
 from . import IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient

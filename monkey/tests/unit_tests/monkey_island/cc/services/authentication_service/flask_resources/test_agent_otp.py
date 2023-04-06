@@ -2,11 +2,10 @@ from http import HTTPStatus
 from typing import Callable
 
 import pytest
+from tests.data_for_tests.otp import TEST_OTP
 
 from monkey_island.cc.services.authentication_service import IOTPGenerator
 from monkey_island.cc.services.authentication_service.flask_resources.agent_otp import AgentOTP
-
-OTP = "supersecretpassword"
 
 
 @pytest.fixture
@@ -20,8 +19,8 @@ def make_otp_request(flask_client):
 
 
 def test_agent_otp__successful(make_otp_request: Callable, mock_otp_generator: IOTPGenerator):
-    mock_otp_generator.generate_otp.return_value = OTP
+    mock_otp_generator.generate_otp.return_value = TEST_OTP
     response = make_otp_request()
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json["otp"] == OTP
+    assert response.json["otp"] == TEST_OTP.get_secret_value()

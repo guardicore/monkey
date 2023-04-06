@@ -51,6 +51,6 @@ class AgentOTP(AbstractResource):
             raise RuntimeError("limiter has not been initialized")
         try:
             with AgentOTP.limiter:
-                return make_response({"otp": self._otp_generator.generate_otp()})
+                return make_response({"otp": self._otp_generator.generate_otp().get_secret_value()})
         except RateLimitExceeded:
             return make_response("Rate limit exceeded", HTTPStatus.TOO_MANY_REQUESTS)
