@@ -36,9 +36,10 @@ class Login(AbstractResource):
         """
         try:
             username, password = get_username_password_from_request(request)
-            response: ResponseValue = login()
         except Exception:
             return responses.make_response_to_invalid_request()
+
+        response: ResponseValue = login()
 
         if not isinstance(response, Response):
             return responses.make_response_to_invalid_request()
