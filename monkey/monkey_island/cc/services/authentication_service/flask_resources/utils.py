@@ -1,13 +1,9 @@
 import json
-from copy import deepcopy
 from functools import wraps
 from typing import Tuple
 
-from flask import Request, Response, request
+from flask import Request, request
 from werkzeug.datastructures import ImmutableMultiDict
-
-from common.common_consts.token_keys import REFRESH_TOKEN_KEY_NAME
-from monkey_island.cc.services.authentication_service.types import Token
 
 
 def get_username_password_from_request(_request: Request) -> Tuple[str, str]:
@@ -42,17 +38,3 @@ def include_auth_token(func):
         return func(*args, **kwargs)
 
     return decorated_function
-
-
-def add_refresh_token_to_response(response: Response, refresh_token: Token) -> Response:
-    """
-    Returns a copy of the response object with the refresh token added to it
-
-    :param response: A Flask Response object
-    :param refresh_token: Refresh token to add to the response
-    :return: A Flask Response object
-    """
-    new_data = deepcopy(response.json)
-    new_data["response"]["user"][REFRESH_TOKEN_KEY_NAME] = refresh_token
-    response.data = json.dumps(new_data).encode()
-    return response
