@@ -12,6 +12,7 @@ export class Response {
 }
 
 export enum APIEndpoint {
+  agent_otp = '/api/agent-otp',
   agents = '/api/agents',
   machines = '/api/machines',
   nodes = '/api/nodes',
