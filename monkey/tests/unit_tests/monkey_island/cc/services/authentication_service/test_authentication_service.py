@@ -193,7 +193,7 @@ def test_remove_user__removes_user(
     mock_user_datastore.delete_user.assert_called_once_with(user)
 
 
-def test_remove_user__does_nothing_if_user_does_not_exist(
+def test_remove_user__is_idempotent(
     mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade
 ):
     mock_user_datastore.find_user = MagicMock(return_value=None)
