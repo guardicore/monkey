@@ -117,6 +117,13 @@ class AuthenticationFacade:
 
         return otp
 
+    def refresh_user_token(self, user: User) -> Token:
+        """
+        Refreshes the user's authentication token
+        """
+        self.revoke_all_tokens_for_user(user)
+        return user.get_auth_token()
+
     def generate_refresh_token(self, user: User) -> Token:
         """
         Generates a refresh token for a specific user

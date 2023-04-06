@@ -142,6 +142,23 @@ def test_handle_sucessful_login(
     assert mock_repository_encryptor.unlock.call_args[0][0] != PASSWORD
 
 
+def test_refresh_user_token(
+    mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade
+):
+    def reset_uniquifier(user: User):
+        user.fs_uniquifier = "b"
+
+    mock_user_datastore.set_uniquifier.side_effect = reset_uniquifier
+    user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
+
+    original_access_token = user.get_auth_token()
+    new_access_token = authentication_facade.refresh_user_token(user)
+
+    mock_user_datastore.set_uniquifier.assert_called_once()
+    assert mock_user_datastore.set_uniquifier.call_args[0][0].username == user.username
+    assert new_access_token != original_access_token
+
+
 def test_generate_new_token_pair__generates_tokens(
     mock_token_generator: TokenGenerator,
     mock_token_parser: TokenParser,

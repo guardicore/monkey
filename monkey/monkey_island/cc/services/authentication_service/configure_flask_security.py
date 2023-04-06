@@ -16,7 +16,7 @@ from .role import Role
 from .user import User
 
 SECRET_FILE_NAME = ".flask_security_configuration.json"
-ACCESS_TOKEN_TTL = 15 * 60  # 15 minutes
+ACCESS_TOKEN_TTL = 5
 # Refresh token lives for 3 minutes longer than auth token
 REFRESH_TOKEN_EXPIRATION_DELTA = 3 * 60  # 3 minutes
 
