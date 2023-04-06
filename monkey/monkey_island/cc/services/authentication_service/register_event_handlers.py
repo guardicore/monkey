@@ -10,27 +10,19 @@ from .authentication_facade import AuthenticationFacade
 def register_event_handlers(container: DIContainer, authentication_facade: AuthenticationFacade):
     agent_event_queue = container.resolve(IAgentEventQueue)
     island_event_queue = container.resolve(IIslandEventQueue)
+    agent_remover = AgentRemover(authentication_facade)
 
-    agent_event_queue.subscribe_type(
-        AgentShutdownEvent, unregister_agent_on_shutdown(authentication_facade)
-    )
-    island_event_queue.subscribe(
-        IslandEventTopic.AGENT_TIMED_OUT, unregister_agent_on_timeout(authentication_facade)
-    )
+    agent_event_queue.subscribe_type(AgentShutdownEvent, agent_remover.remove_on_shutdown)
+    island_event_queue.subscribe(IslandEventTopic.AGENT_TIMED_OUT, agent_remover.remove_on_timeout)
 
 
-class unregister_agent_on_shutdown:
+class AgentRemover:
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
-    def __call__(self, event: AbstractAgentEvent):
+    def remove_on_shutdown(self, event: AbstractAgentEvent):
         agent_id = event.source
         self._authentication_facade.remove_user(str(agent_id))
 
-
-class unregister_agent_on_timeout:
-    def __init__(self, authentication_facade: AuthenticationFacade):
-        self._authentication_facade = authentication_facade
-
-    def __call__(self, agent_id: AgentID):
+    def remove_on_timeout(self, agent_id: AgentID):
         self._authentication_facade.remove_user(str(agent_id))
