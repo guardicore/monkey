@@ -21,9 +21,10 @@ REFRESH_TOKEN = "refresh_token"
 
 @pytest.fixture
 def mock_authentication_facade():
-    mock_service = MagicMock(spec=AuthenticationFacade)
+    maf = MagicMock(spec=AuthenticationFacade)
+    maf.calculate_token_expiration_time.return_value = 123
 
-    return mock_service
+    return maf
 
 
 @pytest.fixture
