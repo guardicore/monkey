@@ -43,12 +43,16 @@ def init_mock_security_app() -> Tuple[Flask, flask_restful.Api]:
     app, api = init_mock_app()
     user_datastore = init_mock_datastore()
 
+    agent_role = user_datastore.find_or_create_role(name=AccountRole.AGENT.name)
     island_role = user_datastore.find_or_create_role(name=AccountRole.ISLAND_INTERFACE.name)
     app.security = Security(app, user_datastore)
     ds = app.security.datastore
     with app.app_context():
         ds.create_user(
-            email="unittest@me.com", username="test", password="password", roles=[island_role]
+            email="unittest@me.com",
+            username="test",
+            password="password",
+            roles=[agent_role, island_role],
         )
         ds.commit()
 
