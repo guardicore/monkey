@@ -30,7 +30,7 @@ const getContents = (props) => {
     seconds,
     minutes,
     restart
-  } = useTimer({ expiryTimestamp: new Date() });
+  } = useTimer({ expiryTimestamp: new Date(), onExpire: () => getOtp() });
 
   const [otp, setOtp] = useState('');
   const [osType, setOsType] = useState(OS_TYPES.WINDOWS_64);
