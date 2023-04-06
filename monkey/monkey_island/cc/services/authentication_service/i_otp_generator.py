@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .types import OTP
+from common.types import OTP
 
 
 class IOTPGenerator(ABC):
