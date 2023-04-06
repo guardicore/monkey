@@ -7,7 +7,7 @@ from uuid import UUID
 import pytest
 import requests
 from tests.common.example_agent_configuration import AGENT_CONFIGURATION
-from tests.data_for_tests.otp import OTP
+from tests.data_for_tests.otp import TEST_OTP
 from tests.data_for_tests.propagation_credentials import CREDENTIALS_DICTS
 from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
     FAKE_AGENT_MANIFEST_DICT,
@@ -107,7 +107,7 @@ def test_login__connection_error():
     api_client = build_api_client(http_client_stub)
 
     with pytest.raises(IslandAPIError):
-        api_client.login(OTP)
+        api_client.login(TEST_OTP)
 
 
 def test_login():
@@ -127,7 +127,7 @@ def test_login():
     }
     api_client = build_api_client(http_client_stub)
 
-    api_client.login(OTP)
+    api_client.login(TEST_OTP)
 
     assert http_client_stub.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] == auth_token
 
@@ -139,7 +139,7 @@ def test_login__bad_response():
     api_client = build_api_client(http_client_stub)
 
     with pytest.raises(IslandAPIAuthenticationError):
-        api_client.login(OTP)
+        api_client.login(TEST_OTP)
 
 
 def test_login__does_not_overwrite_additional_headers():
@@ -159,7 +159,7 @@ def test_login__does_not_overwrite_additional_headers():
     }
     api_client = build_api_client(http_client_stub)
 
-    api_client.login(OTP)
+    api_client.login(TEST_OTP)
 
     assert http_client_stub.additional_headers == {
         "Some-Header": "some value",
