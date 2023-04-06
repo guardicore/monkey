@@ -20,7 +20,6 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
 )
 from monkey_island.cc.services.authentication_service.i_otp_repository import IOTPRepository
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
-from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
 from monkey_island.cc.services.authentication_service.user import User
 
 USERNAME = "user1"
@@ -54,11 +53,6 @@ def mock_user_datastore() -> UserDatastore:
 
 
 @pytest.fixture
-def mock_token_generator() -> TokenGenerator:
-    return MagicMock(spec=TokenGenerator)
-
-
-@pytest.fixture
 def mock_agent_event_queue() -> IAgentEventQueue:
     return MagicMock(spec=IAgentEventQueue)
 
@@ -74,14 +68,12 @@ def authentication_facade(
     mock_repository_encryptor: ILockableEncryptor,
     mock_island_event_queue: IIslandEventQueue,
     mock_user_datastore: UserDatastore,
-    mock_token_generator: TokenGenerator,
     mock_otp_repository: IOTPRepository,
 ) -> AuthenticationFacade:
     return AuthenticationFacade(
         mock_repository_encryptor,
         mock_island_event_queue,
         mock_user_datastore,
-        mock_token_generator,
         mock_otp_repository,
     )
 

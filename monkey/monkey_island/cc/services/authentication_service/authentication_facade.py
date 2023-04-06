@@ -11,7 +11,6 @@ from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
-from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
 
 from . import AccountRole
 from .i_otp_repository import IOTPRepository
@@ -31,13 +30,11 @@ class AuthenticationFacade:
         repository_encryptor: ILockableEncryptor,
         island_event_queue: IIslandEventQueue,
         user_datastore: UserDatastore,
-        token_generator: TokenGenerator,
         otp_repository: IOTPRepository,
     ):
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
         self._datastore = user_datastore
-        self._token_generator = token_generator
         self._otp_repository = otp_repository
         self._otp_read_lock = Lock()
         self._user_lock = Lock()
@@ -98,12 +95,6 @@ class AuthenticationFacade:
         """
         self.revoke_all_tokens_for_user(user)
         return user.get_auth_token()
-
-    def generate_refresh_token(self, user: User) -> Token:
-        """
-        Generates a refresh token for a specific user
-        """
-        return self._token_generator.generate_token(user.fs_uniquifier)
 
     def authorize_otp(self, otp: OTP) -> bool:
         # SECURITY: This method must not run concurrently, otherwise there could be TOCTOU errors,

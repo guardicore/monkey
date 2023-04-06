@@ -22,8 +22,6 @@ REFRESH_TOKEN = "refresh_token"
 @pytest.fixture
 def mock_authentication_facade():
     mock_service = MagicMock(spec=AuthenticationFacade)
-    mock_service.generate_refresh_token = MagicMock()
-    mock_service.generate_refresh_token.return_value = REFRESH_TOKEN
 
     return mock_service
 

@@ -15,7 +15,6 @@ from .configure_flask_security import configure_flask_security
 from .flask_resources import register_resources
 from .mongo_otp_repository import MongoOTPRepository
 from .register_event_handlers import register_event_handlers
-from .token_generator import TokenGenerator
 
 
 def setup_authentication(api, app: Flask, container: DIContainer, data_dir: Path, limiter: Limiter):
@@ -36,12 +35,9 @@ def _build_authentication_facade(container: DIContainer, security: Security):
     repository_encryptor = container.resolve(ILockableEncryptor)
     island_event_queue = container.resolve(IIslandEventQueue)
 
-    token_generator = TokenGenerator(security)
-
     return AuthenticationFacade(
         repository_encryptor,
         island_event_queue,
         security.datastore,
-        token_generator,
         container.resolve(MongoOTPRepository),
     )
