@@ -17,10 +17,13 @@ def get_username_password_from_request(_request: Request) -> Tuple[str, str]:
 
     :param _request: A Flask Request object
     :raises JSONDecodeError: If invalid JSON data is provided
+    :raises KeyError: If username or password were not provided in the request
     """
     cred_dict = json.loads(request.data)
-    username = cred_dict.get("username", "")
-    password = cred_dict.get("password", "")
+
+    username = cred_dict["username"]
+    password = cred_dict["password"]
+
     return username, password
 
 

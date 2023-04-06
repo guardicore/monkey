@@ -30,15 +30,17 @@ class Register(AbstractResource):
         Registers a new user using flask security register
 
         """
+        if not self._authentication_facade.needs_registration():
+            return {
+                "errors": ["A user already exists. Only a single user can be registered."]
+            }, HTTPStatus.CONFLICT
+
         try:
-            if not self._authentication_facade.needs_registration():
-                return {
-                    "errors": ["A user already exists. Only a single user can be registered."]
-                }, HTTPStatus.CONFLICT
             username, password = get_username_password_from_request(request)
-            response: ResponseValue = register()
         except Exception:
             return responses.make_response_to_invalid_request()
+
+        response: ResponseValue = register()
 
         # Register view treat the request as form submit which may return something
         # that it is not a response
