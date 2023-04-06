@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask_security import auth_token_required, roles_required
+from flask_security import auth_token_required, roles_accepted
 
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import INodeRepository
@@ -14,6 +14,6 @@ class Nodes(AbstractResource):
         self._node_repository = node_repository
 
     @auth_token_required
-    @roles_required(AccountRole.ISLAND_INTERFACE.name)
+    @roles_accepted(AccountRole.ISLAND_INTERFACE.name)
     def get(self):
         return self._node_repository.get_nodes(), HTTPStatus.OK

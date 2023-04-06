@@ -9,5 +9,6 @@ class RegistrationStatus(AbstractResource):
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
+    # Can't be secured, used before registration
     def get(self):
         return {"needs_registration": self._authentication_facade.needs_registration()}

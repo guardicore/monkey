@@ -2,11 +2,13 @@ import logging
 from http import HTTPStatus
 
 from flask import make_response
+from flask_security import auth_token_required, roles_accepted
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import IAgentPluginRepository, UnknownRecordError
+from monkey_island.cc.services.authentication_service import AccountRole
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +19,8 @@ class AgentPlugins(AbstractResource):
     def __init__(self, agent_plugin_repository: IAgentPluginRepository):
         self._agent_plugin_repository = agent_plugin_repository
 
-    # Used by monkey. can't secure.
+    @auth_token_required
+    @roles_accepted(AccountRole.AGENT.name)
     def get(self, host_os: str, plugin_type: str, name: str):
         """
         Get the plugin of the specified operating system, type and name.

@@ -13,6 +13,7 @@ from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 
 from ..authentication_facade import AuthenticationFacade
+from .utils import include_auth_token
 
 
 class ArgumentParsingException(Exception):
@@ -31,6 +32,8 @@ class AgentOTPLogin(AbstractResource):
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
+    # Can't be secured, used for login
+    @include_auth_token
     def post(self):
         """
         Gets the one-time password from the request,

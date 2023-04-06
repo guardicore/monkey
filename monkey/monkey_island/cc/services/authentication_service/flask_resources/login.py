@@ -28,6 +28,7 @@ class Login(AbstractResource):
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
+    # Can't be secured, used for login
     @include_auth_token
     def post(self):
         """

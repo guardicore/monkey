@@ -3,7 +3,7 @@ import logging
 from http import HTTPStatus
 
 from flask import make_response, request
-from flask_security import auth_token_required, roles_required
+from flask_security import auth_token_required, roles_accepted
 
 from common import AgentRegistrationData
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
@@ -22,10 +22,12 @@ class Agents(AbstractResource):
         self._agent_repository = agent_repository
 
     @auth_token_required
-    @roles_required(AccountRole.ISLAND_INTERFACE.name)
+    @roles_accepted(AccountRole.ISLAND_INTERFACE.name)
     def get(self):
         return self._agent_repository.get_agents(), HTTPStatus.OK
 
+    @auth_token_required
+    @roles_accepted(AccountRole.AGENT.name)
     def post(self):
         try:
             # Just parse for now
