@@ -2,6 +2,7 @@ from http import HTTPStatus
 from uuid import UUID
 
 import pytest
+from tests.data_for_tests.otp import TEST_OTP
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
@@ -23,7 +24,7 @@ def agent_otp_login(flask_client):
 
 
 def test_agent_otp_login__successful(agent_otp_login):
-    response = agent_otp_login({"agent_id": AGENT_ID, "otp": "supersecretpassword"})
+    response = agent_otp_login({"agent_id": AGENT_ID, "otp": TEST_OTP.get_secret_value()})
 
     assert response.status_code == HTTPStatus.OK
     assert ACCESS_TOKEN_KEY_NAME in response.json["response"]["user"]
@@ -37,8 +38,8 @@ def test_agent_otp_login__successful(agent_otp_login):
         [],
         {"otp": ""},
         {"agent_id": AGENT_ID},
-        {"agent_id": "", "otp": "supersecretpassword"},
-        {"agent_id": "1234", "otp": "supersecretpassword"},
+        {"agent_id": "", "otp": TEST_OTP.get_secret_value()},
+        {"agent_id": "1234", "otp": TEST_OTP.get_secret_value()},
     ],
 )
 def test_invalid_request(agent_otp_login, data):

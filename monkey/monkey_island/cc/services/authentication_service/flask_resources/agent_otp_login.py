@@ -7,13 +7,12 @@ from flask_security import RegisterForm
 from flask_security.registerable import register_user
 
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
-from common.types import AgentID
+from common.types import OTP, AgentID
 from common.utils.code_utils import secure_generate_random_string
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 
 from ..authentication_facade import AuthenticationFacade
-from ..types import OTP
 
 
 class ArgumentParsingException(Exception):
