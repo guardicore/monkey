@@ -193,6 +193,7 @@ def test_agent_otp_rate_limit(monkey_island_requests):
 
 
 def test_refresh_access_token(monkey_island_requests):
+    monkey_island_requests.login()
     original_token = monkey_island_requests.token
 
     monkey_island_requests.refresh_access_token()
