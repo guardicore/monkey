@@ -290,7 +290,6 @@ def test_agent__logout(island):
     island_requests = MonkeyIslandRequests(island)
     island_requests.login()
     response = island_requests.get(GET_AGENT_OTP_ENDPOINT)
-    print(f"response: {response.json()}")
     otp = response.json()["otp"]
 
     agent_requests = AgentRequests(island, LOGOUT_AGENT_ID, OTP(otp))
