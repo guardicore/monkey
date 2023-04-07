@@ -307,6 +307,9 @@ def test_agent__logout(island):
     agent_requests.post(GET_AGENTS_ENDPOINT, data=agent_registration_dict)
     assert agent_requests.post(LOGOUT_ENDPOINT, data=None).status_code == HTTPStatus.OK
 
+    # After logout, agent should not be able to access any endpoints
+    assert agent_requests.get(GET_AGENT_OTP_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+
 
 # NOTE: These test methods are ordered to give time for the slower zoo machines
 # to boot up and finish starting services.
