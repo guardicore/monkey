@@ -107,7 +107,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     def _refresh_token(self):
         if self._token_timer.is_expired():
             response = self._http_client.post("/refresh-authentication-token", {})
-            self._token_timer.reset()
             self._update_token_from_response(response)
 
     @handle_authentication_token_expiration
