@@ -54,7 +54,7 @@ def handle_authentication_token_expiration(fn):
             return fn(self, *args, **kwargs)
         except IslandAPIAuthenticationError:
             logger.debug("Authentication token expired. Refreshing...")
-            self.refresh_tokens()
+            self._refresh_token()
 
             # try again after refreshing tokens
             # something else is wrong if this still doesn't work, let the error be raised
@@ -104,7 +104,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._token_timer.set(expiration_token_time)
 
     @handle_response_parsing_errors
-    def refresh_tokens(self):
+    def _refresh_token(self):
         if self._token_timer.is_expired():
             response = self._http_client.post("/refresh-authentication-token", {})
             self._token_timer.reset()
