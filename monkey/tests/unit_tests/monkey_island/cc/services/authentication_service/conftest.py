@@ -16,8 +16,6 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
     AuthenticationFacade,
 )
 
-REFRESH_TOKEN = "refresh_token"
-
 
 @pytest.fixture
 def mock_authentication_facade():
