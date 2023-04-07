@@ -17,6 +17,7 @@ ISLAND_LOG_ENDPOINT = "api/island/log"
 GET_MACHINES_ENDPOINT = "api/machines"
 GET_AGENT_EVENTS_ENDPOINT = "api/agent-events"
 LOGOUT_ENDPOINT = "api/logout"
+GET_AGENT_OTP_ENDPOINT = "/api/agent-otp"
 
 LOGGER = logging.getLogger(__name__)
 
@@ -200,3 +201,7 @@ class MonkeyIslandClient(object):
         else:
             LOGGER.error("Failed to log out of the Island.")
             assert False
+
+    def get_agent_otp(self):
+        response = self.requests.get(GET_AGENT_OTP_ENDPOINT)
+        return response.json()
