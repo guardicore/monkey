@@ -123,7 +123,7 @@ def register(island_client):
         GET_MACHINES_ENDPOINT,
     ],
 )
-def test_logout(island, authenticated_endpoint):
+def test_island_logout(island, authenticated_endpoint):
     monkey_island_requests = MonkeyIslandRequests(island)
     # Prove that we can't access authenticated endpoints without logging in
     resp = monkey_island_requests.get(authenticated_endpoint)
@@ -286,7 +286,7 @@ def test_agent__cannot_access_nonagent_endpoints(island):
 LOGOUT_AGENT_ID = uuid4()
 
 
-def test_agent__logout(island):
+def test_agent_logout(island):
     island_requests = MonkeyIslandRequests(island)
     island_requests.login()
     response = island_requests.get(GET_AGENT_OTP_ENDPOINT)
