@@ -192,10 +192,10 @@ def test_agent_otp_rate_limit(island):
 UUID = "00000000-0000-0000-0000-000000000000"
 AGENT_BINARIES_ENDPOINT = "/api/agent-binaries/os"
 AGENT_EVENTS_ENDPOINT = "/api/agent-events"
-AGENT_HEARTBEAT_ENDPOINT = f"/api/agent/{UUID}/heartbeat"  # uuid
-PUT_LOG_ENDPOINT = f"/api/agent-logs/{UUID}"  # uuid
-GET_AGENT_PLUGINS_ENDPOINT = "/api/agent-plugins/host/type/name"  # host, type, name
-GET_AGENT_SIGNALS_ENDPOINT = f"/api/agent-signals/{UUID}"  # uuid
+AGENT_HEARTBEAT_ENDPOINT = f"/api/agent/{UUID}/heartbeat"
+PUT_LOG_ENDPOINT = f"/api/agent-logs/{UUID}"
+GET_AGENT_PLUGINS_ENDPOINT = "/api/agent-plugins/host/type/name"
+GET_AGENT_SIGNALS_ENDPOINT = f"/api/agent-signals/{UUID}"
 
 
 def test_island__cannot_access_nonisland_endpoints(island):
