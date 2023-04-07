@@ -16,7 +16,7 @@ from .role import Role
 from .user import User
 
 SECRET_FILE_NAME = ".flask_security_configuration.json"
-ACCESS_TOKEN_TTL = 5
+ACCESS_TOKEN_TTL = 15 * 60  # 15 minutes
 
 
 def configure_flask_security(app, data_dir: Path) -> Security:
