@@ -12,6 +12,9 @@ class BaseIslandAPIClient(IIslandAPIClient):
     def login(self, otp: str):
         return
 
+    def logout(self):
+        return
+
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         return b""
 

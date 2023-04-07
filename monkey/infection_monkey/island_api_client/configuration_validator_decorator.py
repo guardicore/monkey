@@ -27,6 +27,9 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
     def login(self, otp: str):
         return self._island_api_client.login(otp)
 
+    def logout(self):
+        return self._island_api_client.logout()
+
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         return self._island_api_client.get_agent_binary(operating_system)
 
