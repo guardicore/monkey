@@ -506,6 +506,8 @@ class InfectionMonkey:
 
             self._heart.stop()
 
+            self._island_api_client.logout()
+
             self._close_tunnel()
 
         except Exception as e:
