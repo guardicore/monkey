@@ -7,7 +7,7 @@ from uuid import uuid4
 
 import pytest
 
-from common.types import OTP
+from common.types import OTP, SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.island_client.agent_requests import AgentRequests
@@ -281,6 +281,31 @@ def test_agent__cannot_access_nonagent_endpoints(island):
     assert (
         agent_requests.put(PUT_AGENT_CONFIG_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
     )
+
+
+LOGOUT_AGENT_ID = uuid4()
+
+
+def test_agent__logout(island):
+    island_requests = MonkeyIslandRequests(island)
+    island_requests.login()
+    response = island_requests.get(GET_AGENT_OTP_ENDPOINT)
+    print(f"response: {response.json()}")
+    otp = response.json()["otp"]
+
+    agent_requests = AgentRequests(island, LOGOUT_AGENT_ID, OTP(otp))
+    agent_requests.login()
+
+    agent_registration_dict = {
+        "id": LOGOUT_AGENT_ID,
+        "machine_hardware_id": 2,
+        "start_time": "2022-08-18T18:46:48+00:00",
+        "cc_server": SocketAddress.from_string(island).dict(simplify=True),
+        "network_interfaces": [],
+    }
+
+    agent_requests.post(GET_AGENTS_ENDPOINT, data=agent_registration_dict)
+    assert agent_requests.post(LOGOUT_ENDPOINT, data=None).status_code == HTTPStatus.OK
 
 
 # NOTE: These test methods are ordered to give time for the slower zoo machines
