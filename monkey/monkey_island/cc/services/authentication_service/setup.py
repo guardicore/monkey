@@ -29,6 +29,7 @@ def setup_authentication(api, app: Flask, container: DIContainer, data_dir: Path
 
     # revoke all old tokens so that the user has to log in again on startup
     authentication_facade.revoke_all_tokens_for_all_users()
+    authentication_facade.revoke_all_otps()
 
 
 def _build_authentication_facade(container: DIContainer, security: Security):
