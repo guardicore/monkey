@@ -1,5 +1,6 @@
 import time
 from datetime import datetime, timedelta
+from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
@@ -7,6 +8,7 @@ import pytz
 from tests.monkey_island import InMemoryAgentRepository
 
 from common import AgentHeartbeat
+from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.island_event_handlers import AgentHeartbeatMonitor
 from monkey_island.cc.models import Agent
 
@@ -44,16 +46,23 @@ AGENT_ALREADY_STOPPED = Agent(
 
 
 @pytest.fixture
+def mock_island_event_queue() -> IIslandEventQueue:
+    return MagicMock(spec=IIslandEventQueue)
+
+
+@pytest.fixture
 def in_memory_agent_repository():
     return InMemoryAgentRepository()
 
 
 @pytest.fixture
-def agent_heartbeat_handler(in_memory_agent_repository):
-    return AgentHeartbeatMonitor(in_memory_agent_repository)
+def agent_heartbeat_handler(in_memory_agent_repository, mock_island_event_queue):
+    return AgentHeartbeatMonitor(in_memory_agent_repository, mock_island_event_queue)
 
 
-def test_multiple_agents(agent_heartbeat_handler, in_memory_agent_repository):
+def test_multiple_agents(
+    agent_heartbeat_handler, in_memory_agent_repository, mock_island_event_queue
+):
     in_memory_agent_repository.upsert_agent(AGENT_1)
     in_memory_agent_repository.upsert_agent(AGENT_2)
     in_memory_agent_repository.upsert_agent(AGENT_3)
@@ -70,17 +79,34 @@ def test_multiple_agents(agent_heartbeat_handler, in_memory_agent_repository):
     assert agent_1.stop_time == datetime.fromtimestamp(110, tz=pytz.UTC)
     assert agent_2.stop_time == datetime.fromtimestamp(200, tz=pytz.UTC)
     assert agent_3.stop_time == agent_3.start_time
+    assert mock_island_event_queue.publish.call_count == 3
+    mock_island_event_queue.publish.assert_any_call(
+        IslandEventTopic.AGENT_TIMED_OUT, agent_id=AGENT_ID_3
+    )
+    mock_island_event_queue.publish.assert_any_call(
+        IslandEventTopic.AGENT_TIMED_OUT, agent_id=AGENT_ID_2
+    )
+    mock_island_event_queue.publish.assert_any_call(
+        IslandEventTopic.AGENT_TIMED_OUT, agent_id=AGENT_ID_3
+    )
 
 
-def test_no_heartbeat_received(agent_heartbeat_handler, in_memory_agent_repository):
+def test_no_heartbeat_received(
+    agent_heartbeat_handler, in_memory_agent_repository, mock_island_event_queue
+):
     in_memory_agent_repository.upsert_agent(AGENT_1)
 
     agent_heartbeat_handler.set_unresponsive_agents_stop_time()
 
     assert in_memory_agent_repository.get_agent_by_id(AGENT_ID_1).stop_time == AGENT_1.start_time
+    mock_island_event_queue.publish.assert_called_once_with(
+        IslandEventTopic.AGENT_TIMED_OUT, agent_id=AGENT_ID_1
+    )
 
 
-def test_agent_shutdown_unexpectedly(agent_heartbeat_handler, in_memory_agent_repository):
+def test_agent_shutdown_unexpectedly(
+    agent_heartbeat_handler, in_memory_agent_repository, mock_island_event_queue
+):
     last_heartbeat = datetime.fromtimestamp(8675309, tz=pytz.UTC)
     in_memory_agent_repository.upsert_agent(AGENT_1)
     agent_heartbeat_handler.handle_agent_heartbeat(
@@ -90,10 +116,13 @@ def test_agent_shutdown_unexpectedly(agent_heartbeat_handler, in_memory_agent_re
     agent_heartbeat_handler.set_unresponsive_agents_stop_time()
 
     assert in_memory_agent_repository.get_agent_by_id(AGENT_ID_1).stop_time == last_heartbeat
+    mock_island_event_queue.publish.assert_called_once_with(
+        IslandEventTopic.AGENT_TIMED_OUT, agent_id=AGENT_ID_1
+    )
 
 
 def test_leave_stop_time_if_heartbeat_arrives_late(
-    agent_heartbeat_handler, in_memory_agent_repository
+    agent_heartbeat_handler, in_memory_agent_repository, mock_island_event_queue
 ):
     in_memory_agent_repository.upsert_agent(AGENT_ALREADY_STOPPED)
     expected_stop_time = AGENT_ALREADY_STOPPED.stop_time
@@ -108,9 +137,12 @@ def test_leave_stop_time_if_heartbeat_arrives_late(
         in_memory_agent_repository.get_agent_by_id(AGENT_ID_ALREADY_STOPPED).stop_time
         == expected_stop_time
     )
+    assert not mock_island_event_queue.publish.called
 
 
-def test_use_latest_heartbeat(agent_heartbeat_handler, in_memory_agent_repository):
+def test_use_latest_heartbeat(
+    agent_heartbeat_handler, in_memory_agent_repository, mock_island_event_queue
+):
     last_heartbeat = datetime.fromtimestamp(8675309, tz=pytz.UTC)
     in_memory_agent_repository.upsert_agent(AGENT_1)
     agent_heartbeat_handler.handle_agent_heartbeat(AGENT_ID_1, AgentHeartbeat(timestamp=1000))
@@ -121,9 +153,14 @@ def test_use_latest_heartbeat(agent_heartbeat_handler, in_memory_agent_repositor
     agent_heartbeat_handler.set_unresponsive_agents_stop_time()
 
     assert in_memory_agent_repository.get_agent_by_id(AGENT_ID_1).stop_time == last_heartbeat
+    mock_island_event_queue.publish.assert_called_once_with(
+        IslandEventTopic.AGENT_TIMED_OUT, agent_id=AGENT_ID_1
+    )
 
 
-def test_heartbeat_not_expired(agent_heartbeat_handler, in_memory_agent_repository):
+def test_heartbeat_not_expired(
+    agent_heartbeat_handler, in_memory_agent_repository, mock_island_event_queue
+):
     in_memory_agent_repository.upsert_agent(AGENT_1)
     agent_heartbeat_handler.handle_agent_heartbeat(
         AGENT_ID_1, AgentHeartbeat(timestamp=time.time())
@@ -132,3 +169,4 @@ def test_heartbeat_not_expired(agent_heartbeat_handler, in_memory_agent_reposito
     agent_heartbeat_handler.set_unresponsive_agents_stop_time()
 
     assert in_memory_agent_repository.get_agent_by_id(AGENT_ID_1).stop_time is None
+    assert not mock_island_event_queue.publish.called

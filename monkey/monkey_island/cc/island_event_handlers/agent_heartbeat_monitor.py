@@ -5,6 +5,7 @@ from typing import Dict, Sequence
 from common import AgentHeartbeat
 from common.common_consts import HEARTBEAT_INTERVAL
 from common.types import AgentID
+from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import Agent
 from monkey_island.cc.repositories import IAgentRepository
 
@@ -19,9 +20,13 @@ class AgentHeartbeatMonitor:
     """
 
     def __init__(
-        self, agent_repository: IAgentRepository, heartbeat_timeout=DEFAULT_HEARTBEAT_TIMEOUT
+        self,
+        agent_repository: IAgentRepository,
+        island_event_queue: IIslandEventQueue,
+        heartbeat_timeout=DEFAULT_HEARTBEAT_TIMEOUT,
     ):
         self._agent_repository = agent_repository
+        self._island_event_queue = island_event_queue
         self._heartbeat_timeout = heartbeat_timeout
         self._latest_heartbeats: Dict[AgentID, datetime] = {}
 
@@ -44,6 +49,9 @@ class AgentHeartbeatMonitor:
                 )
                 agent.stop_time = latest_heartbeat
                 self._agent_repository.upsert_agent(agent)
+                self._island_event_queue.publish(
+                    IslandEventTopic.AGENT_TIMED_OUT, agent_id=agent.id
+                )
 
     def _clean_latest_heartbeats(self, running_agents: Sequence[Agent]):
         # If an agent is no longer running, then we no longer need to store its most recent

@@ -8,6 +8,7 @@ import pytest
 from flask_security import UserDatastore
 from tests.common import StubDIContainer
 
+from common.event_queue import IAgentEventQueue
 from common.types import OTP
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
@@ -59,6 +60,11 @@ def mock_user_datastore() -> UserDatastore:
 @pytest.fixture
 def mock_token_generator() -> TokenGenerator:
     return MagicMock(spec=TokenGenerator)
+
+
+@pytest.fixture
+def mock_agent_event_queue() -> IAgentEventQueue:
+    return MagicMock(spec=IAgentEventQueue)
 
 
 @pytest.fixture
@@ -182,6 +188,25 @@ def test_generate_new_token_pair__fails_if_token_invalid(
         authentication_facade.generate_new_token_pair(refresh_token)
 
 
+def test_remove_user__removes_user(
+    mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade
+):
+    user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
+    mock_user_datastore.find_user.return_value = user
+
+    authentication_facade.remove_user(user.username)
+
+    mock_user_datastore.delete_user.assert_called_once_with(user)
+
+
+def test_remove_user__is_idempotent(
+    mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade
+):
+    mock_user_datastore.find_user = MagicMock(return_value=None)
+
+    authentication_facade.remove_user(USERNAME)
+
+
 def test_revoke_all_tokens_for_all_users(
     mock_user_datastore: UserDatastore,
     authentication_facade: AuthenticationFacade,
@@ -272,12 +297,12 @@ def test_setup_authentication__revokes_tokens(
     mock_user_datastore: UserDatastore,
     mock_island_event_queue: IIslandEventQueue,
     mock_repository_encryptor: ILockableEncryptor,
+    mock_agent_event_queue: IAgentEventQueue,
 ):
     for user in USERS:
         user.save(force_insert=True)
 
-    mock_security = MagicMock()
-    mock_security.datastore = mock_user_datastore
+    mock_security = MagicMock(datastore=mock_user_datastore)
     monkeypatch.setattr(
         "monkey_island.cc.services.authentication_service.setup.configure_flask_security",
         lambda *args: mock_security,
@@ -286,6 +311,7 @@ def test_setup_authentication__revokes_tokens(
     container = StubDIContainer()
     container.register_instance(ILockableEncryptor, mock_repository_encryptor)
     container.register_instance(IIslandEventQueue, mock_island_event_queue)
+    container.register_instance(IAgentEventQueue, mock_agent_event_queue)
     container.register_instance(pymongo.MongoClient, MockMongoClient())
     setup_authentication(MagicMock(), MagicMock(), container, Path("data_dir"), MagicMock())
 

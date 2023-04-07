@@ -14,6 +14,7 @@ from .authentication_service_otp_generator import AuthenticationServiceOTPGenera
 from .configure_flask_security import configure_flask_security
 from .flask_resources import register_resources
 from .mongo_otp_repository import MongoOTPRepository
+from .register_event_handlers import register_event_handlers
 from .token_generator import TokenGenerator
 from .token_parser import TokenParser
 
@@ -25,6 +26,7 @@ def setup_authentication(api, app: Flask, container: DIContainer, data_dir: Path
     otp_generator = AuthenticationServiceOTPGenerator(authentication_facade)
     container.register_instance(IOTPGenerator, otp_generator)
 
+    register_event_handlers(container, authentication_facade)
     register_resources(api, authentication_facade, otp_generator, limiter)
 
     # revoke all old tokens so that the user has to log in again on startup
