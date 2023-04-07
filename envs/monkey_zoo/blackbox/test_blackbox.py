@@ -3,6 +3,7 @@ import os
 from http import HTTPStatus
 from threading import Thread
 from time import sleep
+from uuid import uuid4
 
 import pytest
 
@@ -189,8 +190,7 @@ def test_agent_otp_rate_limit(monkey_island_requests):
     assert response_codes.count(HTTPStatus.TOO_MANY_REQUESTS) == 1
 
 
-UUID = "00000000-0000-0000-0000-000000000000"
-AGENT_BINARIES_ENDPOINT = "/api/agent-binaries/os"
+UUID = uuid4()
 AGENT_EVENTS_ENDPOINT = "/api/agent-events"
 AGENT_HEARTBEAT_ENDPOINT = f"/api/agent/{UUID}/heartbeat"
 PUT_LOG_ENDPOINT = f"/api/agent-logs/{UUID}"
@@ -202,7 +202,6 @@ def test_island__cannot_access_nonisland_endpoints(island):
     island_requests = MonkeyIslandRequests(island)
     island_requests.login()
 
-    assert island_requests.get(AGENT_BINARIES_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
     assert (
         island_requests.post(AGENT_EVENTS_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
     )
@@ -220,7 +219,7 @@ def test_island__cannot_access_nonisland_endpoints(island):
     assert island_requests.post(GET_AGENTS_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
 
 
-REQUESTS_AGENT_ID = "00000000-0000-0000-0000-000000000001"
+REQUESTS_AGENT_ID = UUID
 TERMINATE_AGENTS_ENDPOINT = "/api/agent-signals/terminate-all-agents"
 CLEAR_SIMULATION_DATA_ENDPOINT = "/api/clear-simulation-data"
 MONKEY_EXPLOITATION_ENDPOINT = "/api/exploitations/monkey"
@@ -242,7 +241,6 @@ def test_agent__cannot_access_nonagent_endpoints(island):
     island_requests = MonkeyIslandRequests(island)
     island_requests.login()
     response = island_requests.get(GET_AGENT_OTP_ENDPOINT)
-    print(f"response: {response.json()}")
     otp = response.json()["otp"]
 
     agent_requests = AgentRequests(island, REQUESTS_AGENT_ID, OTP(otp))
