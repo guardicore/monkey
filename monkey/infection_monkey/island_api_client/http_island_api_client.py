@@ -15,7 +15,7 @@ from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, EXPIRATION_TIME_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from common.credentials import Credentials
 from common.types import OTP, AgentID, JSONSerializable
 
@@ -98,10 +98,10 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     def _update_token_from_response(self, response: Response):
         token_in_response = response.json()["response"]["user"]
         auth_token = token_in_response[ACCESS_TOKEN_KEY_NAME]
-        expiration_token_time = token_in_response[EXPIRATION_TIME_KEY_NAME]
+        token_ttl_sec = token_in_response[TOKEN_TTL_KEY_NAME]
 
         self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
-        self._token_timer.set(expiration_token_time)
+        self._token_timer.set(token_ttl_sec)
 
     @handle_response_parsing_errors
     def _refresh_token(self):
