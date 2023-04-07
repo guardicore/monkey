@@ -29,6 +29,9 @@ from .island_api_client_errors import (
 
 logger = logging.getLogger(__name__)
 
+# After 85% of the token's TTL has expired, it should be refreshed.
+TOKEN_TTL_FACTOR = 0.85
+
 
 def handle_response_parsing_errors(fn):
     @functools.wraps(fn)
@@ -50,16 +53,14 @@ def handle_response_parsing_errors(fn):
 def handle_authentication_token_expiration(fn):
     @functools.wraps(fn)
     def wrapper(self, *args, **kwargs):
-        try:
-            return fn(self, *args, **kwargs)
-        except IslandAPIAuthenticationError:
-            logger.debug("Authentication token expired. Refreshing...")
+        if self._token_timer.is_expired():
+            logger.debug(
+                "The authentication token is close to expiring - refreshing the token before "
+                "making the requested API call..."
+            )
             self._refresh_token()
 
-            # try again after refreshing tokens
-            # something else is wrong if this still doesn't work, let the error be raised
-            logger.debug("Authentication token refreshed, retrying request...")
-            return fn(self, *args, **kwargs)
+        return fn(self, *args, **kwargs)
 
     return wrapper
 
@@ -101,13 +102,12 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         token_ttl_sec = token_in_response[TOKEN_TTL_KEY_NAME]
 
         self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
-        self._token_timer.set(token_ttl_sec)
+        self._token_timer.set(token_ttl_sec * TOKEN_TTL_FACTOR)
 
     @handle_response_parsing_errors
     def _refresh_token(self):
-        if self._token_timer.is_expired():
-            response = self._http_client.post("/refresh-authentication-token", {})
-            self._update_token_from_response(response)
+        response = self._http_client.post("/refresh-authentication-token", {})
+        self._update_token_from_response(response)
 
     @handle_authentication_token_expiration
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:

@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from http import HTTPStatus
 from typing import Dict, List
 from unittest.mock import MagicMock
@@ -110,26 +111,31 @@ def test_login__connection_error():
         api_client.login(TEST_OTP)
 
 
-def test_login():
-    auth_token = "auth_token"
-    token_ttl_sec = 15
+AUTH_TOKEN = "auth_token"
+TOKEN_TTL_SEC = 15
 
-    http_client_stub = MagicMock()
+
+def patch_login_with_valid_response(http_client_stub: MagicMock):
     http_client_stub.additional_headers = {}
     http_client_stub.post = MagicMock()
     http_client_stub.post.return_value.json.return_value = {
         "response": {
             "user": {
-                ACCESS_TOKEN_KEY_NAME: auth_token,
-                TOKEN_TTL_KEY_NAME: token_ttl_sec,
+                ACCESS_TOKEN_KEY_NAME: AUTH_TOKEN,
+                TOKEN_TTL_KEY_NAME: TOKEN_TTL_SEC,
             }
         }
     }
+
+
+def test_login():
+    http_client_stub = MagicMock()
+    patch_login_with_valid_response(http_client_stub)
     api_client = build_api_client(http_client_stub)
 
     api_client.login(TEST_OTP)
 
-    assert http_client_stub.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] == auth_token
+    assert http_client_stub.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] == AUTH_TOKEN
 
 
 def test_login__bad_response():
@@ -143,28 +149,49 @@ def test_login__bad_response():
 
 
 def test_login__does_not_overwrite_additional_headers():
-    auth_token = "auth_token"
-    token_ttl_sec = 15
-
     http_client_stub = MagicMock()
+    patch_login_with_valid_response(http_client_stub)
     http_client_stub.additional_headers = {"Some-Header": "some value"}
-    http_client_stub.post = MagicMock()
-    http_client_stub.post.return_value.json.return_value = {
-        "response": {
-            "user": {
-                ACCESS_TOKEN_KEY_NAME: auth_token,
-                TOKEN_TTL_KEY_NAME: token_ttl_sec,
-            }
-        }
-    }
     api_client = build_api_client(http_client_stub)
 
     api_client.login(TEST_OTP)
 
     assert http_client_stub.additional_headers == {
         "Some-Header": "some value",
-        HTTPIslandAPIClient.TOKEN_HEADER_KEY: auth_token,
+        HTTPIslandAPIClient.TOKEN_HEADER_KEY: AUTH_TOKEN,
     }
+
+
+def test_refresh_token_before_expiration(freezer):
+    refreshed_token = "refreshed_auth_token"
+    freezer.move_to(datetime.utcfromtimestamp(0).strftime("%Y-%m-%d %H:%M:%S"))
+    http_client_stub = MagicMock()
+    patch_login_with_valid_response(http_client_stub)
+    api_client = build_api_client(http_client_stub)
+
+    api_client.login(TEST_OTP)
+    http_client_stub.post.return_value.json.return_value = {
+        "response": {
+            "user": {
+                ACCESS_TOKEN_KEY_NAME: refreshed_token,
+                TOKEN_TTL_KEY_NAME: TOKEN_TTL_SEC,
+            }
+        }
+    }
+    http_client_stub.get.return_value.content = b"abc"
+
+    freezer.move_to(datetime.utcfromtimestamp(TOKEN_TTL_SEC / 2).strftime("%Y-%m-%d %H:%M:%S"))
+    api_client.get_agent_binary(OperatingSystem.LINUX)
+    # assert that the token was not refreshed
+    http_client_stub.post.assert_called_once()
+    assert http_client_stub.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] == AUTH_TOKEN
+
+    freezer.move_to(datetime.utcfromtimestamp(TOKEN_TTL_SEC * 0.99).strftime("%Y-%m-%d %H:%M:%S"))
+    api_client.get_agent_binary(OperatingSystem.LINUX)
+    http_client_stub.post.assert_called_with("/refresh-authentication-token", {})
+    assert (
+        http_client_stub.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] == refreshed_token
+    )
 
 
 def test_island_api_client__get_agent_binary():
