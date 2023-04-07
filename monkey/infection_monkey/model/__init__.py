@@ -1,6 +1,3 @@
-# TODO: Remove this before closing #3077
-OTP_FLAG = "AGENT_OTP_FLAG"
-
 MONKEY_ARG = "m0nk3y"
 DROPPER_ARG = "dr0pp3r"
 ID_STRING = "M0NK3Y3XPL0ITABLE"
