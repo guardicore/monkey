@@ -3,6 +3,7 @@ from http import HTTPStatus
 import pytest
 
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
+from common.types import Token
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
 )
@@ -10,9 +11,7 @@ from monkey_island.cc.services.authentication_service.flask_resources.refresh_au
     RefreshAuthenticationToken,
 )
 
-REQUEST_AUTHENTICATION_TOKEN = "my_authentication_token"
-
-NEW_AUTHENTICATION_TOKEN = "new_authentication_token"
+NEW_AUTHENTICATION_TOKEN = Token("new_authentication_token")
 TOKEN_TTL_SEC = 123
 
 
@@ -37,7 +36,10 @@ def test_token__provides_refreshed_token(
     response = request_token()
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json["response"]["user"][ACCESS_TOKEN_KEY_NAME] == NEW_AUTHENTICATION_TOKEN
+    assert (
+        response.json["response"]["user"][ACCESS_TOKEN_KEY_NAME]
+        == NEW_AUTHENTICATION_TOKEN.get_secret_value()
+    )
     assert response.json["response"]["user"][TOKEN_TTL_KEY_NAME] == TOKEN_TTL_SEC
 
 

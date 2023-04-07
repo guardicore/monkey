@@ -34,7 +34,7 @@ class RefreshAuthenticationToken(AbstractResource):
             response = {
                 "response": {
                     "user": {
-                        ACCESS_TOKEN_KEY_NAME: new_token,
+                        ACCESS_TOKEN_KEY_NAME: new_token.get_secret_value(),
                         TOKEN_TTL_KEY_NAME: token_ttl_sec,
                     }
                 }

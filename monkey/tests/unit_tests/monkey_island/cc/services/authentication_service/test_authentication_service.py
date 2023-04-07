@@ -133,12 +133,12 @@ def test_refresh_user_token(
     mock_user_datastore.set_uniquifier.side_effect = reset_uniquifier
     user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
 
-    original_access_token = user.get_auth_token()
+    original_access_token = str(user.get_auth_token())
     new_access_token, token_ttl_sec = authentication_facade.refresh_user_token(user)
 
     mock_user_datastore.set_uniquifier.assert_called_once()
     assert mock_user_datastore.set_uniquifier.call_args[0][0].username == user.username
-    assert new_access_token != original_access_token
+    assert new_access_token.get_secret_value() != original_access_token
     assert token_ttl_sec == TOKEN_TTL_SEC
 
 

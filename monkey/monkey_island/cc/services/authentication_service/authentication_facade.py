@@ -5,7 +5,7 @@ from typing import Sequence, Tuple
 
 from flask_security import UserDatastore
 
-from common.types import OTP
+from common.types import OTP, Token
 from common.utils.code_utils import secure_generate_random_string
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
@@ -14,7 +14,6 @@ from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from . import AccountRole
 from .i_otp_repository import IOTPRepository
-from .types import Token
 from .user import User
 
 OTP_EXPIRATION_TIME = 2 * 60  # 2 minutes
@@ -104,7 +103,7 @@ class AuthenticationFacade:
         """
         self.revoke_all_tokens_for_user(user)
 
-        return str(user.get_auth_token()), self._token_ttl_sec
+        return Token(user.get_auth_token()), self._token_ttl_sec
 
     def authorize_otp(self, otp: OTP) -> bool:
         # SECURITY: This method must not run concurrently, otherwise there could be TOCTOU errors,
