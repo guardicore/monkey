@@ -11,7 +11,6 @@ from monkey_island.cc.repositories import (
     StorageError,
     UnknownRecordError,
 )
-from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.i_otp_repository import IOTPRepository
 from monkey_island.cc.services.authentication_service.mongo_otp_repository import MongoOTPRepository
 
@@ -35,10 +34,8 @@ def mongo_client() -> mongomock.MongoClient:
 
 
 @pytest.fixture
-def otp_repository(
-    mongo_client: mongomock.MongoClient, repository_encryptor: ILockableEncryptor
-) -> IOTPRepository:
-    return MongoOTPRepository(mongo_client, repository_encryptor)
+def otp_repository(mongo_client: mongomock.MongoClient) -> IOTPRepository:
+    return MongoOTPRepository(mongo_client)
 
 
 @pytest.fixture
@@ -59,7 +56,7 @@ def error_raising_mongo_client() -> mongomock.MongoClient:
 def error_raising_otp_repository(
     error_raising_mongo_client, repository_encryptor
 ) -> IOTPRepository:
-    return MongoOTPRepository(error_raising_mongo_client, repository_encryptor)
+    return MongoOTPRepository(error_raising_mongo_client)
 
 
 def test_insert_otp(otp_repository: IOTPRepository):
