@@ -24,7 +24,7 @@ from common.agent_event_serializers import (
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPluginType
 from common.base_models import InfectionMonkeyBaseModel
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, EXPIRATION_TIME_KEY_NAME
 from common.credentials import Credentials
 from common.types import SocketAddress
 from infection_monkey.island_api_client import (
@@ -112,6 +112,7 @@ def test_login__connection_error():
 
 def test_login():
     auth_token = "auth_token"
+    expiration_time_in_sec = 15
 
     http_client_stub = MagicMock()
     http_client_stub.additional_headers = {}
@@ -120,6 +121,7 @@ def test_login():
         "response": {
             "user": {
                 ACCESS_TOKEN_KEY_NAME: auth_token,
+                EXPIRATION_TIME_KEY_NAME: expiration_time_in_sec,
             }
         }
     }
@@ -142,6 +144,7 @@ def test_login__bad_response():
 
 def test_login__does_not_overwrite_additional_headers():
     auth_token = "auth_token"
+    expiration_time_in_sec = 15
 
     http_client_stub = MagicMock()
     http_client_stub.additional_headers = {"Some-Header": "some value"}
@@ -150,6 +153,7 @@ def test_login__does_not_overwrite_additional_headers():
         "response": {
             "user": {
                 ACCESS_TOKEN_KEY_NAME: auth_token,
+                EXPIRATION_TIME_KEY_NAME: expiration_time_in_sec,
             }
         }
     }

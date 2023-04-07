@@ -6,6 +6,7 @@ from pprint import pformat
 from typing import Any, Dict, List, Sequence
 
 import requests
+from egg_timer import EggTimer
 from flask import Response
 
 from common import AgentHeartbeat, AgentRegistrationData, AgentSignals, OperatingSystem
@@ -14,7 +15,7 @@ from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, EXPIRATION_TIME_KEY_NAME
 from common.credentials import Credentials
 from common.types import OTP, AgentID, JSONSerializable
 
@@ -79,6 +80,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._agent_event_serializer_registry = agent_event_serializer_registry
         self._http_client = http_client
         self._agent_id = agent_id
+        self._token_timer = EggTimer()
 
     @handle_response_parsing_errors
     def login(self, otp: OTP):
@@ -86,25 +88,27 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             response = self._http_client.post(
                 "/agent-otp-login", {"agent_id": str(self._agent_id), "otp": otp.get_secret_value()}
             )
-            self._update_tokens_from_response(response)
+            self._update_token_from_response(response)
         except Exception:
             # We need to catch all exceptions here because we don't want to leak the OTP
             raise IslandAPIAuthenticationError(
                 "HTTPIslandAPIClient failed to authenticate to the Island."
             )
 
-    def _update_tokens_from_response(self, response: Response):
-        tokens_in_response = response.json()["response"]["user"]
-        auth_token = tokens_in_response[ACCESS_TOKEN_KEY_NAME]
+    def _update_token_from_response(self, response: Response):
+        token_in_response = response.json()["response"]["user"]
+        auth_token = token_in_response[ACCESS_TOKEN_KEY_NAME]
+        expiration_token_time = token_in_response[EXPIRATION_TIME_KEY_NAME]
 
-        # TODO: Set EggTimer for auth token time
-        # if time is expired refresh and update
         self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
+        self._token_timer.set(expiration_token_time)
 
     @handle_response_parsing_errors
     def refresh_tokens(self):
-        response = self._http_client.post("/refresh-authentication-token", {})
-        self._update_tokens_from_response(response)
+        if self._token_timer.is_expired():
+            response = self._http_client.post("/refresh-authentication-token", {})
+            self._token_timer.reset()
+            self._update_token_from_response(response)
 
     @handle_authentication_token_expiration
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
