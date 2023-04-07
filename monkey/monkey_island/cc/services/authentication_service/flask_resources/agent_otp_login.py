@@ -3,8 +3,6 @@ from http import HTTPStatus
 from typing import Tuple
 
 from flask import make_response, request
-from flask_security import RegisterForm
-from flask_security.registerable import register_user
 
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
 from common.types import OTP, AgentID
@@ -50,14 +48,12 @@ class AgentOTPLogin(AbstractResource):
         if not self._authentication_facade.authorize_otp(otp):
             return make_response({}, HTTPStatus.UNAUTHORIZED)
 
-        agent_user = register_user(
-            RegisterForm(
-                username=str(agent_id),
-                password=secure_generate_random_string(
-                    32, string.digits + string.ascii_letters + string.punctuation
-                ),
-                roles=[AccountRole.AGENT.name],
-            )
+        agent_user = self._authentication_facade.create_user(
+            username=str(agent_id),
+            password=secure_generate_random_string(
+                32, string.digits + string.ascii_letters + string.punctuation
+            ),
+            roles=[AccountRole.AGENT.name],
         )
 
         auth_token = agent_user.get_auth_token()
