@@ -64,6 +64,7 @@ from infection_monkey.island_api_client import (
     AbstractIslandAPIClientFactory,
     HTTPIslandAPIClientFactory,
     IIslandAPIClient,
+    IslandAPIAuthenticationError,
 )
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
@@ -506,7 +507,7 @@ class InfectionMonkey:
 
             self._heart.stop()
 
-            self._island_api_client.logout()
+            self._logout()
 
             self._close_tunnel()
 
@@ -635,3 +636,9 @@ class InfectionMonkey:
     @staticmethod
     def _self_delete_linux():
         os.remove(sys.executable)
+
+    def _logout(self):
+        try:
+            self._island_api_client.logout()
+        except IslandAPIAuthenticationError:
+            logger.info("Agent is already logged out")
