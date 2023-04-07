@@ -126,6 +126,12 @@ class AuthenticationFacade:
             except UnknownRecordError:
                 return False
 
+    def _otp_ttl_elapsed(self, otp: OTP) -> bool:
+        return self._otp_repository.get_expiration(otp) < time.monotonic()
+
+    def invalidate_all_otps(self):
+        self._otp_repository.reset()
+
     def create_user(
         self, username: str, password: str, roles: Sequence[str], email: str = "dummy@dummy.com"
     ) -> User:
@@ -135,9 +141,6 @@ class AuthenticationFacade:
             roles=roles,
             email=email,
         )
-
-    def _otp_ttl_elapsed(self, otp: OTP) -> bool:
-        return self._otp_repository.get_expiration(otp) < time.monotonic()
 
     def handle_successful_registration(self, username: str, password: str):
         self._reset_island_data()
