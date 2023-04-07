@@ -17,6 +17,7 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.i_otp_repository import IOTPRepository
+from monkey_island.cc.services.authentication_service.mongo_otp_repository import MongoOTPRepository
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
 from monkey_island.cc.services.authentication_service.user import User
 
@@ -261,3 +262,30 @@ def test_setup_authentication__revokes_tokens(
     assert mock_user_datastore.set_uniquifier.call_count == len(USERS)
     for user in USERS:
         mock_user_datastore.set_uniquifier.assert_any_call(user)
+
+
+def test_setup_authentication__invalidates_otps(
+    monkeypatch,
+    mock_flask_app,
+    mock_agent_event_queue: IAgentEventQueue,
+    mock_island_event_queue: IIslandEventQueue,
+    mock_repository_encryptor: ILockableEncryptor,
+):
+    mock_otp_repository = MagicMock(spec=MongoOTPRepository)
+    mock_security = MagicMock()
+    mock_security.datastore = mock_user_datastore
+    monkeypatch.setattr(
+        "monkey_island.cc.services.authentication_service.setup.configure_flask_security",
+        lambda *args: mock_security,
+    )
+
+    container = StubDIContainer()
+    container.register_instance(MongoOTPRepository, mock_otp_repository)
+    container.register_instance(ILockableEncryptor, mock_repository_encryptor)
+    container.register_instance(IIslandEventQueue, mock_island_event_queue)
+    container.register_instance(IAgentEventQueue, mock_agent_event_queue)
+    container.register_instance(pymongo.MongoClient, MockMongoClient())
+
+    setup_authentication(MagicMock(), MagicMock(), container, Path("data_dir"), MagicMock())
+
+    assert mock_otp_repository.reset.called
