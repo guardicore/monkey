@@ -32,6 +32,23 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
+    def logout(self):
+        """
+        Disconnect from the island's API
+
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the Island
+        :raises IslandAPIRequestError: If an error occurs while attempting to logout from the
+                                       Island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to logout from the
+                                             Island API due to an error on the server
+        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the Island
+        :raises IslandAPIError: If an unexpected error occurs while attempting to logout from the
+                                Island API
+        """
+
+    @abstractmethod
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         """
         Get an agent binary for the given OS from the island

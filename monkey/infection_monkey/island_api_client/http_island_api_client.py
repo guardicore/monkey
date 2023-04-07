@@ -105,6 +105,10 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._token_timer.set(token_ttl_sec * TOKEN_TTL_FACTOR)
 
     @handle_response_parsing_errors
+    def logout(self):
+        self._http_client.post("/logout")
+
+    @handle_response_parsing_errors
     def _refresh_token(self):
         response = self._http_client.post("/refresh-authentication-token", {})
         self._update_token_from_response(response)
