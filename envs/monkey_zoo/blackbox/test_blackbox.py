@@ -5,7 +5,6 @@ from threading import Thread
 from time import sleep
 
 import pytest
-import requests
 
 from common.types import OTP
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
@@ -14,6 +13,7 @@ from envs.monkey_zoo.blackbox.island_client.agent_requests import AgentRequests
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import (
     GET_AGENT_EVENTS_ENDPOINT,
+    GET_AGENT_OTP_ENDPOINT,
     GET_AGENTS_ENDPOINT,
     GET_MACHINES_ENDPOINT,
     ISLAND_LOG_ENDPOINT,
@@ -168,13 +168,13 @@ def test_logout_invalidates_all_tokens(island):
     assert resp.status_code == HTTPStatus.UNAUTHORIZED
 
 
-def test_agent_otp_rate_limit(island):
+def test_agent_otp_rate_limit(monkey_island_requests):
+    monkey_island_requests.login()
     threads = []
     response_codes = []
-    agent_otp_endpoint = f"https://{island}/api/agent-otp"
 
     def make_request():
-        response = requests.get(agent_otp_endpoint, verify=False)  # noqa: DUO123
+        response = monkey_island_requests.get(GET_AGENT_OTP_ENDPOINT)
         response_codes.append(response.status_code)
 
     for _ in range(0, MAX_OTP_REQUESTS_PER_SECOND + 1):
@@ -220,7 +220,6 @@ def test_island__cannot_access_nonisland_endpoints(island):
     assert island_requests.post(GET_AGENTS_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
 
 
-GET_AGENT_OTP_ENDPOINT = "/api/agent-otp"
 REQUESTS_AGENT_ID = "00000000-0000-0000-0000-000000000001"
 TERMINATE_AGENTS_ENDPOINT = "/api/agent-signals/terminate-all-agents"
 CLEAR_SIMULATION_DATA_ENDPOINT = "/api/clear-simulation-data"
