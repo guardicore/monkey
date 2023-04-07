@@ -100,7 +100,6 @@ from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
 
 from .heart import Heart
-from .model import OTP_FLAG
 from .plugin_event_forwarder import PluginEventForwarder
 
 logger = logging.getLogger(__name__)
@@ -174,10 +173,6 @@ class InfectionMonkey:
 
     @staticmethod
     def _get_otp() -> OTP:
-        # No need for a constant, this is a feature flag that will be removed.
-        if OTP_FLAG not in os.environ:
-            return OTP("PLACEHOLDER_OTP")
-
         try:
             otp = OTP(os.environ[AGENT_OTP_ENVIRONMENT_VARIABLE])
         except KeyError:
