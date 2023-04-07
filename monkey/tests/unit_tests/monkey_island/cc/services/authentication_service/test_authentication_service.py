@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 from unittest.mock import MagicMock, call
 
@@ -15,7 +14,6 @@ from monkey_island.cc.models import IslandMode
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.authentication_facade import (
-    OTP_EXPIRATION_TIME,
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.i_otp_repository import IOTPRepository
@@ -126,7 +124,7 @@ def test_handle_sucessful_login(
 
 
 def test_refresh_user_token(
-    mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade, freezer
+    mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade
 ):
     def reset_uniquifier(user: User):
         user.fs_uniquifier = "b"
@@ -135,17 +133,12 @@ def test_refresh_user_token(
     user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
 
     original_access_token = user.get_auth_token()
-    new_access_token, expiration_time = authentication_facade.refresh_user_token(user)
+    new_access_token, token_ttl_sec = authentication_facade.refresh_user_token(user)
 
     mock_user_datastore.set_uniquifier.assert_called_once()
     assert mock_user_datastore.set_uniquifier.call_args[0][0].username == user.username
     assert new_access_token != original_access_token
-    assert expiration_time == int(time.time() + TOKEN_TTL_SEC)
-
-
-def test_calculate_token_expiration_time(authentication_facade: AuthenticationFacade):
-    now = time.time()
-    assert authentication_facade.calculate_token_expiration_time(now) == int(now + TOKEN_TTL_SEC)
+    assert token_ttl_sec == TOKEN_TTL_SEC
 
 
 def test_remove_user__removes_user(
@@ -186,16 +179,6 @@ def test_generate_otp__saves_otp(
     otp = authentication_facade.generate_otp()
 
     assert mock_otp_repository.insert_otp.call_args[0][0] == otp
-
-
-def test_generate_otp__uses_expected_expiration_time(
-    freezer, authentication_facade: AuthenticationFacade, mock_otp_repository: IOTPRepository
-):
-    authentication_facade.generate_otp()
-
-    expiration_time = mock_otp_repository.insert_otp.call_args[0][1]
-    expected_expiration_time = time.monotonic() + OTP_EXPIRATION_TIME
-    assert expiration_time == expected_expiration_time
 
 
 TIME = "2020-01-01 00:00:00"

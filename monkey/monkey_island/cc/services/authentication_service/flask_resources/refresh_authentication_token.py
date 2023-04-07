@@ -4,7 +4,7 @@ from http import HTTPStatus
 from flask_login import current_user
 from flask_security import auth_token_required
 
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, EXPIRATION_TIME_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from monkey_island.cc.flask_utils import AbstractResource, responses
 
 from ..authentication_facade import AuthenticationFacade
@@ -30,14 +30,12 @@ class RefreshAuthenticationToken(AbstractResource):
         :return: Response with a new token or an invalid request response
         """
         try:
-            new_token, expiration_time_sec = self._authentication_facade.refresh_user_token(
-                current_user
-            )
+            new_token, token_ttl_sec = self._authentication_facade.refresh_user_token(current_user)
             response = {
                 "response": {
                     "user": {
                         ACCESS_TOKEN_KEY_NAME: new_token,
-                        EXPIRATION_TIME_KEY_NAME: expiration_time_sec,
+                        TOKEN_TTL_KEY_NAME: token_ttl_sec,
                     }
                 }
             }

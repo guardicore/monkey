@@ -6,7 +6,7 @@ import pytest
 from tests.data_for_tests.otp import TEST_OTP
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, EXPIRATION_TIME_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from monkey_island.cc.services.authentication_service.flask_resources.agent_otp_login import (
     AgentOTPLogin,
 )
@@ -33,9 +33,9 @@ def test_agent_otp_login__successful(mock_authentication_facade, agent_otp_login
     response = agent_otp_login({"agent_id": AGENT_ID, "otp": TEST_OTP.get_secret_value()})
 
     assert response.status_code == HTTPStatus.OK
-    token_expiration_time_sec = response.json["response"]["user"][EXPIRATION_TIME_KEY_NAME]
-    assert isinstance(token_expiration_time_sec, int)
-    assert token_expiration_time_sec > 0
+    token_ttl_sec = response.json["response"]["user"][TOKEN_TTL_KEY_NAME]
+    assert isinstance(token_ttl_sec, int)
+    assert token_ttl_sec > 0
     assert ACCESS_TOKEN_KEY_NAME in response.json["response"]["user"]
 
 

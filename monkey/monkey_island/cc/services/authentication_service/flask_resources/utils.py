@@ -6,7 +6,7 @@ from typing import Tuple
 from flask import Request, Response, request
 from werkzeug.datastructures import ImmutableMultiDict
 
-from common.common_consts.token_keys import EXPIRATION_TIME_KEY_NAME
+from common.common_consts.token_keys import TOKEN_TTL_KEY_NAME
 
 
 def get_username_password_from_request(_request: Request) -> Tuple[str, str]:
@@ -43,7 +43,7 @@ def include_auth_token(func):
     return decorated_function
 
 
-def add_expiration_time_to_response(response: Response, expiration_time_sec: int) -> Response:
+def add_token_ttl_to_response(response: Response, token_ttl_sec: int) -> Response:
     """
     Returns a new copy of the response with the expiration time added
 
@@ -52,7 +52,7 @@ def add_expiration_time_to_response(response: Response, expiration_time_sec: int
     """
     new_response = deepcopy(response)
     new_response_json = deepcopy(response.json)
-    new_response_json["response"]["user"][EXPIRATION_TIME_KEY_NAME] = expiration_time_sec
+    new_response_json["response"]["user"][TOKEN_TTL_KEY_NAME] = token_ttl_sec
     new_response.data = json.dumps(new_response_json).encode()
 
     return new_response

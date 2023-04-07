@@ -20,7 +20,7 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
 @pytest.fixture
 def mock_authentication_facade():
     maf = MagicMock(spec=AuthenticationFacade)
-    maf.calculate_token_expiration_time.return_value = 123
+    maf.token_ttl_sec = 123
 
     return maf
 

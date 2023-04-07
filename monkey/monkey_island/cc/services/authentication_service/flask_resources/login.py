@@ -1,5 +1,4 @@
 import logging
-import time
 from http import HTTPStatus
 
 from flask import Response, make_response, request
@@ -9,11 +8,7 @@ from flask_security.views import login
 from monkey_island.cc.flask_utils import AbstractResource, responses
 
 from ..authentication_facade import AuthenticationFacade
-from .utils import (
-    add_expiration_time_to_response,
-    get_username_password_from_request,
-    include_auth_token,
-)
+from .utils import add_token_ttl_to_response, get_username_password_from_request, include_auth_token
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +39,6 @@ class Login(AbstractResource):
         except Exception:
             return responses.make_response_to_invalid_request()
 
-        login_time = int(time.time())
         response: ResponseValue = login()
 
         if not isinstance(response, Response):
@@ -52,9 +46,8 @@ class Login(AbstractResource):
 
         if response.status_code == HTTPStatus.OK:
             self._authentication_facade.handle_successful_login(username, password)
-            token_expiration_time = self._authentication_facade.calculate_token_expiration_time(
-                login_time
+            response = add_token_ttl_to_response(
+                response, self._authentication_facade.token_ttl_sec
             )
-            response = add_expiration_time_to_response(response, token_expiration_time)
 
         return make_response(response)

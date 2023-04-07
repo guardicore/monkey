@@ -41,6 +41,10 @@ class AuthenticationFacade:
         self._otp_read_lock = Lock()
         self._user_lock = Lock()
 
+    @property
+    def token_ttl_sec(self) -> int:
+        return self._token_ttl_sec
+
     def needs_registration(self) -> bool:
         """
         Checks if a user is already registered on the Island
@@ -98,13 +102,9 @@ class AuthenticationFacade:
         :param user: The user to refresh the token for
         :return: The new token and the time when it will expire (in Unix time)
         """
-        creation_time = int(time.time())
         self.revoke_all_tokens_for_user(user)
 
-        return user.get_auth_token(), self.calculate_token_expiration_time(creation_time)
-
-    def calculate_token_expiration_time(self, token_generation_time_sec: int):
-        return int(token_generation_time_sec + self._token_ttl_sec)
+        return str(user.get_auth_token()), self._token_ttl_sec
 
     def authorize_otp(self, otp: OTP) -> bool:
         # SECURITY: This method must not run concurrently, otherwise there could be TOCTOU errors,
