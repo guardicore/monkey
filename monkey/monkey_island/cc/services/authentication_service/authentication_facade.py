@@ -129,7 +129,7 @@ class AuthenticationFacade:
     def _otp_ttl_elapsed(self, otp: OTP) -> bool:
         return self._otp_repository.get_expiration(otp) < time.monotonic()
 
-    def invalidate_all_otps(self):
+    def revoke_all_otps(self):
         self._otp_repository.reset()
 
     def create_user(
