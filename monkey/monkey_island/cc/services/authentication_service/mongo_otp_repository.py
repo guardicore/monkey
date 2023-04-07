@@ -1,3 +1,5 @@
+import hashlib
+import secrets
 from functools import lru_cache
 from typing import Any, Mapping
 
@@ -12,7 +14,6 @@ from monkey_island.cc.repositories import (
     StorageError,
     UnknownRecordError,
 )
-from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from .i_otp_repository import IOTPRepository
 
@@ -21,20 +22,35 @@ class MongoOTPRepository(IOTPRepository):
     def __init__(
         self,
         mongo_client: MongoClient,
-        encryptor: ILockableEncryptor,
     ):
-        self._encryptor = encryptor
+        # SECURITY: A new salt is generated for each instance of this repository. This effectively
+        # makes all preexisting OTPS invalid on Island startup.
+        self._salt = secrets.token_bytes(16)
+
         self._otp_collection = mongo_client.monkey_island.otp
         self._otp_collection.create_index("otp", unique=True)
 
     def insert_otp(self, otp: OTP, expiration: float):
         try:
-            encrypted_otp = self._encryptor.encrypt(otp.get_secret_value().encode())
             self._otp_collection.insert_one(
-                {"otp": encrypted_otp, "expiration_time": expiration, "used": False}
+                {"otp": self._hash_otp(otp), "expiration_time": expiration, "used": False}
             )
         except Exception as err:
             raise StorageError(f"Error inserting OTP: {err}")
+
+    def _hash_otp(self, otp: OTP) -> bytes:
+        # SECURITY: A single round of salted SHA256 is usually not considered sufficient for
+        # protecting passwords. However, OTPs have a very short life span (2 minutes at the time of
+        # this writing). Additionally, they can only be used once. Finally, they are 32 bytes long.
+        # At the present time, we consider this to be sufficient protection. I'm unaware of any
+        # technology in existence that can brute force SHA256 for (roughly) 48-byte inputs in under
+        # 2 minutes.
+        #
+        # Note that if any of these conditions change (timeouts become very long or OTPs become very
+        # short), this should be revisited. For now, we prefer the significantly faster performance
+        # of a single round of salted SHA256 over a more secure but slower algorithm.
+        otp_bytes = otp.get_secret_value().encode()
+        return hashlib.sha256(self._salt + otp_bytes).digest()
 
     def set_used(self, otp: OTP):
         try:
@@ -71,11 +87,10 @@ class MongoOTPRepository(IOTPRepository):
 
     @lru_cache
     def _get_otp_object_id(self, otp: OTP) -> ObjectId:
-        otp_str = otp.get_secret_value()
-
         try:
-            encrypted_otp = self._encryptor.encrypt(otp_str.encode())
-            otp_dict = self._otp_collection.find_one({"otp": encrypted_otp}, [MONGO_OBJECT_ID_KEY])
+            otp_dict = self._otp_collection.find_one(
+                {"otp": self._hash_otp(otp)}, [MONGO_OBJECT_ID_KEY]
+            )
         except Exception as err:
             raise RetrievalError(f"Error retrieving OTP: {err}")
 
