@@ -3,8 +3,6 @@ from http import HTTPStatus
 from typing import Tuple
 
 from flask import make_response, request
-from flask_security import RegisterForm
-from flask_security.registerable import register_user
 
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
 from common.types import OTP, AgentID
@@ -13,6 +11,7 @@ from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 
 from ..authentication_facade import AuthenticationFacade
+from .utils import include_auth_token
 
 
 class ArgumentParsingException(Exception):
@@ -31,6 +30,8 @@ class AgentOTPLogin(AbstractResource):
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
+    # Secured via OTP, not via authentication token.
+    @include_auth_token
     def post(self):
         """
         Gets the one-time password from the request,
@@ -47,14 +48,12 @@ class AgentOTPLogin(AbstractResource):
         if not self._authentication_facade.authorize_otp(otp):
             return make_response({}, HTTPStatus.UNAUTHORIZED)
 
-        agent_user = register_user(
-            RegisterForm(
-                username=str(agent_id),
-                password=secure_generate_random_string(
-                    32, string.digits + string.ascii_letters + string.punctuation
-                ),
-                roles=[AccountRole.AGENT.name],
-            )
+        agent_user = self._authentication_facade.create_user(
+            username=str(agent_id),
+            password=secure_generate_random_string(
+                32, string.digits + string.ascii_letters + string.punctuation
+            ),
+            roles=[AccountRole.AGENT.name],
         )
 
         auth_token = agent_user.get_auth_token()

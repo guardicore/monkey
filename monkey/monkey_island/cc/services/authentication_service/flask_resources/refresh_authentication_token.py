@@ -22,6 +22,7 @@ class RefreshAuthenticationToken(AbstractResource):
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
+    # TODO: Decorate after "user-refresh" logic is added
     def post(self):
         """
         Accepts a refresh token and returns a new token pair

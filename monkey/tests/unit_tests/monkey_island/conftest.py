@@ -15,7 +15,6 @@ from common.utils.code_utils import insecure_generate_random_string
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 from monkey_island.cc.services.authentication_service.flask_resources.login import Login
-from monkey_island.cc.services.authentication_service.flask_resources.logout import Logout
 from monkey_island.cc.services.authentication_service.flask_resources.register import Register
 from monkey_island.cc.services.authentication_service.role import Role
 from monkey_island.cc.services.authentication_service.user import User
@@ -43,12 +42,16 @@ def init_mock_security_app() -> Tuple[Flask, flask_restful.Api]:
     app, api = init_mock_app()
     user_datastore = init_mock_datastore()
 
+    agent_role = user_datastore.find_or_create_role(name=AccountRole.AGENT.name)
     island_role = user_datastore.find_or_create_role(name=AccountRole.ISLAND_INTERFACE.name)
     app.security = Security(app, user_datastore)
     ds = app.security.datastore
     with app.app_context():
         ds.create_user(
-            email="unittest@me.com", username="test", password="password", roles=[island_role]
+            email="unittest@me.com",
+            username="test",
+            password="password",
+            roles=[agent_role, island_role],
         )
         ds.commit()
 
@@ -103,11 +106,7 @@ def set_current_user(app, ds, email):
     """
 
     def token_cb(request):
-        if (
-            Register.urls[0] in request.url
-            or Logout.urls[0] in request.url
-            or Login.urls[0] in request.url
-        ):
+        if Register.urls[0] in request.url or Login.urls[0] in request.url:
             return
         return ds.find_user(email=email)
 

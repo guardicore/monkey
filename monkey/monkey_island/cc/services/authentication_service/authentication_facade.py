@@ -1,7 +1,7 @@
 import string
 import time
 from threading import Lock
-from typing import Tuple
+from typing import Sequence, Tuple
 
 from flask_security import UserDatastore
 
@@ -127,6 +127,16 @@ class AuthenticationFacade:
                 return False
             except UnknownRecordError:
                 return False
+
+    def create_user(
+        self, username: str, password: str, roles: Sequence[str], email: str = "dummy@dummy.com"
+    ) -> User:
+        return self._datastore.create_user(
+            username=username,
+            password=password,
+            roles=roles,
+            email=email,
+        )
 
     def _otp_ttl_elapsed(self, otp: OTP) -> bool:
         return self._otp_repository.get_expiration(otp) < time.monotonic()

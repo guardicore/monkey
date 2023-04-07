@@ -15,7 +15,7 @@ class AgentBinaries(AbstractResource):
     def __init__(self, agent_binary_repository: IAgentBinaryRepository):
         self._agent_binary_repository = agent_binary_repository
 
-    # Used by monkey. can't secure.
+    # Can't be secured, used in manual run commands
     def get(self, os):
         """
         Gets the agent binary for the specified OS

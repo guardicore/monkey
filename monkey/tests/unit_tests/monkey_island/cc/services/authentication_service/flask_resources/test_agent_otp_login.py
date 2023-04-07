@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
@@ -9,6 +10,7 @@ from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN
 from monkey_island.cc.services.authentication_service.flask_resources.agent_otp_login import (
     AgentOTPLogin,
 )
+from monkey_island.cc.services.authentication_service.user import User
 
 AGENT_ID = UUID("9614480d-471b-4568-86b5-cb922a34ed8a")
 
@@ -23,7 +25,11 @@ def agent_otp_login(flask_client):
     return _agent_otp_login
 
 
-def test_agent_otp_login__successful(agent_otp_login):
+def test_agent_otp_login__successful(mock_authentication_facade, agent_otp_login):
+    mock_user = MagicMock(spec=User)
+    mock_user.get_auth_token.return_value = "auth_token"
+    mock_authentication_facade.create_user.return_value = mock_user
+
     response = agent_otp_login({"agent_id": AGENT_ID, "otp": TEST_OTP.get_secret_value()})
 
     assert response.status_code == HTTPStatus.OK

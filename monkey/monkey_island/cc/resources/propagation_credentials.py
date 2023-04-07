@@ -1,10 +1,12 @@
 from http import HTTPStatus
 
 from flask import request
+from flask_security import auth_token_required, roles_accepted
 
 from common.credentials import Credentials
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import ICredentialsRepository
+from monkey_island.cc.services.authentication_service import AccountRole
 
 _configured_collection = "configured-credentials"
 _stolen_collection = "stolen-credentials"
@@ -16,7 +18,8 @@ class PropagationCredentials(AbstractResource):
     def __init__(self, credentials_repository: ICredentialsRepository):
         self._credentials_repository = credentials_repository
 
-    # Used by Agent. Can't secure.
+    @auth_token_required
+    @roles_accepted(AccountRole.AGENT.name, AccountRole.ISLAND_INTERFACE.name)
     def get(self, collection=None):
         if collection == _configured_collection:
             propagation_credentials = self._credentials_repository.get_configured_credentials()
@@ -29,7 +32,8 @@ class PropagationCredentials(AbstractResource):
 
         return propagation_credentials, HTTPStatus.OK
 
-    # Used by Agent. Can't secure.
+    @auth_token_required
+    @roles_accepted(AccountRole.ISLAND_INTERFACE.name)
     def put(self, collection=None):
         credentials = [Credentials(**c) for c in request.json]
         if collection == _configured_collection:

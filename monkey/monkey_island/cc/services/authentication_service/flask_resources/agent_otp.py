@@ -4,8 +4,10 @@ from threading import Lock
 from flask import make_response
 from flask_limiter import Limiter, RateLimitExceeded
 from flask_limiter.util import get_remote_address
+from flask_security import auth_token_required, roles_accepted
 
 from monkey_island.cc.flask_utils import AbstractResource
+from monkey_island.cc.services.authentication_service import AccountRole
 
 from ..i_otp_generator import IOTPGenerator
 
@@ -41,6 +43,8 @@ class AgentOTP(AbstractResource):
 
         self._otp_generator = otp_generator
 
+    @auth_token_required
+    @roles_accepted(AccountRole.AGENT.name, AccountRole.ISLAND_INTERFACE.name)
     def get(self):
         """
         Requests an Agent's one-time password
