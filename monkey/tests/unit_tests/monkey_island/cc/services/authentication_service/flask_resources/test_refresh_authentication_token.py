@@ -2,33 +2,26 @@ from http import HTTPStatus
 
 import pytest
 
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.flask_resources.refresh_authentication_token import (  # noqa: E501
     RefreshAuthenticationToken,
 )
-from monkey_island.cc.services.authentication_service.token_parser import (
-    ExpiredTokenError,
-    InvalidTokenSignatureError,
-    TokenValidationError,
-)
 
 REQUEST_AUTHENTICATION_TOKEN = "my_authentication_token"
-REQUEST_REFRESH_TOKEN = "my_refresh_token"
-REQUEST = {REFRESH_TOKEN_KEY_NAME: REQUEST_REFRESH_TOKEN}
 
 NEW_AUTHENTICATION_TOKEN = "new_authentication_token"
-NEW_REFRESH_TOKEN = "new_refresh_token"
+TOKEN_TTL_SEC = 123
 
 
 @pytest.fixture
 def request_token(flask_client):
     url = RefreshAuthenticationToken.urls[0]
 
-    def inner(request_body):
-        return flask_client.post(url, json=request_body, follow_redirects=True)
+    def inner():
+        return flask_client.post(url, follow_redirects=True)
 
     return inner
 
@@ -36,36 +29,23 @@ def request_token(flask_client):
 def test_token__provides_refreshed_token(
     request_token, mock_authentication_facade: AuthenticationFacade
 ):
-    mock_authentication_facade.generate_new_token_pair.return_value = (
+    mock_authentication_facade.refresh_user_token.return_value = (
         NEW_AUTHENTICATION_TOKEN,
-        NEW_REFRESH_TOKEN,
+        TOKEN_TTL_SEC,
     )
 
-    response = request_token(REQUEST)
+    response = request_token()
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json["response"]["user"][REFRESH_TOKEN_KEY_NAME] == NEW_REFRESH_TOKEN
     assert response.json["response"]["user"][ACCESS_TOKEN_KEY_NAME] == NEW_AUTHENTICATION_TOKEN
+    assert response.json["response"]["user"][TOKEN_TTL_KEY_NAME] == TOKEN_TTL_SEC
 
 
 def test_token__fails_if_refresh_token_is_invalid(
     request_token, mock_authentication_facade: AuthenticationFacade
 ):
-    mock_authentication_facade.generate_new_token_pair.side_effect = Exception()
+    mock_authentication_facade.refresh_user_token.side_effect = Exception()
 
-    response = request_token(REQUEST)
+    response = request_token()
 
     assert response.status_code == HTTPStatus.BAD_REQUEST
-
-
-@pytest.mark.parametrize(
-    "exception", [TokenValidationError, InvalidTokenSignatureError, ExpiredTokenError]
-)
-def test_token__fails_refresh_token(
-    exception, request_token, mock_authentication_facade: AuthenticationFacade
-):
-    mock_authentication_facade.generate_new_token_pair.side_effect = exception("SomeMessage")
-
-    response = request_token(REQUEST)
-
-    assert response.status_code == HTTPStatus.UNAUTHORIZED

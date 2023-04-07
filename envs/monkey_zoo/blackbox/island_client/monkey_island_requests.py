@@ -59,8 +59,17 @@ class MonkeyIslandRequests(IMonkeyIslandRequests):
         if resp.status_code == 400:
             raise InvalidRequestError()
 
-        token = resp.json()["response"]["user"]["authentication_token"]
-        return token
+        return MonkeyIslandRequests._parse_auth_token_from_response(resp)
+
+    @staticmethod
+    def _parse_auth_token_from_response(response: requests.Response):
+        return response.json()["response"]["user"]["authentication_token"]
+
+    def refresh_access_token(self):
+        response = self.post("api/refresh-authentication-token", None)
+        response.raise_for_status()
+
+        self.token = MonkeyIslandRequests._parse_auth_token_from_response(response)
 
     def get(self, url, data=None):
         return requests.get(  # noqa: DUO123

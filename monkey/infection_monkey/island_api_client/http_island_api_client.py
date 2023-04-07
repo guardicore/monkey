@@ -6,6 +6,7 @@ from pprint import pformat
 from typing import Any, Dict, List, Sequence
 
 import requests
+from egg_timer import EggTimer
 from flask import Response
 
 from common import AgentHeartbeat, AgentRegistrationData, AgentSignals, OperatingSystem
@@ -14,7 +15,7 @@ from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from common.credentials import Credentials
 from common.types import OTP, AgentID, JSONSerializable
 
@@ -27,6 +28,9 @@ from .island_api_client_errors import (
 )
 
 logger = logging.getLogger(__name__)
+
+# After 85% of the token's TTL has expired, it should be refreshed.
+TOKEN_TTL_FACTOR = 0.85
 
 
 def handle_response_parsing_errors(fn):
@@ -49,16 +53,14 @@ def handle_response_parsing_errors(fn):
 def handle_authentication_token_expiration(fn):
     @functools.wraps(fn)
     def wrapper(self, *args, **kwargs):
-        try:
-            return fn(self, *args, **kwargs)
-        except IslandAPIAuthenticationError:
-            logger.debug("Authentication token expired. Refreshing...")
-            self.refresh_tokens()
+        if self._token_timer.is_expired():
+            logger.debug(
+                "The authentication token is close to expiring - refreshing the token before "
+                "making the requested API call..."
+            )
+            self._refresh_token()
 
-            # try again after refreshing tokens
-            # something else is wrong if this still doesn't work, let the error be raised
-            logger.debug("Authentication token refreshed, retrying request...")
-            return fn(self, *args, **kwargs)
+        return fn(self, *args, **kwargs)
 
     return wrapper
 
@@ -79,8 +81,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._agent_event_serializer_registry = agent_event_serializer_registry
         self._http_client = http_client
         self._agent_id = agent_id
-
-        self._refresh_token = ""
+        self._token_timer = EggTimer()
 
     @handle_response_parsing_errors
     def login(self, otp: OTP):
@@ -88,29 +89,25 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             response = self._http_client.post(
                 "/agent-otp-login", {"agent_id": str(self._agent_id), "otp": otp.get_secret_value()}
             )
-            self._update_tokens_from_response(response)
+            self._update_token_from_response(response)
         except Exception:
             # We need to catch all exceptions here because we don't want to leak the OTP
             raise IslandAPIAuthenticationError(
                 "HTTPIslandAPIClient failed to authenticate to the Island."
             )
 
-    def _update_tokens_from_response(self, response: Response):
-        tokens_in_response = response.json()["response"]["user"]
-        auth_token, refresh_token = (
-            tokens_in_response[ACCESS_TOKEN_KEY_NAME],
-            tokens_in_response[REFRESH_TOKEN_KEY_NAME],
-        )
+    def _update_token_from_response(self, response: Response):
+        token_in_response = response.json()["response"]["user"]
+        auth_token = token_in_response[ACCESS_TOKEN_KEY_NAME]
+        token_ttl_sec = token_in_response[TOKEN_TTL_KEY_NAME]
 
         self._http_client.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] = auth_token
-        self._refresh_token = refresh_token
+        self._token_timer.set(token_ttl_sec * TOKEN_TTL_FACTOR)
 
     @handle_response_parsing_errors
-    def refresh_tokens(self):
-        response = self._http_client.post(
-            "/refresh-authentication-token", {REFRESH_TOKEN_KEY_NAME: self._refresh_token}
-        )
-        self._update_tokens_from_response(response)
+    def _refresh_token(self):
+        response = self._http_client.post("/refresh-authentication-token", {})
+        self._update_token_from_response(response)
 
     @handle_authentication_token_expiration
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:

@@ -16,16 +16,13 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
     AuthenticationFacade,
 )
 
-REFRESH_TOKEN = "refresh_token"
-
 
 @pytest.fixture
 def mock_authentication_facade():
-    mock_service = MagicMock(spec=AuthenticationFacade)
-    mock_service.generate_refresh_token = MagicMock()
-    mock_service.generate_refresh_token.return_value = REFRESH_TOKEN
+    maf = MagicMock(spec=AuthenticationFacade)
+    maf.token_ttl_sec = 123
 
-    return mock_service
+    return maf
 
 
 @pytest.fixture

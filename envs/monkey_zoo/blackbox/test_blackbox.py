@@ -1,11 +1,13 @@
 import logging
 import os
+from copy import deepcopy
 from http import HTTPStatus
 from threading import Thread
 from time import sleep
 from uuid import uuid4
 
 import pytest
+import requests
 
 from common.types import OTP, SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
@@ -188,6 +190,24 @@ def test_agent_otp_rate_limit(monkey_island_requests):
 
     assert response_codes.count(HTTPStatus.OK) == MAX_OTP_REQUESTS_PER_SECOND
     assert response_codes.count(HTTPStatus.TOO_MANY_REQUESTS) == 1
+
+
+def test_refresh_access_token(monkey_island_requests):
+    monkey_island_requests.login()
+    original_token = monkey_island_requests.token
+
+    monkey_island_requests.refresh_access_token()
+    refreshed_token = monkey_island_requests.token
+
+    assert original_token != refreshed_token
+
+    with pytest.raises(requests.exceptions.HTTPError):
+        monkey_island_requests_copy = deepcopy(monkey_island_requests)
+        monkey_island_requests_copy.token = original_token
+        monkey_island_requests_copy.refresh_access_token()
+
+    monkey_island_requests.refresh_access_token()
+    assert refreshed_token != monkey_island_requests.token
 
 
 UUID = uuid4()

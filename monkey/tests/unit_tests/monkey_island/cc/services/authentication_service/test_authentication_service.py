@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 from unittest.mock import MagicMock, call
 
@@ -15,16 +14,10 @@ from monkey_island.cc.models import IslandMode
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.authentication_facade import (
-    OTP_EXPIRATION_TIME,
     AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.i_otp_repository import IOTPRepository
 from monkey_island.cc.services.authentication_service.setup import setup_authentication
-from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
-from monkey_island.cc.services.authentication_service.token_parser import (
-    TokenParser,
-    TokenValidationError,
-)
 from monkey_island.cc.services.authentication_service.user import User
 
 USERNAME = "user1"
@@ -36,6 +29,7 @@ USERS = [
     User(username="user3", password="test3", fs_uniquifier="c"),
 ]
 
+TOKEN_TTL_SEC = 10
 
 # Some tests have these fixtures as arguments even though `autouse=True`, because
 # to access the object that a fixture returns, it needs to be specified as an argument.
@@ -58,18 +52,8 @@ def mock_user_datastore() -> UserDatastore:
 
 
 @pytest.fixture
-def mock_token_generator() -> TokenGenerator:
-    return MagicMock(spec=TokenGenerator)
-
-
-@pytest.fixture
 def mock_agent_event_queue() -> IAgentEventQueue:
     return MagicMock(spec=IAgentEventQueue)
-
-
-@pytest.fixture
-def mock_token_parser() -> TokenParser:
-    return MagicMock(spec=TokenParser)
 
 
 @pytest.fixture
@@ -83,17 +67,14 @@ def authentication_facade(
     mock_repository_encryptor: ILockableEncryptor,
     mock_island_event_queue: IIslandEventQueue,
     mock_user_datastore: UserDatastore,
-    mock_token_generator: TokenGenerator,
-    mock_token_parser: TokenParser,
     mock_otp_repository: IOTPRepository,
 ) -> AuthenticationFacade:
     return AuthenticationFacade(
         mock_repository_encryptor,
         mock_island_event_queue,
         mock_user_datastore,
-        mock_token_generator,
-        mock_token_parser,
         mock_otp_repository,
+        TOKEN_TTL_SEC,
     )
 
 
@@ -142,50 +123,22 @@ def test_handle_sucessful_login(
     assert mock_repository_encryptor.unlock.call_args[0][0] != PASSWORD
 
 
-def test_generate_new_token_pair__generates_tokens(
-    mock_token_generator: TokenGenerator,
-    mock_token_parser: TokenParser,
-    authentication_facade: AuthenticationFacade,
+def test_refresh_user_token(
+    mock_user_datastore: UserDatastore, authentication_facade: AuthenticationFacade
 ):
+    def reset_uniquifier(user: User):
+        user.fs_uniquifier = "b"
+
+    mock_user_datastore.set_uniquifier.side_effect = reset_uniquifier
     user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
-    user.save()
-    mock_token_generator.generate_token.return_value = "new_token"
-    mock_token_parser.parse.return_value.payload = "a"
 
-    access_token = user.get_auth_token()
-    refresh_token = "original_refresh_token"
-    new_access_token, new_refresh_token = authentication_facade.generate_new_token_pair(
-        refresh_token
-    )
+    original_access_token = user.get_auth_token()
+    new_access_token, token_ttl_sec = authentication_facade.refresh_user_token(user)
 
-    assert access_token != refresh_token
-    assert new_access_token != new_refresh_token
-    assert new_access_token != access_token
-    assert new_refresh_token != refresh_token
-
-
-def test_generate_new_token_pair__fails_if_user_does_not_exist(
-    authentication_facade: AuthenticationFacade,
-):
-    nonexistent_user = User(username="_", password="_", fs_uniquifier="bogus")
-    bogus_token = authentication_facade.generate_refresh_token(nonexistent_user)
-    authentication_facade._datastore.find_user = MagicMock(return_value=None)
-
-    with pytest.raises(Exception):
-        authentication_facade.generate_new_token_pair(bogus_token)
-
-
-def test_generate_new_token_pair__fails_if_token_invalid(
-    mock_token_parser: TokenParser,
-    authentication_facade: AuthenticationFacade,
-):
-    user = User(username=USERNAME, password=PASSWORD, fs_uniquifier="a")
-    user.save()
-    refresh_token = authentication_facade.generate_refresh_token(user)
-    mock_token_parser.parse.side_effect = TokenValidationError()
-
-    with pytest.raises(TokenValidationError):
-        authentication_facade.generate_new_token_pair(refresh_token)
+    mock_user_datastore.set_uniquifier.assert_called_once()
+    assert mock_user_datastore.set_uniquifier.call_args[0][0].username == user.username
+    assert new_access_token != original_access_token
+    assert token_ttl_sec == TOKEN_TTL_SEC
 
 
 def test_remove_user__removes_user(
@@ -226,16 +179,6 @@ def test_generate_otp__saves_otp(
     otp = authentication_facade.generate_otp()
 
     assert mock_otp_repository.insert_otp.call_args[0][0] == otp
-
-
-def test_generate_otp__uses_expected_expiration_time(
-    freezer, authentication_facade: AuthenticationFacade, mock_otp_repository: IOTPRepository
-):
-    authentication_facade.generate_otp()
-
-    expiration_time = mock_otp_repository.insert_otp.call_args[0][1]
-    expected_expiration_time = time.monotonic() + OTP_EXPIRATION_TIME
-    assert expiration_time == expected_expiration_time
 
 
 TIME = "2020-01-01 00:00:00"

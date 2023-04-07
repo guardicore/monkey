@@ -1,11 +1,11 @@
 import logging
 from http import HTTPStatus
 
-from flask import make_response, request
+from flask_login import current_user
+from flask_security import auth_token_required
 
-from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, REFRESH_TOKEN_KEY_NAME
+from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from monkey_island.cc.flask_utils import AbstractResource, responses
-from monkey_island.cc.services.authentication_service.token_parser import TokenValidationError
 
 from ..authentication_facade import AuthenticationFacade
 
@@ -22,28 +22,23 @@ class RefreshAuthenticationToken(AbstractResource):
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
-    # TODO: Decorate after "user-refresh" logic is added
+    @auth_token_required
     def post(self):
         """
-        Accepts a refresh token and returns a new token pair
+        Returns a new token for the authenticated user
 
-        :return: Response with new token pair or an invalid request response
+        :return: Response with a new token or an invalid request response
         """
         try:
-            old_refresh_token = request.json[REFRESH_TOKEN_KEY_NAME]
-            access_token, refresh_token = self._authentication_facade.generate_new_token_pair(
-                old_refresh_token
-            )
+            new_token, token_ttl_sec = self._authentication_facade.refresh_user_token(current_user)
             response = {
                 "response": {
                     "user": {
-                        ACCESS_TOKEN_KEY_NAME: access_token,
-                        REFRESH_TOKEN_KEY_NAME: refresh_token,
+                        ACCESS_TOKEN_KEY_NAME: new_token,
+                        TOKEN_TTL_KEY_NAME: token_ttl_sec,
                     }
                 }
             }
             return response, HTTPStatus.OK
-        except TokenValidationError:
-            return make_response({}, HTTPStatus.UNAUTHORIZED)
         except Exception:
             return responses.make_response_to_invalid_request()

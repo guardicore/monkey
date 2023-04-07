@@ -11,11 +11,9 @@ from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
-from monkey_island.cc.services.authentication_service.token_generator import TokenGenerator
 
 from . import AccountRole
 from .i_otp_repository import IOTPRepository
-from .token_parser import ParsedToken, TokenParser
 from .types import Token
 from .user import User
 
@@ -32,18 +30,20 @@ class AuthenticationFacade:
         repository_encryptor: ILockableEncryptor,
         island_event_queue: IIslandEventQueue,
         user_datastore: UserDatastore,
-        token_generator: TokenGenerator,
-        token_parser: TokenParser,
         otp_repository: IOTPRepository,
+        token_ttl_sec: int,
     ):
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
         self._datastore = user_datastore
-        self._token_generator = token_generator
-        self._token_parser = token_parser
         self._otp_repository = otp_repository
+        self._token_ttl_sec = token_ttl_sec
         self._otp_read_lock = Lock()
         self._user_lock = Lock()
+
+    @property
+    def token_ttl_sec(self) -> int:
+        return self._token_ttl_sec
 
     def needs_registration(self) -> bool:
         """
@@ -83,28 +83,6 @@ class AuthenticationFacade:
         for user in User.objects:
             self.revoke_all_tokens_for_user(user)
 
-    def generate_new_token_pair(self, refresh_token: Token) -> Tuple[Token, Token]:
-        """
-        Generates a new access token and refresh, given a valid refresh token
-
-        :param refresh_token: Refresh token
-        :raise TokenValidationError: If the refresh token is invalid or expired
-        :return: Tuple of the new access token and refresh token
-        """
-        parsed_refresh_token = self._token_parser.parse(refresh_token)
-        user = self._get_refresh_token_owner(parsed_refresh_token)
-
-        new_access_token = user.get_auth_token()
-        new_refresh_token = self._token_generator.generate_token(user.fs_uniquifier)
-
-        return new_access_token, new_refresh_token
-
-    def _get_refresh_token_owner(self, refresh_token: ParsedToken) -> User:
-        user = self._datastore.find_user(fs_uniquifier=refresh_token.user_uniquifier)
-        if not user:
-            raise Exception("Invalid refresh token")
-        return user
-
     def generate_otp(self) -> OTP:
         """
         Generates a new OTP
@@ -117,11 +95,16 @@ class AuthenticationFacade:
 
         return otp
 
-    def generate_refresh_token(self, user: User) -> Token:
+    def refresh_user_token(self, user: User) -> Tuple[Token, int]:
         """
-        Generates a refresh token for a specific user
+        Refreshes the user's authentication token
+
+        :param user: The user to refresh the token for
+        :return: The new token and the time when it will expire (in Unix time)
         """
-        return self._token_generator.generate_token(user.fs_uniquifier)
+        self.revoke_all_tokens_for_user(user)
+
+        return str(user.get_auth_token()), self._token_ttl_sec
 
     def authorize_otp(self, otp: OTP) -> bool:
         # SECURITY: This method must not run concurrently, otherwise there could be TOCTOU errors,

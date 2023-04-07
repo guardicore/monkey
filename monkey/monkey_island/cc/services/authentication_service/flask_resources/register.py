@@ -3,17 +3,12 @@ from http import HTTPStatus
 
 from flask import Response, make_response, request
 from flask.typing import ResponseValue
-from flask_login import current_user
 from flask_security.views import register
 
 from monkey_island.cc.flask_utils import AbstractResource, responses
 
 from ..authentication_facade import AuthenticationFacade
-from .utils import (
-    add_refresh_token_to_response,
-    get_username_password_from_request,
-    include_auth_token,
-)
+from .utils import add_token_ttl_to_response, get_username_password_from_request, include_auth_token
 
 logger = logging.getLogger(__name__)
 
@@ -35,17 +30,17 @@ class Register(AbstractResource):
         Registers a new user using flask security register
 
         """
+        if not self._authentication_facade.needs_registration():
+            return {
+                "errors": ["A user already exists. Only a single user can be registered."]
+            }, HTTPStatus.CONFLICT
+
         try:
-            if not self._authentication_facade.needs_registration():
-                return {
-                    "errors": ["A user already exists. Only a single user can be registered."]
-                }, HTTPStatus.CONFLICT
             username, password = get_username_password_from_request(request)
-            response: ResponseValue = register()
-            refresh_token = self._authentication_facade.generate_refresh_token(current_user)
-            response = add_refresh_token_to_response(response, refresh_token)
         except Exception:
             return responses.make_response_to_invalid_request()
+
+        response: ResponseValue = register()
 
         # Register view treat the request as form submit which may return something
         # that it is not a response
@@ -54,5 +49,8 @@ class Register(AbstractResource):
 
         if response.status_code == HTTPStatus.OK:
             self._authentication_facade.handle_successful_registration(username, password)
+            response = add_token_ttl_to_response(
+                response, self._authentication_facade.token_ttl_sec
+            )
 
         return make_response(response)

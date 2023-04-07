@@ -6,8 +6,7 @@ from typing import Tuple
 from flask import Request, Response, request
 from werkzeug.datastructures import ImmutableMultiDict
 
-from common.common_consts.token_keys import REFRESH_TOKEN_KEY_NAME
-from monkey_island.cc.services.authentication_service.types import Token
+from common.common_consts.token_keys import TOKEN_TTL_KEY_NAME
 
 
 def get_username_password_from_request(_request: Request) -> Tuple[str, str]:
@@ -17,10 +16,13 @@ def get_username_password_from_request(_request: Request) -> Tuple[str, str]:
 
     :param _request: A Flask Request object
     :raises JSONDecodeError: If invalid JSON data is provided
+    :raises KeyError: If username or password were not provided in the request
     """
     cred_dict = json.loads(request.data)
-    username = cred_dict.get("username", "")
-    password = cred_dict.get("password", "")
+
+    username = cred_dict["username"]
+    password = cred_dict["password"]
+
     return username, password
 
 
@@ -41,15 +43,16 @@ def include_auth_token(func):
     return decorated_function
 
 
-def add_refresh_token_to_response(response: Response, refresh_token: Token) -> Response:
+def add_token_ttl_to_response(response: Response, token_ttl_sec: int) -> Response:
     """
-    Returns a copy of the response object with the refresh token added to it
+    Returns a new copy of the response with the expiration time added
 
     :param response: A Flask Response object
-    :param refresh_token: Refresh token to add to the response
-    :return: A Flask Response object
+    :return: A new Flask Response object with the expiration time added
     """
-    new_data = deepcopy(response.json)
-    new_data["response"]["user"][REFRESH_TOKEN_KEY_NAME] = refresh_token
-    response.data = json.dumps(new_data).encode()
-    return response
+    new_response = deepcopy(response)
+    new_response_json = deepcopy(response.json)
+    new_response_json["response"]["user"][TOKEN_TTL_KEY_NAME] = token_ttl_sec
+    new_response.data = json.dumps(new_response_json).encode()
+
+    return new_response
