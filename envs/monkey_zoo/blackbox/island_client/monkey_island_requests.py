@@ -1,8 +1,9 @@
 import logging
 from http import HTTPStatus
-from typing import Dict
 
 import requests
+
+from common.types import JSONSerializable
 
 from .i_monkey_island_requests import IMonkeyIslandRequests
 
@@ -89,17 +90,17 @@ class MonkeyIslandRequests(IMonkeyIslandRequests):
             self.addr + url, data=data, headers=self.get_auth_header(), verify=False
         )
 
-    def put_json(self, url, json: Dict):
+    def put_json(self, url, json: JSONSerializable):
         return requests.put(  # noqa: DUO123
             self.addr + url, json=json, headers=self.get_auth_header(), verify=False
         )
 
-    def post_json(self, url, json: Dict):
+    def post_json(self, url, json: JSONSerializable):
         return requests.post(  # noqa: DUO123
             self.addr + url, json=json, headers=self.get_auth_header(), verify=False
         )
 
-    def patch(self, url, data: Dict):
+    def patch(self, url, data: JSONSerializable):
         return requests.patch(  # noqa: DUO123
             self.addr + url, data=data, headers=self.get_auth_header(), verify=False
         )
