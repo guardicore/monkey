@@ -101,9 +101,10 @@ class AuthenticationFacade:
         :param user: The user to refresh the token for
         :return: The new token and the time when it will expire (in Unix time)
         """
-        self.revoke_all_tokens_for_user(user)
+        with self._user_lock:
+            self.revoke_all_tokens_for_user(user)
 
-        return Token(user.get_auth_token()), self._token_ttl_sec
+            return Token(user.get_auth_token()), self._token_ttl_sec
 
     def authorize_otp(self, otp: OTP) -> bool:
         # SECURITY: This method must not run concurrently, otherwise there could be TOCTOU errors,
