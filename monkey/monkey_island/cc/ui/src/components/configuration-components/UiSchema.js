@@ -55,7 +55,7 @@ export default function UiSchema(props) {
               'ui:classNames': 'config-template-no-header'
             }
           },
-          info_box_scan_my_networks: {
+          warning_box_scan_my_networks: {
             'ui:field': WarningBox
           },
           subnets: {
