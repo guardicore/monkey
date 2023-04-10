@@ -80,7 +80,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   componentDidMount = () => {
-    this.authFetch(SCHEMA_URL).then(res => res.json())
+    this.authFetch(SCHEMA_URL, {}, true).then(res => res.json())
       .then((schema) => {
         RefParser.dereference(schema).then((schema) => {
           schema = mergeAllOf(schema);
@@ -88,7 +88,7 @@ class ConfigurePageComponent extends AuthComponent {
           this.setState({schema: schema});
     })});
 
-    this.authFetch(CONFIG_URL).then(res => res.json())
+    this.authFetch(CONFIG_URL, {}, true).then(res => res.json())
       .then(monkeyConfig => {
         let sections = [];
         monkeyConfig = reformatConfig(monkeyConfig);
@@ -126,7 +126,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   updateCredentials = () => {
-    this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL)
+    this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {}, true)
       .then(res => res.json())
       .then(credentials => {
         credentials = formatCredentialsForForm(credentials);
@@ -138,7 +138,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   updateConfig = () => {
     this.updateCredentials();
-    this.authFetch(CONFIG_URL)
+    this.authFetch(CONFIG_URL, {}, true)
       .then(res => res.json())
       .then(data => {
         data = reformatConfig(data);
@@ -264,7 +264,9 @@ class ConfigurePageComponent extends AuthComponent {
     this.authFetch(RESET_URL,
       {
         method: 'POST'
-      })
+      },
+      true
+    )
       .then(res => res.json())
       .then(() => {
           this.setState({
@@ -274,7 +276,7 @@ class ConfigurePageComponent extends AuthComponent {
           this.props.onStatusChange();
         }
       )
-      .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'}));
+      .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'}, true));
   };
 
   exportConfig = async () => {
@@ -291,7 +293,9 @@ class ConfigurePageComponent extends AuthComponent {
           method: 'PUT',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(config)
-        })
+        },
+        true
+      )
         .then(res => {
           if (!res.ok) {
             console.log(`bad configuration submited ${res.status}`);
@@ -313,7 +317,9 @@ class ConfigurePageComponent extends AuthComponent {
           method: 'PUT',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(formatCredentialsForIsland(this.state.credentials))
-        })
+        },
+        true
+      )
         .then(res => {
           if (!res.ok) {
             throw Error()

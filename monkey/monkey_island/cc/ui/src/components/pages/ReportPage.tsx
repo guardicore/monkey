@@ -35,12 +35,12 @@ function ReportPage(props: Props) {
   function getReportFromServer() {
     doesAnyAgentExist().then(anyAgentExists => {
       if (anyAgentExists) {
-          authComponent.authFetch('/api/report/security')
+          authComponent.authFetch('/api/report/security', {}, true)
           .then(res => res.json())
           .then(res => {
             setSecurityReport(res);
           });
-          authComponent.authFetch('/api/report/ransomware')
+          authComponent.authFetch('/api/report/ransomware', {}, true)
           .then(res => res.json())
           .then(res => {
             setRansomwareReport(res);

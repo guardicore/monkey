@@ -95,7 +95,7 @@ class AppComponent extends AuthComponent {
           }
 
           // update status: report generation
-          this.authFetch('/api/report-generation-status')
+          this.authFetch('/api/report-generation-status', {}, true)
             .then(res => res.json())
             .then(res => {
               this.setState({

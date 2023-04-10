@@ -23,14 +23,16 @@ export enum APIEndpoint {
 }
 
 class IslandHttpClient extends AuthComponent {
-  put(endpoint: string, contents: any): Promise<Response> {
+  put(endpoint: string, contents: any, refreshToken: boolean = false): Promise<Response> {
     let status = null;
     return this.authFetch(endpoint,
       {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(contents)
-      })
+      },
+      refreshToken
+    )
       .then(res => {
         status = res.status;
         return res
@@ -38,14 +40,14 @@ class IslandHttpClient extends AuthComponent {
       .then(res => new Response(res, status));
   }
 
-  get(endpoint: APIEndpoint, args: Record<string, any>={}): Promise<Response> {
+  get(endpoint: APIEndpoint, args: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
     let status = null;
     let params = new URLSearchParams(args);
     let url = String(endpoint);
     if(params.toString() !== ''){
       url = endpoint + '?' + params;
     }
-    return this.authFetch(url)
+    return this.authFetch(url, {}, refreshToken)
       .then(res => {
         status = res.status;
         return res.json()

@@ -48,7 +48,7 @@ const getContents = (props) => {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({type: 'aws', instances: instances, island_ip: selectedIp})
-      }).then(res => res.json())
+      }, true).then(res => res.json())
       .then(res => {
         let result = res['result'];
 

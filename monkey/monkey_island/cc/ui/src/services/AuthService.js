@@ -41,8 +41,10 @@ export default class AuthService {
       });
   }
 
-  authFetch = (url, options) => {
-    if(this._shouldRefreshToken()){
+  authFetch = (url, options, refreshToken = false) => {
+    // refreshToken is a mechanism to keep unneeded calls
+    // to the refresh authentication token endpoint
+    if(this._shouldRefreshToken() && refreshToken){
       this._refreshAuthToken();
     }
     return this._authFetch(url, options);

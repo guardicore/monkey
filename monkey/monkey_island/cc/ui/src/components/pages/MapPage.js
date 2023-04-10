@@ -45,7 +45,9 @@ class MapPageComponent extends AuthComponent {
         headers: { 'Content-Type': 'application/json' },
         // Python uses floating point seconds, Date.now uses milliseconds, so convert
         body: JSON.stringify({ timestamp: Date.now() / 1000.0 })
-      })
+      },
+      true
+    )
       .then(() => { this.setState({ killPressed: true }) });
   };
 

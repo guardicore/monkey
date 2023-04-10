@@ -106,7 +106,8 @@ const ConfigImportModal = (props: Props) => {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(credentials)
-      }
+      },
+      true
     ).then(res => {
       if (res.ok) {
         resetState();
@@ -124,7 +125,8 @@ const ConfigImportModal = (props: Props) => {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(configContents)
-      }
+      },
+      true
     ).then(res => {
       if (res.ok) {
         resetState();

@@ -19,7 +19,7 @@ export function didAllAgentsShutdown() {
 }
 
 export function getCollectionObject(collectionEndpoint: APIEndpoint, key: string) {
-  return IslandHttpClient.get(collectionEndpoint)
+  return IslandHttpClient.get(collectionEndpoint, {}, true)
     .then(res => {
       return arrayToObject(res.body, key);
     });
@@ -30,14 +30,14 @@ export function arrayToObject(array: object[], key: string): Record<string, any>
 }
 
 export function getAllAgents() {
-  return IslandHttpClient.get(APIEndpoint.agents)
+  return IslandHttpClient.get(APIEndpoint.agents, {}, true)
     .then(res => {
       return res.body;
     });
 }
 
 export function getAllMachines() {
-  return IslandHttpClient.get(APIEndpoint.machines)
+  return IslandHttpClient.get(APIEndpoint.machines, {}, true)
     .then(res => {
       return res.body;
     });
