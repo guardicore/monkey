@@ -62,8 +62,6 @@ from infection_monkey.exploit.zerologon import ZerologonExploiter
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import (
-    AbstractIslandAPIClientFactory,
-    HTTPIslandAPIClient,
     HTTPIslandAPIClientFactory,
     IIslandAPIClient,
     IslandAPIAuthenticationError,
@@ -118,9 +116,6 @@ class InfectionMonkey:
         logger.info(f"Process ID: {os.getpid()}")
 
         context = multiprocessing.get_context("spawn")
-        # Register a proxy for HTTPIslandAPIClient. The manager will create and own the instance
-        SyncManager.register("HTTPIslandAPIClient", HTTPIslandAPIClient)
-        self._manager = context.Manager()
 
         self._opts = self._get_arguments(args)
         self._otp = self._get_otp()
@@ -136,6 +131,15 @@ class InfectionMonkey:
             plugin_event_queue, self._agent_event_queue
         )
         self._agent_event_publisher = QueuedAgentEventPublisher(plugin_event_queue)
+
+        http_island_api_client_factory = HTTPIslandAPIClientFactory(
+            self._agent_event_serializer_registry, self._agent_id
+        )
+        # Register a proxy for HTTPIslandAPIClient. The manager will create and own the instance
+        SyncManager.register(
+            "HTTPIslandAPIClient", http_island_api_client_factory.create_island_api_client
+        )
+        self._manager = context.Manager()
 
         self._plugin_dir = (
             Path(gettempdir())
@@ -197,13 +201,7 @@ class InfectionMonkey:
             self._opts.servers,
         )
 
-        http_island_api_client_factory = HTTPIslandAPIClientFactory(
-            self._agent_event_serializer_registry, self._agent_id, self._manager
-        )
-
-        server, island_api_client = self._select_server(
-            server_clients, http_island_api_client_factory
-        )
+        server, island_api_client = self._select_server(server_clients, self._manager)
 
         if server and island_api_client:
             logger.info(f"Using {server} to communicate with the Island")
@@ -222,14 +220,12 @@ class InfectionMonkey:
         return server, island_api_client
 
     def _select_server(
-        self,
-        island_api_statuses: IslandAPISearchResults,
-        island_api_client_factory: AbstractIslandAPIClientFactory,
+        self, island_api_statuses: IslandAPISearchResults, manager: SyncManager
     ) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
         for server in self._opts.servers:
             if island_api_statuses[server]:
                 try:
-                    island_api_client = island_api_client_factory.create_island_api_client(server)
+                    island_api_client = manager.HTTPIslandAPIClient(server)
                     island_api_client.login(self._otp)
 
                     return server, island_api_client
