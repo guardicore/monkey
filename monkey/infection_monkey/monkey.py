@@ -118,10 +118,9 @@ class InfectionMonkey:
         logger.info(f"Process ID: {os.getpid()}")
 
         context = multiprocessing.get_context("spawn")
-        # Register a proxy for IslandAPIClient. The referent will be the agent's instance
+        # Register a proxy for HTTPIslandAPIClient. The manager will create and own the instance
         SyncManager.register("HTTPIslandAPIClient", HTTPIslandAPIClient)
-        self._manager = SyncManager(ctx=context)
-        self._manager.start()
+        self._manager = context.Manager()
 
         self._opts = self._get_arguments(args)
         self._otp = self._get_otp()
