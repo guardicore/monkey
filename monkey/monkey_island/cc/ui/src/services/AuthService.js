@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 
 export function getErrors(errors) {
@@ -124,12 +123,12 @@ export default class AuthService {
     })
   };
 
-  _getAuthTokenFromResponse = (response) => {
-    return _.get(response, 'response.user.'+this.TOKEN_NAME_IN_RESPONSE, undefined);
+  _getAuthTokenFromResponse = (responseObject) => {
+    return responseObject?.response?.user?.[this.TOKEN_NAME_IN_RESPONSE];
   }
 
-  _getAuthTokenExpirationTimeFromResponse = (response) => {
-    return _.get(response, 'response.user.'+this.TOKEN_TTL_NAME_IN_RESPONSE, undefined);
+  _getAuthTokenExpirationTimeFromResponse = (responseObject) => {
+    return responseObject?.response?.user?.[this.TOKEN_TTL_NAME_IN_RESPONSE];
   }
 
   _authFetch = (url, options = {}) => {
