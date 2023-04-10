@@ -12,6 +12,7 @@ from infection_monkey.island_api_client import (
     IslandAPIError,
     IslandAPIRequestError,
     IslandAPIRequestFailedError,
+    IslandAPIRequestLimitExceededError,
     IslandAPITimeoutError,
 )
 from infection_monkey.island_api_client.http_client import RETRIES, HTTPClient
@@ -69,6 +70,7 @@ def test_http_client__unsupported_protocol(server):
         (401, IslandAPIAuthenticationError),
         (403, IslandAPIAuthenticationError),
         (400, IslandAPIRequestError),
+        (429, IslandAPIRequestLimitExceededError),
         (501, IslandAPIRequestFailedError),
     ],
 )

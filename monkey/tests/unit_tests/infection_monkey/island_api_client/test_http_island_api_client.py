@@ -198,22 +198,23 @@ def test_refresh_token_retries_on_429(freezer):
     refreshed_token = "refreshed_auth_token"
 
     def mock_post_refresh_token(*args, **kwargs):
+        mock_post_refresh_token.call_count += 1
+
+        if mock_post_refresh_token.call_count <= 1:
+            raise IslandAPIRequestLimitExceededError("Too many requests")
+
         response = requests.Response()
-        if mock_post_refresh_token.call_count < 1:
-            response.status_code = HTTPStatus.TOO_MANY_REQUESTS
-        else:
-            response.status_code = HTTPStatus.OK
-            response.json = MagicMock()
-            response.json.return_value = {
-                "response": {
-                    "user": {
-                        ACCESS_TOKEN_KEY_NAME: refreshed_token,
-                        TOKEN_TTL_KEY_NAME: TOKEN_TTL_SEC,
-                    }
+        response.status_code = HTTPStatus.OK
+        response.json = MagicMock()
+        response.json.return_value = {
+            "response": {
+                "user": {
+                    ACCESS_TOKEN_KEY_NAME: refreshed_token,
+                    TOKEN_TTL_KEY_NAME: TOKEN_TTL_SEC,
                 }
             }
+        }
 
-        mock_post_refresh_token.call_count += 1
         return response
 
     mock_post_refresh_token.call_count = 0
@@ -310,17 +311,6 @@ def test_island_api_client_get_otp__incorrect_response():
     api_client = _build_client_with_json_response({"otpP": expected_otp})
 
     with pytest.raises(IslandAPIResponseParsingError):
-        api_client.get_otp()
-
-
-def test_island_api_client_get_otp__raises_request_limit_exceeded():
-    response_stub = MagicMock()
-    response_stub.status_code = HTTPStatus.TOO_MANY_REQUESTS
-    http_client_stub = MagicMock()
-    http_client_stub.get.return_value = response_stub
-    api_client = build_api_client(http_client_stub)
-
-    with pytest.raises(IslandAPIRequestLimitExceededError):
         api_client.get_otp()
 
 
