@@ -49,9 +49,6 @@ from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
 from monkey_island.cc.services.authentication_service.flask_resources.agent_otp import (
     MAX_OTP_REQUESTS_PER_SECOND,
 )
-from monkey_island.cc.services.authentication_service.flask_resources.agent_otp_login import (
-    MAX_OTP_LOGIN_REQUESTS_PER_SECOND,
-)
 
 DEFAULT_TIMEOUT_SECONDS = 2 * 60 + 30
 MACHINE_BOOTUP_WAIT_SECONDS = 30
@@ -181,13 +178,6 @@ AGENT_OTP_LOGIN_ENDPOINT = "/api/agent-otp-login"
     "request_callback, successful_request_status, max_requests_per_second",
     [
         (lambda mir: mir.get(GET_AGENT_OTP_ENDPOINT), HTTPStatus.OK, MAX_OTP_REQUESTS_PER_SECOND),
-        (
-            lambda mir: mir.post_json(
-                AGENT_OTP_LOGIN_ENDPOINT, json={"agent_id": str(uuid4()), "otp": "12345"}
-            ),
-            HTTPStatus.UNAUTHORIZED,
-            MAX_OTP_LOGIN_REQUESTS_PER_SECOND,
-        ),
     ],
 )
 def test_rate_limit(
