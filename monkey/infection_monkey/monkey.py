@@ -8,6 +8,7 @@ import sys
 import time
 from functools import partial
 from itertools import chain
+from multiprocessing.managers import SyncManager
 from pathlib import Path, WindowsPath
 from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
@@ -62,6 +63,7 @@ from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import (
     AbstractIslandAPIClientFactory,
+    HTTPIslandAPIClient,
     HTTPIslandAPIClientFactory,
     IIslandAPIClient,
     IslandAPIAuthenticationError,
@@ -116,7 +118,10 @@ class InfectionMonkey:
         logger.info(f"Process ID: {os.getpid()}")
 
         context = multiprocessing.get_context("spawn")
-        self._manager = context.Manager()
+        # Register a proxy for IslandAPIClient. The referent will be the agent's instance
+        SyncManager.register("HTTPIslandAPIClient", HTTPIslandAPIClient)
+        self._manager = SyncManager(ctx=context)
+        self._manager.start()
 
         self._opts = self._get_arguments(args)
         self._otp = self._get_otp()
@@ -194,7 +199,7 @@ class InfectionMonkey:
         )
 
         http_island_api_client_factory = HTTPIslandAPIClientFactory(
-            self._agent_event_serializer_registry, self._agent_id
+            self._agent_event_serializer_registry, self._agent_id, self._manager
         )
 
         server, island_api_client = self._select_server(
