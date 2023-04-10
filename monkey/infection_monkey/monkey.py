@@ -225,7 +225,9 @@ class InfectionMonkey:
         for server in self._opts.servers:
             if island_api_statuses[server]:
                 try:
-                    island_api_client = manager.HTTPIslandAPIClient(server)
+                    island_api_client = manager.HTTPIslandAPIClient(  # type: ignore[attr-defined]
+                        server
+                    )
                     island_api_client.login(self._otp)
 
                     return server, island_api_client
