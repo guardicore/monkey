@@ -34,5 +34,5 @@ def register_resources(
     api.add_resource(
         RefreshAuthenticationToken,
         *RefreshAuthenticationToken.urls,
-        resource_class_args=(authentication_facade,),
+        resource_class_args=(authentication_facade, limiter),
     )
