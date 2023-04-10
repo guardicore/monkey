@@ -22,17 +22,17 @@ def register_resources(
     api.add_resource(
         RegistrationStatus, *RegistrationStatus.urls, resource_class_args=(authentication_facade,)
     )
-    api.add_resource(Login, *Login.urls, resource_class_args=(authentication_facade,))
+    api.add_resource(Login, *Login.urls, resource_class_args=(authentication_facade, limiter))
     api.add_resource(Logout, *Logout.urls, resource_class_args=(authentication_facade,))
 
     api.add_resource(AgentOTP, *AgentOTP.urls, resource_class_args=(otp_generator, limiter))
     api.add_resource(
         AgentOTPLogin,
         *AgentOTPLogin.urls,
-        resource_class_args=(authentication_facade,),
+        resource_class_args=(authentication_facade, limiter),
     )
     api.add_resource(
         RefreshAuthenticationToken,
         *RefreshAuthenticationToken.urls,
-        resource_class_args=(authentication_facade,),
+        resource_class_args=(authentication_facade, limiter),
     )

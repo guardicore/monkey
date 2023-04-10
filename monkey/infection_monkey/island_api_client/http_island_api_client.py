@@ -1,8 +1,8 @@
 import functools
 import json
 import logging
-from http import HTTPStatus
 from pprint import pformat
+from time import sleep
 from typing import Any, Dict, List, Sequence
 
 import requests
@@ -110,8 +110,14 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_response_parsing_errors
     def _refresh_token(self):
-        response = self._http_client.post("/refresh-authentication-token", {})
-        self._update_token_from_response(response)
+        for _ in range(6):
+            try:
+                response = self._http_client.post("/refresh-authentication-token", {})
+                self._update_token_from_response(response)
+                break
+            except IslandAPIRequestLimitExceededError:
+                sleep(0.5)
+                continue
 
     @handle_authentication_token_expiration
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
@@ -123,8 +129,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_authentication_token_expiration
     def get_otp(self) -> str:
         response = self._http_client.get("/agent-otp")
-        if response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
-            raise IslandAPIRequestLimitExceededError("Too many requests to get OTP.")
         return response.json()["otp"]
 
     @handle_response_parsing_errors

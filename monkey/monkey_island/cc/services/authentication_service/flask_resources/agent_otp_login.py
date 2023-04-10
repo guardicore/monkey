@@ -1,8 +1,11 @@
 import string
 from http import HTTPStatus
+from threading import Lock
 from typing import Tuple
 
 from flask import make_response, request
+from flask_limiter import Limiter, RateLimitExceeded
+from flask_limiter.util import get_remote_address
 
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from common.types import OTP, AgentID
@@ -12,6 +15,11 @@ from monkey_island.cc.services.authentication_service import AccountRole
 
 from ..authentication_facade import AuthenticationFacade
 from .utils import include_auth_token
+
+# 100 requests per second is arbitrary, but is expected to be a good-enough limit. Remember that,
+# because of the agent's relay/tunnel capability, many requests could be funneled through the same
+# agent's relay, making them appear to come from the same IP.
+MAX_OTP_LOGIN_REQUESTS_PER_SECOND = 100
 
 
 class ArgumentParsingException(Exception):
@@ -26,8 +34,21 @@ class AgentOTPLogin(AbstractResource):
     """
 
     urls = ["/api/agent-otp-login"]
+    lock = Lock()
+    limiter = None
 
-    def __init__(self, authentication_facade: AuthenticationFacade):
+    def __init__(self, authentication_facade: AuthenticationFacade, limiter: Limiter):
+        # Since flask generates a new instance of this class for each request,
+        # we need to ensure that a single instance of the limiter is used. Hence
+        # the class variable.
+        with AgentOTPLogin.lock:
+            if AgentOTPLogin.limiter is None:
+                AgentOTPLogin.limiter = limiter.limit(
+                    f"{MAX_OTP_LOGIN_REQUESTS_PER_SECOND}/second",
+                    key_func=get_remote_address,
+                    per_method=True,
+                )
+
         self._authentication_facade = authentication_facade
 
     # Secured via OTP, not via authentication token.
@@ -39,6 +60,16 @@ class AgentOTPLogin(AbstractResource):
 
         :return: Authentication token in the response body
         """
+        if AgentOTPLogin.limiter is None:
+            raise RuntimeError("limiter has not been initialized")
+
+        try:
+            with AgentOTPLogin.limiter:
+                return self._handle_otp_login_request()
+        except RateLimitExceeded:
+            return make_response("Rate limit exceeded", HTTPStatus.TOO_MANY_REQUESTS)
+
+    def _handle_otp_login_request(self):
         try:
             agent_id, otp = self._get_request_arguments(request.json)
         except ArgumentParsingException as err:

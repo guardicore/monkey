@@ -32,7 +32,9 @@ class AgentOTP(AbstractResource):
         # the class variable.
         #
         # TODO: The limit is currently applied per IP address. We will want to change
-        # it to per-user once we require authentication for this endpoint.
+        # it to per-user, per-IP once we require authentication for this endpoint.
+        # Note that we do not want to limit to just per-user, otherwise this endpoint could be used
+        # to enumerate users/tokens.
         with AgentOTP.lock:
             if AgentOTP.limiter is None:
                 AgentOTP.limiter = limiter.limit(

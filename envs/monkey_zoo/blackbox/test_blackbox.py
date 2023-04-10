@@ -171,24 +171,37 @@ def test_logout_invalidates_all_tokens(island):
     assert resp.status_code == HTTPStatus.UNAUTHORIZED
 
 
-def test_agent_otp_rate_limit(monkey_island_requests):
+AGENT_OTP_LOGIN_ENDPOINT = "/api/agent-otp-login"
+
+
+@pytest.mark.parametrize(
+    "request_callback, successful_request_status, max_requests_per_second",
+    [
+        (lambda mir: mir.get(GET_AGENT_OTP_ENDPOINT), HTTPStatus.OK, MAX_OTP_REQUESTS_PER_SECOND),
+    ],
+)
+def test_rate_limit(
+    monkey_island_requests, request_callback, successful_request_status, max_requests_per_second
+):
     monkey_island_requests.login()
     threads = []
     response_codes = []
 
-    def make_request():
-        response = monkey_island_requests.get(GET_AGENT_OTP_ENDPOINT)
+    def make_request(monkey_island_requests, request_callback):
+        response = request_callback(monkey_island_requests)
         response_codes.append(response.status_code)
 
-    for _ in range(0, MAX_OTP_REQUESTS_PER_SECOND + 1):
-        t = Thread(target=make_request, daemon=True)
+    for _ in range(0, max_requests_per_second + 1):
+        t = Thread(
+            target=make_request, args=(monkey_island_requests, request_callback), daemon=True
+        )
         t.start()
         threads.append(t)
 
     for t in threads:
         t.join()
 
-    assert response_codes.count(HTTPStatus.OK) == MAX_OTP_REQUESTS_PER_SECOND
+    assert response_codes.count(successful_request_status) == max_requests_per_second
     assert response_codes.count(HTTPStatus.TOO_MANY_REQUESTS) == 1
 
 

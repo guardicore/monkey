@@ -194,6 +194,49 @@ def test_refresh_token_before_expiration(freezer):
     )
 
 
+def test_refresh_token_retries_on_429(freezer):
+    refreshed_token = "refreshed_auth_token"
+
+    def mock_post_refresh_token(*args, **kwargs):
+        mock_post_refresh_token.call_count += 1
+
+        if mock_post_refresh_token.call_count <= 1:
+            raise IslandAPIRequestLimitExceededError("Too many requests")
+
+        response = requests.Response()
+        response.status_code = HTTPStatus.OK
+        response.json = MagicMock()
+        response.json.return_value = {
+            "response": {
+                "user": {
+                    ACCESS_TOKEN_KEY_NAME: refreshed_token,
+                    TOKEN_TTL_KEY_NAME: TOKEN_TTL_SEC,
+                }
+            }
+        }
+
+        return response
+
+    mock_post_refresh_token.call_count = 0
+
+    freezer.move_to(datetime.utcfromtimestamp(0).strftime("%Y-%m-%d %H:%M:%S"))
+    http_client_stub = MagicMock()
+    http_client_stub.get.return_value.content = b"abc"
+    patch_login_with_valid_response(http_client_stub)
+    api_client = build_api_client(http_client_stub)
+
+    api_client.login(TEST_OTP)
+    http_client_stub.post.side_effect = mock_post_refresh_token
+
+    freezer.move_to(datetime.utcfromtimestamp(TOKEN_TTL_SEC * 0.99).strftime("%Y-%m-%d %H:%M:%S"))
+    api_client.get_agent_binary(OperatingSystem.LINUX)
+
+    http_client_stub.post.assert_called_with("/refresh-authentication-token", {})
+    assert (
+        http_client_stub.additional_headers[HTTPIslandAPIClient.TOKEN_HEADER_KEY] == refreshed_token
+    )
+
+
 def test_island_api_client__get_agent_binary():
     fake_binary = b"agent-binary"
     os = OperatingSystem.LINUX
@@ -268,17 +311,6 @@ def test_island_api_client_get_otp__incorrect_response():
     api_client = _build_client_with_json_response({"otpP": expected_otp})
 
     with pytest.raises(IslandAPIResponseParsingError):
-        api_client.get_otp()
-
-
-def test_island_api_client_get_otp__raises_request_limit_exceeded():
-    response_stub = MagicMock()
-    response_stub.status_code = HTTPStatus.TOO_MANY_REQUESTS
-    http_client_stub = MagicMock()
-    http_client_stub.get.return_value = response_stub
-    api_client = build_api_client(http_client_stub)
-
-    with pytest.raises(IslandAPIRequestLimitExceededError):
         api_client.get_otp()
 
 

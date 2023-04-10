@@ -17,6 +17,7 @@ from .island_api_client_errors import (
     IslandAPIError,
     IslandAPIRequestError,
     IslandAPIRequestFailedError,
+    IslandAPIRequestLimitExceededError,
     IslandAPITimeoutError,
 )
 
@@ -47,6 +48,8 @@ def handle_island_errors(fn):
                 HTTPStatus.FORBIDDEN.value,
             ]:
                 raise IslandAPIAuthenticationError(err)
+            if err.response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
+                raise IslandAPIRequestLimitExceededError(err)
             if 400 <= err.response.status_code < 500:
                 raise IslandAPIRequestError(err)
             if 500 <= err.response.status_code < 600:
