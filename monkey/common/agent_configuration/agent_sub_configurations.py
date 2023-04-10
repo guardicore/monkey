@@ -51,6 +51,11 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     scan_my_networks: bool = Field(title="Scan Agent's networks", default=False)
+    warning_box_scan_my_networks: str = Field(  # needed so the UI can show this text
+        default="",
+        info="If the Agent runs on a machine that has a publicly-facing network interface, "
+        "this setting could cause scanning and exploitation of systems outside your organization.",
+    )
     subnets: Tuple[str, ...] = Field(
         title="Scan target list",
         description="List of targets the Monkey will try to scan. Targets can be "
