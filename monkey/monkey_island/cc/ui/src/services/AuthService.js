@@ -50,7 +50,7 @@ export default class AuthService {
   };
 
   _refreshAuthToken = () => {
-    this._fetchNewTokenTime()
+    this._fetchRefreshedAuthenticationToken()
       .then(response => response.json().then(data => ({status: response.status, body: data})))
       .then(object => {
         if(object.status === 200) {
@@ -65,7 +65,7 @@ export default class AuthService {
       })
   }
 
-  _fetchNewTokenTime = () => {
+  _fetchRefreshedAuthenticationToken = () => {
     const options = {
       method: 'POST',
       // https://stackoverflow.com/questions/11508463/javascript-set-object-key-by-variable
