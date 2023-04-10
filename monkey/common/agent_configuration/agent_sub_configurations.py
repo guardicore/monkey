@@ -39,17 +39,30 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
     Configuration of network targets to scan and exploit
 
     Attributes:
-        :param blocked_ips: IP's that won't be scanned
-                            Example: ("1.1.1.1", "2.2.2.2")
-        :param inaccessible_subnets: Subnet ranges that shouldn't be accessible for the agent
-                                     Example: ("1.1.1.1", "2.2.2.2/24", "myserver")
         :param scan_my_networks: If true the Agent will scan networks it belongs to
          in addition to the provided subnet ranges
         :param subnets: Subnet ranges to scan
                         Example: ("192.168.1.1-192.168.2.255", "3.3.3.3", "2.2.2.2/24",
                                   "myHostname")
+        :param blocked_ips: IP's that won't be scanned
+                            Example: ("1.1.1.1", "2.2.2.2")
+        :param inaccessible_subnets: Subnet ranges that shouldn't be accessible for the agent
+                                     Example: ("1.1.1.1", "2.2.2.2/24", "myserver")
     """
 
+    scan_my_networks: bool = Field(title="Scan Agent's networks", default=False)
+    subnets: Tuple[str, ...] = Field(
+        title="Scan target list",
+        description="List of targets the Monkey will try to scan. Targets can be "
+        "IPs, subnets or hosts. "
+        "Examples:\n"
+        '\tTarget a specific IP: "192.168.0.1"\n'
+        "\tTarget a subnet using a network range: "
+        '"192.168.0.5-192.168.0.20"\n'
+        '\tTarget a subnet using an IP mask: "192.168.0.5/24"\n'
+        '\tTarget a specific host: "printer.example"',
+        default=[],
+    )
     blocked_ips: Tuple[str, ...] = Field(
         title="Blocked IPs", description="List of IPs that the monkey will not scan.", default=[]
     )
@@ -74,19 +87,11 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
         "ping sweep.",
         default=[],
     )
-    scan_my_networks: bool = Field(title="Scan Agent's networks", default=False)
-    subnets: Tuple[str, ...] = Field(
-        title="Scan target list",
-        description="List of targets the Monkey will try to scan. Targets can be "
-        "IPs, subnets or hosts. "
-        "Examples:\n"
-        '\tTarget a specific IP: "192.168.0.1"\n'
-        "\tTarget a subnet using a network range: "
-        '"192.168.0.5-192.168.0.20"\n'
-        '\tTarget a subnet using an IP mask: "192.168.0.5/24"\n'
-        '\tTarget a specific host: "printer.example"',
-        default=[],
-    )
+
+    @validator("subnets", each_item=True)
+    def subnets_valid(cls, subnet_range):
+        validate_subnet_range(subnet_range)
+        return subnet_range
 
     @validator("blocked_ips", each_item=True)
     def blocked_ips_valid(cls, ip):
@@ -95,11 +100,6 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
 
     @validator("inaccessible_subnets", each_item=True)
     def inaccessible_subnets_valid(cls, subnet_range):
-        validate_subnet_range(subnet_range)
-        return subnet_range
-
-    @validator("subnets", each_item=True)
-    def subnets_valid(cls, subnet_range):
         validate_subnet_range(subnet_range)
         return subnet_range
 
@@ -124,19 +124,19 @@ class TCPScanConfiguration(MutableInfectionMonkeyBaseModel):
     A configuration for TCP scanning
 
     Attributes:
-        :param timeout: Maximum time in seconds to wait for a response from the target
         :param ports: Ports to scan
+        :param timeout: Maximum time in seconds to wait for a response from the target
     """
 
-    timeout: PositiveFloat = Field(
-        title="TCP scan timeout",
-        description="Maximum time to wait for TCP response in seconds",
-        default=3.0,
-    )
     ports: Tuple[NetworkPort, ...] = Field(
         title="TCP target ports",
         description="List of TCP ports the monkey will check whether they're open",
         default=[22, 2222, 445, 135, 389, 80, 8080, 443, 8008, 3306, 7001, 8088, 5885, 5986],
+    )
+    timeout: PositiveFloat = Field(
+        title="TCP scan timeout",
+        description="Maximum time to wait for TCP response in seconds",
+        default=3.0,
     )
 
 
@@ -145,23 +145,12 @@ class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
     A configuration for network scanning
 
     Attributes:
-        :param tcp: Configuration for TCP scanning
-        :param icmp: Configuration for ICMP scanning
-        :param fingerprinters: Configuration for fingerprinters to run
         :param targets: Configuration for targets to scan
+        :param icmp: Configuration for ICMP scanning
+        :param tcp: Configuration for TCP scanning
+        :param fingerprinters: Configuration for fingerprinters to run
     """
 
-    tcp: TCPScanConfiguration = Field(
-        title="TCP scanner", description="Configure TCP scanning options"
-    )
-    icmp: ICMPScanConfiguration = Field(
-        title="Ping scanner", description="Configure ICMP scanning options"
-    )
-    fingerprinters: Tuple[PluginConfiguration, ...] = Field(
-        title="Fingerprinters",
-        description="Fingerprint modules collect info about external "
-        "services that Infection Monkey scans.",
-    )
     targets: ScanTargetConfiguration = Field(
         title="Network",
         description='If "Scan Agent\'s networks" is checked, the Monkey scans for machines '
@@ -169,6 +158,17 @@ class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
         "on.\nAdditionally, the Monkey scans "
         'machines according to "Scan target list" and skips machines in '
         '"Blocked IPs".',
+    )
+    icmp: ICMPScanConfiguration = Field(
+        title="Ping scanner", description="Configure ICMP scanning options"
+    )
+    tcp: TCPScanConfiguration = Field(
+        title="TCP scanner", description="Configure TCP scanning options"
+    )
+    fingerprinters: Tuple[PluginConfiguration, ...] = Field(
+        title="Fingerprinters",
+        description="Fingerprint modules collect info about external "
+        "services that Infection Monkey scans.",
     )
 
 
@@ -192,19 +192,19 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     A configuration for exploitation
 
     Attributes:
-        :param options: Exploitation options shared by all exploiters
         :param exploiters: Configuration enabled exploiters
+        :param options: Exploitation options shared by all exploiters
     """
 
-    options: ExploitationOptionsConfiguration = Field(
-        title="Exploiters options",
-        description="Configure exploitation options shared by all exploiters",
-    )
     exploiters: Dict[str, Dict] = Field(
         title="Enabled exploiters",
         description="Click on an exploiter to get more information"
         " about it. \n \u26A0 Note that using unsafe exploits may"
         " cause crashes of the exploited machine/service.",
+    )
+    options: ExploitationOptionsConfiguration = Field(
+        title="Exploiters options",
+        description="Configure exploitation options shared by all exploiters",
     )
 
 
