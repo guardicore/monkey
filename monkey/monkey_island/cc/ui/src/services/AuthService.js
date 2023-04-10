@@ -11,14 +11,19 @@ export function getErrors(errors) {
   return <ul>{errorArray}</ul>;
 }
 
+
 export default class AuthService {
   LOGIN_ENDPOINT = '/api/login';
   LOGOUT_ENDPOINT = '/api/logout';
   REGISTRATION_API_ENDPOINT = '/api/register';
   REGISTRATION_STATUS_API_ENDPOINT = '/api/registration-status';
+  REFRESH_AUTH_TOKEN_ENDPOINT = '/api/refresh-authentication-token';
 
   TOKEN_NAME_IN_LOCALSTORAGE = 'authentication_token';
   TOKEN_NAME_IN_RESPONSE = 'authentication_token';
+
+  TOKEN_TTL_NAME_IN_RESPONSE = 'token_ttl_sec';
+  TOKEN_TTL_NAME_IN_LOCALSTORAGE = 'token_ttl_sec';
 
   login = (username, password) => {
     return this._login(username, password);
@@ -29,15 +34,48 @@ export default class AuthService {
       .then(response => response.json())
       .then(response => {
         if(response.meta.code === 200){
-          this._removeToken();
+          this._removeAuthToken();
+          this._removeAuthTokenExpirationTime();
         }
         return response;
       });
   }
 
   authFetch = (url, options) => {
+    if(this._shouldRefreshToken()){
+      this._refreshAuthToken();
+    }
     return this._authFetch(url, options);
   };
+
+  _refreshAuthToken = () => {
+    this._fetchNewTokenTime()
+      .then(response => response.json().then(data => ({status: response.status, body: data})))
+      .then(object => {
+        if(object.status === 200) {
+          let authToken = this._getAuthTokenFromResponse(object.body);
+          this._setAuthToken(authToken);
+          const tokenExpirationTime = this._getAuthTokenExpirationTimeFromResponse(object.body);
+          this._setAuthTokenExpirationTime(tokenExpirationTime);
+        }  else if (object.status === 401) {
+          this._removeAuthToken();
+          this._removeAuthTokenExpirationTime();
+        }
+      })
+  }
+
+  _fetchNewTokenTime = () => {
+    const options = {
+      method: 'POST',
+      // https://stackoverflow.com/questions/11508463/javascript-set-object-key-by-variable
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authentication-Token': this._getAuthToken()
+      }
+    }
+    return fetch(this.REFRESH_AUTH_TOKEN_ENDPOINT, options);
+  }
 
   _login = (username, password) => {
     return this._authFetch(this.LOGIN_ENDPOINT, {
@@ -48,12 +86,15 @@ export default class AuthService {
       })
     }).then(response => response.json())
       .then(res => {
-        let token = this._getTokenFromResponse(res);
-        if (token !== undefined) {
-          this._setToken(token);
+        let token = this._getAuthTokenFromResponse(res);
+        if (token){
+          this._setAuthToken(token);
+          const tokenExpirationTime = this._getAuthTokenExpirationTimeFromResponse(res);
+          this._setAuthTokenExpirationTime(tokenExpirationTime);
           return {result: true};
         } else {
-          this._removeToken();
+          this._removeAuthToken();
+          this._removeAuthTokenExpirationTime();
           return {result: false, errors: res['response']['errors']};
         }
       })
@@ -81,8 +122,12 @@ export default class AuthService {
     })
   };
 
-  _getTokenFromResponse= (response) => {
+  _getAuthTokenFromResponse = (response) => {
     return _.get(response, 'response.user.'+this.TOKEN_NAME_IN_RESPONSE, undefined);
+  }
+
+  _getAuthTokenExpirationTimeFromResponse = (response) => {
+    return _.get(response, 'response.user.'+this.TOKEN_TTL_NAME_IN_RESPONSE, undefined);
   }
 
   _authFetch = (url, options = {}) => {
@@ -92,7 +137,7 @@ export default class AuthService {
     };
 
     if (this.loggedIn()) {
-      headers['Authentication-Token'] = this._getToken();
+      headers['Authentication-Token'] = this._getAuthToken();
     }
 
     if (Object.prototype.hasOwnProperty.call(options, 'headers')) {
@@ -109,7 +154,6 @@ export default class AuthService {
           res.clone().json().then(res_json => {
             console.log('Got 401 from server while trying to authFetch: ' + JSON.stringify(res_json));
           });
-          this._removeToken();
         }
         return res;
       })
@@ -125,20 +169,41 @@ export default class AuthService {
   };
 
   loggedIn() {
-    const token = this._getToken();
+    const token = this._getAuthToken();
     return (token !== null);
   }
 
-  _setToken(idToken) {
+  _setAuthToken(idToken) {
     localStorage.setItem(this.TOKEN_NAME_IN_LOCALSTORAGE, idToken);
   }
 
-  _removeToken() {
+  _removeAuthToken() {
     localStorage.removeItem(this.TOKEN_NAME_IN_LOCALSTORAGE);
   }
 
-  _getToken() {
+  _getAuthToken() {
     return localStorage.getItem(this.TOKEN_NAME_IN_LOCALSTORAGE)
   }
 
+  _setAuthTokenExpirationTime(tokenExpirationTime){
+    const currentDateTimeSeconds = Date.now() / 1000;
+    localStorage.setItem(this.TOKEN_TTL_NAME_IN_LOCALSTORAGE, currentDateTimeSeconds + (tokenExpirationTime * 0.85));
+  }
+
+  _removeAuthTokenExpirationTime(){
+    localStorage.removeItem(this.TOKEN_TTL_NAME_IN_LOCALSTORAGE);
+  }
+
+  _getAuthTokenExpirationTime() {
+    return localStorage.getItem(this.TOKEN_TTL_NAME_IN_LOCALSTORAGE);
+  }
+
+  _shouldRefreshToken = () => {
+    const tokenExpirationTime = this._getAuthTokenExpirationTime();
+    if(tokenExpirationTime) {
+      const currentDateTime = Date.now() / 1000;
+      return (tokenExpirationTime - currentDateTime) <= 0;
+    }
+    return false;
+  }
 }
