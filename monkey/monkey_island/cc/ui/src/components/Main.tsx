@@ -267,7 +267,7 @@ class AppComponent extends AuthComponent {
               <SidebarLayoutComponent component={LicensePage}
                                       islandMode={this.state.islandMode}
                                       {...defaultSideNavProps}/>)}
-            <Route element={<NotFoundPage/>}/>
+            <Route path='*' element={<NotFoundPage/>}/>
           </Routes>
         </Container>
       </Router>
