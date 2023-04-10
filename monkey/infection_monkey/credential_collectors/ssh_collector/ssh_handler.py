@@ -9,7 +9,7 @@ from common.event_queue import IAgentEventQueue
 from common.tags import (
     T1003_ATTACK_TECHNIQUE_TAG,
     T1005_ATTACK_TECHNIQUE_TAG,
-    T1145_ATTACK_TECHNIQUE_TAG,
+    T1552_ATTACK_TECHNIQUE_TAG,
 )
 from common.types import AgentID
 from common.utils.environment import is_windows_os
@@ -24,7 +24,7 @@ SSH_COLLECTOR_EVENT_TAGS = frozenset(
         SSH_CREDENTIAL_COLLECTOR_TAG,
         T1003_ATTACK_TECHNIQUE_TAG,
         T1005_ATTACK_TECHNIQUE_TAG,
-        T1145_ATTACK_TECHNIQUE_TAG,
+        T1552_ATTACK_TECHNIQUE_TAG,
     )
 )
 
