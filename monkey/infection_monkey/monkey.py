@@ -33,7 +33,7 @@ from common.agent_registration_data import AgentRegistrationData
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
-from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
+from common.tags.attack import SYSTEM_INFORMATION_DISCOVERY_T1082_TAG
 from common.types import OTP, NetworkPort, SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.code_utils import del_key, secure_generate_random_string
@@ -281,7 +281,7 @@ class InfectionMonkey:
         event = OSDiscoveryEvent(
             source=self._agent_id,
             timestamp=timestamp,
-            tags={T1082_ATTACK_TECHNIQUE_TAG},
+            tags={SYSTEM_INFORMATION_DISCOVERY_T1082_TAG},
             os=operating_system,
             version=operating_system_version,
         )
@@ -296,7 +296,7 @@ class InfectionMonkey:
         event = HostnameDiscoveryEvent(
             source=self._agent_id,
             timestamp=timestamp,
-            tags={T1082_ATTACK_TECHNIQUE_TAG},
+            tags={SYSTEM_INFORMATION_DISCOVERY_T1082_TAG},
             hostname=hostname,
         )
         self._agent_event_queue.publish(event)

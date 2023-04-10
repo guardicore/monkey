@@ -4,7 +4,7 @@ from typing import Sequence
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IAgentEventQueue
-from common.tags import T1003_ATTACK_TECHNIQUE_TAG, T1005_ATTACK_TECHNIQUE_TAG
+from common.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DUMPING_T1003_TAG
 from common.types import AgentID
 from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.model import USERNAME_PREFIX
@@ -20,8 +20,8 @@ MIMIKATZ_CREDENTIAL_COLLECTOR_TAG = "mimikatz-credentials-collector"
 MIMIKATZ_EVENT_TAGS = frozenset(
     (
         MIMIKATZ_CREDENTIAL_COLLECTOR_TAG,
-        T1003_ATTACK_TECHNIQUE_TAG,
-        T1005_ATTACK_TECHNIQUE_TAG,
+        OS_CREDENTIAL_DUMPING_T1003_TAG,
+        DATA_FROM_LOCAL_SYSTEM_T1005_TAG,
     )
 )
 

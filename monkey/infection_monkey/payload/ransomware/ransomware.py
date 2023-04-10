@@ -5,7 +5,7 @@ from typing import Callable, Iterable
 
 from common.agent_events import FileEncryptionEvent
 from common.event_queue import IAgentEventQueue
-from common.tags import T1486_ATTACK_TECHNIQUE_TAG
+from common.tags import DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG
 from common.types import AgentID
 from infection_monkey.utils.threading import interruptible_function, interruptible_iter
 
@@ -15,7 +15,7 @@ from .ransomware_options import RansomwareOptions
 logger = logging.getLogger(__name__)
 
 RANSOMWARE_PAYLOAD_TAG = "ransomware-payload"
-RANSOMWARE_TAGS = frozenset({RANSOMWARE_PAYLOAD_TAG, T1486_ATTACK_TECHNIQUE_TAG})
+RANSOMWARE_TAGS = frozenset({RANSOMWARE_PAYLOAD_TAG, DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG})
 
 
 class Ransomware:

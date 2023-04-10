@@ -7,9 +7,9 @@ from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, SSHKeypair, Username
 from common.event_queue import IAgentEventQueue
 from common.tags import (
-    T1003_ATTACK_TECHNIQUE_TAG,
-    T1005_ATTACK_TECHNIQUE_TAG,
-    T1145_ATTACK_TECHNIQUE_TAG,
+    DATA_FROM_LOCAL_SYSTEM_T1005_TAG,
+    OS_CREDENTIAL_DUMPING_T1003_TAG,
+    UNSECURED_CREDENTIALS_T1552_TAG,
 )
 from common.types import AgentID
 from common.utils.environment import is_windows_os
@@ -22,9 +22,9 @@ SSH_CREDENTIAL_COLLECTOR_TAG = "ssh-credentials-collector"
 SSH_COLLECTOR_EVENT_TAGS = frozenset(
     (
         SSH_CREDENTIAL_COLLECTOR_TAG,
-        T1003_ATTACK_TECHNIQUE_TAG,
-        T1005_ATTACK_TECHNIQUE_TAG,
-        T1145_ATTACK_TECHNIQUE_TAG,
+        OS_CREDENTIAL_DUMPING_T1003_TAG,
+        DATA_FROM_LOCAL_SYSTEM_T1005_TAG,
+        UNSECURED_CREDENTIALS_T1552_TAG,
     )
 )
 
