@@ -316,6 +316,76 @@ def test_agent__cannot_access_nonagent_endpoints(island):
     )
 
 
+def test_unauthenticated_user_cannot_access_API(island):
+    island_requests = MonkeyIslandRequests(island)
+
+    assert (
+        island_requests.post(AGENT_EVENTS_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert (
+        island_requests.post(AGENT_HEARTBEAT_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert island_requests.put(PUT_LOG_ENDPOINT, data=None).status_code == HTTPStatus.UNAUTHORIZED
+    assert island_requests.get(GET_AGENT_PLUGINS_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert (
+        island_requests.get("/api/agent-plugins/plugin-type/plugin-name/manifest").status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert island_requests.get(GET_AGENT_SIGNALS_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert (
+        island_requests.post(GET_AGENTS_ENDPOINT, data=None).status_code == HTTPStatus.UNAUTHORIZED
+    )
+    assert island_requests.get(GET_AGENT_EVENTS_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert island_requests.get(PUT_LOG_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert (
+        island_requests.post(TERMINATE_AGENTS_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert island_requests.get(GET_AGENTS_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert (
+        island_requests.post(CLEAR_SIMULATION_DATA_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert island_requests.get(MONKEY_EXPLOITATION_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert island_requests.get(GET_ISLAND_LOG_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert island_requests.get(ISLAND_MODE_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert (
+        island_requests.put(ISLAND_MODE_ENDPOINT, data=None).status_code == HTTPStatus.UNAUTHORIZED
+    )
+    assert (
+        island_requests.post(ISLAND_RUN_ENDPOINT, data=None).status_code == HTTPStatus.UNAUTHORIZED
+    )
+    assert island_requests.get(GET_MACHINES_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert island_requests.get(GET_NODES_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert (
+        island_requests.put(PROPAGATION_CREDENTIALS_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert (
+        island_requests.get(PROPAGATION_CREDENTIALS_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    )
+    assert (
+        island_requests.get(GET_RANSOMWARE_REPORT_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    )
+    assert island_requests.get(REMOTE_RUN_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert (
+        island_requests.post(REMOTE_RUN_ENDPOINT, data=None).status_code == HTTPStatus.UNAUTHORIZED
+    )
+    assert island_requests.get(GET_REPORT_STATUS_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert (
+        island_requests.post(RESET_AGENT_CONFIG_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert island_requests.get(GET_SECURITY_REPORT_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert island_requests.get(GET_ISLAND_VERSION_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+    assert (
+        island_requests.put(PUT_AGENT_CONFIG_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+
+
 LOGOUT_AGENT_ID = uuid4()
 
 
