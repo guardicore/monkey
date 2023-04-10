@@ -15,7 +15,7 @@ class VersionComponent extends AuthComponent {
   }
 
   componentDidMount() {
-    this.authFetch('/api/island/version', {}, true)
+    this.authFetch('/api/island/version', {}, false)
       .then(res => res.json())
       .then(res => {
         this.setState({
