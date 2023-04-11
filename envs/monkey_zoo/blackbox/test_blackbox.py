@@ -4,6 +4,7 @@ from copy import deepcopy
 from http import HTTPStatus
 from threading import Thread
 from time import sleep
+from typing import List
 from uuid import uuid4
 
 import pytest
@@ -203,6 +204,67 @@ def test_rate_limit(
 
     assert response_codes.count(successful_request_status) == max_requests_per_second
     assert response_codes.count(HTTPStatus.TOO_MANY_REQUESTS) == 1
+
+
+RATE_LIMIT_AGENT1_ID = uuid4()
+RATE_LIMIT_AGENT2_ID = uuid4()
+
+
+@pytest.mark.parametrize(
+    "request_callback, successful_request_status, max_requests_per_second",
+    [
+        (lambda mir: mir.get(GET_AGENT_OTP_ENDPOINT), HTTPStatus.OK, MAX_OTP_REQUESTS_PER_SECOND),
+    ],
+)
+def test_rate_limit__agent_user(
+    island,
+    monkey_island_requests,
+    request_callback,
+    successful_request_status,
+    max_requests_per_second,
+):
+    monkey_island_requests.login()
+    response = monkey_island_requests.get(GET_AGENT_OTP_ENDPOINT)
+    otp1 = response.json()["otp"]
+    response = monkey_island_requests.get(GET_AGENT_OTP_ENDPOINT)
+    otp2 = response.json()["otp"]
+
+    agent1_requests = AgentRequests(island, RATE_LIMIT_AGENT1_ID, OTP(otp1))
+    agent1_requests.login()
+    agent2_requests = AgentRequests(island, RATE_LIMIT_AGENT2_ID, OTP(otp2))
+    agent2_requests.login()
+
+    threads = []
+    response_codes1: List[int] = []
+    response_codes2: List[int] = []
+
+    def make_request(agent_requests, request_callback, response_codes):
+        response = request_callback(agent_requests)
+        response_codes.append(response.status_code)
+
+    for _ in range(0, max_requests_per_second + 1):
+        t1 = Thread(
+            target=make_request,
+            args=(agent1_requests, request_callback, response_codes1),
+            daemon=True,
+        )
+        t1.start()
+        t2 = Thread(
+            target=make_request,
+            args=(agent2_requests, request_callback, response_codes2),
+            daemon=True,
+        )
+        t2.start()
+        threads.append(t1)
+        threads.append(t2)
+
+    for t in threads:
+        t.join()
+
+    assert response_codes1.count(successful_request_status) == max_requests_per_second
+    assert response_codes1.count(HTTPStatus.TOO_MANY_REQUESTS) == 1
+    assert response_codes2.count(successful_request_status) == max_requests_per_second
+    assert response_codes2.count(HTTPStatus.TOO_MANY_REQUESTS) == 1
 
 
 def test_refresh_access_token(monkey_island_requests):

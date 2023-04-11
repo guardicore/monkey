@@ -3,7 +3,7 @@ from threading import Lock
 
 from flask import make_response
 from flask_limiter import Limiter, RateLimitExceeded
-from flask_limiter.util import get_remote_address
+from flask_login import current_user
 from flask_security import auth_token_required, roles_accepted
 
 from monkey_island.cc.flask_utils import AbstractResource
@@ -31,15 +31,14 @@ class AgentOTP(AbstractResource):
         # we need to ensure that a single instance of the limiter is used. Hence
         # the class variable.
         #
-        # TODO: The limit is currently applied per IP address. We will want to change
-        # it to per-user, per-IP once we require authentication for this endpoint.
         # Note that we do not want to limit to just per-user, otherwise this endpoint could be used
-        # to enumerate users/tokens.
+        # to enumerate users/tokens. This should already be captured by the role-based access
+        # control.
         with AgentOTP.lock:
             if AgentOTP.limiter is None:
                 AgentOTP.limiter = limiter.limit(
                     f"{MAX_OTP_REQUESTS_PER_SECOND}/second",
-                    key_func=get_remote_address,
+                    key_func=lambda: current_user.username,
                     per_method=True,
                 )
 
