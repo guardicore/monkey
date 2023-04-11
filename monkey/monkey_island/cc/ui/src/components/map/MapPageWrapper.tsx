@@ -15,9 +15,9 @@ import generateGraph, {Graph} from './GraphCreator';
 
 const MapPageWrapper = (props) => {
 
-  function getPropagationEvents() {
+  function getPropagationEvents(refreshToken: boolean) {
     let url_args = {'type': 'PropagationEvent', 'success': true};
-    return IslandHttpClient.get(APIEndpoint.agentEvents, url_args, {}, false)
+    return IslandHttpClient.get(APIEndpoint.agentEvents, url_args, refreshToken)
       .then(res => arrayToObject(res.body, 'target'));
   }
 
@@ -34,18 +34,18 @@ const MapPageWrapper = (props) => {
   const [graphSnapshot, setGraphSnapshot] = useState<Graph>({edges: [], nodes: []});
 
 
-  async function fetchMapNodes() {
-    await getCollectionObject(APIEndpoint.nodes, 'machine_id', false).then(nodeObj => setNodes(nodeObj));
-    await getCollectionObject(APIEndpoint.machines, 'id', false).then(machineObj => setMachines(machineObj));
-    await getAllAgents(false).then(agents => setAgents(agents.sort()));
-    return getPropagationEvents().then(events => setPropagationEvents(events));
+  async function fetchMapNodes(refreshToken: boolean) {
+    await getCollectionObject(APIEndpoint.nodes, 'machine_id', refreshToken).then(nodeObj => setNodes(nodeObj));
+    await getCollectionObject(APIEndpoint.machines, 'id', refreshToken).then(machineObj => setMachines(machineObj));
+    await getAllAgents(refreshToken).then(agents => setAgents(agents.sort()));
+    return getPropagationEvents(refreshToken).then(events => setPropagationEvents(events));
   }
 
   useEffect(() => {
     if (!updateInProgress) {
       let oneSecond = 1000;
       setUpdateInProgress(true);
-      fetchMapNodes()
+      fetchMapNodes(updateInProgress)
         .then(() => new Promise(r => setTimeout(r, oneSecond * 2)))
         .then(() => setUpdateInProgress(false));
     }
