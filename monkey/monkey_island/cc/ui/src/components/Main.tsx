@@ -95,7 +95,7 @@ class AppComponent extends AuthComponent {
           }
 
           // update status: report generation
-          this.authFetch('/api/report-generation-status', {}, true)
+          this.authFetch('/api/report-generation-status', {}, false)
             .then(res => res.json())
             .then(res => {
               this.setState({
@@ -108,7 +108,7 @@ class AppComponent extends AuthComponent {
             })
 
           // update status: if any agent ran
-          doesAnyAgentExist().then(anyAgentExists => {
+          doesAnyAgentExist(false).then(anyAgentExists => {
             this.setState({
               completedSteps: new CompletedSteps(
                                     anyAgentExists,
@@ -119,7 +119,7 @@ class AppComponent extends AuthComponent {
           });
 
           // update status: if infection (running and shutting down of all agents) finished
-          didAllAgentsShutdown().then(allAgentsShutdown => {
+          didAllAgentsShutdown(false).then(allAgentsShutdown => {
             let infectionDone = this.state.completedSteps.runMonkey && allAgentsShutdown;
             if(this.state.completedSteps.infectionDone === false
               && infectionDone){

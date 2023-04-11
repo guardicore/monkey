@@ -55,7 +55,7 @@ class ReportPageComponent extends AuthComponent {
 
   componentDidMount() {
     this.getCredentialsFromServer();
-    getAllAgents().then(agents => this.setState({agents: agents}));
+    getAllAgents(true).then(agents => this.setState({agents: agents}));
     getAllMachines().then(machines => this.setState({machines: machines}));
   }
 

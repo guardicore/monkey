@@ -33,7 +33,7 @@ function ReportPage(props: Props) {
   };
 
   function getReportFromServer() {
-    doesAnyAgentExist().then(anyAgentExists => {
+    doesAnyAgentExist(true).then(anyAgentExists => {
       if (anyAgentExists) {
           authComponent.authFetch('/api/report/security', {}, true)
           .then(res => res.json())
@@ -50,10 +50,10 @@ function ReportPage(props: Props) {
   };
 
   function updateMonkeysRunning() {
-    doesAnyAgentExist().then(anyAgentExists => {
+    doesAnyAgentExist(true).then(anyAgentExists => {
       setRunStarted(anyAgentExists);
     });
-    didAllAgentsShutdown().then(allAgentsShutdown => {
+    didAllAgentsShutdown(true).then(allAgentsShutdown => {
       setAllMonkeysAreDead(!runStarted || allAgentsShutdown);
     });
   };
