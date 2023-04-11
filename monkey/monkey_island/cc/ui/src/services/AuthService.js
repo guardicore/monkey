@@ -1,6 +1,8 @@
 import React from 'react';
 import {Mutex} from 'async-mutex';
 
+const MUTEX = new Mutex();
+
 export function getErrors(errors) {
   const errorArray = [];
 
@@ -45,17 +47,22 @@ export default class AuthService {
   authFetch = (url, options, refreshToken = false) => {
     // refreshToken is a mechanism to keep unneeded calls
     // to the refresh authentication token endpoint
-    this.MUTEX.acquire();
+    MUTEX.acquire();
     return this._authFetch(url, options).then(res =>{
         if(res.status != 401){
           if(this._shouldRefreshToken() && refreshToken){
             this._refreshAuthToken();
+            MUTEX.release();
+            return this._authFetch(url, options);
           }
         } else {
+          if(this._shouldRefreshToken() && !refreshToken)
+          {
             this._removeAuthTokenExpirationTime();
             this._removeAuthToken();
+          }
         }
-        this.MUTEX.release();
+        MUTEX.release();
         return res;
     });
   };
@@ -69,9 +76,6 @@ export default class AuthService {
           this._setAuthToken(authToken);
           let tokenExpirationTime = this._getAuthTokenExpirationTimeFromResponse(object.body);
           this._setAuthTokenExpirationTime(tokenExpirationTime);
-        }  else if (object.status === 401) {
-          this._removeAuthToken();
-          this._removeAuthTokenExpirationTime();
         }
       })
   }
