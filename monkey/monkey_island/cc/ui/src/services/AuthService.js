@@ -198,7 +198,7 @@ export default class AuthService {
 
   _setAuthTokenExpirationTime(tokenExpirationTime){
     let currentDateTimeSeconds = Date.now() / 1000;
-    localStorage.setItem(this.TOKEN_TTL_NAME_IN_LOCALSTORAGE, currentDateTimeSeconds + (tokenExpirationTime * 0.85));
+    localStorage.setItem(this.TOKEN_TTL_NAME_IN_LOCALSTORAGE, currentDateTimeSeconds + (tokenExpirationTime * 0.7));
   }
 
   _removeAuthTokenExpirationTime(){
