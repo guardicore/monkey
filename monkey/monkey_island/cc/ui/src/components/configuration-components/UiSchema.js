@@ -1,7 +1,5 @@
 import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
-import InfoBox from './InfoBox';
-import TextBox from './TextBox.js';
-import WarningBox from './WarningBox';
+import CheckboxWithMessage from './CheckboxWithMessage';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 import SensitiveTextareaInput from '../ui-components/SensitiveTextareaInput';
 import PluginSelectorTemplate from './PluginSelectorTemplate';
@@ -55,8 +53,8 @@ export default function UiSchema(props) {
               'ui:classNames': 'config-template-no-header'
             }
           },
-          info_box_scan_my_networks: {
-            'ui:field': WarningBox
+          scan_my_networks: {
+            'ui:field': CheckboxWithMessage
           },
           subnets: {
             items: {
@@ -82,17 +80,11 @@ export default function UiSchema(props) {
     payloads: {
       ransomware:{
         encryption: {
-          info_box: {
-            'ui:field': InfoBox
-          },
           file_extension: {
             'ui:emptyValue': ''
           },
           directories: {
             // Directory inputs are dynamically hidden
-          },
-          text_box: {
-            'ui:field': TextBox
           },
           enabled: {
             'ui:widget': 'hidden'
