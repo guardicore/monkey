@@ -1,7 +1,7 @@
 import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import InfoBox from './InfoBox';
 import TextBox from './TextBox.js';
-import WarningBox from './WarningBox';
+import CheckboxWithMessage from './CheckboxWithMessage';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 import SensitiveTextareaInput from '../ui-components/SensitiveTextareaInput';
 import PluginSelectorTemplate from './PluginSelectorTemplate';
@@ -55,8 +55,8 @@ export default function UiSchema(props) {
               'ui:classNames': 'config-template-no-header'
             }
           },
-          warning_box_scan_my_networks: {
-            'ui:field': WarningBox
+          scan_my_networks: {
+            'ui:field': CheckboxWithMessage
           },
           subnets: {
             items: {
