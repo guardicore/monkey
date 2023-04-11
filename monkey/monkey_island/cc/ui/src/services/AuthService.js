@@ -26,7 +26,6 @@ export default class AuthService {
 
   TOKEN_TTL_NAME_IN_RESPONSE = 'token_ttl_sec';
   TOKEN_TTL_NAME_IN_LOCALSTORAGE = 'token_ttl_sec';
-  MUTEX = new Mutex();
 
   login = (username, password) => {
     return this._login(username, password);
@@ -47,22 +46,30 @@ export default class AuthService {
   authFetch = (url, options, refreshToken = false) => {
     // refreshToken is a mechanism to keep unneeded calls
     // to the refresh authentication token endpoint
-    MUTEX.acquire();
-    return this._authFetch(url, options).then(res =>{
-        if(res.status != 401){
-          if(this._shouldRefreshToken() && refreshToken){
-            this._refreshAuthToken();
-            MUTEX.release();
-            return this._authFetch(url, options);
-          }
-        } else {
-          if(this._shouldRefreshToken() && !refreshToken)
-          {
-            this._removeAuthTokenExpirationTime();
-            this._removeAuthToken();
-          }
+
+    // Before making the request, see if the token should be refreshed
+    MUTEX.runExclusive(() => {
+      if(refreshToken && this._shouldRefreshToken()){
+        return this._refreshAuthToken();
+      }
+    });
+
+    let originalToken = this._getAuthToken();
+    return MUTEX.runExclusive(() => {
+        return this._do_authFetch(url, options, originalToken)
+      }).then(res =>{
+        // If the request failed as unauthorized, see if the token was refreshed.
+        // If so, try again
+        if(res.status === 401){
+            let token = this._getAuthToken();
+            if (token != originalToken) {
+              return MUTEX.runExclusive(() => { return this._do_authFetch(url, options, token); });
+            }
+            else {
+              this._removeAuthTokenExpirationTime();
+              this._removeAuthToken();
+            }
         }
-        MUTEX.release();
         return res;
     });
   };
@@ -146,13 +153,18 @@ export default class AuthService {
   }
 
   _authFetch = (url, options = {}) => {
+    let token = this._getAuthToken();
+    return this._do_authFetch(url, options, token);
+  };
+
+  _do_authFetch = (url, options, token) => {
     const headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     };
 
     if (this.loggedIn()) {
-      headers['Authentication-Token'] = this._getAuthToken();
+      headers['Authentication-Token'] = token;
     }
 
     if (Object.prototype.hasOwnProperty.call(options, 'headers')) {
@@ -164,15 +176,8 @@ export default class AuthService {
     }
 
     return fetch(url, options)
-      .then(res => {
-        if (res.status === 401) {
-          res.clone().json().then(res_json => {
-            console.log('Got 401 from server while trying to authFetch: ' + JSON.stringify(res_json));
-          });
-        }
-        return res;
-      })
-  };
+  }
+
 
   needsRegistration = () => {
     return fetch(this.REGISTRATION_STATUS_API_ENDPOINT,
