@@ -4,7 +4,6 @@ from threading import Lock
 
 from flask import make_response
 from flask_limiter import Limiter, RateLimitExceeded
-from flask_limiter.util import get_remote_address
 from flask_login import current_user
 from flask_security import auth_token_required
 
@@ -38,7 +37,7 @@ class RefreshAuthenticationToken(AbstractResource):
             if RefreshAuthenticationToken.limiter is None:
                 RefreshAuthenticationToken.limiter = limiter.limit(
                     f"{MAX_REFRESH_AUTHENTICATION_TOKEN_REQUESTS_PER_SECOND}/second",
-                    key_func=get_remote_address,
+                    key_func=lambda: current_user.username,
                     per_method=True,
                 )
 
