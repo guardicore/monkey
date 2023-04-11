@@ -45,7 +45,7 @@ const MapPageWrapper = (props) => {
     if (!updateInProgress) {
       let oneSecond = 1000;
       setUpdateInProgress(true);
-      fetchMapNodes(updateInProgress)
+      fetchMapNodes(false)
         .then(() => new Promise(r => setTimeout(r, oneSecond * 2)))
         .then(() => setUpdateInProgress(false));
     }
