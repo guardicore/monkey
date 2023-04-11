@@ -46,11 +46,18 @@ export default class AuthService {
     // refreshToken is a mechanism to keep unneeded calls
     // to the refresh authentication token endpoint
     this.MUTEX.acquire();
-    if(this._shouldRefreshToken() && refreshToken){
-      this._refreshAuthToken();
-    }
-    this.MUTEX.release();
-    return this._authFetch(url, options);
+    return this._authFetch(url, options).then(res =>{
+        if(res.status != 401){
+          if(this._shouldRefreshToken() && refreshToken){
+            this._refreshAuthToken();
+          }
+        } else {
+            this._removeAuthTokenExpirationTime();
+            this._removeAuthToken();
+        }
+        this.MUTEX.release();
+        return res;
+    });
   };
 
   _refreshAuthToken = () => {
