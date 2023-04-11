@@ -18,6 +18,7 @@ from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from common.credentials import Credentials
 from common.types import OTP, AgentID, JSONSerializable
+from common.types.concurrency import BasicLock
 
 from . import IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient
@@ -53,14 +54,15 @@ def handle_response_parsing_errors(fn):
 def handle_authentication_token_expiration(fn):
     @functools.wraps(fn)
     def wrapper(self, *args, **kwargs):
-        if self._token_timer.is_expired():
-            logger.debug(
-                "The authentication token is close to expiring - refreshing the token before "
-                "making the requested API call..."
-            )
-            self._refresh_token()
+        with self._token_refresh_lock:
+            if self._token_timer.is_expired():
+                logger.debug(
+                    "The authentication token is close to expiring - refreshing the token before "
+                    "making the requested API call..."
+                )
+                self._refresh_token()
 
-        return fn(self, *args, **kwargs)
+            return fn(self, *args, **kwargs)
 
     return wrapper
 
@@ -77,11 +79,13 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         agent_event_serializer_registry: AgentEventSerializerRegistry,
         http_client: HTTPClient,
         agent_id: AgentID,
+        token_refresh_lock: BasicLock,
     ):
         self._agent_event_serializer_registry = agent_event_serializer_registry
         self._http_client = http_client
         self._agent_id = agent_id
         self._token_timer = EggTimer()
+        self._token_refresh_lock = token_refresh_lock
 
     @handle_response_parsing_errors
     def login(self, otp: OTP):

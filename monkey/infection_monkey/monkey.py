@@ -133,7 +133,7 @@ class InfectionMonkey:
         self._agent_event_publisher = QueuedAgentEventPublisher(plugin_event_queue)
 
         http_island_api_client_factory = HTTPIslandAPIClientFactory(
-            self._agent_event_serializer_registry, self._agent_id
+            self._agent_event_serializer_registry, self._agent_id, context.Lock()
         )
         # Register a proxy for HTTPIslandAPIClient. The manager will create and own the instance
         SyncManager.register(
