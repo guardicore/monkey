@@ -5,14 +5,23 @@ import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons/faExcla
 class CheckboxWithMessage extends React.Component {
 
   render() {
-    let configurationMessageComponent = <></>;
+    let warningMessageComponent = <></>;
+    let infoMessageComponent = <></>;
 
-    if (Object.prototype.hasOwnProperty.call(this.props.schema, 'configuration_message')) {
-      let className = 'alert alert-' + this.props.schema.configuration_message[0];
-      configurationMessageComponent = (
-        <div className={className}>
+    if (Object.prototype.hasOwnProperty.call(this.props.schema, 'warning_message')) {
+      warningMessageComponent = (
+        <div className='alert alert-warning'>
           <FontAwesomeIcon icon={faExclamationTriangle} style={{ 'marginRight': '5px' }} />
-          {this.props.schema.configuration_message[1]}
+          {this.props.schema.warning_message}
+        </div>
+      );
+    }
+
+    if (Object.prototype.hasOwnProperty.call(this.props.schema, 'info_message')) {
+      infoMessageComponent = (
+        <div className='alert alert-info'>
+          <FontAwesomeIcon icon={faExclamationTriangle} style={{ 'marginRight': '5px' }} />
+          {this.props.schema.info_message}
         </div>
       );
     }
@@ -22,7 +31,8 @@ class CheckboxWithMessage extends React.Component {
         <label>
           <input type='checkbox' /> {this.props.schema.title}
         </label>
-        {configurationMessageComponent}
+        {warningMessageComponent}
+        {infoMessageComponent}
       </div>
     );
   }
