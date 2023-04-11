@@ -60,7 +60,7 @@ export default class AuthService {
         if(object.status === 200) {
           let authToken = this._getAuthTokenFromResponse(object.body);
           this._setAuthToken(authToken);
-          const tokenExpirationTime = this._getAuthTokenExpirationTimeFromResponse(object.body);
+          let tokenExpirationTime = this._getAuthTokenExpirationTimeFromResponse(object.body);
           this._setAuthTokenExpirationTime(tokenExpirationTime);
         }  else if (object.status === 401) {
           this._removeAuthToken();
@@ -93,7 +93,7 @@ export default class AuthService {
         let token = this._getAuthTokenFromResponse(res);
         if (token){
           this._setAuthToken(token);
-          const tokenExpirationTime = this._getAuthTokenExpirationTimeFromResponse(res);
+          let tokenExpirationTime = this._getAuthTokenExpirationTimeFromResponse(res);
           this._setAuthTokenExpirationTime(tokenExpirationTime);
           return {result: true};
         } else {
@@ -190,7 +190,7 @@ export default class AuthService {
   }
 
   _setAuthTokenExpirationTime(tokenExpirationTime){
-    const currentDateTimeSeconds = Date.now() / 1000;
+    let currentDateTimeSeconds = Date.now() / 1000;
     localStorage.setItem(this.TOKEN_TTL_NAME_IN_LOCALSTORAGE, currentDateTimeSeconds + (tokenExpirationTime * 0.85));
   }
 
@@ -203,9 +203,9 @@ export default class AuthService {
   }
 
   _shouldRefreshToken = () => {
-    const tokenExpirationTime = this._getAuthTokenExpirationTime();
+    let tokenExpirationTime = this._getAuthTokenExpirationTime();
     if(tokenExpirationTime) {
-      const currentDateTime = Date.now() / 1000;
+      let currentDateTime = Date.now() / 1000;
       return (tokenExpirationTime - currentDateTime) <= 0;
     }
     return false;
