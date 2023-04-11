@@ -92,7 +92,9 @@ def agent_event_serializer_registry():
 
 
 def build_api_client(http_client):
-    return HTTPIslandAPIClient(agent_event_serializer_registry(), http_client, AGENT_ID)
+    return HTTPIslandAPIClient(
+        agent_event_serializer_registry(), http_client, AGENT_ID, MagicMock()
+    )
 
 
 def _build_client_with_json_response(response):
