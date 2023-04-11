@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
+import InfoBox from './InfoBox';
+import WarningBox from './WarningBox';
 
 class CheckboxWithMessage extends React.Component {
 
@@ -9,21 +9,11 @@ class CheckboxWithMessage extends React.Component {
     let infoMessageComponent = <></>;
 
     if (Object.prototype.hasOwnProperty.call(this.props.schema, 'warning_message')) {
-      warningMessageComponent = (
-        <div className='alert alert-warning'>
-          <FontAwesomeIcon icon={faExclamationTriangle} style={{ 'marginRight': '5px' }} />
-          {this.props.schema.warning_message}
-        </div>
-      );
+      warningMessageComponent = <WarningBox message={this.props.schema.warning_message}/>;
     }
 
     if (Object.prototype.hasOwnProperty.call(this.props.schema, 'info_message')) {
-      infoMessageComponent = (
-        <div className='alert alert-info'>
-          <FontAwesomeIcon icon={faExclamationTriangle} style={{ 'marginRight': '5px' }} />
-          {this.props.schema.info_message}
-        </div>
-      );
+      infoMessageComponent = <InfoBox message={this.props.schema.info_message}/>;
     }
 
     return (
