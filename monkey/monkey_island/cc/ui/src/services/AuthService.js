@@ -1,4 +1,5 @@
 import React from 'react';
+import {Mutex} from 'async-mutex';
 
 export function getErrors(errors) {
   const errorArray = [];
@@ -23,6 +24,7 @@ export default class AuthService {
 
   TOKEN_TTL_NAME_IN_RESPONSE = 'token_ttl_sec';
   TOKEN_TTL_NAME_IN_LOCALSTORAGE = 'token_ttl_sec';
+  MUTEX = new Mutex();
 
   login = (username, password) => {
     return this._login(username, password);
@@ -43,9 +45,11 @@ export default class AuthService {
   authFetch = (url, options, refreshToken = false) => {
     // refreshToken is a mechanism to keep unneeded calls
     // to the refresh authentication token endpoint
+    this.MUTEX.acquire();
     if(this._shouldRefreshToken() && refreshToken){
       this._refreshAuthToken();
     }
+    this.MUTEX.release();
     return this._authFetch(url, options);
   };
 
@@ -68,7 +72,6 @@ export default class AuthService {
   _fetchRefreshedAuthenticationToken = () => {
     const options = {
       method: 'POST',
-      // https://stackoverflow.com/questions/11508463/javascript-set-object-key-by-variable
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
