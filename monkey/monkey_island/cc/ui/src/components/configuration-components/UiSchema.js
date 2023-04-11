@@ -1,6 +1,4 @@
 import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
-import InfoBox from './InfoBox';
-import TextBox from './TextBox.js';
 import CheckboxWithMessage from './CheckboxWithMessage';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 import SensitiveTextareaInput from '../ui-components/SensitiveTextareaInput';
@@ -82,17 +80,11 @@ export default function UiSchema(props) {
     payloads: {
       ransomware:{
         encryption: {
-          info_box: {
-            'ui:field': InfoBox
-          },
           file_extension: {
             'ui:emptyValue': ''
           },
           directories: {
             // Directory inputs are dynamically hidden
-          },
-          text_box: {
-            'ui:field': TextBox
           },
           enabled: {
             'ui:widget': 'hidden'
