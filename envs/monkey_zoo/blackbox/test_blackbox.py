@@ -3,6 +3,7 @@ import os
 import time
 from copy import deepcopy
 from http import HTTPStatus
+from multiprocessing import Process
 from threading import Thread
 from time import sleep
 from typing import List
@@ -235,7 +236,7 @@ def test_rate_limit__agent_user(
     agent2_requests = AgentRequests(island, RATE_LIMIT_AGENT2_ID, OTP(otp2))
     agent2_requests.login()
 
-    threads = []
+    processes = []
     response_codes1: List[int] = []
     response_codes2: List[int] = []
 
@@ -247,23 +248,21 @@ def test_rate_limit__agent_user(
         response_codes.append(response.status_code)
 
     for _ in range(0, max_requests_per_second + 1):
-        t1 = Thread(
+        p1 = Process(
             target=make_request,
             args=(agent1_requests, request_callback, response_codes1),
-            daemon=True,
         )
-        t1.start()
-        t2 = Thread(
+        p1.start()
+        p2 = Process(
             target=make_request,
             args=(agent2_requests, request_callback, response_codes2),
-            daemon=True,
         )
-        t2.start()
-        threads.append(t1)
-        threads.append(t2)
+        p2.start()
+        processes.append(p1)
+        processes.append(p2)
 
-    for t in threads:
-        t.join()
+    for p in processes:
+        p.join()
 
     assert response_codes1.count(successful_request_status) == max_requests_per_second
     assert response_codes1.count(HTTPStatus.TOO_MANY_REQUESTS) == 1
