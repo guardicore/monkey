@@ -24,7 +24,7 @@ function BreachSection() {
   const [machines, setMachines] = useState(null);
 
   useEffect(() => {
-    getAllAgents().then(agents => setAgents(agents));
+    getAllAgents(true).then(agents => setAgents(agents));
     getAllMachines().then(machines => setMachines(machines));
   }, []);
 
