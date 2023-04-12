@@ -50,7 +50,7 @@ export default class AuthService {
     // Before making the request, see if the token should be refreshed
     MUTEX.runExclusive(() => {
       if(refreshToken && this._shouldRefreshToken()){
-        return this._refreshAuthToken();
+        this._refreshAuthToken();
       }
     });
 
