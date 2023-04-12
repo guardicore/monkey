@@ -119,6 +119,37 @@ def register(island_client):
 
 
 @pytest.mark.parametrize(
+    "request_callback, successful_request_status, max_requests_per_second",
+    [
+        (lambda mir: mir.get(GET_AGENT_OTP_ENDPOINT), HTTPStatus.OK, MAX_OTP_REQUESTS_PER_SECOND),
+    ],
+)
+def test_rate_limit(
+    monkey_island_requests, request_callback, successful_request_status, max_requests_per_second
+):
+    monkey_island_requests.login()
+    threads = []
+    response_codes = []
+
+    def make_request(monkey_island_requests, request_callback):
+        response = request_callback(monkey_island_requests)
+        response_codes.append(response.status_code)
+
+    for _ in range(0, max_requests_per_second + 1):
+        t = Thread(
+            target=make_request, args=(monkey_island_requests, request_callback), daemon=True
+        )
+        t.start()
+        threads.append(t)
+
+    for t in threads:
+        t.join()
+
+    assert response_codes.count(successful_request_status) == max_requests_per_second
+    assert response_codes.count(HTTPStatus.TOO_MANY_REQUESTS) == 1
+
+
+@pytest.mark.parametrize(
     "authenticated_endpoint",
     [
         GET_AGENTS_ENDPOINT,
@@ -172,44 +203,13 @@ def test_logout_invalidates_all_tokens(island):
     assert resp.status_code == HTTPStatus.UNAUTHORIZED
 
 
-AGENT_OTP_LOGIN_ENDPOINT = "/api/agent-otp-login"
-
-
-@pytest.mark.parametrize(
-    "request_callback, successful_request_status, max_requests_per_second",
-    [
-        (lambda mir: mir.get(GET_AGENT_OTP_ENDPOINT), HTTPStatus.OK, MAX_OTP_REQUESTS_PER_SECOND),
-    ],
-)
-def test_rate_limit(
-    monkey_island_requests, request_callback, successful_request_status, max_requests_per_second
-):
-    monkey_island_requests.login()
-    threads = []
-    response_codes = []
-
-    def make_request(monkey_island_requests, request_callback):
-        response = request_callback(monkey_island_requests)
-        response_codes.append(response.status_code)
-
-    for _ in range(0, max_requests_per_second + 1):
-        t = Thread(
-            target=make_request, args=(monkey_island_requests, request_callback), daemon=True
-        )
-        t.start()
-        threads.append(t)
-
-    for t in threads:
-        t.join()
-
-    assert response_codes.count(successful_request_status) == max_requests_per_second
-    assert response_codes.count(HTTPStatus.TOO_MANY_REQUESTS) == 1
-
-
 RATE_LIMIT_AGENT1_ID = uuid4()
 RATE_LIMIT_AGENT2_ID = uuid4()
 
 
+# This rate limit test is intentionally not below the other rate limit test.
+# If grouped together, this test fails with a JSONDecodeError on the first OTP request
+# since the rate limit was already reached in the previous test.
 @pytest.mark.parametrize(
     "request_callback, successful_request_status, max_requests_per_second",
     [
