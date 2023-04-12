@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 from copy import deepcopy
 from http import HTTPStatus
 from threading import Thread
@@ -239,7 +240,10 @@ def test_rate_limit__agent_user(
     response_codes2: List[int] = []
 
     def make_request(agent_requests, request_callback, response_codes):
+        before = time.ctime()
         response = request_callback(agent_requests)
+        after = time.ctime()
+        LOGGER.info(f"Time: {before} to {after}\tStatus: {response.status_code}\n")
         response_codes.append(response.status_code)
 
     for _ in range(0, max_requests_per_second + 1):
