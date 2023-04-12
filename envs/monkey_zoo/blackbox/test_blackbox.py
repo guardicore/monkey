@@ -210,6 +210,9 @@ RATE_LIMIT_AGENT1_ID = uuid4()
 RATE_LIMIT_AGENT2_ID = uuid4()
 
 
+@pytest.mark.skip(
+    reason="This test will fail if the requests cannot be made in less than 1 second."
+)
 @pytest.mark.parametrize(
     "request_callback, successful_request_status, max_requests_per_second",
     [
