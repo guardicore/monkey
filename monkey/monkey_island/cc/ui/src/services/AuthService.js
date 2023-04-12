@@ -56,14 +56,14 @@ export default class AuthService {
 
     let originalToken = this._getAuthToken();
     return MUTEX.runExclusive(() => {
-        return this._do_authFetch(url, options, originalToken)
+        return this._doAuthFetch(url, options, originalToken)
       }).then(res =>{
         // If the request failed as unauthorized, see if the token was refreshed.
         // If so, try again
         if(res.status === 401){
             let token = this._getAuthToken();
             if (token != originalToken) {
-              return MUTEX.runExclusive(() => { return this._do_authFetch(url, options, token); });
+              return MUTEX.runExclusive(() => { return this._doAuthFetch(url, options, token); });
             }
             else {
               this._removeAuthTokenExpirationTime();
@@ -154,10 +154,10 @@ export default class AuthService {
 
   _authFetch = (url, options = {}) => {
     let token = this._getAuthToken();
-    return this._do_authFetch(url, options, token);
+    return this._doAuthFetch(url, options, token);
   };
 
-  _do_authFetch = (url, options, token) => {
+  _doAuthFetch = (url, options, token) => {
     const headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
