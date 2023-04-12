@@ -22,7 +22,7 @@ function AWSRunButton(props) {
   }, []);
 
   function checkIsOnAWS() {
-    authComponent.authFetch('/api/remote-monkey?action=list_aws')
+    authComponent.authFetch('/api/remote-monkey?action=list_aws', {}, true)
       .then(res => res.json())
       .then(res => {
         let isAws = res['is_aws'];

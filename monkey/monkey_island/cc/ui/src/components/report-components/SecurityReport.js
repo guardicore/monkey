@@ -55,17 +55,17 @@ class ReportPageComponent extends AuthComponent {
 
   componentDidMount() {
     this.getCredentialsFromServer();
-    getAllAgents().then(agents => this.setState({agents: agents}));
+    getAllAgents(true).then(agents => this.setState({agents: agents}));
     getAllMachines().then(machines => this.setState({machines: machines}));
   }
 
   getCredentialsFromServer = () => {
-    this.authFetch('/api/propagation-credentials/stolen-credentials')
+    this.authFetch('/api/propagation-credentials/stolen-credentials', {}, true)
       .then(res => res.json())
       .then(creds => {
         this.setState({ stolenCredentials: creds });
       })
-    this.authFetch('/api/propagation-credentials/configured-credentials')
+    this.authFetch('/api/propagation-credentials/configured-credentials', {}, true)
       .then(res => res.json())
       .then(creds => {
         this.setState({ configuredCredentials: creds });

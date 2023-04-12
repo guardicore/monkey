@@ -33,7 +33,7 @@ export const AgentLogDownloadButton = ({
   }
 
   function downloadAgentLog(agentId) {
-    authComponent.authFetch(url + agentId)
+    authComponent.authFetch(url + agentId, {}, true)
       .then(res => {
         if (res.status === 404) {
           setNonExistingAgentLogsIds((prevIds) => [...prevIds, agentId]);
@@ -88,7 +88,7 @@ export const IslandLogDownloadButton = ({url, variant = 'primary', disabled = fa
   const [noLogFileExistsComponent, setNoLogFileExistsComponent] = useState(false);
 
   function downloadIslandLog() {
-    authComponent.authFetch(url)
+    authComponent.authFetch(url, {}, true)
       .then(res => {
         if (res.status === 404) {
           setNoLogFileExistsComponent(true);
