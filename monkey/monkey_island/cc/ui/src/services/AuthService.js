@@ -44,30 +44,33 @@ export default class AuthService {
   }
 
   authFetch = (url, options, refreshToken = false) => {
-    // refreshToken is a mechanism to keep unneeded calls
-    // to the refresh authentication token endpoint
+    // `refreshToken` is a mechanism to prevent unneeded calls
+    // to the refresh authentication token endpoint, such as when
+    // the map page is left open but there's no other activity.
 
-    // Before making the request, see if the token should be refreshed
+    // Before making the request, refresh the token if required.
     MUTEX.runExclusive(() => {
-      if(refreshToken && this._shouldRefreshToken()){
+      if (refreshToken && this._shouldRefreshToken()) {
         this._refreshAuthToken();
       }
     });
 
-    let originalToken = this._getAuthToken();
+    let authToken = this._getAuthToken();
     return MUTEX.runExclusive(() => {
-        return this._doAuthFetch(url, options, originalToken)
-      }).then(res =>{
-        // If the request failed as unauthorized, see if the token was refreshed.
-        // If so, try again
-        if(res.status === 401){
-            let token = this._getAuthToken();
-            if (token != originalToken) {
-              return MUTEX.runExclusive(() => { return this._doAuthFetch(url, options, token); });
+        return this._doAuthFetch(url, options, authToken)
+      }).then(res => {
+        // If unauthorized, maybe the token was refreshed before the request
+        // was processed. Get the token again from the storage (which will be
+        // a new valid token if it was refreshed) and attempt the request again.
+        // If it fails again as unauthorized, something else is up. Remove the invalid token.
+        if (res.status === 401) {
+            let latestAuthToken = this._getAuthToken();
+            if (latestAuthToken != authToken) {
+              return MUTEX.runExclusive(() => { return this._doAuthFetch(url, options, latestAuthToken); });
             }
             else {
-              this._removeAuthTokenExpirationTime();
               this._removeAuthToken();
+              this._removeAuthTokenExpirationTime();
             }
         }
         return res;
