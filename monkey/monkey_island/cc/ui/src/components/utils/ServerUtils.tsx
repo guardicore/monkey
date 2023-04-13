@@ -36,8 +36,8 @@ export function getAllAgents(refreshToken: boolean) {
     });
 }
 
-export function getAllMachines() {
-  return IslandHttpClient.get(APIEndpoint.machines, {}, false)
+export function getAllMachines(refreshToken: boolean) {
+  return IslandHttpClient.get(APIEndpoint.machines, {}, refreshToken)
     .then(res => {
       return res.body;
     });
