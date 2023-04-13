@@ -32,7 +32,7 @@ const getContents = (props) => {
   }, []);
 
   function getIps() {
-    getAllMachines().then(machines => {
+    getAllMachines(true).then(machines => {
         let islandIPs = getIslandIPsFromMachines(machines);
         setAllIPs(islandIPs);
         setSelectedIp(islandIPs[0]);
