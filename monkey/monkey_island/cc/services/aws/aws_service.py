@@ -7,6 +7,7 @@ import boto3
 import botocore
 
 from common.aws.aws_instance import AWSInstance
+from common.types import OTP
 from common.utils.code_utils import queue_to_list
 
 from .aws_command_runner import AWSCommandResults, start_infection_monkey_agent
@@ -91,7 +92,7 @@ class AWSService:
         for i in instances:
             t = Thread(
                 target=self._run_agent_on_managed_instance,
-                args=(results_queue, i["instance_id"], i["os"], island_ip, timeout),
+                args=(results_queue, i["instance_id"], i["os"], i["otp"], island_ip, timeout),
                 daemon=True,
             )
             t.start()
@@ -103,11 +104,17 @@ class AWSService:
         return queue_to_list(results_queue)
 
     def _run_agent_on_managed_instance(
-        self, results_queue: Queue, instance_id: str, os: str, island_ip: str, timeout: float
+        self,
+        results_queue: Queue,
+        instance_id: str,
+        os: str,
+        otp: OTP,
+        island_ip: str,
+        timeout: float,
     ):
         ssm_client = boto3.client("ssm", self.island_aws_instance.region)
         command_results = start_infection_monkey_agent(
-            ssm_client, instance_id, os, island_ip, timeout
+            ssm_client, instance_id, os, otp, island_ip, timeout
         )
         results_queue.put(command_results)
 
