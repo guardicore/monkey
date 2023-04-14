@@ -13,6 +13,11 @@ STATUS_CHECK_SLEEP_TIME = 1
 LINUX_DOCUMENT_NAME = "AWS-RunShellScript"
 WINDOWS_DOCUMENT_NAME = "AWS-RunPowerShellScript"
 
+# Setting the log level of botoce to CRITICAL as
+# it it doesn't log out the commands send to the AWS instance
+# thus hiding the Agent's OTP
+logging.getLogger("botocore").setLevel(logging.CRITICAL)
+
 logger = logging.getLogger(__name__)
 
 
