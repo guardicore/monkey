@@ -18,11 +18,10 @@ The Infection Monkey Agent has been tested to run on the following operating sys
 Compatibility depends on GLIBC version (2.23+)[^1]. By default, these
 distributions have been tested:
 
-- Centos 8+
+- CentOS/Rocky/RHEL 8+
 - Debian 9+
 - Kali 2019+
-- Rhel 8+
-- Suse 15+
+- openSUSE 15+
 - Ubuntu 16+
 
 #### Windows
