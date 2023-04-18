@@ -8,6 +8,7 @@ from flask_security import auth_token_required, roles_accepted
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services import AWSService
 from monkey_island.cc.services.authentication_service import AccountRole
+from monkey_island.cc.services.authentication_service.i_otp_generator import IOTPGenerator
 from monkey_island.cc.services.aws import AWSCommandResults
 
 CLIENT_ERROR_FORMAT = (
@@ -26,8 +27,9 @@ class RemoteRun(AbstractResource):
     # really go together.
     urls = ["/api/remote-monkey"]
 
-    def __init__(self, aws_service: AWSService):
+    def __init__(self, aws_service: AWSService, otp_generator: IOTPGenerator):
         self._aws_service = aws_service
+        self._otp_generator = otp_generator
 
     @auth_token_required
     @roles_accepted(AccountRole.ISLAND_INTERFACE.name)
@@ -70,7 +72,13 @@ class RemoteRun(AbstractResource):
         instances = request_body.get("instances")
         island_ip = request_body.get("island_ip")
 
-        return self._aws_service.run_agents_on_managed_instances(instances, island_ip)
+        for instance in instances:
+            instance["otp"] = self._otp_generator.generate_otp()
+
+        return self._aws_service.run_agents_on_managed_instances(
+            instances,
+            island_ip,
+        )
 
     @staticmethod
     def _encode_results(results: Sequence[AWSCommandResults]):
