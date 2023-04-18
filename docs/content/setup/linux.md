@@ -17,7 +17,7 @@ installed, but the ones that we've tested are:
 - BlackArch 2023.04.01
 - Kali 2023.1
 - Parrot 5.2
-- CentOS/Rocky/RHEL 8
+- CentOS/Rocky/RHEL 8+
 - Debian 11
 - openSUSE Leap 15.4
 - Ubuntu Bionic 18.04, Focal 20.04, Jammy 22.04
