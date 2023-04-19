@@ -1,4 +1,4 @@
-from monkey_island.cc.repositories import IAgentConfigurationRepository
+from monkey_island.cc.services import IAgentConfigurationService
 
 
 class reset_agent_configuration:
@@ -9,9 +9,9 @@ class reset_agent_configuration:
 
     def __init__(
         self,
-        agent_configuration_repository: IAgentConfigurationRepository,
+        agent_configuration_service: IAgentConfigurationService,
     ):
-        self._agent_configuration_repository = agent_configuration_repository
+        self._agent_configuration_service = agent_configuration_service
 
     def __call__(self):
-        self._agent_configuration_repository.reset_to_default()
+        self._agent_configuration_service.reset_to_default()

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Row, Col, Container, Form, Button} from 'react-bootstrap';
 
-import AuthService from '../../services/AuthService';
+import AuthService, {getErrors} from '../../services/AuthService';
 import monkeyDetective from '../../images/detective-monkey.svg';
 import ParticleBackground from '../ui-components/ParticleBackground';
 import LoadingIcon from '../ui-components/LoadingIcon';
@@ -19,7 +19,7 @@ class RegisterPageComponent extends React.Component {
         this.setState({
           loading: false,
           failed: true,
-          error: res['error']
+          errors: res['errors']
         });
       }
     });
@@ -82,7 +82,7 @@ class RegisterPageComponent extends React.Component {
                       <Col>
                         {
                           this.state.failed ?
-                            <div className='alert alert-danger' role='alert'>{this.state.error}</div>
+                            <div className='alert alert-danger' role='alert'>{getErrors(this.state.errors)}</div>
                             :
                             ''
                         }

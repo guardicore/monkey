@@ -18,7 +18,7 @@ from .utils import (
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
-        "SMBExploiter": {"smb_download_timeout": 30},
+        "SMB": {"agent_binary_upload_timeout": 30, "smb_connect_timeout": 15},
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)

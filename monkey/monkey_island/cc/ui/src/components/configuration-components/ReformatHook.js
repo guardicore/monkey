@@ -1,38 +1,46 @@
-import {defaultCredentials} from '../../services/configuration/propagation/credentials';
+import CREDENTIALS, {defaultCredentials} from '../../services/configuration/propagation/credentials';
 import {PlaintextType, SecretType} from '../utils/CredentialTitle.tsx';
 import _ from 'lodash';
 
 export function reformatConfig(config, reverse = false) {
-  let formattedConfig = _.clone(config);
+  let formattedConfig = _.cloneDeep(config);
 
   if (reverse) {
-    if (formattedConfig['payloads'].length === 1) {
-      // Second click on Export
-      formattedConfig['payloads'] = [{
-        'name': 'ransomware',
-        'options': formattedConfig['payloads'][0]['options']
-      }];
-    } else {
-      formattedConfig['payloads'] = [{
-        'name': 'ransomware',
-        'options': formattedConfig['payloads']
-      }];
-    }
     formattedConfig['keep_tunnel_open_time'] = formattedConfig['advanced']['keep_tunnel_open_time'];
+    delete formattedConfig['advanced'];
+
     formattedConfig['propagation']['maximum_depth'] = formattedConfig['propagation']['general']['maximum_depth'];
+    delete formattedConfig['propagation']['general'];
   } else {
-    if (formattedConfig['payloads'].length !== 0) {
-      formattedConfig['payloads'] = formattedConfig['payloads'][0]['options'];
-    } else {
-      formattedConfig['payloads'] = {'encryption': {}, 'other_behaviors': {}}
-    }
     formattedConfig['advanced'] = {};
     formattedConfig['advanced']['keep_tunnel_open_time'] = formattedConfig['keep_tunnel_open_time'];
+    delete formattedConfig['keep_tunnel_open_time'];
 
     formattedConfig['propagation']['general'] = {};
     formattedConfig['propagation']['general']['maximum_depth'] = formattedConfig['propagation']['maximum_depth'];
+    delete formattedConfig['propagation']['maximum_depth'];
   }
+
   return formattedConfig;
+}
+
+export function reformatSchema(schema) {
+  schema['properties']['propagation']['properties']['credentials'] = CREDENTIALS;
+  schema['properties']['propagation']['properties']['general'] = {
+    'title': 'General',
+    'type': 'object',
+    'properties': {'maximum_depth': schema['properties']['propagation']['properties']['maximum_depth']}
+  };
+  delete schema['properties']['propagation']['properties']['maximum_depth'];
+  schema['properties']['advanced'] = {
+    'title': 'Advanced',
+    'type': 'object',
+    'properties': {
+      'keep_tunnel_open_time': schema['properties']['keep_tunnel_open_time']
+    }
+  };
+  delete schema['properties']['keep_tunnel_open_time'];
+  return schema;
 }
 
 export function formatCredentialsForForm(credentials) {

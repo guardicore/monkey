@@ -35,10 +35,10 @@ class RunOnIslandButton extends AuthComponent {
   }
 
   componentDidMount() {
-    IslandHttpClient.get(APIEndpoint.machines).then(res => {
+    IslandHttpClient.get(APIEndpoint.machines, {}, true).then(res => {
       const island_machine_id = this.get_island_machine_id(res.body)
 
-      IslandHttpClient.get(APIEndpoint.agents).then(res => {
+      IslandHttpClient.get(APIEndpoint.agents, {}, true).then(res => {
         if (this.agents_running_on_machine(island_machine_id, res.body)) {
           this.setState({runningOnIslandState: MONKEY_STATES.RUNNING});
         } else {
@@ -83,7 +83,9 @@ class RunOnIslandButton extends AuthComponent {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({action: 'run'})
-      })
+      },
+      true
+    )
       .then(res => res.json())
       .then(async res => {
         if (res['is_running']) {

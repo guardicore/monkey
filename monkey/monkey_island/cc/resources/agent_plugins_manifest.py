@@ -2,11 +2,19 @@ import logging
 from http import HTTPStatus
 
 from flask import make_response
+from flask_security import auth_token_required, roles_accepted
 
 from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from common.hard_coded_manifests.hard_coded_credential_collector_manifests import (
+    HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS,
+)
+from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
+    HARD_CODED_FINGERPRINTER_MANIFESTS,
+)
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import IAgentPluginRepository
-from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.services.authentication_service import AccountRole
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +25,8 @@ class AgentPluginsManifest(AbstractResource):
     def __init__(self, agent_plugin_repository: IAgentPluginRepository):
         self._agent_plugin_repository = agent_plugin_repository
 
-    # Used by monkey. can't secure.
+    @auth_token_required
+    @roles_accepted(AccountRole.AGENT.name)
     def get(self, plugin_type: str, name: str):
         """
         Get the plugin manifest of the specified type and name.
@@ -48,5 +57,9 @@ class AgentPluginsManifest(AbstractResource):
         except KeyError as err:
             if plugin_type == AgentPluginType.EXPLOITER:
                 return HARD_CODED_EXPLOITER_MANIFESTS[name]
+            elif plugin_type == AgentPluginType.CREDENTIAL_COLLECTOR:
+                return HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS[name]
+            elif plugin_type == AgentPluginType.FINGERPRINTER:
+                return HARD_CODED_FINGERPRINTER_MANIFESTS[name]
             else:
                 raise err

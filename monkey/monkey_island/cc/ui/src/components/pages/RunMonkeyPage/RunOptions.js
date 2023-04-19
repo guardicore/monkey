@@ -17,7 +17,7 @@ function RunOptions(props) {
 
   useEffect(() => {
     if (initialized === false) {
-      getAllMachines().then(machines => {
+      getAllMachines(true).then(machines => {
         setIPs(getIslandIPsFromMachines(machines));
         setInitialized(true);
       });

@@ -3,34 +3,137 @@ param(
     [String] $monkey_home = (Get-Item -Path ".\").FullName,
 
     [Parameter(Mandatory = $false, Position = 1)]
-    [System.String]
-    $branch = "develop",
+    [String] $branch = "develop",
+
     [Parameter(Mandatory = $false, Position = 2)]
-    [Bool]
-    $agents = $true
+    [Bool] $agents = $true
 )
+
+$ESCAPE = "$([char]27)"
+$BOLD = "$ESCAPE[1m"
+$CYAN = "$ESCAPE[36m"
+$RESET = "$ESCAPE[0m"
+
+function Print-Status([Parameter(Mandatory = $true)] [string]$Text)
+{
+    Write-Output "$($BOLD)$($CYAN)$Text$($RESET)"
+}
+
+function Assert-CommandExists($command)
+{
+    try
+    {
+        Get-Command $command -ErrorAction Stop | Out-Null
+    }
+    catch [System.Management.Automation.CommandNotFoundException]
+    {
+        Write-Output "Command does not exist: $command"
+        Write-Output "Please install $command or add it to path before running this script"
+        exit 1
+    }
+}
+
+function Clone-MonkeyRepo([String] $DestinationPath, [String] $Branch)
+{
+    $command = "git clone --single-branch --recurse-submodules -b $Branch $MONKEY_GIT_URL $DestinationPath 2>&1"
+    Write-Output $command
+    $output = cmd.exe /c $command
+    if ($output -like "*already exists and is not an empty directory.*")
+    {
+        "Assuming you already have the source directory. If not, make sure to set an empty directory as monkey's home directory."
+    }
+    elseif ($output -like "fatal:*")
+    {
+        "Error while cloning monkey from the repository:"
+        $output
+        exit 1
+    }
+    else
+    {
+        "Monkey cloned from the repository"
+    }
+}
+
+function Install-Python
+{
+    try
+    {
+        $version = python --version  2>&1
+        if ($version -notmatch $PYTHON_VERSION_REGEX -or $Matches.2 -lt 2)
+        {
+            throw System.Management.Automation.CommandNotFoundException
+        }
+    }
+    catch [System.Management.Automation.CommandNotFoundException]
+    {
+        "Downloading python $MONKEY_PYTHON_VERSION ..."
+        "Select 'add to PATH' when installing"
+        $webClient.DownloadFile($PYTHON_URL, $TEMP_PYTHON_INSTALLER)
+        Start-Process -Wait $TEMP_PYTHON_INSTALLER -ErrorAction Stop
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+        Remove-Item $TEMP_PYTHON_INSTALLER
+        # Check if installed correctly
+        $version = python --version  2>&1
+        if ($version -like '* is not recognized*')
+        {
+            "Python is not found in PATH. Add it to PATH and relaunch the script."
+            exit 1
+        }
+    }
+}
 
 function Configure-precommit([String] $git_repo_dir)
 {
-    Write-Output "Installing pre-commit and setting up pre-commit hook"
+    Print-Status "Installing pre-commit and setting up pre-commit hook"
     Push-Location $git_repo_dir
     python -m pip install pre-commit
 	if ($LastExitCode) {
-		exit
+		exit 1
 	}
-    pre-commit install -t pre-commit -t pre-push
+    pre-commit install -t pre-commit -t pre-push -t prepare-commit-msg
 	if ($LastExitCode) {
-		exit
+		exit 1
 	}
     Pop-Location
 
-    Write-Output "Pre-commit successfully installed"
+    Print-Status "Pre-commit successfully installed"
+}
+
+function Install-NPM
+{
+    Print-Status "Installing npm"
+    try
+    {
+        Get-Command npm -ErrorAction Stop | Out-Null
+        "Npm already installed"
+    }
+    catch [System.Management.Automation.CommandNotFoundException]
+    {
+        "Downloading npm ..."
+        $webClient.DownloadFile($NPM_URL, $TEMP_NPM_INSTALLER)
+        Start-Process -Wait $TEMP_NPM_INSTALLER
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
+        Remove-Item $TEMP_NPM_INSTALLER
+    }
+}
+
+function Download-UPX([String] $DestinationPath)
+{
+    Print-Status "Downloading upx ..."
+    $webClient.DownloadFile($UPX_URL, $TEMP_UPX_ZIP)
+    "Unzipping upx"
+    Expand-Archive $TEMP_UPX_ZIP -DestinationPath $DestinationPath -ErrorAction SilentlyContinue
+    Move-Item -Path (Join-Path -Path $DestinationPath -ChildPath $UPX_FOLDER | Join-Path -ChildPath "upx.exe") -Destination $DestinationPath
+    # Remove unnecessary files
+    Remove-Item -Recurse -Force (Join-Path -Path $DestinationPath -ChildPath $UPX_FOLDER)
+    "Removing zip file"
+    Remove-Item $TEMP_UPX_ZIP
 }
 
 function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, [String] $branch = "develop")
 {
-    Write-Output "Downloading to $monkey_home"
-    Write-Output "Branch $branch"
+    Print-Status "Downloading to $monkey_home"
+    Print-Status "Branch $branch"
     # Set variables for script execution
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $webClient = New-Object System.Net.WebClient
@@ -53,90 +156,31 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     }
 
 
-    # We check if git is installed
-    try
-    {
-        git | Out-Null -ErrorAction Stop
-        "Git requirement satisfied"
-    }
-    catch [System.Management.Automation.CommandNotFoundException]
-    {
-        "Please install git before running this script or add it to path and restart cmd"
-        return
-    }
+    # Check if git is installed
+    Assert-CommandExists git
+    Clone-MonkeyRepo $monkey_home -Branch $branch
+    Install-Python
+    "$(python --version) is installed"
 
-    # Download the monkey
-    $command = "git clone --single-branch --recurse-submodules -b $branch $MONKEY_GIT_URL $monkey_home 2>&1"
-    Write-Output $command
-    $output = cmd.exe /c $command
-    $binDir = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\bin")
-    if ($output -like "*already exists and is not an empty directory.*")
-    {
-        "Assuming you already have the source directory. If not, make sure to set an empty directory as monkey's home directory."
-    }
-    elseif ($output -like "fatal:*")
-    {
-        "Error while cloning monkey from the repository:"
-        $output
-        return
-    }
-    else
-    {
-        "Monkey cloned from the repository"
-        # Create bin directory
-        New-Item -ItemType directory -path $binDir
-        "Bin directory added"
-    }
-
-    # We check if python is installed
-    try
-    {
-        $version = cmd.exe /c '"python" --version  2>&1'
-        if ($version -like 'Python 3.*')
-        {
-            "Python 3.* was found, installing dependencies"
-        }
-        else
-        {
-            throw System.Management.Automation.CommandNotFoundException
-        }
-    }
-    catch [System.Management.Automation.CommandNotFoundException]
-    {
-        "Downloading python 3 ..."
-        "Select 'add to PATH' when installing"
-        $webClient.DownloadFile($PYTHON_URL, $TEMP_PYTHON_INSTALLER)
-        Start-Process -Wait $TEMP_PYTHON_INSTALLER -ErrorAction Stop
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
-        Remove-Item $TEMP_PYTHON_INSTALLER
-        # Check if installed correctly
-        $version = cmd.exe /c '"python" --version  2>&1'
-        if ($version -like '* is not recognized*')
-        {
-            "Python is not found in PATH. Add it to PATH and relaunch the script."
-            return
-        }
-    }
-
-    "Upgrading pip..."
+    Print-Status "Upgrading pip..."
     $output = cmd.exe /c 'python -m pip install --user --upgrade pip 2>&1'
     $output
     if ($output -like '*No module named pip*')
     {
         "Make sure pip module is installed and re-run this script."
-        return
+        exit 1
     }
 
-    "Installing pipx"
+    Print-Status "Installing pipx"
     pip install --user -U pipx
     pipx ensurepath
     pipx install pipenv
 
-    "Installing python packages for island"
+    Print-Status "Installing python packages for island"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR) -ErrorAction Stop
     pipenv install --dev
     Pop-Location
-    "Installing python packages for monkey"
+    Print-Status "Installing python packages for monkey"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR) -ErrorAction Stop
     pipenv install --dev
     Pop-Location
@@ -152,11 +196,13 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         [Environment]::SetEnvironmentVariable("Path", $env:Path, "User")
     }
 
+    $binDir = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\bin")
+    New-Item -ItemType directory -path $binDir
     $install_mongo_script = (Join-Path -Path $monkey_home -ChildPath "$MONKEY_ISLAND_DIR\windows\install_mongo.ps1")
     Invoke-Expression "$install_mongo_script -binDir $binDir"
 
     # Download OpenSSL
-    "Downloading OpenSSL ..."
+    Print-Status "Downloading OpenSSL ..."
     $webClient.DownloadFile($OPEN_SSL_URL, $TEMP_OPEN_SSL_ZIP)
     "Unzipping OpenSSl"
     Expand-Archive $TEMP_OPEN_SSL_ZIP -DestinationPath (Join-Path -Path $binDir -ChildPath "openssl") -ErrorAction SilentlyContinue
@@ -164,13 +210,13 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     Remove-Item $TEMP_OPEN_SSL_ZIP
 
     # Download and install C++ redistributable
-    "Downloading C++ redistributable ..."
+    Print-Status "Downloading C++ redistributable ..."
     $webClient.DownloadFile($CPP_URL, $TEMP_CPP_INSTALLER)
     Start-Process -Wait $TEMP_CPP_INSTALLER -ErrorAction Stop
     Remove-Item $TEMP_CPP_INSTALLER
 
     # Generate ssl certificate
-    "Generating ssl certificate"
+    Print-Status "Generating ssl certificate"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR)
     . .\windows\create_certificate.bat
     Pop-Location
@@ -178,7 +224,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     if ($agents)
     {
         # Adding binaries
-        "Adding binaries"
+        Print-Status "Downloading agent binaries"
         $binaries = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\cc\binaries")
         New-Item -ItemType directory -path $binaries -ErrorAction SilentlyContinue
         $webClient.DownloadFile($LINUX_64_BINARY_URL, (Join-Path -Path $binaries -ChildPath $LINUX_64_BINARY_PATH))
@@ -187,29 +233,9 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
 
 
     # Check if NPM installed
-    "Installing npm"
-    try
-    {
-        $version = cmd.exe /c '"npm" --version  2>&1'
-        if ($version -like "*is not recognized*")
-        {
-            throw System.Management.Automation.CommandNotFoundException
-        }
-        else
-        {
-            "Npm already installed"
-        }
-    }
-    catch [System.Management.Automation.CommandNotFoundException]
-    {
-        "Downloading npm ..."
-        $webClient.DownloadFile($NPM_URL, $TEMP_NPM_INSTALLER)
-        Start-Process -Wait $TEMP_NPM_INSTALLER
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
-        Remove-Item $TEMP_NPM_INSTALLER
-    }
+    Install-NPM
 
-    "Updating npm"
+    Print-Status "Updating npm"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\cc\ui")
     & npm update
     & npm run dev
@@ -222,19 +248,11 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     # Download upx
     if (!(Test-Path -Path (Join-Path -Path $binDir -ChildPath "upx.exe")))
     {
-        "Downloading upx ..."
-        $webClient.DownloadFile($UPX_URL, $TEMP_UPX_ZIP)
-        "Unzipping upx"
-        Expand-Archive $TEMP_UPX_ZIP -DestinationPath $binDir -ErrorAction SilentlyContinue
-        Move-Item -Path (Join-Path -Path $binDir -ChildPath $UPX_FOLDER | Join-Path -ChildPath "upx.exe") -Destination $binDir
-        # Remove unnecessary files
-        Remove-Item -Recurse -Force (Join-Path -Path $binDir -ChildPath $UPX_FOLDER)
-        "Removing zip file"
-        Remove-Item $TEMP_UPX_ZIP
+        Download-UPX $binDir
     }
 
 
-    "Script finished"
+    Print-Status "Script finished"
 
 }
 Deploy-Windows -monkey_home $monkey_home -branch $branch

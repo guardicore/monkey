@@ -30,11 +30,11 @@ function AttackSection(): ReactElement {
     let machines = [];
 
     let agent_events_url_args = {'type': 'FileEncryptionEvent'};
-    IslandHttpClient.get(APIEndpoint.agents)
+    IslandHttpClient.get(APIEndpoint.agents, {}, true)
       .then(res => agents = res.body)
-      .then(() => IslandHttpClient.get(APIEndpoint.machines)
+      .then(() => IslandHttpClient.get(APIEndpoint.machines, {}, true)
         .then(res => machines = res.body)
-        .then(() => IslandHttpClient.get(APIEndpoint.agentEvents, agent_events_url_args)
+        .then(() => IslandHttpClient.get(APIEndpoint.agentEvents, agent_events_url_args, true)
           .then(res => setTableData(processEvents(res.body, agents, machines)))
         )
       )

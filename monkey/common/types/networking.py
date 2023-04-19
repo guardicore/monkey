@@ -6,7 +6,20 @@ from ipaddress import IPv4Address
 from pydantic import ConstrainedInt
 
 from common.base_models import InfectionMonkeyBaseModel
-from common.network.network_utils import address_to_ip_port
+
+
+class NetworkProtocol(Enum):
+    """
+    An Enum representing network protocols
+
+    This Enum represents network protocols. The value of each
+    member is the member's name in all lower-case characters.
+    """
+
+    TCP = "tcp"
+    UDP = "udp"
+    ICMP = "icmp"
+    UNKNOWN = "unknown"
 
 
 class NetworkService(Enum):
@@ -17,6 +30,12 @@ class NetworkService(Enum):
     member is the member's name in all lower-case characters.
     """
 
+    HTTP = "http"
+    HTTPS = "https"
+    MSSQL = "mssql"
+    SMB = "smb"
+    SSH = "ssh"
+    MSSQL_BROWSER = "mssql_browser"
     UNKNOWN = "unknown"
 
 
@@ -57,9 +76,10 @@ class SocketAddress(InfectionMonkeyBaseModel):
         :raises ValueError: If the string is not a valid ip:port
         :return: SocketAddress with the IP and port
         """
-        ip, port = address_to_ip_port(address_str)
+        ip, port = address_str.split(":")
         if port is None:
             raise ValueError("SocketAddress requires a port")
+
         return SocketAddress(ip=IPv4Address(ip), port=int(port))
 
     def __hash__(self):

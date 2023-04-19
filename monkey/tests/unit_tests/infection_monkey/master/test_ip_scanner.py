@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from tests.unit_tests.infection_monkey.master.mock_puppet import MockPuppet
+from tests.utils import ThreadSafeMagicMock
 
 from common import OperatingSystem
 from common.agent_configuration.agent_sub_configurations import (
@@ -12,13 +13,13 @@ from common.agent_configuration.agent_sub_configurations import (
     PluginConfiguration,
     TCPScanConfiguration,
 )
-from common.types import PortStatus
+from common.types import NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData
 from infection_monkey.master import IPScanner
 from infection_monkey.network import NetworkAddress
 
-WINDOWS_OS = "windows"
-LINUX_OS = "linux"
+WINDOWS_OS = OperatingSystem.WINDOWS
+LINUX_OS = OperatingSystem.LINUX
 
 
 @pytest.fixture
@@ -56,7 +57,7 @@ def stop():
 
 @pytest.fixture
 def callback():
-    return MagicMock()
+    return ThreadSafeMagicMock()
 
 
 def assert_port_status(port_scan_data, expected_open_ports: Set[int]):
@@ -97,11 +98,11 @@ def assert_scan_results_no_1(
 
     assert psd_445.port == 445
     assert psd_445.banner == "SMB BANNER"
-    assert psd_445.service == "tcp-445"
+    assert psd_445.service == NetworkService.SMB
 
     assert psd_3389.port == 3389
     assert psd_3389.banner == ""
-    assert psd_3389.service == "tcp-3389"
+    assert psd_3389.service == NetworkService.UNKNOWN
 
     assert_port_status(port_scan_data, {445, 3389})
     assert_fingerprint_results_no_1(fingerprint_data)
@@ -109,14 +110,16 @@ def assert_scan_results_no_1(
 
 def assert_fingerprint_results_no_1(fingerprint_data: FingerprintData):
     assert len(fingerprint_data.keys()) == 3
-    assert fingerprint_data["SSHFinger"].services == {}
-    assert fingerprint_data["HTTPFinger"].services == {}
+    assert fingerprint_data["SSHFinger"].services == []
+    assert fingerprint_data["HTTPFinger"].services == []
 
-    assert fingerprint_data["SMBFinger"].os_type == WINDOWS_OS
+    assert fingerprint_data["SMBFinger"].os_type == OperatingSystem.WINDOWS
     assert fingerprint_data["SMBFinger"].os_version == "vista"
 
-    assert len(fingerprint_data["SMBFinger"].services.keys()) == 1
-    assert fingerprint_data["SMBFinger"].services["tcp-445"]["name"] == "smb_service_name"
+    assert len(fingerprint_data["SMBFinger"].services) == 1
+    assert fingerprint_data["SMBFinger"].services[0].port == 445
+    assert fingerprint_data["SMBFinger"].services[0].protocol == NetworkProtocol.TCP
+    assert fingerprint_data["SMBFinger"].services[0].service == NetworkService.SMB
 
 
 def assert_scan_results_no_3(
@@ -136,11 +139,11 @@ def assert_scan_results_no_3(
 
     assert psd_443.port == 443
     assert psd_443.banner == "HTTPS BANNER"
-    assert psd_443.service == "tcp-443"
+    assert psd_443.service == NetworkService.HTTPS
 
     assert psd_22.port == 22
     assert psd_22.banner == "SSH BANNER"
-    assert psd_22.service == "tcp-22"
+    assert psd_22.service == NetworkService.SSH
 
     assert_port_status(port_scan_data, {22, 443})
     assert_fingerprint_results_no_3(fingerprint_data)
@@ -148,20 +151,24 @@ def assert_scan_results_no_3(
 
 def assert_fingerprint_results_no_3(fingerprint_data: FingerprintData):
     assert len(fingerprint_data.keys()) == 3
-    assert fingerprint_data["SMBFinger"].services == {}
+    assert fingerprint_data["SMBFinger"].services == []
 
-    assert fingerprint_data["SSHFinger"].os_type == LINUX_OS
+    assert fingerprint_data["SSHFinger"].os_type == OperatingSystem.LINUX
     assert fingerprint_data["SSHFinger"].os_version == "ubuntu"
 
-    assert len(fingerprint_data["SSHFinger"].services.keys()) == 1
-    assert fingerprint_data["SSHFinger"].services["tcp-22"]["name"] == "SSH"
-    assert fingerprint_data["SSHFinger"].services["tcp-22"]["banner"] == "SSH BANNER"
+    assert len(fingerprint_data["SSHFinger"].services) == 1
+    assert fingerprint_data["SSHFinger"].services[0].port == 22
+    assert fingerprint_data["SSHFinger"].services[0].protocol == NetworkProtocol.TCP
+    assert fingerprint_data["SSHFinger"].services[0].service == NetworkService.SSH
 
-    assert len(fingerprint_data["HTTPFinger"].services.keys()) == 2
-    assert fingerprint_data["HTTPFinger"].services["tcp-80"]["name"] == "http"
-    assert fingerprint_data["HTTPFinger"].services["tcp-80"]["data"] == ("SERVER_HEADERS", False)
-    assert fingerprint_data["HTTPFinger"].services["tcp-443"]["name"] == "http"
-    assert fingerprint_data["HTTPFinger"].services["tcp-443"]["data"] == ("SERVER_HEADERS_2", True)
+    assert len(fingerprint_data["HTTPFinger"].services) == 2
+    assert fingerprint_data["HTTPFinger"].services[0].port == 80
+    assert fingerprint_data["HTTPFinger"].services[0].protocol == NetworkProtocol.TCP
+    assert fingerprint_data["HTTPFinger"].services[0].service == NetworkService.HTTP
+
+    assert fingerprint_data["HTTPFinger"].services[1].port == 443
+    assert fingerprint_data["HTTPFinger"].services[1].protocol == NetworkProtocol.TCP
+    assert fingerprint_data["HTTPFinger"].services[1].service == NetworkService.HTTPS
 
 
 def assert_scan_results_host_down(
@@ -287,7 +294,7 @@ def test_interrupt_fingerprinting(callback, scan_config, stop):
         stoppable_fingerprint.barrier.wait()
         stop.set()
 
-        return FingerprintData(None, None, {})
+        return FingerprintData(os_type=None, os_version=None, services=[])
 
     stoppable_fingerprint.barrier = Barrier(2)
 

@@ -26,7 +26,7 @@ log_message() {
 configure_precommit() {
     $1 -m pip install --user pre-commit
     pushd "$2"
-    $HOME/.local/bin/pre-commit install -t pre-commit -t pre-push
+    $HOME/.local/bin/pre-commit install -t pre-commit -t pre-push -t prepare-commit-msg
     popd
 }
 
@@ -101,25 +101,27 @@ log_message "Creating island dirs under $ISLAND_PATH"
 mkdir -p "${MONGO_PATH}" || handle_error
 mkdir -p "${ISLAND_BINARIES_PATH}" || handle_error
 
-# Detecting command that calls python 3.7
+python_version="3.11"
+python_dot_version="311"
+# Detecting command that calls python $python_version
 python_cmd=""
-if [[ $(python --version 2>&1) == *"Python 3.7"* ]]; then
+if [[ $(python --version 2>&1) == *"Python $python_version."* ]]; then
   python_cmd="python"
 fi
-if [[ $(python37 --version 2>&1) == *"Python 3.7"* ]]; then
-  python_cmd="python37"
+if [[ $(python$python_dot_version --version 2>&1) == *"Python $python_version."* ]]; then
+  python_cmd="python$python_dot_version"
 fi
-if [[ $(python3.7 --version 2>&1) == *"Python 3.7"* ]]; then
-  python_cmd="python3.7"
+if [[ $(python$python_version --version 2>&1) == *"Python $python_version."* ]]; then
+  python_cmd="python$python_version"
 fi
 
 if [[ ${python_cmd} == "" ]]; then
-  log_message "Python 3.7 command not found. Installing python 3.7."
+  log_message "Python $python_version command not found. Installing python $python_version."
   sudo add-apt-repository ppa:deadsnakes/ppa
   sudo apt-get update
-  sudo apt-get install -y python3.7 python3.7-dev python3.7-venv
-  log_message "Python 3.7 is now available with command 'python3.7'."
-  python_cmd="python3.7"
+  sudo apt-get install -y python$python_version python$python_version-dev python$python_version-venv
+  log_message "Python $python_version is now available with command 'python$python_version'."
+  python_cmd="python$python_version"
 fi
 
 log_message "Installing build-essential"

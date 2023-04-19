@@ -3,8 +3,8 @@ from http import HTTPStatus
 
 from flask import make_response, send_file
 
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import IAgentBinaryRepository, RetrievalError
-from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class AgentBinaries(AbstractResource):
     def __init__(self, agent_binary_repository: IAgentBinaryRepository):
         self._agent_binary_repository = agent_binary_repository
 
-    # Used by monkey. can't secure.
+    # Can't be secured, used in manual run commands
     def get(self, os):
         """
         Gets the agent binary for the specified OS

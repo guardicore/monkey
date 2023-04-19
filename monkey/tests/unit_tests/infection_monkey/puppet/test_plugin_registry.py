@@ -6,7 +6,8 @@ from serpentarium import MultiprocessingPlugin, PluginLoader
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.exploit import IAgentBinaryRepository
+from common.types import AgentID
+from infection_monkey.exploit import IAgentBinaryRepository, IAgentOTPProvider
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import (
     IIslandAPIClient,
@@ -16,6 +17,8 @@ from infection_monkey.island_api_client import (
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor
+
+AGENT_ID = AgentID("707d801b-68cf-44d1-8a4e-7e1a89c412f8")
 
 
 @pytest.fixture
@@ -48,6 +51,11 @@ def dummy_tcp_port_selector() -> TCPPortSelector:
     return MagicMock(spec=TCPPortSelector)
 
 
+@pytest.fixture
+def dummy_otp_provider() -> IAgentOTPProvider:
+    return MagicMock(spec=IAgentOTPProvider)
+
+
 @pytest.mark.parametrize(
     "error_raised_by_island_api_client, error_raised_by_plugin_registry",
     [(IslandAPIRequestError, UnknownPluginError), (IslandAPIError, IslandAPIError)],
@@ -59,6 +67,7 @@ def test_get_plugin__error_handling(
     dummy_agent_event_publisher: IAgentEventPublisher,
     dummy_propagation_credentials_repository: IPropagationCredentialsRepository,
     dummy_tcp_port_selector: TCPPortSelector,
+    dummy_otp_provider: IAgentOTPProvider,
     error_raised_by_island_api_client: Exception,
     error_raised_by_plugin_registry: Exception,
 ):
@@ -75,6 +84,8 @@ def test_get_plugin__error_handling(
         dummy_agent_event_publisher,
         dummy_propagation_credentials_repository,
         dummy_tcp_port_selector,
+        dummy_otp_provider,
+        AGENT_ID,
     )
 
     with pytest.raises(error_raised_by_plugin_registry):
@@ -128,6 +139,7 @@ def plugin_registry(
     dummy_agent_event_publisher: IAgentEventPublisher,
     dummy_propagation_credentials_repository: IPropagationCredentialsRepository,
     dummy_tcp_port_selector: TCPPortSelector,
+    dummy_otp_provider: IAgentOTPProvider,
 ) -> PluginRegistry:
     return PluginRegistry(
         OperatingSystem.LINUX,
@@ -138,6 +150,8 @@ def plugin_registry(
         dummy_agent_event_publisher,
         dummy_propagation_credentials_repository,
         dummy_tcp_port_selector,
+        dummy_otp_provider,
+        AGENT_ID,
     )
 
 

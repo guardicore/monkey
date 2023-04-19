@@ -14,15 +14,13 @@ package that contains an application and everything that it may need to run.
 
 The Infection Monkey AppImage package should run on most modern Linux distros that have FUSE
 installed, but the ones that we've tested are:
-- BlackArch 2020.12.01
-- Kali 2021.2
-- Parrot 4.11
-- Rocky 8
-- openSUSE Leap 15.3
-- Ubuntu Bionic 18.04
-- Ubuntu Focal 20.04
-- Ubuntu Hirsute 21.04
-- Ubuntu Jammy 22.04
+- BlackArch 2023.04.01
+- Kali 2023.1
+- Parrot 5.2
+- CentOS/Rocky/RHEL 8+
+- Debian 11
+- openSUSE Leap 15.4
+- Ubuntu Bionic 18.04, Focal 20.04, Jammy 22.04
 
 On Windows, AppImage can be run in WSL 2.
 

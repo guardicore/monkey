@@ -7,7 +7,6 @@ from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.credentials import Credentials
-from common.types import AgentID, SocketAddress
 
 from . import IIslandAPIClient, IslandAPIError
 
@@ -25,11 +24,17 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
     def __init__(self, island_api_client: IIslandAPIClient):
         self._island_api_client = island_api_client
 
-    def connect(self, island_server: SocketAddress):
-        return self._island_api_client.connect(island_server)
+    def login(self, otp: str):
+        return self._island_api_client.login(otp)
+
+    def logout(self):
+        return self._island_api_client.logout()
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         return self._island_api_client.get_agent_binary(operating_system)
+
+    def get_otp(self) -> str:
+        return self._island_api_client.get_otp()
 
     def get_agent_plugin(
         self, operating_system: OperatingSystem, plugin_type: AgentPluginType, plugin_name: str
@@ -43,8 +48,8 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
     ) -> AgentPluginManifest:
         return self._island_api_client.get_agent_plugin_manifest(plugin_type, plugin_name)
 
-    def get_agent_signals(self, agent_id: str) -> AgentSignals:
-        return self._island_api_client.get_agent_signals(agent_id)
+    def get_agent_signals(self) -> AgentSignals:
+        return self._island_api_client.get_agent_signals()
 
     def get_agent_configuration_schema(self) -> Dict[str, Any]:
         return self._island_api_client.get_agent_configuration_schema()
@@ -69,8 +74,8 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
     def send_events(self, events: Sequence[AbstractAgentEvent]):
         return self._island_api_client.send_events(events)
 
-    def send_heartbeat(self, agent: AgentID, timestamp: float):
-        return self._island_api_client.send_heartbeat(agent, timestamp)
+    def send_heartbeat(self, timestamp: float):
+        return self._island_api_client.send_heartbeat(timestamp)
 
-    def send_log(self, agent_id: AgentID, log_contents: str):
-        return self._island_api_client.send_log(agent_id, log_contents)
+    def send_log(self, log_contents: str):
+        return self._island_api_client.send_log(log_contents)

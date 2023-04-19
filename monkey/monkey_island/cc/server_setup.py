@@ -123,7 +123,9 @@ def _get_deployment() -> Deployment:
 
 
 def _initialize_di_container(
-    ip_addresses: Sequence[IPv4Address], version: Version, data_dir: Path
+    ip_addresses: Sequence[IPv4Address],
+    version: Version,
+    data_dir: Path,
 ) -> DIContainer:
     container = DIContainer()
 
@@ -176,7 +178,7 @@ def _start_island_server(
 ):
     _configure_gevent_exception_handling(config_options.data_dir)
 
-    app = init_app(mongo_setup.MONGO_URL, container)
+    app = init_app(container, config_options.data_dir)
 
     if should_setup_only:
         logger.warning("Setup only flag passed. Exiting.")

@@ -6,8 +6,8 @@ export class CompletedSteps {
   public constructor(runMonkey?: boolean,
                      infectionDone?: boolean,
                      reportDone?: boolean) {
-    this.runMonkey = runMonkey || false;
-    this.infectionDone = infectionDone || false;
-    this.reportDone = reportDone || false;
+    this.runMonkey = runMonkey;
+    this.infectionDone = infectionDone;
+    this.reportDone = reportDone;
   }
 }

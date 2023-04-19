@@ -32,7 +32,7 @@ const getContents = (props) => {
   }, []);
 
   function getIps() {
-    getAllMachines().then(machines => {
+    getAllMachines(true).then(machines => {
         let islandIPs = getIslandIPsFromMachines(machines);
         setAllIPs(islandIPs);
         setSelectedIp(islandIPs[0]);
@@ -48,7 +48,7 @@ const getContents = (props) => {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({type: 'aws', instances: instances, island_ip: selectedIp})
-      }).then(res => res.json())
+      }, true).then(res => res.json())
       .then(res => {
         let result = res['result'];
 

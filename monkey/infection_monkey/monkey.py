@@ -8,6 +8,7 @@ import sys
 import time
 from functools import partial
 from itertools import chain
+from multiprocessing.managers import SyncManager
 from pathlib import Path, WindowsPath
 from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
@@ -30,12 +31,13 @@ from common.agent_events import (
 )
 from common.agent_plugins import AgentPluginType
 from common.agent_registration_data import AgentRegistrationData
+from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
-from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
-from common.types import SocketAddress
+from common.tags.attack import SYSTEM_INFORMATION_DISCOVERY_T1082_TAG
+from common.types import OTP, NetworkPort, SocketAddress
 from common.utils.argparse_types import positive_int
-from common.utils.code_utils import secure_generate_random_string
+from common.utils.code_utils import del_key, secure_generate_random_string
 from common.utils.file_utils import create_secure_directory
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
@@ -46,16 +48,24 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
-from infection_monkey.exploit import CachingAgentBinaryRepository, ExploiterWrapper
+from infection_monkey.exploit import (
+    CachingAgentBinaryRepository,
+    ExploiterWrapper,
+    IslandAPIAgentOTPProvider,
+)
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
 from infection_monkey.exploit.mssqlexec import MSSQLExploiter
 from infection_monkey.exploit.powershell import PowerShellExploiter
-from infection_monkey.exploit.smbexec import SMBExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.exploit.wmiexec import WmiExploiter
 from infection_monkey.exploit.zerologon import ZerologonExploiter
+from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
-from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
+from infection_monkey.island_api_client import (
+    HTTPIslandAPIClientFactory,
+    IIslandAPIClient,
+    IslandAPIAuthenticationError,
+)
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.network import TCPPortSelector
@@ -82,7 +92,6 @@ from infection_monkey.puppet import (
     PluginSourceExtractor,
 )
 from infection_monkey.puppet.puppet import Puppet
-from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.utils import agent_process, environment
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
@@ -106,13 +115,10 @@ class InfectionMonkey:
         logger.info(f"Agent ID: {self._agent_id}")
         logger.info(f"Process ID: {os.getpid()}")
 
-        # Spawn the manager before the acquiring the singleton in case the file handle gets copied
-        # over to the manager process
         context = multiprocessing.get_context("spawn")
-        self._manager = context.Manager()
 
-        self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
+        self._otp = self._get_otp()
 
         self._ipc_logger_queue = ipc_logger_queue
 
@@ -126,6 +132,15 @@ class InfectionMonkey:
         )
         self._agent_event_publisher = QueuedAgentEventPublisher(plugin_event_queue)
 
+        http_island_api_client_factory = HTTPIslandAPIClientFactory(
+            self._agent_event_serializer_registry, self._agent_id, context.Lock()
+        )
+        # Register a proxy for HTTPIslandAPIClient. The manager will create and own the instance
+        SyncManager.register(
+            "HTTPIslandAPIClient", http_island_api_client_factory.create_island_api_client
+        )
+        self._manager = context.Manager()
+
         self._plugin_dir = (
             Path(gettempdir())
             / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
@@ -133,9 +148,7 @@ class InfectionMonkey:
         self._island_address, self._island_api_client = self._connect_to_island_api()
         self._register_agent()
 
-        self._control_channel = ControlChannel(
-            str(self._island_address), self._agent_id, self._island_api_client
-        )
+        self._control_channel = ControlChannel(str(self._island_address), self._island_api_client)
         self._legacy_propagation_credentials_repository = (
             AggregatingPropagationCredentialsRepository(self._control_channel)
         )
@@ -147,7 +160,7 @@ class InfectionMonkey:
         self._heart.start()
 
         self._current_depth = self._opts.depth
-        self._master = None
+        self._master: Optional[IMaster] = None
         self._relay: Optional[TCPRelay] = None
         self._tcp_port_selector = TCPPortSelector(context, self._manager)
 
@@ -166,14 +179,29 @@ class InfectionMonkey:
 
         return opts
 
-    # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
+    @staticmethod
+    def _get_otp() -> OTP:
+        try:
+            otp = OTP(os.environ[AGENT_OTP_ENVIRONMENT_VARIABLE])
+        except KeyError:
+            raise Exception(
+                f"Couldn't find {AGENT_OTP_ENVIRONMENT_VARIABLE} environmental variable. "
+                f"Without an OTP the agent will fail to authenticate!"
+            )
+
+        # SECURITY: There's no need to leave this floating around in a place as visible as
+        # environment variables for any longer than necessary.
+        del_key(os.environ, AGENT_OTP_ENVIRONMENT_VARIABLE)
+
+        return otp
+
     def _connect_to_island_api(self) -> Tuple[SocketAddress, IIslandAPIClient]:
         logger.debug(f"Trying to wake up with servers: {', '.join(map(str, self._opts.servers))}")
         server_clients = find_available_island_apis(
-            self._opts.servers, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
+            self._opts.servers,
         )
 
-        server, island_api_client = self._select_server(server_clients)
+        server, island_api_client = self._select_server(server_clients, self._manager)
 
         if server and island_api_client:
             logger.info(f"Using {server} to communicate with the Island")
@@ -192,11 +220,19 @@ class InfectionMonkey:
         return server, island_api_client
 
     def _select_server(
-        self, server_clients: IslandAPISearchResults
+        self, island_api_statuses: IslandAPISearchResults, manager: SyncManager
     ) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
         for server in self._opts.servers:
-            if server_clients[server] is not None:
-                return server, server_clients[server]
+            if island_api_statuses[server]:
+                try:
+                    island_api_client = manager.HTTPIslandAPIClient(  # type: ignore[attr-defined]
+                        server
+                    )
+                    island_api_client.login(self._otp)
+
+                    return server, island_api_client
+                except Exception as err:
+                    logger.warning(f"Failed to connect and authenticate to {server}: {err}")
 
         return None, None
 
@@ -221,12 +257,10 @@ class InfectionMonkey:
         self._agent_event_forwarder.start()
         self._plugin_event_forwarder.start()
 
-        if self._is_another_monkey_running():
-            logger.info("Another instance of the monkey is already running")
-            return
-
         logger.info("Agent is starting...")
 
+        # This check must be done after the agent event forwarder is started, otherwise the agent
+        # will be unable to send a shutdown event to the Island.
         should_stop = self._control_channel.should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
@@ -249,7 +283,7 @@ class InfectionMonkey:
         event = OSDiscoveryEvent(
             source=self._agent_id,
             timestamp=timestamp,
-            tags={T1082_ATTACK_TECHNIQUE_TAG},
+            tags={SYSTEM_INFORMATION_DISCOVERY_T1082_TAG},
             os=operating_system,
             version=operating_system_version,
         )
@@ -264,7 +298,7 @@ class InfectionMonkey:
         event = HostnameDiscoveryEvent(
             source=self._agent_id,
             timestamp=timestamp,
-            tags={T1082_ATTACK_TECHNIQUE_TAG},
+            tags={SYSTEM_INFORMATION_DISCOVERY_T1082_TAG},
             hostname=hostname,
         )
         self._agent_event_queue.publish(event)
@@ -280,16 +314,20 @@ class InfectionMonkey:
         config = self._control_channel.get_config()
 
         relay_port = self._tcp_port_selector.get_free_tcp_port()
-        self._relay = TCPRelay(
-            relay_port,
-            self._island_address,
-            client_disconnect_timeout=config.keep_tunnel_open_time,
-        )
+        if relay_port is None:
+            logger.error("No available ports. Unable to create a TCP relay.")
+        else:
+            self._relay = TCPRelay(
+                relay_port,
+                self._island_address,
+                client_disconnect_timeout=config.keep_tunnel_open_time,
+            )
 
-        if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
-            self._relay.start()
+            if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
+                self._relay.start()
 
-        self._build_master(relay_port, operating_system)
+        servers = self._build_server_list(relay_port)
+        self._master = self._build_master(servers, operating_system)
 
         register_signal_handlers(self._master)
 
@@ -309,13 +347,11 @@ class InfectionMonkey:
 
         return agent_event_serializer_registry
 
-    def _build_master(self, relay_port: int, operating_system: OperatingSystem):
-        servers = self._build_server_list(relay_port)
+    def _build_master(self, servers: Sequence[str], operating_system: OperatingSystem) -> IMaster:
         local_network_interfaces = get_network_interfaces()
-
         puppet = self._build_puppet(operating_system)
 
-        self._master = AutomatedMaster(
+        return AutomatedMaster(
             self._current_depth,
             servers,
             puppet,
@@ -324,8 +360,8 @@ class InfectionMonkey:
             self._legacy_propagation_credentials_repository,
         )
 
-    def _build_server_list(self, relay_port: int) -> Sequence[str]:
-        my_relays = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
+    def _build_server_list(self, relay_port: Optional[NetworkPort]) -> Sequence[str]:
+        my_relays = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()] if relay_port else []
         known_servers = chain(map(str, self._opts.servers), my_relays)
 
         # Dictionaries in Python 3.7 and later preserve key order. Sets do not preserve order.
@@ -345,33 +381,39 @@ class InfectionMonkey:
             manager=self._manager,
         )
 
+        plugin_source_extractor = PluginSourceExtractor(self._plugin_dir)
         plugin_loader = PluginLoader(
             self._plugin_dir, partial(configure_child_process_logger, self._ipc_logger_queue)
         )
+        otp_provider = IslandAPIAgentOTPProvider(self._island_api_client)
         plugin_registry = PluginRegistry(
             operating_system,
             self._island_api_client,
-            PluginSourceExtractor(self._plugin_dir),
+            plugin_source_extractor,
             plugin_loader,
             agent_binary_repository,
             self._agent_event_publisher,
             self._propagation_credentials_repository,
-            tcp_port_selector=self._tcp_port_selector,
+            self._tcp_port_selector,
+            otp_provider,
+            self._agent_id,
         )
         plugin_compatability_verifier = PluginCompatabilityVerifier(
             self._island_api_client, HARD_CODED_EXPLOITER_MANIFESTS
         )
-        puppet = Puppet(self._agent_event_queue, plugin_registry, plugin_compatability_verifier)
+        puppet = Puppet(
+            self._agent_event_queue, plugin_registry, plugin_compatability_verifier, self._agent_id
+        )
 
         puppet.load_plugin(
             AgentPluginType.CREDENTIAL_COLLECTOR,
             "MimikatzCollector",
-            MimikatzCredentialCollector(self._agent_event_queue),
+            MimikatzCredentialCollector(self._agent_event_queue, self._agent_id),
         )
         puppet.load_plugin(
             AgentPluginType.CREDENTIAL_COLLECTOR,
             "SSHCollector",
-            SSHCredentialCollector(self._agent_event_queue),
+            SSHCredentialCollector(self._agent_event_queue, self._agent_id),
         )
 
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "http", HTTPFingerprinter())
@@ -380,7 +422,11 @@ class InfectionMonkey:
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "ssh", SSHFingerprinter())
 
         exploit_wrapper = ExploiterWrapper(
-            self._agent_event_queue, agent_binary_repository, self._tcp_port_selector
+            self._agent_id,
+            self._agent_event_queue,
+            agent_binary_repository,
+            self._tcp_port_selector,
+            otp_provider,
         )
 
         puppet.load_plugin(
@@ -392,9 +438,6 @@ class InfectionMonkey:
             AgentPluginType.EXPLOITER,
             "PowerShellExploiter",
             exploit_wrapper.wrap(PowerShellExploiter),
-        )
-        puppet.load_plugin(
-            AgentPluginType.EXPLOITER, "SMBExploiter", exploit_wrapper.wrap(SMBExploiter)
         )
         puppet.load_plugin(
             AgentPluginType.EXPLOITER, "SSHExploiter", exploit_wrapper.wrap(SSHExploiter)
@@ -413,7 +456,9 @@ class InfectionMonkey:
         )
 
         puppet.load_plugin(
-            AgentPluginType.PAYLOAD, "ransomware", RansomwarePayload(self._agent_event_queue)
+            AgentPluginType.PAYLOAD,
+            "ransomware",
+            RansomwarePayload(self._agent_event_queue, self._agent_id),
         )
 
         return puppet
@@ -426,12 +471,11 @@ class InfectionMonkey:
                 self._legacy_propagation_credentials_repository,
             ),
         )
-        self._agent_event_queue.subscribe_type(
-            PropagationEvent, notify_relay_on_propagation(self._relay)
-        )
 
-    def _is_another_monkey_running(self):
-        return not self._singleton.try_lock()
+        if self._relay:
+            self._agent_event_queue.subscribe_type(
+                PropagationEvent, notify_relay_on_propagation(self._relay)
+            )
 
     def cleanup(self):
         logger.info("Agent cleanup started")
@@ -454,9 +498,13 @@ class InfectionMonkey:
             self._publish_agent_shutdown_event()
 
             self._plugin_event_forwarder.flush()
-            self._agent_event_forwarder.flush()
+
+            if self._agent_event_forwarder:
+                self._agent_event_forwarder.flush()
 
             self._heart.stop()
+
+            self._logout()
 
             self._close_tunnel()
 
@@ -466,13 +514,10 @@ class InfectionMonkey:
                 InfectionMonkey._self_delete()
         finally:
             self._plugin_event_forwarder.stop()
-            self._agent_event_forwarder.stop()
+            if self._agent_event_forwarder:
+                self._agent_event_forwarder.stop()
             self._delete_plugin_dir()
             self._manager.shutdown()
-            try:
-                self._singleton.unlock()
-            except AssertionError as err:
-                logger.warning(f"Failed to release the singleton: {err}")
 
         logger.info("Agent is shutting down")
 
@@ -504,7 +549,7 @@ class InfectionMonkey:
         except FileNotFoundError:
             logger.exception(f"Log file {self._log_path} is not found.")
 
-        self._island_api_client.send_log(self._agent_id, log_contents)
+        self._island_api_client.send_log(log_contents)
 
     def _delete_plugin_dir(self):
         if not self._plugin_dir.exists():
@@ -588,3 +633,9 @@ class InfectionMonkey:
     @staticmethod
     def _self_delete_linux():
         os.remove(sys.executable)
+
+    def _logout(self):
+        try:
+            self._island_api_client.logout()
+        except IslandAPIAuthenticationError:
+            logger.info("Agent is already logged out")

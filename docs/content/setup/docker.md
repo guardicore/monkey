@@ -14,22 +14,16 @@ The Infection Monkey Docker container works on Linux only. It is not compatible 
 ## Deployment
 
 ### 1. Load the docker images
-1. Pull the MongoDB v4.2 Docker image:
+1. Pull the MongoDB v6.0 Docker image:
 
     ```bash
-    sudo docker pull mongo:4.2
+    sudo docker pull mongo:6.0
     ```
 
-1. Extract the Monkey Island Docker tarball:
+1. Pull the Monkey Island Docker image:
 
     ```bash
-    tar -xvzf InfectionMonkey-docker-v2.0.0.tgz
-    ```
-
-1. Load the Monkey Island Docker image:
-
-    ```bash
-    sudo docker load -i InfectionMonkey-docker-v2.0.0.tar
+    sudo docker pull infectionmonkey/monkey_island:latest
     ```
 
 ### 2. Start MongoDB
@@ -46,7 +40,7 @@ any MongoDB containers or volumes associated with the previous version.
         --network=host \
         --volume db:/data/db \
         --detach \
-        mongo:4.2
+        mongo:6.0
     ```
 
 ### 3. Start Monkey Island with default certificate
@@ -64,7 +58,7 @@ been signed by a private certificate authority.
         --interactive \
         --name monkey-island \
         --network=host \
-        guardicore/monkey-island:VERSION
+        infectionmonkey/monkey-island:latest
     ```
 
 ### 4. Accessing Monkey Island
@@ -78,30 +72,38 @@ You can configure the server by mounting a volume and specifying a
 
 1. Create a directory for server configuration file, e.g. `monkey_island_data`:
     ```bash
-    mkdir ./monkey_island_data
-    chmod 700 ./monkey_island_data
+    mkdir -m=0700 ./monkey_island_data
     ```
 1. Run the container with a mounted volume, and the `--setup-only` flag:
-```bash
-sudo docker run \
-    --rm \
-    --name monkey-island \
-    --network=host \
-    --user "$(id -u ${USER}):$(id -g ${USER})" \
-    --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-    guardicore/monkey-island:VERSION --setup-only
-```
+    ```bash
+    sudo docker run \
+        --rm \
+        --name monkey-island \
+        --network=host \
+        --user "$(id -u ${USER}):$(id -g ${USER})" \
+        --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
+        infectionmonkey/monkey-island:latest --setup-only
+    ```
 1. Move your `server_config.json` file to `./monkey_island_data` directory.
+   Your `server_config.json` file must contain at least the following:
+    ```json
+        {
+            "data_dir": "/monkey_island_data",
+            "mongodb": {
+                "start_mongodb": false
+            }
+        }
+    ```
 1. Run the container with a mounted volume, specify the path to the `server_config.json`:
-```bash
-sudo docker run \
-    --rm \
-    --name monkey-island \
-    --network=host \
-    --user "$(id -u ${USER}):$(id -g ${USER})" \
-    --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-    guardicore/monkey-island:VERSION --server-config="/monkey_island_data/server_config.json"
-```
+    ```bash
+    sudo docker run \
+        --rm \
+        --name monkey-island \
+        --network=host \
+        --user "$(id -u ${USER}):$(id -g ${USER})" \
+        --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
+        infectionmonkey/monkey-island:latest --server-config="/monkey_island_data/server_config.json"
+    ```
 
 ### Start Monkey Island with user-provided certificate
 
@@ -111,16 +113,22 @@ enterprise or other security-sensitive environments, it is recommended that the
 user provide Infection Monkey with a certificate that has been signed by a
 private certificate authority.
 
+1. If you haven't already, follow the steps above in the [Configuring the
+   server](#configuring-the-server) section.
 1. Terminate the docker container if it's already running.
-1. Move your `.crt` and `.key` files to `./monkey_island_data` (directory created for the volume).
+1. Move your `.crt` and `.key` files to `./monkey_island_data`.
 1. Make sure that your `.crt` and `.key` files are readable only by you.
     ```bash
     chmod 600 <PATH_TO_KEY_FILE>
     chmod 600 <PATH_TO_CRT_FILE>
     ```
-1. Modify the [server configuration file](../../reference/server_configuration) and add the following lines:
+1. Modify the [server configuration file](../../reference/server_configuration) to look like:
     ```json
     {
+        "data_dir": "/monkey_island_data",
+        "mongodb": {
+            "start_mongodb": false
+        },
         "ssl_certificate": {
             "ssl_certificate_file": "/monkey_island_data/my_cert.crt",
             "ssl_certificate_key_file": "/monkey_island_data/my_key.key"
@@ -135,7 +143,7 @@ private certificate authority.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:VERSION --setup-only --server-config="/monkey_island_data/server_config.json"
+        infectionmonkey/monkey-island:latest --server-config="/monkey_island_data/server_config.json"
     ```
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
@@ -157,7 +165,7 @@ private certificate authority.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:VERSION --setup-only --server-config="/monkey_island_data/server_config.json"
+        infectionmonkey/monkey-island:latest --setup-only --server-config="/monkey_island_data/server_config.json"
     ```
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
@@ -186,7 +194,7 @@ to store data in the `monkey-mongo` container.
 UnicodeDecodeError: 'utf-8' codec can't decode byte 0xee in position 0: invalid continuation byte
 ```
 
-Starting a new container from the `guardicore/monkey-island:VERSION` image
+Starting a new container from the `infectionmonkey/monkey-island:VERSION` image
 generates a new secret key for storing sensitive information in MongoDB. If you
 have an old database instance running (from a previous instance of Infection
 Monkey), the data stored in the `monkey-mongo` container has been encrypted

@@ -1,19 +1,17 @@
 import os
-import re
-import uuid
-from datetime import timedelta
-from typing import Iterable, Set, Type
+from pathlib import Path
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from werkzeug.exceptions import NotFound
 
 from common import DIContainer
-from monkey_island.cc.database import database, mongo
+from monkey_island.cc.flask_utils import FlaskDIWrapper
+from monkey_island.cc.mongo_consts import MONGO_URL
 from monkey_island.cc.resources import (
     AgentBinaries,
-    AgentConfiguration,
-    AgentConfigurationSchema,
     AgentEvents,
     AgentHeartbeat,
     AgentLogs,
@@ -31,8 +29,6 @@ from monkey_island.cc.resources import (
     ResetAgentConfiguration,
     TerminateAllAgents,
 )
-from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.auth import Authenticate, Register, RegistrationStatus, init_jwt
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
@@ -41,10 +37,10 @@ from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.version import Version
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.services import register_agent_configuration_resources, setup_authentication
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
-AUTH_EXPIRATION_TIME = timedelta(minutes=30)
 
 
 def serve_static_file(static_path):
@@ -70,74 +66,22 @@ def serve_home():
     return serve_static_file(HOME_FILE)
 
 
-def init_app_config(app, mongo_url):
-    app.config["MONGO_URI"] = mongo_url
-
-    # See https://flask-jwt-extended.readthedocs.io/en/stable/options
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = AUTH_EXPIRATION_TIME
-    # Invalidate the signature of JWTs if the server process restarts. This avoids the edge case
-    # of getting a JWT,
-    # deciding to reset credentials and then still logging in with the old JWT.
-    app.config["JWT_SECRET_KEY"] = str(uuid.uuid4())
-
+def init_app_config(app):
     # By default, Flask sorts keys of JSON objects alphabetically.
     # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config["JSON_SORT_KEYS"] = False
 
+    mongo_url = "".join(MONGO_URL.rpartition("/")[0])
+    app.config["RATELIMIT_HEADERS_ENABLED"] = True
+    app.config["RATELIMIT_STRATEGY"] = "moving-window"
+    app.config["RATELIMIT_STORAGE_URI"] = mongo_url
+
     app.url_map.strict_slashes = False
-
-
-def init_app_services(app):
-    init_jwt(app)
-    mongo.init_app(app)
-
-    with app.app_context():
-        database.init()
 
 
 def init_app_url_rules(app):
     app.add_url_rule("/", "serve_home", serve_home)
     app.add_url_rule("/<path:static_path>", "serve_static_file", serve_static_file)
-
-
-class FlaskDIWrapper:
-    class DuplicateURLError(Exception):
-        pass
-
-    url_parameter_regex = re.compile(r"<.*?:.*?>")
-
-    def __init__(self, api: flask_restful.Api, container: DIContainer):
-        self._api = api
-        self._container = container
-        self._reserved_urls: Set[str] = set()
-
-    def add_resource(self, resource: Type[AbstractResource]):
-        if len(resource.urls) == 0:
-            raise ValueError(f"Resource {resource.__name__} has no defined URLs")
-
-        self._reserve_urls(resource.urls)
-
-        # enforce our rule that URLs should not contain a trailing slash
-        for url in resource.urls:
-            if url.endswith("/"):
-                raise ValueError(
-                    f"Resource {resource.__name__} has an invalid URL: A URL "
-                    "should not have a trailing slash."
-                )
-        dependencies = self._container.resolve_dependencies(resource)
-        self._api.add_resource(resource, *resource.urls, resource_class_args=dependencies)
-
-    def _reserve_urls(self, urls: Iterable[str]):
-        for url in map(FlaskDIWrapper._format_url, urls):
-            if url in self._reserved_urls:
-                raise FlaskDIWrapper.DuplicateURLError(f"URL {url} has already been registered!")
-
-            self._reserved_urls.add(url)
-
-    @staticmethod
-    def _format_url(url: str):
-        new_url = url.strip("/")
-        return FlaskDIWrapper.url_parameter_regex.sub("<PARAMETER_PLACEHOLDER>", new_url)
 
 
 def init_api_resources(api: FlaskDIWrapper):
@@ -147,15 +91,11 @@ def init_api_resources(api: FlaskDIWrapper):
 
 def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Root)
-    api.add_resource(Register)
-    api.add_resource(RegistrationStatus)
-    api.add_resource(Authenticate)
+
     api.add_resource(Agents)
     api.add_resource(LocalRun)
 
     api.add_resource(IslandMode)
-    api.add_resource(AgentConfiguration)
-    api.add_resource(AgentConfigurationSchema)
     api.add_resource(AgentBinaries)
     api.add_resource(AgentPlugins)
     api.add_resource(AgentPluginsManifest)
@@ -181,6 +121,8 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 
     api.add_resource(AgentHeartbeat)
 
+    register_agent_configuration_resources(api)
+
 
 def init_rpc_endpoints(api: FlaskDIWrapper):
     api.add_resource(ResetAgentConfiguration)
@@ -188,9 +130,12 @@ def init_rpc_endpoints(api: FlaskDIWrapper):
     api.add_resource(TerminateAllAgents)
 
 
-def init_app(mongo_url: str, container: DIContainer):
+def init_app(
+    container: DIContainer,
+    data_dir: Path,
+):
     """
-    Simple docstirng for init_app
+    Simple docstring for init_app
 
     :param mongo_url: A url
     :param container: Dependency injection container
@@ -200,10 +145,14 @@ def init_app(mongo_url: str, container: DIContainer):
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
 
-    init_app_config(app, mongo_url)
-    init_app_services(app)
+    init_app_config(app)
     init_app_url_rules(app)
 
+    limiter = Limiter(
+        get_remote_address,
+        app=app,
+    )
+    setup_authentication(api, app, container, data_dir, limiter)
     flask_resource_manager = FlaskDIWrapper(api, container)
     init_api_resources(flask_resource_manager)
 

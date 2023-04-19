@@ -4,11 +4,6 @@ const RANSOMWARE_SCHEMA = {
         'encryption': {
             'title': 'Ransomware simulation',
             'type': 'object',
-            'description': 'To simulate ransomware encryption, you\'ll need to provide Infection ' +
-                'Monkey with files that it can safely encrypt. ' +
-              'Create a directory and put some files on each machine where ' +
-                'the ransomware simulation will run.' +
-                '\n\nProvide the path to the directory that was created on each machine.',
             'properties': {
                 'enabled': {
                     'title': 'Encrypt files',
@@ -16,10 +11,6 @@ const RANSOMWARE_SCHEMA = {
                     'default': true,
                     'description': 'Ransomware encryption will be simulated by flipping every bit ' +
                         'in the files contained within the target directories.'
-                },
-                'info_box': {
-                    'info': 'No files will be encrypted if a directory is not specified or doesn\'t ' +
-                        'exist on a victim machine.'
                 },
                 'file_extension': {
                     'title': 'File extension',
@@ -52,9 +43,6 @@ const RANSOMWARE_SCHEMA = {
                                 'directory is specified, no files will be encrypted.'
                         }
                     }
-                },
-                'text_box': {
-                    'text': 'Note: A README.txt will be left in the specified target directory.'
                 }
             }
         },

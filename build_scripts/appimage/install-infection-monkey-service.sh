@@ -130,7 +130,7 @@ while (( "$#" )); do
       exit 0
       ;;
     *)
-      die "Error: Unsupported parameter $1."
+      die "Error: Unsupported parameter \"$1\"."
       ;;
   esac
 done

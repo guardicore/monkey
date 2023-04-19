@@ -8,8 +8,8 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAK
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
-from infection_monkey.i_puppet import IncompatibleOperatingSystemError, PingScanData
-from infection_monkey.model import TargetHost
+from common.types import AgentID
+from infection_monkey.i_puppet import IncompatibleOperatingSystemError, PingScanData, TargetHost
 from infection_monkey.puppet import PluginCompatabilityVerifier, PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
@@ -30,6 +30,8 @@ def mock_plugin_registry() -> PluginRegistry:
         MagicMock(),
         MagicMock(),
         MagicMock(),
+        MagicMock(),
+        AgentID("fd838244-385f-41b4-9904-495e3c7b644e"),
     )
 
 
@@ -51,6 +53,7 @@ def puppet(
         agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
         plugin_compatability_verifier=mock_plugin_compatability_verifier,
+        agent_id=AgentID("4277aa81-660b-4673-b96c-443ed525b4d0"),
     )
 
 
@@ -143,3 +146,22 @@ def test_exploit_host__incompatable(
             options={},
             interrupt=threading.Event(),
         )
+
+
+def test_malfunctioning_plugin__exploiter(puppet: Puppet):
+    malfunctioning_exploiter = MagicMock()
+    malfunctioning_exploiter.run = MagicMock(return_value=None)
+    puppet.load_plugin(AgentPluginType.EXPLOITER, FAKE_NAME, malfunctioning_exploiter)
+
+    exploiter_result_data = puppet.exploit_host(
+        name=FAKE_NAME,
+        host=TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.WINDOWS),
+        current_depth=1,
+        servers=[],
+        options={},
+        interrupt=threading.Event(),
+    )
+
+    assert exploiter_result_data.exploitation_success is False
+    assert exploiter_result_data.propagation_success is False
+    assert exploiter_result_data.error_message != ""

@@ -1,4 +1,6 @@
-from typing import Optional, Tuple
+from typing import Callable, Mapping, Optional, Tuple, Type
+
+from pydantic import HttpUrl
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
@@ -38,8 +40,8 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
     version: PluginVersion
     description: Optional[str]
     remediation_suggestion: Optional[str]
-    link_to_documentation: Optional[str]
+    link_to_documentation: Optional[HttpUrl]
     safe: bool = False
 
     class Config(InfectionMonkeyModelConfig):
-        json_encoders = {PluginVersion: lambda v: str(v)}
+        json_encoders: Mapping[Type, Callable] = {PluginVersion: lambda v: str(v)}

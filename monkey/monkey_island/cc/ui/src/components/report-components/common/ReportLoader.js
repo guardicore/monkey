@@ -1,4 +1,4 @@
-import {css} from '@emotion/core';
+import {css} from '@emotion/react';
 import React, {Component} from 'react';
 import {GridLoader} from 'react-spinners';
 import * as PropTypes from 'prop-types';

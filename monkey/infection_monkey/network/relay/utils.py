@@ -1,17 +1,12 @@
 import logging
 import socket
 from contextlib import suppress
-from typing import Dict, Iterable, Iterator, Optional
+from typing import Dict, Iterable, Iterator
 
-from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
+import requests
+
+from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 from common.types import SocketAddress
-from infection_monkey.island_api_client import (
-    AbstractIslandAPIClientFactory,
-    IIslandAPIClient,
-    IslandAPIConnectionError,
-    IslandAPIError,
-    IslandAPITimeoutError,
-)
 from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST
 from infection_monkey.utils.threading import (
     ThreadSafeIterator,
@@ -26,12 +21,10 @@ logger = logging.getLogger(__name__)
 NUM_FIND_SERVER_WORKERS = 32
 
 
-IslandAPISearchResults = Dict[SocketAddress, Optional[IIslandAPIClient]]
+IslandAPISearchResults = Dict[SocketAddress, bool]
 
 
-def find_available_island_apis(
-    servers: Iterable[SocketAddress], island_api_client_factory: AbstractIslandAPIClientFactory
-) -> IslandAPISearchResults:
+def find_available_island_apis(servers: Iterable[SocketAddress]) -> IslandAPISearchResults:
     server_list = list(servers)
     server_iterator = ThreadSafeIterator(server_list.__iter__())
     server_results: IslandAPISearchResults = {}
@@ -39,7 +32,7 @@ def find_available_island_apis(
     run_worker_threads(
         _find_island_server,
         "FindIslandServer",
-        args=(server_iterator, server_results, island_api_client_factory),
+        args=(server_iterator, server_results),
         num_workers=NUM_FIND_SERVER_WORKERS,
     )
 
@@ -49,34 +42,27 @@ def find_available_island_apis(
 def _find_island_server(
     servers: Iterator[SocketAddress],
     server_results: IslandAPISearchResults,
-    island_api_client_factory: AbstractIslandAPIClientFactory,
 ):
     with suppress(StopIteration):
         server = next(servers)
-        server_results[server] = _check_if_island_server(server, island_api_client_factory)
+        server_results[server] = _server_is_island(server)
 
 
-def _check_if_island_server(
-    server: SocketAddress, island_api_client_factory: AbstractIslandAPIClientFactory
-) -> Optional[IIslandAPIClient]:
+def _server_is_island(server: SocketAddress) -> bool:
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
-        client = island_api_client_factory.create_island_api_client()
-        client.connect(server)
+        response = requests.get(  # noqa: DUO123
+            f"https://{server}/api?action=is-up", verify=False, timeout=MEDIUM_REQUEST_TIMEOUT
+        )
+        response.raise_for_status()
 
         logger.debug(f"Successfully connected to the Island via {server}")
-        return client
-    except IslandAPIConnectionError as err:
+        return True
+    except requests.exceptions.RequestException as err:
         logger.error(f"Unable to connect to server/relay {server}: {err}")
-    except IslandAPITimeoutError as err:
-        logger.error(f"Timed out while connecting to server/relay {server}: {err}")
-    except IslandAPIError as err:
-        logger.error(
-            f"Exception encountered when trying to connect to server/relay {server}: {err}"
-        )
 
-    return None
+    return False
 
 
 def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[SocketAddress]):

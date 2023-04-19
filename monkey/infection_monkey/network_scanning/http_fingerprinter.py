@@ -1,16 +1,21 @@
 import logging
 from contextlib import closing
-from typing import Any, Dict, Iterable, Optional, Set, Tuple
+from typing import Dict, Iterable, Optional, Set
 
 from requests import head
 from requests.exceptions import ConnectionError, Timeout
+from requests.structures import CaseInsensitiveDict
 
-from common.types import PortStatus
-from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
+from common.types import NetworkPort, NetworkProtocol, NetworkService, PortStatus
+from infection_monkey.i_puppet import (
+    DiscoveredService,
+    FingerprintData,
+    IFingerprinter,
+    PingScanData,
+    PortScanData,
+)
 
 logger = logging.getLogger(__name__)
-
-DISPLAY_NAME = "HTTP"
 
 
 class HTTPFingerprinter(IFingerprinter):
@@ -26,25 +31,24 @@ class HTTPFingerprinter(IFingerprinter):
         port_scan_data: Dict[int, PortScanData],
         options: Dict,
     ) -> FingerprintData:
-        services = {}
+        services = []
         http_ports = set(options.get("http_ports", []))
         ports_to_fingerprint = _get_open_http_ports(http_ports, port_scan_data)
 
         for port in ports_to_fingerprint:
-            server_header_contents, ssl = _query_potential_http_server(host, port)
+            service = _query_potential_http_server(host, port)
 
-            if server_header_contents is not None:
-                services[f"tcp-{port}"] = {
-                    "display_name": DISPLAY_NAME,
-                    "port": port,
-                    "name": "http",
-                    "data": (server_header_contents, ssl),
-                }
+            if service:
+                services.append(
+                    DiscoveredService(
+                        protocol=NetworkProtocol.TCP, port=NetworkPort(port), service=service
+                    )
+                )
 
-        return FingerprintData(None, None, services)
+        return FingerprintData(os_type=None, os_version=None, services=services)
 
 
-def _query_potential_http_server(host: str, port: int) -> Tuple[Optional[str], Optional[bool]]:
+def _query_potential_http_server(host: str, port: int) -> Optional[NetworkService]:
     # check both http and https
     http = f"http://{host}:{port}"
     https = f"https://{host}:{port}"
@@ -53,9 +57,9 @@ def _query_potential_http_server(host: str, port: int) -> Tuple[Optional[str], O
         server_header = _get_server_from_headers(url)
 
         if server_header is not None:
-            return server_header, ssl
+            return NetworkService.HTTPS if ssl else NetworkService.HTTP
 
-    return None, None
+    return None
 
 
 def _get_server_from_headers(url: str) -> Optional[str]:
@@ -66,7 +70,7 @@ def _get_server_from_headers(url: str) -> Optional[str]:
     return None
 
 
-def _get_http_headers(url: str) -> Optional[Dict[str, Any]]:
+def _get_http_headers(url: str) -> Optional[CaseInsensitiveDict]:
     try:
         logger.debug(f"Sending request for headers to {url}")
         with closing(head(url, verify=False, timeout=1)) as response:  # noqa: DUO123

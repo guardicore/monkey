@@ -5,6 +5,44 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2.1.0] - 2023-04-19
+### Added
+- Logout button. #3063
+- An option to the Hadoop exploiter to try all discovered HTTP ports. #2136
+- `GET /api/agent-otp`. #3076
+- `POST /api/agent-otp-login` endpoint. #3076
+- A smarter brute-forcing strategy for SMB exploiter. #3039
+- `POST /api/refresh-authentication-token` endpoint that allows refreshing of
+  the access token. #3181
+
+### Changed
+- Migrated the hard-coded SMB exploiter to a plugin. #2952
+- Python version from 3.7 to 3.11.2. #2705
+- MSI installer is now build with InnoSetup. #1911
+
+### Fixed
+- A UI deficiency where invalid configurations could be submitted to the
+  backend. #1301, #2989
+- Notification spam bug. #2731
+- Agent propagator crashes if exploiters malfunction. #2992
+- Configuration order not preserved in debugging output. #2860
+- A bug in the Hadoop exploiter that resulted in speculative execution of
+  multiple agents. #2758
+- Formatting of the manual run command when copy/pasting from the web UI. #3115
+- A bug where plugins received an incorrect agent ID. #3119
+- Random logouts when the UI is being actively used. #2049, #3079, #3137
+
+### Security
+- Fixed plaintext private key in SSHKey pair list in UI. #2950
+- Upgraded MongoDB version from 4.x to 6.0.4. #2706
+- Replaced the `SystemSingleton` component, which could allow local users to
+  execute a DoS attack against agents. #2817
+- Replaced our bespoke authentication solution with `flask-security-too`.
+  #2049, #2157, #3078, #3138
+- Enforced access control around sensitive API endpoints. #2049, #2157
+- Upgraded 3rd-party dependencies. #2705, #2970, #2865, #3125
+- Fixed a potential XSS issue in exploiter plugins. #3081
+
 ## [2.0.0] - 2023-02-08
 ### Added
 - `credentials.json` file for storing Monkey Island user login information. #1206

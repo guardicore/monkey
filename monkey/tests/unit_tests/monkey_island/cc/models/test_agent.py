@@ -12,6 +12,7 @@ AGENT_OBJECT_DICT = {
     "id": AGENT_ID,
     "machine_id": 2,
     "parent_id": PARENT_ID,
+    "registration_time": datetime.fromtimestamp(1660848410, tz=timezone.utc),
     "start_time": datetime.fromtimestamp(1660848408, tz=timezone.utc),
 }
 
@@ -19,6 +20,7 @@ AGENT_SIMPLE_DICT = {
     "id": str(AGENT_ID),
     "machine_id": 2,
     "parent_id": str(PARENT_ID),
+    "registration_time": "2022-08-18T18:46:50+00:00",
     "start_time": "2022-08-18T18:46:48+00:00",
 }
 
@@ -54,6 +56,7 @@ def test_to_dict():
     [
         ("id", 1),
         ("machine_id", "not-an-int"),
+        ("registration_time", None),
         ("start_time", None),
         ("stop_time", []),
         ("parent_id", 2.1),
@@ -72,6 +75,7 @@ def test_construct_invalid_field__type_error(key, value):
     "key, value",
     [
         ("machine_id", -1),
+        ("registration_time", "not-a-datetime"),
         ("start_time", "not-a-datetime"),
         ("stop_time", "not-a-datetime"),
         ("cc_server", []),
@@ -97,6 +101,13 @@ def test_machine_id_immutable():
 
     with pytest.raises(TypeError):
         a.machine_id = 10
+
+
+def test_registration_time_immutable():
+    a = Agent(**AGENT_SIMPLE_DICT)
+
+    with pytest.raises(TypeError):
+        a.registration_time = 100
 
 
 def test_start_time_immutable():

@@ -2,10 +2,11 @@ import logging
 import multiprocessing
 import time
 from ipaddress import IPv4Interface
-from typing import Any, Callable, Collection, List, Optional, Sequence
+from typing import Any, Callable, Collection, Dict, List, Optional, Sequence
+
+from egg_timer import EggTimer
 
 from common.agent_configuration import PluginConfiguration
-from common.utils import Timer
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
@@ -95,7 +96,7 @@ class AutomatedMaster(IMaster):
             "Checking for the stop signal from the island every "
             f"{CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC} seconds."
         )
-        timer = Timer()
+        timer = EggTimer()
         timer.set(CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC)
 
         while self._master_thread_should_run():
@@ -126,7 +127,7 @@ class AutomatedMaster(IMaster):
             return
 
         credential_collector_thread = create_daemon_thread(
-            target=self._run_plugins,
+            target=self._run_plugins_legacy,
             name="CredentialCollectorThread",
             args=(
                 config.credential_collectors,
@@ -161,10 +162,31 @@ class AutomatedMaster(IMaster):
         if not credentials:
             logger.debug(f"No credentials were collected by {collector}")
 
-    def _run_payload(self, payload: PluginConfiguration):
-        self._puppet.run_payload(payload.name, payload.options, self._stop)
+    def _run_payload(self, name: str, options: Dict):
+        self._puppet.run_payload(name, options, self._stop)
 
     def _run_plugins(
+        self,
+        plugins: Dict[str, Dict],
+        plugin_type: str,
+        callback: Callable[[str, Dict], None],
+    ):
+        logger.info(f"Running {plugin_type}s")
+        logger.debug(f"Found {len(plugins)} {plugin_type}(s) to run")
+
+        interrupted_message = f"Received a stop signal, skipping remaining {plugin_type}s"
+        for p in interruptible_iter(plugins, self._stop, interrupted_message):
+            try:
+                callback(p, plugins[p])
+            except Exception:
+                logger.exception(
+                    f"Got unhandled exception when running {plugin_type} plugin {p}. "
+                    f"Plugin was passed to {callback}"
+                )
+
+        logger.info(f"Finished running {plugin_type}s")
+
+    def _run_plugins_legacy(
         self,
         plugins: Collection[PluginConfiguration],
         plugin_type: str,

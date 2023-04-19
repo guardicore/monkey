@@ -63,8 +63,10 @@ def test_windows_target_dir(monkeypatch, options_from_island):
     assert options.target_directory == Path(WINDOWS_DIR)
 
 
-def test_env_variables_in_target_dir_resolved(options_from_island, patched_home_env, tmp_path):
-    path_with_env_variable = "$HOME/ransomware_target"
+def test_env_variables_in_target_dir_resolved(
+    options_from_island, home_env_variable, patched_home_env, tmp_path
+):
+    path_with_env_variable = f"{home_env_variable}/ransomware_target"
 
     options_from_island["encryption"]["directories"]["linux_target_dir"] = options_from_island[
         "encryption"

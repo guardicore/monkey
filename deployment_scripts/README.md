@@ -84,4 +84,4 @@ been run or all issues have not been resolved.
 
 To install and configure pre-commit manually, run `pip install --user
 pre-commit`. Next, go to the top level directory of this repository and run
-`pre-commit install -t pre-commit -t pre-push` Now, pre-commit will automatically run whenever you `git commit`.
+`pre-commit install -t pre-commit -t pre-push -t prepare-commit-msg` Now, pre-commit will automatically run whenever you `git commit`.

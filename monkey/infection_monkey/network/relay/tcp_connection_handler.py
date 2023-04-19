@@ -3,6 +3,7 @@ import socket
 from threading import Thread
 from typing import Callable, List
 
+from common.types import NetworkPort
 from infection_monkey.utils.threading import InterruptableThreadMixin
 
 PROXY_TIMEOUT = 2.5
@@ -16,11 +17,11 @@ class TCPConnectionHandler(Thread, InterruptableThreadMixin):
     def __init__(
         self,
         bind_host: str,
-        bind_port: int,
+        bind_port: NetworkPort,
         client_connected: List[Callable[[socket.socket], None]] = [],
     ):
         self.bind_host = bind_host
-        self.bind_port = bind_port
+        self.bind_port = int(bind_port)
         self._client_connected = client_connected
 
         Thread.__init__(self, name="TCPConnectionHandler", daemon=True)

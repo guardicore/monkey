@@ -6,50 +6,61 @@ from pprint import pformat
 from time import sleep, time
 from typing import Collection, Dict, Iterable, Mapping, Tuple
 
+from egg_timer import EggTimer
+
 from common.agent_events import TCPScanEvent
 from common.event_queue import IAgentEventQueue
-from common.types import PortStatus
-from common.utils import Timer
-from infection_monkey.i_puppet import PortScanData
-from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT, tcp_port_to_service
-from infection_monkey.utils.ids import get_agent_id
+from common.types import AgentID, NetworkPort, PortStatus
+from infection_monkey.i_puppet import PortScanData, PortScanDataDict
+from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
 POLL_INTERVAL = 0.5
-EMPTY_PORT_SCAN = {}
+EMPTY_PORT_SCAN = PortScanDataDict()
 
 
 def scan_tcp_ports(
-    host: str, ports_to_scan: Collection[int], timeout: float, agent_event_queue: IAgentEventQueue
-) -> Dict[int, PortScanData]:
+    host: str,
+    ports_to_scan: Collection[NetworkPort],
+    timeout: float,
+    agent_event_queue: IAgentEventQueue,
+    agent_id: AgentID,
+) -> PortScanDataDict:
     try:
-        return _scan_tcp_ports(host, ports_to_scan, timeout, agent_event_queue)
+        return _scan_tcp_ports(host, ports_to_scan, timeout, agent_event_queue, agent_id)
     except Exception:
         logger.exception("Unhandled exception occurred while trying to scan tcp ports")
         return EMPTY_PORT_SCAN
 
 
 def _scan_tcp_ports(
-    host: str, ports_to_scan: Collection[int], timeout: float, agent_event_queue: IAgentEventQueue
-) -> Dict[int, PortScanData]:
+    host: str,
+    ports_to_scan: Collection[NetworkPort],
+    timeout: float,
+    agent_event_queue: IAgentEventQueue,
+    agent_id: AgentID,
+) -> PortScanDataDict:
     event_timestamp, open_ports = _check_tcp_ports(host, ports_to_scan, timeout)
 
     port_scan_data = _build_port_scan_data(ports_to_scan, open_ports)
 
-    tcp_scan_event = _generate_tcp_scan_event(host, port_scan_data, event_timestamp)
+    tcp_scan_event = _generate_tcp_scan_event(host, port_scan_data, event_timestamp, agent_id)
     agent_event_queue.publish(tcp_scan_event)
 
     return port_scan_data
 
 
 def _generate_tcp_scan_event(
-    host: str, port_scan_data: Dict[int, PortScanData], event_timestamp: float
+    host: str,
+    port_scan_data_dict: PortScanDataDict,
+    event_timestamp: float,
+    agent_id: AgentID,
 ):
-    port_statuses = {port: psd.status for port, psd in port_scan_data.items()}
+    port_statuses = {port: psd.status for port, psd in port_scan_data_dict.items()}
 
     return TCPScanEvent(
-        source=get_agent_id(),
+        source=agent_id,
         target=IPv4Address(host),
         timestamp=event_timestamp,
         ports=port_statuses,
@@ -57,30 +68,27 @@ def _generate_tcp_scan_event(
 
 
 def _build_port_scan_data(
-    ports_to_scan: Iterable[int], open_ports: Mapping[int, str]
-) -> Dict[int, PortScanData]:
-    port_scan_data = {}
+    ports_to_scan: Iterable[NetworkPort], open_ports: Mapping[NetworkPort, str]
+) -> PortScanDataDict:
+    port_scan_data = PortScanDataDict()
     for port in ports_to_scan:
         if port in open_ports:
-            service = tcp_port_to_service(port)
             banner = open_ports[port]
 
-            port_scan_data[port] = PortScanData(
-                port=port, status=PortStatus.OPEN, banner=banner, service=service
-            )
+            port_scan_data[port] = PortScanData(port=port, status=PortStatus.OPEN, banner=banner)
         else:
             port_scan_data[port] = _get_closed_port_data(port)
 
     return port_scan_data
 
 
-def _get_closed_port_data(port: int) -> PortScanData:
+def _get_closed_port_data(port: NetworkPort) -> PortScanData:
     return PortScanData(port=port, status=PortStatus.CLOSED)
 
 
 def _check_tcp_ports(
-    ip: str, ports_to_scan: Collection[int], timeout: float = DEFAULT_TIMEOUT
-) -> Tuple[float, Dict[int, str]]:
+    ip: str, ports_to_scan: Collection[NetworkPort], timeout: float = DEFAULT_TIMEOUT
+) -> Tuple[float, Dict[NetworkPort, str]]:
     """
     Checks whether any of the given ports are open on a target IP.
     :param ip:  IP of host to attack
@@ -120,17 +128,19 @@ def _check_tcp_ports(
         if len(possible_ports) != 0:
             sockets_to_try = possible_ports.copy()
 
-            timer = Timer()
+            timer = EggTimer()
             timer.set(timeout)
 
             while (not timer.is_expired()) and sockets_to_try:
                 # The call to select() may return sockets that are writeable but not actually
                 # connected. Adding this sleep prevents excessive looping.
-                sleep(min(POLL_INTERVAL, timer.time_remaining))
+                sleep(min(POLL_INTERVAL, timer.time_remaining_sec))
 
                 sock_objects = [s[1] for s in sockets_to_try]
 
-                _, writeable_sockets, _ = select.select([], sock_objects, [], timer.time_remaining)
+                _, writeable_sockets, _ = select.select(
+                    [], sock_objects, [], timer.time_remaining_sec
+                )
                 for s in writeable_sockets:
                     try:  # actual test
                         connected_ports.add((s.getpeername()[1], s))
@@ -147,7 +157,7 @@ def _check_tcp_ports(
             open_ports = {port: "" for port, _ in connected_ports}
             if len(connected_ports) != 0:
                 readable_sockets, _, _ = select.select(
-                    [s[1] for s in connected_ports], [], [], timer.time_remaining
+                    [s[1] for s in connected_ports], [], [], timer.time_remaining_sec
                 )
                 # read first BANNER_READ bytes. We ignore errors because service might not send a
                 # decodable byte string.
@@ -166,8 +176,8 @@ def _check_tcp_ports(
 
 
 def _clean_up_sockets(
-    possible_ports: Iterable[Tuple[int, socket.socket]],
-    connected_ports_sockets: Iterable[Tuple[int, socket.socket]],
+    possible_ports: Iterable[Tuple[NetworkPort, socket.socket]],
+    connected_ports_sockets: Iterable[Tuple[NetworkPort, socket.socket]],
 ):
     # Only call shutdown() on sockets we know to be connected
     for port, s in connected_ports_sockets:

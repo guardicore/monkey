@@ -5,11 +5,12 @@ $MONKEY_REPO = "guardicore/monkey"
 $MONKEY_GIT_URL = "https://github.com/guardicore/monkey"
 $MONKEY_RELEASES_URL = $MONKEY_GIT_URL + "/releases"
 $MONKEY_API_RELEASES_URL = "https://api.github.com/repos/$MONKEY_REPO/releases"
-$MONKEY_LATEST_VERSION = (Invoke-WebRequest $MONKEY_API_RELEASES_URL | ConvertFrom-Json)[0].tag_name
-$MONKEY_DOWNLOAD_URL = $MONKEY_RELEASES_URL + "/download/" + $MONKEY_LATEST_VERSION + "/"
+$MONKEY_LATEST_VERSION = (Invoke-WebRequest $MONKEY_API_RELEASES_URL -UseBasicParsing | ConvertFrom-Json)[0].tag_name
+$MONKEY_DOWNLOAD_URL = "$MONKEY_RELEASES_URL/download/$MONKEY_LATEST_VERSION/"
+$MONKEY_PYTHON_VERSION = "3.11.2"
+$PYTHON_VERSION_REGEX = 'Python 3.11(\.(\d+))?$'
 # Link to the latest python download or install it manually
-$PYTHON_URL = "https://www.python.org/ftp/python/3.7.7/python-3.7.7-amd64.exe"
-
+$PYTHON_URL = "https://www.python.org/ftp/python/$MONKEY_PYTHON_VERSION/python-$MONKEY_PYTHON_VERSION-amd64.exe"
 
 # Monkey binaries
 $LINUX_64_BINARY_URL = $MONKEY_DOWNLOAD_URL + "monkey-linux-64"

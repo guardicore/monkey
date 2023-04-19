@@ -4,7 +4,7 @@ from typing import Optional
 
 from common.agent_signals import AgentSignals
 from common.types import AgentID
-from monkey_island.cc.models import Simulation, TerminateAllAgents
+from monkey_island.cc.models import Agent, MachineID, Simulation, TerminateAllAgents
 from monkey_island.cc.repositories import IAgentRepository, ISimulationRepository
 
 logger = logging.getLogger(__name__)
@@ -40,8 +40,23 @@ class AgentSignalsService:
         if agent.stop_time is not None:
             return AgentSignals(terminate=agent.stop_time)
 
+        if not self._agent_is_first_to_register(agent):
+            return AgentSignals(terminate=agent.registration_time)
+
         terminate_timestamp = self._get_terminate_signal_timestamp(agent_id)
         return AgentSignals(terminate=terminate_timestamp)
+
+    def _agent_is_first_to_register(self, agent: Agent) -> bool:
+        agents_on_same_machine = self._agents_running_on_machine(agent.machine_id)
+        first_to_register = min(
+            agents_on_same_machine, key=lambda a: a.registration_time, default=agent
+        )
+        return agent.id == first_to_register.id
+
+    def _agents_running_on_machine(self, machine_id: MachineID):
+        return [
+            a for a in self._agent_repository.get_running_agents() if a.machine_id == machine_id
+        ]
 
     def _get_terminate_signal_timestamp(self, agent_id: AgentID) -> Optional[datetime]:
         simulation = self._simulation_repository.get_simulation()

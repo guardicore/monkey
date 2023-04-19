@@ -20,6 +20,27 @@ const CREDENTIALS = {
       'description': 'List of passwords that will be used by exploiters that need ' +
         'credentials, like SSH brute-forcing.'
     },
+    'exploit_ssh_keys': {
+      'title': 'SSH key pairs list',
+      'type': 'array',
+      'uniqueItems': true,
+      'default': [],
+      'items': {
+        'type': 'object',
+        'title': 'SSH keypair',
+        'properties': {
+          'public_key': {
+            'title': 'Public Key',
+            'type': 'string'
+          },
+          'private_key': {
+            'title': 'Private Key',
+            'type': 'string'
+          }
+        }
+      },
+      'description': 'List of SSH key pairs to use, when trying to ssh into servers'
+    },
     'exploit_lm_hash_list': {
       'title': 'Exploit LM hash list',
       'type': 'array',
@@ -35,26 +56,6 @@ const CREDENTIALS = {
       'items': {'type': 'string'},
       'default': [],
       'description': 'List of NTLM hashes to use on exploits using credentials'
-    },
-    'exploit_ssh_keys': {
-      'title': 'SSH key pairs list',
-      'type': 'array',
-      'uniqueItems': true,
-      'default': [],
-      'items': {
-        'type': 'object',
-        'properties': {
-          'public_key': {
-            'title': 'Public Key',
-            'type': 'string'
-          },
-          'private_key': {
-            'title': 'Private Key',
-            'type': 'string'
-          }
-        }
-      },
-      'description': 'List of SSH key pairs to use, when trying to ssh into servers'
     }
   }
 }

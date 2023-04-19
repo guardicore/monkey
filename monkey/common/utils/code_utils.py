@@ -4,20 +4,26 @@ import random
 import secrets
 import string
 from threading import Event, Thread
-from typing import Any, Callable, Dict, List, MutableMapping, Optional, Type, TypeVar
+from typing import Any, Callable, Iterable, List, MutableMapping, Optional, TypeVar
 
 T = TypeVar("T")
 
 logger = logging.getLogger(__name__)
 
 
-class Singleton(type):
-    _instances: Dict[Type, type] = {}
+def apply_filters(filters: Iterable[Callable[[T], bool]], iterable: Iterable[T]) -> Iterable[T]:
+    """
+    Applies multiple filters to an iterable
 
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
+    :param filters: An iterable of filters to be applied to the iterable
+    :param iterable: An iterable to be filtered
+    :return: A new iterable with the filters applied
+    """
+    filtered_iterable = iterable
+    for f in filters:
+        filtered_iterable = filter(f, filtered_iterable)
+
+    return filtered_iterable
 
 
 def queue_to_list(q: queue.Queue) -> List[Any]:

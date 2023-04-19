@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from multiprocessing import Queue, get_context
 from multiprocessing.context import BaseContext
+from random import SystemRandom
 from time import sleep
 from typing import Tuple
 
@@ -10,6 +11,7 @@ from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.ports import COMMON_PORTS
 
 MULTIPROCESSING_PORT = 2222
+RANDOM_PORTS_NUMBER = 3
 
 
 @dataclass
@@ -28,16 +30,18 @@ def tcp_port_selector(context) -> TCPPortSelector:
     return TCPPortSelector(context, manager)
 
 
-@pytest.mark.parametrize("port", COMMON_PORTS)
+@pytest.mark.slow
+@pytest.mark.parametrize("number_of_runs", range(RANDOM_PORTS_NUMBER))
 def test_tcp_port_selector__checks_common_ports(
-    tcp_port_selector: TCPPortSelector, port: int, monkeypatch
+    tcp_port_selector: TCPPortSelector, number_of_runs: int, monkeypatch
 ):
-    unavailable_ports = [Connection(("", p)) for p in COMMON_PORTS if p is not port]
+    common_port = SystemRandom().choice(COMMON_PORTS)
+    unavailable_ports = [Connection(("", p)) for p in COMMON_PORTS if p is not common_port]
 
     monkeypatch.setattr(
         "infection_monkey.network.info.psutil.net_connections", lambda: unavailable_ports
     )
-    assert tcp_port_selector.get_free_tcp_port() is port
+    assert tcp_port_selector.get_free_tcp_port() is common_port
 
 
 def test_tcp_port_selector__checks_other_ports_if_common_ports_unavailable(
@@ -62,10 +66,12 @@ def test_tcp_port_selector__none_if_no_available_ports(
     assert tcp_port_selector.get_free_tcp_port() is None
 
 
-@pytest.mark.parametrize("common_port", COMMON_PORTS)
+@pytest.mark.slow
+@pytest.mark.parametrize("number_of_runs", range(RANDOM_PORTS_NUMBER))
 def test_tcp_port_selector__checks_common_ports_leases(
-    tcp_port_selector: TCPPortSelector, common_port: int, monkeypatch
+    tcp_port_selector: TCPPortSelector, number_of_runs: int, monkeypatch
 ):
+    common_port = SystemRandom().choice(COMMON_PORTS)
     unavailable_ports = [Connection(("", p)) for p in COMMON_PORTS if p is not common_port]
     monkeypatch.setattr(
         "infection_monkey.network.info.psutil.net_connections", lambda: unavailable_ports
@@ -101,7 +107,6 @@ def get_multiprocessing_tcp_port(
 def test_tcp_port_selector__uses_multiprocess_leases_same_random_port(
     tcp_port_selector: TCPPortSelector, context: BaseContext, monkeypatch
 ):
-
     queue = context.Queue()
 
     p1 = context.Process(

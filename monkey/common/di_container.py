@@ -111,8 +111,8 @@ class DIContainer:
     def resolve(self, type_: Type[T]) -> T:
         """
         Resolves all dependencies and returns a new instance of `type_` using constructor dependency
-        injection. Note that only positional arguments are resolved. Varargs, keyword-only args, and
-        default values are ignored.
+        injection. Note that only positional arguments or arguments with defaults are resolved.
+        Varargs and keyword-only args are ignored.
 
         Dependencies are resolved with the following precedence
 
@@ -143,13 +143,23 @@ class DIContainer:
         """
         args = []
 
-        for arg_name, arg_type in inspect.getfullargspec(type_).annotations.items():
-            try:
-                instance = self._resolve_convention(arg_type, arg_name)
-            except UnregisteredConventionError:
-                instance = self._resolve_type(arg_type)
+        for parameter in inspect.signature(type_).parameters.values():
+            with suppress(UnregisteredConventionError):
+                args.append(self._resolve_convention(parameter.annotation, parameter.name))
+                continue
 
-            args.append(instance)
+            with suppress(UnresolvableDependencyError):
+                args.append(self._resolve_type(parameter.annotation))
+                continue
+
+            with suppress(UnresolvableDependencyError):
+                args.append(self._resolve_default(parameter.name, parameter.default))
+                continue
+
+            raise UnresolvableDependencyError(
+                f"Failed to resolve dependency {parameter.name} of type "
+                f"{DIContainer._format_type_name(parameter.annotation)}"
+            )
 
         return tuple(args)
 
@@ -165,7 +175,8 @@ class DIContainer:
     def _resolve_type(self, type_: Type[T]) -> T:
         if type_ in self._type_registry:
             return self._construct_new_instance(type_)
-        elif type_ in self._instance_registry:
+
+        if type_ in self._instance_registry:
             return self._retrieve_registered_instance(type_)
 
         raise UnresolvableDependencyError(
@@ -182,6 +193,12 @@ class DIContainer:
 
     def _retrieve_registered_instance(self, arg_type: Type[T]) -> T:
         return self._instance_registry[arg_type]
+
+    def _resolve_default(self, name: str, default: T) -> T:
+        if default is not inspect.Parameter.empty:
+            return default
+
+        raise UnresolvableDependencyError(f'No default found for "{name}"')
 
     def release(self, interface: Type[T]):
         """

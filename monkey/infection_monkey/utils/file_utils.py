@@ -3,6 +3,8 @@ import logging
 from pathlib import Path, WindowsPath
 from typing import Callable, Iterable, Set
 
+from common.utils.code_utils import apply_filters
+
 logger = logging.getLogger(__name__)
 
 MOVEFILE_DELAY_UNTIL_REBOOT = 4
@@ -11,11 +13,7 @@ MOVEFILE_DELAY_UNTIL_REBOOT = 4
 def filter_files(
     files: Iterable[Path], file_filters: Iterable[Callable[[Path], bool]]
 ) -> Iterable[Path]:
-    filtered_files = files
-    for file_filter in file_filters:
-        filtered_files = filter(file_filter, filtered_files)
-
-    return filtered_files
+    return apply_filters(file_filters, files)
 
 
 def file_extension_filter(file_extensions: Set) -> Callable[[Path], bool]:

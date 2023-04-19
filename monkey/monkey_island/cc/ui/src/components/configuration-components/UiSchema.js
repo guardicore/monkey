@@ -1,45 +1,42 @@
 import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
-import InfoBox from './InfoBox';
-import TextBox from './TextBox.js';
-import WarningBox from './WarningBox';
+import CheckboxWithMessage from './CheckboxWithMessage';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
+import SensitiveTextareaInput from '../ui-components/SensitiveTextareaInput';
 import PluginSelectorTemplate from './PluginSelectorTemplate';
+import ArrayFieldTitleTemplate from './ArrayFieldTitleTemplate';
 
 export default function UiSchema(props) {
   const UiSchema = {
     propagation: {
       exploitation: {
         exploiters: {
-          'ui:classNames': 'config-template-no-header',
           'ui:ObjectFieldTemplate': PluginSelectorTemplate
         }
       },
       credentials: {
         exploit_password_list: {
           items: {
-            'ui:classNames': 'config-template-no-header',
             'ui:widget': SensitiveTextInput
           }
         },
         exploit_lm_hash_list: {
           items: {
-            'ui:classNames': 'config-template-no-header',
             'ui:widget': SensitiveTextInput
           }
         },
         exploit_ntlm_hash_list: {
           items: {
-            'ui:classNames': 'config-template-no-header',
             'ui:widget': SensitiveTextInput
           }
         },
         exploit_ssh_keys: {
           items: {
+            'ui:TitleFieldTemplate': ArrayFieldTitleTemplate,
             public_key: {
               'ui:widget': 'TextareaWidget'
             },
             private_key: {
-              'ui:widget': 'TextareaWidget'
+              'ui:widget': SensitiveTextareaInput
             }
           }
         }
@@ -56,8 +53,8 @@ export default function UiSchema(props) {
               'ui:classNames': 'config-template-no-header'
             }
           },
-          info_box_scan_my_networks: {
-            'ui:field': WarningBox
+          scan_my_networks: {
+            'ui:widget': CheckboxWithMessage
           },
           subnets: {
             items: {
@@ -73,7 +70,6 @@ export default function UiSchema(props) {
           }
         },
         fingerprinters: {
-          'ui:classNames': 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect,
           fingerprinter_classes: {
             'ui:classNames': 'config-template-no-header'
@@ -82,30 +78,24 @@ export default function UiSchema(props) {
       }
     },
     payloads: {
-      'ui:classNames': 'config-template-no-header',
-      encryption: {
-        info_box: {
-          'ui:field': InfoBox
+      ransomware:{
+        encryption: {
+          file_extension: {
+            'ui:emptyValue': ''
+          },
+          directories: {
+            // Directory inputs are dynamically hidden
+          },
+          enabled: {
+            'ui:widget': 'hidden'
+          }
         },
-        file_extension: {
-          'ui:emptyValue': ''
-        },
-        directories: {
-          // Directory inputs are dynamically hidden
-        },
-        text_box: {
-          'ui:field': TextBox
-        },
-        enabled: {
+        other_behaviors: {
           'ui:widget': 'hidden'
         }
-      },
-      other_behaviors: {
-        'ui:widget': 'hidden'
       }
     },
     credential_collectors: {
-      'ui:classNames': 'config-template-no-header',
       'ui:widget': AdvancedMultiSelect,
       credential_collectors_classes: {
         'ui:classNames': 'config-template-no-header'

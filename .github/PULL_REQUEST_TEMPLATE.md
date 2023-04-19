@@ -14,6 +14,8 @@ Add any further explanations here.
 ## Testing Checklist
 
 * [ ] Added relevant unit tests?
-* [ ] Have you successfully tested your changes locally? Elaborate:
+* [ ] Do all unit tests pass?
+* [ ] Do all end-to-end tests pass?
+* [ ] Any other testing performed?
     > Tested by {Running the Monkey locally with relevant config/running Island/...}
 * [ ] If applicable, add screenshots or log transcripts of the feature working

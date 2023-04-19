@@ -32,7 +32,7 @@ def island_api_client() -> IIslandAPIClient:
 
 @pytest.fixture
 def control_channel(island_api_client) -> ControlChannel:
-    return ControlChannel(SERVER, AGENT_ID, island_api_client)
+    return ControlChannel(SERVER, island_api_client)
 
 
 @pytest.mark.parametrize("signal_time,expected_should_stop", [(1663950115, True), (None, False)])

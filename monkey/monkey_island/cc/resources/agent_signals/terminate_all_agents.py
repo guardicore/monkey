@@ -3,11 +3,12 @@ from http import HTTPStatus
 from json import JSONDecodeError
 
 from flask import request
+from flask_security import auth_token_required, roles_accepted
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.models import TerminateAllAgents as TerminateAllAgentsObject
-from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
+from monkey_island.cc.services.authentication_service import AccountRole
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,8 @@ class TerminateAllAgents(AbstractResource):
     ):
         self._island_event_queue = island_event_queue
 
-    @jwt_required
+    @auth_token_required
+    @roles_accepted(AccountRole.ISLAND_INTERFACE.name)
     def post(self):
         try:
             terminate_all_agents = TerminateAllAgentsObject(**request.json)

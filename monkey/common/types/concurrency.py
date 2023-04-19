@@ -1,7 +1,5 @@
 from types import TracebackType
-from typing import Optional, Type
-
-from typing_extensions import Protocol
+from typing import Optional, Protocol, Type
 
 
 class BasicLock(Protocol):

@@ -4,10 +4,10 @@ from typing import Sequence
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IAgentEventQueue
-from common.tags import T1003_ATTACK_TECHNIQUE_TAG, T1005_ATTACK_TECHNIQUE_TAG
+from common.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DUMPING_T1003_TAG
+from common.types import AgentID
 from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.model import USERNAME_PREFIX
-from infection_monkey.utils.ids import get_agent_id
 
 from . import pypykatz_handler
 from .windows_credentials import WindowsCredentials
@@ -20,15 +20,16 @@ MIMIKATZ_CREDENTIAL_COLLECTOR_TAG = "mimikatz-credentials-collector"
 MIMIKATZ_EVENT_TAGS = frozenset(
     (
         MIMIKATZ_CREDENTIAL_COLLECTOR_TAG,
-        T1003_ATTACK_TECHNIQUE_TAG,
-        T1005_ATTACK_TECHNIQUE_TAG,
+        OS_CREDENTIAL_DUMPING_T1003_TAG,
+        DATA_FROM_LOCAL_SYSTEM_T1005_TAG,
     )
 )
 
 
 class MimikatzCredentialCollector(ICredentialCollector):
-    def __init__(self, agent_event_queue: IAgentEventQueue):
+    def __init__(self, agent_event_queue: IAgentEventQueue, agent_id: AgentID):
         self._agent_event_queue = agent_event_queue
+        self._agent_id = agent_id
 
     def collect_credentials(self, options=None) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
@@ -76,7 +77,7 @@ class MimikatzCredentialCollector(ICredentialCollector):
 
     def _publish_credentials_stolen_event(self, collected_credentials: Sequence[Credentials]):
         credentials_stolen_event = CredentialsStolenEvent(
-            source=get_agent_id(),
+            source=self._agent_id,
             tags=MIMIKATZ_EVENT_TAGS,
             stolen_credentials=collected_credentials,
         )

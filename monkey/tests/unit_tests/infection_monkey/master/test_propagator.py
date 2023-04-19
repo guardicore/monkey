@@ -1,4 +1,4 @@
-from ipaddress import IPv4Interface
+from ipaddress import IPv4Address, IPv4Interface
 from threading import Event
 from unittest.mock import MagicMock
 
@@ -10,46 +10,103 @@ from common.agent_configuration.agent_sub_configurations import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import PortStatus
-from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData
-from infection_monkey.master import IPScanResults, Propagator
+from common.types import NetworkProtocol, NetworkService, PortStatus
+from infection_monkey.i_puppet import (
+    DiscoveredService,
+    FingerprintData,
+    PingScanData,
+    PortScanData,
+    TargetHost,
+)
+from infection_monkey.master import Exploiter, IPScanResults, Propagator
 
-empty_fingerprint_data = FingerprintData(None, None, {})
+empty_fingerprint_data = FingerprintData(os_type=None, os_version=None, services=[])
 
 dot_1_scan_results = IPScanResults(
     PingScanData(response_received=True, os=OperatingSystem.WINDOWS),
     {
         22: PortScanData(port=22, status=PortStatus.CLOSED),
-        445: PortScanData(port=445, status=PortStatus.OPEN, banner="SMB BANNER", service="tcp-445"),
-        3389: PortScanData(port=3389, status=PortStatus.OPEN, banner="", service="tcp-3389"),
+        445: PortScanData(
+            port=445, status=PortStatus.OPEN, banner="SMB BANNER", service=NetworkService.SMB
+        ),
+        3389: PortScanData(
+            port=3389, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN
+        ),
     },
     {
-        "SMBFinger": FingerprintData("windows", "vista", {"tcp-445": {"name": "smb_service_name"}}),
+        "SMBFinger": FingerprintData(
+            os_type=OperatingSystem.WINDOWS,
+            os_version="vista",
+            services=[
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP, port=445, service=NetworkService.SMB
+                )
+            ],
+        ),
         "SSHFinger": empty_fingerprint_data,
         "HTTPFinger": empty_fingerprint_data,
+    },
+)
+
+dot_2_scan_results = IPScanResults(
+    PingScanData(response_received=True, os=OperatingSystem.LINUX),
+    {
+        99: PortScanData(
+            port=99, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN
+        ),
+    },
+    {
+        "FirstFinger": FingerprintData(
+            os_type=OperatingSystem.WINDOWS,
+            os_version="7",
+            services=[
+                DiscoveredService(
+                    protocol=NetworkProtocol.UDP, port=99, service=NetworkService.MSSQL
+                )
+            ],
+        ),
+        "99Finger": FingerprintData(
+            os_type=OperatingSystem.WINDOWS,
+            os_version="7",
+            services=[
+                DiscoveredService(
+                    protocol=NetworkProtocol.UDP, port=99, service=NetworkService.UNKNOWN
+                )
+            ],
+        ),
     },
 )
 
 dot_3_scan_results = IPScanResults(
     PingScanData(response_received=True, os=OperatingSystem.LINUX),
     {
-        22: PortScanData(port=22, status=PortStatus.OPEN, banner="SSH BANNER", service="tcp-22"),
+        22: PortScanData(
+            port=22, status=PortStatus.OPEN, banner="SSH BANNER", service=NetworkService.SSH
+        ),
         443: PortScanData(
-            port=443, status=PortStatus.OPEN, banner="HTTPS BANNER", service="tcp-443"
+            port=443, status=PortStatus.OPEN, banner="HTTPS BANNER", service=NetworkService.HTTPS
         ),
         3389: PortScanData(port=3389, status=PortStatus.CLOSED, banner=""),
     },
     {
         "SSHFinger": FingerprintData(
-            "linux", "ubuntu", {"tcp-22": {"name": "SSH", "banner": "SSH BANNER"}}
+            os_type=OperatingSystem.LINUX,
+            os_version="ubuntu",
+            services=[
+                DiscoveredService(protocol=NetworkProtocol.TCP, port=22, service=NetworkService.SSH)
+            ],
         ),
         "HTTPFinger": FingerprintData(
-            None,
-            None,
-            {
-                "tcp-80": {"name": "http", "data": ("SERVER_HEADERS", False)},
-                "tcp-443": {"name": "http", "data": ("SERVER_HEADERS_2", True)},
-            },
+            os_type=None,
+            os_version=None,
+            services=[
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP, port=80, service=NetworkService.HTTP
+                ),
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP, port=443, service=NetworkService.HTTPS
+                ),
+            ],
         ),
         "SMBFinger": empty_fingerprint_data,
     },
@@ -100,6 +157,8 @@ def mock_ip_scanner():
         for address in adresses_to_scan:
             if address.ip.endswith(".1"):
                 results_callback(address, dot_1_scan_results)
+            elif address.ip.endswith(".2"):
+                results_callback(address, dot_2_scan_results)
             elif address.ip.endswith(".3"):
                 results_callback(address, dot_3_scan_results)
             else:
@@ -179,3 +238,83 @@ def test_scan_target_generation(mock_ip_scanner, default_agent_configuration):
 
     actual_ip_scan_list = [address.ip for address in mock_ip_scanner.scan.call_args_list[0][0][0]]
     assert actual_ip_scan_list == expected_ip_scan_list
+
+
+def scan_host(ip: str, ip_scanner, default_agent_configuration) -> TargetHost:
+    mock_exploiter = MagicMock(spec=Exploiter)
+    p = Propagator(
+        ip_scanner,
+        mock_exploiter,
+        [],
+    )
+    targets = ScanTargetConfiguration(subnets=[ip])
+    propagation_config = get_propagation_config(default_agent_configuration, targets)
+    p.propagate(propagation_config, 1, SERVERS, Event())
+
+    args, _ = mock_exploiter.exploit_hosts.call_args
+    hosts = args[1]
+    return hosts.get(block=False)
+
+
+#
+def test_targethost_updated_from_pingscan(mock_ip_scanner, default_agent_configuration):
+    host = scan_host("10.0.0.1", mock_ip_scanner, default_agent_configuration)
+
+    assert host.ip == IPv4Address("10.0.0.1")
+    assert host.icmp is True
+    assert host.operating_system == OperatingSystem.WINDOWS
+
+
+def test_targethost_updated_from_fingerprinters(mock_ip_scanner, default_agent_configuration):
+    host = scan_host("10.0.0.1", mock_ip_scanner, default_agent_configuration)
+
+    assert host.ports_status.tcp_ports[445].protocol == NetworkProtocol.TCP
+    assert host.ports_status.tcp_ports[445].service == NetworkService.SMB
+
+
+def test_targethost_udpated_from_portscan(mock_ip_scanner, default_agent_configuration):
+    host = scan_host("10.0.0.3", mock_ip_scanner, default_agent_configuration)
+
+    # port, status, banner
+    # protocol, service
+    assert host.ports_status.tcp_ports[22].port == 22
+    assert host.ports_status.tcp_ports[22].status == PortStatus.OPEN
+    assert host.ports_status.tcp_ports[22].banner == "SSH BANNER"
+    assert host.ports_status.tcp_ports[443].port == 443
+    assert host.ports_status.tcp_ports[443].status == PortStatus.OPEN
+    assert host.ports_status.tcp_ports[443].banner == "HTTPS BANNER"
+    assert host.ports_status.tcp_ports[3389].port == 3389
+    assert host.ports_status.tcp_ports[3389].status == PortStatus.CLOSED
+    assert host.ports_status.tcp_ports[3389].banner == ""
+
+
+def test_targethost_protocol_unknown_without_fingerprinter(
+    mock_ip_scanner, default_agent_configuration
+):
+    host = scan_host("10.0.0.3", mock_ip_scanner, default_agent_configuration)
+
+    assert host.ports_status.tcp_ports[3389].protocol == NetworkProtocol.UNKNOWN
+
+
+def test_targethost_fingerprinter_updates_os(mock_ip_scanner, default_agent_configuration):
+    host = scan_host("10.0.0.2", mock_ip_scanner, default_agent_configuration)
+
+    assert host.operating_system == OperatingSystem.WINDOWS
+
+
+def test_targethost_doesnt_replace_service_with_unknown(
+    mock_ip_scanner, default_agent_configuration
+):
+    host = scan_host("10.0.0.2", mock_ip_scanner, default_agent_configuration)
+
+    assert host.ports_status.udp_ports[99].service == NetworkService.MSSQL
+
+
+def test_targethost_fingerprint_applies_to_correct_protocol(
+    mock_ip_scanner, default_agent_configuration
+):
+    host = scan_host("10.0.0.2", mock_ip_scanner, default_agent_configuration)
+
+    assert len(host.ports_status.tcp_ports) == 1
+    assert len(host.ports_status.udp_ports) == 1
+    assert host.ports_status.tcp_ports[99].service == NetworkService.UNKNOWN

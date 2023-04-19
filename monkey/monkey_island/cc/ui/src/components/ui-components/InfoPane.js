@@ -3,6 +3,7 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 import WarningIcon from './WarningIcon';
+import {sanitizeURI} from '../../utils/sanitizers/uriSanitizer/uriSanitizer';
 
 const WarningType = {
   NONE: 0,
@@ -10,8 +11,7 @@ const WarningType = {
   MULTIPLE: 2
 }
 
-function getDefaultPaneParams(items, isUnsafeOptionSelected) {
-  let configSection = items;
+function getDefaultPaneParams(configSection, isUnsafeOptionSelected) {
   return (
     {
       title: configSection.title,
@@ -41,10 +41,13 @@ function getTitle(props) {
 
 function getLinkButton(props) {
   if (typeof (props.link) == 'string') {
+    const sanitizedLink = sanitizeURI(props.link);
+
     return (
-      <Button variant={'link'} className={'pane-link'} href={props.link} target={'_blank'}>
-        <FontAwesomeIcon icon={faQuestionCircle}/>
-      </Button>)
+      <Button variant={'link'} className={'pane-link'} href={sanitizedLink} target='_blank'>
+         <FontAwesomeIcon icon={faQuestionCircle}/>
+       </Button>
+     )
   }
 }
 

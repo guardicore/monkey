@@ -9,12 +9,12 @@ from serpentarium import MultiUsePlugin, PluginLoader, PluginThreadName, SingleU
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.exploit import IAgentBinaryRepository
+from common.types import AgentID
+from infection_monkey.exploit import IAgentBinaryRepository, IAgentOTPProvider
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIRequestError
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
-from infection_monkey.utils.ids import get_agent_id
 
 from . import PluginSourceExtractor
 
@@ -34,6 +34,8 @@ class PluginRegistry:
         agent_event_publisher: IAgentEventPublisher,
         propagation_credentials_repository: IPropagationCredentialsRepository,
         tcp_port_selector: TCPPortSelector,
+        otp_provider: IAgentOTPProvider,
+        agent_id: AgentID,
     ):
         """
         `self._registry` looks like -
@@ -54,8 +56,9 @@ class PluginRegistry:
         self._agent_event_publisher = agent_event_publisher
         self._propagation_credentials_repository = propagation_credentials_repository
         self._tcp_port_selector = tcp_port_selector
+        self._otp_provider = otp_provider
 
-        self._agent_id = get_agent_id()
+        self._agent_id = agent_id
         self._lock = RLock()
 
     def get_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> Any:
@@ -81,6 +84,7 @@ class PluginRegistry:
             agent_event_publisher=self._agent_event_publisher,
             propagation_credentials_repository=self._propagation_credentials_repository,
             tcp_port_selector=self._tcp_port_selector,
+            otp_provider=self._otp_provider,
         )
 
         self.load_plugin(plugin_type, plugin_name, multiprocessing_plugin)
@@ -130,6 +134,8 @@ class MultiprocessingPluginWrapper(MultiUsePlugin):
         # HERE BE DRAGONS! multiprocessing.Process.start() is not thread-safe on Linux when used
         # with the "spawn" method. See https://github.com/pyinstaller/pyinstaller/issues/7410 for
         # more details.
+        # UPDATE: This has been resolved in PyInstaller 5.8.0. Consider removing this lock, but
+        # leaving a comment here for future reference.
         with MultiprocessingPluginWrapper.process_start_lock:
             logger.debug("Invoking plugin.start()")
             plugin.start(**kwargs)

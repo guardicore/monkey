@@ -6,7 +6,10 @@ import GenerateLocalWindowsPowershell from '../commands/local_windows_powershell
 import GenerateLocalLinuxWget from '../commands/local_linux_wget';
 import GenerateLocalLinuxCurl from '../commands/local_linux_curl';
 import CommandDisplay from '../utils/CommandDisplay';
-import {Form} from 'react-bootstrap';
+import {Button, Form} from 'react-bootstrap';
+import IslandHttpClient, { APIEndpoint } from '../../../IslandHttpClient';
+import { useTimer } from 'react-timer-hook';
+import { CommandExpirationTimer } from '../utils/CommandExpirationTimer';
 
 
 const LocalManualRunOptions = (props) => {
@@ -23,14 +26,25 @@ const getContents = (props) => {
     [OS_TYPES.LINUX_64]: 'Linux 64bit'
   }
 
+  const {
+    seconds,
+    minutes,
+    restart
+  } = useTimer({ expiryTimestamp: new Date(), onExpire: () => getOtp() });
+
+  const [otp, setOtp] = useState('');
   const [osType, setOsType] = useState(OS_TYPES.WINDOWS_64);
   const [selectedIp, setSelectedIp] = useState(props.ips[0]);
-  const [commands, setCommands] = useState(generateCommands());
   const [customUsername, setCustomUsername] = useState('');
+  const [commands, setCommands] = useState(generateCommands());
+
 
   useEffect(() => {
+    getOtp();
+  }, [])
+  useEffect(() => {
     setCommands(generateCommands());
-  }, [osType, selectedIp, customUsername])
+  }, [osType, selectedIp, customUsername, otp])
 
   function setIp(index) {
     setSelectedIp(props.ips[index]);
@@ -45,13 +59,27 @@ const getContents = (props) => {
     }
   }
 
+  function getOtp() {
+    IslandHttpClient.get(APIEndpoint.agent_otp, {}, true).then(res => {
+      setOtp(res.body.otp);
+      restart(newExpirationTime());
+    });
+  }
+
   function generateCommands() {
     if (osType === OS_TYPES.WINDOWS_64) {
-      return [{type: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, customUsername)}]
+      return [{type: 'PowerShell', command: GenerateLocalWindowsPowershell(selectedIp, customUsername, otp)}]
     } else {
-      return [{type: 'CURL', command: GenerateLocalLinuxCurl(selectedIp, customUsername)},
-        {type: 'WGET', command: GenerateLocalLinuxWget(selectedIp, customUsername)}]
+      return [{type: 'cURL', command: GenerateLocalLinuxCurl(selectedIp, customUsername, otp)},
+        {type: 'Wget', command: GenerateLocalLinuxWget(selectedIp, customUsername, otp)}]
     }
+  }
+
+  function newExpirationTime() {
+    const time = new Date();
+    time.setSeconds(time.getSeconds() + 120);
+    console.log('timeout is now: ' + time);
+    return time;
   }
 
   return (
@@ -71,7 +99,15 @@ const getContents = (props) => {
           </Form>
         </div>
       </div>
-      <CommandDisplay commands={commands}/>
+      <CommandDisplay commands={commands} onCopy={getOtp} />
+      <div style={{marginTop: '-0.5em', marginBottom: '0.5em'}}>
+        <CommandExpirationTimer minutes={minutes} seconds={seconds}/>
+      </div>
+      <div style={{textAlign: 'right'}}>
+        <span>
+          <Button title="Copy to Clipboard" onClick={getOtp}>Refresh OTP</Button>
+        </span>
+      </div>
     </>
   )
 }

@@ -1,4 +1,5 @@
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
+from flask_security import Security
 
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
@@ -8,12 +9,14 @@ from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonke
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
+from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
+from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
 # Pydantic configurations are not picked up
@@ -86,6 +89,11 @@ prompt
 app.url_map.strict_slashes
 api.representations
 hub.exception_stream
+app.login_via_request
+app.should_set_cookie
+app.session_interface
+app.save_session
+Security._want_json
 
 # Deployment is chosen dynamically
 Deployment.DEVELOP
@@ -119,3 +127,12 @@ Lock.locked
 AgentPlugin.supported_operating_systems
 
 HadoopPlugin
+
+# User model fields
+User.active
+User.fs_uniquifier
+User.roles
+User.get_by_id
+User.email
+
+secret_type_filter

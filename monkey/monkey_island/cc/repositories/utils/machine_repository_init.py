@@ -1,10 +1,10 @@
 import platform
-from uuid import getnode
 
 from _socket import gethostname
 
 from common import OperatingSystem
 from common.network.network_utils import get_network_interfaces
+from common.utils.environment import get_hardware_id
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IMachineRepository, UnknownRecordError
 
@@ -18,7 +18,7 @@ def initialize_machine_repository(machine_repository: IMachineRepository):
     :param machine_repository: The repository to populate
     :raises StorageError: If an error occurs while attempting to store data in the repository
     """
-    hardware_id = getnode()
+    hardware_id = get_hardware_id()
 
     try:
         machine_repository.get_machine_by_hardware_id(hardware_id)

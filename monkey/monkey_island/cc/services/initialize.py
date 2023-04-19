@@ -31,11 +31,9 @@ from monkey_island.cc.event_queue import (
 )
 from monkey_island.cc.repositories import (
     AgentBinaryRepository,
-    AgentConfigurationValidationDecorator,
     AgentMachineFacade,
     AgentPluginRepositoryCachingDecorator,
     AgentPluginRepositoryLoggingDecorator,
-    FileAgentConfigurationRepository,
     FileAgentLogRepository,
     FileAgentPluginRepository,
     FileRepositoryCachingDecorator,
@@ -43,7 +41,6 @@ from monkey_island.cc.repositories import (
     FileRepositoryLoggingDecorator,
     FileSimulationRepository,
     IAgentBinaryRepository,
-    IAgentConfigurationRepository,
     IAgentEventRepository,
     IAgentLogRepository,
     IAgentPluginRepository,
@@ -53,8 +50,6 @@ from monkey_island.cc.repositories import (
     IMachineRepository,
     INodeRepository,
     ISimulationRepository,
-    IUserRepository,
-    JSONFileUserRepository,
     LocalStorageFileRepository,
     MongoAgentEventRepository,
     MongoAgentRepository,
@@ -68,15 +63,14 @@ from monkey_island.cc.repositories import (
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, PLUGIN_DIR_NAME
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import (
-    AgentConfigurationSchemaService,
     AgentSignalsService,
     AWSService,
+    IAgentConfigurationService,
+    build_agent_configuration_service,
 )
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
-from ..repositories.utils import AgentConfigurationSchemaCompiler
-from . import AuthenticationService
 from .reporting.report import ReportService
 
 logger = logging.getLogger(__name__)
@@ -104,7 +98,7 @@ def initialize_services(container: DIContainer, data_dir: Path):
     # This is temporary until we get DI all worked out.
     ReportService.initialize(
         container.resolve(IAgentRepository),
-        container.resolve(IAgentConfigurationRepository),
+        container.resolve(IAgentConfigurationService),
         container.resolve(IAgentEventRepository),
         container.resolve(IMachineRepository),
         container.resolve(INodeRepository),
@@ -167,7 +161,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(
         ICredentialsRepository, container.resolve(MongoCredentialsRepository)
     )
-    container.register_instance(IUserRepository, container.resolve(JSONFileUserRepository))
     container.register_instance(IAgentEventRepository, container.resolve(MongoAgentEventRepository))
 
     container.register_instance(INodeRepository, container.resolve(MongoNodeRepository))
@@ -182,35 +175,11 @@ def _register_repositories(container: DIContainer, data_dir: Path):
         IAgentPluginRepository,
         _decorate_agent_plugin_repository(container.resolve(FileAgentPluginRepository)),
     )
-    container.register_instance(
-        AgentConfigurationSchemaCompiler, container.resolve(AgentConfigurationSchemaCompiler)
-    )
-    container.register_instance(
-        IAgentConfigurationRepository, _build_file_agent_configuration_repository(container)
-    )
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
     return FileRepositoryLockingDecorator(
         FileRepositoryLoggingDecorator(FileRepositoryCachingDecorator(file_repository))
-    )
-
-
-def _decorate_agent_configuration_repository(
-    agent_configuration_repository: IAgentConfigurationRepository,
-    agent_configuration_schema_compiler: AgentConfigurationSchemaCompiler,
-) -> IAgentConfigurationRepository:
-
-    return AgentConfigurationValidationDecorator(
-        agent_configuration_repository, agent_configuration_schema_compiler
-    )
-
-
-def _build_file_agent_configuration_repository(container: DIContainer):
-    file_agent_configuration_repository = container.resolve(FileAgentConfigurationRepository)
-    agent_configuration_schema_compiler = container.resolve(AgentConfigurationSchemaCompiler)
-    return _decorate_agent_configuration_repository(
-        file_agent_configuration_repository, agent_configuration_schema_compiler
     )
 
 
@@ -279,8 +248,7 @@ def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
 def _register_services(container: DIContainer):
     container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
-    container.register_instance(AuthenticationService, container.resolve(AuthenticationService))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
     container.register_instance(
-        AgentConfigurationSchemaService, container.resolve(AgentConfigurationSchemaService)
+        IAgentConfigurationService, build_agent_configuration_service(container)
     )

@@ -6,7 +6,6 @@ from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.credentials import Credentials
-from common.types import AgentID, SocketAddress
 
 
 class IIslandAPIClient(ABC):
@@ -15,19 +14,38 @@ class IIslandAPIClient(ABC):
     """
 
     @abstractmethod
-    def connect(self, island_server: SocketAddress):
+    def login(self, otp: str):
         """
         Connect to the island's API
 
-        :param island_server: The socket address of the API
-        :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
-        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
-                                       island due to an issue in the request sent from the client
-        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
-                                             island due to an error on the server
-        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
-        :raises IslandAPIError: If an unexpected error occurs while attempting to connect to the
-                                island
+        :param otp: A one-time password used to authenticate with the Island API
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the Island
+        :raises IslandAPIRequestError: If an error occurs while attempting to login to the
+                                       Island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to login to the
+                                             Island API due to an error on the server
+        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the Island
+        :raises IslandAPIError: If an unexpected error occurs while attempting to login to the
+                                Island API
+        """
+
+    @abstractmethod
+    def logout(self):
+        """
+        Disconnect from the island's API
+
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the Island
+        :raises IslandAPIRequestError: If an error occurs while attempting to logout from the
+                                       Island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to logout from the
+                                             Island API due to an error on the server
+        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the Island
+        :raises IslandAPIError: If an unexpected error occurs while attempting to logout from the
+                                Island API
         """
 
     @abstractmethod
@@ -36,6 +54,8 @@ class IIslandAPIClient(ABC):
         Get an agent binary for the given OS from the island
 
         :param operating_system: The OS on which the agent binary will run
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
         :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
                                        island due to an issue in the request sent from the client
@@ -48,6 +68,23 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
+    def get_otp(self) -> str:
+        """
+        Get a one-time password (OTP) for an Agent so it can authenticate with the Island
+
+        :raises IslandAPIAuthenticationError: If authentication fails
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the Island
+        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
+                                       Island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
+                                             Island due to an error on the server
+        :raises IslandAPIRequestLimitExceededError: If the request limit for OTPs has been exceeded
+        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the Island
+        :raises IslandAPIError: If an unexpected error occurs while attempting to get an OTP
+        :return: The OTP
+        """
+
+    @abstractmethod
     def get_agent_plugin(
         self, operating_system: OperatingSystem, plugin_type: AgentPluginType, plugin_name: str
     ) -> AgentPlugin:
@@ -57,6 +94,8 @@ class IIslandAPIClient(ABC):
         :param operating_system: The OS on which the plugin will run
         :param plugin_type: Type of plugin to be fetched
         :param plugin_name: Name of plugin to be fetched
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
         :raises IslandAPIConnectionError: If the client could not connect to the island
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
@@ -73,6 +112,8 @@ class IIslandAPIClient(ABC):
 
         :param plugin_type: Type of the plugin
         :param plugin_name: Name of the plugin
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
         :raises IslandAPIConnectionError: If the client could not connect to the island
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
@@ -81,11 +122,12 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_agent_signals(self, agent_id: str) -> AgentSignals:
+    def get_agent_signals(self) -> AgentSignals:
         """
-        Gets an agent's signals from the island
+        Gets the agent's signals from the island
 
-        :param agent_id: ID of the agent whose signals should be retrieved
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
         :raises IslandAPIConnectionError: If the client could not connect to the island
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
@@ -98,6 +140,8 @@ class IIslandAPIClient(ABC):
         """
         Gets the agent configuration schema from the island
 
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
         :raises IslandAPIConnectionError: If the client could not connect to the island
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
@@ -110,6 +154,8 @@ class IIslandAPIClient(ABC):
         """
         Get agent configuration from the island
 
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
         :raises IslandAPIConnectionError: If the client could not connect to the island
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
@@ -124,6 +170,8 @@ class IIslandAPIClient(ABC):
         """
         Get credentials from the island
 
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
         :raises IslandAPIConnectionError: If the client could not connect to the island
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
@@ -138,6 +186,8 @@ class IIslandAPIClient(ABC):
 
         :param agent_registration_data: Information about the agent to register
             with the island
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
         :raises IslandAPIConnectionError: If the client could not connect to the island
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
@@ -150,6 +200,8 @@ class IIslandAPIClient(ABC):
         Send a sequence of agent events to the Island
 
         :param events: A sequence of agent events
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
         :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
                                        island due to an issue in the request sent from the client
@@ -161,12 +213,13 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def send_heartbeat(self, agent: AgentID, timestamp: float):
+    def send_heartbeat(self, timestamp: float):
         """
         Send a "heartbeat" to the Island to indicate that the agent is still alive
 
-        :param agent_id: The ID of the agent who is sending a heartbeat
         :param timestamp: The timestamp of the agent's heartbeat
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
         :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
                                        island due to an issue in the request sent from the client
@@ -178,12 +231,13 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def send_log(self, agent_id: AgentID, log_contents: str):
+    def send_log(self, log_contents: str):
         """
         Send the contents of the agent's log to the island
 
-        :param agent_id: The ID of the agent whose logs are being sent
         :param log_contents: The contents of the agent's log
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
         :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
                                        island due to an issue in the request sent from the client

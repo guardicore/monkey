@@ -55,17 +55,17 @@ class ReportPageComponent extends AuthComponent {
 
   componentDidMount() {
     this.getCredentialsFromServer();
-    getAllAgents().then(agents => this.setState({agents: agents}));
-    getAllMachines().then(machines => this.setState({machines: machines}));
+    getAllAgents(true).then(agents => this.setState({agents: agents}));
+    getAllMachines(true).then(machines => this.setState({machines: machines}));
   }
 
   getCredentialsFromServer = () => {
-    this.authFetch('/api/propagation-credentials/stolen-credentials')
+    this.authFetch('/api/propagation-credentials/stolen-credentials', {}, true)
       .then(res => res.json())
       .then(creds => {
         this.setState({ stolenCredentials: creds });
       })
-    this.authFetch('/api/propagation-credentials/configured-credentials')
+    this.authFetch('/api/propagation-credentials/configured-credentials', {}, true)
       .then(res => res.json())
       .then(creds => {
         this.setState({ configuredCredentials: creds });
@@ -243,7 +243,7 @@ class ReportPageComponent extends AuthComponent {
     let exploitPercentage =
       (100 * this.state.report.glance.exploited_cnt) / this.state.report.glance.scanned.length;
 
-    let exploitPercentageSection = "";
+    let exploitPercentageSection = '';
     if (! isNaN(exploitPercentage)) {
       exploitPercentageSection = (
         <div className='text-center' style={{ margin: '10px' }}>

@@ -1,4 +1,5 @@
 import logging
+import os
 import platform
 import stat
 import subprocess
@@ -7,6 +8,8 @@ from pathlib import Path
 from shutil import copyfileobj
 from typing import Sequence
 
+from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
+from common.types import OTP
 from monkey_island.cc.repositories import IAgentBinaryRepository, RetrievalError
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 
@@ -26,7 +29,7 @@ class LocalMonkeyRunService:
         self._agent_binary_repository = agent_binary_repository
         self._ips = ip_addresses
 
-    def run_local_monkey(self):
+    def run_local_monkey(self, otp: OTP):
         # get the monkey executable suitable to run on the server
         operating_system = platform.system().lower()
         try:
@@ -69,8 +72,10 @@ class LocalMonkeyRunService:
             ip = self._ips[0]
             port = ISLAND_PORT
 
+            process_env = os.environ.copy()
+            process_env[AGENT_OTP_ENVIRONMENT_VARIABLE] = otp.get_secret_value()
             args = [str(dest_path), "m0nk3y", "-s", f"{ip}:{port}"]
-            subprocess.Popen(args, cwd=self._data_dir)
+            subprocess.Popen(args, cwd=self._data_dir, env=process_env)
         except Exception as exc:
             logger.error("popen failed", exc_info=True)
             return False, "popen failed: %s" % exc

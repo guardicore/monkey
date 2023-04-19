@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from common.types import OTP
 from monkey_island.cc.services.aws.aws_command_runner import (
     LINUX_DOCUMENT_NAME,
     WINDOWS_DOCUMENT_NAME,
@@ -11,9 +12,10 @@ from monkey_island.cc.services.aws.aws_command_runner import (
     start_infection_monkey_agent,
 )
 
-TIMEOUT = 0.03
+TIMEOUT = 0.1
 INSTANCE_ID = "BEEFFACE"
 ISLAND_IP = "127.0.0.1"
+INSTANCE_OTP = OTP("supersecretone")
 
 
 @pytest.fixture
@@ -136,7 +138,9 @@ def successful_mock_client(send_command_response, success_response):
 
 
 def test_correct_instance_id(successful_mock_client):
-    start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "linux", ISLAND_IP, TIMEOUT)
+    start_infection_monkey_agent(
+        successful_mock_client, INSTANCE_ID, "linux", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+    )
 
     successful_mock_client.send_command.assert_called_once()
     call_args_kwargs = successful_mock_client.send_command.call_args[1]
@@ -144,7 +148,9 @@ def test_correct_instance_id(successful_mock_client):
 
 
 def test_linux_doc_name(successful_mock_client):
-    start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "linux", ISLAND_IP, TIMEOUT)
+    start_infection_monkey_agent(
+        successful_mock_client, INSTANCE_ID, "linux", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+    )
 
     successful_mock_client.send_command.assert_called_once()
     call_args_kwargs = successful_mock_client.send_command.call_args[1]
@@ -152,7 +158,9 @@ def test_linux_doc_name(successful_mock_client):
 
 
 def test_windows_doc_name(successful_mock_client):
-    start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "windows", ISLAND_IP, TIMEOUT)
+    start_infection_monkey_agent(
+        successful_mock_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+    )
 
     successful_mock_client.send_command.assert_called_once()
     call_args_kwargs = successful_mock_client.send_command.call_args[1]
@@ -160,7 +168,9 @@ def test_windows_doc_name(successful_mock_client):
 
 
 def test_linux_command(successful_mock_client):
-    start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "linux", ISLAND_IP, TIMEOUT)
+    start_infection_monkey_agent(
+        successful_mock_client, INSTANCE_ID, "linux", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+    )
 
     successful_mock_client.send_command.assert_called_once()
     call_args_kwargs = successful_mock_client.send_command.call_args[1]
@@ -168,7 +178,9 @@ def test_linux_command(successful_mock_client):
 
 
 def test_windows_command(successful_mock_client):
-    start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "windows", ISLAND_IP, TIMEOUT)
+    start_infection_monkey_agent(
+        successful_mock_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+    )
 
     successful_mock_client.send_command.assert_called_once()
     call_args_kwargs = successful_mock_client.send_command.call_args[1]
@@ -183,7 +195,7 @@ def test_multiple_status_queries(send_command_response, in_progress_response, su
     )
 
     command_results = start_infection_monkey_agent(
-        aws_client, INSTANCE_ID, "windows", ISLAND_IP, TIMEOUT
+        aws_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, TIMEOUT
     )
     assert command_results.status == AWSCommandStatus.SUCCESS
 
@@ -194,7 +206,7 @@ def test_in_progress_timeout(send_command_response, in_progress_response):
     aws_client.get_command_invocation = MagicMock(return_value=in_progress_response)
 
     command_results = start_infection_monkey_agent(
-        aws_client, INSTANCE_ID, "windows", ISLAND_IP, TIMEOUT
+        aws_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, TIMEOUT
     )
     assert command_results.status == AWSCommandStatus.IN_PROGRESS
 
@@ -205,7 +217,7 @@ def test_failed_command(send_command_response, error_response):
     aws_client.get_command_invocation = MagicMock(return_value=error_response)
 
     command_results = start_infection_monkey_agent(
-        aws_client, INSTANCE_ID, "windows", ISLAND_IP, TIMEOUT
+        aws_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, TIMEOUT
     )
     assert command_results.status == AWSCommandStatus.ERROR
 

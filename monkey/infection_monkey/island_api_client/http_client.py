@@ -1,6 +1,7 @@
 import functools
 import logging
 from enum import Enum, auto
+from http import HTTPStatus
 from typing import Any, Dict, Optional
 
 import requests
@@ -8,13 +9,15 @@ from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
-from common.types import JSONSerializable, SocketAddress
+from common.types import JSONSerializable
 
 from .island_api_client_errors import (
+    IslandAPIAuthenticationError,
     IslandAPIConnectionError,
     IslandAPIError,
     IslandAPIRequestError,
     IslandAPIRequestFailedError,
+    IslandAPIRequestLimitExceededError,
     IslandAPITimeoutError,
 )
 
@@ -40,12 +43,19 @@ def handle_island_errors(fn):
         except (requests.exceptions.ConnectionError, requests.exceptions.TooManyRedirects) as err:
             raise IslandAPIConnectionError(err)
         except requests.exceptions.HTTPError as err:
+            if err.response.status_code in [
+                HTTPStatus.UNAUTHORIZED.value,
+                HTTPStatus.FORBIDDEN.value,
+            ]:
+                raise IslandAPIAuthenticationError(err)
+            if err.response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
+                raise IslandAPIRequestLimitExceededError(err)
             if 400 <= err.response.status_code < 500:
                 raise IslandAPIRequestError(err)
-            elif 500 <= err.response.status_code < 600:
+            if 500 <= err.response.status_code < 600:
                 raise IslandAPIRequestFailedError(err)
-            else:
-                raise IslandAPIError(err)
+
+            raise IslandAPIError(err)
         except TimeoutError as err:
             raise IslandAPITimeoutError(err)
         except Exception as err:
@@ -55,31 +65,19 @@ def handle_island_errors(fn):
 
 
 class HTTPClient:
-    def __init__(self, retries=RETRIES):
+    def __init__(self, server_url: str, retries=RETRIES):
+        if not server_url.startswith("https://"):
+            raise ValueError("Only HTTPS protocol is supported by HTTPClient")
+        self._server_url = server_url
+
         self._session = requests.Session()
         retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
-        self._api_url: Optional[str] = None
-
-    @handle_island_errors
-    def connect(self, island_server: SocketAddress):
-        try:
-            self._api_url = f"https://{island_server}/api"
-            # Don't use retries here, because we expect to not be able to connect.
-            response = requests.get(  # noqa: DUO123
-                f"{self._api_url}?action=is-up",
-                verify=False,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
-            )
-            response.raise_for_status()
-        except Exception as err:
-            logger.debug(f"Connection to {island_server} failed: {err}")
-            self._api_url = None
-            raise err
+        self.additional_headers: Dict[str, Any] = {}
 
     def get(
         self,
-        endpoint: str,
+        endpoint: str = "",
         params: Optional[Dict[str, Any]] = None,
         timeout=MEDIUM_REQUEST_TIMEOUT,
         *args,
@@ -91,7 +89,7 @@ class HTTPClient:
 
     def post(
         self,
-        endpoint: str,
+        endpoint: str = "",
         data: Optional[JSONSerializable] = None,
         timeout=MEDIUM_REQUEST_TIMEOUT,
         *args,
@@ -103,7 +101,7 @@ class HTTPClient:
 
     def put(
         self,
-        endpoint: str,
+        endpoint: str = "",
         data: Optional[JSONSerializable] = None,
         timeout=MEDIUM_REQUEST_TIMEOUT,
         *args,
@@ -122,17 +120,15 @@ class HTTPClient:
         *args,
         **kwargs,
     ) -> requests.Response:
-        if self._api_url is None:
-            raise RuntimeError(
-                "HTTP client is not connected to the Island server,"
-                "establish a connection with 'connect()' before "
-                "attempting to send any requests"
-            )
-        url = f"{self._api_url}/{endpoint}".strip("/")
+        if self._server_url is None:
+            raise RuntimeError("HTTP client does not have a server URL set")
+        url = f"{self._server_url.strip('/')}/{endpoint.strip('/')}".strip("/")
         logger.debug(f"{request_type.name} {url}, timeout={timeout}")
 
         method = getattr(self._session, str.lower(request_type.name))
-        response = method(url, *args, timeout=timeout, verify=False, **kwargs)
+        response = method(
+            url, *args, timeout=timeout, verify=False, headers=self.additional_headers, **kwargs
+        )
         response.raise_for_status()
 
         return response

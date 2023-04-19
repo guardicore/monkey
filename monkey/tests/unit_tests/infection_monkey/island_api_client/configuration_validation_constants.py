@@ -16,8 +16,7 @@ SCHEMA = {
         },
         "payloads": {
             "title": "Payloads",
-            "type": "array",
-            "items": {"$ref": "#/definitions/PluginConfiguration"},
+            "type": "object",
         },
         "propagation": {
             "title": "Propagation",
@@ -195,23 +194,6 @@ SCHEMA = {
                             "description": "Exploits a software vulnerability (CVE-2021-44228) in Apache Log4j, a Java logging framework. Exploitation is attempted on the following services - Apache Solr, Apache Tomcat, Logstash.",
                             "link": "https://techdocs.akamai.com/infection-monkey/docs/log4shell/",
                             "properties": {},
-                        },
-                        "SMBExploiter": {
-                            "type": "object",
-                            "title": "SMB Exploiter",
-                            "safe": True,
-                            "description": "Brute forces using credentials provided by user and hashes gathered by mimikatz.",
-                            "link": "https://techdocs.akamai.com/infection-monkey/docs/smbexec/",
-                            "properties": {
-                                "smb_download_timeout": {
-                                    "title": "SMB download timeout",
-                                    "description": "Maximum time allowd for uploading the Agent binary to the target",
-                                    "type": "number",
-                                    "default": 30,
-                                    "minimum": 0,
-                                    "maximum": 100,
-                                }
-                            },
                         },
                         "PowerShellExploiter": {
                             "type": "object",

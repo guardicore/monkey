@@ -39,9 +39,9 @@ function ScannedServersComponent(props) {
   const [allMachines, setAllMachines] = useState({});
 
   useEffect(() => {
-    getCollectionObject(APIEndpoint.nodes, 'machine_id')
+    getCollectionObject(APIEndpoint.nodes, 'machine_id', true)
       .then(nodesObj => setAllNodes(nodesObj));
-    getCollectionObject(APIEndpoint.machines, 'id')
+    getCollectionObject(APIEndpoint.machines, 'id', true)
       .then(machinesObj => setAllMachines(machinesObj));
   }, [])
 

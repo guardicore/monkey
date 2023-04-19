@@ -1,24 +1,18 @@
-from uuid import UUID, getnode, uuid4
+from uuid import uuid4
 
-from common.types import HardwareID
+from common.types import AgentID, HardwareID
+from common.utils.environment import get_hardware_id
 
-_id = None
 
-
-def get_agent_id() -> UUID:
+def get_agent_id() -> AgentID:
     """
-    Get the agent ID for the current running agent
+    Generate an agent ID
 
-    Each time an agent process starts, the return value of this function will be unique. Subsequent
-    calls to this function from within the same process will have the same return value.
+    Subsequent calls to this function will return a different ID.
     """
-    global _id
-    if _id is None:
-        _id = uuid4()
-
-    return _id
+    return uuid4()
 
 
 def get_machine_id() -> HardwareID:
     """Get an integer that uniquely defines the machine the agent is running on"""
-    return getnode()
+    return get_hardware_id()

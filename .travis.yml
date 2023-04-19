@@ -15,7 +15,7 @@ jobs:
     - name: "Monkey Linux"
       language: python
       python:
-        - 3.7
+        - 3.11
       os: linux
       dist: focal
       vm:
@@ -76,7 +76,7 @@ jobs:
         ## run unit tests and generate coverage data
         - cd monkey  # this is our source dir
         - pip install pytest-xdist
-        - python -m pytest -n auto --dist loadscope --cov=. # have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
+        - python -m pytest -n auto --dist worksteal --cov=. # have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
         # check js code. the npm install must happen after the flake8 because the node_modules folder will cause a lot of errors.
         - cd monkey_island/cc/ui
@@ -99,12 +99,12 @@ jobs:
       vm:
         size: x-large
       before_install:
-        - choco install python --version=3.7.9
+        - choco install python --version=3.11
         - python -m pip install -U pip setuptools virtualenv
         - python -m virtualenv $HOME/venv
         - source $HOME/venv/Scripts/activate
       env:
-        PATH=/c/Python37:/c/Python37/Scripts:$PATH
+        PATH=/c/Python311:/c/Python311/Scripts:$PATH
       cache:
         pip: true
         directories:
@@ -113,7 +113,7 @@ jobs:
       install:
         # Python
         - nproc
-        - pip install pipenv==2022.7.4
+        - pip install pipenv
           # Install island and monkey requirements as they are needed by UT's
         - pushd monkey/monkey_island
         - pipenv sync --dev  # This installs dependencies from lock
@@ -126,7 +126,7 @@ jobs:
         ## run unit tests and generate coverage data
         - cd monkey  # this is our source dir
         - pip install pytest-xdist
-        - python -m pytest -n auto --dist loadscope
+        - python -m pytest -n auto --dist worksteal
 
 
 notifications:

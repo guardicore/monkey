@@ -18,7 +18,8 @@ After running the installer, the following prompt should appear on the screen:
 ![Windows installer screenshot](../../images/island/others/windows_installer.png "Windows installer screenshot")
 
 1. Follow the steps to complete the installation.
-1. Run the Monkey Island by clicking on the desktop shortcut.
+1. Run the Infection Monkey by clicking on the desktop shortcut. **Note**: If you want Agents to
+collect more data on the current machine, consider running as Administrator.
 
 {{% notice info %}}
 If you're prompted to delete your data directory and you're not sure what to
@@ -32,7 +33,7 @@ do, see the [FAQ]({{< ref
 You can configure the server by editing [the configuration
 file](../../reference/server_configuration) located in installation directory.
 The default path is
-`C:\Program Files\Guardicore\Monkey Island\monkey\monkey_island\cc\server_config.json`.
+`C:\Program Files\Infection Monkey\monkey_island\cc\server_config.json`.
 
 ### Start Monkey Island with user-provided certificate
 
@@ -43,7 +44,7 @@ private certificate authority.
 
 1. Stop the Monkey Island process.
 1. (Optional but recommended) Move your `.crt` and `.key` files to `%AppData%\monkey_island`.
-1. Modify the `server_config.json` (by default located in `C:\Program Files\Guardicore\Monkey Island\monkey\monkey_island\cc\server_config.json`) by adding the following lines:
+1. Modify the `server_config.json` (by default located in `C:\Program Files\Infection Monkey\monkey_island\cc\server_config.json`) by adding the following lines:
     ```json
     {
       ...
@@ -61,7 +62,7 @@ private certificate authority.
 ### Change logging level
 
 1. Stop the Island Server.
-1. Modify the `server_config.json` (by default located in `C:\Program Files\Guardicore\Monkey Island\monkey\monkey_island\cc\server_config.json`) by adding the following lines:
+1. Modify the `server_config.json` (by default located in `C:\Program Files\Infection Monkey\monkey_island\cc\server_config.json`) by adding the following lines:
     ```json
     {
         ...

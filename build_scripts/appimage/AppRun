@@ -5,11 +5,6 @@ self="$(readlink -f -- $0)"
 here="${self%/*}"
 APPDIR="${APPDIR:-${here}}"
 
-# Export TCl/Tk
-export TCL_LIBRARY="${APPDIR}/usr/share/tcltk/tcl8.4"
-export TK_LIBRARY="${APPDIR}/usr/share/tcltk/tk8.4"
-export TKPATH="${TK_LIBRARY}"
-
 # Export SSL certificate
 export SSL_CERT_FILE="${APPDIR}/opt/_internal/certs.pem"
 
@@ -24,12 +19,12 @@ do
     if [[ "${opt}" =~ "I" ]] || [[ "${opt}" =~ "E" ]]; then
         # Environment variables are disabled ($PYTHONHOME). Let's run in a safe
         # mode from the raw Python binary inside the AppImage
-        "$APPDIR/opt/python3.7/bin/python3.7" "$@"
+        "$APPDIR/opt/python3.11/bin/python3.11" "$@"
         exit "$?"
     fi
 done
 
 export PYTHONNOUSERSITE=1
-(PYTHONHOME="${APPDIR}/opt/python3.7" exec "${APPDIR}/opt/python3.7/bin/python3.7" "${APPDIR}/usr/src/monkey_island.py" $@)
+(PYTHONHOME="${APPDIR}/opt/python3.11" exec "${APPDIR}/opt/python3.11/bin/python3.11" "${APPDIR}/usr/src/monkey_island.py" $@)
 
 exit "$?"
