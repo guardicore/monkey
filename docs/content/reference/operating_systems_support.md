@@ -37,9 +37,9 @@ distributions have been tested:
 
 - Most modern Linux distros (see the [linux setup page]({{< ref "/setup/linux"
   >}}) for more details)
-- Windows Server 2012
-- Windows Server 2012 R2
 - Windows Server 2016
+- Windows Server 2019
+- Windows 10
 
 We also provide a Dockerfile on our [website](http://infectionmonkey.com/) that lets the Monkey Island run inside a container.
 
