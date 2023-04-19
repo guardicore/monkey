@@ -15,12 +15,7 @@ The official distribution of Infection Monkey is compiled and supplied by Guardi
 Use the `Get-FileHash` <i class="fas fa-terminal"></i> PowerShell commandlet, like so:
 
 ```powershell
-Get-FileHash '.\Monkey Island v1.8.2_3536_windows.exe' | Format-List
-
-# Should print
-#   Algorithm : SHA256
-#   Hash      : 2BE528685D675C882604D98382ADB739F5BA0A7E234E3569B21F535173BD9569
-#   Path      : C:\Users\shay.nehmad\Desktop\work\compiled monkeys\1.8.2\Monkey Island v1.8.2_3536_windows.exe  <-- Your path will be different
+Get-FileHash '<FILE_NAME>' | Format-List
 ```
 
 ### On Linux
@@ -28,12 +23,21 @@ Get-FileHash '.\Monkey Island v1.8.2_3536_windows.exe' | Format-List
 Use the `sha256sum` <i class="fas fa-terminal"></i> shell command, like so:
 
 ```sh
-$ sha256sum monkey-linux-64
-# Should print:
-#   734dd2580f3d483210daf54c063a0a972911bbe9afb6ebc6278f86cd6b05e7ab  monkey-linux-64
+$ sha256sum <FILE_NAME>
 ```
 
 ## Latest version checksums
+
+| Filename                                             | Type              | Version | SHA256                                                             |
+|------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
+| monkey-windows-64.exe                                | Windows Agent     | 2.1.0   | `883b16c9f8d9a532da6787a1a088bef6fabba782058bcedbd1e02afc613b88c2` |
+| monkey-linux-64                                      | Linux Agent       | 2.1.0   | `d7217665f714fbde6657f3b4ac60182779dfd2668fc9a308a77fc595be711252` |
+| InfectionMonkey-v2.1.0.AppImage                      | Linux Package     | 2.1.0   | `a788e693d4e785e039aad513ebd626be1d265e961a2f44dc06df3c9eae33cd8e` |
+| InfectionMonkey-docker-v2.1.0.tgz                    | Docker            | 2.1.0   | `d78c8bcc71988932c22b867f74ec71e5c5b99e204e959ad0fe55e7552a1b8928` |
+| InfectionMonkey-v2.1.0.exe                           | Windows Installer | 2.1.0   | `62095752eee71776f050712670c42c57d2fa439ca5f842cb1ff0830e52b2bdc0` |
+
+
+## Older checksums
 
 | Filename                                             | Type              | Version | SHA256                                                             |
 |------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
@@ -42,12 +46,6 @@ $ sha256sum monkey-linux-64
 | InfectionMonkey-v2.0.0.AppImage                      | Linux Package     | 2.0.0   | `b40ffde3e55f2b2198e8f26c44a1beb33a84a0979764a47ffb5ce26f07f4fa8e` |
 | InfectionMonkey-docker-v2.0.0.tgz                    | Docker            | 2.0.0   | `fa75631d6fa6d6d5086d936077e8005b8b7f59626c78ca561de80470ce5d42f0` |
 | InfectionMonkey-v2.0.0.exe                           | Windows Installer | 2.0.0   | `bbe670cec5c16fbfbec63719594830a52f9495899f96a06fd5c587c6390c3269` |
-
-
-## Older checksums
-
-| Filename                                             | Type              | Version | SHA256                                                             |
-|------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
 | monkey-windows-64.exe                                | Windows Agent     | 1.13.0  | `3EDD20DE2247047C8A822C84145981936CE2FD0BDF843EB5CA777CA4D2478B35` |
 | monkey-windows-32.exe                                | Windows Agent     | 1.13.0  | `7497907E3CF4FFEB121A7795BFA16709800E6E0F99770F64AF7FFF684ECBA6D6` |
 | monkey-linux-64                                      | Linux Agent       | 1.13.0  | `F21E709CB7BA8DAF90B908AF5FE485BA43866C325D3C7CE1EB07E8A2323E07C1` |

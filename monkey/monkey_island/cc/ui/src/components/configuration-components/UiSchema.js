@@ -54,7 +54,7 @@ export default function UiSchema(props) {
             }
           },
           scan_my_networks: {
-            'ui:field': CheckboxWithMessage
+            'ui:widget': CheckboxWithMessage
           },
           subnets: {
             items: {

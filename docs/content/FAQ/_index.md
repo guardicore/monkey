@@ -126,7 +126,7 @@ To reset the credentials, you'll need to perform a complete factory reset:
         --network=host \
         --volume db:/data/db \
         --detach \
-        mongo:4.2
+        mongo:6.0
     ```
 1. Restart the Monkey Island container
     ```bash

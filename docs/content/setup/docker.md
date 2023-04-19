@@ -72,30 +72,38 @@ You can configure the server by mounting a volume and specifying a
 
 1. Create a directory for server configuration file, e.g. `monkey_island_data`:
     ```bash
-    mkdir ./monkey_island_data
-    chmod 700 ./monkey_island_data
+    mkdir -m=0700 ./monkey_island_data
     ```
 1. Run the container with a mounted volume, and the `--setup-only` flag:
-```bash
-sudo docker run \
-    --rm \
-    --name monkey-island \
-    --network=host \
-    --user "$(id -u ${USER}):$(id -g ${USER})" \
-    --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-    infectionmonkey/monkey-island:latest --setup-only
-```
+    ```bash
+    sudo docker run \
+        --rm \
+        --name monkey-island \
+        --network=host \
+        --user "$(id -u ${USER}):$(id -g ${USER})" \
+        --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
+        infectionmonkey/monkey-island:latest --setup-only
+    ```
 1. Move your `server_config.json` file to `./monkey_island_data` directory.
+   Your `server_config.json` file must contain at least the following:
+    ```json
+        {
+            "data_dir": "/monkey_island_data",
+            "mongodb": {
+                "start_mongodb": false
+            }
+        }
+    ```
 1. Run the container with a mounted volume, specify the path to the `server_config.json`:
-```bash
-sudo docker run \
-    --rm \
-    --name monkey-island \
-    --network=host \
-    --user "$(id -u ${USER}):$(id -g ${USER})" \
-    --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-    infectionmonkey/monkey-island:latest --server-config="/monkey_island_data/server_config.json"
-```
+    ```bash
+    sudo docker run \
+        --rm \
+        --name monkey-island \
+        --network=host \
+        --user "$(id -u ${USER}):$(id -g ${USER})" \
+        --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
+        infectionmonkey/monkey-island:latest --server-config="/monkey_island_data/server_config.json"
+    ```
 
 ### Start Monkey Island with user-provided certificate
 
@@ -105,16 +113,22 @@ enterprise or other security-sensitive environments, it is recommended that the
 user provide Infection Monkey with a certificate that has been signed by a
 private certificate authority.
 
+1. If you haven't already, follow the steps above in the [Configuring the
+   server](#configuring-the-server) section.
 1. Terminate the docker container if it's already running.
-1. Move your `.crt` and `.key` files to `./monkey_island_data` (directory created for the volume).
+1. Move your `.crt` and `.key` files to `./monkey_island_data`.
 1. Make sure that your `.crt` and `.key` files are readable only by you.
     ```bash
     chmod 600 <PATH_TO_KEY_FILE>
     chmod 600 <PATH_TO_CRT_FILE>
     ```
-1. Modify the [server configuration file](../../reference/server_configuration) and add the following lines:
+1. Modify the [server configuration file](../../reference/server_configuration) to look like:
     ```json
     {
+        "data_dir": "/monkey_island_data",
+        "mongodb": {
+            "start_mongodb": false
+        },
         "ssl_certificate": {
             "ssl_certificate_file": "/monkey_island_data/my_cert.crt",
             "ssl_certificate_key_file": "/monkey_island_data/my_key.key"
@@ -129,7 +143,7 @@ private certificate authority.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        infection-monkey/monkey-island:latest --setup-only --server-config="/monkey_island_data/server_config.json"
+        infectionmonkey/monkey-island:latest --server-config="/monkey_island_data/server_config.json"
     ```
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.

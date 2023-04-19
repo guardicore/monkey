@@ -6,6 +6,7 @@ from tests.common import StubDIContainer
 
 from monkey_island.cc.resources import RemoteRun
 from monkey_island.cc.services import AWSService
+from monkey_island.cc.services.authentication_service import IOTPGenerator
 from monkey_island.cc.services.aws import AWSCommandResults, AWSCommandStatus
 
 
@@ -15,9 +16,15 @@ def mock_aws_service():
 
 
 @pytest.fixture
-def flask_client(build_flask_client, mock_aws_service):
+def mock_otp_generator() -> IOTPGenerator:
+    return MagicMock(spec=IOTPGenerator)
+
+
+@pytest.fixture
+def flask_client(build_flask_client, mock_aws_service, mock_otp_generator):
     container = StubDIContainer()
     container.register_instance(AWSService, mock_aws_service)
+    container.register_instance(IOTPGenerator, mock_otp_generator)
 
     with build_flask_client(container) as flask_client:
         yield flask_client
@@ -57,17 +64,19 @@ def test_get_instances(flask_client, mock_aws_service):
 # TODO: Test error cases for get()
 
 
-def test_post_no_type(flask_client):
+def test_post_no_type(flask_client, mock_otp_generator):
     response = flask_client.post(RemoteRun.urls[0], data="{}")
     assert response.status_code == 500
+    mock_otp_generator.assert_not_called()
 
 
-def test_post_invalid_type(flask_client):
+def test_post_invalid_type(flask_client, mock_otp_generator):
     response = flask_client.post(RemoteRun.urls[0], data='{"type": "INVALID"}')
     assert response.status_code == 500
+    mock_otp_generator.assert_not_called()
 
 
-def test_post(flask_client, mock_aws_service):
+def test_post(flask_client, mock_aws_service, mock_otp_generator):
     request_body = json.dumps(
         {
             "type": "aws",
@@ -107,3 +116,4 @@ def test_post(flask_client, mock_aws_service):
     response = flask_client.post(RemoteRun.urls[0], data=request_body)
 
     assert json.loads(response.text)["result"] == expected_result
+    assert mock_otp_generator.generate_otp.call_count == 3
