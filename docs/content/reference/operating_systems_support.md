@@ -41,7 +41,8 @@ distributions have been tested:
 - Windows Server 2019
 - Windows 10
 
-We also provide a Dockerfile on our [website](http://infectionmonkey.com/) that lets the Monkey Island run inside a container.
+We also provide a Dockerfile on Docker Hub. You can get it with `sudo docker
+pull infectionmonkey/monkey-island:latest`.
 
 [^1]: The GLIBC >= 2.23 requirement exists because the Infection Monkey Agent
   was built using this GLIBC version, and GLIBC is not backward compatible. We
