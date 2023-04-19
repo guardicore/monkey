@@ -1,0 +1,12 @@
+---
+- name: Configure SNMP manager
+  hosts: all
+  remote_user: root
+
+  tasks:
+    - name: Install SNMP
+      ansible.builtin.apt:
+        update_cache: true
+        pkg:
+          - snmp
+    # Add user

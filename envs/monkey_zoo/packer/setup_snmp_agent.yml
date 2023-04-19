@@ -1,0 +1,37 @@
+---
+- name: Configure SNMP agent
+  hosts: all
+  remote_user: root
+  vars:
+    user: user
+    password: password
+    manager_ip: 10.2.1.30
+    community_string: c0mmun1ty
+
+  tasks:
+    - name: Install SNMP
+      ansible.builtin.apt:
+        update_cache: true
+        name: snmpd
+    - name: Configure allowed connections
+      ansible.builtin.blockinfile:
+        path: /etc/snmp/snmpd.conf
+        block: |
+          agentAddress udp:{{ manager_ip }}:161
+    - name: Configure SNMP community
+      ansible.builtin.blockinfile:
+        path: /etc/snmp/snmpd.conf
+        block: |
+          rwcommunity {{ community_string }}
+    - name: Add SNMP User
+      ansible.builtin.blockinfile:
+        path: /etc/snmp/snmpd.conf
+        block: |
+          defSecurityName {{ user }}
+          defSecurityLevel authPriv
+          defAuthType MD5
+          defPrivType DES
+          defAuthPassphrase {{ password }}
+          defPrivPassphrase {{ password }}
+    # Restart service
+    # Allow data over port 161
