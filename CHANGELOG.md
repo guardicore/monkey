@@ -5,7 +5,7 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [2.1.0]
+## [2.1.0] - 2023-04-19
 ### Added
 - Logout button. #3063
 - An option to the Hadoop exploiter to try all discovered HTTP ports. #2136
