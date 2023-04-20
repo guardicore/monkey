@@ -11,21 +11,10 @@ variable "machine_type" {
 }
 variable "source_image" {
     type = string
-    default = "ubuntu-2004-focal-v20230302"
+    default = "ubuntu-1804-bionic-v20230418"
 }
 variable "account_file" {
     type = string
-}
-
-source "googlecompute" "snmp-manager" {
-    image_name = "snmp-manager"
-    project_id = "${var.project_id}"
-    source_image = "${var.source_image}"
-    zone = "${var.zone}"
-    disk_size = 5
-    machine_type = "${var.machine_type}"
-    ssh_username = "root"
-    account_file = "${var.account_file}"
 }
 
 source "googlecompute" "snmp-agent" {
@@ -33,7 +22,7 @@ source "googlecompute" "snmp-agent" {
     project_id = "${var.project_id}"
     source_image = "${var.source_image}"
     zone = "${var.zone}"
-    disk_size = 5
+    disk_size = 10
     machine_type = "${var.machine_type}"
     ssh_username = "root"
     account_file = "${var.account_file}"
@@ -41,13 +30,8 @@ source "googlecompute" "snmp-agent" {
 
 build {
     sources = [
-        "source.googlecompute.snmp-manager",
         "source.googlecompute.snmp-agent"
     ]
-    provisioner "ansible" {
-        only = ["googlecompute.snmp-manager"]
-        playbook_file = "./packer/setup_snmp_manager.yml"
-    }
     provisioner "ansible" {
         only = ["googlecompute.snmp-agent"]
         playbook_file = "./packer/setup_snmp_agent.yml"

@@ -37,7 +37,7 @@ while :; do
             ;;
         --account-file)
             if [ "$2" ]; then
-                ACCOUNT_FILE=$2
+                ACCOUNT_FILE=$(realpath "$2")
                 shift 2
             else
                 printerr 'ERROR: "--account-file" requires a non-empty option argument.\n'
@@ -65,4 +65,7 @@ if [ -z "$ACCOUNT_FILE" ]; then
     exit 1
 fi
 
+prevdir=$(pwd)
+cd "$ROOT" || exit 1
 packer build $FORCE -var "project_id=$PROJECT_ID" -var "account_file=$ACCOUNT_FILE" "$ROOT/packer/snmp.pkr.hcl"
+cd "$prevdir" || exit 1
