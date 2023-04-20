@@ -17,8 +17,8 @@ variable "account_file" {
     type = string
 }
 
-source "googlecompute" "snmp-agent" {
-    image_name = "snmp-agent"
+source "googlecompute" "snmp-20" {
+    image_name = "snmp-20"
     project_id = "${var.project_id}"
     source_image = "${var.source_image}"
     zone = "${var.zone}"
@@ -30,10 +30,10 @@ source "googlecompute" "snmp-agent" {
 
 build {
     sources = [
-        "source.googlecompute.snmp-agent"
+        "source.googlecompute.snmp-20"
     ]
     provisioner "ansible" {
-        only = ["googlecompute.snmp-agent"]
+        only = ["googlecompute.snmp-20"]
         playbook_file = "./packer/setup_snmp_agent.yml"
     }
 }
