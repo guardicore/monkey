@@ -107,6 +107,13 @@ def _copy_plugins_into_data_dir(data_dir_path: Path):
 
     for plugin_tar_file in plugin_tar_files:
         plugin_dest_path = plugins_dir / plugin_tar_file.name
+        if plugin_dest_path.exists():
+            logger.info(
+                "Skipping plugin tar file copy: "
+                f"destination file {plugin_dest_path} already exists."
+            )
+            continue
+
         try:
             shutil.copy2(plugin_tar_file, plugin_dest_path)
         except FileNotFoundError:

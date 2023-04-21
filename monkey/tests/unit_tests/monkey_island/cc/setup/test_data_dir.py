@@ -157,3 +157,27 @@ def test_plugins_copied_to_plugin_dir(monkeypatch, tmp_path, temp_data_dir_path)
 
     setup_data_dir(temp_data_dir_path)
     assert (temp_data_dir_path / PLUGIN_DIR_NAME / test_plugin.name).read_text() == plugin_contents
+
+
+def test_plugins_in_plugin_dir_not_overwitten(
+    monkeypatch, tmp_path, temp_data_dir_path, temp_version_file_path
+):
+    temp_data_dir_path.mkdir()
+    temp_version_file_path.write_text(current_version)
+
+    test_plugin_name = "test_plugin.tar"
+    original_plugin_contents = "original plugin"
+    plugin_dir = temp_data_dir_path / PLUGIN_DIR_NAME
+    plugin_dir.mkdir()
+    plugin_dir_plugin = plugin_dir / test_plugin_name
+    plugin_dir_plugin.write_text(original_plugin_contents)
+
+    plugin_src_dir = tmp_path / PLUGIN_DIR_NAME
+    plugin_src_dir.mkdir()
+    new_plugin = plugin_src_dir / test_plugin_name
+    new_plugin.write_text("new plugin")
+    monkeypatch.setattr("monkey_island.cc.setup.data_dir.MONKEY_ISLAND_ABS_PATH", tmp_path)
+
+    setup_data_dir(temp_data_dir_path)
+
+    assert plugin_dir_plugin.read_text() == original_plugin_contents
