@@ -125,7 +125,7 @@ This document describes Infection Monkey’s test network.
 <tbody>
 <tr class="odd">
 <td>OS:</td>
-<td><strong>Ubuntu 16.04.05 x64</strong></td>
+<td><strong>Ubuntu 18.04.6 x64</strong></td>
 </tr>
 <tr class="even">
 <td>Software:</td>

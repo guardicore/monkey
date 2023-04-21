@@ -123,10 +123,9 @@ resource "google_compute_instance_from_template" "hadoop-3" {
   }
 }
 
-resource "google_compute_instance_from_template" "tunneling-9" {
-  name                     = "${local.resource_prefix}tunneling-9"
-  source_instance_template = local.default_ubuntu
-  machine_type             = "n1-standard-2"
+resource "google_compute_instance" "tunneling-9" {
+  name         = "${local.resource_prefix}tunneling-9"
+  machine_type = "n1-standard-2"
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-9.self_link
