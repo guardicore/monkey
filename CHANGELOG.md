@@ -5,6 +5,10 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+### Added
+- `PortScanData.open` property. #3238
+
 ## [2.1.0] - 2023-04-19
 ### Added
 - Logout button. #3063
