@@ -115,6 +115,7 @@ def _copy_plugins_into_data_dir(data_dir_path: Path):
             continue
 
         try:
+            logger.info(f"Copying plugin tar file: {plugin_tar_file} -> {plugin_dest_path}")
             shutil.copy2(plugin_tar_file, plugin_dest_path)
         except FileNotFoundError:
             logger.exception(
