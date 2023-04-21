@@ -70,3 +70,17 @@ def test_closed_tcp_ports():
     )
 
     assert tcp_ports.closed == expected_closed_ports
+
+
+def test_open_tcp_ports():
+    expected_open_ports = {1, 3}
+    tcp_ports = PortScanDataDict(
+        {
+            NetworkPort(1): PortScanData(port=1, status=PortStatus.OPEN),
+            NetworkPort(2): PortScanData(port=2, status=PortStatus.CLOSED),
+            NetworkPort(3): PortScanData(port=3, status=PortStatus.OPEN),
+            NetworkPort(4): PortScanData(port=4, status=PortStatus.CLOSED),
+        }
+    )
+
+    assert tcp_ports.open == expected_open_ports
