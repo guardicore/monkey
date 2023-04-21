@@ -18,11 +18,16 @@ class PortScanDataDict(UserDict[NetworkPort, PortScanData]):
         super().__setitem__(key, value)
 
     @property
+    def open(self) -> Set[NetworkPort]:
+        return self._filter_ports_by_status(PortStatus.OPEN)
+
+    @property
     def closed(self) -> Set[NetworkPort]:
+        return self._filter_ports_by_status(PortStatus.CLOSED)
+
+    def _filter_ports_by_status(self, status: PortStatus) -> Set[NetworkPort]:
         return {
-            port
-            for port, port_scan_data in self.data.items()
-            if port_scan_data.status == PortStatus.CLOSED
+            port for port, port_scan_data in self.data.items() if port_scan_data.status == status
         }
 
 
