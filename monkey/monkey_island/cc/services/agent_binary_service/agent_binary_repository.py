@@ -1,6 +1,8 @@
 from typing import BinaryIO
 
-from . import IAgentBinaryRepository, IFileRepository, RetrievalError
+from monkey_island.cc.repositories import IFileRepository, RetrievalError
+
+from .i_agent_binary_repository import IAgentBinaryRepository
 
 LINUX_AGENT_FILE_NAME = "monkey-linux-64"
 WINDOWS_AGENT_FILE_NAME = "monkey-windows-64.exe"

@@ -1,7 +1,7 @@
 from typing import BinaryIO
 
-from monkey_island.cc.repositories import IAgentBinaryRepository
 from . import IAgentBinaryService
+from .i_agent_binary_repository import IAgentBinaryRepository
 
 
 class AgentBinaryService(IAgentBinaryService):

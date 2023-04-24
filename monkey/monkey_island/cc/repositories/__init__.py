@@ -3,7 +3,6 @@ from .consts import MONGO_OBJECT_ID_KEY
 
 
 from .i_file_repository import FileNotFoundError, IFileRepository
-from .i_agent_binary_repository import IAgentBinaryRepository
 from .i_simulation_repository import ISimulationRepository
 from .i_credentials_repository import ICredentialsRepository
 from .i_machine_repository import IMachineRepository
@@ -23,7 +22,6 @@ from .agent_plugin_repository_logging_decorator import AgentPluginRepositoryLogg
 from .agent_plugin_repository_caching_decorator import AgentPluginRepositoryCachingDecorator
 
 
-from .agent_binary_repository import AgentBinaryRepository
 from .file_simulation_repository import FileSimulationRepository
 from .mongo_credentials_repository import MongoCredentialsRepository
 from .mongo_machine_repository import MongoMachineRepository

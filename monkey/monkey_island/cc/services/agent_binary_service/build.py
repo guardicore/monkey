@@ -3,11 +3,9 @@ from pathlib import Path
 
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repositories import (
-    AgentBinaryRepository,
     FileRepositoryCachingDecorator,
     FileRepositoryLockingDecorator,
     FileRepositoryLoggingDecorator,
-    IAgentBinaryRepository,
     IFileRepository,
     LocalStorageFileRepository,
     RetrievalError,
@@ -15,7 +13,9 @@ from monkey_island.cc.repositories import (
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 from . import IAgentBinaryService
+from .agent_binary_repository import AgentBinaryRepository
 from .agent_binary_service import AgentBinaryService
+from .i_agent_binary_repository import IAgentBinaryRepository
 
 AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
 logger = logging.getLogger(__name__)

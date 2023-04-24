@@ -2,7 +2,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from monkey_island.cc.repositories import AgentBinaryRepository, IFileRepository, RetrievalError
+from monkey_island.cc.repositories import IFileRepository, RetrievalError
+from monkey_island.cc.services.agent_binary_service.agent_binary_repository import (
+    AgentBinaryRepository,
+)
 
 LINUX_AGENT_BINARY = b"linux_binary"
 WINDOWS_AGENT_BINARY = b"windows_binary"
