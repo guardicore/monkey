@@ -181,3 +181,21 @@ def test_plugins_in_plugin_dir_not_overwitten(
     setup_data_dir(temp_data_dir_path)
 
     assert plugin_dir_plugin.read_text() == original_plugin_contents
+
+
+def test_setup_plugin_dir_existing_dir_permissions(temp_data_dir_path):
+    if is_windows_os():
+        assert_permissions = assert_windows_permissions
+    else:
+        assert_permissions = assert_linux_permissions
+
+    plugin_dir_path = temp_data_dir_path / PLUGIN_DIR_NAME
+    temp_data_dir_path.mkdir()
+    plugin_dir_path.mkdir()
+
+    assert plugin_dir_path.is_dir()
+    with pytest.raises(AssertionError):
+        assert_permissions(plugin_dir_path)
+
+    setup_data_dir(plugin_dir_path)
+    assert_permissions(plugin_dir_path)
