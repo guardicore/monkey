@@ -23,14 +23,12 @@ from common.event_queue import (
     PyPubSubAgentEventQueue,
 )
 from common.types.concurrency import BasicLock, RLock
-from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.event_queue import (
     IIslandEventQueue,
     LockingIslandEventQueueDecorator,
     PyPubSubIslandEventQueue,
 )
 from monkey_island.cc.repositories import (
-    AgentBinaryRepository,
     AgentMachineFacade,
     AgentPluginRepositoryCachingDecorator,
     AgentPluginRepositoryLoggingDecorator,
@@ -40,7 +38,6 @@ from monkey_island.cc.repositories import (
     FileRepositoryLockingDecorator,
     FileRepositoryLoggingDecorator,
     FileSimulationRepository,
-    IAgentBinaryRepository,
     IAgentEventRepository,
     IAgentLogRepository,
     IAgentPluginRepository,
@@ -57,7 +54,6 @@ from monkey_island.cc.repositories import (
     MongoMachineRepository,
     MongoNodeRepository,
     NetworkModelUpdateFacade,
-    RetrievalError,
     initialize_machine_repository,
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, PLUGIN_DIR_NAME
@@ -65,7 +61,9 @@ from monkey_island.cc.server_utils.encryption import ILockableEncryptor, Reposit
 from monkey_island.cc.services import (
     AgentSignalsService,
     AWSService,
+    IAgentBinaryService,
     IAgentConfigurationService,
+    build_agent_binary_service,
     build_agent_configuration_service,
 )
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
@@ -155,7 +153,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
             FileRepositoryLoggingDecorator(LocalStorageFileRepository(data_dir / PLUGIN_DIR_NAME))
         ),
     )
-    container.register_instance(IAgentBinaryRepository, _build_agent_binary_repository())
 
     container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))
     container.register_instance(
@@ -181,15 +178,6 @@ def _decorate_file_repository(file_repository: IFileRepository) -> IFileReposito
     return FileRepositoryLockingDecorator(
         FileRepositoryLoggingDecorator(FileRepositoryCachingDecorator(file_repository))
     )
-
-
-def _build_agent_binary_repository() -> IAgentBinaryRepository:
-    file_repository = _decorate_file_repository(LocalStorageFileRepository(AGENT_BINARIES_PATH))
-    agent_binary_repository = AgentBinaryRepository(file_repository)
-
-    _log_agent_binary_hashes(agent_binary_repository)
-
-    return agent_binary_repository
 
 
 def _build_machine_repository(container: DIContainer) -> IMachineRepository:
@@ -221,34 +209,11 @@ def _setup_agent_event_serializers(container: DIContainer):
     container.register_instance(AgentEventSerializerRegistry, agent_event_serializer_registry)
 
 
-def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
-    """
-    Logs all the hashes of the agent executables for debugging ease
-
-    :param agent_binary_repository: Used to retrieve the agent binaries
-    """
-    agent_binaries = {
-        "Linux": agent_binary_repository.get_linux_binary,
-        "Windows": agent_binary_repository.get_windows_binary,
-    }
-    agent_hashes = {}
-
-    for os, get_agent_binary in agent_binaries.items():
-        try:
-            agent_binary = get_agent_binary()
-            binary_sha256_hash = get_binary_io_sha256_hash(agent_binary)
-            agent_hashes[os] = binary_sha256_hash
-        except RetrievalError as err:
-            logger.error(f"No agent available for {os}: {err}")
-
-    for os, binary_sha256_hash in agent_hashes.items():
-        logger.info(f"{os} agent: SHA-256 hash: {binary_sha256_hash}")
-
-
 def _register_services(container: DIContainer):
     container.register_instance(AWSService, container.resolve(AWSService))
-    container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
+    container.register_instance(IAgentBinaryService, build_agent_binary_service())
     container.register_instance(
         IAgentConfigurationService, build_agent_configuration_service(container)
     )
+    container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
