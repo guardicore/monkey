@@ -157,7 +157,9 @@ class AutomatedMaster(IMaster):
         payload_thread.join()
 
     def _collect_credentials(self, collector: PluginConfiguration):
-        credentials = self._puppet.run_credentials_collector(collector.name, collector.options)
+        credentials = self._puppet.run_credentials_collector(
+            collector.name, collector.options, self._stop
+        )
 
         if not credentials:
             logger.debug(f"No credentials were collected by {collector}")

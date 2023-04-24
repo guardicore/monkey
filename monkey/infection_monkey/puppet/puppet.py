@@ -41,11 +41,13 @@ class Puppet(IPuppet):
     def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
         self._plugin_registry.load_plugin(plugin_type, plugin_name, plugin)
 
-    def run_credentials_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
+    def run_credentials_collector(
+        self, name: str, options: Dict, interrupt: Event
+    ) -> Sequence[Credentials]:
         credentials_collector = self._plugin_registry.get_plugin(
             AgentPluginType.CREDENTIALS_COLLECTOR, name
         )
-        return credentials_collector.collect_credentials(options)
+        return credentials_collector.run(options=options, interrupt=interrupt)
 
     def ping(self, host: str, timeout: float = CONNECTION_TIMEOUT) -> PingScanData:
         return network_scanning.ping(host, timeout, self._agent_event_queue, self._agent_id)
