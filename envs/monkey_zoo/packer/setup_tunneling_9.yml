@@ -1,0 +1,20 @@
+---
+- name: Configure Tunneling-9
+  hosts: all
+  remote_user: root
+
+  tasks:
+    - name: Add m0nk3y user
+      user:
+        name: m0nk3y
+        password: "{{ '`))jU7L(w}' | password_hash('sha512') }}"
+        groups:
+          - sudo
+        append: yes
+    - name: Enable Password Authentication
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication.*no'
+        line: "PasswordAuthentication yes"
+        state: present
+        backup: yes
