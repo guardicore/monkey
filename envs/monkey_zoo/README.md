@@ -15,6 +15,20 @@ Terraform scripts allows you to quickly setup a network that’s full of
 vulnerable machines to regression test monkey’s exploiters, evaluate
 scanning times in a real-world scenario and many more.
 
+## Building MonkeyZoo Images
+
+### Requirements
+- [Packer](https://developer.hashicorp.com/packer/downloads)
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible)
+- A [GCP Service Account](https://developers.google.com/identity/protocols/oauth2/service-account#creatinganaccount) for the project in which to create the images
+  - This account should have `Service Account User` and `Compute Instance Admin` permissions
+- A GCP key file for the service account
+
+Run envs/monkey_zoo/build_images.sh to build the images for the MonkeyZoo. These are the images from which the zoo will be deployed.
+
+Example:
+  ./build_images.sh --project my-gcp-project --account-file /path/to/account_file.json
+
 ## MonkeyZoo network
 
 Check [MonkeyZoo network](docs/zoo_network.md) documentation on how machines are setup
