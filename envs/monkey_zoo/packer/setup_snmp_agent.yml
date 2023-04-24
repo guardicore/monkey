@@ -9,6 +9,8 @@
     - name: Install SNMP
       apt:
         name:
+          # These specific versions are required, as newer versions of SNMP are
+          # patched to prevent adding commands to the nsExtendObjects table
           - snmp=5.7.3+dfsg-1.8ubuntu3
           - snmpd=5.7.3+dfsg-1.8ubuntu3
           - libsnmp30=5.7.3+dfsg-1.8ubuntu3
