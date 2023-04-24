@@ -5,7 +5,8 @@ from flask import make_response, send_file
 
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import RetrievalError
-from monkey_island.cc.services import IAgentBinaryService
+
+from .. import IAgentBinaryService
 
 logger = logging.getLogger(__name__)
 
