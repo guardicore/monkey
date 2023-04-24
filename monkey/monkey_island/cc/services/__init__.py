@@ -12,3 +12,4 @@ from .agent_configuration_service import build as build_agent_configuration_serv
 from .agent_configuration_service import (
     register_resources as register_agent_configuration_resources,
 )  # noqa: E501
+from .agent_binary_service import IAgentBinaryService
