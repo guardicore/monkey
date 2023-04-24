@@ -20,6 +20,9 @@ def get_security_descriptor_for_owner_only_permissions():
     dacl.SetEntriesInAcl(entries)
 
     security_descriptor = win32security.SECURITY_DESCRIPTOR()
+    security_descriptor.SetSecurityDescriptorControl(
+        win32security.SE_DACL_PROTECTED, win32security.SE_DACL_PROTECTED
+    )
     security_descriptor.SetSecurityDescriptorDacl(1, dacl, 0)
 
     return security_descriptor
