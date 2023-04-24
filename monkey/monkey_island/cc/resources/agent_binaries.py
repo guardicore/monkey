@@ -4,7 +4,8 @@ from http import HTTPStatus
 from flask import make_response, send_file
 
 from monkey_island.cc.flask_utils import AbstractResource
-from monkey_island.cc.repositories import IAgentBinaryRepository, RetrievalError
+from monkey_island.cc.repositories import RetrievalError
+from monkey_island.cc.services import IAgentBinaryService
 
 logger = logging.getLogger(__name__)
 
@@ -12,8 +13,8 @@ logger = logging.getLogger(__name__)
 class AgentBinaries(AbstractResource):
     urls = ["/api/agent-binaries/<string:os>"]
 
-    def __init__(self, agent_binary_repository: IAgentBinaryRepository):
-        self._agent_binary_repository = agent_binary_repository
+    def __init__(self, agent_binary_service: IAgentBinaryService):
+        self._agent_binary_service = agent_binary_service
 
     # Can't be secured, used in manual run commands
     def get(self, os):
@@ -25,8 +26,8 @@ class AgentBinaries(AbstractResource):
         """
         try:
             agent_binaries = {
-                "linux": self._agent_binary_repository.get_linux_binary,
-                "windows": self._agent_binary_repository.get_windows_binary,
+                "linux": self._agent_binary_service.get_linux_binary,
+                "windows": self._agent_binary_service.get_windows_binary,
             }
 
             file = agent_binaries[os]()
