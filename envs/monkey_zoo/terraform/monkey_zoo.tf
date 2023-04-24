@@ -338,9 +338,9 @@ resource "google_compute_instance_from_template" "mssql-16" {
 }
 
 resource "google_compute_instance" "snmp-20" {
-  name = "${local.resource_prefix}snmp-20"
-
+  name           = "${local.resource_prefix}snmp-20"
   machine_type   = "n1-standard-1"
+  zone           = "europe-west1-b"
   can_ip_forward = false
   service_account {
     email  = local.service_account_email
@@ -353,8 +353,8 @@ resource "google_compute_instance" "snmp-20" {
     auto_delete = true
   }
   network_interface {
-    subnetwork = "${local.resource_prefix}monkeyzoo-main"
-    network_ip = "10.2.2.20"
+    subnetwork = "${local.resource_prefix}monkeyzoo-main-1"
+    network_ip = "10.2.3.20"
     access_config {
       // Allows Ephemeral IPs
     }
