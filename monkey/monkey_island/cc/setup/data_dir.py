@@ -95,20 +95,31 @@ def _data_dir_version_mismatch_exists(data_dir_path: Path) -> bool:
 
 
 def _copy_plugins_into_data_dir(data_dir_path: Path):
-    plugin_path = Path(MONKEY_ISLAND_ABS_PATH) / PLUGIN_DIR_NAME
+    plugin_source_dir = Path(MONKEY_ISLAND_ABS_PATH) / PLUGIN_DIR_NAME
     try:
-        plugins_destination_path = _create_plugins_dir(data_dir_path)
-        plugin_tar_paths = list(plugin_path.glob("*.tar"))
+        plugins_dir = _create_plugins_dir(data_dir_path)
+        plugin_tar_files = list(plugin_source_dir.glob("*.tar"))
     except Exception:
-        logger.exception(f"An error occured while creating plugins data directory: {plugin_path}")
+        logger.exception(
+            f"An error occured while creating plugins data directory: {plugin_source_dir}"
+        )
         return
 
-    for plugin_tar_path in plugin_tar_paths:
+    for plugin_tar_file in plugin_tar_files:
+        plugin_dest_path = plugins_dir / plugin_tar_file.name
+        if plugin_dest_path.exists():
+            logger.info(
+                "Skipping plugin tar file copy: "
+                f"destination file {plugin_dest_path} already exists."
+            )
+            continue
+
         try:
-            shutil.copy2(plugin_tar_path, plugins_destination_path)
+            logger.info(f"Copying plugin tar file: {plugin_tar_file} -> {plugin_dest_path}")
+            shutil.copy2(plugin_tar_file, plugin_dest_path)
         except FileNotFoundError:
             logger.exception(
-                f"An error occured while copying plugin {plugin_tar_path} "
+                f"An error occured while copying plugin {plugin_tar_file} "
                 f"to the data directory: {data_dir_path}"
             )
 
