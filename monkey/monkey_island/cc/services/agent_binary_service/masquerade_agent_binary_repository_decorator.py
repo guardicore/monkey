@@ -9,8 +9,12 @@ DEFAULT_NULL_BYTES_LENGTH = 16
 
 class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
     """
-    An IAgentBinaryRepsitory decorator that applies a masque to the
-    agent binaries for other IAgentBinaryRepositories
+    An IAgentBinaryRepsitory decorator that applies a masque Agent binaries
+
+
+    This decorator applies a masque by appending a fixed set of bytes to Agent binaries. The masque
+    is preceeded by a configurable number of null bytes to prevent the masque from being interpreted
+    as part of the binary.
     """
 
     def __init__(
