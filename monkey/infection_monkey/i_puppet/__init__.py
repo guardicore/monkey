@@ -9,5 +9,5 @@ from .i_puppet import (
     IncompatibleOperatingSystemError,
 )
 from .i_fingerprinter import IFingerprinter
-from .i_credential_collector import ICredentialCollector
+from .i_credentials_collector import ICredentialsCollector
 from .target_host import TargetHost, TargetHostPorts, PortScanDataDict

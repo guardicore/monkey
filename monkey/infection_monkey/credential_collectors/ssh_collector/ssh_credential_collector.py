@@ -5,12 +5,12 @@ from common.credentials import Credentials
 from common.event_queue import IAgentEventQueue
 from common.types import AgentID
 from infection_monkey.credential_collectors.ssh_collector import ssh_handler
-from infection_monkey.i_puppet import ICredentialCollector
+from infection_monkey.i_puppet import ICredentialsCollector
 
 logger = logging.getLogger(__name__)
 
 
-class SSHCredentialCollector(ICredentialCollector):
+class SSHCredentialCollector(ICredentialsCollector):
     """
     SSH keys credential collector
     """

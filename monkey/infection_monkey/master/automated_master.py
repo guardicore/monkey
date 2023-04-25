@@ -126,19 +126,19 @@ class AutomatedMaster(IMaster):
             logger.error(f"An error occurred while fetching configuration: {e}")
             return
 
-        credential_collector_thread = create_daemon_thread(
+        credentials_collector_thread = create_daemon_thread(
             target=self._run_plugins_legacy,
-            name="CredentialCollectorThread",
+            name="CredentialsCollectorThread",
             args=(
-                config.credential_collectors,
-                "credential collector",
+                config.credentials_collectors,
+                "credentials collector",
                 self._collect_credentials,
             ),
         )
         # We don't need to use multithreading here, but it's likely that in the
         # future we'll like to run other tasks while credentials are being collected
-        credential_collector_thread.start()
-        credential_collector_thread.join()
+        credentials_collector_thread.start()
+        credentials_collector_thread.join()
 
         current_depth = self._current_depth if self._current_depth is not None else 0
         logger.info(f"Current depth is {current_depth}")
@@ -157,7 +157,7 @@ class AutomatedMaster(IMaster):
         payload_thread.join()
 
     def _collect_credentials(self, collector: PluginConfiguration):
-        credentials = self._puppet.run_credential_collector(collector.name, collector.options)
+        credentials = self._puppet.run_credentials_collector(collector.name, collector.options)
 
         if not credentials:
             logger.debug(f"No credentials were collected by {collector}")
