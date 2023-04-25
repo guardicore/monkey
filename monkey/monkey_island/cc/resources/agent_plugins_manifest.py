@@ -57,7 +57,7 @@ class AgentPluginsManifest(AbstractResource):
         except KeyError as err:
             if plugin_type == AgentPluginType.EXPLOITER:
                 return HARD_CODED_EXPLOITER_MANIFESTS[name]
-            elif plugin_type == AgentPluginType.CREDENTIAL_COLLECTOR:
+            elif plugin_type == AgentPluginType.CREDENTIALS_COLLECTOR:
                 return HARD_CODED_CREDENTIALS_COLLECTOR_MANIFESTS[name]
             elif plugin_type == AgentPluginType.FINGERPRINTER:
                 return HARD_CODED_FINGERPRINTER_MANIFESTS[name]

@@ -24,7 +24,7 @@ from .hard_coded_schemas import (
 
 PLUGIN_PATH_IN_SCHEMA = {
     AgentPluginType.EXPLOITER: "definitions.ExploitationConfiguration.properties.exploiters",
-    AgentPluginType.CREDENTIAL_COLLECTOR: "properties.credentials_collectors",
+    AgentPluginType.CREDENTIALS_COLLECTOR: "properties.credentials_collectors",
     AgentPluginType.FINGERPRINTER: "definitions.NetworkScanConfiguration.properties.fingerprinters",
     AgentPluginType.PAYLOAD: "properties.payloads",
 }
@@ -97,7 +97,9 @@ class AgentConfigurationSchemaCompiler:
 
     def _add_non_plugin_credentials_collectors(self, schema: Dict[str, Any]) -> Dict[str, Any]:
         properties = dpath.get(
-            schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.CREDENTIAL_COLLECTOR] + ".properties", "."
+            schema,
+            PLUGIN_PATH_IN_SCHEMA[AgentPluginType.CREDENTIALS_COLLECTOR] + ".properties",
+            ".",
         )
         credentials_collector_schemas = self._add_manifests_to_plugins_schema(
             HARD_CODED_CREDENTIALS_COLLECTOR_SCHEMAS, HARD_CODED_CREDENTIALS_COLLECTOR_MANIFESTS
