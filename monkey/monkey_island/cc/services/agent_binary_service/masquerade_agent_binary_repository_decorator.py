@@ -4,7 +4,7 @@ from typing import BinaryIO
 
 from .i_agent_binary_repository import IAgentBinaryRepository
 
-NULL_BYTES_LENGTH = 16
+DEFAULT_NULL_BYTES_LENGTH = 16
 
 
 class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
@@ -13,9 +13,15 @@ class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
     agent binaries for other IAgentBinaryRepositories
     """
 
-    def __init__(self, agent_binary_repository: IAgentBinaryRepository, masque: bytes):
+    def __init__(
+        self,
+        agent_binary_repository: IAgentBinaryRepository,
+        masque: bytes,
+        null_bytes_length: int = DEFAULT_NULL_BYTES_LENGTH,
+    ):
         self._agent_binary_repository = agent_binary_repository
         self._masque = masque
+        self._null_bytes_length = null_bytes_length
 
     @lru_cache()
     def get_linux_binary(self) -> BinaryIO:
@@ -28,7 +34,7 @@ class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
         return self._apply_masque(agent_windows_binary)
 
     def _apply_masque(self, agent_binary: BinaryIO) -> BinaryIO:
-        null_bytes = b"\x00" * NULL_BYTES_LENGTH
+        null_bytes = b"\x00" * self._null_bytes_length
         agent_binary.seek(0, io.SEEK_END)
         agent_binary.write(null_bytes + self._masque)
         return agent_binary
