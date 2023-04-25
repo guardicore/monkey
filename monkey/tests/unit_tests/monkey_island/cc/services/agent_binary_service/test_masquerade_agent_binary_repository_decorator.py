@@ -1,8 +1,9 @@
 import io
-from unittest.mock import MagicMock
 
 import pytest
+from tests.monkey_island import InMemoryAgentBinaryRepository
 
+from common import OperatingSystem
 from monkey_island.cc.services.agent_binary_service.i_agent_binary_repository import (
     IAgentBinaryRepository,
 )
@@ -27,57 +28,47 @@ MASQUED_WINDOWS_AGENT_BINARY = io.BytesIO(
 
 
 @pytest.fixture
-def mock_agent_binary_repository() -> IAgentBinaryRepository:
-    mock_agent_binary_repository = MagicMock(wraps=IAgentBinaryRepository)
-
-    mock_agent_binary_repository.get_linux_binary = MagicMock(return_value=LINUX_AGENT_BINARY)
-    mock_agent_binary_repository.get_windows_binary = MagicMock(return_value=WINDOWS_AGENT_BINARY)
-
-    return mock_agent_binary_repository
+def in_memory_agent_binary_repository() -> InMemoryAgentBinaryRepository:
+    return InMemoryAgentBinaryRepository()
 
 
 @pytest.fixture
 def mock_masquerade_agent_binary_repository(
-    mock_agent_binary_repository,
+    in_memory_agent_binary_repository: IAgentBinaryRepository,
 ) -> MasqueradeAgentBinaryRepositoryDecorator:
     return MasqueradeAgentBinaryRepositoryDecorator(
-        mock_agent_binary_repository, MASQUE, NULL_BYTES_LENGTH
+        in_memory_agent_binary_repository, MASQUE, NULL_BYTES_LENGTH
     )
 
 
-def test_masquerade_agent_binary_repository_decorator__linux(
+@pytest.mark.parametrize(
+    "operating_system,expected_agent_binary",
+    (
+        (OperatingSystem.LINUX, MASQUED_LINUX_AGENT_BINARY),
+        (OperatingSystem.WINDOWS, MASQUED_WINDOWS_AGENT_BINARY),
+    ),
+)
+def test_get_agent_binary(
     mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
+    operating_system: OperatingSystem,
+    expected_agent_binary: io.BytesIO,
 ):
-    actual_linux_binary = mock_masquerade_agent_binary_repository.get_linux_binary()
+    actual_linux_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
 
-    assert actual_linux_binary.getvalue() == MASQUED_LINUX_AGENT_BINARY.getvalue()  # type: ignore[attr-defined] # noqa: E501
+    assert actual_linux_binary.getvalue() == expected_agent_binary.getvalue()  # type: ignore[attr-defined] # noqa: E501
 
 
-def test_masquerade_agent_binary_repository_decorator__windows(
+@pytest.mark.parametrize(
+    "operating_system",
+    (OperatingSystem.LINUX, OperatingSystem.WINDOWS),
+)
+def test_get_agent_binary__cached(
+    in_memory_agent_binary_repository: InMemoryAgentBinaryRepository,
     mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
+    operating_system: OperatingSystem,
 ):
-    actual_windows_binary = mock_masquerade_agent_binary_repository.get_windows_binary()
-
-    assert actual_windows_binary.getvalue() == MASQUED_WINDOWS_AGENT_BINARY.getvalue()  # type: ignore[attr-defined] # noqa: E501
-
-
-def test_masquerade_agent_binary_repository_decorator__cached_linux(
-    mock_agent_binary_repository: IAgentBinaryRepository,
-    mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
-):
-    actual_linux_binary = mock_masquerade_agent_binary_repository.get_linux_binary()
-    mock_agent_binary_repository.get_linux_binary = MagicMock(return_value=b"not_linux_binary")  # type: ignore[assignment,method-assign] # noqa: E501
-    cached_linux_binary = mock_masquerade_agent_binary_repository.get_linux_binary()
+    actual_linux_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
+    in_memory_agent_binary_repository.agent_binaries[operating_system] = b"new_binary"
+    cached_linux_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
 
     assert actual_linux_binary == cached_linux_binary
-
-
-def test_masquerade_agent_binary_repository_decorator__cached_windows(
-    mock_agent_binary_repository: IAgentBinaryRepository,
-    mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
-):
-    actual_windows_binary = mock_masquerade_agent_binary_repository.get_windows_binary()
-    mock_agent_binary_repository.get_windows_binary = MagicMock(return_value=b"not_windows_binary")  # type: ignore[assignment,method-assign] # noqa: E501
-    cached_windows_binary = mock_masquerade_agent_binary_repository.get_windows_binary()
-
-    assert actual_windows_binary == cached_windows_binary

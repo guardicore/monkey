@@ -8,6 +8,7 @@ from pathlib import Path
 from shutil import copyfileobj
 from typing import Sequence
 
+from common import OperatingSystem
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.types import OTP
 from monkey_island.cc.repositories import RetrievalError
@@ -16,7 +17,10 @@ from monkey_island.cc.services import IAgentBinaryService
 
 logger = logging.getLogger(__name__)
 
-AGENT_NAMES = {"linux": "monkey-linux-64", "windows": "monkey-windows-64.exe"}
+AGENT_NAMES = {
+    OperatingSystem.LINUX: "monkey-linux-64",
+    OperatingSystem.WINDOWS: "monkey-windows-64.exe",
+}
 
 
 class LocalMonkeyRunService:
@@ -32,14 +36,9 @@ class LocalMonkeyRunService:
 
     def run_local_monkey(self, otp: OTP):
         # get the monkey executable suitable to run on the server
-        operating_system = platform.system().lower()
         try:
-            agents = {
-                "linux": self._agent_binary_service.get_linux_binary,
-                "windows": self._agent_binary_service.get_windows_binary,
-            }
-
-            agent_binary = agents[platform.system().lower()]()
+            operating_system = OperatingSystem[platform.system().upper()]
+            agent_binary = self._agent_binary_service.get_agent_binary(operating_system)
         except RetrievalError as err:
             logger.error(
                 f"No Agent can be retrieved for the specified operating system"

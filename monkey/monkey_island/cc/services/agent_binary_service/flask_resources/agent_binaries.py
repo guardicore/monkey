@@ -3,6 +3,7 @@ from http import HTTPStatus
 
 from flask import make_response, send_file
 
+from common import OperatingSystem
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import RetrievalError
 
@@ -26,12 +27,8 @@ class AgentBinaries(AbstractResource):
         :return: an agent binary file
         """
         try:
-            agent_binaries = {
-                "linux": self._agent_binary_service.get_linux_binary,
-                "windows": self._agent_binary_service.get_windows_binary,
-            }
-
-            file = agent_binaries[os]()
+            operating_system = OperatingSystem[os.upper()]
+            file = self._agent_binary_service.get_agent_binary(operating_system)
 
             return send_file(file, mimetype="application/octet-stream")
         except KeyError as err:
