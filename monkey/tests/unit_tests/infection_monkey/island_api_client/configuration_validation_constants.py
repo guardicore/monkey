@@ -9,8 +9,8 @@ SCHEMA = {
             "minimum": 0,
             "type": "number",
         },
-        "credential_collectors": {
-            "title": "Credential collectors",
+        "credentials_collectors": {
+            "title": "Credentials collectors",
             "type": "array",
             "items": {"$ref": "#/definitions/PluginConfiguration"},
         },
@@ -23,7 +23,7 @@ SCHEMA = {
             "allOf": [{"$ref": "#/definitions/PropagationConfiguration"}],
         },
     },
-    "required": ["credential_collectors", "payloads", "propagation"],
+    "required": ["credentials_collectors", "payloads", "propagation"],
     "additionalProperties": False,
     "definitions": {
         "PluginConfiguration": {

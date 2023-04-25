@@ -1,6 +1,6 @@
-const CREDENTIAL_COLLECTORS = {
-    'title': 'Credential Collectors',
-    'description': 'Click on a credential collector for more information.',
+const CREDENTIALS_COLLECTORS = {
+    'title': 'Credentials Collectors',
+    'description': 'Click on a credentials collector for more information.',
     'type': 'object',
     'pluginDefs': {
       'MimikatzCollector':{'name': 'MimikatzCollector', 'options': {}},
@@ -31,4 +31,4 @@ const CREDENTIAL_COLLECTORS = {
       }
     }
 }
-export default CREDENTIAL_COLLECTORS
+export default CREDENTIALS_COLLECTORS

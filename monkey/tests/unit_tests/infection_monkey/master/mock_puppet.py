@@ -29,8 +29,8 @@ class MockPuppet(IPuppet):
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
         logger.debug(f"load_plugin({plugin}, {plugin_type})")
 
-    def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
-        logger.debug(f"run_credential_collector({name})")
+    def run_credentials_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
+        logger.debug(f"run_credentials_collector({name})")
 
         if name == "SSHCollector":
             ssh_credentials = [

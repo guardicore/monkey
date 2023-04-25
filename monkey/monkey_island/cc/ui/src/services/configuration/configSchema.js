@@ -1,5 +1,5 @@
 import PROPAGATION_CONFIGURATION_SCHEMA from './propagation/propagation.js';
-import CREDENTIAL_COLLECTORS from './credentialCollectors.js';
+import CREDENTIALS_COLLECTORS from './credentialsCollectors.js';
 import RANSOMWARE_SCHEMA from './ransomware';
 
 export const SCHEMA = {
@@ -8,11 +8,11 @@ export const SCHEMA = {
   'properties': {
     'propagation': PROPAGATION_CONFIGURATION_SCHEMA,
     'payloads': RANSOMWARE_SCHEMA,
-    'credential_collectors': {
-      'title': 'Credential collectors',
+    'credentials_collectors': {
+      'title': 'Credentials collectors',
       'type': 'array',
       'uniqueItems': true,
-      'items': CREDENTIAL_COLLECTORS
+      'items': CREDENTIALS_COLLECTORS
     },
     'advanced': {
       'title': 'Advanced',

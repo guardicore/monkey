@@ -6,9 +6,9 @@ function getLegacyPluginDescriptors(schema, config) {
       selectedPlugins: config.propagation.network_scan.fingerprinters
     },
     {
-      name: 'CredentialCollectors',
-      allPlugins: schema.properties.credential_collectors.properties,
-      selectedPlugins: config.credential_collectors
+      name: 'CredentialsCollectors',
+      allPlugins: schema.properties.credentials_collectors.properties,
+      selectedPlugins: config.credentials_collectors
     }
   ]);
 }

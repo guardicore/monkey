@@ -44,7 +44,7 @@ PROPAGATION_CONFIGURATION = {
 
 AGENT_CONFIGURATION = {
     "keep_tunnel_open_time": 30,
-    "credential_collectors": [PLUGIN_CONFIGURATION],
+    "credentials_collectors": [PLUGIN_CONFIGURATION],
     "payloads": {},
     "propagation": PROPAGATION_CONFIGURATION,
 }

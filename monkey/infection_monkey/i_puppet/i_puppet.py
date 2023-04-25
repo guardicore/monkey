@@ -33,13 +33,13 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
+    def run_credentials_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
         """
-        Runs a credential collector
+        Runs a credentials collector
 
-        :param str name: The name of the credential collector to run
+        :param str name: The name of the credentials collector to run
         :param Dict options: A dictionary containing options that modify the behavior of the
-                             Credential collector
+                             Credentials collector
         :return: A sequence of Credentials that have been collected from the system
         :rtype: Sequence[Credentials]
         """
