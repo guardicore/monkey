@@ -20,24 +20,6 @@ class IAgentBinaryService(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def get_linux_binary(self) -> BinaryIO:
-        """
-        Retrieve linux agent binary
-
-        :return: A file-like object that represents the linux agent binary
-        :raises RetrievalError: If the agent binary could not be retrieved
-        """
-
-    @abc.abstractmethod
-    def get_windows_binary(self) -> BinaryIO:
-        """
-        Retrieve windows agent binary
-
-        :return: A file-like object that represents the windows agent binary
-        :raises RetrievalError: If the agent binary could not be retrieved
-        """
-
-    @abc.abstractmethod
     def get_masque(self, operating_system: OperatingSystem) -> Optional[bytes]:
         """
         Retrieve os specific agent binary masque
