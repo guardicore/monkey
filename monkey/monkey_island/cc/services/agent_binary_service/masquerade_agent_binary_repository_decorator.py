@@ -34,16 +34,6 @@ class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
         agent_binary = self._agent_binary_repository.get_agent_binary(operating_system)
         return self._apply_masque(agent_binary)
 
-    @lru_cache()
-    def get_linux_binary(self) -> BinaryIO:
-        agent_linux_binary = self._agent_binary_repository.get_linux_binary()
-        return self._apply_masque(agent_linux_binary)
-
-    @lru_cache()
-    def get_windows_binary(self) -> BinaryIO:
-        agent_windows_binary = self._agent_binary_repository.get_windows_binary()
-        return self._apply_masque(agent_windows_binary)
-
     def _apply_masque(self, agent_binary: BinaryIO) -> BinaryIO:
         # Note: These null bytes separate the Agent binary from the masque. The goal is to prevent
         # the masque from being interpreted by the OS as code that should be run.

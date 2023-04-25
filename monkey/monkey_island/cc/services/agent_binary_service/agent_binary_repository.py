@@ -21,12 +21,6 @@ class AgentBinaryRepository(IAgentBinaryRepository):
     def get_agent_binary(self, operating_system: OperatingSystem) -> BinaryIO:
         return self._get_binary(AGENT_FILE_NAMES[operating_system])
 
-    def get_linux_binary(self) -> BinaryIO:
-        return self._get_binary(LINUX_AGENT_FILE_NAME)
-
-    def get_windows_binary(self) -> BinaryIO:
-        return self._get_binary(WINDOWS_AGENT_FILE_NAME)
-
     def _get_binary(self, filename: str) -> BinaryIO:
         try:
             agent_binary = self._file_repository.open_file(filename)

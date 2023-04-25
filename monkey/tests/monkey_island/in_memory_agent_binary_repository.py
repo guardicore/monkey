@@ -18,9 +18,3 @@ class InMemoryAgentBinaryRepository(IAgentBinaryRepository):
 
     def get_agent_binary(self, operating_system: OperatingSystem):
         return io.BytesIO(self.agent_binaries[operating_system])
-
-    def get_linux_binary(self):
-        return io.BytesIO(self.agent_binaries[OperatingSystem.LINUX])
-
-    def get_windows_binary(self):
-        return io.BytesIO(self.agent_binaries[OperatingSystem.WINDOWS])

@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 
+from common import OperatingSystem
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repositories import (
     FileRepositoryCachingDecorator,
@@ -49,14 +50,13 @@ def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
     :param agent_binary_repository: Used to retrieve the agent binaries
     """
     agent_binaries = {
-        "Linux": agent_binary_repository.get_linux_binary,
-        "Windows": agent_binary_repository.get_windows_binary,
+        "Linux": agent_binary_repository.get_agent_binary(OperatingSystem.LINUX),
+        "Windows": agent_binary_repository.get_agent_binary(OperatingSystem.WINDOWS),
     }
     agent_hashes = {}
 
-    for os, get_agent_binary in agent_binaries.items():
+    for os, agent_binary in agent_binaries.items():
         try:
-            agent_binary = get_agent_binary()
             binary_sha256_hash = get_binary_io_sha256_hash(agent_binary)
             agent_hashes[os] = binary_sha256_hash
         except RetrievalError as err:
