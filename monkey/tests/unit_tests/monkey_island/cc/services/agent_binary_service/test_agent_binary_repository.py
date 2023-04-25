@@ -28,7 +28,7 @@ def agent_binary_repository():
     "operating_system,expected_agent_binary",
     ([OperatingSystem.LINUX, LINUX_AGENT_BINARY], [OperatingSystem.WINDOWS, WINDOWS_AGENT_BINARY]),
 )
-def test_get_os_binary(
+def test_get_agent_binary(
     agent_binary_repository, operating_system: OperatingSystem, expected_agent_binary: bytes
 ):
     assert (
@@ -49,11 +49,9 @@ def error_raising_agent_binary_repository(error_mock_file_repository):
     return AgentBinaryRepository(error_mock_file_repository)
 
 
-def test_get_linux_binary_retrieval_error(error_raising_agent_binary_repository):
+@pytest.mark.parametrize("operating_system", [OperatingSystem.LINUX, OperatingSystem.WINDOWS])
+def test_get_agent_binary_retrieval_error(
+    error_raising_agent_binary_repository, operating_system: OperatingSystem
+):
     with pytest.raises(RetrievalError):
-        error_raising_agent_binary_repository.get_linux_binary()
-
-
-def test_get_windows_binary_retrieval_error(error_raising_agent_binary_repository):
-    with pytest.raises(RetrievalError):
-        error_raising_agent_binary_repository.get_windows_binary()
+        error_raising_agent_binary_repository.get_agent_binary(operating_system)
