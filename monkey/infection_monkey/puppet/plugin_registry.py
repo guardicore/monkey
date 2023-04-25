@@ -1,10 +1,9 @@
 import logging
-import threading
 from copy import copy
 from threading import RLock
 from typing import Any, Dict
 
-from serpentarium import MultiUsePlugin, PluginLoader, PluginThreadName, SingleUsePlugin
+from serpentarium import PluginLoader, PluginThreadName, SingleUsePlugin
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
@@ -17,6 +16,7 @@ from infection_monkey.network import TCPPortSelector
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 
 from . import PluginSourceExtractor
+from infection_monkey.plugin.multiprocessing_plugin_wrapper import MultiprocessingPluginWrapper
 
 logger = logging.getLogger()
 
@@ -110,39 +110,3 @@ class PluginRegistry:
 
         self._registry[plugin_type][plugin_name] = plugin
         logger.debug(f"Plugin '{plugin_name}' loaded")
-
-
-# NOTE: This should probably get moved to serpentarium.
-class MultiprocessingPluginWrapper(MultiUsePlugin):
-    """
-    Wraps a MultiprocessingPlugin so it can be used like a MultiUsePlugin
-    """
-
-    process_start_lock = threading.Lock()
-
-    def __init__(self, *, plugin_loader: PluginLoader, plugin_name: str, **kwargs):
-        self._plugin_loader = plugin_loader
-        self._name = plugin_name
-        self._constructor_kwargs = kwargs
-
-    def run(self, **kwargs) -> Any:
-        logger.debug(f"Constructing a new instance of {self._name}")
-        plugin = self._plugin_loader.load_multiprocessing_plugin(
-            plugin_name=self._name, **self._constructor_kwargs
-        )
-
-        # HERE BE DRAGONS! multiprocessing.Process.start() is not thread-safe on Linux when used
-        # with the "spawn" method. See https://github.com/pyinstaller/pyinstaller/issues/7410 for
-        # more details.
-        # UPDATE: This has been resolved in PyInstaller 5.8.0. Consider removing this lock, but
-        # leaving a comment here for future reference.
-        with MultiprocessingPluginWrapper.process_start_lock:
-            logger.debug("Invoking plugin.start()")
-            plugin.start(**kwargs)
-
-        plugin.join()
-        return plugin.return_value
-
-    @property
-    def name(self) -> str:
-        return self._name
