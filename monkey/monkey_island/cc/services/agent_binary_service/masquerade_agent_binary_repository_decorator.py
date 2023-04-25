@@ -1,6 +1,6 @@
 import io
 from functools import lru_cache
-from typing import BinaryIO
+from typing import BinaryIO, Mapping, Optional
 
 from common import OperatingSystem
 
@@ -22,24 +22,29 @@ class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
     def __init__(
         self,
         agent_binary_repository: IAgentBinaryRepository,
-        masque: bytes,
+        masques: Mapping[OperatingSystem, Optional[bytes]],
         null_bytes_length: int = DEFAULT_NULL_BYTES_LENGTH,
     ):
         self._agent_binary_repository = agent_binary_repository
-        self._masque = masque
+        self._masques = masques
         self._null_bytes_length = null_bytes_length
 
     @lru_cache()
     def get_agent_binary(self, operating_system: OperatingSystem) -> BinaryIO:
         agent_binary = self._agent_binary_repository.get_agent_binary(operating_system)
-        return self._apply_masque(agent_binary)
+        return self._apply_masque(operating_system, agent_binary)
 
-    def _apply_masque(self, agent_binary: BinaryIO) -> BinaryIO:
+    def _apply_masque(self, operating_system: OperatingSystem, agent_binary: BinaryIO) -> BinaryIO:
+        masque = self._masques.get(operating_system, None)
+
+        if masque is None:
+            return agent_binary
+
         # Note: These null bytes separate the Agent binary from the masque. The goal is to prevent
         # the masque from being interpreted by the OS as code that should be run.
         null_bytes = b"\x00" * self._null_bytes_length
         agent_binary.seek(0, io.SEEK_END)
-        agent_binary.write(null_bytes + self._masque)
+        agent_binary.write(null_bytes + masque)
         agent_binary.seek(0)
 
         return agent_binary
