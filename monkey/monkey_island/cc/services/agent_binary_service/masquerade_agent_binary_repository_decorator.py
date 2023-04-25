@@ -40,4 +40,6 @@ class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
         null_bytes = b"\x00" * self._null_bytes_length
         agent_binary.seek(0, io.SEEK_END)
         agent_binary.write(null_bytes + self._masque)
+        agent_binary.seek(0)
+
         return agent_binary

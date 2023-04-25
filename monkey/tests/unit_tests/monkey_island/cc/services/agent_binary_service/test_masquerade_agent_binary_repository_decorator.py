@@ -53,9 +53,9 @@ def test_get_agent_binary(
     operating_system: OperatingSystem,
     expected_agent_binary: io.BytesIO,
 ):
-    actual_linux_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
+    actual_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
 
-    assert actual_linux_binary.getvalue() == expected_agent_binary.getvalue()  # type: ignore[attr-defined] # noqa: E501
+    assert actual_binary.read() == expected_agent_binary.getvalue()
 
 
 @pytest.mark.parametrize(
