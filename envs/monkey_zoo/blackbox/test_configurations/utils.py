@@ -9,7 +9,6 @@ def add_exploiters(
     agent_configuration: AgentConfiguration,
     exploiters: Optional[Dict[str, Mapping]],
 ) -> AgentConfiguration:
-
     agent_configuration_copy = agent_configuration.copy(deep=True)
     if not exploiters:
         exploiters = {}
@@ -21,7 +20,6 @@ def add_exploiters(
 def add_fingerprinters(
     agent_configuration: AgentConfiguration, fingerprinters: Sequence[PluginConfiguration]
 ) -> AgentConfiguration:
-
     agent_configuration_copy = agent_configuration.copy(deep=True)
     agent_configuration_copy.propagation.network_scan.fingerprinters = fingerprinters
 
@@ -31,7 +29,6 @@ def add_fingerprinters(
 def add_tcp_ports(
     agent_configuration: AgentConfiguration, tcp_ports: Sequence[int]
 ) -> AgentConfiguration:
-
     agent_configuration_copy = agent_configuration.copy(deep=True)
     agent_configuration_copy.propagation.network_scan.tcp.ports = tuple(tcp_ports)
 
@@ -41,19 +38,17 @@ def add_tcp_ports(
 def add_subnets(
     agent_configuration: AgentConfiguration, subnets: Sequence[str]
 ) -> AgentConfiguration:
-
     agent_configuration_copy = agent_configuration.copy(deep=True)
     agent_configuration_copy.propagation.network_scan.targets.subnets = subnets
 
     return agent_configuration_copy
 
 
-def add_credential_collectors(
-    agent_configuration: AgentConfiguration, credential_collectors: Sequence[PluginConfiguration]
+def add_credentials_collectors(
+    agent_configuration: AgentConfiguration, credentials_collectors: Sequence[PluginConfiguration]
 ) -> AgentConfiguration:
-
     agent_configuration_copy = agent_configuration.copy(deep=True)
-    agent_configuration_copy.credential_collectors = tuple(credential_collectors)
+    agent_configuration_copy.credentials_collectors = tuple(credentials_collectors)
 
     return agent_configuration_copy
 
@@ -61,7 +56,6 @@ def add_credential_collectors(
 def add_http_ports(
     agent_configuration: AgentConfiguration, http_ports: Sequence[int]
 ) -> AgentConfiguration:
-
     agent_configuration_copy = agent_configuration.copy(deep=True)
     agent_configuration_copy.propagation.exploitation.options.http_ports = http_ports
 
@@ -71,7 +65,6 @@ def add_http_ports(
 def set_keep_tunnel_open_time(
     agent_configuration: AgentConfiguration, keep_tunnel_open_time: int
 ) -> AgentConfiguration:
-
     agent_configuration_copy = agent_configuration.copy(deep=True)
     agent_configuration_copy.keep_tunnel_open_time = keep_tunnel_open_time
 
@@ -81,7 +74,6 @@ def set_keep_tunnel_open_time(
 def set_maximum_depth(
     agent_configuration: AgentConfiguration, maximum_depth: int
 ) -> AgentConfiguration:
-
     agent_configuration_copy = agent_configuration.copy(deep=True)
     agent_configuration_copy.propagation.maximum_depth = maximum_depth
 

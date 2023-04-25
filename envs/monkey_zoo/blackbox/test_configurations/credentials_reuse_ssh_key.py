@@ -6,7 +6,7 @@ from common.credentials import Credentials, Password, Username
 
 from .noop import noop_test_configuration
 from .utils import (
-    add_credential_collectors,
+    add_credentials_collectors,
     add_exploiters,
     add_subnets,
     add_tcp_ports,
@@ -33,13 +33,13 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     return add_subnets(agent_configuration, subnets)
 
 
-def _add_credential_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    credential_collectors = [
+def _add_credentials_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
+    credentials_collectors = [
         PluginConfiguration(name="SSHCollector", options={}),
     ]
 
-    return add_credential_collectors(
-        agent_configuration, credential_collectors=credential_collectors
+    return add_credentials_collectors(
+        agent_configuration, credentials_collectors=credentials_collectors
     )
 
 
@@ -52,7 +52,7 @@ test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_confi
 test_agent_configuration = set_keep_tunnel_open_time(test_agent_configuration, 20)
 test_agent_configuration = _add_exploiters(test_agent_configuration)
 test_agent_configuration = _add_subnets(test_agent_configuration)
-test_agent_configuration = _add_credential_collectors(test_agent_configuration)
+test_agent_configuration = _add_credentials_collectors(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 
 CREDENTIALS = (

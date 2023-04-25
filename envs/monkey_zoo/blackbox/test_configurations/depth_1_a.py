@@ -6,7 +6,7 @@ from common.credentials import Credentials, Password, Username
 
 from .noop import noop_test_configuration
 from .utils import (
-    add_credential_collectors,
+    add_credentials_collectors,
     add_exploiters,
     add_fingerprinters,
     add_http_ports,
@@ -63,8 +63,8 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     return add_subnets(agent_configuration, subnets)
 
 
-def _add_credential_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    return add_credential_collectors(
+def _add_credentials_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
+    return add_credentials_collectors(
         agent_configuration, [PluginConfiguration(name="MimikatzCollector", options={})]
     )
 
@@ -86,7 +86,7 @@ test_agent_configuration = _add_exploiters(test_agent_configuration)
 test_agent_configuration = _add_fingerprinters(test_agent_configuration)
 test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
-test_agent_configuration = _add_credential_collectors(test_agent_configuration)
+test_agent_configuration = _add_credentials_collectors(test_agent_configuration)
 test_agent_configuration = _add_http_ports(test_agent_configuration)
 
 CREDENTIALS = (
