@@ -15,7 +15,7 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
     Attributes:
         :param name: Plugin name in snake case
         :param plugin_type: Type of the plugin (exploiter, fingerprinter,
-         credential collector, etc.)
+         credentials collector, etc.)
         :param supported_operating_systems: Operating systems that the plugin can run on
         :param target_operating_systems: Operating systems that the plugin can target
         :param title: Human readable name for the plugin
