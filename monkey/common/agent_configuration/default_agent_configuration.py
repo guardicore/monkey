@@ -12,10 +12,10 @@ from .agent_sub_configurations import (
     TCPScanConfiguration,
 )
 
-CREDENTIAL_COLLECTORS = ("MimikatzCollector", "SSHCollector")
+CREDENTIALS_COLLECTORS = ("MimikatzCollector", "SSHCollector")
 
-CREDENTIAL_COLLECTOR_CONFIGURATION = tuple(
-    PluginConfiguration(name=collector, options={}) for collector in CREDENTIAL_COLLECTORS
+CREDENTIALS_COLLECTOR_CONFIGURATION = tuple(
+    PluginConfiguration(name=collector, options={}) for collector in CREDENTIALS_COLLECTORS
 )
 
 RANSOMWARE_OPTIONS = {
@@ -93,10 +93,10 @@ PROPAGATION_CONFIGURATION = PropagationConfiguration(
 
 DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     keep_tunnel_open_time=30,
-    credential_collectors=CREDENTIAL_COLLECTOR_CONFIGURATION,
+    credentials_collectors=CREDENTIALS_COLLECTOR_CONFIGURATION,
     payloads=PAYLOAD_CONFIGURATION,
     propagation=PROPAGATION_CONFIGURATION,
 )
 
 DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = deepcopy(DEFAULT_AGENT_CONFIGURATION)
-DEFAULT_RANSOMWARE_AGENT_CONFIGURATION.credential_collectors = tuple()
+DEFAULT_RANSOMWARE_AGENT_CONFIGURATION.credentials_collectors = tuple()
