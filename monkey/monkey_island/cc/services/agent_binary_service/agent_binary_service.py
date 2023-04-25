@@ -4,6 +4,7 @@ from common import OperatingSystem
 
 from . import IAgentBinaryService
 from .i_agent_binary_repository import IAgentBinaryRepository
+from .masquerade_agent_binary_repository_decorator import MasqueradeAgentBinaryRepositoryDecorator
 
 
 class AgentBinaryService(IAgentBinaryService):
@@ -12,7 +13,8 @@ class AgentBinaryService(IAgentBinaryService):
     """
 
     def __init__(self, agent_binary_repository: IAgentBinaryRepository):
-        self._agent_binary_repository = agent_binary_repository
+        self._undecorated_agent_binary_repository = agent_binary_repository
+        self._agent_binary_repository = self._undecorated_agent_binary_repository
 
         self._os_masque: Dict[OperatingSystem, Optional[bytes]] = {
             OperatingSystem.LINUX: None,
@@ -27,3 +29,6 @@ class AgentBinaryService(IAgentBinaryService):
 
     def set_masque(self, operating_system: OperatingSystem, masque: Optional[bytes]):
         self._os_masque[operating_system] = masque
+        self._agent_binary_repository = MasqueradeAgentBinaryRepositoryDecorator(
+            self._undecorated_agent_binary_repository, self._os_masque
+        )
