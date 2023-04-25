@@ -41,41 +41,34 @@ def mock_masquerade_agent_binary_repository(
     )
 
 
-def test_masquerade_agent_binary_repository_decorator__linux(
+@pytest.mark.parametrize(
+    "operating_system,expected_agent_binary",
+    (
+        (OperatingSystem.LINUX, MASQUED_LINUX_AGENT_BINARY),
+        (OperatingSystem.WINDOWS, MASQUED_WINDOWS_AGENT_BINARY),
+    ),
+)
+def test_get_agent_binary(
     mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
+    operating_system: OperatingSystem,
+    expected_agent_binary: io.BytesIO,
 ):
-    actual_linux_binary = mock_masquerade_agent_binary_repository.get_linux_binary()
+    actual_linux_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
 
-    assert actual_linux_binary.getvalue() == MASQUED_LINUX_AGENT_BINARY.getvalue()  # type: ignore[attr-defined] # noqa: E501
-
-
-def test_masquerade_agent_binary_repository_decorator__windows(
-    mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
-):
-    actual_windows_binary = mock_masquerade_agent_binary_repository.get_windows_binary()
-
-    assert actual_windows_binary.getvalue() == MASQUED_WINDOWS_AGENT_BINARY.getvalue()  # type: ignore[attr-defined] # noqa: E501
+    assert actual_linux_binary.getvalue() == expected_agent_binary.getvalue()  # type: ignore[attr-defined] # noqa: E501
 
 
-def test_masquerade_agent_binary_repository_decorator__cached_linux(
+@pytest.mark.parametrize(
+    "operating_system",
+    (OperatingSystem.LINUX, OperatingSystem.WINDOWS),
+)
+def test_get_agent_binary__cached(
     in_memory_agent_binary_repository: InMemoryAgentBinaryRepository,
     mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
+    operating_system: OperatingSystem,
 ):
-    actual_linux_binary = mock_masquerade_agent_binary_repository.get_linux_binary()
-    in_memory_agent_binary_repository.agent_binaries[OperatingSystem.LINUX] = b"not_linux_binary"
-    cached_linux_binary = mock_masquerade_agent_binary_repository.get_linux_binary()
+    actual_linux_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
+    in_memory_agent_binary_repository.agent_binaries[operating_system] = b"new_binary"
+    cached_linux_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
 
     assert actual_linux_binary == cached_linux_binary
-
-
-def test_masquerade_agent_binary_repository_decorator__cached_windows(
-    in_memory_agent_binary_repository: InMemoryAgentBinaryRepository,
-    mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
-):
-    actual_windows_binary = mock_masquerade_agent_binary_repository.get_windows_binary()
-    in_memory_agent_binary_repository.agent_binaries[
-        OperatingSystem.WINDOWS
-    ] = b"not_windows_binary"
-    cached_windows_binary = mock_masquerade_agent_binary_repository.get_windows_binary()
-
-    assert actual_windows_binary == cached_windows_binary
