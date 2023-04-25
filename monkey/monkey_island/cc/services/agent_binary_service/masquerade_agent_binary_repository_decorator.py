@@ -38,6 +38,8 @@ class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
         return self._apply_masque(agent_windows_binary)
 
     def _apply_masque(self, agent_binary: BinaryIO) -> BinaryIO:
+        # Note: These null bytes separate the Agent binary from the masque. The goal is to prevent
+        # the masque from being interpreted by the OS as code that should be run.
         null_bytes = b"\x00" * self._null_bytes_length
         agent_binary.seek(0, io.SEEK_END)
         agent_binary.write(null_bytes + self._masque)
