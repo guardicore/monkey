@@ -1,5 +1,6 @@
 from typing import BinaryIO
 
+from common import OperatingSystem
 from monkey_island.cc.repositories import IFileRepository, RetrievalError
 
 from .i_agent_binary_repository import IAgentBinaryRepository
@@ -7,10 +8,18 @@ from .i_agent_binary_repository import IAgentBinaryRepository
 LINUX_AGENT_FILE_NAME = "monkey-linux-64"
 WINDOWS_AGENT_FILE_NAME = "monkey-windows-64.exe"
 
+AGENT_FILE_NAMES = {
+    OperatingSystem.LINUX: LINUX_AGENT_FILE_NAME,
+    OperatingSystem.WINDOWS: WINDOWS_AGENT_FILE_NAME,
+}
+
 
 class AgentBinaryRepository(IAgentBinaryRepository):
     def __init__(self, file_repository: IFileRepository):
         self._file_repository = file_repository
+
+    def get_agent_binary(self, operating_system: OperatingSystem) -> BinaryIO:
+        return self._get_binary(AGENT_FILE_NAMES[operating_system])
 
     def get_linux_binary(self) -> BinaryIO:
         return self._get_binary(LINUX_AGENT_FILE_NAME)

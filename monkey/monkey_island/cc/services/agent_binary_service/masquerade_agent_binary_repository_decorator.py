@@ -2,6 +2,8 @@ import io
 from functools import lru_cache
 from typing import BinaryIO
 
+from common import OperatingSystem
+
 from .i_agent_binary_repository import IAgentBinaryRepository
 
 DEFAULT_NULL_BYTES_LENGTH = 16
@@ -26,6 +28,11 @@ class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
         self._agent_binary_repository = agent_binary_repository
         self._masque = masque
         self._null_bytes_length = null_bytes_length
+
+    @lru_cache()
+    def get_agent_binary(self, operating_system: OperatingSystem) -> BinaryIO:
+        agent_binary = self._agent_binary_repository.get_agent_binary(operating_system)
+        return self._apply_masque(agent_binary)
 
     @lru_cache()
     def get_linux_binary(self) -> BinaryIO:
