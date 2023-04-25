@@ -4,7 +4,7 @@ from common.operating_system import OperatingSystem
 HARD_CODED_CREDENTIALS_COLLECTOR_MANIFESTS = {
     "MimikatzCollector": AgentPluginManifest(
         name="MimikatzCollector",
-        plugin_type=AgentPluginType.CREDENTIAL_COLLECTOR,
+        plugin_type=AgentPluginType.CREDENTIALS_COLLECTOR,
         supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
         target_operating_systems=(OperatingSystem.WINDOWS,),
         title="Mimikatz Credentials Collector",
@@ -14,7 +14,7 @@ HARD_CODED_CREDENTIALS_COLLECTOR_MANIFESTS = {
     ),
     "SSHCollector": AgentPluginManifest(
         name="SSHCollector",
-        plugin_type=AgentPluginType.CREDENTIAL_COLLECTOR,
+        plugin_type=AgentPluginType.CREDENTIALS_COLLECTOR,
         supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
         target_operating_systems=(OperatingSystem.LINUX,),
         title="SSH Credentials Collector",
