@@ -6,8 +6,8 @@ from flask_security import auth_token_required, roles_accepted
 
 from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
-from common.hard_coded_manifests.hard_coded_credential_collector_manifests import (
-    HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS,
+from common.hard_coded_manifests.hard_coded_credentials_collector_manifests import (
+    HARD_CODED_CREDENTIALS_COLLECTOR_MANIFESTS,
 )
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
@@ -58,7 +58,7 @@ class AgentPluginsManifest(AbstractResource):
             if plugin_type == AgentPluginType.EXPLOITER:
                 return HARD_CODED_EXPLOITER_MANIFESTS[name]
             elif plugin_type == AgentPluginType.CREDENTIAL_COLLECTOR:
-                return HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS[name]
+                return HARD_CODED_CREDENTIALS_COLLECTOR_MANIFESTS[name]
             elif plugin_type == AgentPluginType.FINGERPRINTER:
                 return HARD_CODED_FINGERPRINTER_MANIFESTS[name]
             else:
