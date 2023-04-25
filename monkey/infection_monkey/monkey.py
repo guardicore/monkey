@@ -14,7 +14,7 @@ from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
 
 from pubsub.core import Publisher
-from serpentarium import PluginLoader
+from serpentarium import PluginLoader, PluginThreadName
 from serpentarium.logging import configure_child_process_logger
 
 from common import HARD_CODED_EXPLOITER_MANIFESTS, OperatingSystem
@@ -82,6 +82,11 @@ from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerpri
 from infection_monkey.network_scanning.smb_fingerprinter import SMBFingerprinter
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
+from infection_monkey.plugin.credentials_collector_plugin_factory import (
+    CredentialsCollectorPluginFactory,
+)
+from infection_monkey.plugin.exploiter_plugin_factory import ExploiterPluginFactory
+from infection_monkey.plugin.multiprocessing_plugin_wrapper import MultiprocessingPluginWrapper
 from infection_monkey.propagation_credentials_repository import (
     AggregatingPropagationCredentialsRepository,
     PropagationCredentialsRepository,
@@ -386,17 +391,31 @@ class InfectionMonkey:
             self._plugin_dir, partial(configure_child_process_logger, self._ipc_logger_queue)
         )
         otp_provider = IslandAPIAgentOTPProvider(self._island_api_client)
+        create_plugin = partial(
+            MultiprocessingPluginWrapper,
+            plugin_loader=plugin_loader,
+            reset_modules_cache=False,
+            main_thread_name=PluginThreadName.CALLING_THREAD,
+        )
+        plugin_factories = {
+            AgentPluginType.CREDENTIALS_COLLECTOR: CredentialsCollectorPluginFactory(
+                self._agent_id, self._agent_event_publisher, create_plugin
+            ),
+            AgentPluginType.EXPLOITER: ExploiterPluginFactory(
+                self._agent_id,
+                agent_binary_repository,
+                self._agent_event_publisher,
+                self._propagation_credentials_repository,
+                self._tcp_port_selector,
+                otp_provider,
+                create_plugin,
+            ),
+        }
         plugin_registry = PluginRegistry(
             operating_system,
             self._island_api_client,
             plugin_source_extractor,
-            plugin_loader,
-            agent_binary_repository,
-            self._agent_event_publisher,
-            self._propagation_credentials_repository,
-            self._tcp_port_selector,
-            otp_provider,
-            self._agent_id,
+            plugin_factories,
         )
         plugin_compatability_verifier = PluginCompatabilityVerifier(
             self._island_api_client, HARD_CODED_EXPLOITER_MANIFESTS
