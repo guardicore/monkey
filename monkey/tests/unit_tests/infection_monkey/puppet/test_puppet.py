@@ -26,12 +26,6 @@ def mock_plugin_registry() -> PluginRegistry:
         MagicMock(),
         MagicMock(),
         MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        AgentID("fd838244-385f-41b4-9904-495e3c7b644e"),
     )
 
 
