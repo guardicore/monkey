@@ -406,12 +406,12 @@ class InfectionMonkey:
         )
 
         puppet.load_plugin(
-            AgentPluginType.CREDENTIAL_COLLECTOR,
+            AgentPluginType.CREDENTIALS_COLLECTOR,
             "MimikatzCollector",
             MimikatzCredentialCollector(self._agent_event_queue, self._agent_id),
         )
         puppet.load_plugin(
-            AgentPluginType.CREDENTIAL_COLLECTOR,
+            AgentPluginType.CREDENTIALS_COLLECTOR,
             "SSHCollector",
             SSHCredentialCollector(self._agent_event_queue, self._agent_id),
         )

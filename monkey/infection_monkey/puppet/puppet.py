@@ -43,7 +43,7 @@ class Puppet(IPuppet):
 
     def run_credentials_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
         credentials_collector = self._plugin_registry.get_plugin(
-            AgentPluginType.CREDENTIAL_COLLECTOR, name
+            AgentPluginType.CREDENTIALS_COLLECTOR, name
         )
         return credentials_collector.collect_credentials(options)
 
