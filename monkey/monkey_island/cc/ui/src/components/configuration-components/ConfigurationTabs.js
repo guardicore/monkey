@@ -1,7 +1,7 @@
 const CONFIGURATION_TABS = {
   PROPAGATION: 'propagation',
   PAYLOADS: 'payloads',
-  CREDENTIALS_COLLECTORS: 'credential_collectors',
+  CREDENTIALS_COLLECTORS: 'credentials_collectors',
   ADVANCED: 'advanced'
 };
 
