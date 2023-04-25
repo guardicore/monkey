@@ -10,6 +10,16 @@ class IAgentBinaryService(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
+    def get_agent_binary(self, operating_system: OperatingSystem) -> BinaryIO:
+        """
+        Retrieve an agent binary for the specified operating system
+
+        :param operating_system: The operating system with which the binary must be compatible
+        :return: A file-like object that represents the agent binary
+        :raises RetrievalError: If the agent binary could not be retrieved
+        """
+
+    @abc.abstractmethod
     def get_linux_binary(self) -> BinaryIO:
         """
         Retrieve linux agent binary

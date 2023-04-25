@@ -19,6 +19,9 @@ class AgentBinaryService(IAgentBinaryService):
             OperatingSystem.WINDOWS: None,
         }
 
+    def get_agent_binary(self, operating_system: OperatingSystem) -> BinaryIO:
+        return self._agent_binary_repository.get_agent_binary(operating_system)
+
     def get_linux_binary(self) -> BinaryIO:
         return self._agent_binary_repository.get_agent_binary(OperatingSystem.LINUX)
 
