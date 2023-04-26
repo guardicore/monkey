@@ -214,22 +214,6 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     )
 
 
-class CredentialsCollectorsConfiguration(MutableInfectionMonkeyBaseModel):
-    """
-    A configuration for credentials collectors
-
-    Attributes:
-        :param credentials_collectors: Configuration enabled credentials collectors
-    """
-
-    credentials_collectors: Dict[str, Dict] = Field(
-        title="Enabled credentials collectors",
-        description="Click on an credentials collectors to get more information"
-        " about it. \n \u26A0 Note that using unsafe credentials collectors may"
-        " cause crashes of the local machine/system.",
-    )
-
-
 class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for propagation
