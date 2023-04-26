@@ -16,11 +16,6 @@ from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
-from monkey_island.cc.service.agent_binary_service.agent_binary_service import AgentBinaryService
-from monkey_island.cc.services import IAgentBinaryService
-from monkey_island.cc.services.agent_binary_service.masquerade_agent_binary_repository_decorator import (  # noqa: E501
-    MasqueradeAgentBinaryRepositoryDecorator,
-)
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
@@ -141,10 +136,3 @@ User.get_by_id
 User.email
 
 secret_type_filter
-
-# Remove after 3241
-MasqueradeAgentBinaryRepositoryDecorator
-IAgentBinaryService.get_masque
-IAgentBinaryService.set_masque
-AgentBinaryService.get_masque
-AgentBinaryService.set_masque
