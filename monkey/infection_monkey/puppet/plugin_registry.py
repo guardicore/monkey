@@ -3,7 +3,7 @@ from copy import copy
 from threading import RLock
 from typing import Any, Dict
 
-from serpentarium import PluginThreadName, SingleUsePlugin
+from serpentarium import SingleUsePlugin
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
