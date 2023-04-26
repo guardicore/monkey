@@ -6,6 +6,7 @@ from serpentarium import MultiUsePlugin, PluginLoader
 
 logger = getLogger(__name__)
 
+
 # NOTE: This should probably get moved to serpentarium.
 class MultiprocessingPluginWrapper(MultiUsePlugin):
     """
