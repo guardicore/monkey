@@ -1,8 +1,9 @@
 import logging
 from pathlib import Path
 
-from common import OperatingSystem
+from common import DIContainer, OperatingSystem
 from common.utils.file_utils import get_binary_io_sha256_hash
+from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.repositories import (
     FileRepositoryCachingDecorator,
     FileRepositoryLockingDecorator,
@@ -16,16 +17,20 @@ from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from . import IAgentBinaryService
 from .agent_binary_repository import AgentBinaryRepository
 from .agent_binary_service import AgentBinaryService
+from .event_handlers import reset_masque_on_island_mode_change
 from .i_agent_binary_repository import IAgentBinaryRepository
 
 AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
 logger = logging.getLogger(__name__)
 
 
-def build() -> IAgentBinaryService:
+def build(container: DIContainer) -> IAgentBinaryService:
     agent_binary_repository = _build_agent_binary_repository()
+    agent_binary_service = AgentBinaryService(agent_binary_repository)
 
-    return AgentBinaryService(agent_binary_repository)
+    _register_event_handlers(container.resolve(IIslandEventQueue), agent_binary_service)
+
+    return agent_binary_service
 
 
 def _build_agent_binary_repository() -> IAgentBinaryRepository:
@@ -64,3 +69,11 @@ def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
 
     for os, binary_sha256_hash in agent_hashes.items():
         logger.info(f"{os} agent: SHA-256 hash: {binary_sha256_hash}")
+
+
+def _register_event_handlers(
+    island_event_queue: IIslandEventQueue, agent_binary_service: IAgentBinaryService
+):
+    island_event_queue.subscribe(
+        IslandEventTopic.SET_ISLAND_MODE, reset_masque_on_island_mode_change(agent_binary_service)
+    )

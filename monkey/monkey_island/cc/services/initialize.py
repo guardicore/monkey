@@ -212,7 +212,7 @@ def _setup_agent_event_serializers(container: DIContainer):
 def _register_services(container: DIContainer):
     container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
-    container.register_instance(IAgentBinaryService, build_agent_binary_service())
+    container.register_instance(IAgentBinaryService, build_agent_binary_service(container))
     container.register_instance(
         IAgentConfigurationService, build_agent_configuration_service(container)
     )
