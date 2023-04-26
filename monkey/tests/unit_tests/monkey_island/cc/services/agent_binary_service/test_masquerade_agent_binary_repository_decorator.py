@@ -70,11 +70,29 @@ def test_get_agent_binary__cached(
     mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
     operating_system: OperatingSystem,
 ):
-    actual_linux_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
+    actual_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
     in_memory_agent_binary_repository.agent_binaries[operating_system] = b"new_binary"
-    cached_linux_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
+    cached_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
 
-    assert actual_linux_binary == cached_linux_binary
+    assert actual_binary.read() == cached_binary.read()
+
+
+def test_get_agent_binary__cached_multiple_calls(
+    in_memory_agent_binary_repository: InMemoryAgentBinaryRepository,
+    mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
+):
+    operating_system = OperatingSystem.WINDOWS
+
+    cached_binary_1 = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
+    in_memory_agent_binary_repository.agent_binaries[operating_system] = b"new_binary"
+    cached_binary_2 = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
+    cached_binary_3 = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
+
+    # Writing the assertion this way verifies that returned files have had their positions reset to
+    # the beginning (i.e. seek(0)).
+    assert cached_binary_1.read() == MASQUED_WINDOWS_AGENT_BINARY.getvalue()
+    assert cached_binary_2.read() == MASQUED_WINDOWS_AGENT_BINARY.getvalue()
+    assert cached_binary_3.read() == MASQUED_WINDOWS_AGENT_BINARY.getvalue()
 
 
 @pytest.mark.parametrize(
