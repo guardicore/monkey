@@ -30,14 +30,15 @@ class AgentBinariesMasque(AbstractResource):
             return make_response({"error": message}, HTTPStatus.NOT_FOUND)
 
         masque = self._agent_binary_service.get_masque(operating_system)
-        if masque is None:
-            masque = b""
+        masque = b"" if masque is None else masque
+
         return make_response(masque, HTTPStatus.OK, {"Content-Type": "application/octet-stream"})
 
     @auth_token_required
     @roles_accepted(AccountRole.ISLAND_INTERFACE.name)
     def put(self, os):
         masque = request.data
+        masque = None if len(masque) == 0 else masque
 
         try:
             operating_system = OperatingSystem[os.upper()]

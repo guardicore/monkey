@@ -5,6 +5,7 @@ import pytest
 from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
+from common import OperatingSystem
 from monkey_island.cc.services import IAgentBinaryService
 from monkey_island.cc.services.agent_binary_service.flask_resources.agent_binaries_masque import (
     AgentBinariesMasque,
@@ -97,3 +98,14 @@ def test_set_masque__unrecognized_os(flask_client):
     )
 
     assert resp.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_set_masque__empty(agent_binary_service, flask_client):
+    resp = flask_client.put(
+        get_url_for_resource(AgentBinariesMasque, os="linux"),
+        data=b"",
+        follow_redirects=True,
+    )
+
+    assert resp.status_code == HTTPStatus.NO_CONTENT
+    agent_binary_service.set_masque.assert_called_with(OperatingSystem.LINUX, None)
