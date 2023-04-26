@@ -2,9 +2,10 @@ from abc import ABC, abstractmethod
 from typing import Mapping, Optional, Sequence
 
 from common.credentials import Credentials
+from common.types import Event
 
 
 class ICredentialsCollector(ABC):
     @abstractmethod
-    def collect_credentials(self, options: Optional[Mapping]) -> Sequence[Credentials]:
+    def run(self, options: Optional[Mapping], interrupt: Event) -> Sequence[Credentials]:
         pass
