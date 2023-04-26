@@ -122,6 +122,7 @@ class MonkeyIslandClient(object):
         self._reset_simulation_data()
         self._reset_credentials()
         self._reset_island_mode()
+        self.set_masque(b"")
 
     def _reset_agent_configuration(self):
         if self.requests.post("api/reset-agent-configuration", data=None).ok:
