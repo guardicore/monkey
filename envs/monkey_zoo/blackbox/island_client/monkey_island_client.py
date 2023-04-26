@@ -37,6 +37,7 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def set_masque(self, masque):
+        masque = b"" if masque is None else masque
         for operating_system in [operating_system.name for operating_system in OperatingSystem]:
             if self.requests.put(f"api/agent-binaries/{operating_system}/masque", data=masque).ok:
                 LOGGER.info(f'Setting {operating_system} masque to "{masque}"')
