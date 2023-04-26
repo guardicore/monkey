@@ -3,6 +3,7 @@ import CheckboxWithMessage from './CheckboxWithMessage';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 import SensitiveTextareaInput from '../ui-components/SensitiveTextareaInput';
 import PluginSelectorTemplate from './PluginSelectorTemplate';
+import PluginSelectorTemplateGeneral from './PluginSelectorTemplateGeneral';
 import ArrayFieldTitleTemplate from './ArrayFieldTitleTemplate';
 
 export default function UiSchema(props) {
@@ -96,10 +97,9 @@ export default function UiSchema(props) {
       }
     },
     credentials_collectors: {
-      'ui:widget': AdvancedMultiSelect,
-      credentials_collectors_classes: {
-        'ui:classNames': 'config-template-no-header'
-      }
+        credentials_collectors: {
+            'ui:ObjectFieldTemplate': PluginSelectorTemplateGeneral
+        }
     }
   };
   return UiSchema[props.selectedSection]
