@@ -26,8 +26,9 @@ export default function PropagationConfig(props) {
     configuration,
     credentials,
     onCredentialChange,
-    selectedExploiters,
-    setSelectedExploiters,
+    selectedPlugins,
+    setSelectedPlugins,
+    selectedConfigSection,
     validator
   } = props;
 
@@ -90,9 +91,10 @@ export default function PropagationConfig(props) {
                    // children={true} hides the submit button
                    children={true}
                    formContext={{
-                     'selectedExploiters': selectedExploiters,
-                     'setSelectedExploiters': setSelectedExploiters,
-                     'setUiSchema': setUiSchemaForCurrentSection
+                     'selectedPlugins': selectedPlugins[selectedConfigSection],
+                     'setSelectedPlugins': setSelectedPlugins,
+                     'section': selectedConfigSection,
+                     setUiSchema: setUiSchemaForCurrentSection
                    }}/>
     }
   }

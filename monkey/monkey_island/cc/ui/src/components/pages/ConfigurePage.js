@@ -59,7 +59,6 @@ class ConfigurePageComponent extends AuthComponent {
       showUnsafeOptionsConfirmation: false,
       showConfigExportModal: false,
       showConfigImportModal: false,
-      selectedExploiters: new Set(),
       selectedPlugins: {}
     };
   }
@@ -103,7 +102,6 @@ class ConfigurePageComponent extends AuthComponent {
         }
         this.setState({
           configuration: monkeyConfig,
-          selectedExploiters: new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
           selectedPlugins: {
               'propagation': new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
               'credentials_collectors': new Set(Object.keys(_.get(monkeyConfig, CREDENTIALS_COLLECTORS_CONFIG_PATH)))
@@ -149,7 +147,6 @@ class ConfigurePageComponent extends AuthComponent {
       .then(data => {
         data = reformatConfig(data);
         this.setState({
-          selectedExploiters: new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
           selectedPlugins: {
               'propagation': new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
               'credentials_collectors': new Set(Object.keys(_.get(data, CREDENTIALS_COLLECTORS_CONFIG_PATH)))
@@ -158,10 +155,6 @@ class ConfigurePageComponent extends AuthComponent {
           currentFormData: _.cloneDeep(data[this.state.selectedSection])
         });
       });
-  }
-
-  setSelectedExploiters = (exploiters) => {
-    this.setState({selectedExploiters: exploiters})
   }
 
   setSelectedPlugins = (plugins, key) => {
@@ -372,8 +365,9 @@ class ConfigurePageComponent extends AuthComponent {
       return (<PropagationConfig {...formProperties}
                                  fullUiSchema={fullUiSchema}
                                  credentials={this.state.credentials}
-                                 selectedExploiters={this.state.selectedExploiters}
-                                 setSelectedExploiters={this.setSelectedExploiters}
+                                 selectedPlugins={this.state.selectedPlugins}
+                                 setSelectedPlugins={this.setSelectedPlugins}
+                                 selectedConfigSection={this.state.selectedSection}
                                  onCredentialChange={this.onCredentialChange}/>)
     } else {
       formProperties['onChange'] = (formData) => {
