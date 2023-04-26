@@ -1,9 +1,11 @@
 from common import DIContainer
+from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 
 from . import IAgentConfigurationService
 from .agent_configuration_schema_compiler import AgentConfigurationSchemaCompiler
 from .agent_configuration_service import AgentConfigurationService
 from .agent_configuration_validation_decorator import AgentConfigurationValidationDecorator
+from .event_handlers import reset_agent_configuration
 from .file_agent_configuration_repository import FileAgentConfigurationRepository
 from .i_agent_configuration_repository import IAgentConfigurationRepository
 
@@ -14,7 +16,14 @@ def build(container: DIContainer) -> IAgentConfigurationService:
         container, schema_compiler
     )
 
-    return AgentConfigurationService(agent_configuration_repository, schema_compiler)
+    agent_configuration_service = AgentConfigurationService(
+        agent_configuration_repository, schema_compiler
+    )
+
+    island_event_queue = container.resolve(IIslandEventQueue)
+    _register_event_handlers(island_event_queue, agent_configuration_service)
+
+    return agent_configuration_service
 
 
 def _build_file_agent_configuration_repository(
@@ -30,5 +39,14 @@ def _decorate_agent_configuration_repository(
     agent_configuration_repository: IAgentConfigurationRepository,
     schema_compiler: AgentConfigurationSchemaCompiler,
 ) -> IAgentConfigurationRepository:
-
     return AgentConfigurationValidationDecorator(agent_configuration_repository, schema_compiler)
+
+
+def _register_event_handlers(
+    island_event_queue: IIslandEventQueue,
+    agent_configuration_service: IAgentConfigurationService,
+) -> None:
+    island_event_queue.subscribe(
+        IslandEventTopic.RESET_AGENT_CONFIGURATION,
+        reset_agent_configuration(agent_configuration_service),
+    )

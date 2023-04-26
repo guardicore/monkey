@@ -2,8 +2,10 @@ import pytest
 from tests.monkey_island import InMemoryAgentConfigurationService
 
 from common.agent_configuration import AgentConfiguration
-from monkey_island.cc.island_event_handlers import reset_agent_configuration
 from monkey_island.cc.services import IAgentConfigurationService
+from monkey_island.cc.services.agent_configuration_service.event_handlers import (
+    reset_agent_configuration,
+)
 
 
 @pytest.fixture

@@ -1,4 +1,4 @@
-from monkey_island.cc.services import IAgentConfigurationService
+from . import IAgentConfigurationService
 
 
 class reset_agent_configuration:
