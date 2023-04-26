@@ -70,11 +70,11 @@ def test_get_agent_binary__cached(
     mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
     operating_system: OperatingSystem,
 ):
-    actual_linux_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
+    actual_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
     in_memory_agent_binary_repository.agent_binaries[operating_system] = b"new_binary"
-    cached_linux_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
+    cached_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
 
-    assert actual_linux_binary == cached_linux_binary
+    assert actual_binary == cached_binary
 
 
 @pytest.mark.parametrize(
