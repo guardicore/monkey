@@ -6,7 +6,6 @@ from monkey_island.cc.island_event_handlers import (
     AgentHeartbeatMonitor,
     handle_agent_registration,
     reset_machine_repository,
-    set_agent_configuration_per_island_mode,
 )
 from monkey_island.cc.repositories import (
     AgentMachineFacade,
@@ -81,8 +80,6 @@ def _subscribe_set_island_mode_events(
     island_event_queue: IIslandEventQueue, container: DIContainer
 ):
     topic = IslandEventTopic.SET_ISLAND_MODE
-
-    island_event_queue.subscribe(topic, container.resolve(set_agent_configuration_per_island_mode))
 
     simulation_repository = container.resolve(ISimulationRepository)
     island_event_queue.subscribe(topic, simulation_repository.set_mode)
