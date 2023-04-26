@@ -8,6 +8,8 @@ import {InfoPane, WarningType} from '../ui-components/InfoPane';
 import {EXPLOITERS_PATH_PROPAGATION} from './PropagationConfig';
 import MarkdownDescriptionTemplate from './MarkdownDescriptionTemplate';
 
+const pluginSchemaPath = {'propagation': EXPLOITERS_PATH_PROPAGATION, 'credentials_collectors': 'credentials_collectors'}
+
 
 export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) {
 
@@ -60,8 +62,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
         uiSchema[pluginName] = {'ui:DescriptionFieldTemplate': MarkdownDescriptionTemplate};
       }
     }
-    // TODO: Fix the path
-    props.formContext.setUiSchema(uiSchema, 'credentials_collectors');
+    props.formContext.setUiSchema(uiSchema, pluginSchemaPath[props.formContext.section]);
   }
 
   function getMasterCheckboxState(selectValues) {
