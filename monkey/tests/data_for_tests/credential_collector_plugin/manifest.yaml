@@ -1,13 +1,13 @@
 name: MockCollector
-plugin_type: Credential_Collector
+plugin_type: Credentials_Collector
 supported_operating_systems:
   - linux
   - windows
 target_operating_systems:
   - windows
   - linux
-title: Mock Credential Collector plugin
-description: A credential collector plugin for testing purposes
+title: Mock Credentials Collector plugin
+description: A credentials collector plugin for testing purposes
 version: 1.0.0
 safe: true
 link_to_documentation: https://www.akamai.com/infectionmonkey

@@ -1,6 +1,6 @@
 {
-    "title": "Mock credential collector",
-    "description": "Configuration settings for mock credential collecotr.",
+    "title": "Mock credentials collector",
+    "description": "Configuration settings for mock credentials collecotr.",
     "type": "object",
     "properties": {
          "random_boolean": {
