@@ -1,7 +1,9 @@
 from copy import deepcopy
+from typing import Dict
 
 from . import AgentConfiguration
 from .agent_sub_configurations import (
+    CredentialsCollectorsConfiguration,
     ExploitationConfiguration,
     ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
@@ -12,11 +14,7 @@ from .agent_sub_configurations import (
     TCPScanConfiguration,
 )
 
-CREDENTIALS_COLLECTORS = ("MimikatzCollector", "SSHCollector")
-
-CREDENTIALS_COLLECTOR_CONFIGURATION = tuple(
-    PluginConfiguration(name=collector, options={}) for collector in CREDENTIALS_COLLECTORS
-)
+CREDENTIALS_COLLECTORS: Dict[str, Dict] = {"MimikatzCollector": {}, "SSHCollector": {}}
 
 RANSOMWARE_OPTIONS = {
     "encryption": {
@@ -93,10 +91,12 @@ PROPAGATION_CONFIGURATION = PropagationConfiguration(
 
 DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     keep_tunnel_open_time=30,
-    credentials_collectors=CREDENTIALS_COLLECTOR_CONFIGURATION,
+    credentials_collectors=CredentialsCollectorsConfiguration(
+        credentials_collectors=CREDENTIALS_COLLECTORS
+    ),
     payloads=PAYLOAD_CONFIGURATION,
     propagation=PROPAGATION_CONFIGURATION,
 )
 
 DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = deepcopy(DEFAULT_AGENT_CONFIGURATION)
-DEFAULT_RANSOMWARE_AGENT_CONFIGURATION.credentials_collectors = tuple()
+DEFAULT_RANSOMWARE_AGENT_CONFIGURATION.credentials_collectors = None
