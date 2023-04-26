@@ -2,7 +2,7 @@ import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import CheckboxWithMessage from './CheckboxWithMessage';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 import SensitiveTextareaInput from '../ui-components/SensitiveTextareaInput';
-import PluginSelectorTemplateGeneral from './PluginSelectorTemplateGeneral';
+import PluginSelectorTemplate from './PluginSelectorTemplate';
 import ArrayFieldTitleTemplate from './ArrayFieldTitleTemplate';
 
 export default function UiSchema(props) {
@@ -10,7 +10,7 @@ export default function UiSchema(props) {
     propagation: {
       exploitation: {
         exploiters: {
-          'ui:ObjectFieldTemplate': PluginSelectorTemplateGeneral
+          'ui:ObjectFieldTemplate': PluginSelectorTemplate
         }
       },
       credentials: {
@@ -97,7 +97,7 @@ export default function UiSchema(props) {
     },
     credentials_collectors: {
         credentials_collectors: {
-            'ui:ObjectFieldTemplate': PluginSelectorTemplateGeneral
+            'ui:ObjectFieldTemplate': PluginSelectorTemplate
         }
     }
   };
