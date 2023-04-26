@@ -1,7 +1,7 @@
 import dataclasses
 from typing import Dict, Mapping
 
-from common.agent_configuration import AgentConfiguration, PluginConfiguration
+from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials, Password, Username
 
 from .noop import noop_test_configuration
@@ -33,8 +33,9 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
 
 
 def _add_credentials_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
+    credentials_collectors: Dict[str, Mapping] = {"MimikatzCollector": {}}
     return add_credentials_collectors(
-        agent_configuration, [PluginConfiguration(name="MimikatzCollector", options={})]
+        agent_configuration, credentials_collectors=credentials_collectors
     )
 
 
@@ -48,7 +49,6 @@ test_agent_configuration = _add_exploiters(test_agent_configuration)
 test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_credentials_collectors(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
-test_agent_configuration = _add_credentials_collectors(test_agent_configuration)
 
 CREDENTIALS = (
     Credentials(identity=Username(username="Administrator"), secret=None),
