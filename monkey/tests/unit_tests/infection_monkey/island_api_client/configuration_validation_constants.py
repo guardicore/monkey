@@ -11,8 +11,8 @@ SCHEMA = {
         },
         "credentials_collectors": {
             "title": "Credentials collectors",
-            "type": "array",
-            "items": {"$ref": "#/definitions/PluginConfiguration"},
+            "type": "object",
+            "items": {"$ref": "#/definitions/CredentialsCollectorsConfiguration"},
         },
         "payloads": {
             "title": "Payloads",
@@ -35,6 +35,25 @@ SCHEMA = {
                 "options": {"title": "Options", "type": "object"},
             },
             "required": ["name", "options"],
+            "additionalProperties": False,
+        },
+        "CredentialsCollectorsConfiguration": {
+            "title": "CredentialsCollectorsConfiguration",
+            "description": "",
+            "type": "object",
+            "properties": {
+                "credentials_collectors": {
+                    "SSHCollector": {},
+                    "MockCollector": {
+                        "type": "object",
+                        "title": "MockCollector",
+                        "safe": True,
+                        "description": "Collects something cool!",
+                        "link": "https://techdocs.akamai.com/infection-monkey",
+                        "properties": {},
+                    },
+                }
+            },
             "additionalProperties": False,
         },
         "TCPScanConfiguration": {

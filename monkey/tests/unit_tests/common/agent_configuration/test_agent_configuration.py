@@ -21,6 +21,7 @@ from tests.common.example_agent_configuration import (
 
 from common.agent_configuration.agent_configuration import AgentConfiguration
 from common.agent_configuration.agent_sub_configurations import (
+    CredentialsCollectorsConfiguration,
     ExploitationConfiguration,
     ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
@@ -197,7 +198,7 @@ def test_agent_configuration():
 
     assert isinstance(config, AgentConfiguration)
     assert config.keep_tunnel_open_time == 30
-    assert isinstance(config.credentials_collectors[0], PluginConfiguration)
+    assert isinstance(config.credentials_collectors, CredentialsCollectorsConfiguration)
     assert isinstance(config.payloads, dict)
     assert isinstance(config.propagation, PropagationConfiguration)
     assert config_dict == AGENT_CONFIGURATION
