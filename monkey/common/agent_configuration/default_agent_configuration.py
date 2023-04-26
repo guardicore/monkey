@@ -3,7 +3,6 @@ from typing import Dict
 
 from . import AgentConfiguration
 from .agent_sub_configurations import (
-    CredentialsCollectorsConfiguration,
     ExploitationConfiguration,
     ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
@@ -91,12 +90,10 @@ PROPAGATION_CONFIGURATION = PropagationConfiguration(
 
 DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     keep_tunnel_open_time=30,
-    credentials_collectors=CredentialsCollectorsConfiguration(
-        credentials_collectors=CREDENTIALS_COLLECTORS
-    ),
+    credentials_collectors=CREDENTIALS_COLLECTORS,
     payloads=PAYLOAD_CONFIGURATION,
     propagation=PROPAGATION_CONFIGURATION,
 )
 
 DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = deepcopy(DEFAULT_AGENT_CONFIGURATION)
-DEFAULT_RANSOMWARE_AGENT_CONFIGURATION.credentials_collectors = None
+DEFAULT_RANSOMWARE_AGENT_CONFIGURATION.credentials_collectors = {}
