@@ -17,8 +17,6 @@ UNRECOGNIZED = "unrecognized"
 LINUX_MASQUE = b"linux-masque\xBE\xEF\x00\xFA\xCE"
 WINDOWS_MASQUE = b"windows-masque\x0F\xF1\xCE\x00\xBA\xBB\x1E"
 
-MASQUES = {LINUX: LINUX_MASQUE, WINDOWS: WINDOWS_MASQUE}
-
 
 @pytest.fixture
 def agent_binary_service() -> IAgentBinaryService:
@@ -69,7 +67,7 @@ def test_get_masque__unrecognized_os(flask_client):
         follow_redirects=True,
     )
 
-    assert resp.status_code == HTTPStatus.BAD_REQUEST
+    assert resp.status_code == HTTPStatus.NOT_FOUND
 
 
 @pytest.mark.parametrize(
@@ -98,4 +96,4 @@ def test_set_masque__unrecognized_os(flask_client):
         follow_redirects=True,
     )
 
-    assert resp.status_code == HTTPStatus.BAD_REQUEST
+    assert resp.status_code == HTTPStatus.NOT_FOUND
