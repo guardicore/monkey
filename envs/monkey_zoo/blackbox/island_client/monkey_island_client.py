@@ -34,6 +34,15 @@ class MonkeyIslandClient(object):
     def get_api_status(self):
         return self.requests.get("api")
 
+    @avoid_race_condition
+    def set_masque(self, masque):
+        for os in ["linux", "windows"]:
+            if self.requests.put(f"api/agent-binaries/{os}/masque", data=masque).ok:
+                LOGGER.info(f'Setting {os} masque to "{masque}"')
+            else:
+                LOGGER.error(f"Failed to set {os} masque")
+                assert False
+
     def get_propagation_credentials(self) -> Sequence[Credentials]:
         response = self.requests.get("api/propagation-credentials")
         return [Credentials(**credentials) for credentials in response.json()]
