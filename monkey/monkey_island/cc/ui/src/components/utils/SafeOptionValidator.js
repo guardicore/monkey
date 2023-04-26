@@ -4,11 +4,6 @@ function getLegacyPluginDescriptors(schema, config) {
       name: 'Fingerprinters',
       allPlugins: schema.properties.propagation.properties.network_scan.properties.fingerprinters.properties,
       selectedPlugins: config.propagation.network_scan.fingerprinters
-    },
-    {
-      name: 'CredentialsCollectors',
-      allPlugins: schema.properties.credentials_collectors.properties,
-      selectedPlugins: config.credentials_collectors
     }
   ]);
 }
@@ -19,6 +14,11 @@ function getPluginDescriptors(schema, config) {
       name: 'Exploiters',
       allPlugins: schema.properties.propagation.properties.exploitation.properties.exploiters.properties,
       selectedPlugins: Object.keys(config.propagation.exploitation.exploiters)
+    },
+    {
+      name: 'CredentialsCollectors',
+      allPlugins: schema.properties.credentials_collectors.properties.credentials_collectors.properties,
+      selectedPlugins: Object.keys(config.credentials_collectors.credentials_collectors)
     }
   ])
 }
