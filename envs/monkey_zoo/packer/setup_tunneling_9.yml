@@ -18,3 +18,7 @@
         line: "PasswordAuthentication yes"
         state: present
         backup: yes
+    - name: Remove sshguard
+      apt:
+        name: sshguard
+        state: absent
