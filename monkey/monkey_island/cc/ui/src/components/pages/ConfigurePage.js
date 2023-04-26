@@ -38,7 +38,7 @@ const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/con
 const configSubmitAction = 'config-submit';
 const configExportAction = 'config-export';
 const configSaveAction = 'config-saved';
-const CREDENTIALS_COLLECTORS_CONFIG_PATH = 'credentials_collectors.credentials_collectors';
+const CREDENTIALS_COLLECTORS_CONFIG_PATH = 'credentials_collectors';
 
 class ConfigurePageComponent extends AuthComponent {
 

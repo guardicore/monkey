@@ -96,9 +96,7 @@ export default function UiSchema(props) {
       }
     },
     credentials_collectors: {
-        credentials_collectors: {
-            'ui:ObjectFieldTemplate': PluginSelectorTemplate
-        }
+      'ui:ObjectFieldTemplate': PluginSelectorTemplate
     }
   };
   return UiSchema[props.selectedSection]
