@@ -9,7 +9,7 @@ import {EXPLOITERS_PATH_PROPAGATION} from './PropagationConfig';
 import MarkdownDescriptionTemplate from './MarkdownDescriptionTemplate';
 
 
-export default function PluginSelectorTemplateGeneral(props: ObjectFieldTemplateProps) {
+export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) {
 
   let [activePlugin, setActivePlugin] = useState(null);
 
