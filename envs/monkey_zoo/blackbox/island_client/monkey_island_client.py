@@ -4,6 +4,7 @@ import time
 from http import HTTPStatus
 from typing import List, Mapping, Optional, Sequence
 
+from common import OperatingSystem
 from common.credentials import Credentials
 from common.types import AgentID, MachineID
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
@@ -36,11 +37,11 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def set_masque(self, masque):
-        for os in ["linux", "windows"]:
-            if self.requests.put(f"api/agent-binaries/{os}/masque", data=masque).ok:
-                LOGGER.info(f'Setting {os} masque to "{masque}"')
+        for operating_system in [operating_system.name for operating_system in OperatingSystem]:
+            if self.requests.put(f"api/agent-binaries/{operating_system}/masque", data=masque).ok:
+                LOGGER.info(f'Setting {operating_system} masque to "{masque}"')
             else:
-                LOGGER.error(f"Failed to set {os} masque")
+                LOGGER.error(f"Failed to set {operating_system} masque")
                 assert False
 
     def get_propagation_credentials(self) -> Sequence[Credentials]:
