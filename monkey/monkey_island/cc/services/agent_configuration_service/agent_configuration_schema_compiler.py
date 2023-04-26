@@ -24,7 +24,7 @@ from .hard_coded_schemas import (
 
 PLUGIN_PATH_IN_SCHEMA = {
     AgentPluginType.EXPLOITER: "definitions.ExploitationConfiguration.properties.exploiters",
-    AgentPluginType.CREDENTIALS_COLLECTOR: "properties.credentials_collectors",
+    AgentPluginType.CREDENTIALS_COLLECTOR: "definitions.CredentialsCollectorsConfiguration.properties.credentials_collectors",  # noqa: E501
     AgentPluginType.FINGERPRINTER: "definitions.NetworkScanConfiguration.properties.fingerprinters",
     AgentPluginType.PAYLOAD: "properties.payloads",
 }
