@@ -22,7 +22,6 @@ export default function FormConfig(props) {
     setFormUiSchema(newSchema);
   }
     const getForm = () => {
-        console.log(formUiSchema, fullUiSchema, selectedPlugins);
         return <Form {...props}
                  uiSchema={formUiSchema}
                  formContext={{
