@@ -36,13 +36,13 @@ def flask_client(build_flask_client, agent_binary_service):
 
 
 @pytest.mark.parametrize(
-    "os, masque", [(LINUX, LINUX_MASQUE), (WINDOWS, WINDOWS_MASQUE), (LINUX, b"")]
+    "operating_system, masque", [(LINUX, LINUX_MASQUE), (WINDOWS, WINDOWS_MASQUE), (LINUX, b"")]
 )
-def test_get_masque(agent_binary_service, flask_client, os, masque):
+def test_get_masque(agent_binary_service, flask_client, operating_system, masque):
     agent_binary_service.get_masque = MagicMock(return_value=masque)
 
     resp = flask_client.get(
-        get_url_for_resource(AgentBinariesMasque, os=os),
+        get_url_for_resource(AgentBinariesMasque, os=operating_system),
         follow_redirects=True,
     )
 
@@ -62,7 +62,7 @@ def test_get_masque__none_value(flask_client):
     assert resp.data == b""
 
 
-def test_get_masque__unrecognized_os(flask_client):
+def test_get_masque__unrecognized_operating_system(flask_client):
     resp = flask_client.get(
         get_url_for_resource(AgentBinariesMasque, os=UNRECOGNIZED),
         follow_redirects=True,
@@ -72,7 +72,7 @@ def test_get_masque__unrecognized_os(flask_client):
 
 
 @pytest.mark.parametrize(
-    "os, masque",
+    "operating_system, masque",
     [
         (LINUX, LINUX_MASQUE),
         (WINDOWS, WINDOWS_MASQUE),
@@ -80,9 +80,9 @@ def test_get_masque__unrecognized_os(flask_client):
         (WINDOWS, "just a string"),
     ],
 )
-def test_set_masque(flask_client, os, masque):
+def test_set_masque(flask_client, operating_system, masque):
     resp = flask_client.put(
-        get_url_for_resource(AgentBinariesMasque, os=os),
+        get_url_for_resource(AgentBinariesMasque, os=operating_system),
         data=masque,
         follow_redirects=True,
     )
@@ -90,7 +90,7 @@ def test_set_masque(flask_client, os, masque):
     assert resp.status_code == HTTPStatus.NO_CONTENT
 
 
-def test_set_masque__unrecognized_os(flask_client):
+def test_set_masque__unrecognized_operating_system(flask_client):
     resp = flask_client.put(
         get_url_for_resource(AgentBinariesMasque, os=UNRECOGNIZED),
         data=LINUX_MASQUE,
