@@ -18,8 +18,12 @@ export default function FormConfig(props) {
 
   const setUiSchemaForCurrentSection = (uiSubschema, path) => {
     let newSchema = _.cloneDeep(formUiSchema);
-    _.set(newSchema, path, uiSubschema)
-    setFormUiSchema(newSchema);
+    if(path !== selectedSection){
+      _.set(newSchema, path, uiSubschema);
+      setFormUiSchema(newSchema);
+    }else {
+      setFormUiSchema(uiSubschema);
+    }
   }
     const getForm = () => {
         return <Form {...props}
