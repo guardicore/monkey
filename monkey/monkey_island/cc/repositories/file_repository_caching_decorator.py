@@ -1,8 +1,8 @@
-import io
 import re
-import shutil
 from functools import lru_cache
 from typing import BinaryIO, Optional, Sequence
+
+from common.utils.file_utils import make_fileobj_copy
 
 from . import IFileRepository
 
@@ -29,13 +29,8 @@ class FileRepositoryCachingDecorator(IFileRepository):
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
         original_file = self._open_file(unsafe_file_name)
-        file_copy = io.BytesIO()
 
-        shutil.copyfileobj(original_file, file_copy)
-        original_file.seek(0)
-        file_copy.seek(0)
-
-        return file_copy
+        return make_fileobj_copy(original_file)
 
     @lru_cache(maxsize=16)
     def _open_file(self, unsafe_file_name: str) -> BinaryIO:
