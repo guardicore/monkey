@@ -4,7 +4,7 @@ from copy import deepcopy
 from http import HTTPStatus
 from threading import Thread
 from time import sleep
-from typing import List
+from typing import List, Optional
 from uuid import uuid4
 
 import pytest
@@ -488,6 +488,7 @@ class TestMonkeyBlackbox:
         test_configuration: TestConfiguration,
         test_name: str,
         timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS,
+        masque: Optional[bytes] = None,
     ):
         analyzer = CommunicationAnalyzer(
             island_client,
@@ -500,6 +501,7 @@ class TestMonkeyBlackbox:
             name=test_name,
             island_client=island_client,
             test_configuration=test_configuration,
+            masque=masque,
             analyzers=[analyzer],
             timeout=timeout_in_seconds,
             log_handler=log_handler,
@@ -521,7 +523,7 @@ class TestMonkeyBlackbox:
 
     def test_depth_1_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
-            island_client, depth_1_a_test_configuration, "Depth1A test suite"
+            island_client, depth_1_a_test_configuration, "Depth1A test suite", masque=b"m0nk3y"
         )
 
     def test_depth_3_a(self, island_client):
@@ -531,7 +533,7 @@ class TestMonkeyBlackbox:
 
     def test_depth_4_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
-            island_client, depth_4_a_test_configuration, "Depth4A test suite"
+            island_client, depth_4_a_test_configuration, "Depth4A test suite", masque=b"m0nk3y"
         )
 
     # Not grouped because it's slow
@@ -554,6 +556,7 @@ class TestMonkeyBlackbox:
             name=test_name,
             island_client=island_client,
             test_configuration=zerologon_test_configuration,
+            masque=b"",
             analyzers=[zero_logon_analyzer, communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
