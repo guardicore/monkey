@@ -520,6 +520,7 @@ class TestMonkeyBlackbox:
         )
 
     def test_depth_1_a(self, island_client):
+        island_client.set_masque(b"m0nk3y")
         TestMonkeyBlackbox.run_exploitation_test(
             island_client, depth_1_a_test_configuration, "Depth1A test suite"
         )
@@ -530,6 +531,7 @@ class TestMonkeyBlackbox:
         )
 
     def test_depth_4_a(self, island_client):
+        island_client.set_masque(b"m0nk3y")
         TestMonkeyBlackbox.run_exploitation_test(
             island_client, depth_4_a_test_configuration, "Depth4A test suite"
         )
