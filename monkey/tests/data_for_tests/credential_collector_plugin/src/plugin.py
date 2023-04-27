@@ -1,7 +1,7 @@
 import logging
 import time
 from threading import Event, current_thread
-from typing import Any, Dict
+from typing import Any, Dict, Sequence
 
 import mock_dependency
 
@@ -39,7 +39,7 @@ class Plugin:
         Plugin._log_options(options)
         Plugin._sleep(options.get("sleep_duration", 0), interrupt)
 
-        self._collect_credentials(options)
+        return self._collect_credentials(options)
 
     @staticmethod
     def _log_options(options: Dict[str, Any]):
@@ -55,16 +55,18 @@ class Plugin:
             logger.info(f"Passed {time_passed} seconds")
             time.sleep(1)
 
-    def _collect_credentials(self, options: Dict[str, Any]):
+    def _collect_credentials(self, options: Dict[str, Any]) -> Sequence[Credentials]:
+        collected_credentials = [
+            Credentials(
+                identity=Username(username="stolen_username"),
+                secret=Password(password="stolen_password"),
+            )
+        ]
         self._agent_event_publisher.publish(
             CredentialsStolenEvent(
-                stolen_credentials=[
-                    Credentials(
-                        identity=Username(username="stolen_username"),
-                        secret=Password(password="stolen_password"),
-                    )
-                ],
+                stolen_credentials=collected_credentials,
                 tags=frozenset(["mock1-plugin-collector"]),
                 source=self._agent_id,
             )
         )
+        return collected_credentials
