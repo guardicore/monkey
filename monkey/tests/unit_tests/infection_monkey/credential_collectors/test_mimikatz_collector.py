@@ -28,7 +28,7 @@ def patch_pypykatz(win_creds: Sequence[WindowsCredentials], monkeypatch):
 
 def collect_credentials() -> Sequence[Credentials]:
     mock_event_queue = MagicMock(spec=IAgentEventQueue)
-    return MimikatzCredentialCollector(mock_event_queue, AGENT_ID).collect_credentials()
+    return MimikatzCredentialCollector(mock_event_queue, AGENT_ID).run()
 
 
 @pytest.mark.parametrize(
@@ -133,7 +133,7 @@ def test_mimikatz_credentials_stolen_event_published(monkeypatch):
     patch_pypykatz([], monkeypatch)
 
     mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue, AGENT_ID)
-    mimikatz_credential_collector.collect_credentials()
+    mimikatz_credential_collector.run()
 
     mock_event_queue.publish.assert_called_once()
 
@@ -147,7 +147,7 @@ def test_mimikatz_credentials_stolen_event_tags(monkeypatch):
     patch_pypykatz([], monkeypatch)
 
     mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue, AGENT_ID)
-    mimikatz_credential_collector.collect_credentials()
+    mimikatz_credential_collector.run()
 
     mock_event_queue_call_args = mock_event_queue.publish.call_args[0][0]
 
@@ -164,7 +164,7 @@ def test_mimikatz_credentials_stolen_event_stolen_credentials(monkeypatch):
     patch_pypykatz(win_creds, monkeypatch)
 
     mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue, AGENT_ID)
-    collected_credentials = mimikatz_credential_collector.collect_credentials()
+    collected_credentials = mimikatz_credential_collector.run()
 
     mock_event_queue_call_args = mock_event_queue.publish.call_args[0][0]
 

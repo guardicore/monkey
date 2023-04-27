@@ -31,7 +31,7 @@ class MimikatzCredentialCollector(ICredentialsCollector):
         self._agent_event_queue = agent_event_queue
         self._agent_id = agent_id
 
-    def collect_credentials(self, options=None) -> Sequence[Credentials]:
+    def run(self, options=None, interrupt=None) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
         windows_credentials = pypykatz_handler.get_windows_creds()
 

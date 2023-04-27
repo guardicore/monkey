@@ -19,7 +19,7 @@ class SSHCredentialCollector(ICredentialsCollector):
         self._agent_event_queue = agent_event_queue
         self._agent_id = agent_id
 
-    def collect_credentials(self, _options=None) -> Sequence[Credentials]:
+    def run(self, options=None, interrupt=None) -> Sequence[Credentials]:
         logger.info("Started scanning for SSH credentials")
         ssh_info = ssh_handler.get_ssh_info(self._agent_event_queue, self._agent_id)
         logger.info("Finished scanning for SSH credentials")
