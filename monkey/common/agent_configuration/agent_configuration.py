@@ -17,9 +17,9 @@ class AgentConfiguration(MutableInfectionMonkeyBaseModel):
     )
     credentials_collectors: Dict[str, Dict] = Field(
         title="Enabled credentials collectors",
-        description="Click on an credentials collectors to get more information"
-        " about it. \n \u26A0 Note that using unsafe credentials collectors may"
-        " cause crashes of the local machine/system.",
+        description="Click on a credentials collectors to get more information"
+        " about it. \n \u26A0 Note that using unsafe options may"
+        " result in unexpected behavior on the machine.",
     )
     payloads: Dict[str, Dict] = Field(
         title="Payloads", description="Configure payloads that Agents will execute"
