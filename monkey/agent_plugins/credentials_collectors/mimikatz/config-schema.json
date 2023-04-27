@@ -1,5 +1,4 @@
 {
-    "required": ["exclude_username_prefix"],
     "properties": {
         "exclude_username_prefix": {
             "title": "Excluded username prefix",
