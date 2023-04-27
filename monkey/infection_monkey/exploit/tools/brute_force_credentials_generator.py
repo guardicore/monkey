@@ -15,6 +15,14 @@ from typing import (
 from common.credentials import Credentials, Identity, Secret
 
 
+class identity_type_filter:
+    def __init__(self, identity_types: Container[Type[Identity]]):
+        self.identity_types = identity_types
+
+    def __call__(self, identity: Optional[Identity]) -> TypeGuard[Identity]:
+        return type(identity) in self.identity_types
+
+
 class secret_type_filter:
     def __init__(self, secret_types: Container[Type[Secret]]):
         self.secret_types = secret_types

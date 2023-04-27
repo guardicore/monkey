@@ -136,6 +136,7 @@ User.roles
 User.get_by_id
 User.email
 
+identity_type_filter
 secret_type_filter
 
 # Remove after #3163
