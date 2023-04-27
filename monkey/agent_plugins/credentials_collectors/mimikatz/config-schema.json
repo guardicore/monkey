@@ -1,0 +1,11 @@
+{
+    "required": ["exclude_username_prefix"],
+    "properties": {
+        "exclude_username_prefix": {
+            "title": "Excluded username prefix",
+            "description": "A username prefix for which Mimikatz will not collect credentials.",
+            "type": "string",
+            "default": "somenewuser"
+        }
+    }
+}
