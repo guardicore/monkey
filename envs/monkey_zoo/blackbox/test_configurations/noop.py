@@ -39,7 +39,7 @@ _propagation_configuration = PropagationConfiguration(
 
 _agent_configuration = AgentConfiguration(
     keep_tunnel_open_time=0,
-    credentials_collectors=[],
+    credentials_collectors={},
     payloads={},
     propagation=_propagation_configuration,
 )
