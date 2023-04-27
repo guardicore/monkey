@@ -3,20 +3,12 @@ const CREDENTIALS_COLLECTORS = {
     'description': 'Click on a credentials collector for more information.',
     'type': 'object',
     'pluginDefs': {
-      'MimikatzCollector':{'name': 'MimikatzCollector', 'options': {}},
       'SSHCollector':{'name': 'SSHCollector', 'options': {}}
     },
     'properties':{
       'name': {
         'type': 'string',
         'anyOf': [
-          {
-            'type': 'string',
-            'enum': ['MimikatzCollector'],
-            'title': 'Mimikatz Credentials Collector',
-            'safe': true,
-            'info': 'Collects credentials from Windows credential manager.'
-          },
           {
             'type': 'string',
             'enum': ['SSHCollector'],
