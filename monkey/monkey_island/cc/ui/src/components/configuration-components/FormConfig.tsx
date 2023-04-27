@@ -3,9 +3,6 @@ import React, {useState} from 'react';
 import _ from 'lodash';
 
 
-export const EXPLOITERS_PATH_PROPAGATION = 'exploitation.exploiters';
-export const EXPLOITERS_CONFIG_PATH = 'propagation.' + EXPLOITERS_PATH_PROPAGATION;
-
 export default function FormConfig(props) {
   const {
     fullUiSchema,
