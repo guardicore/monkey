@@ -11,6 +11,7 @@ import transformErrors from '../configuration-components/ValidationErrorMessages
 import PropagationConfig, {
   EXPLOITERS_CONFIG_PATH
 } from '../configuration-components/PropagationConfig';
+import {CREDENTIALS_COLLECTORS_CONFIG_PATH} from '../configuration-components/PluginSelectorTemplate';
 import FormConfig from '../configuration-components/FormConfig';
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
@@ -38,7 +39,6 @@ const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/con
 const configSubmitAction = 'config-submit';
 const configExportAction = 'config-export';
 const configSaveAction = 'config-saved';
-const CREDENTIALS_COLLECTORS_CONFIG_PATH = 'credentials_collectors';
 
 class ConfigurePageComponent extends AuthComponent {
 
