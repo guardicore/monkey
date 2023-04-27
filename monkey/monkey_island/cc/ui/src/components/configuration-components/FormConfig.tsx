@@ -14,27 +14,25 @@ export default function FormConfig(props) {
   const [formUiSchema, setFormUiSchema] = useState(fullUiSchema);
 
   const setUiSchemaForCurrentSection = (uiSubschema, path) => {
-    let newSchema = _.cloneDeep(formUiSchema);
     if(path !== selectedSection){
+      let newSchema = _.cloneDeep(formUiSchema);
       _.set(newSchema, path, uiSubschema);
       setFormUiSchema(newSchema);
     }else {
       setFormUiSchema(uiSubschema);
     }
   }
-    const getForm = () => {
-        return <Form {...props}
-                 uiSchema={formUiSchema}
-                 formContext={{
-                   'selectedPlugins': selectedPlugins,
-                   'setSelectedPlugins': setSelectedPlugins,
-                   'setUiSchema': setUiSchemaForCurrentSection,
-                   'section': selectedSection
-                 }}>
-                 <button type='submit' className={'hidden'}>Submit</button>
-             </Form>
-    }
+
   return (<div>
-    {getForm()}
+    <Form {...props}
+          uiSchema={formUiSchema}
+          formContext={{
+            'selectedPlugins': selectedPlugins,
+            'setSelectedPlugins': setSelectedPlugins,
+            'setUiSchema': setUiSchemaForCurrentSection,
+            'section': selectedSection
+           }}>
+      <button type='submit' className={'hidden'}>Submit</button>
+    </Form>
   </div>)
 }
