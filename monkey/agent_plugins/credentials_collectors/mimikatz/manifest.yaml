@@ -1,0 +1,11 @@
+name: Mimikatz
+plugin_type: Credentials_Collector
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - windows
+title: Mimikatz Credentials Collector
+version: 1.0.0
+description: Collects credentials from Windows credential manager.
+safe: true
