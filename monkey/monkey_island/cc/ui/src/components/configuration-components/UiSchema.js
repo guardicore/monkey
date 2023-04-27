@@ -96,10 +96,7 @@ export default function UiSchema(props) {
       }
     },
     credentials_collectors: {
-      'ui:widget': AdvancedMultiSelect,
-      credentials_collectors_classes: {
-        'ui:classNames': 'config-template-no-header'
-      }
+      'ui:ObjectFieldTemplate': PluginSelectorTemplate
     }
   };
   return UiSchema[props.selectedSection]

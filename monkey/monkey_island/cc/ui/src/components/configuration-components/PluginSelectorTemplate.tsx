@@ -8,12 +8,15 @@ import {InfoPane, WarningType} from '../ui-components/InfoPane';
 import {EXPLOITERS_PATH_PROPAGATION} from './PropagationConfig';
 import MarkdownDescriptionTemplate from './MarkdownDescriptionTemplate';
 
+export const CREDENTIALS_COLLECTORS_CONFIG_PATH = 'credentials_collectors';
+const PLUGIN_SCHEMA_PATH = {'propagation': EXPLOITERS_PATH_PROPAGATION, 'credentials_collectors': CREDENTIALS_COLLECTORS_CONFIG_PATH}
+
 
 export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) {
 
   let [activePlugin, setActivePlugin] = useState(null);
 
-  useEffect(() => updateUISchema(), [props.formContext.selectedExploiters]);
+  useEffect(() => updateUISchema(), [props.formContext.selectedPlugins]);
 
   function getPluginDisplay(plugin, allPlugins) {
     let activePlugins = allPlugins.filter((pluginInArray) => pluginInArray.name == plugin);
@@ -41,26 +44,26 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   }
 
   function togglePluggin(pluginName) {
-    let plugins = new Set(props.formContext.selectedExploiters);
-    if (props.formContext.selectedExploiters.has(pluginName)) {
+    let plugins = new Set(props.formContext.selectedPlugins);
+    if (props.formContext.selectedPlugins.has(pluginName)) {
       plugins.delete(pluginName);
     } else {
       plugins.add(pluginName);
     }
-    props.formContext.setSelectedExploiters(plugins);
+    props.formContext.setSelectedPlugins(plugins, props.formContext.section);
   }
 
   function updateUISchema(){
     let uiSchema = _.cloneDeep(props.uiSchema);
     for(let pluginName of Object.keys(generateDefaultConfig())) {
-      if(!props.formContext.selectedExploiters.has(pluginName)){
+      if(!props.formContext.selectedPlugins.has(pluginName)){
         uiSchema[pluginName] = {"ui:readonly": true,
           'ui:DescriptionFieldTemplate': MarkdownDescriptionTemplate};
       } else {
         uiSchema[pluginName] = {'ui:DescriptionFieldTemplate': MarkdownDescriptionTemplate};
       }
     }
-    props.formContext.setUiSchema(uiSchema, EXPLOITERS_PATH_PROPAGATION);
+    props.formContext.setUiSchema(uiSchema, PLUGIN_SCHEMA_PATH[props.formContext.section]);
   }
 
   function getMasterCheckboxState(selectValues) {
@@ -82,11 +85,12 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   }
 
   function onMasterPluginCheckboxClick() {
-    let checkboxState = getMasterCheckboxState([...props.formContext.selectedExploiters]);
+    let checkboxState = getMasterCheckboxState([...props.formContext.selectedPlugins]);
+    let selectedSection = props.formContext.section
     if (checkboxState == MasterCheckboxState.ALL) {
-      props.formContext.setSelectedExploiters(new Set());
+      props.formContext.setSelectedPlugins(new Set(), selectedSection);
     } else {
-      props.formContext.setSelectedExploiters(new Set(Object.keys(generateDefaultConfig())));
+     props.formContext.setSelectedPlugins(new Set(Object.keys(generateDefaultConfig())), selectedSection);
     }
   }
 
@@ -104,9 +108,9 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   }
 
   function onResetClick() {
-    let safePluginNames = [...props.formContext.selectedExploiters].filter(
+    let safePluginNames = [...props.formContext.selectedPlugins].filter(
       pluginName => isPluginSafe(pluginName));
-    props.formContext.setSelectedExploiters(new Set(safePluginNames));
+    props.formContext.setSelectedPlugins(new Set(safePluginNames), props.formContext.section);
   }
 
   return (
@@ -115,14 +119,14 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
                                  onCheckboxClick={onMasterPluginCheckboxClick}
                                  checkboxState={
                                    getMasterCheckboxState(
-                                     [...props.formContext.selectedExploiters])}
+                                     [...props.formContext.selectedPlugins])}
                                  hideReset={getHideResetState(
-                                       [...props.formContext.selectedExploiters])}
+                                       [...props.formContext.selectedPlugins])}
                                  onResetClick={onResetClick}
-                                 resetButtonTitle={'Disable unsafe exploiters'}/>
+                                 resetButtonTitle={'Disable unsafe'}/>
       <ChildCheckboxContainer multiple={true} required={false}
                               autoFocus={true}
-                              selectedValues={[...props.formContext.selectedExploiters]}
+                              selectedValues={[...props.formContext.selectedPlugins]}
                               onCheckboxClick={togglePluggin}
                               isSafe={isPluginSafe}
                               onPaneClick={setActivePlugin}

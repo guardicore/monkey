@@ -1,7 +1,7 @@
 import logging
 from copy import copy
 from threading import RLock
-from typing import Any, Dict
+from typing import Dict
 
 from serpentarium import SingleUsePlugin
 
@@ -42,7 +42,16 @@ class PluginRegistry:
 
         self._lock = RLock()
 
-    def get_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> Any:
+    def get_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> SingleUsePlugin:
+        """
+        Retrieve a plugin stored in the registry. If the plugin does not exist in the registry, an
+        attempt will be made to download it from the island.
+
+        :param plugin_type: The type of plugin to get.
+        :param plugin_name: The name of the plugin to get.
+        :return: A plugin of the given type and name.
+        :raises UnknownPluginError: If the plugin is not found.
+        """
         with self._lock:
             try:
                 # Note: The MultiprocessingPluginWrapper is a MultiUsePlugin. The copy() used here
