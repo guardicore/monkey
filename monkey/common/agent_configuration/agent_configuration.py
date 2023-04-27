@@ -1,10 +1,10 @@
-from typing import Dict, Tuple
+from typing import Dict
 
 from pydantic import Field, confloat
 
 from common.base_models import MutableInfectionMonkeyBaseModel
 
-from .agent_sub_configurations import PluginConfiguration, PropagationConfiguration
+from .agent_sub_configurations import PropagationConfiguration
 
 
 class AgentConfiguration(MutableInfectionMonkeyBaseModel):
@@ -15,9 +15,11 @@ class AgentConfiguration(MutableInfectionMonkeyBaseModel):
         "seconds)",
         default=30,
     )
-    credentials_collectors: Tuple[PluginConfiguration, ...] = Field(
-        title="Credentials collectors",
-        description="Configure options for the attack’s credentials collection stage",
+    credentials_collectors: Dict[str, Dict] = Field(
+        title="Enabled credentials collectors",
+        description="Click on a credentials collector to get more information"
+        " about it. \n \u26A0 Note that using unsafe options may"
+        " result in unexpected behavior on the machine.",
     )
     payloads: Dict[str, Dict] = Field(
         title="Payloads", description="Configure payloads that Agents will execute"

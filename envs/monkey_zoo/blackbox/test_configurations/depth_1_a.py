@@ -64,8 +64,9 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
 
 
 def _add_credentials_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
+    credentials_collectors: Dict[str, Mapping] = {"MimikatzCollector": {}}
     return add_credentials_collectors(
-        agent_configuration, [PluginConfiguration(name="MimikatzCollector", options={})]
+        agent_configuration, credentials_collectors=credentials_collectors
     )
 
 

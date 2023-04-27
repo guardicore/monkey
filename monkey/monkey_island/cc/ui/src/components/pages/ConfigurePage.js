@@ -1,5 +1,4 @@
 import React from 'react';
-import Form from '@rjsf/bootstrap-4';
 import {Col, Nav} from 'react-bootstrap';
 import _ from 'lodash';
 import AuthComponent from '../AuthComponent';
@@ -11,7 +10,9 @@ import {formValidationFormats} from '../configuration-components/ValidationForma
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import PropagationConfig, {
   EXPLOITERS_CONFIG_PATH
-} from '../configuration-components/PropagationConfig'
+} from '../configuration-components/PropagationConfig';
+import {CREDENTIALS_COLLECTORS_CONFIG_PATH} from '../configuration-components/PluginSelectorTemplate';
+import FormConfig from '../configuration-components/FormConfig';
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
@@ -58,7 +59,7 @@ class ConfigurePageComponent extends AuthComponent {
       showUnsafeOptionsConfirmation: false,
       showConfigExportModal: false,
       showConfigImportModal: false,
-      selectedExploiters: new Set()
+      selectedPlugins: {}
     };
   }
 
@@ -101,7 +102,10 @@ class ConfigurePageComponent extends AuthComponent {
         }
         this.setState({
           configuration: monkeyConfig,
-          selectedExploiters: new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
+          selectedPlugins: {
+              'propagation': new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
+              'credentials_collectors': new Set(Object.keys(_.get(monkeyConfig, CREDENTIALS_COLLECTORS_CONFIG_PATH)))
+          },
           sections: sections,
           currentFormData: _.cloneDeep(monkeyConfig[this.state.selectedSection])
         })
@@ -143,15 +147,18 @@ class ConfigurePageComponent extends AuthComponent {
       .then(data => {
         data = reformatConfig(data);
         this.setState({
-          selectedExploiters: new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
+          selectedPlugins: {
+              'propagation': new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
+              'credentials_collectors': new Set(Object.keys(_.get(data, CREDENTIALS_COLLECTORS_CONFIG_PATH)))
+          },
           configuration: data,
           currentFormData: _.cloneDeep(data[this.state.selectedSection])
         });
       });
   }
 
-  setSelectedExploiters = (exploiters) => {
-    this.setState({selectedExploiters: exploiters})
+  setSelectedPlugins = (plugins, key) => {
+    this.setState({selectedPlugins: {...this.state.selectedPlugins, [key]: plugins}});
   }
 
   onSubmit = () => {
@@ -179,17 +186,22 @@ class ConfigurePageComponent extends AuthComponent {
   // Until the issue is fixed, we need to manually remove plugins that were not selected before
   // submitting/exporting the configuration
   filterUnselectedPlugins() {
-    let filteredExploiters = {};
-    let exploiterFormData = _.get(this.state.configuration, EXPLOITERS_CONFIG_PATH);
-    for (let exploiter of [...this.state.selectedExploiters]) {
-      if (exploiterFormData[exploiter] === undefined) {
-        filteredExploiters[exploiter] = {};
-      } else {
-        filteredExploiters[exploiter] = exploiterFormData[exploiter];
-      }
-    }
+    let pluginTypes = {'propagation': EXPLOITERS_CONFIG_PATH, 'credentials_collectors': CREDENTIALS_COLLECTORS_CONFIG_PATH};
     let config = _.cloneDeep(this.state.configuration)
-    _.set(config, EXPLOITERS_CONFIG_PATH, filteredExploiters)
+
+    for (let pluginType in pluginTypes){
+      let pluginPath = pluginTypes[pluginType];
+      let pluginFormData = _.get(this.state.configuration, pluginPath);
+      let filteredPlugins = {};
+      for (let plugin of [...this.state.selectedPlugins[pluginType] ?? []]){
+        if (pluginFormData[plugin] === undefined) {
+          filteredPlugins[plugin] = {};
+        } else {
+          filteredPlugins[plugin] = pluginFormData[plugin];
+        }
+      }
+      _.set(config, pluginPath, filteredPlugins)
+    }
     return config;
   }
 
@@ -335,7 +347,7 @@ class ConfigurePageComponent extends AuthComponent {
     let formProperties = {};
     let fullUiSchema = UiSchema({
       selectedSection: this.state.selectedSection
-    })
+    });
     formProperties['schema'] = displayedSchema
     formProperties['onChange'] = this.onChange;
     formProperties['onFocus'] = this.resetLastAction;
@@ -348,26 +360,25 @@ class ConfigurePageComponent extends AuthComponent {
     applyUiSchemaManipulators(this.state.selectedSection,
       formProperties['formData'],
       fullUiSchema);
-
     if (this.state.selectedSection === 'propagation') {
       delete Object.assign(formProperties, {'configuration': formProperties.formData}).formData;
       return (<PropagationConfig {...formProperties}
                                  fullUiSchema={fullUiSchema}
                                  credentials={this.state.credentials}
-                                 selectedExploiters={this.state.selectedExploiters}
-                                 setSelectedExploiters={this.setSelectedExploiters}
+                                 selectedPlugins={this.state.selectedPlugins}
+                                 setSelectedPlugins={this.setSelectedPlugins}
+                                 selectedConfigSection={this.state.selectedSection}
                                  onCredentialChange={this.onCredentialChange}/>)
     } else {
       formProperties['onChange'] = (formData) => {
         this.onChange(formData.formData)
       };
-      return (
-        <div>
-          <Form {...formProperties} uiSchema={fullUiSchema} key={displayedSchema.title}>
-            <button type='submit' className={'hidden'}>Submit</button>
-          </Form>
-        </div>
-      )
+      return (<FormConfig {...formProperties}
+                      fullUiSchema={fullUiSchema}
+                      selectedPlugins={this.state.selectedPlugins[this.state.selectedSection]}
+                      setSelectedPlugins={this.setSelectedPlugins}
+                      selectedSection={this.state.selectedSection}
+                      key={displayedSchema.title}/>)
     }
   };
 

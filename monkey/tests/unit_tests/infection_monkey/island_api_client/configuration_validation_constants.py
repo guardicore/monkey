@@ -11,8 +11,7 @@ SCHEMA = {
         },
         "credentials_collectors": {
             "title": "Credentials collectors",
-            "type": "array",
-            "items": {"$ref": "#/definitions/PluginConfiguration"},
+            "type": "object",
         },
         "payloads": {
             "title": "Payloads",

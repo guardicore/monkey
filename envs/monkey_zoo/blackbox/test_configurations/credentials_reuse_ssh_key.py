@@ -1,7 +1,7 @@
 import dataclasses
 from typing import Dict, Mapping
 
-from common.agent_configuration import AgentConfiguration, PluginConfiguration
+from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials, Password, Username
 
 from .noop import noop_test_configuration
@@ -34,10 +34,7 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
 
 
 def _add_credentials_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    credentials_collectors = [
-        PluginConfiguration(name="SSHCollector", options={}),
-    ]
-
+    credentials_collectors: Dict[str, Mapping] = {"SSHCollector": {}}
     return add_credentials_collectors(
         agent_configuration, credentials_collectors=credentials_collectors
     )
