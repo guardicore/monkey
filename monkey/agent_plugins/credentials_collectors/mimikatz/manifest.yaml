@@ -7,5 +7,5 @@ target_operating_systems:
   - windows
 title: Mimikatz Credentials Collector
 version: 1.0.0
-description: Collects credentials from Windows credential manager.
+description: Collects credentials from Windows Credential Manager using Mimikatz.
 safe: true
