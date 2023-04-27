@@ -1,5 +1,4 @@
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
-from agent_plugins.exploiters.wmi.src.wmi_options import WMIOptions
 from flask_security import Security
 
 from common import DIContainer
@@ -138,5 +137,9 @@ User.email
 
 secret_type_filter
 
-# Remove after 3163
+# Remove after #3163
+from agent_plugins.exploiters.wmi.src.wmi_command_builder import build_wmi_command
+from agent_plugins.exploiters.wmi.src.wmi_options import WMIOptions
+
 WMIOptions
+build_wmi_command
