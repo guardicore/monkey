@@ -1,3 +1,4 @@
+from agent_plugins.credentials_collectors.mimikatz.src.mimikatz_options import MimikatzOptions
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
 from flask_security import Security
 
@@ -143,3 +144,7 @@ from agent_plugins.exploiters.wmi.src.wmi_options import WMIOptions
 
 WMIOptions
 build_wmi_command
+
+# Remove after 3168
+MimikatzOptions
+MimikatzOptions.excluded_username_prefix
