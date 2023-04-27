@@ -145,4 +145,4 @@ secret_type_filter
 
 # Remove after 3168
 MimikatzOptions
-MimikatzOptions.excluded_username_prefix
+MimikatzOptions.excluded_username_prefixes
