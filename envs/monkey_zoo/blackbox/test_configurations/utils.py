@@ -45,11 +45,9 @@ def add_subnets(
 
 
 def add_credentials_collectors(
-    agent_configuration: AgentConfiguration, credentials_collectors: Optional[Dict[str, Mapping]]
+    agent_configuration: AgentConfiguration, credentials_collectors: Dict[str, Mapping]
 ) -> AgentConfiguration:
     agent_configuration_copy = agent_configuration.copy(deep=True)
-    if not credentials_collectors:
-        credentials_collectors = {}
     agent_configuration_copy.credentials_collectors = credentials_collectors
 
     return agent_configuration_copy
