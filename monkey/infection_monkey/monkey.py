@@ -49,10 +49,7 @@ from infection_monkey.agent_event_handlers import (
     add_stolen_credentials_to_propagation_credentials_repository,
     notify_relay_on_propagation,
 )
-from infection_monkey.credential_collectors import (
-    MimikatzCredentialCollector,
-    SSHCredentialCollector,
-)
+from infection_monkey.credential_collectors import SSHCredentialCollector
 from infection_monkey.exploit import (
     CachingAgentBinaryRepository,
     ExploiterWrapper,
@@ -432,11 +429,6 @@ class InfectionMonkey:
             self._agent_event_queue, plugin_registry, plugin_compatibility_verifier, self._agent_id
         )
 
-        puppet.load_plugin(
-            AgentPluginType.CREDENTIALS_COLLECTOR,
-            "MimikatzCollector",
-            MimikatzCredentialCollector(self._agent_event_queue, self._agent_id),
-        )
         puppet.load_plugin(
             AgentPluginType.CREDENTIALS_COLLECTOR,
             "SSHCollector",
