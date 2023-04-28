@@ -10,7 +10,7 @@ from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 logger = logging.getLogger(__name__)
 
 
-class PluginCompatabilityVerifier:
+class PluginCompatibilityVerifier:
     """
     Verify plugin compatibility to run
     """

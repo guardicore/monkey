@@ -17,7 +17,7 @@ from infection_monkey.i_puppet import (
     PortScanDataDict,
     TargetHost,
 )
-from infection_monkey.puppet import PluginCompatabilityVerifier
+from infection_monkey.puppet import PluginCompatibilityVerifier
 
 from . import PluginRegistry
 
@@ -31,12 +31,12 @@ class Puppet(IPuppet):
         self,
         agent_event_queue: IAgentEventQueue,
         plugin_registry: PluginRegistry,
-        plugin_compatability_verifier: PluginCompatabilityVerifier,
+        plugin_compatibility_verifier: PluginCompatibilityVerifier,
         agent_id: AgentID,
     ) -> None:
         self._plugin_registry = plugin_registry
         self._agent_event_queue = agent_event_queue
-        self._plugin_compatability_verifier = plugin_compatability_verifier
+        self._plugin_compatibility_verifier = plugin_compatibility_verifier
         self._agent_id = agent_id
 
     def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
@@ -87,7 +87,7 @@ class Puppet(IPuppet):
         interrupt: Event,
     ) -> ExploiterResultData:
         compatible_with_local_os = (
-            self._plugin_compatability_verifier.verify_local_operating_system_compatibility(
+            self._plugin_compatibility_verifier.verify_local_operating_system_compatibility(
                 AgentPluginType.EXPLOITER, name
             )
         )
@@ -96,7 +96,7 @@ class Puppet(IPuppet):
                 f'The exploiter, "{name}" is not compatible with the local operating system'
             )
 
-        if self._plugin_compatability_verifier.verify_exploiter_compatibility(name, host) is False:
+        if self._plugin_compatibility_verifier.verify_exploiter_compatibility(name, host) is False:
             raise IncompatibleTargetOperatingSystemError(
                 f'The exploiter, "{name}", is not compatible with the operating system on {host.ip}'
             )

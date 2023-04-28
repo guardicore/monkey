@@ -93,7 +93,7 @@ from infection_monkey.propagation_credentials_repository import (
     PropagationCredentialsRepository,
 )
 from infection_monkey.puppet import (
-    PluginCompatabilityVerifier,
+    PluginCompatibilityVerifier,
     PluginRegistry,
     PluginSourceExtractor,
 )
@@ -420,13 +420,13 @@ class InfectionMonkey:
             plugin_source_extractor,
             plugin_factories,
         )
-        plugin_compatability_verifier = PluginCompatabilityVerifier(
+        plugin_compatibility_verifier = PluginCompatibilityVerifier(
             self._island_api_client,
             self._operating_system,
             HARD_CODED_EXPLOITER_MANIFESTS,
         )
         puppet = Puppet(
-            self._agent_event_queue, plugin_registry, plugin_compatability_verifier, self._agent_id
+            self._agent_event_queue, plugin_registry, plugin_compatibility_verifier, self._agent_id
         )
 
         puppet.load_plugin(

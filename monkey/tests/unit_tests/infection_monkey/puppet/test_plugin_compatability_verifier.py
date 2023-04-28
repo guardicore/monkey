@@ -16,7 +16,7 @@ from common.agent_plugins import AgentPluginType
 from common.agent_plugins.agent_plugin_manifest import AgentPluginManifest
 from infection_monkey.i_puppet import TargetHost
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
-from infection_monkey.puppet import PluginCompatabilityVerifier
+from infection_monkey.puppet import PluginCompatibilityVerifier
 
 FAKE_NAME3 = "http://www.BogusExploiter.com"
 
@@ -42,8 +42,8 @@ def island_api_client():
 
 
 @pytest.fixture
-def plugin_compatability_verifier(island_api_client):
-    return PluginCompatabilityVerifier(
+def plugin_compatibility_verifier(island_api_client):
+    return PluginCompatibilityVerifier(
         island_api_client, OperatingSystem.WINDOWS, deepcopy(FAKE_HARD_CODED_PLUGIN_MANIFESTS)
     )
 
@@ -52,52 +52,52 @@ def plugin_compatability_verifier(island_api_client):
     "target_host_os, exploiter_name",
     [(None, FAKE_NAME), (OperatingSystem.WINDOWS, FAKE_NAME2), (OperatingSystem.LINUX, FAKE_NAME)],
 )
-def test_os_compatability_verifier__hard_coded_exploiters(
-    target_host_os, exploiter_name, island_api_client, plugin_compatability_verifier
+def test_os_compatibility_verifier__hard_coded_exploiters(
+    target_host_os, exploiter_name, island_api_client, plugin_compatibility_verifier
 ):
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
-    assert plugin_compatability_verifier.verify_exploiter_compatibility(exploiter_name, target_host)
+    assert plugin_compatibility_verifier.verify_exploiter_compatibility(exploiter_name, target_host)
 
 
 @pytest.mark.parametrize(
     "target_host_os, exploiter_name",
     [(OperatingSystem.WINDOWS, FAKE_NAME), (OperatingSystem.LINUX, FAKE_NAME2)],
 )
-def test_os_compatability_verifier__incompatable(
-    target_host_os, exploiter_name, island_api_client, plugin_compatability_verifier
+def test_os_compatibility_verifier__incompatible(
+    target_host_os, exploiter_name, island_api_client, plugin_compatibility_verifier
 ):
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
-    assert not plugin_compatability_verifier.verify_exploiter_compatibility(
+    assert not plugin_compatibility_verifier.verify_exploiter_compatibility(
         exploiter_name, target_host
     )
 
 
 @pytest.mark.parametrize("target_host_os", [None, OperatingSystem.LINUX])
-def test_os_compatability_verifier__island_api_client(
-    target_host_os, island_api_client, plugin_compatability_verifier
+def test_os_compatibility_verifier__island_api_client(
+    target_host_os, island_api_client, plugin_compatibility_verifier
 ):
     island_api_client.get_agent_plugin_manifest = lambda _, __: FAKE_MANIFEST_OBJECT
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
-    assert plugin_compatability_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)
+    assert plugin_compatibility_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)
 
 
-def test_os_compatability_verifier__island_api_client_incompatable(
-    island_api_client, plugin_compatability_verifier
+def test_os_compatibility_verifier__island_api_client_incompatible(
+    island_api_client, plugin_compatibility_verifier
 ):
     island_api_client.get_agent_plugin_manifest = lambda _, __: FAKE_MANIFEST_OBJECT
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.WINDOWS)
 
-    assert not plugin_compatability_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)
+    assert not plugin_compatibility_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)
 
 
 @pytest.mark.parametrize("target_host_os", [None, OperatingSystem.LINUX])
-def test_os_compatability_verifier__island_api_client_error(
-    target_host_os, island_api_client, plugin_compatability_verifier
+def test_os_compatibility_verifier__island_api_client_error(
+    target_host_os, island_api_client, plugin_compatibility_verifier
 ):
     def raise_island_api_error(plugin_type, name):
         raise IslandAPIError
@@ -105,7 +105,7 @@ def test_os_compatability_verifier__island_api_client_error(
     island_api_client.get_agent_plugin_manifest = raise_island_api_error
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
-    assert not plugin_compatability_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)
+    assert not plugin_compatibility_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)
 
 
 @pytest.mark.parametrize(
@@ -119,7 +119,7 @@ def test_os_compatability_verifier__island_api_client_error(
         (OperatingSystem.WINDOWS, [OperatingSystem.LINUX, OperatingSystem.WINDOWS], True),
     ],
 )
-def test_verify_local_os_compatability__linux(
+def test_verify_local_os_compatibility__linux(
     operating_system, supported_operating_systems, expected_result
 ):
     manifest = AgentPluginManifest(
@@ -130,11 +130,11 @@ def test_verify_local_os_compatability__linux(
         version="1.0.0",
         link_to_documentation=URL,
     )
-    plugin_compatability_verifier = PluginCompatabilityVerifier(
+    plugin_compatibility_verifier = PluginCompatibilityVerifier(
         island_api_client, operating_system, {FAKE_NAME2: manifest}
     )
 
-    actual_result = plugin_compatability_verifier.verify_local_operating_system_compatibility(
+    actual_result = plugin_compatibility_verifier.verify_local_operating_system_compatibility(
         AgentPluginType.EXPLOITER, FAKE_NAME2
     )
 

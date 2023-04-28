@@ -15,7 +15,7 @@ from infection_monkey.i_puppet import (
     PingScanData,
     TargetHost,
 )
-from infection_monkey.puppet import PluginCompatabilityVerifier, PluginRegistry
+from infection_monkey.puppet import PluginCompatibilityVerifier, PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
 
@@ -35,8 +35,8 @@ def mock_plugin_registry() -> PluginRegistry:
 
 
 @pytest.fixture
-def mock_plugin_compatability_verifier() -> PluginCompatabilityVerifier:
-    pcv = MagicMock(spec=PluginCompatabilityVerifier)
+def mock_plugin_compatibility_verifier() -> PluginCompatibilityVerifier:
+    pcv = MagicMock(spec=PluginCompatibilityVerifier)
     pcv.verify_exploiter_compatibility = MagicMock(return_value=True)
     pcv.verify_local_operating_system_compatibility = MagicMock(return_value=True)  # type: ignore [assignment]  # noqa: E501
 
@@ -47,12 +47,12 @@ def mock_plugin_compatability_verifier() -> PluginCompatabilityVerifier:
 def puppet(
     mock_agent_event_queue: IAgentEventQueue,
     mock_plugin_registry: PluginRegistry,
-    mock_plugin_compatability_verifier: PluginCompatabilityVerifier,
+    mock_plugin_compatibility_verifier: PluginCompatibilityVerifier,
 ) -> Puppet:
     return Puppet(
         agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
-        plugin_compatability_verifier=mock_plugin_compatability_verifier,
+        plugin_compatibility_verifier=mock_plugin_compatibility_verifier,
         agent_id=AgentID("4277aa81-660b-4673-b96c-443ed525b4d0"),
     )
 
@@ -127,13 +127,13 @@ def test_exploit_host(
     "target_host_os, exploiter_name",
     [(OperatingSystem.WINDOWS, FAKE_NAME), (OperatingSystem.LINUX, FAKE_NAME2)],
 )
-def test_exploit_host__incompatable(
+def test_exploit_host__incompatible(
     target_host_os: Optional[OperatingSystem],
     exploiter_name: str,
     puppet: Puppet,
-    mock_plugin_compatability_verifier: PluginCompatabilityVerifier,
+    mock_plugin_compatibility_verifier: PluginCompatibilityVerifier,
 ):
-    mock_plugin_compatability_verifier.verify_exploiter_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
+    mock_plugin_compatibility_verifier.verify_exploiter_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
         return_value=False
     )
 
@@ -167,11 +167,11 @@ def test_malfunctioning_plugin__exploiter(puppet: Puppet):
     assert exploiter_result_data.error_message != ""
 
 
-def test_exploit_host__incompatable_local_operating_system(
+def test_exploit_host__incompatible_local_operating_system(
     puppet: Puppet,
-    mock_plugin_compatability_verifier: PluginCompatabilityVerifier,
+    mock_plugin_compatibility_verifier: PluginCompatibilityVerifier,
 ):
-    mock_plugin_compatability_verifier.verify_local_operating_system_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
+    mock_plugin_compatibility_verifier.verify_local_operating_system_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
         return_value=False
     )
 
