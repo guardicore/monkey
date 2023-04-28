@@ -525,9 +525,14 @@ class TestMonkeyBlackbox:
         test_name = "Depth1A test suite"
         masque = b"m0nk3y"
 
-        expected_creds: List[str] = []
+        expected_credentials: List[str] = [
+            "fc525c9683e8fe067095ba2ddc971889",
+            "e1c0dc690821c13b10a41dccfc72e43a",
+            "vakaris_zilius",
+            "m0nk3y",
+        ]
 
-        mimikatz_analyzer = MimikatzAnalyzer(island_client, expected_creds)
+        mimikatz_analyzer = MimikatzAnalyzer(island_client, expected_credentials)
         communication_analyzer = CommunicationAnalyzer(
             island_client,
             get_target_ips(depth_1_a_test_configuration),
