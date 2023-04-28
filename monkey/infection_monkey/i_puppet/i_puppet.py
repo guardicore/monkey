@@ -17,6 +17,10 @@ class RejectedRequestError(Exception):
     pass
 
 
+class IncompatibleLocalOperatingSystemError(RejectedRequestError):
+    """Raised when a plugin is not compatible with the local machines's OS"""
+
+
 class IncompatibleTargetOperatingSystemError(RejectedRequestError):
     """Raised when a plugin is not compatible with the target machines's OS"""
 
