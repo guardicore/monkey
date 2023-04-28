@@ -41,6 +41,10 @@ def island_api_client():
     return MagicMock(spec=IIslandAPIClient)
 
 
+def raise_island_api_error(plugin_type, name):
+    raise IslandAPIError
+
+
 @pytest.fixture
 def plugin_compatibility_verifier(island_api_client):
     return PluginCompatibilityVerifier(
@@ -105,9 +109,6 @@ def test_os_compatibility_verifier__island_api_client_incompatible(
 def test_os_compatibility_verifier__island_api_client_error(
     target_host_os, island_api_client, plugin_compatibility_verifier
 ):
-    def raise_island_api_error(plugin_type, name):
-        raise IslandAPIError
-
     island_api_client.get_agent_plugin_manifest = raise_island_api_error
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
@@ -151,6 +152,16 @@ def test_verify_local_os_compatibility(
     )
 
     assert actual_result is expected_result
+
+
+def test_local_os_compatibility__island_api_client_error(
+    island_api_client, plugin_compatibility_verifier
+):
+    island_api_client.get_agent_plugin_manifest = raise_island_api_error
+
+    assert not plugin_compatibility_verifier.verify_local_operating_system_compatibility(
+        AgentPluginType.EXPLOITER, FAKE_NAME3
+    )
 
 
 @pytest.mark.parametrize(
