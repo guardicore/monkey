@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Mapping, Optional
+from typing import Dict, Mapping, Optional
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
@@ -23,20 +23,19 @@ class PluginCompatibilityVerifier:
     ):
         self._island_api_client = island_api_client
         self._operating_system = operating_system
-        self._exploiter_plugin_manifests = dict(exploiter_plugin_manifests)
+        self._plugin_manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {
+            AgentPluginType.EXPLOITER: dict(exploiter_plugin_manifests)
+        }
         self._cache_lock = threading.Lock()
 
     def verify_local_operating_system_compatibility(
         self, plugin_type: AgentPluginType, plugin_name: str
     ) -> bool:
-        if plugin_type != AgentPluginType.EXPLOITER:
-            raise NotImplementedError(f"Unsupported plugin type {plugin_type}")
-
-        exploiter_plugin_manifest = self._get_exploiter_plugin_manifest(plugin_name)
-        if exploiter_plugin_manifest is None:
+        plugin_manifest = self._get_plugin_manifest(plugin_type, plugin_name)
+        if plugin_manifest is None:
             return False
 
-        return self._operating_system in exploiter_plugin_manifest.supported_operating_systems
+        return self._operating_system in plugin_manifest.supported_operating_systems
 
     def verify_exploiter_compatibility(self, exploiter_name: str, target_host: TargetHost) -> bool:
         """
@@ -45,7 +44,9 @@ class PluginCompatibilityVerifier:
         :param exploiter_name: Name of the exploiter
         :param target_host: Target host
         """
-        exploiter_plugin_manifest = self._get_exploiter_plugin_manifest(exploiter_name)
+        exploiter_plugin_manifest = self._get_plugin_manifest(
+            AgentPluginType.EXPLOITER, exploiter_name
+        )
         if exploiter_plugin_manifest is None:
             return False
 
@@ -54,25 +55,29 @@ class PluginCompatibilityVerifier:
             or target_host.operating_system in exploiter_plugin_manifest.target_operating_systems
         )
 
-    def _get_exploiter_plugin_manifest(self, exploiter_name: str) -> Optional[AgentPluginManifest]:
+    def _get_plugin_manifest(
+        self, plugin_type: AgentPluginType, plugin_name: str
+    ) -> Optional[AgentPluginManifest]:
         """
-        Get exploiter plugin manifest
+        Get plugin manifest
 
         Request island for plugin manifest if it doesn't exists and return it
-        :param exploiter_name: Name of exploiter
+        :param plugin_type: Type of the plugin
+        :param plugin_name: Name of the plugin
         """
+        plugin_type_manifests = self._plugin_manifests.setdefault(plugin_type, {})
         with self._cache_lock:
-            if exploiter_name in self._exploiter_plugin_manifests:
-                return self._exploiter_plugin_manifests[exploiter_name]
+            if plugin_name in plugin_type_manifests:
+                return plugin_type_manifests[plugin_name]
 
             try:
                 plugin_manifest = self._island_api_client.get_agent_plugin_manifest(
-                    AgentPluginType.EXPLOITER, exploiter_name
+                    plugin_type, plugin_name
                 )
-                self._exploiter_plugin_manifests[exploiter_name] = plugin_manifest
+                plugin_type_manifests[plugin_name] = plugin_manifest
 
                 return plugin_manifest
             except IslandAPIError:
-                logger.exception(f"No plugin manifest found for {exploiter_name}")
+                logger.exception(f"No plugin manifest found for {plugin_name}")
 
             return None

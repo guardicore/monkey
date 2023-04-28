@@ -109,6 +109,9 @@ def test_os_compatibility_verifier__island_api_client_error(
 
 
 @pytest.mark.parametrize(
+    "plugin_type", [AgentPluginType.EXPLOITER, AgentPluginType.CREDENTIALS_COLLECTOR]
+)
+@pytest.mark.parametrize(
     "operating_system, supported_operating_systems, expected_result",
     [
         (OperatingSystem.LINUX, [OperatingSystem.LINUX], True),
@@ -120,22 +123,50 @@ def test_os_compatibility_verifier__island_api_client_error(
     ],
 )
 def test_verify_local_os_compatibility(
-    operating_system, supported_operating_systems, expected_result
+    plugin_type, operating_system, supported_operating_systems, expected_result
 ):
     manifest = AgentPluginManifest(
         name=FAKE_NAME2,
-        plugin_type=AgentPluginType.EXPLOITER,
+        plugin_type=plugin_type,
         supported_operating_systems=supported_operating_systems,
         title="Some exploiter title",
         version="1.0.0",
         link_to_documentation=URL,
     )
+    island_api_client.get_agent_plugin_manifest = lambda _, __: manifest
     plugin_compatibility_verifier = PluginCompatibilityVerifier(
-        island_api_client, operating_system, {FAKE_NAME2: manifest}
+        island_api_client, operating_system, {}
     )
 
     actual_result = plugin_compatibility_verifier.verify_local_operating_system_compatibility(
-        AgentPluginType.EXPLOITER, FAKE_NAME2
+        plugin_type, FAKE_NAME2
     )
 
     assert actual_result is expected_result
+
+
+@pytest.mark.parametrize(
+    "plugin_type", [AgentPluginType.EXPLOITER, AgentPluginType.CREDENTIALS_COLLECTOR]
+)
+def test_manifest_caching(island_api_client, plugin_type):
+    manifest = AgentPluginManifest(
+        name=FAKE_NAME2,
+        plugin_type=plugin_type,
+        supported_operating_systems=[OperatingSystem.LINUX],
+        title="Some exploiter title",
+        version="1.0.0",
+        link_to_documentation=URL,
+    )
+    island_api_client.get_agent_plugin_manifest.side_effect = lambda _, __: manifest
+    plugin_compatibility_verifier = PluginCompatibilityVerifier(
+        island_api_client, OperatingSystem.LINUX, {}
+    )
+
+    plugin_compatibility_verifier.verify_local_operating_system_compatibility(
+        plugin_type, FAKE_NAME2
+    )
+    plugin_compatibility_verifier.verify_local_operating_system_compatibility(
+        plugin_type, FAKE_NAME2
+    )
+
+    assert island_api_client.get_agent_plugin_manifest.call_count == 1
