@@ -38,6 +38,7 @@ from common.tags.attack import SYSTEM_INFORMATION_DISCOVERY_T1082_TAG
 from common.types import OTP, NetworkPort, SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.code_utils import del_key, secure_generate_random_string
+from common.utils.environment import get_os
 from common.utils.file_utils import create_secure_directory
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
@@ -152,6 +153,8 @@ class InfectionMonkey:
         )
         self._island_address, self._island_api_client = self._connect_to_island_api()
         self._register_agent()
+
+        self._operating_system = get_os()
 
         self._control_channel = ControlChannel(str(self._island_address), self._island_api_client)
         self._legacy_propagation_credentials_repository = (
@@ -418,7 +421,9 @@ class InfectionMonkey:
             plugin_factories,
         )
         plugin_compatability_verifier = PluginCompatabilityVerifier(
-            self._island_api_client, HARD_CODED_EXPLOITER_MANIFESTS
+            self._island_api_client,
+            self._operating_system,
+            HARD_CODED_EXPLOITER_MANIFESTS,
         )
         puppet = Puppet(
             self._agent_event_queue, plugin_registry, plugin_compatability_verifier, self._agent_id

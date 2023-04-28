@@ -2,6 +2,7 @@ import logging
 import threading
 from typing import Mapping, Optional
 
+from common import OperatingSystem
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from infection_monkey.i_puppet import TargetHost
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
@@ -17,11 +18,25 @@ class PluginCompatabilityVerifier:
     def __init__(
         self,
         island_api_client: IIslandAPIClient,
+        operating_system: OperatingSystem,
         exploiter_plugin_manifests: Mapping[str, AgentPluginManifest],
     ):
         self._island_api_client = island_api_client
+        self._operating_system = operating_system
         self._exploiter_plugin_manifests = dict(exploiter_plugin_manifests)
         self._cache_lock = threading.Lock()
+
+    def verify_local_operating_system_compatibility(
+        self, plugin_type: AgentPluginType, plugin_name: str
+    ) -> bool:
+        if plugin_type != AgentPluginType.EXPLOITER:
+            raise NotImplementedError(f"Unsupported plugin type {plugin_type}")
+
+        exploiter_plugin_manifest = self._get_exploiter_plugin_manifest(plugin_name)
+        if exploiter_plugin_manifest is None:
+            return False
+
+        return self._operating_system in exploiter_plugin_manifest.supported_operating_systems
 
     def verify_exploiter_compatibility(self, exploiter_name: str, target_host: TargetHost) -> bool:
         """
