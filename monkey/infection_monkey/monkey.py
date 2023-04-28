@@ -17,7 +17,11 @@ from pubsub.core import Publisher
 from serpentarium import PluginLoader, PluginThreadName
 from serpentarium.logging import configure_child_process_logger
 
-from common import HARD_CODED_EXPLOITER_MANIFESTS, OperatingSystem
+from common import (
+    HARD_CODED_CREDENTIALS_COLLECTOR_MANIFESTS,
+    HARD_CODED_EXPLOITER_MANIFESTS,
+    OperatingSystem,
+)
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
@@ -424,6 +428,7 @@ class InfectionMonkey:
             self._island_api_client,
             self._operating_system,
             HARD_CODED_EXPLOITER_MANIFESTS,
+            HARD_CODED_CREDENTIALS_COLLECTOR_MANIFESTS,
         )
         puppet = Puppet(
             self._agent_event_queue, plugin_registry, plugin_compatibility_verifier, self._agent_id
