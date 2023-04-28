@@ -37,7 +37,6 @@ from envs.monkey_zoo.blackbox.test_configurations import (
     depth_3_a_test_configuration,
     depth_4_a_test_configuration,
     smb_pth_test_configuration,
-    wmi_mimikatz_test_configuration,
     zerologon_test_configuration,
 )
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
@@ -561,13 +560,6 @@ class TestMonkeyBlackbox:
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         ).run()
-
-    # Not grouped because conflicts with SMB.
-    # Consider grouping when more depth 1 exploiters collide with group depth_1_a
-    def test_wmi_and_mimikatz_exploiters(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, wmi_mimikatz_test_configuration, "WMI_exploiter,_mimikatz"
-        )
 
     # Not grouped because it's depth 1 but conflicts with SMB exploiter in group depth_1_a
     def test_smb_pth(self, island_client):
