@@ -9,7 +9,11 @@ from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
 from common.types import AgentID
-from infection_monkey.i_puppet import IncompatibleOperatingSystemError, PingScanData, TargetHost
+from infection_monkey.i_puppet import (
+    IncompatibleTargetOperatingSystemError,
+    PingScanData,
+    TargetHost,
+)
 from infection_monkey.puppet import PluginCompatabilityVerifier, PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
@@ -131,7 +135,7 @@ def test_exploit_host__incompatable(
         return_value=False
     )
 
-    with pytest.raises(IncompatibleOperatingSystemError):
+    with pytest.raises(IncompatibleTargetOperatingSystemError):
         puppet.exploit_host(
             name=exploiter_name,
             host=TargetHost(ip="1.1.1.1", operating_system=target_host_os),

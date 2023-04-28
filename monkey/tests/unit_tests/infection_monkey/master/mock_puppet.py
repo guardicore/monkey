@@ -9,7 +9,7 @@ from infection_monkey.i_puppet import (
     DiscoveredService,
     ExploiterResultData,
     FingerprintData,
-    IncompatibleOperatingSystemError,
+    IncompatibleTargetOperatingSystemError,
     IPuppet,
     PingScanData,
     PortScanData,
@@ -240,7 +240,7 @@ class MockPuppet(IPuppet):
         try:
             if host.operating_system in supported_os[name] or host.operating_system is None:
                 return successful_exploiters[host.ip][name]
-            raise IncompatibleOperatingSystemError
+            raise IncompatibleTargetOperatingSystemError
         except KeyError:
             return ExploiterResultData(
                 False,
