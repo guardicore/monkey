@@ -13,6 +13,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Renamed "Credential collector" to "Credentials collector". #3167
 
+### Fixed
+- Plugins are now being checked for local OS compatibility. #3275
+
 ## [2.1.0] - 2023-04-19
 ### Added
 - Logout button. #3063
