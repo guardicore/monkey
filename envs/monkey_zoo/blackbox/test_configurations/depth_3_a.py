@@ -25,7 +25,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
     exploiters: Dict[str, Mapping] = {
         "PowerShellExploiter": {},
         "SSHExploiter": {},
-        "WmiExploiter": {"smb_download_timeout": 30},
+        "WMI": {"agent_binary_upload_timeout": 30},
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
