@@ -37,7 +37,7 @@ def mock_plugin_registry() -> PluginRegistry:
 @pytest.fixture
 def mock_plugin_compatibility_verifier() -> PluginCompatibilityVerifier:
     pcv = MagicMock(spec=PluginCompatibilityVerifier)
-    pcv.verify_exploiter_compatibility = MagicMock(return_value=True)
+    pcv.verify_target_operating_system_compatibility = MagicMock(return_value=True)
     pcv.verify_local_operating_system_compatibility = MagicMock(return_value=True)  # type: ignore [assignment]  # noqa: E501
 
     return pcv
@@ -133,7 +133,7 @@ def test_exploit_host__incompatible(
     puppet: Puppet,
     mock_plugin_compatibility_verifier: PluginCompatibilityVerifier,
 ):
-    mock_plugin_compatibility_verifier.verify_exploiter_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
+    mock_plugin_compatibility_verifier.verify_target_operating_system_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
         return_value=False
     )
 

@@ -96,10 +96,16 @@ class Puppet(IPuppet):
                 f'The exploiter, "{name}" is not compatible with the local operating system'
             )
 
-        if self._plugin_compatibility_verifier.verify_exploiter_compatibility(name, host) is False:
+        compatible_with_target_os = (
+            self._plugin_compatibility_verifier.verify_target_operating_system_compatibility(
+                AgentPluginType.EXPLOITER, name, host
+            )
+        )
+        if not compatible_with_target_os:
             raise IncompatibleTargetOperatingSystemError(
                 f'The exploiter, "{name}", is not compatible with the operating system on {host.ip}'
             )
+
         exploiter = self._plugin_registry.get_plugin(AgentPluginType.EXPLOITER, name)
         exploiter_result_data = exploiter.run(
             host=host,
