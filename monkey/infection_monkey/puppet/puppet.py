@@ -10,7 +10,8 @@ from infection_monkey import network_scanning
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
-    IncompatibleOperatingSystemError,
+    IncompatibleLocalOperatingSystemError,
+    IncompatibleTargetOperatingSystemError,
     IPuppet,
     PingScanData,
     PortScanDataDict,
@@ -85,8 +86,18 @@ class Puppet(IPuppet):
         options: Mapping,
         interrupt: Event,
     ) -> ExploiterResultData:
+        compatible_with_local_os = (
+            self._plugin_compatability_verifier.verify_local_operating_system_compatibility(
+                AgentPluginType.EXPLOITER, name
+            )
+        )
+        if not compatible_with_local_os:
+            raise IncompatibleLocalOperatingSystemError(
+                f'The exploiter, "{name}" is not compatible with the local operating system'
+            )
+
         if self._plugin_compatability_verifier.verify_exploiter_compatibility(name, host) is False:
-            raise IncompatibleOperatingSystemError(
+            raise IncompatibleTargetOperatingSystemError(
                 f'The exploiter, "{name}", is not compatible with the operating system on {host.ip}'
             )
         exploiter = self._plugin_registry.get_plugin(AgentPluginType.EXPLOITER, name)

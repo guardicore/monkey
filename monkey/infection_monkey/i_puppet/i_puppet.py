@@ -17,8 +17,12 @@ class RejectedRequestError(Exception):
     pass
 
 
-class IncompatibleOperatingSystemError(RejectedRequestError):
-    pass
+class IncompatibleLocalOperatingSystemError(RejectedRequestError):
+    """Raised when a plugin is not compatible with the local machines's OS"""
+
+
+class IncompatibleTargetOperatingSystemError(RejectedRequestError):
+    """Raised when a plugin is not compatible with the target machines's OS"""
 
 
 class IPuppet(metaclass=abc.ABCMeta):
@@ -111,8 +115,10 @@ class IPuppet(metaclass=abc.ABCMeta):
         :param options: A dictionary containing options that modify the behavior of the exploiter
         :param interrupt: An `Event` object that signals the exploit to stop executing and clean
                           itself up.
-        :raises IncompatibleOperatingSystemError: If an exploiter is not compatible with the target
-                                                  host's operating system
+        :raises IncompatibleLocalOperatingSystemError: If an exploiter plugin is not compatible with
+                                                       the local host's operating system
+        :raises IncompatibleTargetOperatingSystemError: If an exploiter is not compatible with the
+                                                        target host's operating system
         :return: The result of the exploit attempt
         """
 

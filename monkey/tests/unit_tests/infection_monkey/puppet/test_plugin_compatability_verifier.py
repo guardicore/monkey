@@ -12,6 +12,7 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
 )
 
 from common import OperatingSystem
+from common.agent_plugins import AgentPluginType
 from common.agent_plugins.agent_plugin_manifest import AgentPluginManifest
 from infection_monkey.i_puppet import TargetHost
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
@@ -43,7 +44,7 @@ def island_api_client():
 @pytest.fixture
 def plugin_compatability_verifier(island_api_client):
     return PluginCompatabilityVerifier(
-        island_api_client, deepcopy(FAKE_HARD_CODED_PLUGIN_MANIFESTS)
+        island_api_client, OperatingSystem.WINDOWS, deepcopy(FAKE_HARD_CODED_PLUGIN_MANIFESTS)
     )
 
 
@@ -105,3 +106,36 @@ def test_os_compatability_verifier__island_api_client_error(
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
     assert not plugin_compatability_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)
+
+
+@pytest.mark.parametrize(
+    "operating_system, supported_operating_systems, expected_result",
+    [
+        (OperatingSystem.LINUX, [OperatingSystem.LINUX], True),
+        (OperatingSystem.LINUX, [OperatingSystem.WINDOWS], False),
+        (OperatingSystem.LINUX, [OperatingSystem.LINUX, OperatingSystem.WINDOWS], True),
+        (OperatingSystem.WINDOWS, [OperatingSystem.LINUX], False),
+        (OperatingSystem.WINDOWS, [OperatingSystem.WINDOWS], True),
+        (OperatingSystem.WINDOWS, [OperatingSystem.LINUX, OperatingSystem.WINDOWS], True),
+    ],
+)
+def test_verify_local_os_compatability__linux(
+    operating_system, supported_operating_systems, expected_result
+):
+    manifest = AgentPluginManifest(
+        name=FAKE_NAME2,
+        plugin_type=AgentPluginType.EXPLOITER,
+        supported_operating_systems=supported_operating_systems,
+        title="Some exploiter title",
+        version="1.0.0",
+        link_to_documentation=URL,
+    )
+    plugin_compatability_verifier = PluginCompatabilityVerifier(
+        island_api_client, operating_system, {FAKE_NAME2: manifest}
+    )
+
+    actual_result = plugin_compatability_verifier.verify_local_operating_system_compatibility(
+        AgentPluginType.EXPLOITER, FAKE_NAME2
+    )
+
+    assert actual_result is expected_result
