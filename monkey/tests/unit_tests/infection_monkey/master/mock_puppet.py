@@ -204,7 +204,7 @@ class MockPuppet(IPuppet):
                     info_ssh,
                     "Failed exploiting",
                 ),
-                "WmiExploiter": ExploiterResultData(
+                "Exploiter1": ExploiterResultData(
                     True, True, OperatingSystem.WINDOWS.value, info_wmi
                 ),
             },
@@ -232,7 +232,7 @@ class MockPuppet(IPuppet):
         supported_os = {
             "SSHExploiter": [OperatingSystem.LINUX],
             "ZerologonExploiter": [OperatingSystem.WINDOWS],
-            "WmiExploiter": [OperatingSystem.WINDOWS],
+            "Exploiter1": [OperatingSystem.WINDOWS],
             "PowerShellExploiter": [OperatingSystem.WINDOWS],
             "MSSQLExploiter": [OperatingSystem.WINDOWS],
         }

@@ -69,7 +69,7 @@ EVENT_6 = ExploitationEvent(
     source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
     target=IPv4Address("2.2.2.2"),
     success=False,
-    exploiter_name="wmi",
+    exploiter_name="exploiter one",
     timestamp=11,
 )
 EVENTS = [EVENT_2, EVENT_3, EVENT_4, EVENT_1, EVENT_5]

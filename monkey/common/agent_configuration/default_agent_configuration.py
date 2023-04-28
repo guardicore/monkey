@@ -69,12 +69,11 @@ NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
 EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports=HTTP_PORTS)
 
 # Order is preserved and agent will run exploiters in this sequence
-EXPLOITERS = {
+EXPLOITERS: Dict[str, Dict] = {
     "Log4ShellExploiter": {},
     "MSSQLExploiter": {},
     "PowerShellExploiter": {},
     "SSHExploiter": {},
-    "WmiExploiter": {"smb_download_timeout": 30},
 }
 
 EXPLOITATION_CONFIGURATION = ExploitationConfiguration(

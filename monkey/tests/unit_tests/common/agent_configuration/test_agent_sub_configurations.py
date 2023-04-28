@@ -35,8 +35,7 @@ def test_sub_config_to_json_schema():
 raw_exploitation_configuration = {
     "exploiters": {
         "Exploiter5": {},
-        "Exploiter4": {},
-        "WmiExploiter": {"smb_download_timeout": 30},
+        "Exploiter4": {"timeout": 30},
         "Exploiter2": {},
         "SSHExploiter": {},
         "Exploiter3": {},

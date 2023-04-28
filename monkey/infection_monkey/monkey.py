@@ -62,7 +62,6 @@ from infection_monkey.exploit.log4shell import Log4ShellExploiter
 from infection_monkey.exploit.mssqlexec import MSSQLExploiter
 from infection_monkey.exploit.powershell import PowerShellExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
-from infection_monkey.exploit.wmiexec import WmiExploiter
 from infection_monkey.exploit.zerologon import ZerologonExploiter
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
@@ -470,9 +469,6 @@ class InfectionMonkey:
         )
         puppet.load_plugin(
             AgentPluginType.EXPLOITER, "SSHExploiter", exploit_wrapper.wrap(SSHExploiter)
-        )
-        puppet.load_plugin(
-            AgentPluginType.EXPLOITER, "WmiExploiter", exploit_wrapper.wrap(WmiExploiter)
         )
         puppet.load_plugin(
             AgentPluginType.EXPLOITER, "MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter)
