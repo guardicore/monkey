@@ -12,6 +12,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Renamed "Credential collector" to "Credentials collector". #3167
+- Hard-coded WMI exploiter to a plugin. #3163
 
 ### Fixed
 - Plugins are now being checked for local OS compatibility. #3275
