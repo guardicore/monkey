@@ -3,6 +3,7 @@ from typing import Optional
 from unittest.mock import MagicMock
 
 import pytest
+from tests.data_for_tests.propagation_credentials import CREDENTIALS
 from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_NAME, FAKE_NAME2
 
 from common import OperatingSystem
@@ -55,6 +56,28 @@ def puppet(
         plugin_compatibility_verifier=mock_plugin_compatibility_verifier,
         agent_id=AgentID("4277aa81-660b-4673-b96c-443ed525b4d0"),
     )
+
+
+def test_run_credentials_collector(puppet: Puppet):
+    plugin_name = "cc_1"
+    credentials_collector = MagicMock()
+    credentials_collector.run = MagicMock(return_value=CREDENTIALS)
+    puppet.load_plugin(AgentPluginType.CREDENTIALS_COLLECTOR, plugin_name, credentials_collector)
+
+    collected_credentials = puppet.run_credentials_collector(plugin_name, {}, threading.Event())
+
+    assert collected_credentials == CREDENTIALS
+
+
+def test_run_credentials_collector__incompatible_local_os(
+    mock_plugin_compatibility_verifier: PluginCompatibilityVerifier, puppet: Puppet
+):
+    mock_plugin_compatibility_verifier.verify_local_operating_system_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
+        return_value=False
+    )
+
+    with pytest.raises(IncompatibleLocalOperatingSystemError):
+        puppet.run_credentials_collector("test", {}, threading.Event())
 
 
 def test_puppet_run_payload_success(puppet: Puppet):
