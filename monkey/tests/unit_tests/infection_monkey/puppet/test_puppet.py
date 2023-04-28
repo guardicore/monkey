@@ -10,6 +10,7 @@ from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
 from common.types import AgentID
 from infection_monkey.i_puppet import (
+    IncompatibleLocalOperatingSystemError,
     IncompatibleTargetOperatingSystemError,
     PingScanData,
     TargetHost,
@@ -37,6 +38,7 @@ def mock_plugin_registry() -> PluginRegistry:
 def mock_plugin_compatability_verifier() -> PluginCompatabilityVerifier:
     pcv = MagicMock(spec=PluginCompatabilityVerifier)
     pcv.verify_exploiter_compatibility = MagicMock(return_value=True)
+    pcv.verify_local_operating_system_compatibility = MagicMock(return_value=True)  # type: ignore [assignment]  # noqa: E501
 
     return pcv
 
@@ -163,3 +165,22 @@ def test_malfunctioning_plugin__exploiter(puppet: Puppet):
     assert exploiter_result_data.exploitation_success is False
     assert exploiter_result_data.propagation_success is False
     assert exploiter_result_data.error_message != ""
+
+
+def test_exploit_host__incompatable_local_operating_system(
+    puppet: Puppet,
+    mock_plugin_compatability_verifier: PluginCompatabilityVerifier,
+):
+    mock_plugin_compatability_verifier.verify_local_operating_system_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
+        return_value=False
+    )
+
+    with pytest.raises(IncompatibleLocalOperatingSystemError):
+        puppet.exploit_host(
+            name=FAKE_NAME,
+            host=TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.WINDOWS),
+            current_depth=1,
+            servers=[],
+            options={},
+            interrupt=threading.Event(),
+        )
