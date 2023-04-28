@@ -4,9 +4,19 @@ from contextlib import suppress
 
 from common.types import HardwareID
 
+from ..operating_system import OperatingSystem
 
+
+# DEPRECATED: Use get_os() instead
 def is_windows_os() -> bool:
     return platform.system() == "Windows"
+
+
+def get_os() -> OperatingSystem:
+    if is_windows_os():
+        return OperatingSystem.WINDOWS
+
+    return OperatingSystem.LINUX
 
 
 def get_hardware_id() -> HardwareID:
