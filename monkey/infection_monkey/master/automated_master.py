@@ -8,7 +8,7 @@ from egg_timer import EggTimer
 
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
-from infection_monkey.i_puppet import IPuppet
+from infection_monkey.i_puppet import IPuppet, RejectedRequestError
 from infection_monkey.propagation_credentials_repository import (
     ILegacyPropagationCredentialsRepository,
 )
@@ -178,7 +178,11 @@ class AutomatedMaster(IMaster):
         interrupted_message = f"Received a stop signal, skipping remaining {plugin_type}s"
         for p in interruptible_iter(plugins, self._stop, interrupted_message):
             try:
+                logger.info(f'Trying to run plugin "{p}" of type "{plugin_type}"')
                 callback(p, plugins[p])
+            except RejectedRequestError as err:
+                logger.info(f"Skipping plugin {p} of type {plugin_type}: {err}")
+                continue
             except Exception:
                 logger.exception(
                     f"Got unhandled exception when running {plugin_type} plugin {p}. "

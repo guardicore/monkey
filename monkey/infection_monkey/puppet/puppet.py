@@ -45,6 +45,17 @@ class Puppet(IPuppet):
     def run_credentials_collector(
         self, name: str, options: Dict, interrupt: Event
     ) -> Sequence[Credentials]:
+        compatible_with_local_os = (
+            self._plugin_compatibility_verifier.verify_local_operating_system_compatibility(
+                AgentPluginType.CREDENTIALS_COLLECTOR, name
+            )
+        )
+        if not compatible_with_local_os:
+            raise IncompatibleLocalOperatingSystemError(
+                f'The credentials collector, "{name}" is not compatible with the '
+                "local operating system"
+            )
+
         credentials_collector = self._plugin_registry.get_plugin(
             AgentPluginType.CREDENTIALS_COLLECTOR, name
         )
