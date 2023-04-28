@@ -1,7 +1,6 @@
 name: Mimikatz
 plugin_type: Credentials_Collector
 supported_operating_systems:
-  - linux
   - windows
 target_operating_systems:
   - windows
