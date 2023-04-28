@@ -119,7 +119,7 @@ def test_os_compatibility_verifier__island_api_client_error(
         (OperatingSystem.WINDOWS, [OperatingSystem.LINUX, OperatingSystem.WINDOWS], True),
     ],
 )
-def test_verify_local_os_compatibility__linux(
+def test_verify_local_os_compatibility(
     operating_system, supported_operating_systems, expected_result
 ):
     manifest = AgentPluginManifest(
