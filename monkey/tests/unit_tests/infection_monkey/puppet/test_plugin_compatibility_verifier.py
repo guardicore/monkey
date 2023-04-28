@@ -57,7 +57,9 @@ def test_os_compatibility_verifier__hard_coded_exploiters(
 ):
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
-    assert plugin_compatibility_verifier.verify_exploiter_compatibility(exploiter_name, target_host)
+    assert plugin_compatibility_verifier.verify_target_operating_system_compatibility(
+        AgentPluginType.EXPLOITER, exploiter_name, target_host
+    )
 
 
 @pytest.mark.parametrize(
@@ -69,8 +71,8 @@ def test_os_compatibility_verifier__incompatible(
 ):
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
-    assert not plugin_compatibility_verifier.verify_exploiter_compatibility(
-        exploiter_name, target_host
+    assert not plugin_compatibility_verifier.verify_target_operating_system_compatibility(
+        AgentPluginType.EXPLOITER, exploiter_name, target_host
     )
 
 
@@ -82,7 +84,9 @@ def test_os_compatibility_verifier__island_api_client(
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
-    assert plugin_compatibility_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)
+    assert plugin_compatibility_verifier.verify_target_operating_system_compatibility(
+        AgentPluginType.EXPLOITER, FAKE_NAME3, target_host
+    )
 
 
 def test_os_compatibility_verifier__island_api_client_incompatible(
@@ -92,7 +96,9 @@ def test_os_compatibility_verifier__island_api_client_incompatible(
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.WINDOWS)
 
-    assert not plugin_compatibility_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)
+    assert not plugin_compatibility_verifier.verify_target_operating_system_compatibility(
+        AgentPluginType.EXPLOITER, FAKE_NAME3, target_host
+    )
 
 
 @pytest.mark.parametrize("target_host_os", [None, OperatingSystem.LINUX])
@@ -105,7 +111,9 @@ def test_os_compatibility_verifier__island_api_client_error(
     island_api_client.get_agent_plugin_manifest = raise_island_api_error
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
-    assert not plugin_compatibility_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)
+    assert not plugin_compatibility_verifier.verify_target_operating_system_compatibility(
+        AgentPluginType.EXPLOITER, FAKE_NAME3, target_host
+    )
 
 
 @pytest.mark.parametrize(

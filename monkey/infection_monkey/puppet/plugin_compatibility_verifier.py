@@ -37,22 +37,23 @@ class PluginCompatibilityVerifier:
 
         return self._operating_system in plugin_manifest.supported_operating_systems
 
-    def verify_exploiter_compatibility(self, exploiter_name: str, target_host: TargetHost) -> bool:
+    def verify_target_operating_system_compatibility(
+        self, plugin_type: AgentPluginType, plugin_name: str, target_host: TargetHost
+    ) -> bool:
         """
         Verify exploiter compatibility to run on a target host
 
-        :param exploiter_name: Name of the exploiter
+        :param plugin_type: Type of the plugin
+        :param plugin_name: Name of the plugin
         :param target_host: Target host
         """
-        exploiter_plugin_manifest = self._get_plugin_manifest(
-            AgentPluginType.EXPLOITER, exploiter_name
-        )
-        if exploiter_plugin_manifest is None:
+        plugin_manifest = self._get_plugin_manifest(plugin_type, plugin_name)
+        if plugin_manifest is None:
             return False
 
         return (
             target_host.operating_system is None
-            or target_host.operating_system in exploiter_plugin_manifest.target_operating_systems
+            or target_host.operating_system in plugin_manifest.target_operating_systems
         )
 
     def _get_plugin_manifest(
