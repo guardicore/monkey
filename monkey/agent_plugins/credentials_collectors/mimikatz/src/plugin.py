@@ -32,7 +32,7 @@ class Plugin:
         self._agent_event_publisher = agent_event_publisher
         self._agent_id = agent_id
 
-    def run(self, options=None, interrupt=None) -> Sequence[Credentials]:
+    def run(self, *, options=None, interrupt=None) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
         windows_credentials = get_windows_creds()
         logger.info(f"Pypykatz gathered {len(windows_credentials)} credentials.")
