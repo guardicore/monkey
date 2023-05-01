@@ -4,8 +4,6 @@ from typing import Any, Dict, List, NewType
 
 from pypykatz.pypykatz import pypykatz
 
-from common.utils.environment import is_windows_os
-
 from .windows_credentials import WindowsCredentials
 
 logger = logging.getLogger(__name__)
@@ -23,11 +21,6 @@ PypykatzCredential = NewType("PypykatzCredential", Dict)
 
 
 def get_windows_creds() -> List[WindowsCredentials]:
-    # TODO: Remove this check when this is turned into a plugin.
-    if not is_windows_os():
-        logger.debug("Skipping pypykatz because the operating system is not Windows")
-        return []
-
     try:
         pypy_handle = pypykatz.go_live()
     except Exception as err:
