@@ -32,7 +32,7 @@ def zerologon_exploiter_object(monkeypatch, mock_agent_event_publisher):
     monkeypatch.setattr(obj, "dc_name", NETBIOS_NAME, raising=False)
     monkeypatch.setattr(obj, "report_login_attempt", mock_report_login_attempt)
     monkeypatch.setattr(obj, "host", TargetHost(ip=IPv4Address("1.1.1.1")))
-    monkeypatch.setattr(obj, "agent_event_queue", mock_agent_event_publisher)
+    monkeypatch.setattr(obj, "agent_event_publisher", mock_agent_event_publisher)
     monkeypatch.setattr(obj, "agent_id", get_agent_id())
     return obj
 
