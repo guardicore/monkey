@@ -1,0 +1,27 @@
+name: Zerologon
+plugin_type: Exploiter
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - windows
+title: Zerologon Exploiter
+version: 1.0.0
+description: >-
+    Exploits a privilege escalation vulnerability (CVE-2020-1472) in a Windows
+    server domain controller (DC) by using the Netlogon Remote Protocol (MS-NRPC).
+    This exploiter changes the password of a Windows server DC account, steals
+    credentials, and then attempts to restore the original DC password. The
+    victim DC will be unable to communicate with other DCs until the original
+    password has been restored. If Infection Monkey fails to restore the
+    password automatically, you'll have to do it manually. For more
+    information, see the documentation.
+safe: false
+remediation_suggestion: >-
+    Install Windows security updates.
+
+    The machine is vulnerable to a Zerologon exploit.
+    This attack was possible because the latest security updates from Microsoft
+    have not been applied to this machine. For more information about this vulnerability,
+    see [this](https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2020-1472).
+link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/zerologon/

@@ -146,3 +146,7 @@ secret_type_filter
 # Remove after 3168
 MimikatzOptions
 MimikatzOptions.excluded_username_prefix
+
+# Remove after 3164
+ZerologonOptions
+ZerologonOptions.max_attempts
