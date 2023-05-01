@@ -1,5 +1,7 @@
 from agent_plugins.credentials_collectors.mimikatz.src.mimikatz_options import MimikatzOptions
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
+from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
+from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
 from flask_security import Security
 
 from common import DIContainer
@@ -128,6 +130,8 @@ Lock.locked
 AgentPlugin.supported_operating_systems
 
 HadoopPlugin
+SMBPlugin
+WMIPlugin
 
 # User model fields
 User.active
@@ -138,13 +142,6 @@ User.email
 
 identity_type_filter
 secret_type_filter
-
-# Remove after #3163
-from agent_plugins.exploiters.wmi.src.wmi_command_builder import build_wmi_command
-from agent_plugins.exploiters.wmi.src.wmi_options import WMIOptions
-
-WMIOptions
-build_wmi_command
 
 # Remove after 3168
 MimikatzOptions
