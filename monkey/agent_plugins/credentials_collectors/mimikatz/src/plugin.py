@@ -3,7 +3,7 @@ from typing import Sequence
 
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
-from common.event_queue import IAgentEventQueue
+from common.event_queue import IAgentEventPublisher
 from common.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DUMPING_T1003_TAG
 from common.types import AgentID
 from infection_monkey.model import USERNAME_PREFIX
@@ -26,8 +26,10 @@ MIMIKATZ_EVENT_TAGS = frozenset(
 
 
 class Plugin:
-    def __init__(self, agent_event_queue: IAgentEventQueue, agent_id: AgentID):
-        self._agent_event_queue = agent_event_queue
+    def __init__(
+        self, *, plugin_name: str, agent_id: AgentID, agent_event_publisher: IAgentEventPublisher
+    ):
+        self._agent_event_publisher = agent_event_publisher
         self._agent_id = agent_id
 
     def run(self, options=None, interrupt=None) -> Sequence[Credentials]:
@@ -79,4 +81,4 @@ class Plugin:
             stolen_credentials=collected_credentials,
         )
 
-        self._agent_event_queue.publish(credentials_stolen_event)
+        self._agent_event_publisher.publish(credentials_stolen_event)
