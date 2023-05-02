@@ -5,13 +5,8 @@ from uuid import UUID
 import pytest
 from tests.monkey_island import InMemoryFileRepository, OpenErrorFileRepository
 
-from monkey_island.cc.repositories import (
-    FileAgentLogRepository,
-    IFileRepository,
-    RetrievalError,
-    UnknownRecordError,
-)
-from monkey_island.cc.services.log_service import IAgentLogRepository
+from monkey_island.cc.repositories import IFileRepository, RetrievalError, UnknownRecordError
+from monkey_island.cc.services.log_service import FileAgentLogRepository, IAgentLogRepository
 
 LOG_CONTENTS = "lots of useful information"
 AGENT_ID_1 = UUID("6bfd8b64-43d8-4449-8c70-d898aca74ad8")

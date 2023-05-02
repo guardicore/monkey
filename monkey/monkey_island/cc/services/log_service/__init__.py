@@ -1,1 +1,2 @@
 from .i_agent_log_repository import IAgentLogRepository
+from .file_agent_log_repository import FileAgentLogRepository
