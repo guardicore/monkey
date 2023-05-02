@@ -6,8 +6,9 @@ from flask_security import auth_token_required, roles_accepted
 
 from common.types import AgentID
 from monkey_island.cc.flask_utils import AbstractResource
-from monkey_island.cc.repositories import IAgentLogRepository, UnknownRecordError
+from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.services.authentication_service import AccountRole
+from monkey_island.cc.services.log_service import IAgentLogRepository
 
 logger = logging.getLogger(__name__)
 

@@ -5,7 +5,7 @@ import pytest
 from tests.common import StubDIContainer
 from tests.monkey_island import InMemoryAgentLogRepository
 
-from monkey_island.cc.repositories import IAgentLogRepository
+from monkey_island.cc.services.log_service import IAgentLogRepository
 
 AGENT_ID_1 = UUID("c0dd10b3-e21a-4da9-9d96-a99c19ebd7c5")
 AGENT_ID_2 = UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5")

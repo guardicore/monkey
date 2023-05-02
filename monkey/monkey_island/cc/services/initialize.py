@@ -39,7 +39,6 @@ from monkey_island.cc.repositories import (
     FileRepositoryLoggingDecorator,
     FileSimulationRepository,
     IAgentEventRepository,
-    IAgentLogRepository,
     IAgentPluginRepository,
     IAgentRepository,
     ICredentialsRepository,
@@ -66,6 +65,7 @@ from monkey_island.cc.services import (
     build_agent_binary_service,
     build_agent_configuration_service,
 )
+from monkey_island.cc.services.log_service import IAgentLogRepository
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 

@@ -10,7 +10,6 @@ from monkey_island.cc.island_event_handlers import (
 from monkey_island.cc.repositories import (
     AgentMachineFacade,
     IAgentEventRepository,
-    IAgentLogRepository,
     IAgentRepository,
     ICredentialsRepository,
     INodeRepository,
@@ -18,6 +17,7 @@ from monkey_island.cc.repositories import (
     NetworkModelUpdateFacade,
 )
 from monkey_island.cc.services import AgentSignalsService
+from monkey_island.cc.services.log_service import IAgentLogRepository
 
 
 def setup_island_event_handlers(container: DIContainer):
