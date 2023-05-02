@@ -13,7 +13,6 @@ from monkey_island.cc.mongo_consts import MONGO_URL
 from monkey_island.cc.resources import (
     AgentEvents,
     AgentHeartbeat,
-    AgentLogs,
     AgentPlugins,
     AgentPluginsManifest,
     Agents,
@@ -41,6 +40,7 @@ from monkey_island.cc.services import (
     register_agent_configuration_resources,
     setup_authentication,
 )
+from monkey_island.cc.services.log_service.flask_resources import AgentLogs
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"

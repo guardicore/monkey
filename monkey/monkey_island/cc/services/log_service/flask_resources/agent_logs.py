@@ -8,7 +8,8 @@ from common.types import AgentID
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.services.authentication_service import AccountRole
-from monkey_island.cc.services.log_service import IAgentLogRepository
+
+from ..i_agent_log_repository import IAgentLogRepository
 
 logger = logging.getLogger(__name__)
 
