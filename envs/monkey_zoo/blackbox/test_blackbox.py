@@ -10,8 +10,10 @@ from uuid import uuid4
 import pytest
 import requests
 
+from common.credentials import Credentials, NTHash, Password, Username
 from common.types import OTP, SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
+from envs.monkey_zoo.blackbox.analyzers.stolen_credentials_analyzer import StolenCredentialsAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.island_client.agent_requests import AgentRequests
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
@@ -521,9 +523,39 @@ class TestMonkeyBlackbox:
         )
 
     def test_depth_1_a(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, depth_1_a_test_configuration, "Depth1A test suite", masque=b"m0nk3y"
+        test_name = "Depth1A test suite"
+        masque = b"m0nk3y"
+
+        expected_credentials = {
+            Credentials(
+                identity=Username(username="m0nk3y"),
+                secret=NTHash(nt_hash="5da0889ea2081aa79f6852294cba4a5e"),
+            ),
+            Credentials(
+                identity=Username(username="m0nk3y"), secret=Password(password="pAJfG56JX><")
+            ),
+            Credentials(
+                identity=Username(username="m0nk3y"), secret=Password(password="Ivrrw5zEzs")
+            ),
+        }
+
+        stolen_credentials_analyzer = StolenCredentialsAnalyzer(island_client, expected_credentials)
+        communication_analyzer = CommunicationAnalyzer(
+            island_client,
+            get_target_ips(depth_1_a_test_configuration),
         )
+        log_handler = TestLogsHandler(
+            test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
+        )
+        ExploitationTest(
+            name=test_name,
+            island_client=island_client,
+            test_configuration=depth_1_a_test_configuration,
+            masque=masque,
+            analyzers=[stolen_credentials_analyzer, communication_analyzer],
+            timeout=DEFAULT_TIMEOUT_SECONDS + 30,
+            log_handler=log_handler,
+        ).run()
 
     def test_depth_3_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
@@ -538,11 +570,13 @@ class TestMonkeyBlackbox:
     # Not grouped because it's slow
     def test_zerologon_exploiter(self, island_client):
         test_name = "Zerologon_exploiter"
+
         expected_creds = [
             "Administrator",
             "aad3b435b51404eeaad3b435b51404ee",
             "2864b62ea4496934a5d6e86f50b834a5",
         ]
+
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
             island_client,

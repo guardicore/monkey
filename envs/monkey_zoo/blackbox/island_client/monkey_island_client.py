@@ -49,6 +49,10 @@ class MonkeyIslandClient(object):
         response = self.requests.get("api/propagation-credentials")
         return [Credentials(**credentials) for credentials in response.json()]
 
+    def get_stolen_credentials(self) -> Sequence[Credentials]:
+        response = self.requests.get("api/propagation-credentials/stolen-credentials")
+        return [Credentials(**credentials) for credentials in response.json()]
+
     @avoid_race_condition
     def import_config(self, test_configuration: TestConfiguration):
         self._set_island_mode()
