@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 pyinstaller = "*"
 ifaddr = "*"
-impacket = ">=0.9"
 ipaddress = ">=1.0.23"
 odict = "==1.7.0"
 psutil = ">=5.7.0"
