@@ -37,9 +37,9 @@ from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import (
     register_agent_binary_resources,
     register_agent_configuration_resources,
+    register_log_resources,
     setup_authentication,
 )
-from monkey_island.cc.services.log_service.flask_resources import AgentLogs, IslandLog
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
@@ -106,9 +106,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(RansomwareReport)
     api.add_resource(MonkeyExploitation)
 
-    api.add_resource(AgentLogs)
-    api.add_resource(IslandLog)
-
     api.add_resource(AgentEvents)
     api.add_resource(AgentSignals)
 
@@ -124,6 +121,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 
     register_agent_configuration_resources(api)
     register_agent_binary_resources(api)
+    register_log_resources(api)
 
 
 def init_rpc_endpoints(api: FlaskDIWrapper):
