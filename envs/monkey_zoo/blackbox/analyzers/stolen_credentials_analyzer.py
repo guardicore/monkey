@@ -6,7 +6,7 @@ from envs.monkey_zoo.blackbox.analyzers.analyzer_log import AnalyzerLog
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 
 
-class MimikatzAnalyzer(Analyzer):
+class StolenCredentialsAnalyzer(Analyzer):
     def __init__(
         self, island_client: MonkeyIslandClient, expected_stolen_credentials: Set[Credentials]
     ):
@@ -21,7 +21,7 @@ class MimikatzAnalyzer(Analyzer):
         stolen_credentials = set(self.island_client.get_stolen_credentials())
 
         if self.expected_stolen_credentials == stolen_credentials:
-            self.log.add_entry("\tMimikatz stole all expected credentials")
+            self.log.add_entry("\tAll expected credentials were stolen")
             return True
 
         if len(stolen_credentials) != len(self.expected_stolen_credentials):

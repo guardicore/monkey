@@ -13,7 +13,7 @@ import requests
 from common.credentials import Credentials, NTHash, Password, Username
 from common.types import OTP, SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
-from envs.monkey_zoo.blackbox.analyzers.mimikatz_analyzer import MimikatzAnalyzer
+from envs.monkey_zoo.blackbox.analyzers.stolen_credentials_analyzer import StolenCredentialsAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.island_client.agent_requests import AgentRequests
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
@@ -539,7 +539,7 @@ class TestMonkeyBlackbox:
             ),
         }
 
-        mimikatz_analyzer = MimikatzAnalyzer(island_client, expected_credentials)
+        stolen_credentials_analyzer = StolenCredentialsAnalyzer(island_client, expected_credentials)
         communication_analyzer = CommunicationAnalyzer(
             island_client,
             get_target_ips(depth_1_a_test_configuration),
@@ -552,7 +552,7 @@ class TestMonkeyBlackbox:
             island_client=island_client,
             test_configuration=depth_1_a_test_configuration,
             masque=masque,
-            analyzers=[mimikatz_analyzer, communication_analyzer],
+            analyzers=[stolen_credentials_analyzer, communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         ).run()
