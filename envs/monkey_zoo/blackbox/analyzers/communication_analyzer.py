@@ -19,9 +19,9 @@ class CommunicationAnalyzer(Analyzer):
 
         for machine_ip in self.machine_ips:
             if self._agent_communicated_back(machine_ip, agent_ips):
-                self.log.add_entry("Agent from {} communicated back".format(machine_ip))
+                self.log.add_entry("\tAgent from {} communicated back".format(machine_ip))
             else:
-                self.log.add_entry("Agent from {} didn't communicate back".format(machine_ip))
+                self.log.add_entry("\tAgent from {} didn't communicate back".format(machine_ip))
                 all_agents_communicated = False
 
         return all_agents_communicated
