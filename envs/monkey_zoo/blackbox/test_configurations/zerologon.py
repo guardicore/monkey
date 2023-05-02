@@ -15,7 +15,7 @@ from .utils import (
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
-        "ZerologonExploiter": {},
+        "Zerologon": {},
         "SMB": {"agent_binary_upload_timeout": 30, "smb_connect_timeout": 15},
     }
 
