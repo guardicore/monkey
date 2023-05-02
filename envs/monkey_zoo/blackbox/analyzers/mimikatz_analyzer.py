@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Sequence
 
 from common.credentials import Credentials
 from common.credentials.encoding import get_plaintext
@@ -8,9 +8,7 @@ from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIs
 
 
 class MimikatzAnalyzer(Analyzer):
-    def __init__(
-        self, island_client: MonkeyIslandClient, expected_stolen_credentials: List[Credentials]
-    ):
+    def __init__(self, island_client: MonkeyIslandClient, expected_stolen_credentials: List[str]):
         self.island_client = island_client
         self.expected_stolen_credentials = expected_stolen_credentials
 
@@ -32,7 +30,7 @@ class MimikatzAnalyzer(Analyzer):
         return self._all_expected_credentials_stolen(plaintext_stolen_credentials)
 
     @staticmethod
-    def _get_plaintext_stolen_credentials(stolen_credentials: List[Credentials]) -> List[str]:
+    def _get_plaintext_stolen_credentials(stolen_credentials: Sequence[Credentials]) -> List[str]:
         plaintext_stolen_credentials = set()
 
         for credentials in stolen_credentials:
