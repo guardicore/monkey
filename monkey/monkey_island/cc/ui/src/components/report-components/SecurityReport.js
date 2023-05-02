@@ -323,7 +323,7 @@ class ReportPageComponent extends AuthComponent {
       </ReactMarkdown>
     }
 
-    if(issue.type === 'ZerologonExploiter' && issue.password_restored === false){
+    if(issue.type === 'Zerologon' && issue.password_restored === false){
       remediation = <>
         {zerologonOverviewWithFailedPassResetWarning()}
         <br/>
