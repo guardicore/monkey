@@ -18,7 +18,6 @@ from monkey_island.cc.resources import (
     Agents,
     AgentSignals,
     ClearSimulationData,
-    IslandLog,
     Machines,
     Nodes,
     PropagationCredentials,
@@ -40,7 +39,7 @@ from monkey_island.cc.services import (
     register_agent_configuration_resources,
     setup_authentication,
 )
-from monkey_island.cc.services.log_service.flask_resources import AgentLogs
+from monkey_island.cc.services.log_service.flask_resources import AgentLogs, IslandLog
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
