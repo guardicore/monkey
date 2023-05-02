@@ -10,6 +10,7 @@ from uuid import uuid4
 import pytest
 import requests
 
+from common.credentials import Credentials, NTHash, Password, Username
 from common.types import OTP, SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.mimikatz_analyzer import MimikatzAnalyzer
@@ -525,12 +526,18 @@ class TestMonkeyBlackbox:
         test_name = "Depth1A test suite"
         masque = b"m0nk3y"
 
-        expected_credentials: List[str] = [
-            "fc525c9683e8fe067095ba2ddc971889",
-            "e1c0dc690821c13b10a41dccfc72e43a",
-            "vakaris_zilius",
-            "m0nk3y",
-        ]
+        expected_credentials = {
+            Credentials(
+                identity=Username(username="m0nk3y"),
+                secret=NTHash(nt_hash="5da0889ea2081aa79f6852294cba4a5e"),
+            ),
+            Credentials(
+                identity=Username(username="m0nk3y"), secret=Password(password="pAJfG56JX><")
+            ),
+            Credentials(
+                identity=Username(username="m0nk3y"), secret=Password(password="Ivrrw5zEzs")
+            ),
+        }
 
         mimikatz_analyzer = MimikatzAnalyzer(island_client, expected_credentials)
         communication_analyzer = CommunicationAnalyzer(
