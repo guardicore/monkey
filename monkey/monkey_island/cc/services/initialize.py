@@ -63,8 +63,8 @@ from monkey_island.cc.services import (
     IAgentConfigurationService,
     build_agent_binary_service,
     build_agent_configuration_service,
+    setup_log_service,
 )
-from monkey_island.cc.services.log_service import FileAgentLogRepository, IAgentLogRepository
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
@@ -162,7 +162,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(INodeRepository, container.resolve(MongoNodeRepository))
     container.register_instance(IMachineRepository, _build_machine_repository(container))
     container.register_instance(IAgentRepository, container.resolve(MongoAgentRepository))
-    container.register_instance(IAgentLogRepository, container.resolve(FileAgentLogRepository))
     container.register_instance(AgentMachineFacade, container.resolve(AgentMachineFacade))
     container.register_instance(
         NetworkModelUpdateFacade, container.resolve(NetworkModelUpdateFacade)
@@ -216,3 +215,4 @@ def _register_services(container: DIContainer):
         IAgentConfigurationService, build_agent_configuration_service(container)
     )
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
+    setup_log_service(container)
