@@ -29,5 +29,9 @@ rm requirements.txt
 #exit venv
 deactivate
 
+# The Compress-Archive command is stupidly slow with debugging turned on. Turn it off temporarily.
+Set-PSDebug -Off
 Compress-Archive -Path "$plugin_path\src\vendor-windows" -Destination "$workspace\vendor-windows.zip" -Force
+Set-PSDebug -Trace 1
+
 Remove-Item $plugin_path\venv -Recurse -Force
