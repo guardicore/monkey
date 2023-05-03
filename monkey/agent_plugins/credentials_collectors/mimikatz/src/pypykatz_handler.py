@@ -6,6 +6,7 @@ from pypykatz.pypykatz import pypykatz
 
 from .windows_credentials import WindowsCredentials
 
+logging.getLogger("pypykatz").setLevel(logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 CREDENTIAL_TYPES = [
