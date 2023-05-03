@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Mapping, Sequence
+from typing import Any, Dict, Mapping, Sequence
 
 from common.agent_plugins import AgentPluginType
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
@@ -43,7 +43,7 @@ class Puppet(IPuppet):
         self._plugin_registry.load_plugin(plugin_type, plugin_name, plugin)
 
     def run_credentials_collector(
-        self, name: str, options: Dict, interrupt: Event
+        self, name: str, options: Mapping[str, Any], interrupt: Event
     ) -> Sequence[Credentials]:
         compatible_with_local_os = (
             self._plugin_compatibility_verifier.verify_local_operating_system_compatibility(

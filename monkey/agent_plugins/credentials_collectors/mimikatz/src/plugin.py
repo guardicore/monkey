@@ -1,13 +1,14 @@
 import logging
-from typing import Sequence
+from pprint import pformat
+from typing import Any, Collection, Mapping, Sequence
 
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IAgentEventPublisher
 from common.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DUMPING_T1003_TAG
-from common.types import AgentID
-from infection_monkey.model import USERNAME_PREFIX
+from common.types import AgentID, Event
 
+from .mimikatz_options import MimikatzOptions
 from .pypykatz_handler import get_windows_creds
 from .windows_credentials import WindowsCredentials
 
@@ -32,13 +33,24 @@ class Plugin:
         self._agent_event_publisher = agent_event_publisher
         self._agent_id = agent_id
 
-    def run(self, *, options=None, interrupt=None) -> Sequence[Credentials]:
+    def run(self, *, options: Mapping[str, Any], interrupt: Event) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
+
+        try:
+            logger.debug(f"Parsing options: {pformat(options)}")
+            mimikatz_options = MimikatzOptions(**options)
+        except Exception as err:
+            logger.exception(f"Failed to parse mimikatz options: {err}")
+            return []
+
         windows_credentials = get_windows_creds()
         unique_credentials = list(set(windows_credentials))
         logger.info(f"Pypykatz gathered {len(unique_credentials)} unique credentials.")
 
         collected_credentials = self._to_credentials(unique_credentials)
+        collected_credentials = self._remove_excluded_usernames(
+            collected_credentials, mimikatz_options.excluded_username_prefixes
+        )
         self._publish_credentials_stolen_event(collected_credentials)
 
         return collected_credentials
@@ -47,12 +59,6 @@ class Plugin:
     def _to_credentials(windows_credentials: Sequence[WindowsCredentials]) -> Sequence[Credentials]:
         credentials = []
         for wc in windows_credentials:
-            # Mimikatz picks up users created by the Monkey even if they're successfully deleted
-            # since it picks up creds from the registry. The newly created users are not removed
-            # from the registry until a reboot of the system, hence this check.
-            if wc.username and wc.username.startswith(USERNAME_PREFIX):
-                continue
-
             identity = None
 
             if wc.username:
@@ -74,6 +80,28 @@ class Plugin:
                 credentials.append(Credentials(identity=identity, secret=None))
 
         return credentials
+
+    @staticmethod
+    def _remove_excluded_usernames(
+        credentials: Collection[Credentials], excluded_username_prefixes: Collection[str]
+    ) -> Sequence[Credentials]:
+        filtered_credentials = []
+        for credential in credentials:
+            if not isinstance(credential.identity, Username):
+                filtered_credentials.append(credential)
+                continue
+
+            excluded = False
+            for prefix in excluded_username_prefixes:
+                if credential.identity.username.startswith(prefix):
+                    logger.debug(f'Excluding credentials for username with prefix "{prefix}"')
+                    excluded = True
+                    break
+
+            if not excluded:
+                filtered_credentials.append(credential)
+
+        return filtered_credentials
 
     def _publish_credentials_stolen_event(self, collected_credentials: Sequence[Credentials]):
         credentials_stolen_event = CredentialsStolenEvent(

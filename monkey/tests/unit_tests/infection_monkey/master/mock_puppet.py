@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Sequence
+from typing import Any, Dict, Mapping, Sequence
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
@@ -29,7 +29,9 @@ class MockPuppet(IPuppet):
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
         logger.debug(f"load_plugin({plugin}, {plugin_type})")
 
-    def run_credentials_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
+    def run_credentials_collector(
+        self, name: str, options: Mapping[str, Any], interrupt: Event
+    ) -> Sequence[Credentials]:
         logger.debug(f"run_credentials_collector({name})")
 
         if name == "SSHCollector":

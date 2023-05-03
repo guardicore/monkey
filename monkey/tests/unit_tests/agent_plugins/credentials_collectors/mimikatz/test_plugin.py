@@ -1,7 +1,9 @@
-from typing import Sequence
+import threading
+from typing import Any, Dict, Sequence
 from unittest.mock import MagicMock
 
 import pytest
+from agent_plugins.credentials_collectors.mimikatz.src.mimikatz_options import MimikatzOptions
 from agent_plugins.credentials_collectors.mimikatz.src.plugin import MIMIKATZ_EVENT_TAGS, Plugin
 from agent_plugins.credentials_collectors.mimikatz.src.windows_credentials import WindowsCredentials
 
@@ -21,11 +23,11 @@ def patch_pypykatz(win_creds: Sequence[WindowsCredentials], monkeypatch):
     )
 
 
-def collect_credentials() -> Sequence[Credentials]:
+def collect_credentials(options: Dict[str, Any] = {}) -> Sequence[Credentials]:
     mock_event_publisher = MagicMock(spec=IAgentEventPublisher)
     return Plugin(
         plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
-    ).run()
+    ).run(options=options, interrupt=threading.Event())
 
 
 @pytest.mark.parametrize(
@@ -132,7 +134,7 @@ def test_mimikatz_credentials_stolen_event_published(monkeypatch):
     mimikatz_credential_collector = Plugin(
         plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
     )
-    mimikatz_credential_collector.run()
+    mimikatz_credential_collector.run(options={}, interrupt=threading.Event())
 
     mock_event_publisher.publish.assert_called_once()
 
@@ -148,7 +150,7 @@ def test_mimikatz_credentials_stolen_event_tags(monkeypatch):
     mimikatz_credential_collector = Plugin(
         plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
     )
-    mimikatz_credential_collector.run()
+    mimikatz_credential_collector.run(options={}, interrupt=threading.Event())
 
     mock_event_publisher_call_args = mock_event_publisher.publish.call_args[0][0]
 
@@ -167,8 +169,40 @@ def test_mimikatz_credentials_stolen_event_stolen_credentials(monkeypatch):
     mimikatz_credential_collector = Plugin(
         plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
     )
-    collected_credentials = mimikatz_credential_collector.run()
+    collected_credentials = mimikatz_credential_collector.run(
+        options={}, interrupt=threading.Event()
+    )
 
     mock_event_publisher_call_args = mock_event_publisher.publish.call_args[0][0]
 
     assert mock_event_publisher_call_args.stolen_credentials == collected_credentials
+
+
+def test_exclude_username_prefixes(monkeypatch):
+    USER_1 = "user1"
+    USER_2 = "user2"
+    PASSWORD = "secret"
+    win_creds = [
+        WindowsCredentials(username=USER_1, password=PASSWORD, ntlm_hash="", lm_hash=""),
+        WindowsCredentials(
+            username=f"sensitive-{USER_1}", password=PASSWORD, ntlm_hash="", lm_hash=""
+        ),
+        WindowsCredentials(username=USER_2, password=PASSWORD, ntlm_hash="", lm_hash=""),
+        WindowsCredentials(
+            username=f"sensitive-{USER_2}", password=PASSWORD, ntlm_hash="", lm_hash=""
+        ),
+        WindowsCredentials(username="administrator", password=PASSWORD, ntlm_hash="", lm_hash=""),
+        WindowsCredentials(username="admin", password=PASSWORD, ntlm_hash="", lm_hash=""),
+    ]
+    patch_pypykatz(win_creds, monkeypatch)
+
+    password = Password(password=PASSWORD)
+    expected_credentials = {
+        Credentials(identity=Username(username=USER_1), secret=password),
+        Credentials(identity=Username(username=USER_2), secret=password),
+    }
+    options = MimikatzOptions(excluded_username_prefixes=["sensitive-", "admin"])
+
+    collected_credentials = collect_credentials(options.dict(simplify=True))
+    assert len(collected_credentials) == len(expected_credentials)
+    assert set(collected_credentials) == expected_credentials
