@@ -15,3 +15,16 @@ class WindowsCredentials:
             "ntlm_hash": self.ntlm_hash,
             "lm_hash": self.lm_hash,
         }
+
+    def __eq__(self, other):
+        if isinstance(other, WindowsCredentials):
+            return (
+                self.username == other.username
+                and self.password == other.password
+                and self.ntlm_hash == other.ntlm_hash
+                and self.lm_hash == other.lm_hash
+            )
+        return False
+
+    def __hash__(self):
+        return hash((self.username, self.password, self.ntlm_hash, self.lm_hash))
