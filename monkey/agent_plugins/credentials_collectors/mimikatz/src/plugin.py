@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Mapping, Sequence
+from pprint import pformat
+from typing import Any, Collection, Mapping, Sequence
 
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
@@ -8,6 +9,7 @@ from common.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DUMPING_
 from common.types import AgentID, Event
 from infection_monkey.model import USERNAME_PREFIX
 
+from .mimikatz_options import MimikatzOptions
 from .pypykatz_handler import get_windows_creds
 from .windows_credentials import WindowsCredentials
 
@@ -34,11 +36,22 @@ class Plugin:
 
     def run(self, *, options: Mapping[str, Any], interrupt: Event) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
+
+        try:
+            logger.debug(f"Parsing options: {pformat(options)}")
+            mimikatz_options = MimikatzOptions(**options)
+        except Exception as err:
+            logger.exception(f"Failed to parse mimikatz options: {err}")
+            return []
+
         windows_credentials = get_windows_creds()
         unique_credentials = list(set(windows_credentials))
         logger.info(f"Pypykatz gathered {len(unique_credentials)} unique credentials.")
 
         collected_credentials = self._to_credentials(unique_credentials)
+        collected_credentials = self._remove_excluded_usernames(
+            collected_credentials, mimikatz_options.excluded_username_prefixes
+        )
         self._publish_credentials_stolen_event(collected_credentials)
 
         return collected_credentials
@@ -74,6 +87,28 @@ class Plugin:
                 credentials.append(Credentials(identity=identity, secret=None))
 
         return credentials
+
+    @staticmethod
+    def _remove_excluded_usernames(
+        credentials: Collection[Credentials], excluded_username_prefixes: Collection[str]
+    ) -> Sequence[Credentials]:
+        filtered_credentials = []
+        for credential in credentials:
+            if not isinstance(credential.identity, Username):
+                filtered_credentials.append(credential)
+                continue
+
+            excluded = False
+            for prefix in excluded_username_prefixes:
+                if credential.identity.username.startswith(prefix):
+                    logger.debug(f'Excluding credentials for username with prefix "{prefix}"')
+                    excluded = True
+                    break
+
+            if not excluded:
+                filtered_credentials.append(credential)
+
+        return filtered_credentials
 
     def _publish_credentials_stolen_event(self, collected_credentials: Sequence[Credentials]):
         credentials_stolen_event = CredentialsStolenEvent(

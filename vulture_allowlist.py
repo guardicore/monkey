@@ -142,7 +142,3 @@ User.email
 
 identity_type_filter
 secret_type_filter
-
-# Remove after 3168
-MimikatzOptions
-MimikatzOptions.excluded_username_prefixes
