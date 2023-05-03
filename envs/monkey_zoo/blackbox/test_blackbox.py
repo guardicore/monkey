@@ -545,6 +545,10 @@ class TestMonkeyBlackbox:
                 identity=Username(username="m0nk3y"),
                 secret=NTHash(nt_hash="fc525c9683e8fe067095ba2ddc971889"),
             ),
+            Credentials(
+                identity=Username(username="m0nk3y"),
+                secret=NTHash(nt_hash="201fe0a0db9733e419875201c6bd36f2"),
+            ),
         }
 
         stolen_credentials_analyzer = StolenCredentialsAnalyzer(island_client, expected_credentials)
