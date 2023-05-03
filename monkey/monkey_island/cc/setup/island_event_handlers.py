@@ -17,7 +17,6 @@ from monkey_island.cc.repositories import (
     NetworkModelUpdateFacade,
 )
 from monkey_island.cc.services import AgentSignalsService
-from monkey_island.cc.services.log_service import IAgentLogRepository
 
 
 def setup_island_event_handlers(container: DIContainer):
@@ -68,7 +67,6 @@ def _subscribe_clear_simulation_data_events(
 
     for i_repository in [
         IAgentEventRepository,
-        IAgentLogRepository,
         IAgentRepository,
         INodeRepository,
     ]:
