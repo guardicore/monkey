@@ -10,7 +10,6 @@ ipaddress = ">=1.0.23"
 odict = "==1.7.0"
 psutil = ">=5.7.0"
 pymssql = "*"
-pypykatz = "==0.5.2"
 requests = ">=2.24"
 urllib3 = "==1.26.5"
 WMI = {version = "==1.5.1", sys_platform = "== 'win32'"}

@@ -2,33 +2,30 @@ from typing import Sequence
 from unittest.mock import MagicMock
 
 import pytest
+from agent_plugins.credentials_collectors.mimikatz.src.plugin import MIMIKATZ_EVENT_TAGS, Plugin
+from agent_plugins.credentials_collectors.mimikatz.src.windows_credentials import WindowsCredentials
 
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
-from common.event_queue import IAgentEventQueue
+from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
-from infection_monkey.credential_collectors import MimikatzCredentialCollector
-from infection_monkey.credential_collectors.mimikatz_collector.mimikatz_credential_collector import (  # noqa: E501
-    MIMIKATZ_EVENT_TAGS,
-)
-from infection_monkey.credential_collectors.mimikatz_collector.windows_credentials import (
-    WindowsCredentials,
-)
 
+PLUGIN_NAME = "TEST_MIMIKATZ"
 AGENT_ID = AgentID("be11ad56-995d-45fd-be03-e7806a47b56b")
 
 
 def patch_pypykatz(win_creds: Sequence[WindowsCredentials], monkeypatch):
     monkeypatch.setattr(
-        "infection_monkey.credential_collectors"
-        ".mimikatz_collector.pypykatz_handler.get_windows_creds",
+        "agent_plugins.credentials_collectors.mimikatz.src" ".plugin.get_windows_creds",
         lambda: win_creds,
     )
 
 
 def collect_credentials() -> Sequence[Credentials]:
-    mock_event_queue = MagicMock(spec=IAgentEventQueue)
-    return MimikatzCredentialCollector(mock_event_queue, AGENT_ID).run()
+    mock_event_publisher = MagicMock(spec=IAgentEventPublisher)
+    return Plugin(
+        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+    ).run()
 
 
 @pytest.mark.parametrize(
@@ -61,7 +58,7 @@ def test_pypykatz_result_parsing_duplicates(monkeypatch):
     patch_pypykatz(win_creds, monkeypatch)
 
     collected_credentials = collect_credentials()
-    assert len(collected_credentials) == 2
+    assert len(collected_credentials) == 1
 
 
 def test_pypykatz_result_parsing_defaults(monkeypatch):
@@ -129,33 +126,37 @@ def test_pypykatz_result_parsing_no_secrets(monkeypatch):
 
 
 def test_mimikatz_credentials_stolen_event_published(monkeypatch):
-    mock_event_queue = MagicMock(spec=IAgentEventQueue)
+    mock_event_publisher = MagicMock(spec=IAgentEventPublisher)
     patch_pypykatz([], monkeypatch)
 
-    mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue, AGENT_ID)
+    mimikatz_credential_collector = Plugin(
+        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+    )
     mimikatz_credential_collector.run()
 
-    mock_event_queue.publish.assert_called_once()
+    mock_event_publisher.publish.assert_called_once()
 
-    mock_event_queue_call_args = mock_event_queue.publish.call_args[0][0]
+    mock_event_publisher_call_args = mock_event_publisher.publish.call_args[0][0]
 
-    assert isinstance(mock_event_queue_call_args, CredentialsStolenEvent)
+    assert isinstance(mock_event_publisher_call_args, CredentialsStolenEvent)
 
 
 def test_mimikatz_credentials_stolen_event_tags(monkeypatch):
-    mock_event_queue = MagicMock(spec=IAgentEventQueue)
+    mock_event_publisher = MagicMock(spec=IAgentEventPublisher)
     patch_pypykatz([], monkeypatch)
 
-    mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue, AGENT_ID)
+    mimikatz_credential_collector = Plugin(
+        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+    )
     mimikatz_credential_collector.run()
 
-    mock_event_queue_call_args = mock_event_queue.publish.call_args[0][0]
+    mock_event_publisher_call_args = mock_event_publisher.publish.call_args[0][0]
 
-    assert mock_event_queue_call_args.tags == MIMIKATZ_EVENT_TAGS
+    assert mock_event_publisher_call_args.tags == MIMIKATZ_EVENT_TAGS
 
 
 def test_mimikatz_credentials_stolen_event_stolen_credentials(monkeypatch):
-    mock_event_queue = MagicMock(spec=IAgentEventQueue)
+    mock_event_publisher = MagicMock(spec=IAgentEventPublisher)
     win_creds = [
         WindowsCredentials(
             username="user2", password="secret2", lm_hash="0182BD0BD4444BF8FC83B5D9042EED2E"
@@ -163,9 +164,11 @@ def test_mimikatz_credentials_stolen_event_stolen_credentials(monkeypatch):
     ]
     patch_pypykatz(win_creds, monkeypatch)
 
-    mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue, AGENT_ID)
+    mimikatz_credential_collector = Plugin(
+        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+    )
     collected_credentials = mimikatz_credential_collector.run()
 
-    mock_event_queue_call_args = mock_event_queue.publish.call_args[0][0]
+    mock_event_publisher_call_args = mock_event_publisher.publish.call_args[0][0]
 
-    assert mock_event_queue_call_args.stolen_credentials == collected_credentials
+    assert mock_event_publisher_call_args.stolen_credentials == collected_credentials

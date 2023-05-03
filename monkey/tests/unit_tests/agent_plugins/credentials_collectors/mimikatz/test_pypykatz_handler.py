@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from infection_monkey.credential_collectors.mimikatz_collector.pypykatz_handler import (
+from agent_plugins.credentials_collectors.mimikatz.src.pypykatz_handler import (
     _get_creds_from_pypykatz_session,
 )
 
@@ -154,5 +154,6 @@ class TestPypykatzHandler(TestCase):
             },
             {"username": "test", "ntlm_hash": "", "password": "canyoufindit", "lm_hash": ""},
         ]
-        results = [result.to_dict() for result in results]
-        [self.assertTrue(test_dict in results) for test_dict in test_dicts]
+        results_dicts = [result.to_dict() for result in results]
+        for test_dict in test_dicts:
+            self.assertTrue(test_dict in results_dicts)

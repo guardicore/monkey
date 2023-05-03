@@ -3,13 +3,12 @@ from typing import Sequence
 
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
-from common.event_queue import IAgentEventQueue
+from common.event_queue import IAgentEventPublisher
 from common.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DUMPING_T1003_TAG
 from common.types import AgentID
-from infection_monkey.i_puppet import ICredentialsCollector
 from infection_monkey.model import USERNAME_PREFIX
 
-from . import pypykatz_handler
+from .pypykatz_handler import get_windows_creds
 from .windows_credentials import WindowsCredentials
 
 logger = logging.getLogger(__name__)
@@ -26,19 +25,20 @@ MIMIKATZ_EVENT_TAGS = frozenset(
 )
 
 
-class MimikatzCredentialCollector(ICredentialsCollector):
-    def __init__(self, agent_event_queue: IAgentEventQueue, agent_id: AgentID):
-        self._agent_event_queue = agent_event_queue
+class Plugin:
+    def __init__(
+        self, *, plugin_name: str, agent_id: AgentID, agent_event_publisher: IAgentEventPublisher
+    ):
+        self._agent_event_publisher = agent_event_publisher
         self._agent_id = agent_id
 
-    def run(self, options=None, interrupt=None) -> Sequence[Credentials]:
+    def run(self, *, options=None, interrupt=None) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
-        windows_credentials = pypykatz_handler.get_windows_creds()
+        windows_credentials = get_windows_creds()
+        unique_credentials = list(set(windows_credentials))
+        logger.info(f"Pypykatz gathered {len(unique_credentials)} unique credentials.")
 
-        logger.info(f"Pypykatz gathered {len(windows_credentials)} credentials.")
-
-        collected_credentials = MimikatzCredentialCollector._to_credentials(windows_credentials)
-
+        collected_credentials = self._to_credentials(unique_credentials)
         self._publish_credentials_stolen_event(collected_credentials)
 
         return collected_credentials
@@ -82,4 +82,4 @@ class MimikatzCredentialCollector(ICredentialsCollector):
             stolen_credentials=collected_credentials,
         )
 
-        self._agent_event_queue.publish(credentials_stolen_event)
+        self._agent_event_publisher.publish(credentials_stolen_event)
