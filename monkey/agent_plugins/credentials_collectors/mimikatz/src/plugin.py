@@ -35,9 +35,10 @@ class Plugin:
     def run(self, *, options=None, interrupt=None) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
         windows_credentials = get_windows_creds()
-        logger.info(f"Pypykatz gathered {len(windows_credentials)} credentials.")
+        unique_credentials = list(set(windows_credentials))
+        logger.info(f"Pypykatz gathered {len(unique_credentials)} unique credentials.")
 
-        collected_credentials = self._to_credentials(windows_credentials)
+        collected_credentials = self._to_credentials(unique_credentials)
         self._publish_credentials_stolen_event(collected_credentials)
 
         return collected_credentials

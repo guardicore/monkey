@@ -58,7 +58,7 @@ def test_pypykatz_result_parsing_duplicates(monkeypatch):
     patch_pypykatz(win_creds, monkeypatch)
 
     collected_credentials = collect_credentials()
-    assert len(collected_credentials) == 2
+    assert len(collected_credentials) == 1
 
 
 def test_pypykatz_result_parsing_defaults(monkeypatch):
