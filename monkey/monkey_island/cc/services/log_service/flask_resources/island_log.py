@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 from pathlib import Path
 
 from flask_security import auth_token_required, roles_accepted
@@ -21,5 +22,8 @@ class IslandLog(AbstractResource):
     def get(self):
         try:
             return get_text_file_contents(self._island_log_file_path)
+        except FileNotFoundError:
+            logger.error("Monkey Island logs do not exist", exc_info=True)
+            return "", HTTPStatus.NOT_FOUND
         except Exception:
             logger.error("Monkey Island logs failed to download", exc_info=True)
