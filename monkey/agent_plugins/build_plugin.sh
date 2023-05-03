@@ -21,9 +21,14 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 pushd "$PLUGIN_PATH" || fail "$PLUGIN_PATH does not exist"
+VENDOR_DIR=vendor
+if [ -d "src/vendor-windows" ]; then
+    VENDOR_DIR=vendor-linux
+fi
+
 pip install pipenv
 pipenv requirements >> requirements.txt
-pip install -r requirements.txt -t src/vendor
+pip install -r requirements.txt -t src/$VENDOR_DIR
 rm requirements.txt
 
 # Package everything up
@@ -32,7 +37,7 @@ pushd "$PLUGIN_PATH/src" || fail "$PLUGIN_PATH/src does not exist"
 source_archive=$PLUGIN_PATH/$SOURCE_FILENAME
 tar -cf "$source_archive" --exclude __pycache__ --exclude .mypy_cache --exclude .pytest_cache --exclude .git --exclude .gitignore --exclude .DS_Store -- *
 
-rm -rf vendor
+rm -rf vendor*
 popd || exit 1
 
 plugin_filename=$(get_plugin_filename) || fail "Failed to get plugin filename: $plugin_filename"
