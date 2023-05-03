@@ -11,6 +11,7 @@ Write-Output "Building Windows vendor directory"
 
 Set-Location $plugin_path
 
+Remove-Item "$workspace\vendor-windows.zip" -Force
 Remove-Item $plugin_path\venv -Recurse -Force
 & python -m venv "$plugin_path\venv"
 & "$plugin_path\venv\Scripts\Activate.ps1"
@@ -28,5 +29,5 @@ rm requirements.txt
 #exit venv
 deactivate
 
-Compress-Archive -Path "$plugin_path\src\vendor-windows" -Destination "$workspace\vendor-windows.zip"
+Compress-Archive -Path "$plugin_path\src\vendor-windows" -Destination "$workspace\vendor-windows.zip" -Force
 Remove-Item $plugin_path\venv -Recurse -Force
