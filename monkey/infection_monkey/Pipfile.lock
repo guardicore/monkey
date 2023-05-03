@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cd78686713d9747261ff6f0d932b1db6d4d339c07d25ffd833a6ccf4bbebb2d6"
+            "sha256": "0d109699ca20e8be6d7d204aade1b06848d23bb85c7fe463a195fdb8a31bd815"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -222,14 +222,6 @@
             ],
             "markers": "python_full_version >= '3.7.0'",
             "version": "==3.1.0"
-        },
-        "colorama": {
-            "hashes": [
-                "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44",
-                "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"
-            ],
-            "markers": "platform_system == 'Windows'",
-            "version": "==0.4.6"
         },
         "constantly": {
             "hashes": [
@@ -615,13 +607,6 @@
             "markers": "python_version >= '3.7'",
             "version": "==0.19.3"
         },
-        "pysmb": {
-            "hashes": [
-                "sha256:ad613988d54b1317ca0466dc3546f47b2dddea16e645d755d29fb75a86903326"
-            ],
-            "index": "pypi",
-            "version": "==1.2.9.1"
-        },
         "pyspnego": {
             "hashes": [
                 "sha256:187aa308fb40be4292753e86f9ee3df1c48500accdb50bcfecb7246b618cd7d8",
@@ -716,14 +701,6 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.16.0"
-        },
-        "tqdm": {
-            "hashes": [
-                "sha256:1871fb68a86b8fb3b59ca4cdd3dcccbc7e6d613eeed31f4c332531977b89beb5",
-                "sha256:c4f53a17fe37e132815abceec022631be8ffe1b9381c2e6e30aa70edc99e9671"
-            ],
-            "markers": "python_version >= '3.7'",
-            "version": "==4.65.0"
         },
         "twisted": {
             "extras": [
@@ -833,7 +810,7 @@
                 "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44",
                 "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"
             ],
-            "markers": "platform_system == 'Windows'",
+            "markers": "sys_platform == 'win32'",
             "version": "==0.4.6"
         },
         "freezegun": {
