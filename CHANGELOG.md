@@ -20,6 +20,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Plugins are now being checked for local OS compatibility. #3275
 - A bug that could prevent multi-hop propagation via SMB. #3173
 
+### Security
+- Fixes a bug where OTPs can be leaked by the hadoop exploiter. #3296
+
 ## [2.1.0] - 2023-04-19
 ### Added
 - Logout button. #3063

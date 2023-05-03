@@ -32,12 +32,14 @@ class OTPFormatter(logging.Formatter):
     Formatter that replaces OTPs in log messages with asterisks
     """
 
-    def format(self, record):
-        otp_regex = re.compile(f"{AGENT_OTP_ENVIRONMENT_VARIABLE}=[a-zA-Z0-9]*")
-        otp_replacement = f"{AGENT_OTP_ENVIRONMENT_VARIABLE}={'*' * 6}"
+    OTP_REGEX = re.compile(f"{AGENT_OTP_ENVIRONMENT_VARIABLE}=\\S+[\\s;]+")
+    OTP_REPLACEMENT = f"{AGENT_OTP_ENVIRONMENT_VARIABLE}={'*' * 6}"
 
+    def format(self, record):
         original_log_message = logging.Formatter.format(self, record)
-        formatted_log_message = re.sub(otp_regex, otp_replacement, original_log_message)
+        formatted_log_message = re.sub(
+            OTPFormatter.OTP_REGEX, OTPFormatter.OTP_REPLACEMENT, original_log_message
+        )
 
         return formatted_log_message
 
