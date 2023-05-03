@@ -23,15 +23,13 @@ class StolenCredentialsAnalyzer(Analyzer):
         if self.expected_stolen_credentials == stolen_credentials:
             self.log.add_entry("All expected credentials were stolen")
             return True
-
-        if len(stolen_credentials) != len(self.expected_stolen_credentials):
+        else:
+            self.log.add_entry(
+                "The contents of the stolen credentials did not match the expected credentials"
+            )
             self.log.add_entry(
                 f"Expected {len(self.expected_stolen_credentials)} credentials to be stolen but "
                 f"{len(stolen_credentials)} were stolen"
-            )
-        elif self.expected_stolen_credentials != stolen_credentials:
-            self.log.add_entry(
-                "The contents of the stolen credentials did not match the expected credentials"
             )
 
         return False
