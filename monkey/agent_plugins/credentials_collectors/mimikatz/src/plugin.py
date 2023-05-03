@@ -1,11 +1,11 @@
 import logging
-from typing import Sequence
+from typing import Any, Mapping, Sequence
 
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IAgentEventPublisher
 from common.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DUMPING_T1003_TAG
-from common.types import AgentID
+from common.types import AgentID, Event
 from infection_monkey.model import USERNAME_PREFIX
 
 from .pypykatz_handler import get_windows_creds
@@ -32,7 +32,7 @@ class Plugin:
         self._agent_event_publisher = agent_event_publisher
         self._agent_id = agent_id
 
-    def run(self, *, options=None, interrupt=None) -> Sequence[Credentials]:
+    def run(self, *, options: Mapping[str, Any], interrupt: Event) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
         windows_credentials = get_windows_creds()
         unique_credentials = list(set(windows_credentials))

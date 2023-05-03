@@ -1,4 +1,5 @@
-from typing import Sequence
+import threading
+from typing import Any, Dict, Sequence
 from unittest.mock import MagicMock
 
 import pytest
@@ -21,11 +22,11 @@ def patch_pypykatz(win_creds: Sequence[WindowsCredentials], monkeypatch):
     )
 
 
-def collect_credentials() -> Sequence[Credentials]:
+def collect_credentials(options: Dict[str, Any] = {}) -> Sequence[Credentials]:
     mock_event_publisher = MagicMock(spec=IAgentEventPublisher)
     return Plugin(
         plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
-    ).run()
+    ).run(options=options, interrupt=threading.Event())
 
 
 @pytest.mark.parametrize(
@@ -132,7 +133,7 @@ def test_mimikatz_credentials_stolen_event_published(monkeypatch):
     mimikatz_credential_collector = Plugin(
         plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
     )
-    mimikatz_credential_collector.run()
+    mimikatz_credential_collector.run(options={}, interrupt=threading.Event())
 
     mock_event_publisher.publish.assert_called_once()
 
@@ -148,7 +149,7 @@ def test_mimikatz_credentials_stolen_event_tags(monkeypatch):
     mimikatz_credential_collector = Plugin(
         plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
     )
-    mimikatz_credential_collector.run()
+    mimikatz_credential_collector.run(options={}, interrupt=threading.Event())
 
     mock_event_publisher_call_args = mock_event_publisher.publish.call_args[0][0]
 
@@ -167,7 +168,9 @@ def test_mimikatz_credentials_stolen_event_stolen_credentials(monkeypatch):
     mimikatz_credential_collector = Plugin(
         plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
     )
-    collected_credentials = mimikatz_credential_collector.run()
+    collected_credentials = mimikatz_credential_collector.run(
+        options={}, interrupt=threading.Event()
+    )
 
     mock_event_publisher_call_args = mock_event_publisher.publish.call_args[0][0]
 
