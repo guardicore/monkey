@@ -1,4 +1,3 @@
 from .i_agent_log_repository import IAgentLogRepository
 
-from .flask_resources.register_resources import register_resources
 from .setup_log_service import setup_log_service

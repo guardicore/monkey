@@ -37,8 +37,8 @@ from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import (
     register_agent_binary_resources,
     register_agent_configuration_resources,
-    register_log_resources,
     setup_authentication,
+    setup_log_service,
 )
 from monkey_island.cc.services.representations import output_json
 
@@ -121,7 +121,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 
     register_agent_configuration_resources(api)
     register_agent_binary_resources(api)
-    register_log_resources(api)
 
 
 def init_rpc_endpoints(api: FlaskDIWrapper):
@@ -153,6 +152,7 @@ def init_app(
         app=app,
     )
     setup_authentication(api, app, container, data_dir, limiter)
+    setup_log_service(api, container)
     flask_resource_manager = FlaskDIWrapper(api, container)
     init_api_resources(flask_resource_manager)
 
