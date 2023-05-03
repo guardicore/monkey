@@ -3,7 +3,8 @@ import re
 
 from monkey_island.cc.models import AgentID
 from monkey_island.cc.repositories import IFileRepository, RepositoryError, RetrievalError
-from . import IAgentLogRepository
+
+from .i_agent_log_repository import IAgentLogRepository
 
 AGENT_LOG_FILE_NAME_REGEX = re.compile(r"^agent-[\w-]+.log$")
 
