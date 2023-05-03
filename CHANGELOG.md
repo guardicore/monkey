@@ -14,6 +14,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Renamed "Credential collector" to "Credentials collector". #3167
 - Hard-coded WMI exploiter to a plugin. #3163
 - Hard-coded Mimikatz credentials collector to a plugin. #3168
+- Hard-coded Zerologon exploiter to a plugin. #3164
 
 ### Fixed
 - Plugins are now being checked for local OS compatibility. #3275
