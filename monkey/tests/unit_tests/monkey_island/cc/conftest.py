@@ -43,9 +43,19 @@ def build_flask_client():
     return inner
 
 
-def get_mock_app(container):
+@pytest.fixture
+def build_flask_client_with_resources():
+    def inner(container, resources):
+        return get_mock_app(container, resources).test_client()
+
+    return inner
+
+
+def get_mock_app(container, resources=[]):
     app, api = init_mock_security_app()
     flask_resource_manager = monkey_island.cc.app.FlaskDIWrapper(api, container)
+    for resource in resources:
+        flask_resource_manager.add_resource(resource)
     monkey_island.cc.app.init_api_resources(flask_resource_manager)
 
     return app

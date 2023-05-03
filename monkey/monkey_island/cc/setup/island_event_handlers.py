@@ -10,7 +10,6 @@ from monkey_island.cc.island_event_handlers import (
 from monkey_island.cc.repositories import (
     AgentMachineFacade,
     IAgentEventRepository,
-    IAgentLogRepository,
     IAgentRepository,
     ICredentialsRepository,
     INodeRepository,
@@ -68,7 +67,6 @@ def _subscribe_clear_simulation_data_events(
 
     for i_repository in [
         IAgentEventRepository,
-        IAgentLogRepository,
         IAgentRepository,
         INodeRepository,
     ]:

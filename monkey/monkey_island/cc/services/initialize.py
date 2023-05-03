@@ -32,14 +32,12 @@ from monkey_island.cc.repositories import (
     AgentMachineFacade,
     AgentPluginRepositoryCachingDecorator,
     AgentPluginRepositoryLoggingDecorator,
-    FileAgentLogRepository,
     FileAgentPluginRepository,
     FileRepositoryCachingDecorator,
     FileRepositoryLockingDecorator,
     FileRepositoryLoggingDecorator,
     FileSimulationRepository,
     IAgentEventRepository,
-    IAgentLogRepository,
     IAgentPluginRepository,
     IAgentRepository,
     ICredentialsRepository,
@@ -163,7 +161,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(INodeRepository, container.resolve(MongoNodeRepository))
     container.register_instance(IMachineRepository, _build_machine_repository(container))
     container.register_instance(IAgentRepository, container.resolve(MongoAgentRepository))
-    container.register_instance(IAgentLogRepository, container.resolve(FileAgentLogRepository))
     container.register_instance(AgentMachineFacade, container.resolve(AgentMachineFacade))
     container.register_instance(
         NetworkModelUpdateFacade, container.resolve(NetworkModelUpdateFacade)

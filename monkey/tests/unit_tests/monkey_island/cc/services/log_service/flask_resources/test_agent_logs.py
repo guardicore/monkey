@@ -5,7 +5,8 @@ import pytest
 from tests.common import StubDIContainer
 from tests.monkey_island import InMemoryAgentLogRepository
 
-from monkey_island.cc.repositories import IAgentLogRepository
+from monkey_island.cc.services.log_service.flask_resources.agent_logs import AgentLogs
+from monkey_island.cc.services.log_service.i_agent_log_repository import IAgentLogRepository
 
 AGENT_ID_1 = UUID("c0dd10b3-e21a-4da9-9d96-a99c19ebd7c5")
 AGENT_ID_2 = UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5")
@@ -15,11 +16,10 @@ AGENT_LOGS_URL_2 = f"/api/agent-logs/{AGENT_ID_2}"
 
 
 @pytest.fixture
-def flask_client(build_flask_client):
+def flask_client(build_flask_client_with_resources):
     container = StubDIContainer()
     container.register_instance(IAgentLogRepository, InMemoryAgentLogRepository())
-
-    with build_flask_client(container) as flask_client:
+    with build_flask_client_with_resources(container, [AgentLogs]) as flask_client:
         yield flask_client
 
 

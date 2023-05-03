@@ -13,13 +13,11 @@ from monkey_island.cc.mongo_consts import MONGO_URL
 from monkey_island.cc.resources import (
     AgentEvents,
     AgentHeartbeat,
-    AgentLogs,
     AgentPlugins,
     AgentPluginsManifest,
     Agents,
     AgentSignals,
     ClearSimulationData,
-    IslandLog,
     Machines,
     Nodes,
     PropagationCredentials,
@@ -40,6 +38,7 @@ from monkey_island.cc.services import (
     register_agent_binary_resources,
     register_agent_configuration_resources,
     setup_authentication,
+    setup_log_service,
 )
 from monkey_island.cc.services.representations import output_json
 
@@ -107,9 +106,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(RansomwareReport)
     api.add_resource(MonkeyExploitation)
 
-    api.add_resource(AgentLogs)
-    api.add_resource(IslandLog)
-
     api.add_resource(AgentEvents)
     api.add_resource(AgentSignals)
 
@@ -156,6 +152,7 @@ def init_app(
         app=app,
     )
     setup_authentication(api, app, container, data_dir, limiter)
+    setup_log_service(api, container, data_dir)
     flask_resource_manager = FlaskDIWrapper(api, container)
     init_api_resources(flask_resource_manager)
 
