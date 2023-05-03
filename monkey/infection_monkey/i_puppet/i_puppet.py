@@ -1,5 +1,5 @@
 import abc
-from typing import Dict, Mapping, Sequence
+from typing import Any, Dict, Mapping, Sequence
 
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials
@@ -38,7 +38,7 @@ class IPuppet(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def run_credentials_collector(
-        self, name: str, options: Dict, interrupt: Event
+        self, name: str, options: Mapping[str, Any], interrupt: Event
     ) -> Sequence[Credentials]:
         """
         Runs a credentials collector
