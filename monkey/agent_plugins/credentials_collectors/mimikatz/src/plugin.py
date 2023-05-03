@@ -7,7 +7,6 @@ from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IAgentEventPublisher
 from common.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DUMPING_T1003_TAG
 from common.types import AgentID, Event
-from infection_monkey.model import USERNAME_PREFIX
 
 from .mimikatz_options import MimikatzOptions
 from .pypykatz_handler import get_windows_creds
@@ -60,12 +59,6 @@ class Plugin:
     def _to_credentials(windows_credentials: Sequence[WindowsCredentials]) -> Sequence[Credentials]:
         credentials = []
         for wc in windows_credentials:
-            # Mimikatz picks up users created by the Monkey even if they're successfully deleted
-            # since it picks up creds from the registry. The newly created users are not removed
-            # from the registry until a reboot of the system, hence this check.
-            if wc.username and wc.username.startswith(USERNAME_PREFIX):
-                continue
-
             identity = None
 
             if wc.username:
