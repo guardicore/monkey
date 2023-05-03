@@ -2,9 +2,6 @@ MONKEY_ARG = "m0nk3y"
 DROPPER_ARG = "dr0pp3r"
 ID_STRING = "M0NK3Y3XPL0ITABLE"
 
-# Username prefix for users created by Infection Monkey
-USERNAME_PREFIX = "somenewuser"
-
 SET_OTP_WINDOWS = "set %(agent_otp_environment_variable)s=%(agent_otp)s&"
 
 # CMD prefix for windows commands
