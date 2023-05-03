@@ -152,7 +152,7 @@ def init_app(
         app=app,
     )
     setup_authentication(api, app, container, data_dir, limiter)
-    setup_log_service(api, container)
+    setup_log_service(api, container, data_dir)
     flask_resource_manager = FlaskDIWrapper(api, container)
     init_api_resources(flask_resource_manager)
 
