@@ -11,6 +11,7 @@ Write-Output "Building Windows vendor directory"
 
 Set-Location $plugin_path
 
+Remove-Item "$workspace\vendor-windows.zip" -Force
 Remove-Item $plugin_path\venv -Recurse -Force
 & python -m venv "$plugin_path\venv"
 & "$plugin_path\venv\Scripts\Activate.ps1"
@@ -28,5 +29,9 @@ rm requirements.txt
 #exit venv
 deactivate
 
-Compress-Archive -Path "$plugin_path\src\vendor-windows" -Destination "$workspace\vendor-windows.zip"
+# The Compress-Archive command is stupidly slow with debugging turned on. Turn it off temporarily.
+Set-PSDebug -Off
+Compress-Archive -Path "$plugin_path\src\vendor-windows" -Destination "$workspace\vendor-windows.zip" -Force
+Set-PSDebug -Trace 1
+
 Remove-Item $plugin_path\venv -Recurse -Force
