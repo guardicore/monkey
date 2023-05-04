@@ -12,7 +12,6 @@ psutil = ">=5.7.0"
 pymssql = "*"
 requests = ">=2.24"
 urllib3 = "==1.26.5"
-WMI = {version = "==1.5.1", sys_platform = "== 'win32'"}
 pypsrp = "*"
 "WinSys-3.x" = "*"
 ldaptor = "*"
