@@ -1,0 +1,21 @@
+name: SNMP
+plugin_type: Exploiter
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - linux
+title: SNMP Exploiter
+version: 1.0.0
+description: Attempts remote command execution over SNMP using known credentials.
+safe: true
+remediation_suggestion: >-
+    Configure SNMP to use read-only communities.
+
+    Limit access over SNMP to trusted hosts.
+
+    Use SNMPv3 with the authPriv security level if possible.
+
+
+    The machine is vulnerable to an SNMP attack.
+    An Infection Monkey Agent executed a command over SNMP using stolen/configured credentials.
