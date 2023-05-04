@@ -11,6 +11,7 @@ import transformErrors from '../configuration-components/ValidationErrorMessages
 import PropagationConfig, {
   EXPLOITERS_CONFIG_PATH
 } from '../configuration-components/PropagationConfig';
+import MasqueradeConfig from '../configuration-components/MasqueradeConfig';
 import {CREDENTIALS_COLLECTORS_CONFIG_PATH} from '../configuration-components/PluginSelectorTemplate';
 import FormConfig from '../configuration-components/FormConfig';
 import UnsafeConfigOptionsConfirmationModal
@@ -31,6 +32,7 @@ import LoadingIcon from '../ui-components/LoadingIcon';
 import mergeAllOf from 'json-schema-merge-allof';
 import RefParser from '@apidevtools/json-schema-ref-parser';
 import CREDENTIALS from '../../services/configuration/propagation/credentials';
+import MASQUERADE from '../../services/configuration/masquerade';
 
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
@@ -50,6 +52,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.state = {
       configuration: {},
       credentials: {},
+      masqueList: {},
       currentFormData: {},
       importCandidateConfig: null,
       lastAction: 'none',
@@ -111,6 +114,7 @@ class ConfigurePageComponent extends AuthComponent {
         })
       });
     this.updateCredentials();
+    this.updateMasqueList();
   };
 
   onUnsafeConfirmationCancelClick = () => {
@@ -140,8 +144,13 @@ class ConfigurePageComponent extends AuthComponent {
       });
   }
 
+  updateMasqueList = () => {
+    console.log('MASQUE update');
+  }
+
   updateConfig = () => {
     this.updateCredentials();
+    this.updateMasqueList();
     this.authFetch(CONFIG_URL, {}, true)
       .then(res => res.json())
       .then(data => {
@@ -222,6 +231,7 @@ class ConfigurePageComponent extends AuthComponent {
   onCredentialChange = (credentials) => {
     this.setState({credentials: credentials});
   }
+
 
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
@@ -369,7 +379,13 @@ class ConfigurePageComponent extends AuthComponent {
                                  setSelectedPlugins={this.setSelectedPlugins}
                                  selectedConfigSection={this.state.selectedSection}
                                  onCredentialChange={this.onCredentialChange}/>)
-    } else {
+    }
+    else if(this.state.selectedSection === 'masquerade'){
+      return (<MasqueradeConfig {...formProperties}
+                                fullUiSchema={fullUiSchema}
+                                masqueList={this.state.masqueList}
+                                onMasqueListChange={this.onMasqueListChange}/>)
+    }else {
       formProperties['onChange'] = (formData) => {
         this.onChange(formData.formData)
       };
@@ -403,7 +419,8 @@ class ConfigurePageComponent extends AuthComponent {
     }
     let errors = this.validator.validateFormData(this.state.configuration, this.state.schema);
     let credentialErrors = this.validator.validateFormData(this.state.credentials, CREDENTIALS);
-    return errors.errors.length+credentialErrors.errors.length > 0
+    let masqueradeErrors = this.validator.validateFormData(this.state.masqueList, MASQUERADE);
+    return errors.errors.length+credentialErrors.errors.length+masqueradeErrors.errors.length > 0
   }
 
   render() {
