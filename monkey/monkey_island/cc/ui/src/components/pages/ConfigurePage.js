@@ -33,7 +33,7 @@ import mergeAllOf from 'json-schema-merge-allof';
 import RefParser from '@apidevtools/json-schema-ref-parser';
 import CREDENTIALS from '../../services/configuration/propagation/credentials';
 import MASQUERADE from '../../services/configuration/masquerade';
-import IslandHttpClient from '../IslandHttpClient';
+import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
@@ -147,8 +147,8 @@ class ConfigurePageComponent extends AuthComponent {
 
   updateMasqueStrings = async () => {
     const [linuxRes, windowsRes] = await Promise.all([
-      IslandHttpClient.getBytes('/api/agent-binaries/linux/masque', {}, true),
-      IslandHttpClient.getBytes('/api/agent-binaries/windows/masque', {}, true)
+      IslandHttpClient.getBytes(APIEndpoint.linuxMasque, {}, true),
+      IslandHttpClient.getBytes(APIEndpoint.windowsMasque, {}, true)
     ]);
     const linuxMasqueBytes = await linuxRes.body.arrayBuffer();
     const linuxMasqueStrings = this.getStringsFromBytes(linuxMasqueBytes);
