@@ -8,7 +8,7 @@ export default function MasqueradeConfig(props) {
     schema,
     uiSchema,
     masqueStrings,
-    onMasqueStringsChange,
+    onChange,
     customFormats,
     className
   } = props;
@@ -19,7 +19,7 @@ export default function MasqueradeConfig(props) {
           uiSchema={uiSchema}
           formData={masqueStringsCopy}
           validator={validator}
-          onChange={(formData) => {onMasqueStringsChange(formData.formData)}}
+          onChange={(formData) => {onChange(formData.formData)}}
           // @ts-ignore
           customFormats={customFormats}
           className={className}

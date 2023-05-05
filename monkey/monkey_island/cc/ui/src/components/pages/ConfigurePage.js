@@ -232,6 +232,10 @@ class ConfigurePageComponent extends AuthComponent {
     this.setState({credentials: credentials});
   }
 
+  onMasqueStringsChange = (masqueStrings) => {
+    this.setState({masqueStrings: masqueStrings});
+  }
+
 
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
@@ -384,7 +388,7 @@ class ConfigurePageComponent extends AuthComponent {
       return (<MasqueradeConfig {...formProperties}
                                 fullUiSchema={fullUiSchema}
                                 masqueStrings={this.state.masqueStrings}
-                                onMasqueStringsChange={this.onMasqueStringsChange}/>)
+                                onChange={this.onMasqueStringsChange}/>)
     }else {
       formProperties['onChange'] = (formData) => {
         this.onChange(formData.formData)
