@@ -52,7 +52,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.state = {
       configuration: {},
       credentials: {},
-      masqueList: {},
+      masqueStrings: {},
       currentFormData: {},
       importCandidateConfig: null,
       lastAction: 'none',
@@ -114,7 +114,7 @@ class ConfigurePageComponent extends AuthComponent {
         })
       });
     this.updateCredentials();
-    this.updateMasqueList();
+    this.updateMasqueStrings();
   };
 
   onUnsafeConfirmationCancelClick = () => {
@@ -144,13 +144,13 @@ class ConfigurePageComponent extends AuthComponent {
       });
   }
 
-  updateMasqueList = () => {
+  updateMasqueStrings = () => {
     console.log('MASQUE update');
   }
 
   updateConfig = () => {
     this.updateCredentials();
-    this.updateMasqueList();
+    this.updateMasqueStrings();
     this.authFetch(CONFIG_URL, {}, true)
       .then(res => res.json())
       .then(data => {
@@ -383,8 +383,8 @@ class ConfigurePageComponent extends AuthComponent {
     else if(this.state.selectedSection === 'masquerade'){
       return (<MasqueradeConfig {...formProperties}
                                 fullUiSchema={fullUiSchema}
-                                masqueList={this.state.masqueList}
-                                onMasqueListChange={this.onMasqueListChange}/>)
+                                masqueStrings={this.state.masqueStrings}
+                                onMasqueStringsChange={this.onMasqueStringsChange}/>)
     }else {
       formProperties['onChange'] = (formData) => {
         this.onChange(formData.formData)
@@ -419,7 +419,7 @@ class ConfigurePageComponent extends AuthComponent {
     }
     let errors = this.validator.validateFormData(this.state.configuration, this.state.schema);
     let credentialErrors = this.validator.validateFormData(this.state.credentials, CREDENTIALS);
-    let masqueradeErrors = this.validator.validateFormData(this.state.masqueList, MASQUERADE);
+    let masqueradeErrors = this.validator.validateFormData(this.state.masqueStrings, MASQUERADE);
     return errors.errors.length+credentialErrors.errors.length+masqueradeErrors.errors.length > 0
   }
 
