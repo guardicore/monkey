@@ -19,7 +19,9 @@ export enum APIEndpoint {
   agentEvents = '/api/agent-events',
   mode = '/api/island/mode',
   monkey_exploitation = '/api/exploitations/monkey',
-  stolenCredentials = '/api/propagation-credentials/stolen-credentials'
+  stolenCredentials = '/api/propagation-credentials/stolen-credentials',
+  linuxMasque = '/api/agent-binaries/linux/masque',
+  windowsMasque = '/api/agent-binaries/linux/masque'
 }
 
 class IslandHttpClient extends AuthComponent {
@@ -42,6 +44,16 @@ class IslandHttpClient extends AuthComponent {
 
   get(endpoint: APIEndpoint, args: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
     let status = null;
+    return this.getRaw(endpoint, args, refreshToken)
+      .then(res => {
+        status = res.status;
+        return res.body.json()
+      })
+      .then(res => new Response(res, status));
+  }
+
+  getRaw(endpoint: APIEndpoint, args: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
+    let status = null;
     let params = new URLSearchParams(args);
     let url = String(endpoint);
     if(params.toString() !== ''){
@@ -50,7 +62,7 @@ class IslandHttpClient extends AuthComponent {
     return this.authFetch(url, {}, refreshToken)
       .then(res => {
         status = res.status;
-        return res.json()
+        return res;
       })
       .then(res => new Response(res, status));
   }

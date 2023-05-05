@@ -33,6 +33,7 @@ import mergeAllOf from 'json-schema-merge-allof';
 import RefParser from '@apidevtools/json-schema-ref-parser';
 import CREDENTIALS from '../../services/configuration/propagation/credentials';
 import MASQUERADE from '../../services/configuration/masquerade';
+import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
@@ -144,8 +145,32 @@ class ConfigurePageComponent extends AuthComponent {
       });
   }
 
-  updateMasqueStrings = () => {
-    console.log('MASQUE update');
+  updateMasqueStrings = async () => {
+    const [linuxRes, windowsRes] = await Promise.all([
+      IslandHttpClient.getRaw(APIEndpoint.linuxMasque, {}, true),
+      IslandHttpClient.getRaw(APIEndpoint.windowsMasque, {}, true)
+    ]);
+    const linuxMasqueBytes = await linuxRes.body.arrayBuffer();
+    const linuxMasqueStrings = this.getStringsFromBytes(linuxMasqueBytes);
+
+    const windowsMasqueBytes = await windowsRes.body.arrayBuffer();
+    const windowsMasqueStrings = this.getStringsFromBytes(windowsMasqueBytes);
+    this.setState({
+      masqueStrings: {
+        'linux_masque_strings': linuxMasqueStrings,
+        'windows_masque_strings': windowsMasqueStrings
+      }
+    });
+  }
+
+  getStringsFromBytes = (bytesArray) => {
+    const decoder = new TextDecoder('utf-8');
+    const dataViewArray = new DataView(bytesArray);
+    const stringsArray = decoder.decode(dataViewArray).split('\0');
+    if(stringsArray.every(string => string === '')){
+      return [];
+    }
+    return stringsArray;
   }
 
   updateConfig = () => {
