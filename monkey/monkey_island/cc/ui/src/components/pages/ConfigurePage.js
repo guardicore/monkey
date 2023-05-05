@@ -150,22 +150,22 @@ class ConfigurePageComponent extends AuthComponent {
       this.authFetch('/api/agent-binaries/windows/masque', {}, true)
     ]);
     const linuxMasqueBytes = await linuxRes.arrayBuffer();
-    const linuxMasqueString = this.getStringFromBytes(linuxMasqueBytes);
+    const linuxMasqueStrings = this.getStringsFromBytes(linuxMasqueBytes);
 
     const windowsMasqueBytes = await windowsRes.arrayBuffer();
-    const windowsMasqueString = this.getStringFromBytes(windowsMasqueBytes);
+    const windowsMasqueStrings = this.getStringsFromBytes(windowsMasqueBytes);
     this.setState({
       masqueStrings: {
-        'linux_masque_string': linuxMasqueString,
-        'windows_masque_string': windowsMasqueString
+        'linux_masque_strings': linuxMasqueStrings,
+        'windows_masque_strings': windowsMasqueStrings
       }
     });
   }
 
-  getStringFromBytes = (bytesArray) => {
+  getStringsFromBytes = (bytesArray) => {
     const decoder = new TextDecoder('utf-8');
     const dataViewArray = new DataView(bytesArray);
-    return decoder.decode(dataViewArray);
+    return decoder.decode(dataViewArray).split('\0');
   }
 
   updateConfig = () => {
