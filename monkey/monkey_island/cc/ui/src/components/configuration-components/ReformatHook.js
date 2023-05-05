@@ -1,4 +1,5 @@
 import CREDENTIALS, {defaultCredentials} from '../../services/configuration/propagation/credentials';
+import MASQUERADE from '../../services/configuration/masquerade';
 import {PlaintextType, SecretType} from '../utils/CredentialTitle.tsx';
 import _ from 'lodash';
 
@@ -26,6 +27,7 @@ export function reformatConfig(config, reverse = false) {
 
 export function reformatSchema(schema) {
   schema['properties']['propagation']['properties']['credentials'] = CREDENTIALS;
+  schema['properties']['masquerade'] = MASQUERADE;
   schema['properties']['propagation']['properties']['general'] = {
     'title': 'General',
     'type': 'object',
