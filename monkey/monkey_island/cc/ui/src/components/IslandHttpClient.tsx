@@ -21,17 +21,20 @@ export enum APIEndpoint {
   monkey_exploitation = '/api/exploitations/monkey',
   stolenCredentials = '/api/propagation-credentials/stolen-credentials',
   linuxMasque = '/api/agent-binaries/linux/masque',
-  windowsMasque = '/api/agent-binaries/linux/masque'
+  windowsMasque = '/api/agent-binaries/windows/masque'
 }
 
 class IslandHttpClient extends AuthComponent {
-  put(endpoint: string, contents: any, refreshToken: boolean = false): Promise<Response> {
+  put(endpoint: string, contents: any, refreshToken: boolean = false, type: string = 'JSON'): Promise<Response> {
     let status = null;
+    if(type === 'JSON'){
+      contents = JSON.stringify(contents);
+    }
     return this.authFetch(endpoint,
       {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(contents)
+        body: contents
       },
       refreshToken
     )
