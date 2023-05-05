@@ -144,8 +144,28 @@ class ConfigurePageComponent extends AuthComponent {
       });
   }
 
-  updateMasqueStrings = () => {
-    console.log('MASQUE update');
+  updateMasqueStrings = async () => {
+    const [linuxRes, windowsRes] = await Promise.all([
+      this.authFetch('/api/agent-binaries/linux/masque', {}, true),
+      this.authFetch('/api/agent-binaries/windows/masque', {}, true)
+    ]);
+    const linuxMasqueBytes = await linuxRes.arrayBuffer();
+    const linuxMasqueString = this.getStringFromBytes(linuxMasqueBytes);
+
+    const windowsMasqueBytes = await windowsRes.arrayBuffer();
+    const windowsMasqueString = this.getStringFromBytes(windowsMasqueBytes);
+    this.setState({
+      masqueStrings: {
+        'linux_masque_string': linuxMasqueString,
+        'windows_masque_string': windowsMasqueString
+      }
+    });
+  }
+
+  getStringFromBytes = (bytesArray) => {
+    const decoder = new TextDecoder('utf-8');
+    const dataViewArray = new DataView(bytesArray);
+    return decoder.decode(dataViewArray);
   }
 
   updateConfig = () => {
