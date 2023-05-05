@@ -12,10 +12,16 @@ safe: true
 remediation_suggestion: >-
     Configure SNMP to use read-only communities.
 
+    Apply security updates to your Net-SNMP installation.
+
     Limit access over SNMP to trusted hosts.
 
     Use SNMPv3 with the authPriv security level if possible.
 
 
-    The machine is vulnerable to an SNMP attack.
-    An Infection Monkey Agent executed a command over SNMP using stolen/configured credentials.
+    The machine is vulnerable to an attack on Net-SNMP via
+    [CVE-2020-15862](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-15862)
+    An Infection Monkey Agent executed a command over SNMP using
+    stolen/configured credentials or community strings. This attack was
+    possible because the version of Net-SNMP running on the server has not had
+    security patches applied.
