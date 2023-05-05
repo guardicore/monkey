@@ -42,15 +42,10 @@ class IslandHttpClient extends AuthComponent {
 
   get(endpoint: APIEndpoint, args: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
     let status = null;
-    let params = new URLSearchParams(args);
-    let url = String(endpoint);
-    if(params.toString() !== ''){
-      url = endpoint + '?' + params;
-    }
-    return this.authFetch(url, {}, refreshToken)
+    return this.getBytes(endpoint, args, refreshToken)
       .then(res => {
         status = res.status;
-        return res.json()
+        return res.body.json()
       })
       .then(res => new Response(res, status));
   }
