@@ -7,19 +7,19 @@ export default function MasqueradeConfig(props) {
   const {
     schema,
     uiSchema,
-    masqueList,
-    onChange,
+    masqueStrings,
+    onMasqueStringsChange,
     customFormats,
     className
   } = props;
 
-  let masqueListCopy = _.clone(masqueList);
+  let masqueStringsCopy = _.clone(masqueStrings);
   return (<>
     <Form schema={schema}
           uiSchema={uiSchema}
-          formData={masqueListCopy}
+          formData={masqueStringsCopy}
           validator={validator}
-          onChange={(formData) => {onChange(formData.formData)}}
+          onChange={(formData) => {onMasqueStringsChange(formData.formData)}}
           // @ts-ignore
           customFormats={customFormats}
           className={className}
