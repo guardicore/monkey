@@ -168,10 +168,7 @@ class ConfigurePageComponent extends AuthComponent {
     const decoder = new TextDecoder('utf-8');
     const dataViewArray = new DataView(bytesArray);
     const stringsArray = decoder.decode(dataViewArray).split('\0');
-    if(stringsArray.every(string => string === '')){
-      return [];
-    }
-    return stringsArray;
+    return stringsArray.filter(str => str !== '');
   }
 
   updateConfig = () => {
@@ -242,12 +239,12 @@ class ConfigurePageComponent extends AuthComponent {
 
   configSubmit(config) {
     const sendCredentialsPromise = this.sendCredentials();
-    const sendLinuxMasqueStringsPromise = this.sendOSMasqueString('linux');
-    const sendWindowsMasqueStringsPromise = this.sendOSMasqueStrings('windows');
+    const sendLinuxMasqueStringsPromise = this.sendLinuxMasqueStrings();
+    const sendWindowsMasqueStringsPromise = this.sendWindowsMasqueStrings();
 
     Promise.all([sendCredentialsPromise, sendLinuxMasqueStringsPromise, sendWindowsMasqueStringsPromise])
       .then(responses => {
-        if (responses.every(res => res.ok)) {
+        if (responses.every(res => res.status === 204)) {
           this.sendConfig(config);
         } else {
           console.log('One or more requests failed.');
@@ -393,17 +390,14 @@ class ConfigurePageComponent extends AuthComponent {
       }));
   }
 
-  sendOSMasqueString(os) {
-    const osMasqueString = this.state.masqueStrings?.[`${os}_masque_string`];
-    const encoder = new TextEncoder('utf-8');
-    const osMasqueBytes = encoder.encode(osMasqueString);
-    return this.authFetch(`/api/agent-binaries/${os}/masque`, {
-      method: 'PUT',
-      headers: {'Content-Type': 'application/octet-stream'},
-      body: osMasqueBytes.length > 0 ? osMasqueBytes : null
-    }, true)
-      .then(res => {
-        if (!res.ok) {
+  sendLinuxMasqueStrings() {
+    const linuxMasqueStrings = this.state.masqueStrings?.linux_masque_strings;
+    const linuxMasqueBytes = this.getNullTerminatedBytesFromStrings(linuxMasqueStrings);
+
+    return IslandHttpClient.put(
+      APIEndpoint.linuxMasque, linuxMasqueBytes, true, 'bytes')
+        .then(res => {
+        if (res.status !== 204) {
           throw Error();
         }
         return res;
@@ -411,7 +405,35 @@ class ConfigurePageComponent extends AuthComponent {
       .catch((error) => {
         console.log(`bad configuration ${error}`);
         this.setState({lastAction: 'invalid_configuration'});
-    });
+      });
+  }
+
+  sendWindowsMasqueStrings() {
+    const windowsMasqueStrings = this.state.masqueStrings?.windows_masque_strings;
+    const windowsMasqueBytes = this.getNullTerminatedBytesFromStrings(windowsMasqueStrings);
+
+    return IslandHttpClient.put(
+      APIEndpoint.windowsMasque, windowsMasqueBytes, true, 'bytes')
+        .then(res => {
+        if (res.status !== 204) {
+          throw Error();
+        }
+        return res;
+      })
+      .catch((error) => {
+        console.log(`bad configuration ${error}`);
+        this.setState({lastAction: 'invalid_configuration'});
+      });
+  }
+
+  getNullTerminatedBytesFromStrings = (stringsArray) => {
+   const encoder = new TextEncoder('utf-8');
+
+   let bytes = stringsArray
+     .map(str => str ? encoder.encode(str + '\0') : [])
+     .reduce((acc, curr) => [...acc, ...curr], []);
+
+    return new Uint8Array(bytes);
   }
 
   renderConfigContent = (displayedSchema) => {
