@@ -1,20 +1,24 @@
 const MASQUERADE = {
   'title': 'Masquerade',
   'type': 'object',
+  'description': 'To identify malware in a file, one common approach is to search for specific ' +
+  'strings or unique byte sequences.\nIn order to enhance Infection Monkey\'s malware emulation,'+
+  'custom data can be injected into agent binaries, allowing the agents to imitate various types of malware. '+
+  'This feature can be particularly helpful when testing custom detection rules.',
   'properties': {
-    'masque_list': {
-      'title': 'Masque list',
+    'masque_strings': {
+      'title': 'Masque Strings',
       'type': 'array',
       'uniqueItems': true,
       'items': {'type': 'string'},
       'default': [],
-      'description': 'List of masque strings that will be appended to the agent binaries '
+      'description': 'List of masque strings that will be insert to the agent binaries '
     }
   }
 }
 
 export const defaultMasques = {
- 'masque_list': []
+ 'masque_strings': []
 }
 
 export default MASQUERADE;
