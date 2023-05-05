@@ -155,6 +155,7 @@ class ConfigurePageComponent extends AuthComponent {
 
     const windowsMasqueBytes = await windowsRes.body.arrayBuffer();
     const windowsMasqueStrings = this.getStringsFromBytes(windowsMasqueBytes);
+
     this.setState({
       masqueStrings: {
         'linux_masque_strings': linuxMasqueStrings,
@@ -240,11 +241,21 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   configSubmit(config) {
-    this.sendCredentials().then(res => {
-      if (res.ok) {
-        this.sendConfig(config);
-      }
-    });
+    const sendCredentialsPromise = this.sendCredentials();
+    const sendLinuxMasqueStringsPromise = this.sendOSMasqueString('linux');
+    const sendWindowsMasqueStringsPromise = this.sendOSMasqueStrings('windows');
+
+    Promise.all([sendCredentialsPromise, sendLinuxMasqueStringsPromise, sendWindowsMasqueStringsPromise])
+      .then(responses => {
+        if (responses.every(res => res.ok)) {
+          this.sendConfig(config);
+        } else {
+          console.log('One or more requests failed.');
+        }
+      })
+      .catch(error => {
+        console.log('Error occurred:', error);
+      });
   }
 
   onChange = (formData) => {
@@ -380,6 +391,27 @@ class ConfigurePageComponent extends AuthComponent {
         console.log(`bad configuration ${error}`);
         this.setState({lastAction: 'invalid_configuration'});
       }));
+  }
+
+  sendOSMasqueString(os) {
+    const osMasqueString = this.state.masqueStrings?.[`${os}_masque_string`];
+    const encoder = new TextEncoder('utf-8');
+    const osMasqueBytes = encoder.encode(osMasqueString);
+    return this.authFetch(`/api/agent-binaries/${os}/masque`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/octet-stream'},
+      body: osMasqueBytes.length > 0 ? osMasqueBytes : null
+    }, true)
+      .then(res => {
+        if (!res.ok) {
+          throw Error();
+        }
+        return res;
+      })
+      .catch((error) => {
+        console.log(`bad configuration ${error}`);
+        this.setState({lastAction: 'invalid_configuration'});
+    });
   }
 
   renderConfigContent = (displayedSchema) => {
