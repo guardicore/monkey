@@ -166,7 +166,11 @@ class ConfigurePageComponent extends AuthComponent {
   getStringsFromBytes = (bytesArray) => {
     const decoder = new TextDecoder('utf-8');
     const dataViewArray = new DataView(bytesArray);
-    return decoder.decode(dataViewArray).split('\0');
+    const stringsArray = decoder.decode(dataViewArray).split('\0');
+    if(stringsArray.every(string => string === '')){
+      return [];
+    }
+    return stringsArray;
   }
 
   updateConfig = () => {
