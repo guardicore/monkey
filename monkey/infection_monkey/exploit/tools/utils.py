@@ -4,9 +4,9 @@ from common.types import NetworkPort
 from infection_monkey.i_puppet import TargetHost
 
 
-def all_exploitation_ports_are_closed(host: TargetHost, exploitation_ports: Sequence[int]) -> bool:
+def all_tcp_ports_are_closed(host: TargetHost, tcp_ports: Sequence[NetworkPort]) -> bool:
     closed_tcp_ports = host.ports_status.tcp_ports.closed
-    return all([p in closed_tcp_ports for p in exploitation_ports])
+    return all([p in closed_tcp_ports for p in tcp_ports])
 
 
 def all_udp_ports_are_closed(host: TargetHost, udp_ports: Sequence[NetworkPort]) -> bool:
