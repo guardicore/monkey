@@ -398,7 +398,8 @@ class ConfigurePageComponent extends AuthComponent {
 
     applyUiSchemaManipulators(this.state.selectedSection,
       formProperties['formData'],
-      fullUiSchema);
+      fullUiSchema,
+      formProperties?.schema);
     if (this.state.selectedSection === 'propagation') {
       delete Object.assign(formProperties, {'configuration': formProperties.formData}).formData;
       return (<PropagationConfig {...formProperties}

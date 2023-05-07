@@ -1,6 +1,5 @@
 import {getDefaultFormState, ObjectFieldTemplateProps} from '@rjsf/utils';
 import React, {useEffect, useState} from 'react';
-import _ from 'lodash';
 import ChildCheckboxContainer from '../ui-components/ChildCheckbox';
 import {AdvancedMultiSelectHeader} from '../ui-components/AdvancedMultiSelect';
 import {MasterCheckboxState} from '../ui-components/MasterCheckbox';
@@ -9,12 +8,13 @@ import {EXPLOITERS_PATH_PROPAGATION} from './PropagationConfig';
 import MarkdownDescriptionTemplate from './MarkdownDescriptionTemplate';
 
 export const CREDENTIALS_COLLECTORS_CONFIG_PATH = 'credentials_collectors';
-const PLUGIN_SCHEMA_PATH = {'propagation': EXPLOITERS_PATH_PROPAGATION, 'credentials_collectors': CREDENTIALS_COLLECTORS_CONFIG_PATH}
+const PLUGIN_SCHEMA_PATH = {'propagation': EXPLOITERS_PATH_PROPAGATION, 'credentials_collectors': CREDENTIALS_COLLECTORS_CONFIG_PATH};
 
 
 export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) {
 
   let [activePlugin, setActivePlugin] = useState(null);
+  const [defaultSchema,] = useState(generateDefaultConfig());
 
   useEffect(() => updateUISchema(), [props.formContext.selectedPlugins]);
 
@@ -43,7 +43,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     return selectorOptions;
   }
 
-  function togglePluggin(pluginName) {
+  function togglePlugin(pluginName) {
     let plugins = new Set(props.formContext.selectedPlugins);
     if (props.formContext.selectedPlugins.has(pluginName)) {
       plugins.delete(pluginName);
@@ -53,16 +53,12 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     props.formContext.setSelectedPlugins(plugins, props.formContext.section);
   }
 
-  function updateUISchema(){
-    let uiSchema = _.cloneDeep(props.uiSchema);
-    for(let pluginName of Object.keys(generateDefaultConfig())) {
-      if(!props.formContext.selectedPlugins.has(pluginName)){
-        uiSchema[pluginName] = {"ui:readonly": true,
-          'ui:DescriptionFieldTemplate': MarkdownDescriptionTemplate};
-      } else {
-        uiSchema[pluginName] = {'ui:DescriptionFieldTemplate': MarkdownDescriptionTemplate};
-      }
+  const updateUISchema = () => {
+    let uiSchema = {...props.uiSchema};
+    for (let pluginName of Object.keys(defaultSchema)) {
+      uiSchema[pluginName] = Object.assign({...uiSchema[pluginName]}, {'ui:readonly': !props.formContext.selectedPlugins.has(pluginName)});
     }
+
     props.formContext.setUiSchema(uiSchema, PLUGIN_SCHEMA_PATH[props.formContext.section]);
   }
 
@@ -90,7 +86,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     if (checkboxState == MasterCheckboxState.ALL) {
       props.formContext.setSelectedPlugins(new Set(), selectedSection);
     } else {
-     props.formContext.setSelectedPlugins(new Set(Object.keys(generateDefaultConfig())), selectedSection);
+     props.formContext.setSelectedPlugins(new Set(Object.keys(defaultSchema)), selectedSection);
     }
   }
 
@@ -127,7 +123,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
       <ChildCheckboxContainer multiple={true} required={false}
                               autoFocus={true}
                               selectedValues={[...props.formContext.selectedPlugins]}
-                              onCheckboxClick={togglePluggin}
+                              onCheckboxClick={togglePlugin}
                               isSafe={isPluginSafe}
                               onPaneClick={setActivePlugin}
                               enumOptions={getOptions()}/>

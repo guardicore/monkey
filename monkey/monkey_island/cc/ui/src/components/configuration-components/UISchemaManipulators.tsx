@@ -1,11 +1,13 @@
+import pluginsManipulator from "./UISchemaPluginsManipulator";
 
-const manipulatorList = [ransomwareDirManipulator]
+const manipulatorList = [ransomwareDirManipulator, pluginsDirManipulator]
 
-function applyUiSchemaManipulators(selectedSection,
+export default function applyUiSchemaManipulators(selectedSection,
                                    formData,
-                                   uiSchema) {
+                                   uiSchema,
+                                   JSONSchema) {
   for(let i = 0; i < manipulatorList.length; i++){
-    manipulatorList[i](selectedSection, formData, uiSchema);
+    manipulatorList[i](selectedSection, formData, uiSchema, JSONSchema);
   }
 }
 
@@ -18,4 +20,8 @@ function ransomwareDirManipulator(selectedSection,
     }
 }
 
-export default applyUiSchemaManipulators;
+function pluginsDirManipulator(selectedSection, formData, uiSchema, JSONSchema) {
+  if(selectedSection === 'propagation') {
+    pluginsManipulator(uiSchema?.exploitation?.exploiters, JSONSchema?.properties?.exploitation?.properties?.exploiters?.properties)
+  }
+}
