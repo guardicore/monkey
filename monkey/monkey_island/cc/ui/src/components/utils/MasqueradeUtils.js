@@ -29,11 +29,11 @@ export function getStringsFromBytes(bytesArray) {
 function getPrefixIndexFromBytesArray(bytesArray, prefix){
   const uint8Array = new Uint8Array(bytesArray);
   return uint8Array.findIndex((_value, index) => {
-  for (let i = 0; i < prefix.length; i++) {
-    if (uint8Array[index + i] !== prefix[i]) {
-      return false;
+    for (let i = 0; i < prefix.length; i++) {
+      if (uint8Array[index + i] !== prefix[i]) {
+        return false;
+      }
     }
-  }
-  return true;
+    return true;
   });
 }
