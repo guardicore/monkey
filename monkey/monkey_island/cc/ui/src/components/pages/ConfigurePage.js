@@ -43,6 +43,8 @@ const configSubmitAction = 'config-submit';
 const configExportAction = 'config-export';
 const configSaveAction = 'config-saved';
 
+const MASQUERADE_STRINGS_PREFIX = 'InfectionMonkeyMasquePrefix';
+
 class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
@@ -165,9 +167,26 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   getStringsFromBytes = (bytesArray) => {
+    const encoder = new TextEncoder('utf-8');
     const decoder = new TextDecoder('utf-8');
-    const dataViewArray = new DataView(bytesArray);
-    const stringsArray = decoder.decode(dataViewArray).split('\0');
+    const prefixBytes = encoder.encode(MASQUERADE_STRINGS_PREFIX);
+    const uint8Array = new Uint8Array(bytesArray);
+    const prefixIndex = uint8Array.findIndex((_value, index) => {
+    for (let i = 0; i < prefixBytes.length; i++) {
+        if (uint8Array[index + i] !== prefixBytes[i]) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    if (prefixIndex === -1) {
+      return [];
+    }
+    const dataViewArray = new DataView(bytesArray, prefixIndex + prefixBytes.length);
+    const lastString = decoder.decode(dataViewArray);
+    const stringsArray = lastString.split('\0');
+
     return stringsArray.filter(str => str !== '');
   }
 
@@ -419,7 +438,8 @@ class ConfigurePageComponent extends AuthComponent {
      .map(str => str ? encoder.encode(str + '\0') : [])
      .reduce((acc, curr) => [...acc, ...curr], []);
 
-    return new Uint8Array(bytes);
+   let prefixBytes = encoder.encode(MASQUERADE_STRINGS_PREFIX);
+   return new Uint8Array([...prefixBytes, ...bytes]);
   }
 
   renderConfigContent = (displayedSchema) => {
