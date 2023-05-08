@@ -9,6 +9,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - `PortScanData.open` property. #3238
 - `{GET,PUT} /api/agent-binaries/<string:os>/masque`. #3249
+- Placeholder values for empty plugin configuration fields having defaults. #3310
 
 ### Changed
 - Renamed "Credential collector" to "Credentials collector". #3167
