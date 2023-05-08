@@ -9,11 +9,14 @@ import UnsafeConfigOptionsConfirmationModal
   from './UnsafeConfigOptionsConfirmationModal.js';
 import UploadStatusIcon, {UploadStatuses} from '../ui-components/UploadStatusIcon';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
+import {transformStringsToBytes} from '../utils/MasqueradeUtils.js';
 import {decryptText} from '../utils/PasswordBasedEncryptor';
 import {
   reformatConfig,
   formatCredentialsForIsland
 } from '../configuration-components/ReformatHook';
+
+import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 
 type Props = {
   show: boolean,
@@ -29,6 +32,7 @@ const ConfigImportModal = (props: Props) => {
   const [uploadStatus, setUploadStatus] = useState(UploadStatuses.clean);
   const [configContents, setConfigContents] = useState(null);
   const [configCredentials, setConfigCredentials] = useState(null);
+  const [configMasqueStrings, setConfigMasqueStrings] = useState(null);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [configEncrypted, setConfigEncrypted] = useState(false);
@@ -41,10 +45,10 @@ const ConfigImportModal = (props: Props) => {
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
-    if (configContents !== null && configCredentials !== null) {
+    if (configContents !== null && configCredentials !== null && configMasqueStrings != null) {
       tryImport();
     }
-  }, [configContents, configCredentials, unsafeOptionsVerified])
+  }, [configContents, configCredentials, configMasqueStrings, unsafeOptionsVerified])
 
   function tryImport() {
     if (configEncrypted && !showPassword) {
@@ -79,9 +83,11 @@ const ConfigImportModal = (props: Props) => {
     try {
       let decryptedConfig = JSON.parse(decryptText(configContents, password));
       let decryptedConfigCredentials = JSON.parse(decryptText(configCredentials, password));
+      let decryptedConfigMasqueStrings = JSON.parse(decryptText(configMasqueStrings, password))
       setConfigEncrypted(false);
       setConfigContents(decryptedConfig);
       setConfigCredentials(decryptedConfigCredentials);
+      setConfigMasqueStrings(decryptedConfigMasqueStrings);
     } catch {
       setUploadStatus(UploadStatuses.error);
       setErrorMessage('Decryption failed: Password is wrong or the file is corrupted');
@@ -92,6 +98,8 @@ const ConfigImportModal = (props: Props) => {
     try {
       sendConfigToServer();
       sendConfigCredentialsToServer();
+      sendConfigMasqueStringsToServer(APIEndpoint.linuxMasque, configMasqueStrings.linux_masque_strings);
+      sendConfigMasqueStringsToServer(APIEndpoint.windowsMasque, configMasqueStrings.windows_masque_strings);
       setUploadStatus(UploadStatuses.success);
     } catch {
       setUploadStatus(UploadStatuses.error);
@@ -117,6 +125,20 @@ const ConfigImportModal = (props: Props) => {
         setErrorMessage('Configuration file is corrupt or in an outdated format.');
       }
     })
+  }
+
+  function sendConfigMasqueStringsToServer(endpoint, osMasqueStrings) {
+    let masqueBytes = transformStringsToBytes(osMasqueStrings);
+    IslandHttpClient.put(endpoint, masqueBytes, true)
+      .then(res => {
+        if (res.status === 204) {
+          resetState();
+          props.onClose(true);
+        } else {
+          setUploadStatus(UploadStatuses.error);
+          setErrorMessage('Configuration file is corrupt or in an outdated format.');
+        }
+       });
   }
 
   function sendConfigToServer() {
@@ -148,6 +170,7 @@ const ConfigImportModal = (props: Props) => {
     setPassword('');
     setConfigContents(null);
     setConfigCredentials(null);
+    setConfigMasqueStrings(null);
     setErrorMessage('');
     setShowPassword(false);
     setShowUnsafeOptionsConfirmation(false);
@@ -173,6 +196,7 @@ const ConfigImportModal = (props: Props) => {
         setConfigEncrypted(importContents['metadata']['encrypted']);
         setConfigContents(importContents['configuration']);
         setConfigCredentials(importContents['credentials']);
+        setConfigMasqueStrings(importContents['masque_strings']);
       } catch (e) {
         if (e instanceof TypeError) {
           setErrorMessage('Missing required fields; configuration file is most '
