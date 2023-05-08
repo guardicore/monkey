@@ -1,5 +1,6 @@
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
 from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
+from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
 from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
 from flask_security import Security
 
@@ -141,3 +142,6 @@ User.email
 
 identity_type_filter
 secret_type_filter
+
+SNMPResult.errorIndex
+SNMPResult.varBinds
