@@ -145,7 +145,7 @@ def to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
             if len(ssh_keypair):
                 secret = SSHKeypair(
                     private_key=ssh_keypair.get("private_key", ""),
-                    public_key=ssh_keypair.get("public_key", ""),
+                    public_key=ssh_keypair.get("public_key", None),
                 )
 
         if any([identity, secret]):
