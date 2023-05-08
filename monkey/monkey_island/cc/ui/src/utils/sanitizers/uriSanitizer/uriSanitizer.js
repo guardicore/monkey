@@ -1,8 +1,8 @@
 const URL_REGEX_VALIDATORS = Object.freeze([
-  {expression: /[()[\]{};`'"<>]/gmi, expectedTestResult: false},
-  {expression: /^([^\w]*)(script|unsafe|javascript|vbscript|app|admin|icloud-sharing|icloud-vetting|help|aim|facetime-audio|applefeedback|ibooks|macappstore|udoc|ts|st|x-apple-helpbasic)/gmi, expectedTestResult: false},
-  {expression: /^(?:(?:ht)tps?:|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/gmi, expectedTestResult: true},
-  {expression: /(javascript:)/gmi, expectedTestResult: false}
+  {expression: /[()[\]{};`'"<>]/mi, expectedTestResult: false},
+  {expression: /^([^\w]*)(script|unsafe|javascript|vbscript|app|admin|icloud-sharing|icloud-vetting|help|aim|facetime-audio|applefeedback|ibooks|macappstore|udoc|ts|st|x-apple-helpbasic)/mi, expectedTestResult: false},
+  {expression: /^(?:(?:ht)tps?:|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/mi, expectedTestResult: true},
+  {expression: /(javascript:)/mi, expectedTestResult: false}
 ]);
 
 const EMPTY_URI = '';
