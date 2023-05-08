@@ -43,6 +43,8 @@ const configSubmitAction = 'config-submit';
 const configExportAction = 'config-export';
 const configSaveAction = 'config-saved';
 
+const MASQUERADE_STRINGS_PREFIX = 'InfectionMonkeyMasquePrefix';
+
 class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
@@ -155,6 +157,7 @@ class ConfigurePageComponent extends AuthComponent {
 
     const windowsMasqueBytes = await windowsRes.body.arrayBuffer();
     const windowsMasqueStrings = this.getStringsFromBytes(windowsMasqueBytes);
+
     this.setState({
       masqueStrings: {
         'linux_masque_strings': linuxMasqueStrings,
@@ -164,13 +167,27 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   getStringsFromBytes = (bytesArray) => {
+    const encoder = new TextEncoder('utf-8');
     const decoder = new TextDecoder('utf-8');
-    const dataViewArray = new DataView(bytesArray);
-    const stringsArray = decoder.decode(dataViewArray).split('\0');
-    if(stringsArray.every(string => string === '')){
+    const prefixBytes = encoder.encode(MASQUERADE_STRINGS_PREFIX);
+    const uint8Array = new Uint8Array(bytesArray);
+    const prefixIndex = uint8Array.findIndex((_value, index) => {
+    for (let i = 0; i < prefixBytes.length; i++) {
+        if (uint8Array[index + i] !== prefixBytes[i]) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    if (prefixIndex === -1) {
       return [];
     }
-    return stringsArray;
+    const dataViewArray = new DataView(bytesArray, prefixIndex + prefixBytes.length);
+    const lastString = decoder.decode(dataViewArray);
+    const stringsArray = lastString.split('\0');
+
+    return stringsArray.filter(str => str !== '');
   }
 
   updateConfig = () => {
@@ -240,11 +257,27 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   configSubmit(config) {
-    this.sendCredentials().then(res => {
-      if (res.ok) {
-        this.sendConfig(config);
-      }
-    });
+    const sendCredentialsPromise = this.sendCredentials();
+    const sendLinuxMasqueStringsPromise = this.sendMasqueStrings(
+      APIEndpoint.linuxMasque,
+      this.state.masqueStrings?.linux_masque_strings
+    );
+    const sendWindowsMasqueStringsPromise = this.sendMasqueStrings(
+      APIEndpoint.windowsMasque,
+      this.state.masqueStrings?.windows_masque_strings
+    );
+
+    Promise.all([sendCredentialsPromise, sendLinuxMasqueStringsPromise, sendWindowsMasqueStringsPromise])
+      .then(responses => {
+        if (responses.every(res => res.status === 204)) {
+          this.sendConfig(config);
+        } else {
+          console.log('One or more requests failed.');
+        }
+      })
+      .catch(error => {
+        console.log('Error occurred:', error);
+      });
   }
 
   onChange = (formData) => {
@@ -380,6 +413,33 @@ class ConfigurePageComponent extends AuthComponent {
         console.log(`bad configuration ${error}`);
         this.setState({lastAction: 'invalid_configuration'});
       }));
+  }
+
+  sendMasqueStrings(endpoint, masqueStrings){
+    const masqueBytes = this.transformStringsToBytes(masqueStrings);
+    return IslandHttpClient.put(
+      endpoint, masqueBytes, true)
+        .then(res => {
+        if (res.status !== 204) {
+          throw Error();
+        }
+        return res;
+      })
+      .catch((error) => {
+        console.log(`bad configuration ${error}`);
+        this.setState({lastAction: 'invalid_configuration'});
+      });
+  }
+
+  transformStringsToBytes = (stringsArray) => {
+   const encoder = new TextEncoder('utf-8');
+
+   let bytes = stringsArray
+     .map(str => str ? encoder.encode(str + '\0') : [])
+     .reduce((acc, curr) => [...acc, ...curr], []);
+
+   let prefixBytes = encoder.encode(MASQUERADE_STRINGS_PREFIX);
+   return new Uint8Array([...prefixBytes, ...bytes]);
   }
 
   renderConfigContent = (displayedSchema) => {
