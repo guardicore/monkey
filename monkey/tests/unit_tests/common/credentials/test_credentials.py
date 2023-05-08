@@ -11,8 +11,8 @@ from tests.data_for_tests.propagation_credentials import (
     PASSWORD_1,
     PLAINTEXT_LM_HASH,
     PLAINTEXT_PASSWORD,
-    PLAINTEXT_PRIVATE_KEY,
-    PRIVATE_KEY,
+    PLAINTEXT_PRIVATE_KEY_1,
+    PRIVATE_KEY_1,
 )
 
 from common.base_models import InfectionMonkeyBaseModel
@@ -56,14 +56,22 @@ def test_credentials_secrets_not_logged(caplog):
 
 _plaintext = [
     PLAINTEXT_PASSWORD,
-    PLAINTEXT_PRIVATE_KEY,
+    PLAINTEXT_PRIVATE_KEY_1,
     PLAINTEXT_LM_HASH,
     "",
     "already_plaintext",
     Path("C:\\jolly_fella"),
     None,
 ]
-_hidden = [PASSWORD_1, PRIVATE_KEY, LM_HASH, "", "already_plaintext", Path("C:\\jolly_fella"), None]
+_hidden = [
+    PASSWORD_1,
+    PRIVATE_KEY_1,
+    LM_HASH,
+    "",
+    "already_plaintext",
+    Path("C:\\jolly_fella"),
+    None,
+]
 
 
 @pytest.mark.parametrize("expected, hidden", list(zip(_plaintext, _hidden)))

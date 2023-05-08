@@ -9,7 +9,7 @@ from tests.data_for_tests.propagation_credentials import (
     PASSWORD_1,
     PASSWORD_2,
     PASSWORD_3,
-    PRIVATE_KEY,
+    PRIVATE_KEY_1,
     PUBLIC_KEY,
     SPECIAL_USERNAME,
     USERNAME,
@@ -25,7 +25,7 @@ TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS = {
     "exploit_password_list": {PASSWORD_1, PASSWORD_2, PASSWORD_3},
     "exploit_lm_hash_list": {LM_HASH},
     "exploit_ntlm_hash_list": {NT_HASH},
-    "exploit_ssh_keys": [{"public_key": PUBLIC_KEY, "private_key": PRIVATE_KEY}],
+    "exploit_ssh_keys": [{"public_key": PUBLIC_KEY, "private_key": PRIVATE_KEY_1}],
 }
 
 EMPTY_CHANNEL_CREDENTIALS = []
