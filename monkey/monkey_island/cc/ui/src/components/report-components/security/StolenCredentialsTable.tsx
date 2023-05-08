@@ -23,7 +23,7 @@ const StolenCredentialsTable = () => {
   const [credentialsTableData, setCredentialsTableData] = useState(null);
 
   useEffect(() => {
-    IslandHttpClient.get(APIEndpoint.stolenCredentials, {}, true).then(
+    IslandHttpClient.getJSON(APIEndpoint.stolenCredentials, {}, true).then(
       res => setCredentialsTableData(getCredentialsTableData(res.body))
     );
   }, [])

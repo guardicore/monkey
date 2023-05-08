@@ -26,7 +26,7 @@ function BreachedServersComponent() {
   const [exploitations, setExploitations] = useState(null);
 
   useEffect(() => {
-    IslandHttpClient.get(APIEndpoint.monkey_exploitation, {}, true)
+    IslandHttpClient.getJSON(APIEndpoint.monkey_exploitation, {}, true)
       .then(res => setExploitations(res.body['monkey_exploitations']))
   }, []);
 

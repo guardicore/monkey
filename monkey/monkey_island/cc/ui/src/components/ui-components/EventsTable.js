@@ -125,13 +125,13 @@ class EventsTable extends React.Component {
 
   componentDidMount = () => {
     this.setState({loading: true})
-    IslandHttpClient.get(APIEndpoint.agents, {}, true)
+    IslandHttpClient.getJSON(APIEndpoint.agents, {}, true)
       .then(res => this.setState({agents: res.body}))
 
-    IslandHttpClient.get(APIEndpoint.machines, {}, true)
+    IslandHttpClient.getJSON(APIEndpoint.machines, {}, true)
       .then(res => this.setState({machines: res.body}))
 
-    IslandHttpClient.get(APIEndpoint.agentEvents, {}, true)
+    IslandHttpClient.getJSON(APIEndpoint.agentEvents, {}, true)
       .then(res => this.setState({events: res.body, loading: false}))
   };
 
