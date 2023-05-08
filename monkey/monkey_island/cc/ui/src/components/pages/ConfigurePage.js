@@ -151,8 +151,8 @@ class ConfigurePageComponent extends AuthComponent {
 
   updateMasqueStrings = async () => {
     const [linuxRes, windowsRes] = await Promise.all([
-      IslandHttpClient.getRaw(APIEndpoint.linuxMasque, {}, true),
-      IslandHttpClient.getRaw(APIEndpoint.windowsMasque, {}, true)
+      IslandHttpClient.get(APIEndpoint.linuxMasque, {}, true),
+      IslandHttpClient.get(APIEndpoint.windowsMasque, {}, true)
     ]);
     const linuxMasqueBytes = await linuxRes.body.arrayBuffer();
     const linuxMasqueStrings = getStringsFromBytes(linuxMasqueBytes);

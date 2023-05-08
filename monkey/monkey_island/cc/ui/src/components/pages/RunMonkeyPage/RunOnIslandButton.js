@@ -35,10 +35,10 @@ class RunOnIslandButton extends AuthComponent {
   }
 
   componentDidMount() {
-    IslandHttpClient.get(APIEndpoint.machines, {}, true).then(res => {
+    IslandHttpClient.getJSON(APIEndpoint.machines, {}, true).then(res => {
       const island_machine_id = this.get_island_machine_id(res.body)
 
-      IslandHttpClient.get(APIEndpoint.agents, {}, true).then(res => {
+      IslandHttpClient.getJSON(APIEndpoint.agents, {}, true).then(res => {
         if (this.agents_running_on_machine(island_machine_id, res.body)) {
           this.setState({runningOnIslandState: MONKEY_STATES.RUNNING});
         } else {

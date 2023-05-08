@@ -60,7 +60,7 @@ const getContents = (props) => {
   }
 
   function getOtp() {
-    IslandHttpClient.get(APIEndpoint.agent_otp, {}, true).then(res => {
+    IslandHttpClient.getJSON(APIEndpoint.agent_otp, {}, true).then(res => {
       setOtp(res.body.otp);
       restart(newExpirationTime());
     });

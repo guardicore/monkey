@@ -19,7 +19,7 @@ export function didAllAgentsShutdown(refreshToken: boolean) {
 }
 
 export function getCollectionObject(collectionEndpoint: APIEndpoint, key: string, refreshToken: boolean) {
-  return IslandHttpClient.get(collectionEndpoint, {}, refreshToken)
+  return IslandHttpClient.getJSON(collectionEndpoint, {}, refreshToken)
     .then(res => {
       return arrayToObject(res.body, key);
     });
@@ -30,14 +30,14 @@ export function arrayToObject(array: object[], key: string): Record<string, any>
 }
 
 export function getAllAgents(refreshToken: boolean) {
-  return IslandHttpClient.get(APIEndpoint.agents, {}, refreshToken)
+  return IslandHttpClient.getJSON(APIEndpoint.agents, {}, refreshToken)
     .then(res => {
       return res.body;
     });
 }
 
 export function getAllMachines(refreshToken: boolean) {
-  return IslandHttpClient.get(APIEndpoint.machines, {}, refreshToken)
+  return IslandHttpClient.getJSON(APIEndpoint.machines, {}, refreshToken)
     .then(res => {
       return res.body;
     });

@@ -52,9 +52,9 @@ class IslandHttpClient extends AuthComponent {
       .then(res => new Response(res, status));
   }
 
-  get(endpoint: APIEndpoint, args: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
+  getJSON(endpoint: APIEndpoint, args: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
     let status = null;
-    return this.getRaw(endpoint, args, refreshToken)
+    return this.get(endpoint, args, refreshToken)
       .then(res => {
         status = res.status;
         return res.body.json()
@@ -62,7 +62,7 @@ class IslandHttpClient extends AuthComponent {
       .then(res => new Response(res, status));
   }
 
-  getRaw(endpoint: APIEndpoint, args: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
+  get(endpoint: APIEndpoint, args: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
     let status = null;
     let params = new URLSearchParams(args);
     let url = String(endpoint);
