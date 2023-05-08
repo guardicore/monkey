@@ -399,7 +399,7 @@ class ConfigurePageComponent extends AuthComponent {
   sendMasqueStrings(endpoint, masqueStrings){
     const masqueBytes = this.transformStringsToBytes(masqueStrings);
     return IslandHttpClient.put(
-      endpoint, masqueBytes, true, 'bytes')
+      endpoint, masqueBytes, true)
         .then(res => {
         if (res.status !== 204) {
           throw Error();
