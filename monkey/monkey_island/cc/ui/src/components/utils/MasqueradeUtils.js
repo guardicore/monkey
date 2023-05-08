@@ -5,7 +5,7 @@ export function transformStringsToBytes(stringsArray){
 
   let bytes = stringsArray
     .map(str => str ? encoder.encode(str + '\0') : [])
-    .reduce((acc, curr) => [...acc, ...curr], []);
+    .reduce((accumulator, currentString) => [...accumulator, ...currentString], []);
 
   let prefixBytes = encoder.encode(MASQUERADE_STRINGS_PREFIX);
   return new Uint8Array([...prefixBytes, ...bytes]);
@@ -18,19 +18,19 @@ export function getStringsFromBytes(bytesArray) {
   const uint8Array = new Uint8Array(bytesArray);
   const prefixIndex = uint8Array.findIndex((_value, index) => {
   for (let i = 0; i < prefixBytes.length; i++) {
-      if (uint8Array[index + i] !== prefixBytes[i]) {
-        return false;
-      }
+    if (uint8Array[index + i] !== prefixBytes[i]) {
+      return false;
     }
-    return true;
+  }
+  return true;
   });
 
   if (prefixIndex === -1) {
     return [];
   }
   const dataViewArray = new DataView(bytesArray, prefixIndex + prefixBytes.length);
-  const lastString = decoder.decode(dataViewArray);
-  const stringsArray = lastString.split('\0');
+  const stringsBytes = decoder.decode(dataViewArray);
+  const stringsArray = stringsBytes.split('\0');
 
   return stringsArray.filter(str => str !== '');
 }
