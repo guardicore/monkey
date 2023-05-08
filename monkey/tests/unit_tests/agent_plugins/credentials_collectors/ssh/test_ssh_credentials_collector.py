@@ -1,12 +1,11 @@
+import threading
 from unittest.mock import MagicMock
 
 import pytest
-from agent_plugins.credentials_collectors.ssh.src.ssh_credential_collector import (
-    SSHCredentialCollector,
-)
+from agent_plugins.credentials_collectors.ssh.src.plugin import Plugin
 
 from common.credentials import Credentials, SSHKeypair, Username
-from common.event_queue import IAgentEventQueue
+from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 
 AGENT_ID = AgentID("ed077054-a316-479a-a99d-75bb378c0a6e")
@@ -14,7 +13,7 @@ AGENT_ID = AgentID("ed077054-a316-479a-a99d-75bb378c0a6e")
 
 def patch_ssh_handler(ssh_creds, monkeypatch):
     monkeypatch.setattr(
-        "agent_plugins.credentials_collectors.ssh.src.ssh_credential_collector.get_ssh_info",
+        "agent_plugins.credentials_collectors.ssh.src.plugin.get_ssh_info",
         lambda _, __: ssh_creds,
     )
 
@@ -24,7 +23,9 @@ def patch_ssh_handler(ssh_creds, monkeypatch):
 )
 def test_ssh_credentials_empty_results(monkeypatch, ssh_creds):
     patch_ssh_handler(ssh_creds, monkeypatch)
-    collected = SSHCredentialCollector(MagicMock(spec=IAgentEventQueue), AGENT_ID).run()
+    collected = Plugin(
+        agent_id=AGENT_ID, agent_event_publisher=MagicMock(spec=IAgentEventPublisher)
+    ).run(options={}, interrupt=threading.Event())
     assert not collected
 
 
@@ -69,5 +70,7 @@ def test_ssh_info_result_parsing(monkeypatch):
         Credentials(identity=username3, secret=None),
         Credentials(identity=None, secret=ssh_keypair3),
     ]
-    collected = SSHCredentialCollector(MagicMock(spec=IAgentEventQueue), AGENT_ID).run()
+    collected = Plugin(
+        agent_id=AGENT_ID, agent_event_publisher=MagicMock(spec=IAgentEventPublisher)
+    ).run(options={}, interrupt=threading.Event())
     assert expected == collected
