@@ -239,8 +239,14 @@ class ConfigurePageComponent extends AuthComponent {
 
   configSubmit(config) {
     const sendCredentialsPromise = this.sendCredentials();
-    const sendLinuxMasqueStringsPromise = this.sendLinuxMasqueStrings();
-    const sendWindowsMasqueStringsPromise = this.sendWindowsMasqueStrings();
+    const sendLinuxMasqueStringsPromise = this.sendMasqueStrings(
+      APIEndpoint.linuxMasque,
+      this.state.masqueStrings?.linux_masque_strings
+    );
+    const sendWindowsMasqueStringsPromise = this.sendMasqueStrings(
+      APIEndpoint.windowsMasque,
+      this.state.masqueStrings?.windows_masque_strings
+    );
 
     Promise.all([sendCredentialsPromise, sendLinuxMasqueStringsPromise, sendWindowsMasqueStringsPromise])
       .then(responses => {
@@ -390,30 +396,10 @@ class ConfigurePageComponent extends AuthComponent {
       }));
   }
 
-  sendLinuxMasqueStrings() {
-    const linuxMasqueStrings = this.state.masqueStrings?.linux_masque_strings;
-    const linuxMasqueBytes = this.getNullTerminatedBytesFromStrings(linuxMasqueStrings);
-
+  sendMasqueStrings(endpoint, masqueStrings){
+    const masqueBytes = this.getNullTerminatedBytesFromStrings(masqueStrings);
     return IslandHttpClient.put(
-      APIEndpoint.linuxMasque, linuxMasqueBytes, true, 'bytes')
-        .then(res => {
-        if (res.status !== 204) {
-          throw Error();
-        }
-        return res;
-      })
-      .catch((error) => {
-        console.log(`bad configuration ${error}`);
-        this.setState({lastAction: 'invalid_configuration'});
-      });
-  }
-
-  sendWindowsMasqueStrings() {
-    const windowsMasqueStrings = this.state.masqueStrings?.windows_masque_strings;
-    const windowsMasqueBytes = this.getNullTerminatedBytesFromStrings(windowsMasqueStrings);
-
-    return IslandHttpClient.put(
-      APIEndpoint.windowsMasque, windowsMasqueBytes, true, 'bytes')
+      endpoint, masqueBytes, true, 'bytes')
         .then(res => {
         if (res.status !== 204) {
           throw Error();
