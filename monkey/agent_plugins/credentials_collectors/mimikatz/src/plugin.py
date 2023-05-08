@@ -28,12 +28,19 @@ MIMIKATZ_EVENT_TAGS = frozenset(
 
 class Plugin:
     def __init__(
-        self, *, plugin_name: str, agent_id: AgentID, agent_event_publisher: IAgentEventPublisher
+        self,
+        *,
+        plugin_name: str,
+        agent_id: AgentID,
+        agent_event_publisher: IAgentEventPublisher,
+        **kwargs,
     ):
         self._agent_event_publisher = agent_event_publisher
         self._agent_id = agent_id
 
-    def run(self, *, options: Mapping[str, Any], interrupt: Event) -> Sequence[Credentials]:
+    def run(
+        self, *, options: Mapping[str, Any], interrupt: Event, **kwargs
+    ) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
 
         try:
