@@ -44,6 +44,8 @@ const configSubmitAction = 'config-submit';
 const configExportAction = 'config-export';
 const configSaveAction = 'config-saved';
 
+const EMPTY_BYTES_ARRAY = new Uint8Array(new ArrayBuffer(0));
+
 
 class ConfigurePageComponent extends AuthComponent {
 
@@ -330,14 +332,18 @@ class ConfigurePageComponent extends AuthComponent {
     )
       .then(res => res.json())
       .then(() => {
+          this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'}, true);
+          IslandHttpClient.put(APIEndpoint.linuxMasque, EMPTY_BYTES_ARRAY, true);
+          IslandHttpClient.put(APIEndpoint.windowsMasque, EMPTY_BYTES_ARRAY, true);
+      })
+      .then(() => {
           this.setState({
             lastAction: 'reset'
           });
           this.updateConfig();
           this.props.onStatusChange();
         }
-      )
-      .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'}, true));
+      );
   };
 
   exportConfig = async () => {
