@@ -299,6 +299,7 @@ class ConfigurePageComponent extends AuthComponent {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
                                configuration={this.filterUnselectedPlugins()}
                                credentials={this.state.credentials}
+                               masqueStrings={this.state.masqueStrings}
                                onHide={() => {
                                  this.setState({showConfigExportModal: false});
                                }}/>);
