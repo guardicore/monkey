@@ -1,8 +1,7 @@
 import MarkdownDescriptionTemplate from './MarkdownDescriptionTemplate';
 
-const RJSF_ATTR_MAPPING = {
-  'placeholder': 'ui:placeholder'
-};
+const DEFAULT_VALUE_FIELD = 'default';
+const UI_SCHEMA_PLACEHOLDER_FIELD = 'ui:placeholder';
 
 const pluginsManipulator = (uiSchema, JSONSchema) => {
   for (let pluginName of Object.keys(JSONSchema)) {
@@ -27,12 +26,10 @@ const updateUiSchemaForDynamicComponentsAttributes = (pluginsPaths, uiSchema, JS
     paths?.forEach(path => {
       const pluginObj = getObjectByPath(JSONSchema[pluginName], path);
       Object.entries(pluginObj).forEach(([currField, data]) => {
-        Object.keys(data).forEach(attr => {
-          if (RJSF_ATTR_MAPPING[attr]) {
-            const attrValue = data[attr];
-            uiSchema[pluginName] = Object.assign({...uiSchema[pluginName]}, {[currField]: {[RJSF_ATTR_MAPPING[attr]]: attrValue}})
-          }
-        });
+        if (Object.hasOwn(data, DEFAULT_VALUE_FIELD)) {
+          uiSchema[pluginName][currField] = {};
+          uiSchema[pluginName][currField][UI_SCHEMA_PLACEHOLDER_FIELD] = data[DEFAULT_VALUE_FIELD];
+        }
       });
     });
   });
