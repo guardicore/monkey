@@ -1,4 +1,4 @@
-const MASQUERADE_STRINGS_PREFIX = 'InfectionMonkeyMasquePrefix';
+const MASQUERADE_STRINGS_PREFIX = 'InfectionMonkeyMasquePrefix\0';
 
 export function transformStringsToBytes(stringsArray){
   const encoder = new TextEncoder('utf-8');
