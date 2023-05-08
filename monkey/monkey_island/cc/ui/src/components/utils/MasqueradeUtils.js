@@ -15,16 +15,7 @@ export function getStringsFromBytes(bytesArray) {
   const encoder = new TextEncoder('utf-8');
   const decoder = new TextDecoder('utf-8');
   const prefixBytes = encoder.encode(MASQUERADE_STRINGS_PREFIX);
-  const uint8Array = new Uint8Array(bytesArray);
-  const prefixIndex = uint8Array.findIndex((_value, index) => {
-  for (let i = 0; i < prefixBytes.length; i++) {
-    if (uint8Array[index + i] !== prefixBytes[i]) {
-      return false;
-    }
-  }
-  return true;
-  });
-
+  const prefixIndex = getPrefixIndexFromBytesArray(bytesArray, prefixBytes);
   if (prefixIndex === -1) {
     return [];
   }
@@ -33,4 +24,16 @@ export function getStringsFromBytes(bytesArray) {
   const stringsArray = stringsBytes.split('\0');
 
   return stringsArray.filter(str => str !== '');
+}
+
+function getPrefixIndexFromBytesArray(bytesArray, prefix){
+  const uint8Array = new Uint8Array(bytesArray);
+  return uint8Array.findIndex((_value, index) => {
+  for (let i = 0; i < prefix.length; i++) {
+    if (uint8Array[index + i] !== prefix[i]) {
+      return false;
+    }
+  }
+  return true;
+  });
 }
