@@ -397,7 +397,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   sendMasqueStrings(endpoint, masqueStrings){
-    const masqueBytes = this.getNullTerminatedBytesFromStrings(masqueStrings);
+    const masqueBytes = this.transformStringsToBytes(masqueStrings);
     return IslandHttpClient.put(
       endpoint, masqueBytes, true, 'bytes')
         .then(res => {
@@ -412,7 +412,7 @@ class ConfigurePageComponent extends AuthComponent {
       });
   }
 
-  getNullTerminatedBytesFromStrings = (stringsArray) => {
+  transformStringsToBytes = (stringsArray) => {
    const encoder = new TextEncoder('utf-8');
 
    let bytes = stringsArray
