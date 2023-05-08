@@ -6,8 +6,9 @@ from ..base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 from . import LMHash, NTHash, Password, SSHKeypair, Username
 from .encoding import SecretEncodingConfig
 
-Secret = Union[Password, LMHash, NTHash, SSHKeypair]
 Identity = Username
+Secret = Union[Password, LMHash, NTHash, SSHKeypair]
+CredentialsComponent = Union[Identity, Secret]
 
 
 class Credentials(InfectionMonkeyBaseModel):
