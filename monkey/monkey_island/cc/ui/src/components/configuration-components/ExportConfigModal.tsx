@@ -11,6 +11,7 @@ type Props = {
   show: boolean,
   configuration: object,
   credentials: string,
+  masqueStrings: string,
   onHide: () => void
 }
 
@@ -25,15 +26,22 @@ const ConfigExportModal = (props: Props) => {
   function onSubmit() {
     let configuration = reformatConfig(props.configuration, true);
     let credentials = props.credentials;
+    let masqueStrings = props.masqueStrings;
     let metadata = {'encrypted': false};
 
     if (radioValue === 'password') {
       configuration = encryptText(JSON.stringify(configuration), pass);
       credentials = encryptText(JSON.stringify(credentials), pass);
+      masqueStrings = encryptText(JSON.stringify(masqueStrings), pass);
       metadata = {'encrypted': true};
     }
 
-    let config_export = {'metadata': metadata, 'configuration': configuration, 'credentials': credentials};
+    let config_export = {
+      'metadata': metadata,
+      'configuration': configuration,
+      'credentials': credentials,
+      'masque_strings': masqueStrings
+    };
     let export_json = JSON.stringify(config_export, null, 2);
     let export_blob = new Blob(
       [export_json],
