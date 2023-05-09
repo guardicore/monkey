@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Iterable, Mapping
 from unittest.mock import MagicMock
 
 import mongomock
@@ -136,7 +136,7 @@ def test_mongo_repository_reset__removal_error(error_raising_credentials_reposit
 def test_configured_secrets_encrypted(
     mongo_repository: MongoCredentialsRepository,
     mongo_client: MongoClient,
-    credentials: Sequence[Credentials],
+    credentials: Credentials,
 ):
     mongo_repository.save_configured_credentials([credentials])
     check_if_stored_credentials_encrypted(mongo_client, credentials)
