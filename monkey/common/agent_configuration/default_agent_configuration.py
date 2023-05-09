@@ -13,7 +13,7 @@ from .agent_sub_configurations import (
     TCPScanConfiguration,
 )
 
-CREDENTIALS_COLLECTORS: Dict[str, Dict] = {"SSHCollector": {}}
+CREDENTIALS_COLLECTORS: Dict[str, Dict] = {}
 
 RANSOMWARE_OPTIONS = {
     "encryption": {

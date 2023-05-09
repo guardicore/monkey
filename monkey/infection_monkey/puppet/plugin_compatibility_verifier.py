@@ -20,13 +20,11 @@ class PluginCompatibilityVerifier:
         island_api_client: IIslandAPIClient,
         operating_system: OperatingSystem,
         exploiter_plugin_manifests: Mapping[str, AgentPluginManifest],
-        credentials_collector_plugin_manifests: Mapping[str, AgentPluginManifest] = {},
     ):
         self._island_api_client = island_api_client
         self._operating_system = operating_system
         self._plugin_manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {
             AgentPluginType.EXPLOITER: dict(exploiter_plugin_manifests),
-            AgentPluginType.CREDENTIALS_COLLECTOR: dict(credentials_collector_plugin_manifests),
         }
         self._cache_lock = threading.Lock()
 

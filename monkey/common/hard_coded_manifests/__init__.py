@@ -1,3 +1,2 @@
 from .hard_coded_exploiter_manifests import HARD_CODED_EXPLOITER_MANIFESTS
 from .hard_coded_payloads_manifests import HARD_CODED_PAYLOADS_MANIFESTS
-from .hard_coded_credentials_collector_manifests import HARD_CODED_CREDENTIALS_COLLECTOR_MANIFESTS
