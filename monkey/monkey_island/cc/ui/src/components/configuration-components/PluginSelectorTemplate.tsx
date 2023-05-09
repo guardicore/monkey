@@ -36,7 +36,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
 
   function getOptions() {
     let selectorOptions = [];
-    for (let [name, schema] of Object.entries(props.schema.properties)) {
+    for (let [name, schema] of Object.entries(props.schema.properties || {})) {
       // @ts-expect-error
       selectorOptions.push({label: schema.title, value: name, isActive: (name === activePlugin)});
     }
