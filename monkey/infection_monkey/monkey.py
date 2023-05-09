@@ -17,11 +17,7 @@ from pubsub.core import Publisher
 from serpentarium import PluginLoader, PluginThreadName
 from serpentarium.logging import configure_child_process_logger
 
-from common import (
-    HARD_CODED_CREDENTIALS_COLLECTOR_MANIFESTS,
-    HARD_CODED_EXPLOITER_MANIFESTS,
-    OperatingSystem,
-)
+from common import HARD_CODED_EXPLOITER_MANIFESTS, OperatingSystem
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
@@ -49,7 +45,6 @@ from infection_monkey.agent_event_handlers import (
     add_stolen_credentials_to_propagation_credentials_repository,
     notify_relay_on_propagation,
 )
-from infection_monkey.credential_collectors import SSHCredentialCollector
 from infection_monkey.exploit import (
     CachingAgentBinaryRepository,
     ExploiterWrapper,
@@ -423,16 +418,9 @@ class InfectionMonkey:
             self._island_api_client,
             self._operating_system,
             HARD_CODED_EXPLOITER_MANIFESTS,
-            HARD_CODED_CREDENTIALS_COLLECTOR_MANIFESTS,
         )
         puppet = Puppet(
             self._agent_event_queue, plugin_registry, plugin_compatibility_verifier, self._agent_id
-        )
-
-        puppet.load_plugin(
-            AgentPluginType.CREDENTIALS_COLLECTOR,
-            "SSHCollector",
-            SSHCredentialCollector(self._agent_event_queue, self._agent_id),
         )
 
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "http", HTTPFingerprinter())
