@@ -5,7 +5,7 @@ from typing import Dict, Iterable, Sequence
 
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, SSHKeypair, Username
-from common.event_queue import IAgentEventQueue
+from common.event_queue import IAgentEventPublisher
 from common.tags import (
     DATA_FROM_LOCAL_SYSTEM_T1005_TAG,
     OS_CREDENTIAL_DUMPING_T1003_TAG,
@@ -29,7 +29,7 @@ SSH_COLLECTOR_EVENT_TAGS = frozenset(
 )
 
 
-def get_ssh_info(agent_event_queue: IAgentEventQueue, agent_id: AgentID) -> Iterable[Dict]:
+def get_ssh_info(agent_event_publisher: IAgentEventPublisher, agent_id: AgentID) -> Iterable[Dict]:
     # TODO: Remove this check when this is turned into a plugin.
     if is_windows_os():
         logger.debug(
@@ -38,7 +38,7 @@ def get_ssh_info(agent_event_queue: IAgentEventQueue, agent_id: AgentID) -> Iter
         return []
 
     home_dirs = _get_home_dirs()
-    ssh_info = _get_ssh_files(home_dirs, agent_event_queue, agent_id)
+    ssh_info = _get_ssh_files(home_dirs, agent_event_publisher, agent_id)
 
     return ssh_info
 
@@ -78,7 +78,7 @@ def _get_ssh_struct(name: str, home_dir: str) -> Dict:
 
 def _get_ssh_files(
     user_info: Iterable[Dict],
-    agent_event_queue: IAgentEventQueue,
+    agent_event_publisher: IAgentEventPublisher,
     agent_id: AgentID,
 ) -> Iterable[Dict]:
     for info in user_info:
@@ -110,7 +110,9 @@ def _get_ssh_files(
                                             logger.info("Found private key in %s" % private)
                                             collected_credentials = to_credentials([info])
                                             _publish_credentials_stolen_event(
-                                                collected_credentials, agent_event_queue, agent_id
+                                                collected_credentials,
+                                                agent_event_publisher,
+                                                agent_id,
                                             )
                                         else:
                                             continue
@@ -156,7 +158,7 @@ def to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
 
 def _publish_credentials_stolen_event(
     collected_credentials: Sequence[Credentials],
-    agent_event_queue: IAgentEventQueue,
+    agent_event_publisher: IAgentEventPublisher,
     agent_id: AgentID,
 ):
     credentials_stolen_event = CredentialsStolenEvent(
@@ -165,4 +167,4 @@ def _publish_credentials_stolen_event(
         stolen_credentials=collected_credentials,
     )
 
-    agent_event_queue.publish(credentials_stolen_event)
+    agent_event_publisher.publish(credentials_stolen_event)
