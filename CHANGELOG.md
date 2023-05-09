@@ -11,6 +11,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `{GET,PUT} /api/agent-binaries/<string:os>/masque`. #3249
 - Placeholder values for empty plugin configuration fields having defaults. #3310
 - Malware masquerading. #3241, #3242
+- Support for plugin manifest files with the "yml" extension. #3097
 
 ### Changed
 - Renamed "Credential collector" to "Credentials collector". #3167
