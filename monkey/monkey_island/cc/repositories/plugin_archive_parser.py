@@ -105,6 +105,7 @@ def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
     for manifest_filename in MANIFEST_FILENAMES:
         try:
             manifest_buf = _safe_extract_file(tar, manifest_filename)
+            break
         except KeyError:
             pass
 
