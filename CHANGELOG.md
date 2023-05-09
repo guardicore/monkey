@@ -27,6 +27,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Security
 - Fixes a bug where OTPs can be leaked by the hadoop exploiter. #3296
+- Fixes pypykatz leaking sensitive information into the logs. #3168, #3293
 
 ## [2.1.0] - 2023-04-19
 ### Added
