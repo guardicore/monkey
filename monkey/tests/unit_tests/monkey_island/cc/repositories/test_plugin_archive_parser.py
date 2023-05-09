@@ -81,10 +81,12 @@ def config_schema() -> Dict[str, Any]:
     return {"type": "object", "properties": {"name": {"type": "string"}}}
 
 
-def build_agent_plugin_tar(agent_plugin: AgentPlugin) -> BinaryIO:
+def build_agent_plugin_tar(
+    agent_plugin: AgentPlugin, manifest_file_name: str = "manifest.yaml"
+) -> BinaryIO:
     fileobj = io.BytesIO()
     with TarFile(fileobj=fileobj, mode="w") as tar:
-        manifest_tarinfo = TarInfo("manifest.yaml")
+        manifest_tarinfo = TarInfo(manifest_file_name)
         manifest_bytes = yaml.safe_dump(agent_plugin.plugin_manifest.dict(simplify=True)).encode()
         manifest_tarinfo.size = len(manifest_bytes)
         tar.addfile(manifest_tarinfo, io.BytesIO(manifest_bytes))
@@ -102,7 +104,7 @@ def build_agent_plugin_tar(agent_plugin: AgentPlugin) -> BinaryIO:
     return fileobj
 
 
-def test_parse_plugin_manifest(
+def test_parse_plugin_manifest_yaml_extension(
     simple_agent_plugin: AgentPlugin, agent_plugin_manifest: AgentPluginManifest
 ):
     agent_plugin_tar = build_agent_plugin_tar(simple_agent_plugin)
@@ -110,6 +112,29 @@ def test_parse_plugin_manifest(
 
     for plugin in parsed_plugin.values():
         assert plugin.plugin_manifest == agent_plugin_manifest
+
+
+def test_parse_plugin_manifest_yml_extension(
+    simple_agent_plugin: AgentPlugin, agent_plugin_manifest: AgentPluginManifest
+):
+    agent_plugin_tar = build_agent_plugin_tar(
+        simple_agent_plugin, manifest_file_name="manifest.yml"
+    )
+    parsed_plugin = parse_plugin(agent_plugin_tar)
+
+    for plugin in parsed_plugin.values():
+        assert plugin.plugin_manifest == agent_plugin_manifest
+
+
+def test_parse_plugin_manifest_unrecognised_extension(
+    simple_agent_plugin: AgentPlugin, agent_plugin_manifest: AgentPluginManifest
+):
+    agent_plugin_tar = build_agent_plugin_tar(
+        simple_agent_plugin, manifest_file_name="manifest.idk"
+    )
+
+    with pytest.raises(ValueError):
+        parse_plugin(agent_plugin_tar)
 
 
 def test_parse_plugin_config_schema(
