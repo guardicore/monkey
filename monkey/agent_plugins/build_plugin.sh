@@ -5,15 +5,15 @@
 
 ROOT="$( cd "$( dirname "$0" )" && pwd )"
 
-#shellcheck disable=SC1091
-source "$ROOT/util.sh"
-
 if [ -z "$1" ]; then
     echo "No plugin path specified."
     exit 1
 else
     PLUGIN_PATH=$(realpath "$1")
 fi
+
+#shellcheck disable=SC1091
+source "$ROOT/util.sh" $PLUGIN_PATH
 
 set -x
 export PYENV_ROOT="$HOME/.pyenv"

@@ -15,7 +15,7 @@ else
 fi
 
 #shellcheck disable=SC1091
-source "$SCRIPT_DIR/util.sh"
+source "$SCRIPT_DIR/util.sh" $PLUGIN_PATH
 plugin_filename=$(get_plugin_filename "$SCRIPT_DIR/$PLUGIN_PATH") || fail "Failed to get plugin filename: $plugin_filename"
 
 DOCKER_COMMANDS="
