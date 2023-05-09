@@ -9,14 +9,16 @@ SPECIAL_USERNAME = "m0nk3y.user"
 PLAINTEXT_NT_HASH = "C1C58F96CDF212B50837BC11A00BE47C"
 PLAINTEXT_LM_HASH = "299BD128C1101FD6299BD128C1101FD6"
 PLAINTEXT_PASSWORD = "trytostealthis"
-PLAINTEXT_PRIVATE_KEY = "MY_PRIVATE_KEY"
+PLAINTEXT_PRIVATE_KEY_1 = "MY_PRIVATE_KEY"
+PLAINTEXT_PRIVATE_KEY_2 = "SECOND_PRIVATE_KEY"
 NT_HASH = SecretStr(PLAINTEXT_NT_HASH)
 LM_HASH = SecretStr(PLAINTEXT_LM_HASH)
 PASSWORD_1 = SecretStr(PLAINTEXT_PASSWORD)
 PASSWORD_2 = SecretStr("password!")
 PASSWORD_3 = SecretStr("rubberbabybuggybumpers")
 PUBLIC_KEY = "MY_PUBLIC_KEY"
-PRIVATE_KEY = SecretStr(PLAINTEXT_PRIVATE_KEY)
+PRIVATE_KEY_1 = SecretStr(PLAINTEXT_PRIVATE_KEY_1)
+PRIVATE_KEY_2 = SecretStr(PLAINTEXT_PRIVATE_KEY_2)
 
 IDENTITIES = [Username(username=USERNAME), None, Username(username=SPECIAL_USERNAME)]
 IDENTITY_DICTS = [{"username": USERNAME}, None]
@@ -27,7 +29,8 @@ SECRETS = (
     Password(password=PASSWORD_3),
     LMHash(lm_hash=LM_HASH),
     NTHash(nt_hash=NT_HASH),
-    SSHKeypair(private_key=PRIVATE_KEY, public_key=PUBLIC_KEY),
+    SSHKeypair(private_key=PRIVATE_KEY_1, public_key=PUBLIC_KEY),
+    SSHKeypair(private_key=PRIVATE_KEY_2, public_key=None),
     None,
 )
 SECRET_DICTS = [
@@ -36,7 +39,11 @@ SECRET_DICTS = [
     {"nt_hash": NT_HASH},
     {
         "public_key": PUBLIC_KEY,
-        "private_key": PRIVATE_KEY,
+        "private_key": PRIVATE_KEY_1,
+    },
+    {
+        "public_key": None,
+        "private_key": PRIVATE_KEY_1,
     },
     None,
 ]

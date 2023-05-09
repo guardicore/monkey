@@ -66,8 +66,10 @@ export function formatCredentialsForForm(credentials) {
       }
       if (Object.prototype.hasOwnProperty.call(secret, SecretType.PrivateKey)) {
         let keypair = {
-          'public_key': secret[PlaintextType.PublicKey],
           'private_key': secret[SecretType.PrivateKey]
+        }
+        if(secret[PlaintextType.PublicKey] !== null){
+          keypair['public_key'] = secret[PlaintextType.PublicKey];
         }
         formattedCredentials['exploit_ssh_keys'].push(keypair)
       }

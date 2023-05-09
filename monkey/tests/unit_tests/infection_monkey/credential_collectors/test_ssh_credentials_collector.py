@@ -44,7 +44,7 @@ def test_ssh_info_result_parsing(monkeypatch):
         {
             "name": "",
             "home_dir": "/home/mcus",
-            "public_key": "PubKey",
+            "public_key": None,
             "private_key": "PrivKey",
         },
     ]
@@ -59,7 +59,7 @@ def test_ssh_info_result_parsing(monkeypatch):
         private_key="ExtremelyGoodPrivateKey", public_key="SomePublicKeyUbuntu"
     )
     ssh_keypair2 = SSHKeypair(private_key="", public_key="AnotherPublicKey")
-    ssh_keypair3 = SSHKeypair(private_key="PrivKey", public_key="PubKey")
+    ssh_keypair3 = SSHKeypair(private_key="PrivKey", public_key=None)
 
     expected = [
         Credentials(identity=username, secret=ssh_keypair1),
