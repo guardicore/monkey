@@ -101,7 +101,7 @@ class MongoCredentialsRepository(ICredentialsRepository):
                 decrypted_component = None
             else:
                 decrypted_component = {
-                    key: self._repository_encryptor.decrypt(value).decode()
+                    key: self._repository_encryptor.decrypt(value).decode() if value else value
                     for key, value in credentials_component.items()
                 }
 
