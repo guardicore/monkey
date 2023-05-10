@@ -82,8 +82,8 @@ def place_key_files(tmp_path):
     yield
 
     # Set these permissions so that pytest can clean up the directory
-    inaccessible_root_ssh_dir.chmod(700)
-    inaccessible_home_dir.chmod(700)
+    inaccessible_root_ssh_dir.chmod(0o700)
+    inaccessible_home_dir.chmod(0o700)
 
 
 @pytest.fixture
