@@ -19,6 +19,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Hard-coded Mimikatz credentials collector to a plugin. #3168
 - Hard-coded Zerologon exploiter to a plugin. #3164
 - Hard-coded SSH credentials collector to a plugin. #3169
+- SSH credentials collector's private-key search algorithm. #1882
 
 ### Fixed
 - Plugins are now being checked for local OS compatibility. #3275
