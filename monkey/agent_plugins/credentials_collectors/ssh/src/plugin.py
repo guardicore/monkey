@@ -14,6 +14,10 @@ from common.tags import (
 )
 from common.types import AgentID, Event
 
+# The maximum RSA keysize is 2048 bytes. Our maximum supported key file size is 4x to future proof
+# our detection algorithm.
+MAX_KEY_FILE_SIZE_BYTES = 8192
+
 logger = logging.getLogger(__name__)
 
 LinuxUsername = str
@@ -122,7 +126,7 @@ def _steal_keypairs(ssh_dir: PosixPath) -> Iterable[SSHKeypair]:
         if not _file_is_private_key(file):
             continue
 
-        private_key = file.read_text()
+        private_key = _read_key_file(file)
         public_key = _find_public_key(file)
         keypair = SSHKeypair(private_key=private_key, public_key=public_key)
 
@@ -131,9 +135,16 @@ def _steal_keypairs(ssh_dir: PosixPath) -> Iterable[SSHKeypair]:
     return stolen_keypairs
 
 
+def _read_key_file(file: PosixPath, size: int = MAX_KEY_FILE_SIZE_BYTES) -> str:
+    # SECURITY: File reads should be limited in size. This prevents a DoS condition where someone
+    # could place a large file in the SSH directory and cause the agent consume all available RAM.
+    with file.open("rt") as f:
+        return f.read(size)
+
+
 def _file_is_private_key(file: PosixPath) -> bool:
     try:
-        file_contents = file.read_text()[:1024]
+        file_contents = _read_key_file(file, 1024)
         for pattern in OPEN_SSL_KEY_FILE_HEADERS:
             if file_contents.startswith(pattern):
                 return True
@@ -148,7 +159,7 @@ def _find_public_key(private_key_file: PosixPath) -> Optional[str]:
     try:
         public_key_file = private_key_file.with_suffix(".pub")
         if public_key_file.is_file():
-            return public_key_file.read_text()
+            return _read_key_file(public_key_file)
     except (IOError, OSError) as err:
         logger.debug(f"Received an error while reading {public_key_file}: {err}")
 
