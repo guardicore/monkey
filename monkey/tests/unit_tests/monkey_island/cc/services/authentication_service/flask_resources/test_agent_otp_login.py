@@ -62,7 +62,7 @@ def test_invalid_json(flask_client):
 
     response = flask_client.post(url, data=invalid_json, follow_redirects=True)
 
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.UNSUPPORTED_MEDIA_TYPE
 
 
 def test_unauthorized(mock_authentication_facade, agent_otp_login):
