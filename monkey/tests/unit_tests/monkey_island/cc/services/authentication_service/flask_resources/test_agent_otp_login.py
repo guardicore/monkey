@@ -56,7 +56,18 @@ def test_invalid_request(agent_otp_login, data):
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
-def test_invalid_json(flask_client):
+def test_invalid_json__json_content_type(flask_client):
+    url = get_url_for_resource(AgentOTPLogin)
+    invalid_json = "{'key1': 'value1', 'key2: 'value2'}"
+
+    response = flask_client.post(
+        url, data=invalid_json, follow_redirects=True, content_type="application/json"
+    )
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+
+
+def test_invalid_json__no_content_type(flask_client):
     url = get_url_for_resource(AgentOTPLogin)
     invalid_json = "{'key1': 'value1', 'key2: 'value2'}"
 
