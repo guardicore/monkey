@@ -26,6 +26,7 @@ cryptography = "*"
 serpentarium = "==0.5.0"
 jsonschema = "*"
 semver = "==2.13.0"
+pyasn1 = "==0.4.8"
 
 [dev-packages]
 ldap3 = "*"
