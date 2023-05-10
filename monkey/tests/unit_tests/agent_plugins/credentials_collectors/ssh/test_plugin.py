@@ -144,3 +144,5 @@ def test_stolen_credentials(patch_pwd_getpwall, mock_agent_event_publisher):
     stolen_credentials = plugin.run(options={}, interrupt=threading.Event())
 
     assert set(stolen_credentials) == CREDENTIALS
+    assert mock_agent_event_publisher.publish.call_count == 1
+    assert set(mock_agent_event_publisher.publish.call_args[0][0].stolen_credentials) == CREDENTIALS
