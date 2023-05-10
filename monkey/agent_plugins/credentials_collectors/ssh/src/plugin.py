@@ -1,5 +1,6 @@
 import logging
 import pwd
+import re
 import time
 from pathlib import PosixPath
 from typing import Any, Dict, Iterable, Mapping, Optional, Sequence
@@ -30,6 +31,13 @@ SSH_COLLECTOR_EVENT_TAGS = frozenset(
         UNSECURED_CREDENTIALS_T1552_TAG,
     )
 )
+
+SSL_FILE_PATTERNS = [
+    r"-----BEGIN\sRSA\sPRIVATE",
+    r"-----BEGIN\sDSA\sPRIVATE",
+    r"-----BEGIN\sEC\sPRIVATE",
+    r"-----BEGIN\sECDSA\sPRIVATE",
+]
 
 
 class Plugin:
@@ -125,10 +133,12 @@ def _steal_keypairs(ssh_dir: PosixPath) -> Iterable[SSHKeypair]:
 
 
 def _file_is_private_key(file: PosixPath) -> bool:
-    # TODO: Perform a real check based on https://github.com/file/file/blob/master/magic/Magdir/ssl
     try:
-        file.read_text()
-        return file.suffix != ".pub"
+        file_data = file.read_text()[:1024]
+        for pattern in SSL_FILE_PATTERNS:
+            if re.search(pattern, file_data):
+                return True
+        return False
     except (IOError, OSError) as err:
         logger.debug(f"Received an error while reading {file}: {err}")
         return False

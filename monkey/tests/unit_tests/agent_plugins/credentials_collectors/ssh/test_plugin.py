@@ -33,15 +33,15 @@ def test_pwd_exception(monkeypatch, mock_agent_event_publisher: IAgentEventPubli
 
 USERNAME_1 = "test_user_1"
 PUBLIC_KEY_1a = "pubkey1a"
-PRIVATE_KEY_1a = "privkey1a"
-PRIVATE_KEY_1b = "privkey1b"
+PRIVATE_KEY_1a = "-----BEGIN DSA PRIVATE privkey1a"
+PRIVATE_KEY_1b = "-----BEGIN ECDSA PRIVATE privkey1b"
 
 IDENTITY_1 = Username(username=USERNAME_1)
 SECRET_1a = SSHKeypair(private_key=PRIVATE_KEY_1a, public_key=PUBLIC_KEY_1a)
 SECRET_1b = SSHKeypair(private_key=PRIVATE_KEY_1b, public_key=None)
 
 USERNAME_2 = "test_user_2"
-PRIVATE_KEY_2 = "privkey2"
+PRIVATE_KEY_2 = "-----BEGIN EC PRIVATE privkey2"
 
 IDENTITY_2 = Username(username=USERNAME_2)
 SECRET_2 = SSHKeypair(private_key=PRIVATE_KEY_2, public_key=None)
