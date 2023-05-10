@@ -29,6 +29,7 @@ GCP_TEST_MACHINE_LIST = {
         "log4j-solr-50",
         "log4j-tomcat-51",
         "log4j-tomcat-52",
+        "snmp-20",
     ],
 }
 
@@ -53,6 +54,7 @@ DEPTH_1_A = {
         "log4j-solr-50",
         "log4j-tomcat-51",
         "log4j-tomcat-52",
+        "snmp-20",
     ],
 }
 
