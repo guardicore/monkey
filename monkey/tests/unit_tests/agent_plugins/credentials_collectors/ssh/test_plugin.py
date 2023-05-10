@@ -57,12 +57,12 @@ CREDENTIALS = {
 def place_key_files(tmp_path):
     inaccessible_root_ssh_dir = tmp_path / "root/.ssh"
     inaccessible_root_ssh_dir.mkdir(parents=True)
-    inaccessible_root_ssh_dir.chmod(mode=200)
+    inaccessible_root_ssh_dir.chmod(mode=0o200)
 
     inaccessible_home_dir = tmp_path / "daemon_home"
     inaccessible_home_dir.mkdir()
     (inaccessible_home_dir / ".ssh").mkdir()
-    inaccessible_home_dir.chmod(000)
+    inaccessible_home_dir.chmod(0o000)
 
     user_1_ssh_dir = tmp_path / "home" / USERNAME_1 / ".ssh"
     user_1_ssh_dir.mkdir(parents=True)
@@ -71,8 +71,8 @@ def place_key_files(tmp_path):
     (user_1_ssh_dir / "key1.pub").write_text(PUBLIC_KEY_1a)
     (user_1_ssh_dir / "key2").write_text(PRIVATE_KEY_1b)
 
-    (user_1_ssh_dir / "key2.pub").touch(mode=200)
-    (user_1_ssh_dir / "unreadable").touch(mode=200)
+    (user_1_ssh_dir / "key2.pub").touch(mode=0o200)
+    (user_1_ssh_dir / "unreadable").touch(mode=0o200)
 
     user_2_ssh_dir = tmp_path / "var/home" / USERNAME_2 / ".ssh"
     user_2_ssh_dir.mkdir(parents=True)
