@@ -1,6 +1,5 @@
 import logging
 import pwd
-import re
 import time
 from pathlib import PosixPath
 from typing import Any, Dict, Iterable, Mapping, Optional, Sequence
@@ -32,11 +31,11 @@ SSH_COLLECTOR_EVENT_TAGS = frozenset(
     )
 )
 
-SSL_FILE_PATTERNS = [
-    r"-----BEGIN\sRSA\sPRIVATE",
-    r"-----BEGIN\sDSA\sPRIVATE",
-    r"-----BEGIN\sEC\sPRIVATE",
-    r"-----BEGIN\sECDSA\sPRIVATE",
+OPEN_SSL_KEY_FILE_HEADERS = [
+    r"-----BEGIN RSA PRIVATE",
+    r"-----BEGIN DSA PRIVATE",
+    r"-----BEGIN EC PRIVATE",
+    r"-----BEGIN ECDSA PRIVATE",
 ]
 
 
@@ -134,10 +133,11 @@ def _steal_keypairs(ssh_dir: PosixPath) -> Iterable[SSHKeypair]:
 
 def _file_is_private_key(file: PosixPath) -> bool:
     try:
-        file_data = file.read_text()[:1024]
-        for pattern in SSL_FILE_PATTERNS:
-            if re.search(pattern, file_data):
+        file_contents = file.read_text()[:1024]
+        for pattern in OPEN_SSL_KEY_FILE_HEADERS:
+            if file_contents.startswith(pattern):
                 return True
+
         return False
     except (IOError, OSError) as err:
         logger.debug(f"Received an error while reading {file}: {err}")
