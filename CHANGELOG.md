@@ -20,6 +20,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Hard-coded Zerologon exploiter to a plugin. #3164
 - Hard-coded SSH credentials collector to a plugin. #3169
 - SSH credentials collector's private-key search algorithm. #1882
+- Manual run page UI. #3328
 
 ### Fixed
 - Plugins are now being checked for local OS compatibility. #3275
