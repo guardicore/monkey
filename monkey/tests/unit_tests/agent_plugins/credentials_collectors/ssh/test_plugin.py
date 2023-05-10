@@ -28,7 +28,7 @@ def test_pwd_exception(monkeypatch, mock_agent_event_publisher: IAgentEventPubli
     ).run(options={}, interrupt=threading.Event())
 
     assert len(stolen_credentials) == 0
-    assert mock_agent_event_publisher.publish().call_count == 0
+    assert mock_agent_event_publisher.publish.call_count == 0  # type: ignore[attr-defined]
 
 
 USERNAME_1 = "test_user_1"
