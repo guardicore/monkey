@@ -22,6 +22,7 @@ from .utils import (
 #     Log4shell (10.2.3.55, 10.2.3.56, 10.2.3.49, 10.2.3.50, 10.2.3.51, 10.2.3.52)
 #     MSSQL (10.2.2.16)
 #     SMB mimikatz password stealing and brute force (10.2.2.14 and 10.2.2.15)
+#     SNMP (10.2.3.20)
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
@@ -35,6 +36,10 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
         "Log4ShellExploiter": {},
         "MSSQLExploiter": {},
         "SMB": {"agent_binary_upload_timeout": 30, "smb_connect_timeout": 15},
+        "SNMP": {
+            "snmp_request_timeout": 0.5,
+            "snmp_retries": 1,
+        },
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
@@ -59,6 +64,7 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
         "10.2.2.16",
         "10.2.2.14",
         "10.2.2.15",
+        "10.2.3.20",
     ]
     return add_subnets(agent_configuration, subnets)
 
@@ -92,6 +98,7 @@ test_agent_configuration = _add_http_ports(test_agent_configuration)
 
 CREDENTIALS = (
     Credentials(identity=Username(username="m0nk3y"), secret=None),
+    Credentials(identity=Username(username="c0mmun1ty"), secret=None),
     Credentials(identity=None, secret=Password(password="Ivrrw5zEzs")),
     Credentials(identity=None, secret=Password(password="Xk8VDTsC")),
 )
