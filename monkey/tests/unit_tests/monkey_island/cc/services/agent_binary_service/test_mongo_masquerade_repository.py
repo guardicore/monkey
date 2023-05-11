@@ -102,9 +102,12 @@ def test_get_masque(masquerade_repository):
 
 
 def test_get_masque__empty_masque(masquerade_repository):
+    empty_bytes = b""
+
+    masquerade_repository.set_masque(OperatingSystem.WINDOWS, empty_bytes)
     masque = masquerade_repository.get_masque(OperatingSystem.WINDOWS)
 
-    assert masque == WINDOWS_MASQUE
+    assert masque == empty_bytes
 
 
 def test_get_masque__retrieval_error(error_raising_masquerade_repository):
