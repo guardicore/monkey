@@ -1,4 +1,5 @@
 from ipaddress import IPv4Address
+from uuid import UUID
 
 import pytest
 
@@ -20,9 +21,10 @@ def agent_id():
 
 
 def test_build_monkey_commandline_parameters_arguments():
+    agent_id = UUID("9614480d-471b-4568-86b5-cb922a34ed8a")
     expected = [
         "-p",
-        "101010",
+        str(agent_id),
         "-s",
         "127.127.127.127:5000,138.138.138.138:5007",
         "-d",
@@ -31,7 +33,10 @@ def test_build_monkey_commandline_parameters_arguments():
         "C:\\windows\\abc",
     ]
     actual = build_monkey_commandline_parameters(
-        "101010", ["127.127.127.127:5000", "138.138.138.138:5007"], 0, "C:\\windows\\abc"
+        agent_id,
+        ["127.127.127.127:5000", "138.138.138.138:5007"],
+        0,
+        "C:\\windows\\abc",
     )
 
     assert expected == actual
