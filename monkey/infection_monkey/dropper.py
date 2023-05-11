@@ -11,18 +11,13 @@ from pathlib import PosixPath, WindowsPath
 
 from common import OperatingSystem
 from common.utils.argparse_types import positive_int
-from common.utils.environment import get_os, is_windows_os
+from common.utils.environment import get_os
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
-
-if "win32" == sys.platform:
-    from win32process import DETACHED_PROCESS
-else:
-    DETACHED_PROCESS = 0
 
 # Linux doesn't have WindowsError
 try:
@@ -89,49 +84,7 @@ class MonkeyDrops(object):
             return False
 
         MonkeyDrops._try_update_access_time(destination_path)
-
-        monkey_options = build_monkey_commandline_explicitly(
-            parent=self.opts.parent,
-            servers=self.opts.servers,
-            depth=self.opts.depth,
-            location=None,
-        )
-
-        if is_windows_os():
-            monkey_commandline = get_monkey_commandline_windows(
-                self._config["destination_path"], monkey_options
-            )
-
-            monkey_process = subprocess.Popen(
-                monkey_commandline,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                close_fds=True,
-                creationflags=DETACHED_PROCESS,
-            )
-        else:
-            dest_path = self._config["destination_path"]
-            # In Linux, we need to change the directory first, which is done
-            # using thw `cwd` argument in `subprocess.Popen` below
-
-            monkey_commandline = get_monkey_commandline_linux(dest_path, monkey_options)
-
-            monkey_process = subprocess.Popen(
-                monkey_commandline,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                close_fds=True,
-                cwd="/".join(dest_path.split("/")[0:-1]),
-                creationflags=DETACHED_PROCESS,
-            )
-
-        logger.info(
-            "Executed monkey process (PID=%d) with command line: %s",
-            monkey_process.pid,
-            " ".join(monkey_commandline),
-        )
+        monkey_process = self._run_monkey(destination_path)
 
         time.sleep(3)
         if monkey_process.poll() is not None:
@@ -178,6 +131,48 @@ class MonkeyDrops(object):
                 os.utime(destination_path, (ref_stat.st_atime, ref_stat.st_mtime))
             except OSError:
                 logger.warning("Cannot set reference date to destination file")
+
+    def _run_monkey(self, destination_path) -> subprocess.Popen:
+        monkey_options = build_monkey_commandline_explicitly(
+            parent=self.opts.parent,
+            servers=self.opts.servers,
+            depth=self.opts.depth,
+            location=None,
+        )
+
+        if get_os() == OperatingSystem.WINDOWS:
+            from win32process import DETACHED_PROCESS
+
+            monkey_commandline = get_monkey_commandline_windows(destination_path, monkey_options)
+
+            monkey_process = subprocess.Popen(
+                monkey_commandline,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                close_fds=True,
+                creationflags=DETACHED_PROCESS,
+            )
+        else:
+            # In Linux, we need to change the directory first, which is done
+            # using thw `cwd` argument in `subprocess.Popen` below
+
+            monkey_commandline = get_monkey_commandline_linux(destination_path, monkey_options)
+
+            monkey_process = subprocess.Popen(
+                monkey_commandline,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                close_fds=True,
+                cwd="/".join(destination_path.split("/")[0:-1]),
+            )
+
+        logger.info(
+            f"Executed monkey process (PID={monkey_process.pid}) "
+            f"with command line: {' '.join(monkey_commandline)}"
+        )
+        return monkey_process
 
     def cleanup(self):
         logger.info("Cleaning up the dropper")
