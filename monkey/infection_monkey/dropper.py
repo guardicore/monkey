@@ -76,27 +76,12 @@ class MonkeyDrops(object):
         if not file_exists and os.path.exists(destination_path):
             os.remove(destination_path)
 
-        # always try to move the file first
-        if not file_exists and not self._move_file(source_path, destination_path):
-            # if file still need to change path, copy it
-
-            try:
-                shutil.copy(self._config["source_path"], self._config["destination_path"])
-
-                logger.info(
-                    "Copied source file '%s' into '%s'",
-                    self._config["source_path"],
-                    self._config["destination_path"],
-                )
-            except (WindowsError, IOError, OSError) as exc:
-                logger.error(
-                    "Error copying source file '%s' into '%s': %s",
-                    self._config["source_path"],
-                    self._config["destination_path"],
-                    exc,
-                )
-
-                return False
+        if (
+            not file_exists
+            and not self._move_file(source_path, destination_path)
+            and not self._copy_file(source_path, destination_path)
+        ):
+            return False
 
         if sys.platform == "win32":
             dropper_date_reference_path = DATE_REFERENCE_PATH_WINDOWS
@@ -170,6 +155,19 @@ class MonkeyDrops(object):
         except (WindowsError, IOError, OSError) as exc:
             logger.debug(
                 f"Error moving source file '{source_path}' into '{destination_path}': {exc}"
+            )
+
+            return False
+
+        return True
+
+    def _copy_file(self, source_path, destination_path) -> bool:
+        try:
+            shutil.copy(source_path, destination_path)
+            logger.info(f"Copied source file '{source_path}' into '{destination_path}'")
+        except (WindowsError, IOError, OSError) as exc:
+            logger.debug(
+                f"Error copying source file '{source_path}' into '{destination_path}': {exc}"
             )
 
             return False
