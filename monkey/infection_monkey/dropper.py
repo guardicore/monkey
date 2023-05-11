@@ -9,8 +9,9 @@ import sys
 import time
 from pathlib import PosixPath, WindowsPath
 
+from common import OperatingSystem
 from common.utils.argparse_types import positive_int
-from common.utils.environment import is_windows_os
+from common.utils.environment import get_os, is_windows_os
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
     get_monkey_commandline_linux,
@@ -20,11 +21,8 @@ from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
-
-    DATE_REFERENCE_PATH_WINDOWS = os.path.expandvars(WindowsPath(r"%windir%\system32\kernel32.dll"))
 else:
     DETACHED_PROCESS = 0
-    DATE_REFERENCE_PATH_LINUX = PosixPath("/bin/sh")
 
 # Linux doesn't have WindowsError
 try:
@@ -44,6 +42,13 @@ def file_exists_at_destination(source_path, destination_path) -> bool:
         return filecmp.cmp(source_path, destination_path)
     except OSError:
         return False
+
+
+def get_date_reference_path():
+    if get_os() == OperatingSystem.WINDOWS:
+        return os.path.expandvars(WindowsPath(r"%windir%\system32\kernel32.dll"))
+    else:
+        return PosixPath("/bin/sh")
 
 
 class MonkeyDrops(object):
@@ -83,10 +88,7 @@ class MonkeyDrops(object):
         ):
             return False
 
-        if sys.platform == "win32":
-            dropper_date_reference_path = DATE_REFERENCE_PATH_WINDOWS
-        else:
-            dropper_date_reference_path = DATE_REFERENCE_PATH_LINUX
+        dropper_date_reference_path = get_date_reference_path()
 
         try:
             ref_stat = os.stat(dropper_date_reference_path)
