@@ -88,20 +88,7 @@ class MonkeyDrops(object):
         ):
             return False
 
-        dropper_date_reference_path = get_date_reference_path()
-
-        try:
-            ref_stat = os.stat(dropper_date_reference_path)
-        except OSError:
-            logger.warning(
-                "Cannot set reference date using '%s', file not found",
-                dropper_date_reference_path,
-            )
-        else:
-            try:
-                os.utime(self._config["destination_path"], (ref_stat.st_atime, ref_stat.st_mtime))
-            except OSError:
-                logger.warning("Cannot set reference date to destination file")
+        MonkeyDrops._try_update_access_time(destination_path)
 
         monkey_options = build_monkey_commandline_explicitly(
             parent=self.opts.parent,
@@ -175,6 +162,22 @@ class MonkeyDrops(object):
             return False
 
         return True
+
+    @staticmethod
+    def _try_update_access_time(destination_path):
+        dropper_date_reference_path = get_date_reference_path()
+
+        try:
+            ref_stat = os.stat(dropper_date_reference_path)
+        except OSError:
+            logger.warning(
+                f"Cannot set reference date using '{dropper_date_reference_path}', file not found"
+            )
+        else:
+            try:
+                os.utime(destination_path, (ref_stat.st_atime, ref_stat.st_mtime))
+            except OSError:
+                logger.warning("Cannot set reference date to destination file")
 
     def cleanup(self):
         logger.info("Cleaning up the dropper")
