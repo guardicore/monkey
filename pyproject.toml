@@ -27,7 +27,7 @@ pythonpath = "./monkey"
 filterwarnings = ["ignore:.*'propagate_exceptions' is deprecated and will be removed in Flask 2.3:DeprecationWarning"]  # Remove when Flask is up to v2.3
 
 [tool.vulture]
-exclude = ["monkey/monkey_island/cc/ui/", "monkey/tests/", "monkey/monkey_island/docs/", "monkey/infection_monkey/pyinstaller_hooks", "envs"]
+exclude = ["monkey/monkey_island/cc/ui/", "monkey/tests/", "monkey/monkey_island/docs/", "monkey/infection_monkey/pyinstaller_hooks", "envs", "*/*-MIB.py",]
 paths = ["."]
 
 [tool.mypy]
