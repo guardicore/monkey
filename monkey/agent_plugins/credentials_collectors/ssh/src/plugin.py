@@ -101,7 +101,9 @@ def _steal_credentials() -> Sequence[Credentials]:
 
 def _get_ssh_dirs() -> UserDirectories:
     try:
-        home_dirs = {p.pw_name: PosixPath(p.pw_dir) for p in pwd.getpwall()}
+        home_dirs = {
+            p.pw_name: PosixPath(p.pw_dir) for p in pwd.getpwall()  # type: ignore[attr-defined]
+        }
     except Exception:
         logger.exception("Failed to get SSH directories")
         return {}
