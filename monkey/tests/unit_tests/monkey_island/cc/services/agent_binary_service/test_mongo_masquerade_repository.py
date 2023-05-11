@@ -4,12 +4,12 @@ import mongomock
 import pytest
 
 from common import OperatingSystem
-from monkey_island.cc.repositories import (
+from monkey_island.cc.repositories import RemovalError, RetrievalError, StorageError
+from monkey_island.cc.services.agent_binary_service.i_masquerade_repository import (
     IMasqueradeRepository,
+)
+from monkey_island.cc.services.agent_binary_service.mongo_masquerade_repository import (
     MongoMasqueradeRepository,
-    RemovalError,
-    RetrievalError,
-    StorageError,
 )
 
 LINUX_MASQUE = b"linux_m0nk3y"

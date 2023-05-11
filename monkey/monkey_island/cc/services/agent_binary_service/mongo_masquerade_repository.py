@@ -3,14 +3,10 @@ from typing import Optional
 from pymongo import MongoClient
 
 from common import OperatingSystem
-from monkey_island.cc.repositories import (
-    IMasqueradeRepository,
-    RemovalError,
-    RetrievalError,
-    StorageError,
-)
+from monkey_island.cc.repositories import RemovalError, RetrievalError, StorageError
+from monkey_island.cc.repositories.consts import MONGO_OBJECT_ID_KEY
 
-from .consts import MONGO_OBJECT_ID_KEY
+from .i_masquerade_repository import IMasqueradeRepository
 
 
 class MongoMasqueradeRepository(IMasqueradeRepository):

@@ -10,7 +10,6 @@ from .i_agent_repository import IAgentRepository
 from .i_node_repository import INodeRepository
 from .i_agent_event_repository import IAgentEventRepository
 from .i_agent_plugin_repository import IAgentPluginRepository
-from .i_masquerade_repository import IMasqueradeRepository
 
 from .local_storage_file_repository import LocalStorageFileRepository
 from .file_repository_caching_decorator import FileRepositoryCachingDecorator
@@ -27,7 +26,6 @@ from .mongo_agent_repository import MongoAgentRepository
 from .mongo_node_repository import MongoNodeRepository
 from .mongo_agent_event_repository import MongoAgentEventRepository
 from .file_agent_plugin_repository import FileAgentPluginRepository
-from .mongo_masquerade_repository import MongoMasqueradeRepository
 
 from .utils import initialize_machine_repository
 from .agent_machine_facade import AgentMachineFacade
