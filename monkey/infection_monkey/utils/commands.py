@@ -7,6 +7,7 @@ from infection_monkey.exploit.tools.helpers import (
     AGENT_BINARY_PATH_LINUX,
     AGENT_BINARY_PATH_WIN64,
     get_agent_dst_path,
+    get_dropper_script_dst_path,
 )
 from infection_monkey.i_puppet import TargetHost
 from infection_monkey.model import CMD_CARRY_OUT, CMD_EXE, MONKEY_ARG
@@ -19,6 +20,11 @@ DROPPER_TARGET_PATH_WIN64 = AGENT_BINARY_PATH_WIN64
 def build_agent_download_command(target_host: TargetHost, url: str):
     agent_dst_path = get_agent_dst_path(target_host)
     return build_download_command(target_host, url, agent_dst_path)
+
+
+def build_dropper_script_download_command(target_host: TargetHost, url: str):
+    dropper_script_dst_path = get_dropper_script_dst_path(target_host)
+    return build_download_command(target_host, url, dropper_script_dst_path)
 
 
 def build_download_command(target_host: TargetHost, url: str, dst: PurePath):
