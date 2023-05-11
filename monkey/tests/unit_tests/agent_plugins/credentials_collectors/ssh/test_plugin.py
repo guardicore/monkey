@@ -1,14 +1,16 @@
-import pwd
 import threading
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-from agent_plugins.credentials_collectors.ssh.src.plugin import Plugin
 
 from common.credentials import Credentials, SSHKeypair, Username
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
+
+pwd = pytest.importorskip("pwd")
+# we need to check if `pwd` can be imported before importing `Plugin`
+from agent_plugins.credentials_collectors.ssh.src.plugin import Plugin  # noqa: E402
 
 AGENT_ID = AgentID("ed077054-a316-479a-a99d-75bb378c0a6e")
 
@@ -89,7 +91,7 @@ def place_key_files(tmp_path):
 @pytest.fixture
 def patch_pwd_getpwall(monkeypatch, place_key_files, tmp_path: Path):
     pwd_structs = [
-        pwd.struct_passwd(
+        pwd.struct_passwd(  # type: ignore[attr-defined]
             [
                 "root",
                 "x",
@@ -100,7 +102,7 @@ def patch_pwd_getpwall(monkeypatch, place_key_files, tmp_path: Path):
                 "/bin/bash",
             ]
         ),
-        pwd.struct_passwd(
+        pwd.struct_passwd(  # type: ignore[attr-defined]
             [
                 USERNAME_1,
                 "x",
@@ -111,7 +113,7 @@ def patch_pwd_getpwall(monkeypatch, place_key_files, tmp_path: Path):
                 "/bin/sync",
             ]
         ),
-        pwd.struct_passwd(
+        pwd.struct_passwd(  # type: ignore[attr-defined]
             [
                 "daemon",
                 "x",
@@ -122,7 +124,7 @@ def patch_pwd_getpwall(monkeypatch, place_key_files, tmp_path: Path):
                 "/usr/sbin/nologin",
             ]
         ),
-        pwd.struct_passwd(
+        pwd.struct_passwd(  # type: ignore[attr-defined]
             [
                 USERNAME_2,
                 "x",
