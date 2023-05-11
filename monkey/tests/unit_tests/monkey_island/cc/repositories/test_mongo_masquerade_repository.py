@@ -81,7 +81,7 @@ def test_set_masque__storage_error(error_raising_masquerade_repository):
 def test_get_masque__empty_repo(empty_masquerade_repository):
     masque = empty_masquerade_repository.get_masque(OperatingSystem.LINUX)
 
-    assert masque == b""
+    assert masque is None
 
 
 def test_get_masque(masquerade_repository):
@@ -110,7 +110,7 @@ def test_reset(masquerade_repository):
     masquerade_repository.reset()
 
     for operating_system in OperatingSystem:
-        assert masquerade_repository.get_masque(operating_system) == b""
+        assert masquerade_repository.get_masque(operating_system) is None
 
 
 def test_usable_after_reset(masquerade_repository):
