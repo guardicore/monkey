@@ -39,6 +39,13 @@ logger = logging.getLogger(__name__)
 MOVEFILE_DELAY_UNTIL_REBOOT = 4
 
 
+def file_exists_at_destination(source_path, destination_path) -> bool:
+    try:
+        return filecmp.cmp(source_path, destination_path)
+    except OSError:
+        return False
+
+
 class MonkeyDrops(object):
     def __init__(self, args):
         arg_parser = argparse.ArgumentParser()
@@ -61,17 +68,16 @@ class MonkeyDrops(object):
             logger.error("No destination path specified")
             return False
 
-        # we copy/move only in case path is different
-        try:
-            file_moved = filecmp.cmp(self._config["source_path"], self._config["destination_path"])
-        except OSError:
-            file_moved = False
+        source_path = self._config["source_path"]
+        destination_path = self._config["destination_path"]
 
-        if not file_moved and os.path.exists(self._config["destination_path"]):
-            os.remove(self._config["destination_path"])
+        # we copy/move only in case path is different
+        file_exists = file_exists_at_destination(source_path, destination_path)
+        if not file_exists and os.path.exists(destination_path):
+            os.remove(destination_path)
 
         # always try to move the file first
-        if not file_moved:
+        if not file_exists:
             try:
                 shutil.move(self._config["source_path"], self._config["destination_path"])
 
@@ -81,7 +87,7 @@ class MonkeyDrops(object):
                     self._config["destination_path"],
                 )
 
-                file_moved = True
+                file_exists = True
             except (WindowsError, IOError, OSError) as exc:
                 logger.debug(
                     "Error moving source file '%s' into '%s': %s",
@@ -91,7 +97,7 @@ class MonkeyDrops(object):
                 )
 
         # if file still need to change path, copy it
-        if not file_moved:
+        if not file_exists:
             try:
                 shutil.copy(self._config["source_path"], self._config["destination_path"])
 
@@ -182,7 +188,6 @@ class MonkeyDrops(object):
             if self._config["source_path"].lower() != self._config[
                 "destination_path"
             ].lower() and os.path.exists(self._config["source_path"]):
-
                 # try removing the file first
                 try:
                     os.remove(self._config["source_path"])
