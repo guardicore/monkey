@@ -177,20 +177,22 @@ class MonkeyDrops(object):
     def cleanup(self):
         logger.info("Cleaning up the dropper")
 
-        try:
-            if self._config["source_path"].lower() != self._config[
-                "destination_path"
-            ].lower() and os.path.exists(self._config["source_path"]):
-                # try removing the file first
-                try:
-                    os.remove(self._config["source_path"])
-                except Exception as exc:
-                    logger.debug(
-                        "Error removing source file '%s': %s", self._config["source_path"], exc
-                    )
+        source_path = self._config["source_path"]
 
-                    # mark the file for removal on next boot
-                    mark_file_for_deletion_on_windows(WindowsPath(self._config["source_path"]))
+        try:
+            if source_path.lower() != self._config["destination_path"].lower() and os.path.exists(
+                source_path
+            ):
+                self._remove_file(source_path)
             logger.info("Dropper cleanup complete")
         except AttributeError:
             logger.error("Invalid configuration options. Failing")
+
+    def _remove_file(self, path):
+        try:
+            os.remove(path)
+        except Exception as exc:
+            logger.debug(f"Error removing source file '{path}': {exc}")
+
+            # mark the file for removal on next boot
+            mark_file_for_deletion_on_windows(WindowsPath(path))
