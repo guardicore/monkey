@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pymongo import MongoClient
 
 from common import OperatingSystem
@@ -19,12 +21,12 @@ class MongoMasqueradeRepository(IMasqueradeRepository):
     def __init__(self, mongo: MongoClient):
         self._collection = mongo.monkey_island.masques
 
-    def get_masque(self, operating_system: OperatingSystem) -> bytes:
+    def get_masque(self, operating_system: OperatingSystem) -> Optional[bytes]:
         try:
             masque_document = self._collection.find_one(
                 {"operating_system": operating_system.value}, {MONGO_OBJECT_ID_KEY: False}
             )
-            return masque_document["masque"] if masque_document else b""
+            return masque_document["masque"] if masque_document else None
         except Exception as err:
             raise RetrievalError(f"Error retrieving {operating_system.value} masque: {err}")
 

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from common import OperatingSystem
 
@@ -12,7 +13,7 @@ class IMasqueradeRepository(ABC):
     """
 
     @abstractmethod
-    def get_masque(self, operating_system: OperatingSystem) -> bytes:
+    def get_masque(self, operating_system: OperatingSystem) -> Optional[bytes]:
         """
         Retrieve the masque for the specified OS.
 
