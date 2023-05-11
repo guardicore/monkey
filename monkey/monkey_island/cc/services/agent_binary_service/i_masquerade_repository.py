@@ -24,12 +24,12 @@ class IMasqueradeRepository(ABC):
         """
 
     @abstractmethod
-    def set_masque(self, operating_system: OperatingSystem, masque: bytes):
+    def set_masque(self, operating_system: OperatingSystem, masque: Optional[bytes]):
         """
         Set the masque for the specified OS.
 
         :param operating_system: The OS whose masque is to be set
-        :param masque: The value to set the masque to
+        :param masque: The value to set the masque to, or None to clear the masque
         :raises StorageError: If an error is encountered while attempting to store the masque
         """
 

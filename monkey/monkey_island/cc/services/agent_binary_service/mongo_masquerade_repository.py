@@ -26,7 +26,7 @@ class MongoMasqueradeRepository(IMasqueradeRepository):
         except Exception as err:
             raise RetrievalError(f"Error retrieving {operating_system.value} masque: {err}")
 
-    def set_masque(self, operating_system: OperatingSystem, masque: bytes):
+    def set_masque(self, operating_system: OperatingSystem, masque: Optional[bytes]):
         try:
             self._collection.replace_one(
                 {"operating_system": operating_system.value},

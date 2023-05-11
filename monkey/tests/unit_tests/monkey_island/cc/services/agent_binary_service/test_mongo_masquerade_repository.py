@@ -67,6 +67,17 @@ def test_set_masque__update(masquerade_repository):
     assert masquerade_repository.get_masque(OperatingSystem.WINDOWS) == new_masque
 
 
+@pytest.mark.parametrize("operating_system", [OperatingSystem.LINUX, OperatingSystem.WINDOWS])
+def test_set_masque__clear(masquerade_repository, operating_system: OperatingSystem):
+    # Ensure the repository is not empty
+    masque = masquerade_repository.get_masque(operating_system)
+    assert isinstance(masque, bytes)
+
+    masquerade_repository.set_masque(operating_system, None)
+
+    assert masquerade_repository.get_masque(operating_system) is None
+
+
 def test_set_masque__no_changes(masquerade_repository):
     masquerade_repository.set_masque(OperatingSystem.LINUX, LINUX_MASQUE)
 
