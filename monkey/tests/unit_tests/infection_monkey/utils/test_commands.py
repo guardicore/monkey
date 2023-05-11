@@ -1,6 +1,11 @@
+from ipaddress import IPv4Address
+
 import pytest
 
+from common import OperatingSystem
+from infection_monkey.i_puppet import TargetHost
 from infection_monkey.utils.commands import (
+    build_agent_download_command,
     build_monkey_commandline,
     build_monkey_commandline_parameters,
     get_monkey_commandline_linux,
@@ -97,3 +102,21 @@ def test_build_monkey_commandline_empty_servers(agent_id, servers):
     )
 
     assert expected == actual
+
+
+def test_build_agent_download_command__linux():
+    target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.LINUX)
+    url = "https://example.com/agent"
+
+    linux_agent_download_command = build_agent_download_command(target_host, url)
+
+    assert linux_agent_download_command.startswith("wget")
+    assert linux_agent_download_command.endswith(url)
+
+
+def test_build_agent_download_command__windows():
+    target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.WINDOWS)
+    url = "https://example.com/agent"
+
+    with pytest.raises(NotImplementedError):
+        build_agent_download_command(target_host, url)

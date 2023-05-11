@@ -1,13 +1,39 @@
 from pathlib import PurePath
 from typing import List, Optional, Union
 
+from common import OperatingSystem
 from common.types import AgentID
-from infection_monkey.exploit.tools.helpers import AGENT_BINARY_PATH_LINUX, AGENT_BINARY_PATH_WIN64
+from infection_monkey.exploit.tools.helpers import (
+    AGENT_BINARY_PATH_LINUX,
+    AGENT_BINARY_PATH_WIN64,
+    get_agent_dst_path,
+)
+from infection_monkey.i_puppet import TargetHost
 from infection_monkey.model import CMD_CARRY_OUT, CMD_EXE, MONKEY_ARG
 
 # Dropper target paths
 DROPPER_TARGET_PATH_LINUX = AGENT_BINARY_PATH_LINUX
 DROPPER_TARGET_PATH_WIN64 = AGENT_BINARY_PATH_WIN64
+
+
+def build_agent_download_command(target_host: TargetHost, url: str):
+    agent_dst_path = get_agent_dst_path(target_host)
+    return build_download_command(target_host, url, agent_dst_path)
+
+
+def build_download_command(target_host: TargetHost, url: str, dst: PurePath):
+    if target_host.operating_system == OperatingSystem.WINDOWS:
+        return build_download_command_windows(url, dst)
+
+    return build_download_command_linux(url, dst)
+
+
+def build_download_command_windows(url: str, dst: PurePath):
+    raise NotImplementedError()
+
+
+def build_download_command_linux(url: str, dst: PurePath):
+    return f"wget -qO {dst} {url}"
 
 
 def build_monkey_commandline(
