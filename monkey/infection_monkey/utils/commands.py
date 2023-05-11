@@ -14,7 +14,7 @@ def build_monkey_commandline(
     agent_id: AgentID, servers: List[str], depth: int, location: Union[str, PurePath, None] = None
 ) -> str:
     return " " + " ".join(
-        build_monkey_commandline_explicitly(
+        build_monkey_commandline_parameters(
             agent_id,
             servers,
             depth,
@@ -23,7 +23,7 @@ def build_monkey_commandline(
     )
 
 
-def build_monkey_commandline_explicitly(
+def build_monkey_commandline_parameters(
     parent: Optional[AgentID] = None,
     servers: Optional[List[str]] = None,
     depth: Optional[int] = None,

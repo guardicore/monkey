@@ -2,7 +2,7 @@ import pytest
 
 from infection_monkey.utils.commands import (
     build_monkey_commandline,
-    build_monkey_commandline_explicitly,
+    build_monkey_commandline_parameters,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
@@ -14,7 +14,7 @@ def agent_id():
     return get_agent_id()
 
 
-def test_build_monkey_commandline_explicitly_arguments():
+def test_build_monkey_commandline_parameters_arguments():
     expected = [
         "-p",
         "101010",
@@ -25,19 +25,19 @@ def test_build_monkey_commandline_explicitly_arguments():
         "-l",
         "C:\\windows\\abc",
     ]
-    actual = build_monkey_commandline_explicitly(
+    actual = build_monkey_commandline_parameters(
         "101010", ["127.127.127.127:5000", "138.138.138.138:5007"], 0, "C:\\windows\\abc"
     )
 
     assert expected == actual
 
 
-def test_build_monkey_commandline_explicitly_depth_condition_greater():
+def test_build_monkey_commandline_parameters_depth_condition_greater():
     expected = [
         "-d",
         "50",
     ]
-    actual = build_monkey_commandline_explicitly(depth=50)
+    actual = build_monkey_commandline_parameters(depth=50)
 
     assert expected == actual
 
