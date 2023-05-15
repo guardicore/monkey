@@ -1,9 +1,10 @@
 import {cloneDeep} from 'lodash';
 
-const MASQUERADE_TEXTS_PREFIX = 'InfectionMonkeyTextsMasquePrefix\0';
-const MASQUERADE_BASE64_PREFIX = 'InfectionMonkeyBase64MasquePrefix\0';
-const ENCODING = 'utf-8';
 const NULL_BYTE = '\0';
+const MASQUERADE_TEXTS_PREFIX = `InfectionMonkeyTextsMasquePrefix${NULL_BYTE}`;
+const MASQUERADE_BASE64_PREFIX = `InfectionMonkeyBase64MasquePrefix${NULL_BYTE}`;
+const ENCODING = 'utf-8';
+
 const OS_TYPES = ['linux', 'windows'];
 
 export const MASQUE_TYPES = {
