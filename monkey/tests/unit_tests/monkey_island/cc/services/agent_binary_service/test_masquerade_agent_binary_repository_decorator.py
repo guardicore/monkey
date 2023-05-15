@@ -1,12 +1,15 @@
 import io
-from typing import Mapping
 
 import pytest
 from tests.monkey_island import InMemoryAgentBinaryRepository
+from tests.monkey_island.in_memory_masquerade_repository import InMemoryMasqueradeRepository
 
 from common import OperatingSystem
 from monkey_island.cc.services.agent_binary_service.i_agent_binary_repository import (
     IAgentBinaryRepository,
+)
+from monkey_island.cc.services.agent_binary_service.i_masquerade_repository import (
+    IMasqueradeRepository,
 )
 from monkey_island.cc.services.agent_binary_service.masquerade_agent_binary_repository_decorator import (  # noqa: E501
     MasqueradeAgentBinaryRepositoryDecorator,
@@ -15,7 +18,6 @@ from monkey_island.cc.services.agent_binary_service.masquerade_agent_binary_repo
 NULL_BYTES_LENGTH = 8
 LINUX_MASQUE = b"m0nk3y"
 WINDOWS_MASQUE = b"m0nk3y"
-MASQUES = {OperatingSystem.LINUX: LINUX_MASQUE, OperatingSystem.WINDOWS: WINDOWS_MASQUE}
 
 LINUX_AGENT_BINARY_BYTES = b"linux_binary"
 LINUX_AGENT_BINARY = io.BytesIO(LINUX_AGENT_BINARY_BYTES)
@@ -36,11 +38,20 @@ def in_memory_agent_binary_repository() -> InMemoryAgentBinaryRepository:
 
 
 @pytest.fixture
+def in_memory_masquerade_repository() -> InMemoryAgentBinaryRepository:
+    return InMemoryMasqueradeRepository()
+
+
+@pytest.fixture
 def mock_masquerade_agent_binary_repository(
     in_memory_agent_binary_repository: IAgentBinaryRepository,
+    in_memory_masquerade_repository: IMasqueradeRepository,
 ) -> MasqueradeAgentBinaryRepositoryDecorator:
+    in_memory_masquerade_repository.set_masque(OperatingSystem.LINUX, LINUX_MASQUE)
+    in_memory_masquerade_repository.set_masque(OperatingSystem.WINDOWS, WINDOWS_MASQUE)
+
     return MasqueradeAgentBinaryRepositoryDecorator(
-        in_memory_agent_binary_repository, MASQUES, NULL_BYTES_LENGTH
+        in_memory_agent_binary_repository, in_memory_masquerade_repository, NULL_BYTES_LENGTH
     )
 
 
@@ -95,19 +106,14 @@ def test_get_agent_binary__cached_multiple_calls(
     assert cached_binary_3.read() == MASQUED_WINDOWS_AGENT_BINARY.getvalue()
 
 
-@pytest.mark.parametrize(
-    "masques",
-    (
-        {OperatingSystem.LINUX: LINUX_MASQUE},
-        {OperatingSystem.LINUX: LINUX_MASQUE, OperatingSystem.WINDOWS: None},
-    ),
-)
 def test_one_unset_masque(
     in_memory_agent_binary_repository: IAgentBinaryRepository,
-    masques: Mapping[OperatingSystem, bytes],
+    in_memory_masquerade_repository: IMasqueradeRepository,
 ):
+    in_memory_masquerade_repository.set_masque(OperatingSystem.LINUX, LINUX_MASQUE)
+
     masquerade_agent_binary_repository = MasqueradeAgentBinaryRepositoryDecorator(
-        in_memory_agent_binary_repository, masques, NULL_BYTES_LENGTH
+        in_memory_agent_binary_repository, in_memory_masquerade_repository, NULL_BYTES_LENGTH
     )
 
     actual_linux_binary = masquerade_agent_binary_repository.get_agent_binary(OperatingSystem.LINUX)

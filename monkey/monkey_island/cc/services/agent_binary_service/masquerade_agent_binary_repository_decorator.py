@@ -1,11 +1,12 @@
 import io
 from functools import lru_cache
-from typing import BinaryIO, Mapping, Optional
+from typing import BinaryIO
 
 from common import OperatingSystem
 from common.utils.file_utils import make_fileobj_copy
 
 from .i_agent_binary_repository import IAgentBinaryRepository
+from .i_masquerade_repository import IMasqueradeRepository
 
 DEFAULT_NULL_BYTES_LENGTH = 16
 
@@ -23,11 +24,11 @@ class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
     def __init__(
         self,
         agent_binary_repository: IAgentBinaryRepository,
-        masques: Mapping[OperatingSystem, Optional[bytes]],
+        masquerade_repository: IMasqueradeRepository,
         null_bytes_length: int = DEFAULT_NULL_BYTES_LENGTH,
     ):
         self._agent_binary_repository = agent_binary_repository
-        self._masques = masques
+        self._masquerade_repository = masquerade_repository
         self._null_bytes = b"\x00" * null_bytes_length
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> BinaryIO:
@@ -41,7 +42,7 @@ class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
         return self._apply_masque(operating_system, agent_binary)
 
     def _apply_masque(self, operating_system: OperatingSystem, agent_binary: BinaryIO) -> BinaryIO:
-        masque = self._masques.get(operating_system, None)
+        masque = self._masquerade_repository.get_masque(operating_system)
 
         if masque is None:
             return agent_binary
