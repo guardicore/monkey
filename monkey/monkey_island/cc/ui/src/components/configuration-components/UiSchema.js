@@ -102,14 +102,20 @@ export default function UiSchema(props) {
       linux: {
         masque_base64: {
           items: {
-            'ui:widget': 'textarea'
+            'ui:widget': 'textarea',
+            'ui:options': {
+              rows: 2
+            }
           }
         }
       },
       windows: {
         masque_base64: {
           items: {
-            'ui:widget': 'textarea'
+            'ui:widget': 'textarea',
+            'ui:options': {
+              rows: 2
+            }
           }
         }
       }
