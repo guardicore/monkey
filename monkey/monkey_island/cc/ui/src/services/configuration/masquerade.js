@@ -24,7 +24,7 @@ export const MASQUERADE = {
           uniqueItems: true,
           items: {'type': 'string'},
           default: DEFAULT_MASQUES.linux.texts,
-          description: 'List of masque strings that will be applied to the Linux Agent binary.'
+          description: 'List of masque strings that will be included in the Linux Agent binary.'
         },
         masque_base64: {
           title: 'Base64',
@@ -36,7 +36,7 @@ export const MASQUERADE = {
           },
           maxItems: 1,
           default: DEFAULT_MASQUES.linux.base64,
-          description: 'A masque (bytes) encoded in Base64 that will be applied to the Linux Agent binary.'
+          description: 'A masque (bytes) encoded in Base64 that will be included in the Linux Agent binary.'
         }
       }
     },
@@ -49,7 +49,7 @@ export const MASQUERADE = {
           uniqueItems: true,
           items: {'type': 'string'},
           default: DEFAULT_MASQUES.windows.texts,
-          description: 'List of masque strings that will be applied to the Windows Agent binary.'
+          description: 'List of masque strings that will be included in the Windows Agent binary.'
         },
         masque_base64: {
           title: 'Base64',
@@ -61,7 +61,7 @@ export const MASQUERADE = {
           },
           maxItems: 1,
           default: DEFAULT_MASQUES.windows.base64,
-          description: 'A masque (bytes) encoded in Base64 that will be applied to the Windows Agent binary.'
+          description: 'A masque (bytes) encoded in Base64 that will be included in the Windows Agent binary.'
         }
       }
     }
