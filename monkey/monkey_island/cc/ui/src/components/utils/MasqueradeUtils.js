@@ -3,7 +3,7 @@ import {cloneDeep} from 'lodash';
 const NULL_BYTE = '\0';
 const MASQUERADE_TEXTS_PREFIX = `InfectionMonkeyTextsMasquePrefix${NULL_BYTE}`;
 const MASQUERADE_BASE64_PREFIX = `InfectionMonkeyBase64MasquePrefix${NULL_BYTE}`;
-const ENCODING = 'utf-8';
+const ENCODING_FORMAT = 'utf-8';
 
 const OS_TYPES = ['linux', 'windows'];
 
@@ -26,7 +26,7 @@ export function transformStringsToBytes(stringsArray, masquePrefix) {
 }
 
 export function getStringsFromBytes(bytesArray, masquePrefix, masqueDetails) {
-  if (bytesArray && masqueDetails) {
+  if (bytesArray && bytesArray?.byteLength && masqueDetails) {
     const dataViewArray = new DataView(bytesArray, masqueDetails.offsetIndex + masqueDetails.prefixLength, masqueDetails.length);
     const stringsBytes = decodeBytes(dataViewArray);
     let stringsArray = stringsBytes.split(NULL_BYTE);
@@ -98,33 +98,23 @@ export const getMasqueradeBytesSubsets = (bytesArray) => {
 
   const masqueTypesValues = Object.values(MASQUE_TYPES);
 
-  masqueTypesValues.forEach(({key, _prefix}) => {
-    subsetsDetails[key] = {...defaultValues};
-  });
-
   masqueTypesValues.forEach(({key, prefix}) => {
     const prefixBytes = encodeString(prefix);
     let offsetIndex = getPrefixIndexFromBytesArray(bytesArray, prefixBytes);
 
     if (offsetIndex !== -1) {
+      subsetsDetails[key] = {...defaultValues};
       subsetsDetails[key].offsetIndex = offsetIndex;
       subsetsDetails[key].prefixLength = prefix.length;
     }
   });
 
-  subsetsDetails = filterOutSubsetWithNullOffsetIndex(subsetsDetails);
+  if(bytesArray?.byteLength && Object.keys(subsetsDetails).length === 0) {
+    subsetsDetails[MASQUE_TYPES.BASE64.key] = Object.assign({...defaultValues}, {offsetIndex: 0});
+  }
+
   subsetsDetails = calculateMasquesSubsetsLengths(subsetsDetails, bytesArray.byteLength)
   return subsetsDetails;
-}
-
-const filterOutSubsetWithNullOffsetIndex = (subsetsDetails) => {
-  const filteredSubsets = {};
-  for (const key in subsetsDetails) {
-    if (subsetsDetails[key].offsetIndex !== null) {
-      filteredSubsets[key] = subsetsDetails[key];
-    }
-  }
-  return filteredSubsets;
 }
 
 const calculateMasquesSubsetsLengths = (subsetsDetails, bytesArrayLength) => {
@@ -133,7 +123,7 @@ const calculateMasquesSubsetsLengths = (subsetsDetails, bytesArrayLength) => {
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
     const obj = subsetsDetailsToReturn[key];
-    const subsetOffset = obj.offsetIndex + obj.prefixLength;
+    const subsetOffset = obj.offsetIndex + (obj?.prefixLength || 0);
     if (i < keys.length - 1) {
       obj.length = Math.abs(subsetOffset - subsetsDetailsToReturn[keys[i + 1]].offsetIndex);
     } else {
@@ -143,13 +133,12 @@ const calculateMasquesSubsetsLengths = (subsetsDetails, bytesArrayLength) => {
   return subsetsDetailsToReturn;
 };
 
-
 const encodeString = str => {
-   const encoder = new TextEncoder(ENCODING);
+   const encoder = new TextEncoder(ENCODING_FORMAT);
    return encoder.encode(str);
 }
 
 const decodeBytes = bytes => {
-   const decoder = new TextDecoder(ENCODING);
+   const decoder = new TextDecoder(ENCODING_FORMAT);
    return decoder.decode(bytes);
 }
