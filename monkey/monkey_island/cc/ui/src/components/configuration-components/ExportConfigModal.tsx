@@ -37,10 +37,10 @@ const ConfigExportModal = (props: Props) => {
     }
 
     let config_export = {
-      'metadata': metadata,
-      'configuration': configuration,
-      'credentials': credentials,
-      'masque_strings': masqueStrings
+      metadata: metadata,
+      configuration: configuration,
+      credentials: credentials,
+      masque_strings: masqueStrings
     };
     let export_json = JSON.stringify(config_export, null, 2);
     let export_blob = new Blob(
