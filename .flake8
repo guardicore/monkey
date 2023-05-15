@@ -9,6 +9,7 @@ per-file-ignores =
   __init__.py:F401
   monkey/tests/unit_tests/infection_monkey/island_api_client/configuration_validation_constants.py:E501
   monkey/agent_plugins/exploiters/zerologon/src/zerologon.py:C901
+  monkey/monkey_island/cc/services/reporting/report.py:C901
 
 ### ignore "whitespace before ':'", "line break before binary operator" for
 ### compatibility with black, and cyclomatic complexity (for now).
