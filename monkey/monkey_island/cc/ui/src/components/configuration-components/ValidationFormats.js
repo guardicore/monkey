@@ -20,17 +20,28 @@ const emptyRegex = /^$/
 
 export const IP_RANGE = 'ip-range';
 export const IP = 'ip';
-export const VALID_FILE_EXTENSION = 'valid-file-extension'
-export const VALID_RANSOMWARE_TARGET_PATH_LINUX = 'valid-ransomware-target-path-linux'
-export const VALID_RANSOMWARE_TARGET_PATH_WINDOWS = 'valid-ransomware-target-path-windows'
+export const VALID_FILE_EXTENSION = 'valid-file-extension';
+export const VALID_RANSOMWARE_TARGET_PATH_LINUX = 'valid-ransomware-target-path-linux';
+export const VALID_RANSOMWARE_TARGET_PATH_WINDOWS = 'valid-ransomware-target-path-windows';
+export const VALID_BASE64 = 'valid-base64';
+
 
 export const formValidationFormats = {
   [IP_RANGE]: buildIpRangeRegex(),
   [IP]: buildIpRegex(),
   [VALID_FILE_EXTENSION]: fileExtensionRegex,
   [VALID_RANSOMWARE_TARGET_PATH_LINUX]: buildValidRansomwarePathLinuxRegex(),
-  [VALID_RANSOMWARE_TARGET_PATH_WINDOWS]: buildValidRansomwarePathWindowsRegex()
+  [VALID_RANSOMWARE_TARGET_PATH_WINDOWS]: buildValidRansomwarePathWindowsRegex(),
+  [VALID_BASE64]: isBase64
 };
+
+function isBase64(str) {
+  try {
+    return btoa(atob(str)) === str;
+  } catch (err) {
+    return false;
+  }
+}
 
 function buildIpRangeRegex() {
   return new RegExp([

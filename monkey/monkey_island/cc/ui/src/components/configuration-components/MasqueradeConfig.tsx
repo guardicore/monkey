@@ -1,7 +1,6 @@
 import Form from '@rjsf/bootstrap-4';
 import React from 'react';
 import _ from 'lodash';
-import validator from '@rjsf/validator-ajv8';
 
 export default function MasqueradeConfig(props) {
   const {
@@ -10,7 +9,9 @@ export default function MasqueradeConfig(props) {
     masqueStrings,
     onChange,
     customFormats,
-    className
+    className,
+    validator,
+    transformErrors
   } = props;
 
   let masqueStringsCopy = _.clone(masqueStrings);
@@ -20,6 +21,7 @@ export default function MasqueradeConfig(props) {
           uiSchema={fullUiSchema}
           formData={masqueStringsCopy}
           validator={validator}
+          transformErrors={transformErrors}
           onChange={(formData) => {
             onChange(formData.formData)
           }}
