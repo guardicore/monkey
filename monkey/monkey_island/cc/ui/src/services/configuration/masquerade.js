@@ -34,6 +34,7 @@ export const MASQUERADE = {
             type: 'string',
             format: 'valid-base64'
           },
+          maxItems: 1,
           default: DEFAULT_MASQUES.linux.base64,
           description: 'List of masque Base64 strings that will be applied to the Linux Agent binary.'
         }
@@ -58,6 +59,7 @@ export const MASQUERADE = {
             type: 'string',
             format: 'valid-base64'
           },
+          maxItems: 1,
           default: DEFAULT_MASQUES.windows.base64,
           description: 'List of masque Base64 strings that will be applied to the Linux Agent binary.'
         }
