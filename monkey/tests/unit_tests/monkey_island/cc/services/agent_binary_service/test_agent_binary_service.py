@@ -24,24 +24,6 @@ def agent_binary_service() -> IAgentBinaryService:
     return AgentBinaryService(InMemoryAgentBinaryRepository())
 
 
-@pytest.mark.parametrize("operating_system", [OperatingSystem.LINUX, OperatingSystem.WINDOWS])
-def test_get_masque__empty(
-    agent_binary_service: IAgentBinaryService, operating_system: OperatingSystem
-):
-    assert agent_binary_service.get_masque(operating_system) is None
-
-
-@pytest.mark.parametrize(
-    "operating_system",
-    [OperatingSystem.LINUX, OperatingSystem.WINDOWS],
-)
-def test_set_masque(agent_binary_service: IAgentBinaryService, operating_system: OperatingSystem):
-    masque = MASQUES[operating_system]
-    agent_binary_service.set_masque(operating_system, masque)
-
-    assert agent_binary_service.get_masque(operating_system) == masque
-
-
 @pytest.mark.parametrize(
     "operating_system",
     [OperatingSystem.LINUX, OperatingSystem.WINDOWS],
