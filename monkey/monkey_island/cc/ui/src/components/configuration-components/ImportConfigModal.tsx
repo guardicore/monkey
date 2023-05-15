@@ -9,12 +9,9 @@ import UnsafeConfigOptionsConfirmationModal
   from './UnsafeConfigOptionsConfirmationModal.js';
 import UploadStatusIcon, {UploadStatuses} from '../ui-components/UploadStatusIcon';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
-import {getMasqueradesBytesArrays, transformStringsToBytes} from '../utils/MasqueradeUtils.js';
+import {getMasqueradesBytesArrays} from '../utils/MasqueradeUtils.js';
 import {decryptText} from '../utils/PasswordBasedEncryptor';
-import {
-  reformatConfig,
-  formatCredentialsForIsland
-} from '../configuration-components/ReformatHook';
+import {formatCredentialsForIsland} from './ReformatHook';
 
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 
@@ -87,7 +84,6 @@ const ConfigImportModal = (props: Props) => {
       setConfigEncrypted(false);
       setConfigContents(decryptedConfig);
       setConfigCredentials(decryptedConfigCredentials);
-      // TODO: change
       setConfigMasqueStrings(decryptedConfigMasqueStrings);
     } catch {
       setUploadStatus(UploadStatuses.error);
@@ -133,7 +129,6 @@ const ConfigImportModal = (props: Props) => {
     })
   }
 
-  // TODO: change --
   function sendConfigMasqueStringsToServer(endpoint, masqueBytes) {
     IslandHttpClient.put(endpoint, masqueBytes, true)
       .then(res => {
