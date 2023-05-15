@@ -25,3 +25,4 @@ remediation_suggestion: >-
     stolen/configured credentials or community strings. This attack was
     possible because the version of Net-SNMP running on the server has not had
     security patches applied.
+link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/snmp
