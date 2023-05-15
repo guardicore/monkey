@@ -4,6 +4,7 @@ from tests.monkey_island.in_memory_agent_binary_repository import (
     WINDOWS_AGENT_BINARY,
     InMemoryAgentBinaryRepository,
 )
+from tests.monkey_island.in_memory_masquerade_repository import InMemoryMasqueradeRepository
 
 from common import OperatingSystem
 from monkey_island.cc.services import IAgentBinaryService
@@ -21,7 +22,7 @@ MASQUES = {
 
 @pytest.fixture
 def agent_binary_service() -> IAgentBinaryService:
-    return AgentBinaryService(InMemoryAgentBinaryRepository())
+    return AgentBinaryService(InMemoryAgentBinaryRepository(), InMemoryMasqueradeRepository())
 
 
 @pytest.mark.parametrize(
