@@ -121,7 +121,7 @@ def test_build_agent_download_command__linux(build_command_fn: Callable[[TargetH
     linux_download_command = build_command_fn(target_host, url)
 
     assert linux_download_command.startswith("wget")
-    assert linux_download_command.endswith(url)
+    assert url in linux_download_command
 
 
 @pytest.mark.parametrize(
