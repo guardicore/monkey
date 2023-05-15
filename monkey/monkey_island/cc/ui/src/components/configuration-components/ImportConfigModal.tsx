@@ -9,7 +9,7 @@ import UnsafeConfigOptionsConfirmationModal
   from './UnsafeConfigOptionsConfirmationModal.js';
 import UploadStatusIcon, {UploadStatuses} from '../ui-components/UploadStatusIcon';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
-import {transformStringsToBytes} from '../utils/MasqueradeUtils.js';
+import {getMasqueradesBytesArrays, transformStringsToBytes} from '../utils/MasqueradeUtils.js';
 import {decryptText} from '../utils/PasswordBasedEncryptor';
 import {
   reformatConfig,
@@ -87,6 +87,7 @@ const ConfigImportModal = (props: Props) => {
       setConfigEncrypted(false);
       setConfigContents(decryptedConfig);
       setConfigCredentials(decryptedConfigCredentials);
+      // TODO: change
       setConfigMasqueStrings(decryptedConfigMasqueStrings);
     } catch {
       setUploadStatus(UploadStatuses.error);
@@ -98,13 +99,18 @@ const ConfigImportModal = (props: Props) => {
     try {
       sendConfigToServer();
       sendConfigCredentialsToServer();
-      sendConfigMasqueStringsToServer(APIEndpoint.linuxMasque, configMasqueStrings.linux_masque_strings);
-      sendConfigMasqueStringsToServer(APIEndpoint.windowsMasque, configMasqueStrings.windows_masque_strings);
+      submitConfigMasqueStringsToServer();
       setUploadStatus(UploadStatuses.success);
     } catch {
       setUploadStatus(UploadStatuses.error);
       setErrorMessage('Configuration file is corrupt or in an outdated format');
     }
+  }
+
+  const submitConfigMasqueStringsToServer = () => {
+    const {linuxMasqueBytes, windowsMasqueBytes} = getMasqueradesBytesArrays(configMasqueStrings);
+      sendConfigMasqueStringsToServer(APIEndpoint.linuxMasque, linuxMasqueBytes);
+      sendConfigMasqueStringsToServer(APIEndpoint.windowsMasque, windowsMasqueBytes);
   }
 
   function sendConfigCredentialsToServer() {
@@ -127,8 +133,8 @@ const ConfigImportModal = (props: Props) => {
     })
   }
 
-  function sendConfigMasqueStringsToServer(endpoint, osMasqueStrings) {
-    let masqueBytes = transformStringsToBytes(osMasqueStrings);
+  // TODO: change --
+  function sendConfigMasqueStringsToServer(endpoint, masqueBytes) {
     IslandHttpClient.put(endpoint, masqueBytes, true)
       .then(res => {
         if (res.status === 204) {
