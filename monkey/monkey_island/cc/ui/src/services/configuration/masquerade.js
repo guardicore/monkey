@@ -11,9 +11,9 @@ export const DEFAULT_MASQUES = {
 export const MASQUERADE = {
   title: 'Masquerade',
   type: 'object',
-  description: 'Infection Monkey can mimic a malware signature by injecting custom data into ' +
-    'Agent binaries.\nThis feature can be particularly helpful when testing custom detection ' +
-    'rules.',
+  description: 'Infection Monkey can mimic a malware signature by injecting data into ' +
+    'Agent binaries.\nThis feature can be particularly helpful when testing custom malware ' +
+    'detection rules.',
   properties: {
     linux: {
       title: 'Linux Masque',
