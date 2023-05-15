@@ -33,7 +33,7 @@ import LoadingIcon from '../ui-components/LoadingIcon';
 import mergeAllOf from 'json-schema-merge-allof';
 import RefParser from '@apidevtools/json-schema-ref-parser';
 import CREDENTIALS from '../../services/configuration/propagation/credentials';
-import MASQUERADE from '../../services/configuration/masquerade';
+import {MASQUERADE} from '../../services/configuration/masquerade';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 
 const CONFIG_URL = '/api/agent-configuration';

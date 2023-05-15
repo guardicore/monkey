@@ -6,7 +6,7 @@ import validator from '@rjsf/validator-ajv8';
 export default function MasqueradeConfig(props) {
   const {
     schema,
-    uiSchema,
+    fullUiSchema,
     masqueStrings,
     onChange,
     customFormats,
@@ -14,16 +14,20 @@ export default function MasqueradeConfig(props) {
   } = props;
 
   let masqueStringsCopy = _.clone(masqueStrings);
-  return (<>
+
+  return <>
     <Form schema={schema}
-          uiSchema={uiSchema}
+          uiSchema={fullUiSchema}
           formData={masqueStringsCopy}
           validator={validator}
-          onChange={(formData) => {onChange(formData.formData)}}
+          onChange={(formData) => {
+            onChange(formData.formData)
+          }}
           // @ts-ignore
           customFormats={customFormats}
           className={className}
           liveValidate
-    children={true}/>
-  </>)
+          children={true}
+    />
+  </>
 }

@@ -1,8 +1,8 @@
 import PROPAGATION_CONFIGURATION_SCHEMA from './propagation/propagation.js';
 import CREDENTIALS_COLLECTORS from './credentialsCollectors.js';
 import RANSOMWARE_SCHEMA from './ransomware';
-import MASQUERADE from './masquerade.js';
 import POLYMORPHISM_SCHEMA from './polymorphism.js'
+import {MASQUERADE} from './masquerade.js';
 
 export const SCHEMA = {
   'title': 'Monkey',

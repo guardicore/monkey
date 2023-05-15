@@ -97,6 +97,22 @@ export default function UiSchema(props) {
     },
     credentials_collectors: {
       'ui:ObjectFieldTemplate': PluginSelectorTemplate
+    },
+    masquerade: {
+      linux: {
+        masque_base64: {
+          items: {
+            'ui:widget': 'textarea'
+          }
+        }
+      },
+      windows: {
+        masque_base64: {
+          items: {
+            'ui:widget': 'textarea'
+          }
+        }
+      }
     }
   };
   return UiSchema[props.selectedSection]
