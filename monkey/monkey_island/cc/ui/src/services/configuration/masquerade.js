@@ -61,7 +61,7 @@ export const MASQUERADE = {
           },
           maxItems: 1,
           default: DEFAULT_MASQUES.windows.base64,
-          description: 'A masque (bytes) encoded in Base64 that will be applied to the Linux Agent binary.'
+          description: 'A masque (bytes) encoded in Base64 that will be applied to the Windows Agent binary.'
         }
       }
     }
