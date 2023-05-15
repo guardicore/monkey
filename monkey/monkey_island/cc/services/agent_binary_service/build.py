@@ -1,6 +1,8 @@
 import logging
 from pathlib import Path
 
+from pymongo import MongoClient
+
 from common import DIContainer, OperatingSystem
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
@@ -19,6 +21,7 @@ from .agent_binary_repository import AgentBinaryRepository
 from .agent_binary_service import AgentBinaryService
 from .event_handlers import reset_masque_on_island_mode_change
 from .i_agent_binary_repository import IAgentBinaryRepository
+from .mongo_masquerade_repository import MongoMasqueradeRepository
 
 AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
 logger = logging.getLogger(__name__)
@@ -26,7 +29,8 @@ logger = logging.getLogger(__name__)
 
 def build(container: DIContainer) -> IAgentBinaryService:
     agent_binary_repository = _build_agent_binary_repository()
-    agent_binary_service = AgentBinaryService(agent_binary_repository)
+    masquerade_repository = MongoMasqueradeRepository(container.resolve(MongoClient))
+    agent_binary_service = AgentBinaryService(agent_binary_repository, masquerade_repository)
 
     _register_event_handlers(container.resolve(IIslandEventQueue), agent_binary_service)
 
