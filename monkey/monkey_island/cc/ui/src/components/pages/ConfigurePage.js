@@ -19,8 +19,7 @@ import UnsafeConfigOptionsConfirmationModal
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import {
   getStringsFromBytes,
-  MASQUERADE_TYPE_PREFIX,
-  getMasqueradesBytesArrays
+  getMasqueradesBytesArrays, getMasqueradeBytesSubsets, MASQUE_TYPES
 } from '../utils/MasqueradeUtils.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
@@ -160,12 +159,14 @@ class ConfigurePageComponent extends AuthComponent {
     ]);
 
     const linuxMasqueBytes = await linuxRes.body.arrayBuffer();
-    const linuxMasqueTexts = getStringsFromBytes(linuxMasqueBytes, MASQUERADE_TYPE_PREFIX.TEXTS);
-    const linuxMasqueBase64 = getStringsFromBytes(linuxMasqueBytes, MASQUERADE_TYPE_PREFIX.BASE64);
+    const linuxMasquesSubsets = getMasqueradeBytesSubsets(linuxMasqueBytes);
+    const linuxMasqueTexts = getStringsFromBytes(linuxMasqueBytes, MASQUE_TYPES.TEXTS.prefix, linuxMasquesSubsets[MASQUE_TYPES.TEXTS.key]);
+    const linuxMasqueBase64 = getStringsFromBytes(linuxMasqueBytes, MASQUE_TYPES.BASE64.prefix, linuxMasquesSubsets[MASQUE_TYPES.BASE64.key]);
 
     const windowsMasqueBytes = await windowsRes.body.arrayBuffer();
-    const windowsMasqueTexts= getStringsFromBytes(windowsMasqueBytes, MASQUERADE_TYPE_PREFIX.TEXTS);
-    const windowsMasqueBase64 = getStringsFromBytes(windowsMasqueBytes, MASQUERADE_TYPE_PREFIX.BASE64);
+    const windowsMasquesSubsets = getMasqueradeBytesSubsets(windowsMasqueBytes);
+    const windowsMasqueTexts = getStringsFromBytes(windowsMasqueBytes, MASQUE_TYPES.TEXTS.prefix, windowsMasquesSubsets[MASQUE_TYPES.TEXTS.key]);
+    const windowsMasqueBase64 = getStringsFromBytes(windowsMasqueBytes, MASQUE_TYPES.BASE64.prefix, windowsMasquesSubsets[MASQUE_TYPES.BASE64.key]);
 
     this.setState({
       masqueStrings: {
@@ -251,7 +252,7 @@ class ConfigurePageComponent extends AuthComponent {
     const sendCredentialsPromise = this.sendCredentials();
 
     const {linuxMasqueBytes, windowsMasqueBytes} = getMasqueradesBytesArrays(this.state.masqueStrings);
-    // TODO: change
+
     const sendLinuxMasqueStringsPromise = this.sendMasqueStrings(
       APIEndpoint.linuxMasque,
       linuxMasqueBytes
