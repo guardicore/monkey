@@ -119,6 +119,8 @@ class InfectionMonkey:
 
         context = multiprocessing.get_context("spawn")
 
+        self._running_from_source = "python" in Path(sys.executable).name
+
         self._opts = self._get_arguments(args)
         self._otp = self._get_otp()
 
@@ -248,18 +250,19 @@ class InfectionMonkey:
             parent_id=self._opts.parent,
             cc_server=self._island_address,
             network_interfaces=get_network_interfaces(),
-            sha256=InfectionMonkey._calculate_agent_sha256_hash(),
+            sha256=self._calculate_agent_sha256_hash(),
         )
         self._island_api_client.register_agent(agent_registration_data)
 
-    @staticmethod
-    def _calculate_agent_sha256_hash():
+    def _calculate_agent_sha256_hash(self):
         sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
 
+        if self._running_from_source:
+            return sha256
+
         try:
-            if "python" not in Path(sys.executable).name:
-                with open(sys.executable, "rb") as f:
-                    sha256 = get_binary_io_sha256_hash(f)
+            with open(sys.executable, "rb") as f:
+                sha256 = get_binary_io_sha256_hash(f)
         except Exception:
             logger.exception(
                 "An error occurred while attempting to calculate the agent binary's SHA256 hash."
@@ -518,7 +521,7 @@ class InfectionMonkey:
                 firewall.remove_firewall_rule()
                 firewall.close()
 
-            deleted = InfectionMonkey._self_delete()
+            deleted = self._self_delete()
 
             self._send_log()
 
@@ -538,7 +541,7 @@ class InfectionMonkey:
         except Exception as e:
             logger.exception(f"An error occurred while cleaning up the monkey agent: {e}")
             if deleted is None:
-                InfectionMonkey._self_delete()
+                self._self_delete()
         finally:
             self._plugin_event_forwarder.stop()
             if self._agent_event_forwarder:
@@ -587,12 +590,11 @@ class InfectionMonkey:
         except Exception as err:
             logger.warning(f"Failed to cleanup the plugin directory: {err}")
 
-    @staticmethod
-    def _self_delete() -> bool:
+    def _self_delete(self) -> bool:
         logger.info("Cleaning up the Agent's artifacts")
         remove_monkey_dir()
 
-        if "python" in Path(sys.executable).name:
+        if self._running_from_source:
             return False
 
         try:
