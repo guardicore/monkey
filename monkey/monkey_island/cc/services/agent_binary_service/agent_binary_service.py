@@ -18,9 +18,10 @@ class AgentBinaryService(IAgentBinaryService):
         agent_binary_repository: IAgentBinaryRepository,
         masquerade_repository: IMasqueradeRepository,
     ):
-        self._undecorated_agent_binary_repository = agent_binary_repository
-        self._agent_binary_repository = self._undecorated_agent_binary_repository
         self._masquerade_repository = masquerade_repository
+        self._agent_binary_repository = MasqueradeAgentBinaryRepositoryDecorator(
+            agent_binary_repository, self._masquerade_repository
+        )
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> BinaryIO:
         return self._agent_binary_repository.get_agent_binary(operating_system)
@@ -30,6 +31,3 @@ class AgentBinaryService(IAgentBinaryService):
 
     def set_masque(self, operating_system: OperatingSystem, masque: Optional[bytes]):
         self._masquerade_repository.set_masque(operating_system, masque)
-        self._agent_binary_repository = MasqueradeAgentBinaryRepositoryDecorator(
-            self._undecorated_agent_binary_repository, self._masquerade_repository
-        )
