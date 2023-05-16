@@ -117,7 +117,7 @@ export default function UiSchema(props) {
       }
     },
     polymorphism: {
-      randomized_agent_hash: {
+      randomize_agent_hash: {
         'ui:widget': CheckboxWithMessage
       }
     }

@@ -6,6 +6,7 @@ from common.agent_configuration import (
     ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
+    PolymorphismConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
     TCPScanConfiguration,
@@ -37,11 +38,16 @@ _propagation_configuration = PropagationConfiguration(
     exploitation=_exploitation_configuration,
 )
 
+_polymorphism_configuration = PolymorphismConfiguration(
+    randomize_agent_hash=False,
+)
+
 _agent_configuration = AgentConfiguration(
     keep_tunnel_open_time=0,
     credentials_collectors={},
     payloads={},
     propagation=_propagation_configuration,
+    polymorphism=_polymorphism_configuration,
 )
 _propagation_credentials: Tuple[Credentials, ...] = tuple()
 

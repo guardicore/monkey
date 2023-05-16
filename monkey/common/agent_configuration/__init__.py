@@ -1,13 +1,14 @@
 from .agent_configuration import AgentConfiguration
 from .agent_sub_configurations import (
-    PluginConfiguration,
-    ScanTargetConfiguration,
-    ICMPScanConfiguration,
-    TCPScanConfiguration,
-    NetworkScanConfiguration,
-    ExploitationOptionsConfiguration,
     ExploitationConfiguration,
+    ExploitationOptionsConfiguration,
+    ICMPScanConfiguration,
+    NetworkScanConfiguration,
+    PluginConfiguration,
+    PolymorphismConfiguration,
     PropagationConfiguration,
+    ScanTargetConfiguration,
+    TCPScanConfiguration,
 )
 from .default_agent_configuration import (
     DEFAULT_AGENT_CONFIGURATION,
