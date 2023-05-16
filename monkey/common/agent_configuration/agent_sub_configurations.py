@@ -256,6 +256,6 @@ class PolymorphismConfiguration(MutableInfectionMonkeyBaseModel):
     randomized_agent_hash: bool = Field(
         title="Randomize Agent hash",
         description="Emulate the property of polymorphic (or metamorphic) malware that all "
-        "copies have unique hashes by modifying the Agent binary before propagation.",
+        "copies have unique hashes.",
         default=False,
     )
