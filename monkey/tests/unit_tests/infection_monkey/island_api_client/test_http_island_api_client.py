@@ -42,6 +42,7 @@ from infection_monkey.island_api_client.island_api_client_errors import (
 SERVER = SocketAddress(ip="1.1.1.1", port=9999)
 WINDOWS = "windows"
 AGENT_ID = UUID("80988359-a1cd-42a2-9b47-5b94b37cd673")
+AGENT_SHA256 = "7f295ebba73b2f549f98b9c35ae588f153283476ac8f087cc75d9c4788795d82"
 AGENT_REGISTRATION = AgentRegistrationData(
     id=AGENT_ID,
     machine_hardware_id=1,
@@ -49,6 +50,7 @@ AGENT_REGISTRATION = AgentRegistrationData(
     parent_id=None,
     cc_server=SERVER,
     network_interfaces=[],
+    sha256=AGENT_SHA256,
 )
 
 TIMESTAMP = 123456789

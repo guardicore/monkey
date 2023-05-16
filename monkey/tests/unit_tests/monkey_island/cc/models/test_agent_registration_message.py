@@ -10,6 +10,7 @@ from common.types import SocketAddress
 
 AGENT_ID = UUID("012e7238-7b81-4108-8c7f-0787bc3f3c10")
 PARENT_ID = UUID("0fc9afcb-1902-436b-bd5c-1ad194252484")
+AGENT_SHA256 = "c6fef92294c27bbe372696bd58f35d1117e41088edff3ffd3c73df865297ac88"
 SOCKET_ADDRESS = SocketAddress(ip="192.168.1.1", port=5000)
 
 AGENT_REGISTRATION_MESSAGE_OBJECT_DICT = {
@@ -19,6 +20,7 @@ AGENT_REGISTRATION_MESSAGE_OBJECT_DICT = {
     "parent_id": PARENT_ID,
     "cc_server": SOCKET_ADDRESS,
     "network_interfaces": [IPv4Interface("10.0.0.1/24"), IPv4Interface("192.168.5.32/16")],
+    "sha256": AGENT_SHA256,
 }
 
 AGENT_REGISTRATION_MESSAGE_SIMPLE_DICT = {
@@ -28,6 +30,7 @@ AGENT_REGISTRATION_MESSAGE_SIMPLE_DICT = {
     "parent_id": str(PARENT_ID),
     "cc_server": SOCKET_ADDRESS.dict(simplify=True),
     "network_interfaces": ["10.0.0.1/24", "192.168.5.32/16"],
+    "sha256": AGENT_SHA256,
 }
 
 
@@ -54,6 +57,7 @@ def test_from_serialized():
         ("parent_id", 2.1),
         ("cc_server", [1]),
         ("network_interfaces", "not-a-list"),
+        ("sha256", []),
     ],
 )
 def test_construct_invalid_field__type_error(key, value):
@@ -71,6 +75,9 @@ def test_construct_invalid_field__type_error(key, value):
         ("start_time", "not-a-date-time"),
         ("network_interfaces", [1, "stuff", 3]),
         ("cc_server", []),
+        ("sha256", "not-a-hex-string-although-it-is-of-the-correct-length-for-sha256"),
+        ("sha256", "12345678123456781234567812345678123456781234567812345678123456780"),
+        ("sha256", "12345678"),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):
@@ -90,6 +97,7 @@ def test_construct_invalid_field__value_error(key, value):
         ("parent_id", AGENT_ID),
         ("cc_server", SOCKET_ADDRESS),
         ("network_interfaces", ["10.0.0.1/24"]),
+        ("sha256", "fdf59a0b2fc2b49b9e245da81a44654e97fa5be566cc719deeb77aaf74fe6013"),
     ],
 )
 def test_fields_immutable(key, value):

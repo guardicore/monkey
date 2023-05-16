@@ -19,6 +19,7 @@ AGENT_REGISTRATION_DICT = {
     "parent_id": UUID("9d55ba33-95c2-417d-bd86-d3d11e47daeb"),
     "cc_server": {"ip": "10.0.0.1", "port": "5000"},
     "network_interfaces": ["10.1.1.2/24"],
+    "sha256": "cf5c10a8073aa923877ee66df8c1912cac2dbb4b85a97d09cb95d57bde4d2876",
 }
 
 AGENTS = (
