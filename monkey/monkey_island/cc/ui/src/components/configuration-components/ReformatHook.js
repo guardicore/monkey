@@ -1,5 +1,5 @@
 import CREDENTIALS, {defaultCredentials} from '../../services/configuration/propagation/credentials';
-import MASQUERADE from '../../services/configuration/masquerade';
+import {MASQUERADE} from '../../services/configuration/masquerade';
 import {PlaintextType, SecretType} from '../utils/CredentialTitle.tsx';
 import _ from 'lodash';
 

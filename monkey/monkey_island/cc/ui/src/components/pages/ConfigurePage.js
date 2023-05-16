@@ -17,7 +17,10 @@ import FormConfig from '../configuration-components/FormConfig';
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
-import {transformStringsToBytes, getStringsFromBytes} from '../utils/MasqueradeUtils.js';
+import {
+  getStringsFromBytes,
+  getMasqueradesBytesArrays, getMasqueradeBytesSubsets, MASQUE_TYPES
+} from '../utils/MasqueradeUtils.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
@@ -33,7 +36,7 @@ import LoadingIcon from '../ui-components/LoadingIcon';
 import mergeAllOf from 'json-schema-merge-allof';
 import RefParser from '@apidevtools/json-schema-ref-parser';
 import CREDENTIALS from '../../services/configuration/propagation/credentials';
-import MASQUERADE from '../../services/configuration/masquerade';
+import {MASQUERADE} from '../../services/configuration/masquerade';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 
 const CONFIG_URL = '/api/agent-configuration';
@@ -154,16 +157,27 @@ class ConfigurePageComponent extends AuthComponent {
       IslandHttpClient.get(APIEndpoint.linuxMasque, {}, true),
       IslandHttpClient.get(APIEndpoint.windowsMasque, {}, true)
     ]);
+
     const linuxMasqueBytes = await linuxRes.body.arrayBuffer();
-    const linuxMasqueStrings = getStringsFromBytes(linuxMasqueBytes);
+    const linuxMasquesSubsets = getMasqueradeBytesSubsets(linuxMasqueBytes);
+    const linuxMasqueTexts = getStringsFromBytes(linuxMasqueBytes, MASQUE_TYPES.TEXTS, linuxMasquesSubsets[MASQUE_TYPES.TEXTS.key]);
+    const linuxMasqueBase64 = getStringsFromBytes(linuxMasqueBytes, MASQUE_TYPES.BASE64, linuxMasquesSubsets[MASQUE_TYPES.BASE64.key]);
 
     const windowsMasqueBytes = await windowsRes.body.arrayBuffer();
-    const windowsMasqueStrings = getStringsFromBytes(windowsMasqueBytes);
+    const windowsMasquesSubsets = getMasqueradeBytesSubsets(windowsMasqueBytes);
+    const windowsMasqueTexts = getStringsFromBytes(windowsMasqueBytes, MASQUE_TYPES.TEXTS, windowsMasquesSubsets[MASQUE_TYPES.TEXTS.key]);
+    const windowsMasqueBase64 = getStringsFromBytes(windowsMasqueBytes, MASQUE_TYPES.BASE64, windowsMasquesSubsets[MASQUE_TYPES.BASE64.key]);
 
     this.setState({
       masqueStrings: {
-        'linux_masque_strings': linuxMasqueStrings,
-        'windows_masque_strings': windowsMasqueStrings
+        linux: {
+          masque_texts: linuxMasqueTexts,
+          masque_base64: linuxMasqueBase64
+        },
+        windows: {
+          masque_texts: windowsMasqueTexts,
+          masque_base64: windowsMasqueBase64
+        }
       }
     });
   }
@@ -236,13 +250,17 @@ class ConfigurePageComponent extends AuthComponent {
 
   configSubmit(config) {
     const sendCredentialsPromise = this.sendCredentials();
+
+    const {linuxMasqueBytes, windowsMasqueBytes} = getMasqueradesBytesArrays(this.state.masqueStrings);
+
     const sendLinuxMasqueStringsPromise = this.sendMasqueStrings(
       APIEndpoint.linuxMasque,
-      this.state.masqueStrings?.linux_masque_strings
+      linuxMasqueBytes
     );
+
     const sendWindowsMasqueStringsPromise = this.sendMasqueStrings(
       APIEndpoint.windowsMasque,
-      this.state.masqueStrings?.windows_masque_strings
+      windowsMasqueBytes
     );
 
     Promise.all([sendCredentialsPromise, sendLinuxMasqueStringsPromise, sendWindowsMasqueStringsPromise])
@@ -398,8 +416,7 @@ class ConfigurePageComponent extends AuthComponent {
       }));
   }
 
-  sendMasqueStrings(endpoint, masqueStrings){
-    const masqueBytes = transformStringsToBytes(masqueStrings);
+  sendMasqueStrings(endpoint, masqueBytes){
     return IslandHttpClient.put(
       endpoint, masqueBytes, true)
         .then(res => {
