@@ -114,12 +114,13 @@ class InfectionMonkey:
 
         self._agent_id = get_agent_id()
         self._log_path = log_path
+        self._running_from_source = "python" in Path(sys.executable).name
+        self._sha256 = self._calculate_agent_sha256_hash()
         logger.info(f"Agent ID: {self._agent_id}")
         logger.info(f"Process ID: {os.getpid()}")
+        logger.info(f"SHA256: {self._sha256}")
 
         context = multiprocessing.get_context("spawn")
-
-        self._running_from_source = "python" in Path(sys.executable).name
 
         self._opts = self._get_arguments(args)
         self._otp = self._get_otp()
@@ -169,6 +170,23 @@ class InfectionMonkey:
         self._master: Optional[IMaster] = None
         self._relay: Optional[TCPRelay] = None
         self._tcp_port_selector = TCPPortSelector(context, self._manager)
+
+    def _calculate_agent_sha256_hash(self) -> str:
+        sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
+
+        if self._running_from_source:
+            return sha256
+
+        try:
+            with open(sys.executable, "rb") as f:
+                sha256 = get_binary_io_sha256_hash(f)
+        except Exception:
+            logger.exception(
+                "An error occurred while attempting to calculate the agent binary's SHA256 hash."
+            )
+
+        logger.info(f"Agent Binary SHA256: {sha256}")
+        return sha256
 
     @staticmethod
     def _get_arguments(args):
@@ -250,25 +268,9 @@ class InfectionMonkey:
             parent_id=self._opts.parent,
             cc_server=self._island_address,
             network_interfaces=get_network_interfaces(),
-            sha256=self._calculate_agent_sha256_hash(),
+            sha256=self._sha256,
         )
         self._island_api_client.register_agent(agent_registration_data)
-
-    def _calculate_agent_sha256_hash(self):
-        sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
-
-        if self._running_from_source:
-            return sha256
-
-        try:
-            with open(sys.executable, "rb") as f:
-                sha256 = get_binary_io_sha256_hash(f)
-        except Exception:
-            logger.exception(
-                "An error occurred while attempting to calculate the agent binary's SHA256 hash."
-            )
-
-        return sha256
 
     @staticmethod
     def _log_arguments(args):
