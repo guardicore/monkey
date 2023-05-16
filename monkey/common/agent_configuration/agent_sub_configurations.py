@@ -249,10 +249,11 @@ class PolymorphismConfiguration(MutableInfectionMonkeyBaseModel):
     A configuration for polymorphism
 
     Attributes:
-        :param randomized_agent_hash: If true, the Agent will emulate polymorphism
+        :param randomized_agent_hash: If true, the Agent will emulate the property of polymorphism
+                                      that all copies have unique hashes
     """
 
     randomized_agent_hash: bool = Field(
-        title="Emulate polymorphism",
+        title="Randomize Agent hash",
         default=False,
     )
