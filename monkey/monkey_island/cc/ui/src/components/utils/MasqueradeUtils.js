@@ -13,12 +13,18 @@ export const MASQUE_TYPES = {
   BASE64: {key: 'masque_base64', prefix: MASQUERADE_BASE64_PREFIX}
 }
 
+var base64 = require('base64-js');
+
 export function transformStringsToBytes(stringsArray, masquePrefix) {
   if (stringsArray?.length) {
-    let bytes = stringsArray
-      .map(str => str ? encodeString((masquePrefix === MASQUE_TYPES.BASE64.prefix ? base64ToText(str) : str) + NULL_BYTE) : [])
-      .reduce((accumulator, currentString) => [...accumulator, ...currentString], []);
-
+    let bytes = [];
+    if(masquePrefix === MASQUE_TYPES.TEXTS.prefix){
+      bytes = stringsArray
+        .map(str => str ? encodeString(str + NULL_BYTE) : [])
+        .reduce((accumulator, currentString) => [...accumulator, ...currentString], []);
+    } else {
+      bytes = base64ToBytes(stringsArray[0]);
+    }
     let prefixBytes = encodeString(masquePrefix);
     return new Uint8Array([...prefixBytes, ...bytes]);
   }
@@ -32,19 +38,35 @@ export function getStringsFromBytes(bytesArray, masqueType, masqueDetails) {
     const stringsBytes = decodeBytes(dataViewArray);
     let stringsArray = stringsBytes.split(NULL_BYTE);
 
-    if (masqueType.key === MASQUE_TYPES.BASE64.key) {
-      stringsArray = stringsArray.map(str => {
-        return textToBase64(str);
-      })
-
-      // In order to support only one base64's textarea
-      return stringsArray[0] || getDefaultValueByMasquePrefix(masqueType.key);
+    if (masqueType.key === MASQUE_TYPES.TEXTS.key) {
+      return stringsArray.filter(str => str !== '');
     }
 
-    return stringsArray.filter(str => str !== '');
+    // In order to support only one base64's textarea
+    var uint8Array = splitUint8ArrayByNull(new Uint8Array(dataViewArray.buffer)).slice(-1)[0];
+    return bytesToBase64(uint8Array) || getDefaultValueByMasquePrefix(masqueType.key);
   }
 
   return getDefaultValueByMasquePrefix(masqueType.key);
+}
+
+function splitUint8ArrayByNull(uint8Array) {
+  var subarrays = [];
+  var startIndex = 0;
+
+  for (var i = 0; i < uint8Array.length; i++) {
+    if (uint8Array[i] === 0x00) {
+      subarrays.push(uint8Array.slice(startIndex, i));
+      startIndex = i + 1;
+    }
+  }
+
+  // Push the remaining portion after the last null byte (if any)
+  if (startIndex < uint8Array.length) {
+    subarrays.push(uint8Array.slice(startIndex));
+  }
+
+  return subarrays;
 }
 
 const getDefaultValueByMasquePrefix = masqueType => {
@@ -63,21 +85,13 @@ function getPrefixIndexFromBytesArray(bytesArray, prefix) {
   });
 }
 
-const base64ToText = (base64) => {
-  // Convert the base64 string to a byte array
-  const bytes = atob(base64)
-    .split('')
-    .map((char) => char.charCodeAt(0));
-
-  return decodeBytes(new Uint8Array(bytes));
+const base64ToBytes = (base64String) => {
+  var bytes = base64.toByteArray(base64String);
+  return bytes;
 }
 
-const textToBase64 = (text) => {
-  const uint8Array = encodeString(text);
-
-  // Convert the Uint8Array to a base64-encoded string
-  const base64String = btoa(String.fromCharCode(...uint8Array));
-
+const bytesToBase64 = (bytes) => {
+  var base64String = base64.fromByteArray(bytes);
   return base64String;
 }
 
