@@ -48,7 +48,9 @@ from infection_monkey.agent_event_handlers import (
 from infection_monkey.exploit import (
     CachingAgentBinaryRepository,
     ExploiterWrapper,
+    IAgentBinaryRepository,
     IslandAPIAgentOTPProvider,
+    PolymorphicAgentBinaryRepositoryDecorator,
 )
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
 from infection_monkey.exploit.mssqlexec import MSSQLExploiter
@@ -378,10 +380,7 @@ class InfectionMonkey:
         #           insecure permissions.
         logger.debug(f"Created {self._plugin_dir} to store agent plugins")
 
-        agent_binary_repository = CachingAgentBinaryRepository(
-            island_api_client=self._island_api_client,
-            manager=self._manager,
-        )
+        agent_binary_repository = self._build_agent_binary_repository()
 
         plugin_source_extractor = PluginSourceExtractor(self._plugin_dir)
         plugin_loader = PluginLoader(
@@ -460,6 +459,20 @@ class InfectionMonkey:
         )
 
         return puppet
+
+    def _build_agent_binary_repository(self) -> IAgentBinaryRepository:
+        agent_configuration = self._island_api_client.get_config()
+        agent_binary_repository: IAgentBinaryRepository = CachingAgentBinaryRepository(
+            island_api_client=self._island_api_client,
+            manager=self._manager,
+        )
+
+        if agent_configuration.polymorphism.randomized_agent_hash:
+            agent_binary_repository = PolymorphicAgentBinaryRepositoryDecorator(
+                agent_binary_repository
+            )
+
+        return agent_binary_repository
 
     def _subscribe_events(self):
         self._agent_event_queue.subscribe_type(
