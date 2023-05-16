@@ -13,11 +13,13 @@ from monkey_island.cc.island_event_handlers import AgentHeartbeatMonitor
 from monkey_island.cc.models import Agent
 
 AGENT_ID_1 = UUID("2d56f972-78a8-4026-9f47-2dfd550ee207")
+AGENT_SHA256 = "142e6b8c77382ebaa41d3eb5cc6520dc5922d1030ecf2fa6fbb9b2462af11bbe"
 AGENT_1 = Agent(
     id=AGENT_ID_1,
     machine_id=1,
     start_time=100,
     stop_time=None,
+    sha256=AGENT_SHA256,
 )
 
 AGENT_ID_2 = UUID("65c641f2-af47-4a42-929b-109b30f0d8d6")
@@ -26,6 +28,7 @@ AGENT_2 = Agent(
     machine_id=2,
     start_time=100,
     stop_time=None,
+    sha256=AGENT_SHA256,
 )
 
 AGENT_ID_3 = UUID("290da3c3-f410-4f5e-a472-b04416860a2c")
@@ -34,6 +37,7 @@ AGENT_3 = Agent(
     machine_id=3,
     start_time=300,
     stop_time=None,
+    sha256=AGENT_SHA256,
 )
 
 AGENT_ID_ALREADY_STOPPED = UUID("e5cd334a-5ca5-4f19-a2ab-a68d515fea46")
@@ -42,6 +46,7 @@ AGENT_ALREADY_STOPPED = Agent(
     machine_id=4,
     start_time=600,
     stop_time=700,
+    sha256=AGENT_SHA256,
 )
 
 

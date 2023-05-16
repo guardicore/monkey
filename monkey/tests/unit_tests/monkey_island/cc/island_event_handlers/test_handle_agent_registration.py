@@ -172,6 +172,7 @@ def test_add_agent(handler, agent_repository):
         start_time=AGENT_REGISTRATION_DATA.start_time,
         parent_id=AGENT_REGISTRATION_DATA.parent_id,
         cc_server=AGENT_REGISTRATION_DATA.cc_server,
+        sha256=AGENT_REGISTRATION_DATA.sha256,
     )
     handler(AGENT_REGISTRATION_DATA)
 
