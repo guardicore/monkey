@@ -1,4 +1,5 @@
 import {cloneDeep} from 'lodash';
+import {DEFAULT_MASQUES_VALUES} from '../../services/configuration/masquerade';
 
 const NULL_BYTE = '\0';
 const MASQUERADE_TEXTS_PREFIX = `InfectionMonkeyTextsMasquePrefix${NULL_BYTE}`;
@@ -13,7 +14,7 @@ export const MASQUE_TYPES = {
 }
 
 export function transformStringsToBytes(stringsArray, masquePrefix) {
-  if (stringsArray.length > 0) {
+  if (stringsArray?.length) {
     let bytes = stringsArray
       .map(str => str ? encodeString((masquePrefix === MASQUE_TYPES.BASE64.prefix ? base64ToText(str) : str) + NULL_BYTE) : [])
       .reduce((accumulator, currentString) => [...accumulator, ...currentString], []);
@@ -25,21 +26,29 @@ export function transformStringsToBytes(stringsArray, masquePrefix) {
   return [];
 }
 
-export function getStringsFromBytes(bytesArray, masquePrefix, masqueDetails) {
+export function getStringsFromBytes(bytesArray, masqueType, masqueDetails) {
   if (bytesArray && bytesArray?.byteLength && masqueDetails) {
     const dataViewArray = new DataView(bytesArray, masqueDetails.offsetIndex + masqueDetails.prefixLength, masqueDetails.length);
     const stringsBytes = decodeBytes(dataViewArray);
     let stringsArray = stringsBytes.split(NULL_BYTE);
 
-    if (masquePrefix === MASQUE_TYPES.BASE64.prefix) {
+    if (masqueType.key === MASQUE_TYPES.BASE64.key) {
       stringsArray = stringsArray.map(str => {
         return textToBase64(str);
       })
+
+      // In order to support only one base64's textarea
+      return stringsArray[0] || getDefaultValueByMasquePrefix(masqueType.key);
     }
+
     return stringsArray.filter(str => str !== '');
   }
 
-  return [];
+  return getDefaultValueByMasquePrefix(masqueType.key);
+}
+
+const getDefaultValueByMasquePrefix = masqueType => {
+    return Object.entries(cloneDeep(DEFAULT_MASQUES_VALUES)).filter(([key, _defaultValue]) => {return masqueType?.includes(key)})?.[0]?.[1]
 }
 
 function getPrefixIndexFromBytesArray(bytesArray, prefix) {
@@ -79,7 +88,13 @@ export const getMasqueradesBytesArrays = (masqueStrings) => {
     let bytesArray = []
 
     Object.values(MASQUE_TYPES).forEach(({key, prefix}) => {
-      bytesArray = [...bytesArray, ...transformStringsToBytes(masqueStrings?.[osType]?.[key], prefix)]
+      let currentVal = cloneDeep(masqueStrings?.[osType]?.[key]);
+      // If it's a single value, and it's not empty, convert it to array with this one item
+      if (!Array.isArray(currentVal)) {
+        currentVal = currentVal ? [currentVal] : [];
+      }
+
+      bytesArray = [...bytesArray, ...transformStringsToBytes(currentVal, prefix)]
     });
 
     if (osType === 'linux') {
@@ -109,7 +124,7 @@ export const getMasqueradeBytesSubsets = (bytesArray) => {
     }
   });
 
-  if(bytesArray?.byteLength && Object.keys(subsetsDetails).length === 0) {
+  if (bytesArray?.byteLength && Object.keys(subsetsDetails).length === 0) {
     subsetsDetails[MASQUE_TYPES.BASE64.key] = Object.assign({...defaultValues}, {offsetIndex: 0});
   }
 
@@ -134,11 +149,11 @@ const calculateMasquesSubsetsLengths = (subsetsDetails, bytesArrayLength) => {
 };
 
 const encodeString = str => {
-   const encoder = new TextEncoder(ENCODING_FORMAT);
-   return encoder.encode(str);
+  const encoder = new TextEncoder(ENCODING_FORMAT);
+  return encoder.encode(str);
 }
 
 const decodeBytes = bytes => {
-   const decoder = new TextDecoder(ENCODING_FORMAT);
-   return decoder.decode(bytes);
+  const decoder = new TextDecoder(ENCODING_FORMAT);
+  return decoder.decode(bytes);
 }

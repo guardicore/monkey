@@ -104,7 +104,7 @@ export default function UiSchema(props) {
           items: {
             'ui:widget': 'textarea',
             'ui:options': {
-              rows: 2
+              rows: 3
             }
           }
         }
@@ -114,7 +114,7 @@ export default function UiSchema(props) {
           items: {
             'ui:widget': 'textarea',
             'ui:options': {
-              rows: 2
+              rows: 3
             }
           }
         }

@@ -1,12 +1,10 @@
+export const DEFAULT_MASQUES_VALUES = {
+  texts: [],
+  base64: ''
+}
 export const DEFAULT_MASQUES = {
-  linux: {
-    texts: [],
-    base64: []
-  },
-  windows: {
-    texts: [],
-    base64: []
-  }
+  linux: {...DEFAULT_MASQUES_VALUES},
+  windows: {...DEFAULT_MASQUES_VALUES}
 }
 export const MASQUERADE = {
   title: 'Masquerade',
@@ -28,13 +26,8 @@ export const MASQUERADE = {
         },
         masque_base64: {
           title: 'Base64',
-          type: 'array',
-          uniqueItems: true,
-          items: {
-            type: 'string',
-            format: 'valid-base64'
-          },
-          maxItems: 1,
+          type: 'string',
+          format: 'valid-base64',
           default: DEFAULT_MASQUES.linux.base64,
           description: 'A masque (bytes) encoded in Base64 that will be included in the Linux Agent binary.'
         }
@@ -53,13 +46,8 @@ export const MASQUERADE = {
         },
         masque_base64: {
           title: 'Base64',
-          type: 'array',
-          uniqueItems: true,
-          items: {
-            type: 'string',
-            format: 'valid-base64'
-          },
-          maxItems: 1,
+          type: 'string',
+          format: 'valid-base64',
           default: DEFAULT_MASQUES.windows.base64,
           description: 'A masque (bytes) encoded in Base64 that will be included in the Windows Agent binary.'
         }
