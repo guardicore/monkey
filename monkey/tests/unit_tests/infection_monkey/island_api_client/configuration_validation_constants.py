@@ -308,11 +308,11 @@ SCHEMA = {
         },
         "PolymorphismConfiguration": {
             "title": "PolymorphismConfiguration",
-            "description": "A configuration for polymorphism\n\nAttributes:\n    :param randomized_agent_hash: If true, the Agent will emulate polymorphism",
+            "description": "A configuration for polymorphism\n\nAttributes:\n    :param randomized_agent_hash: If true, the Agent will emulate the property of polymorphism that all copies have unique hashes",
             "type": "object",
             "properties": {
                 "randomized_agent_hash": {
-                    "title": "Emulate polymorphism",
+                    "title": "Randomize Agent hash",
                     "default": False,
                 },
             },
