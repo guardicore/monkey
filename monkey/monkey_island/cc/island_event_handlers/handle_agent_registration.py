@@ -108,6 +108,7 @@ class handle_agent_registration:
             start_time=agent_registration_data.start_time,
             parent_id=agent_registration_data.parent_id,
             cc_server=agent_registration_data.cc_server,
+            sha256=agent_registration_data.sha256,
         )
         self._agent_repository.upsert_agent(new_agent)
 
