@@ -75,6 +75,9 @@ def test_construct_invalid_field__type_error(key, value):
         ("start_time", "not-a-date-time"),
         ("network_interfaces", [1, "stuff", 3]),
         ("cc_server", []),
+        ("sha256", "not-a-hex-string-although-it-is-of-the-correct-length-for-sha256"),
+        ("sha256", "12345678123456781234567812345678123456781234567812345678123456780"),
+        ("sha256", "12345678"),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):
