@@ -101,21 +101,17 @@ export default function UiSchema(props) {
     masquerade: {
       linux: {
         masque_base64: {
-          items: {
-            'ui:widget': 'textarea',
-            'ui:options': {
-              rows: 3
-            }
+          'ui:widget': 'textarea',
+          'ui:options': {
+            rows: 3
           }
         }
       },
       windows: {
         masque_base64: {
-          items: {
-            'ui:widget': 'textarea',
-            'ui:options': {
-              rows: 3
-            }
+          'ui:widget': 'textarea',
+          'ui:options': {
+            rows: 3
           }
         }
       }
