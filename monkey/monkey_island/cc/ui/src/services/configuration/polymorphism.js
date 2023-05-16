@@ -1,7 +1,7 @@
 const POLYMORPHISM_SCHEMA = {
   'title': 'Polymorphism',
   'properties': {
-    'enabled': {
+    'randomized_agent_hash': {
       'title': 'Emulate polymorphism',
       'type': 'boolean',
       'default': false,
