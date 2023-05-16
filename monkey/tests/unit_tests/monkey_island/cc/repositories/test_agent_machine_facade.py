@@ -20,12 +20,14 @@ SOURCE_MACHINE = Machine(
 )
 
 AGENT_ID = UUID("655fd01c-5eec-4e42-b6e3-1fb738c2978d")
+AGENT_SHA256 = "5d1bb53850d782d42b0b9d86497ca95986d4945d3284a0e5fc0f7beaccde19c6"
 AGENT = Agent(
     id=AGENT_ID,
     machine_id=SOURCE_MACHINE_ID,
     start_time=0,
     parent_id=None,
     cc_server=(SocketAddress(ip="10.10.10.10", port=5000)),
+    sha256=AGENT_SHA256,
 )
 
 
@@ -71,6 +73,7 @@ def test_cache_reset__get_machine_id_from_agent_id(
         start_time=0,
         parent_id=None,
         cc_server=(SocketAddress(ip="10.10.10.10", port=5000)),
+        sha256=AGENT_SHA256,
     )
 
     agent_repository.reset()

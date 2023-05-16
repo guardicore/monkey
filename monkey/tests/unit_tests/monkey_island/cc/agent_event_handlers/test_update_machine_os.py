@@ -30,8 +30,11 @@ MACHINE = Machine(
 
 # The agent
 AGENT_ID = UUID("72a64013-b3ab-4be9-9f05-0ffaccf01950")
+AGENT_SHA256 = "142e6b8c77382ebaa41d3eb5cc6520dc5922d1030ecf2fa6fbb9b2462af11bbe"
 CC_SERVER = SocketAddress(ip="10.10.10.100", port="5000")
-AGENT = Agent(id=AGENT_ID, machine_id=MACHINE_ID, start_time=0, cc_server=CC_SERVER)
+AGENT = Agent(
+    id=AGENT_ID, machine_id=MACHINE_ID, start_time=0, cc_server=CC_SERVER, sha256=AGENT_SHA256
+)
 
 # The event
 EVENT = OSDiscoveryEvent(source=AGENT_ID, os=OperatingSystem.LINUX, version="blah")

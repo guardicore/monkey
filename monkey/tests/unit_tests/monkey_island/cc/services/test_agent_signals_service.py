@@ -13,11 +13,13 @@ from monkey_island.cc.repositories import (
 )
 from monkey_island.cc.services import AgentSignalsService
 
+AGENT_SHA256 = "2d374cfed2946b0a69d9f5831b00335b303b0d47e5a89649807d0f87b6748ea0"
 AGENT_1 = Agent(
     id=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"),
     machine_id=1,
     start_time=100,
     parent_id=None,
+    sha256=AGENT_SHA256,
 )
 
 AGENT_2 = Agent(
@@ -25,6 +27,7 @@ AGENT_2 = Agent(
     machine_id=2,
     start_time=200,
     parent_id=AGENT_1.id,
+    sha256=AGENT_SHA256,
 )
 
 AGENT_3 = Agent(
@@ -33,6 +36,7 @@ AGENT_3 = Agent(
     registration_time=301,
     start_time=300,
     parent_id=AGENT_2.id,
+    sha256=AGENT_SHA256,
 )
 
 DUPLICATE_MACHINE_AGENT = Agent(
@@ -41,6 +45,7 @@ DUPLICATE_MACHINE_AGENT = Agent(
     registration_time=302,
     start_time=299,
     parent_id=AGENT_2.id,
+    sha256=AGENT_SHA256,
 )
 
 AGENTS = [AGENT_1, AGENT_2, AGENT_3]
@@ -51,6 +56,7 @@ STOPPED_AGENT = Agent(
     start_time=400,
     stop_time=500,
     parent_id=AGENT_3.id,
+    sha256=AGENT_SHA256,
 )
 
 ALL_AGENTS = [*AGENTS, DUPLICATE_MACHINE_AGENT, STOPPED_AGENT]

@@ -101,6 +101,7 @@ MACHINE_3 = Machine(
     network_interfaces=[IPv4Interface("10.10.10.3/24")],
 )
 
+AGENT_SHA256 = "59e822fe452926447efb74fb980e885a84e5c26a0c6bb4ce0634f6982390d50b"
 AGENTS = [
     Agent(
         id=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
@@ -108,6 +109,7 @@ AGENTS = [
         start_time=100,
         stop_time=500,
         cc_server=SocketAddress(ip="127.0.0.1", port=5000),
+        sha256=AGENT_SHA256,
     ),
     Agent(
         id=UUID("65c641f2-af47-4a42-929b-109b30f0d8d6"),
@@ -115,6 +117,7 @@ AGENTS = [
         start_time=200,
         stop_time=600,
         cc_server=SocketAddress(ip="127.0.0.1", port=5000),
+        sha256=AGENT_SHA256,
     ),
     Agent(
         id=UUID("290da3c3-f410-4f5e-a472-b04416860a2c"),
@@ -122,6 +125,7 @@ AGENTS = [
         start_time=300,
         stop_time=700,
         cc_server=SocketAddress(ip="127.0.0.1", port=5000),
+        sha256=AGENT_SHA256,
     ),
     Agent(
         id=UUID("e5cd334a-5ca5-4f19-a2ab-a68d515fea46"),
@@ -129,6 +133,7 @@ AGENTS = [
         start_time=600,
         stop_time=40309,
         cc_server=SocketAddress(ip="127.0.0.1", port=5000),
+        sha256=AGENT_SHA256,
     ),
 ]
 
@@ -138,6 +143,7 @@ AGENT_NOT_DEAD = Agent(
     start_time=601,
     stop_time=None,
     cc_server=SocketAddress(ip="127.0.0.1", port=5000),
+    sha256=AGENT_SHA256,
 )
 
 NODES = [

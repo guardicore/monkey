@@ -32,3 +32,6 @@ class Agent(MutableInfectionMonkeyBaseModel):
 
     cc_server: Optional[SocketAddress]
     """The address that the agent used to communicate with the island"""
+
+    sha256: str = Field(allow_mutation=False, regex="^[0-9a-fA-F]{64}$")
+    """The SHA256 hash of the agent binary"""

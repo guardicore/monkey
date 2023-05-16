@@ -7,6 +7,7 @@ from monkey_island.cc.models import Agent
 
 AGENT_ID = UUID("012e7238-7b81-4108-8c7f-0787bc3f3c10")
 PARENT_ID = UUID("0fc9afcb-1902-436b-bd5c-1ad194252484")
+SHA256 = "6b524293febf78ac659ce4ca368b8fc74df6e14462e12a43e4044eafe2a5f947"
 
 AGENT_OBJECT_DICT = {
     "id": AGENT_ID,
@@ -14,6 +15,7 @@ AGENT_OBJECT_DICT = {
     "parent_id": PARENT_ID,
     "registration_time": datetime.fromtimestamp(1660848410, tz=timezone.utc),
     "start_time": datetime.fromtimestamp(1660848408, tz=timezone.utc),
+    "sha256": SHA256,
 }
 
 AGENT_SIMPLE_DICT = {
@@ -22,6 +24,7 @@ AGENT_SIMPLE_DICT = {
     "parent_id": str(PARENT_ID),
     "registration_time": "2022-08-18T18:46:50+00:00",
     "start_time": "2022-08-18T18:46:48+00:00",
+    "sha256": SHA256,
 }
 
 
@@ -61,6 +64,7 @@ def test_to_dict():
         ("stop_time", []),
         ("parent_id", 2.1),
         ("cc_server", [1]),
+        ("sha256", []),
     ],
 )
 def test_construct_invalid_field__type_error(key, value):
@@ -79,6 +83,10 @@ def test_construct_invalid_field__type_error(key, value):
         ("start_time", "not-a-datetime"),
         ("stop_time", "not-a-datetime"),
         ("cc_server", []),
+        ("sha256", "abcdef"),  # too short
+        ("sha256", "this_string_has_the_right_length_but_includes_non_hex_characters"),
+        ("sha256", "1234567812345678123456781234567812345678123456781234567812345678abcdef"),
+        ("sha256", 1),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):
@@ -136,3 +144,10 @@ def test_cc_server_set_validated():
 
     with pytest.raises(ValueError):
         a.cc_server = []
+
+
+def test_sha256_immutable():
+    a = Agent(**AGENT_SIMPLE_DICT)
+
+    with pytest.raises(TypeError):
+        a.sha256 = "testing!"
