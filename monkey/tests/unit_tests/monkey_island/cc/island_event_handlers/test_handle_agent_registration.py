@@ -19,6 +19,7 @@ from monkey_island.cc.repositories import (
 )
 
 AGENT_ID = UUID("860aff5b-d2af-43ea-afb5-62bac3d30b7e")
+AGENT_SHA256 = "a4beff584bc18ef48f64874e2f57ef2c8088d6947d4e15490120730401640dbc"
 
 SEED_ID = 10
 
@@ -38,6 +39,7 @@ AGENT_REGISTRATION_DATA = AgentRegistrationData(
     parent_id=None,
     cc_server=SocketAddress.from_string(IP),
     network_interfaces=[IPv4Interface("192.168.1.2/24")],
+    sha256=AGENT_SHA256,
 )
 
 
@@ -67,7 +69,6 @@ def node_repository() -> INodeRepository:
 
 @pytest.fixture
 def handler(machine_repository, agent_repository, node_repository) -> handle_agent_registration:
-
     return handle_agent_registration(
         machine_repository, agent_repository, node_repository, get_current_datetime=lambda: NOW
     )
@@ -125,6 +126,7 @@ def test_existing_machine_updated__find_by_ip(handler, machine_repository):
             IPv4Interface("192.168.1.4/24"),
             IPv4Interface("192.168.1.5/24"),
         ],
+        sha256=AGENT_SHA256,
     )
 
     existing_machine = Machine(
@@ -230,6 +232,7 @@ def test_machine_interfaces_updated(handler, machine_repository):
             IPv4Interface("192.168.1.3/16"),
             IPv4Interface("192.168.1.4/24"),
         ],
+        sha256=AGENT_SHA256,
     )
     expected_network_interfaces = sorted(
         (*agent_registration_data.network_interfaces, existing_machine.network_interfaces[-1])

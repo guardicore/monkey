@@ -17,6 +17,7 @@ class AgentRegistrationData(InfectionMonkeyBaseModel):
     parent_id: Optional[UUID]
     cc_server: SocketAddress
     network_interfaces: Sequence[IPv4Interface]
+    sha256: str
 
     _make_immutable_sequence = validator("network_interfaces", pre=True, allow_reuse=True)(
         make_immutable_sequence
