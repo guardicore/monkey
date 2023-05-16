@@ -13,6 +13,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Malware masquerading. #3241, #3242
 - Support for plugin manifest files with the "yml" extension. #3097
 - Randomize Agent binary hash (polymorphism) feature. #3244
+- Agent binary's SHA256 to `AgentRegistrationData`. #3244
 
 ### Changed
 - Renamed "Credential collector" to "Credentials collector". #3167
