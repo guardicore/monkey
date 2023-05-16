@@ -21,6 +21,10 @@ SCHEMA = {
             "title": "Propagation",
             "allOf": [{"$ref": "#/definitions/PropagationConfiguration"}],
         },
+        "polymorphism": {
+            "title": "Polymorphism",
+            "allOf": [{"$ref": "#/definitions/PolymorphismConfiguration"}],
+        },
     },
     "required": ["credentials_collectors", "payloads", "propagation"],
     "additionalProperties": False,
@@ -300,6 +304,19 @@ SCHEMA = {
                 },
             },
             "required": ["network_scan", "exploitation"],
+            "additionalProperties": False,
+        },
+        "PolymorphismConfiguration": {
+            "title": "PolymorphismConfiguration",
+            "description": "A configuration for polymorphism\n\nAttributes:\n    :param randomized_agent_hash: If true, the Agent will emulate the property of polymorphism that all copies have unique hashes",
+            "type": "object",
+            "properties": {
+                "randomized_agent_hash": {
+                    "title": "Randomize Agent hash",
+                    "default": False,
+                },
+            },
+            "required": ["randomized_agent_hash"],
             "additionalProperties": False,
         },
     },

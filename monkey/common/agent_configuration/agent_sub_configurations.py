@@ -242,3 +242,20 @@ class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
     exploitation: ExploitationConfiguration = Field(
         title="Exploiters", description="Configure the exploitation step of the attack"
     )
+
+
+class PolymorphismConfiguration(MutableInfectionMonkeyBaseModel):
+    """
+    A configuration for polymorphism
+
+    Attributes:
+        :param randomized_agent_hash: If true, the Agent will emulate the property of polymorphism
+                                      that all copies have unique hashes
+    """
+
+    randomized_agent_hash: bool = Field(
+        title="Randomize Agent hash",
+        description="Emulate the property of polymorphic (or metamorphic) malware that all "
+        "copies have unique hashes by modifying the Agent binary before propagation.",
+        default=False,
+    )
