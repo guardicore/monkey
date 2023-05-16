@@ -46,9 +46,12 @@ CREDENTIALS_COLLECTORS: Dict[str, Dict] = {
     "credentials_collectors": {"SSHCollector": {}, "MimikatzCollector": {}}
 }
 
+POLYMORPHISM_CONFIGURATION = {"enabled": False}
+
 AGENT_CONFIGURATION = {
     "keep_tunnel_open_time": 30,
     "credentials_collectors": CREDENTIALS_COLLECTORS,
     "payloads": {},
     "propagation": PROPAGATION_CONFIGURATION,
+    "polymorphism": POLYMORPHISM_CONFIGURATION,
 }
