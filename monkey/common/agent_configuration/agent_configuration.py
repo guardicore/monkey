@@ -4,7 +4,7 @@ from pydantic import Field, confloat
 
 from common.base_models import MutableInfectionMonkeyBaseModel
 
-from .agent_sub_configurations import PropagationConfiguration
+from .agent_sub_configurations import PolymorphismConfiguration, PropagationConfiguration
 
 
 class AgentConfiguration(MutableInfectionMonkeyBaseModel):
@@ -27,4 +27,9 @@ class AgentConfiguration(MutableInfectionMonkeyBaseModel):
     propagation: PropagationConfiguration = Field(
         title="Propagation",
         description="Configure options for the attack’s propagation stage",
+    )
+    polymorphism: PolymorphismConfiguration = Field(
+        title="Emulate polymorphism",
+        description="Emulate polymorphic (or metamorphic) malware by"
+        " modifying the Agent binary before propagation.",
     )

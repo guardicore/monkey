@@ -242,3 +242,17 @@ class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
     exploitation: ExploitationConfiguration = Field(
         title="Exploiters", description="Configure the exploitation step of the attack"
     )
+
+
+class PolymorphismConfiguration(MutableInfectionMonkeyBaseModel):
+    """
+    A configuration for polymorphism
+
+    Attributes:
+        :param enabled: If true, the Agent will emulate polymorphism
+    """
+
+    enabled: bool = Field(
+        title="Emulate polymorphism",
+        default=False,
+    )
