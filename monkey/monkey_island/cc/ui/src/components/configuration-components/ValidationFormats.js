@@ -35,10 +35,13 @@ export const formValidationFormats = {
   [VALID_BASE64]: isBase64
 };
 
+var base64 = require('base64-js');
+
 function isBase64(str) {
   try {
-    return btoa(atob(str)) === str;
-  } catch (err) {
+    base64.toByteArray(str);
+    return true;
+  } catch (error) {
     return false;
   }
 }
