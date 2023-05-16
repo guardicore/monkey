@@ -308,15 +308,15 @@ SCHEMA = {
         },
         "PolymorphismConfiguration": {
             "title": "PolymorphismConfiguration",
-            "description": "A configuration for polymorphism\n\nAttributes:\n    :param enabled: If true, the Agent will emulate polymorphism",
+            "description": "A configuration for polymorphism\n\nAttributes:\n    :param randomized_agent_hash: If true, the Agent will emulate polymorphism",
             "type": "object",
             "properties": {
-                "enabled": {
+                "randomized_agent_hash": {
                     "title": "Emulate polymorphism",
                     "default": False,
                 },
             },
-            "required": ["enabled"],
+            "required": ["randomized_agent_hash"],
             "additionalProperties": False,
         },
     },
