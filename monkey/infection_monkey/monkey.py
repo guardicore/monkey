@@ -39,7 +39,7 @@ from common.types import OTP, NetworkPort, SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.code_utils import del_key, secure_generate_random_string
 from common.utils.environment import get_os
-from common.utils.file_utils import create_secure_directory
+from common.utils.file_utils import create_secure_directory, get_binary_io_sha256_hash
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
     add_stolen_credentials_to_propagation_credentials_repository,
@@ -248,9 +248,24 @@ class InfectionMonkey:
             parent_id=self._opts.parent,
             cc_server=self._island_address,
             network_interfaces=get_network_interfaces(),
-            sha256="0000000000000000000000000000000000000000000000000000000000000000",
+            sha256=InfectionMonkey._calculate_agent_sha256_hash(),
         )
         self._island_api_client.register_agent(agent_registration_data)
+
+    @staticmethod
+    def _calculate_agent_sha256_hash():
+        sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
+
+        try:
+            if "python" not in Path(sys.executable).name:
+                with open(sys.executable, "rb") as f:
+                    sha256 = get_binary_io_sha256_hash(f)
+        except Exception:
+            logger.exception(
+                "An error occurred while attempting to calculate the agent binary's SHA256 hash."
+            )
+
+        return sha256
 
     @staticmethod
     def _log_arguments(args):
