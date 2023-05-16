@@ -16,6 +16,7 @@ from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.transport.http import FileServHTTPRequestHandler
+from infection_monkey.utils import commands
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
@@ -145,3 +146,10 @@ secret_type_filter
 
 SNMPResult.errorIndex
 SNMPResult.varBinds
+
+commands.build_agent_deploy_command
+commands.build_agent_download_command
+commands.build_command_windows_powershell
+commands.build_download_command_linux_curl
+commands.build_dropper_script_download_command
+commands.download_command_windows_powershell
