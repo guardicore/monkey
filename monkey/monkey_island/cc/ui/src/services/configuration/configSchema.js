@@ -2,6 +2,7 @@ import PROPAGATION_CONFIGURATION_SCHEMA from './propagation/propagation.js';
 import CREDENTIALS_COLLECTORS from './credentialsCollectors.js';
 import RANSOMWARE_SCHEMA from './ransomware';
 import MASQUERADE from './masquerade.js';
+import POLYMORPHISM_SCHEMA from './polymorphism.js'
 
 export const SCHEMA = {
   'title': 'Monkey',
@@ -16,6 +17,7 @@ export const SCHEMA = {
       'items': CREDENTIALS_COLLECTORS
     },
     'masquerade': MASQUERADE,
+    'polymorphism': POLYMORPHISM_SCHEMA,
     'advanced': {
       'title': 'Advanced',
       'type': 'object',
