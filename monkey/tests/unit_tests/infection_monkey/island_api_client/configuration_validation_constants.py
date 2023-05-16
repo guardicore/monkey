@@ -21,6 +21,10 @@ SCHEMA = {
             "title": "Propagation",
             "allOf": [{"$ref": "#/definitions/PropagationConfiguration"}],
         },
+        "polymorphism": {
+            "title": "Polymorphism",
+            "allOf": [{"$ref": "#/definitions/PolymorphismConfiguration"}],
+        },
     },
     "required": ["credentials_collectors", "payloads", "propagation"],
     "additionalProperties": False,
@@ -300,6 +304,19 @@ SCHEMA = {
                 },
             },
             "required": ["network_scan", "exploitation"],
+            "additionalProperties": False,
+        },
+        "PolymorphismConfiguration": {
+            "title": "PolymorphismConfiguration",
+            "description": "A configuration for polymorphism\n\nAttributes:\n    :param enabled: If true, the Agent will emulate polymorphism",
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "title": "Emulate polymorphism",
+                    "default": False,
+                },
+            },
+            "required": ["enabled"],
             "additionalProperties": False,
         },
     },
