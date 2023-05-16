@@ -80,6 +80,12 @@ def set_maximum_depth(
     return agent_configuration_copy
 
 
+def set_randomize_agent_hash(agent_configuration: AgentConfiguration, value: bool):
+    agent_configuration.polymorphism.randomize_agent_hash = value
+
+    return agent_configuration
+
+
 def replace_agent_configuration(
     test_configuration: TestConfiguration, agent_configuration: AgentConfiguration
 ):

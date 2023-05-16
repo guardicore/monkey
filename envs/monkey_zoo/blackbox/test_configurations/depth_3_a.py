@@ -13,6 +13,7 @@ from .utils import (
     replace_propagation_credentials,
     set_keep_tunnel_open_time,
     set_maximum_depth,
+    set_randomize_agent_hash,
 )
 
 # Tests:
@@ -54,6 +55,7 @@ test_agent_configuration = set_keep_tunnel_open_time(test_agent_configuration, 2
 test_agent_configuration = _add_exploiters(test_agent_configuration)
 test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
+test_agent_configuration = set_randomize_agent_hash(test_agent_configuration, True)
 
 CREDENTIALS = (
     Credentials(identity=Username(username="m0nk3y"), secret=None),

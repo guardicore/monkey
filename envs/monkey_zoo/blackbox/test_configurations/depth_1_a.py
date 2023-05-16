@@ -15,6 +15,7 @@ from .utils import (
     replace_agent_configuration,
     replace_propagation_credentials,
     set_maximum_depth,
+    set_randomize_agent_hash,
 )
 
 # Tests:
@@ -95,6 +96,7 @@ test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 test_agent_configuration = _add_credentials_collectors(test_agent_configuration)
 test_agent_configuration = _add_http_ports(test_agent_configuration)
+test_agent_configuration = set_randomize_agent_hash(test_agent_configuration, True)
 
 CREDENTIALS = (
     Credentials(identity=Username(username="m0nk3y"), secret=None),
