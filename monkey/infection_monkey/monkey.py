@@ -248,6 +248,7 @@ class InfectionMonkey:
             parent_id=self._opts.parent,
             cc_server=self._island_address,
             network_interfaces=get_network_interfaces(),
+            sha256="0000000000000000000000000000000000000000000000000000000000000000",
         )
         self._island_api_client.register_agent(agent_registration_data)
 
