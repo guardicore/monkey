@@ -93,7 +93,7 @@ DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     credentials_collectors=CREDENTIALS_COLLECTORS,
     payloads=PAYLOAD_CONFIGURATION,
     propagation=PROPAGATION_CONFIGURATION,
-    polymorphism=PolymorphismConfiguration(randomized_agent_hash=False),
+    polymorphism=PolymorphismConfiguration(randomize_agent_hash=False),
 )
 
 DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = deepcopy(DEFAULT_AGENT_CONFIGURATION)

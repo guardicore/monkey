@@ -467,7 +467,7 @@ class InfectionMonkey:
             manager=self._manager,
         )
 
-        if agent_configuration.polymorphism.randomized_agent_hash:
+        if agent_configuration.polymorphism.randomize_agent_hash:
             agent_binary_repository = PolymorphicAgentBinaryRepositoryDecorator(
                 agent_binary_repository
             )
