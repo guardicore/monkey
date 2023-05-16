@@ -172,7 +172,7 @@ class InfectionMonkey:
         self._tcp_port_selector = TCPPortSelector(context, self._manager)
 
     def _calculate_agent_sha256_hash(self) -> str:
-        sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
+        sha256 = "0" * 64
 
         if self._running_from_source:
             return sha256
