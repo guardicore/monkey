@@ -1,9 +1,8 @@
-import io
 from functools import lru_cache
 from typing import BinaryIO
 
 from common import OperatingSystem
-from common.utils.file_utils import make_fileobj_copy
+from common.utils.file_utils import append_bytes, make_fileobj_copy
 
 from .i_agent_binary_repository import IAgentBinaryRepository
 from .i_masquerade_repository import IMasqueradeRepository
@@ -49,8 +48,6 @@ class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
 
         # Note: These null bytes separate the Agent binary from the masque. The goal is to prevent
         # the masque from being interpreted by the OS as code that should be run.
-        agent_binary.seek(0, io.SEEK_END)
-        agent_binary.write(self._null_bytes + masque)
-        agent_binary.seek(0)
+        append_bytes(agent_binary, self._null_bytes + masque)
 
         return agent_binary
