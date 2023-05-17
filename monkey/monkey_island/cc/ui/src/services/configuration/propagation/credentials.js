@@ -15,7 +15,10 @@ const CREDENTIALS = {
       'title': 'Exploit email address list',
       'type': 'array',
       'uniqueItems': true,
-      'items': {'type': 'string'},
+      'items': {
+        'type': 'string',
+        'format': 'valid-email-address'
+      },
       'default': [],
       'description': 'List of email addresses that will be used by exploiters.'
     },

@@ -2,6 +2,7 @@ import {
   IP,
   IP_RANGE,
   VALID_BASE64,
+  VALID_EMAIL_ADDRESS,
   VALID_FILE_EXTENSION,
   VALID_RANSOMWARE_TARGET_PATH_LINUX,
   VALID_RANSOMWARE_TARGET_PATH_WINDOWS
@@ -24,7 +25,9 @@ export default function transformErrors(errors) {
     } else if (error.name === 'format' && error.params.format === VALID_RANSOMWARE_TARGET_PATH_WINDOWS) {
       error.message = invalidDirMessage;
     } else if (error.name === 'format' && error.params.format === VALID_BASE64) {
-      error.message = 'Must be a Base64 value';
+      error.message = 'Must be a Base64 value.';
+    } else if (error.name === 'format' && error.params.format === VALID_EMAIL_ADDRESS) {
+      error.message = 'Invalid email address.';
     }
     return error;
   });

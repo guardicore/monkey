@@ -29,7 +29,8 @@ export default function PropagationConfig(props) {
     selectedPlugins,
     setSelectedPlugins,
     selectedConfigSection,
-    validator
+    validator,
+    transformErrors
   } = props;
 
   const [selectedSection, setSelectedSection] = useState(initialSection);
@@ -73,7 +74,9 @@ export default function PropagationConfig(props) {
                                 credentials={credentials}
                                 onChange={onCredentialChange}
                                 customFormats={customFormats}
-                                className={className}/>
+                                className={className}
+                                validator={validator}
+                                transformErrors={transformErrors}/>
     } else {
       let selectedSectionData = configuration[selectedSection];
       return <Form schema={displayedSchema}

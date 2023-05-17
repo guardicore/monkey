@@ -1,7 +1,6 @@
 import Form from '@rjsf/bootstrap-4';
 import React from 'react';
 import _ from 'lodash';
-import validator from '@rjsf/validator-ajv8';
 
 export default function CredentialsConfig(props) {
   const {
@@ -10,7 +9,9 @@ export default function CredentialsConfig(props) {
     credentials,
     onChange,
     customFormats,
-    className
+    className,
+    validator,
+    transformErrors
   } = props;
 
   let credentialsCopy = _.clone(credentials);
@@ -19,6 +20,7 @@ export default function CredentialsConfig(props) {
           uiSchema={uiSchema}
           formData={credentialsCopy}
           validator={validator}
+          transformErrors={transformErrors}
           onChange={(formData) => {onChange(formData.formData)}}
           // @ts-ignore
           customFormats={customFormats}

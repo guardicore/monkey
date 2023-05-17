@@ -8,14 +8,16 @@ const linuxAbsolutePathRegex = /^\// // path starts with `/`
 const linuxPathStartsWithEnvVariableRegex = /^\$/ // path starts with `$`
 const linuxPathStartsWithTildeRegex = /^~/ // path starts with `~`
 
-
 const windowsAbsolutePathRegex = /^([A-Za-z]:(\\|\/))/ // path starts like `C:\` OR `C:/`
 const windowsEnvVarNonNumeric = '[A-Za-z#\\$\'\\(\\)\\*\\+,\\-\\.\\?@\\[\\]_`\\{\\}~ ]'
 const windowsPathStartsWithEnvVariableRegex = new RegExp(
   `^%(${windowsEnvVarNonNumeric}+(${windowsEnvVarNonNumeric}|\\d)*)%`
 ) // path starts like `$` OR `%abc%`
 const windowsUncPathRegex = /^\\{2}/ // Path starts like `\\`
+
 const emptyRegex = /^$/
+
+const emailAddressRegex = new RegExp(/^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$/)
 
 
 export const IP_RANGE = 'ip-range';
@@ -24,6 +26,7 @@ export const VALID_FILE_EXTENSION = 'valid-file-extension';
 export const VALID_RANSOMWARE_TARGET_PATH_LINUX = 'valid-ransomware-target-path-linux';
 export const VALID_RANSOMWARE_TARGET_PATH_WINDOWS = 'valid-ransomware-target-path-windows';
 export const VALID_BASE64 = 'valid-base64';
+export const VALID_EMAIL_ADDRESS = 'valid-email-address';
 
 
 export const formValidationFormats = {
@@ -32,7 +35,8 @@ export const formValidationFormats = {
   [VALID_FILE_EXTENSION]: fileExtensionRegex,
   [VALID_RANSOMWARE_TARGET_PATH_LINUX]: buildValidRansomwarePathLinuxRegex(),
   [VALID_RANSOMWARE_TARGET_PATH_WINDOWS]: buildValidRansomwarePathWindowsRegex(),
-  [VALID_BASE64]: isBase64
+  [VALID_BASE64]: isBase64,
+  [VALID_EMAIL_ADDRESS]: emailAddressRegex
 };
 
 var base64 = require('base64-js');
