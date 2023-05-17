@@ -20,6 +20,7 @@ def test_construct_valid_email_address(email_address):
         "too_many_dots@here..com",
         "...@xyz.in",
         "xyz@.mail.com",
+        "qwerty@gma$il.com",
     ],
 )
 def test_construct_invalid_email_address(email_address):
