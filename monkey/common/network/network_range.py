@@ -2,6 +2,7 @@ import ipaddress
 import logging
 import random
 import socket
+import re
 import struct
 from abc import ABCMeta, abstractmethod
 from typing import Iterable, List, Tuple
@@ -14,6 +15,9 @@ class InvalidNetworkRangeError(Exception):
 
 
 class NetworkRange(object, metaclass=ABCMeta):
+    DOMAIN_LABEL_PATTERN = re.compile(r"(?!-)[a-z0-9-]{1,63}(?<!-)$", re.IGNORECASE)
+    TLD_PATTERN = re.compile(r"[0-9]+$")
+
     def __init__(self, shuffle=True):
         self._shuffle = shuffle
 
@@ -51,6 +55,8 @@ class NetworkRange(object, metaclass=ABCMeta):
         address_str = address_str.strip()
         if address_str.endswith("/32"):
             address_str = address_str[:-3]
+        if NetworkRange.check_if_hostname(address_str):
+            return SingleIpRange(ip_address=address_str)
         if NetworkRange.check_if_range(address_str):
             return IpRange(ip_range=address_str)
         if "/" in address_str:
@@ -77,7 +83,20 @@ class NetworkRange(object, metaclass=ABCMeta):
             raise InvalidNetworkRangeError(e)
 
     @staticmethod
-    def check_if_range(address_str):
+    def check_if_hostname(hostname: str):
+        if len(hostname) > 253 or hostname[-1] == ".":
+            return False
+
+        labels = hostname.split(".")
+
+        # the TLD must be not all-numeric
+        if NetworkRange.TLD_PATTERN.match(labels[-1]):
+            return False
+
+        return all([NetworkRange.DOMAIN_LABEL_PATTERN.match(label) for label in labels])
+
+    @staticmethod
+    def check_if_range(address_str: str):
         if -1 != address_str.find("-"):
             try:
                 NetworkRange._range_to_ips(address_str)
