@@ -543,6 +543,8 @@ class TestMonkeyBlackbox:
             log_handler=log_handler,
         )
         exploitation_test.run()
+
+        # asserting that Agent hashes are not unique
         assert len({a.sha256 for a in exploitation_test.agents}) == 2
 
     def test_depth_1_a(self, island_client):
