@@ -21,6 +21,8 @@ type Props = {
   onClose: (importSuccessful: boolean) => void
 }
 
+const BAD_CONFIGURATION_MESSAGE = 'Configuration file is corrupt or in an outdated format.';
+
 
 const ConfigImportModal = (props: Props) => {
   const configImportEndpoint = '/api/agent-configuration';
@@ -65,7 +67,7 @@ const ConfigImportModal = (props: Props) => {
       unsafeSelected = isUnsafeOptionSelected(props.schema, configContents);
     } catch {
       setUploadStatus(UploadStatuses.error);
-      setErrorMessage('Configuration file is corrupt or in an outdated format');
+      setErrorMessage(BAD_CONFIGURATION_MESSAGE);
       return;
     }
 
@@ -99,7 +101,7 @@ const ConfigImportModal = (props: Props) => {
       setUploadStatus(UploadStatuses.success);
     } catch {
       setUploadStatus(UploadStatuses.error);
-      setErrorMessage('Configuration file is corrupt or in an outdated format');
+      setErrorMessage(BAD_CONFIGURATION_MESSAGE);
     }
   }
 
@@ -124,7 +126,7 @@ const ConfigImportModal = (props: Props) => {
         props.onClose(true);
       } else {
         setUploadStatus(UploadStatuses.error);
-        setErrorMessage('Configuration file is corrupt or in an outdated format.');
+        setErrorMessage(BAD_CONFIGURATION_MESSAGE);
       }
     })
   }
@@ -137,7 +139,7 @@ const ConfigImportModal = (props: Props) => {
           props.onClose(true);
         } else {
           setUploadStatus(UploadStatuses.error);
-          setErrorMessage('Configuration file is corrupt or in an outdated format.');
+          setErrorMessage(BAD_CONFIGURATION_MESSAGE);
         }
        });
   }
@@ -156,7 +158,7 @@ const ConfigImportModal = (props: Props) => {
         props.onClose(true);
       } else {
         setUploadStatus(UploadStatuses.error);
-        setErrorMessage('Configuration file is corrupt or in an outdated format');
+        setErrorMessage(BAD_CONFIGURATION_MESSAGE);
       }
     })
   }
