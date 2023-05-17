@@ -94,73 +94,65 @@ const ConfigImportModal = (props: Props) => {
   }
 
   function submitImport() {
-    try {
-      sendConfigToServer();
-      sendConfigCredentialsToServer();
-      submitConfigMasqueStringsToServer();
-      setUploadStatus(UploadStatuses.success);
-    } catch {
-      setUploadStatus(UploadStatuses.error);
-      setErrorMessage(BAD_CONFIGURATION_MESSAGE);
-    }
+    let configurationSubmissionStatus = false;
+    let credentialsSubmissionStatus = false;
+    let masqueStringsSubmissionStatus = false;
+
+    sendConfigToServer().then(status => {
+      configurationSubmissionStatus = status;
+      sendConfigCredentialsToServer().then(status => {
+        credentialsSubmissionStatus = status;
+        submitConfigMasqueStringsToServer().then(status => {
+          masqueStringsSubmissionStatus = status;
+        }).then(() => {
+          if ((configurationSubmissionStatus && credentialsSubmissionStatus && masqueStringsSubmissionStatus) === true) {
+            resetState();
+            props.onClose(true);
+            setUploadStatus(UploadStatuses.success);
+          } else {
+            setUploadStatus(UploadStatuses.error);
+            setErrorMessage(BAD_CONFIGURATION_MESSAGE);
+          }
+        });
+      });
+    });
   }
 
   const submitConfigMasqueStringsToServer = () => {
     const {linuxMasqueBytes, windowsMasqueBytes} = getMasqueradesBytesArrays(configMasqueStrings);
-      sendConfigMasqueStringsToServer(APIEndpoint.linuxMasque, linuxMasqueBytes);
-      sendConfigMasqueStringsToServer(APIEndpoint.windowsMasque, windowsMasqueBytes);
+
+    let linuxMasqueStringsSubmissionStatus = sendConfigMasqueStringsToServer(APIEndpoint.linuxMasque, linuxMasqueBytes);
+    let windowsMasqueStringsSubmissionStatus = sendConfigMasqueStringsToServer(APIEndpoint.windowsMasque, windowsMasqueBytes);
+
+    return (linuxMasqueStringsSubmissionStatus && windowsMasqueStringsSubmissionStatus);
   }
 
   function sendConfigCredentialsToServer() {
     let credentials = formatCredentialsForIsland(configCredentials);
-    authComponent.authFetch(credentialsEndpoint,
+    return authComponent.authFetch(credentialsEndpoint,
       {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(credentials)
       },
       true
-    ).then(res => {
-      if (res.ok) {
-        resetState();
-        props.onClose(true);
-      } else {
-        setUploadStatus(UploadStatuses.error);
-        setErrorMessage(BAD_CONFIGURATION_MESSAGE);
-      }
-    })
+    ).then(res => {return res.ok})
   }
 
   function sendConfigMasqueStringsToServer(endpoint, masqueBytes) {
-    IslandHttpClient.put(endpoint, masqueBytes, true)
-      .then(res => {
-        if (res.status === 204) {
-          resetState();
-          props.onClose(true);
-        } else {
-          setUploadStatus(UploadStatuses.error);
-          setErrorMessage(BAD_CONFIGURATION_MESSAGE);
-        }
-       });
+    return IslandHttpClient.put(endpoint, masqueBytes, true)
+      .then(res => {return res.status === 204});
   }
 
   function sendConfigToServer() {
-    authComponent.authFetch(configImportEndpoint,
+    return authComponent.authFetch(configImportEndpoint,
       {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(configContents)
       },
       true
-    ).then(res => {
-      if (res.ok) {
-        resetState();
-        props.onClose(true);
-      } else {
-        setUploadStatus(UploadStatuses.error);
-        setErrorMessage(BAD_CONFIGURATION_MESSAGE);
-      }
-    })
+    ).then(res => {return res.ok})
   }
 
   function isImportDisabled(): boolean {
