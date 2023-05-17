@@ -21,6 +21,8 @@ type Props = {
   onClose: (importSuccessful: boolean) => void
 }
 
+const BAD_CONFIGURATION_MESSAGE = 'Configuration file is corrupt or in an outdated format.';
+
 
 const ConfigImportModal = (props: Props) => {
   const configImportEndpoint = '/api/agent-configuration';
@@ -65,7 +67,7 @@ const ConfigImportModal = (props: Props) => {
       unsafeSelected = isUnsafeOptionSelected(props.schema, configContents);
     } catch {
       setUploadStatus(UploadStatuses.error);
-      setErrorMessage('Configuration file is corrupt or in an outdated format');
+      setErrorMessage(BAD_CONFIGURATION_MESSAGE);
       return;
     }
 
@@ -92,73 +94,58 @@ const ConfigImportModal = (props: Props) => {
   }
 
   function submitImport() {
-    try {
-      sendConfigToServer();
-      sendConfigCredentialsToServer();
-      submitConfigMasqueStringsToServer();
-      setUploadStatus(UploadStatuses.success);
-    } catch {
-      setUploadStatus(UploadStatuses.error);
-      setErrorMessage('Configuration file is corrupt or in an outdated format');
-    }
+    let configurationSubmissionStatus = sendConfigToServer();
+    let credentialsSubmissionStatus = sendConfigCredentialsToServer();
+    let masqueStringsSubmissionStatus = submitConfigMasqueStringsToServer();
+
+    Promise.all([configurationSubmissionStatus, credentialsSubmissionStatus, masqueStringsSubmissionStatus])
+      .then((submissionStatuses) => {
+        if (submissionStatuses.every(status => status === true)) {
+          resetState();
+          props.onClose(true);
+          setUploadStatus(UploadStatuses.success);
+        } else {
+          setUploadStatus(UploadStatuses.error);
+          setErrorMessage(BAD_CONFIGURATION_MESSAGE);
+        }
+      });
   }
 
   const submitConfigMasqueStringsToServer = () => {
     const {linuxMasqueBytes, windowsMasqueBytes} = getMasqueradesBytesArrays(configMasqueStrings);
-      sendConfigMasqueStringsToServer(APIEndpoint.linuxMasque, linuxMasqueBytes);
-      sendConfigMasqueStringsToServer(APIEndpoint.windowsMasque, windowsMasqueBytes);
+
+    let linuxMasqueStringsSubmissionStatus = sendConfigMasqueStringsToServer(APIEndpoint.linuxMasque, linuxMasqueBytes);
+    let windowsMasqueStringsSubmissionStatus = sendConfigMasqueStringsToServer(APIEndpoint.windowsMasque, windowsMasqueBytes);
+
+    return (linuxMasqueStringsSubmissionStatus && windowsMasqueStringsSubmissionStatus);
   }
 
   function sendConfigCredentialsToServer() {
     let credentials = formatCredentialsForIsland(configCredentials);
-    authComponent.authFetch(credentialsEndpoint,
+    return authComponent.authFetch(credentialsEndpoint,
       {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(credentials)
       },
       true
-    ).then(res => {
-      if (res.ok) {
-        resetState();
-        props.onClose(true);
-      } else {
-        setUploadStatus(UploadStatuses.error);
-        setErrorMessage('Configuration file is corrupt or in an outdated format.');
-      }
-    })
+    ).then(res => {return res.ok})
   }
 
   function sendConfigMasqueStringsToServer(endpoint, masqueBytes) {
-    IslandHttpClient.put(endpoint, masqueBytes, true)
-      .then(res => {
-        if (res.status === 204) {
-          resetState();
-          props.onClose(true);
-        } else {
-          setUploadStatus(UploadStatuses.error);
-          setErrorMessage('Configuration file is corrupt or in an outdated format.');
-        }
-       });
+    return IslandHttpClient.put(endpoint, masqueBytes, true)
+      .then(res => {return res.status === 204});
   }
 
   function sendConfigToServer() {
-    authComponent.authFetch(configImportEndpoint,
+    return authComponent.authFetch(configImportEndpoint,
       {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(configContents)
       },
       true
-    ).then(res => {
-      if (res.ok) {
-        resetState();
-        props.onClose(true);
-      } else {
-        setUploadStatus(UploadStatuses.error);
-        setErrorMessage('Configuration file is corrupt or in an outdated format');
-      }
-    })
+    ).then(res => {return res.ok})
   }
 
   function isImportDisabled(): boolean {
@@ -189,7 +176,7 @@ const ConfigImportModal = (props: Props) => {
         let contents = event.target.result as string;
         importContents = JSON.parse(contents);
       } catch (e) {
-        setErrorMessage('File is not in a valid json format');
+        setErrorMessage('File is not in a valid JSON format');
         return
       }
 

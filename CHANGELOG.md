@@ -28,6 +28,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Plugins are now being checked for local OS compatibility. #3275
 - A bug that could prevent multi-hop propagation via SMB. #3173
 - Exceptions being raised when WMI and Zerologon are used together. #1774
+- A bug that caused failing configuration imports to be marked as successful. #3341
 
 ### Security
 - Fixes a bug where OTPs can be leaked by the hadoop exploiter. #3296
