@@ -183,7 +183,7 @@ const ConfigImportModal = (props: Props) => {
         let contents = event.target.result as string;
         importContents = JSON.parse(contents);
       } catch (e) {
-        setErrorMessage('File is not in a valid json format');
+        setErrorMessage('File is not in a valid JSON format');
         return
       }
 
