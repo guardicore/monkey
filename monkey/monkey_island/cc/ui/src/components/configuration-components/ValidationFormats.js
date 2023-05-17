@@ -17,7 +17,7 @@ const windowsUncPathRegex = /^\\{2}/ // Path starts like `\\`
 
 const emptyRegex = /^$/
 
-const emailAddressRegex = new RegExp(/^[\w\-.]+@([\w-]+\.)+[\w-]{2,4}$/)
+const emailAddressRegex = new RegExp(/^[\S\-.]+@([\w-]+\.)+[\w-]{2,4}$/)
 
 
 export const IP_RANGE = 'ip-range';
