@@ -1,6 +1,6 @@
 import CREDENTIALS, {defaultCredentials} from '../../services/configuration/propagation/credentials';
 import {MASQUERADE} from '../../services/configuration/masquerade';
-import {PlaintextType, SecretType} from '../utils/CredentialTitle.tsx';
+import {IdentityType, PlaintextType, SecretType} from '../utils/CredentialTitle.tsx';
 import _ from 'lodash';
 
 export function reformatConfig(config, reverse = false) {
@@ -47,10 +47,17 @@ export function reformatSchema(schema) {
 
 export function formatCredentialsForForm(credentials) {
   let formattedCredentials = _.cloneDeep(defaultCredentials);
+
   for (let i = 0; i < credentials.length; i++) {
+
     let identity = credentials[i]['identity'];
     if (identity !== null) {
-      formattedCredentials['exploit_user_list'].push(identity.username)
+      if (Object.prototype.hasOwnProperty.call(identity, IdentityType.Username)) {
+        formattedCredentials['exploit_user_list'].push(identity[IdentityType.Username])
+      }
+      if (Object.prototype.hasOwnProperty.call(identity, IdentityType.EmailAddress)) {
+        formattedCredentials['exploit_email_list'].push(identity[IdentityType.EmailAddress])
+      }
     }
 
     let secret = credentials[i]['secret'];
@@ -77,6 +84,7 @@ export function formatCredentialsForForm(credentials) {
   }
 
   formattedCredentials['exploit_user_list'] = [...new Set(formattedCredentials['exploit_user_list'])];
+  formattedCredentials['exploit_email_list'] = [...new Set(formattedCredentials['exploit_email_list'])];
   formattedCredentials['exploit_password_list'] = [...new Set(formattedCredentials['exploit_password_list'])];
   formattedCredentials['exploit_ntlm_hash_list'] = [...new Set(formattedCredentials['exploit_ntlm_hash_list'])];
   formattedCredentials['exploit_lm_hash_list'] = [...new Set(formattedCredentials['exploit_lm_hash_list'])];
@@ -86,17 +94,13 @@ export function formatCredentialsForForm(credentials) {
 
 export function formatCredentialsForIsland(credentials) {
   let formattedCredentials = [];
-  let usernames = credentials['exploit_user_list'];
-  for (let i = 0; i < usernames.length; i++) {
-    formattedCredentials.push({
-      'identity': {'username': usernames[i]},
-      'secret': null
-    })
-  }
 
-  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_password_list'], SecretType.Password))
-  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_ntlm_hash_list'], SecretType.NTHash))
-  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_lm_hash_list'], SecretType.LMHash))
+  formattedCredentials.push(...getFormattedIdentities(credentials['exploit_user_list'], IdentityType.Username))
+  formattedCredentials.push(...getFormattedIdentities(credentials['exploit_email_list'], IdentityType.EmailAddress))
+
+  formattedCredentials.push(...getFormattedSecrets(credentials['exploit_password_list'], SecretType.Password))
+  formattedCredentials.push(...getFormattedSecrets(credentials['exploit_ntlm_hash_list'], SecretType.NTHash))
+  formattedCredentials.push(...getFormattedSecrets(credentials['exploit_lm_hash_list'], SecretType.LMHash))
 
   let ssh_keys = credentials['exploit_ssh_keys'];
   for (let i = 0; i < ssh_keys.length; i++) {
@@ -112,7 +116,18 @@ export function formatCredentialsForIsland(credentials) {
   return formattedCredentials;
 }
 
-function getFormattedCredentials(credentials, keyOfSecret) {
+function getFormattedIdentities(credentials, keyOfIdentity) {
+  let formattedCredentials = [];
+  for (let i = 0; i < credentials.length; i++) {
+    formattedCredentials.push({
+      'identity': {[keyOfIdentity]: credentials[i]},
+      'secret': null
+    })
+  }
+  return formattedCredentials;
+}
+
+function getFormattedSecrets(credentials, keyOfSecret) {
   let formattedCredentials = [];
   for (let i = 0; i < credentials.length; i++) {
     formattedCredentials.push({
