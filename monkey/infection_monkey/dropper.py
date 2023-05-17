@@ -13,7 +13,7 @@ from common import OperatingSystem
 from common.utils.argparse_types import positive_int
 from common.utils.environment import get_os
 from infection_monkey.utils.commands import (
-    build_monkey_commandline_explicitly,
+    build_monkey_commandline_parameters,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
@@ -133,7 +133,7 @@ class MonkeyDrops(object):
                 logger.warning("Cannot set reference date to destination file")
 
     def _run_monkey(self, destination_path) -> subprocess.Popen:
-        monkey_options = build_monkey_commandline_explicitly(
+        monkey_options = build_monkey_commandline_parameters(
             parent=self.opts.parent,
             servers=self.opts.servers,
             depth=self.opts.depth,

@@ -14,6 +14,8 @@ RAND_SUFFIX_LEN = 8
 AGENT_BINARY_PATH_LINUX = PurePosixPath("/tmp/monkey")
 AGENT_BINARY_PATH_WIN64 = PureWindowsPath(r"C:\Windows\temp\monkey64.exe")
 
+DROPPER_SCRIPT_PATH_LINUX = PurePosixPath("/tmp/monkey-dropper.sh")
+
 
 def get_agent_dst_path(host: TargetHost) -> PurePath:
     return _add_random_suffix(_get_agent_path(host))
@@ -38,3 +40,14 @@ def get_random_file_suffix() -> str:
     character_set = string.ascii_letters + string.digits + "_" + "-"
     # Avoid the risk of blocking by using insecure_generate_random_string()
     return insecure_generate_random_string(n=RAND_SUFFIX_LEN, character_set=character_set)
+
+
+def get_dropper_script_dst_path(host: TargetHost) -> PurePath:
+    return _add_random_suffix(_get_dropper_script_path(host))
+
+
+def _get_dropper_script_path(host: TargetHost) -> PurePath:
+    if host.operating_system == OperatingSystem.WINDOWS:
+        raise NotImplementedError("This function is not implemented for Windows")
+
+    return PurePosixPath(DROPPER_SCRIPT_PATH_LINUX)
