@@ -4,7 +4,7 @@ from copy import deepcopy
 from http import HTTPStatus
 from threading import Thread
 from time import sleep
-from typing import List, Optional
+from typing import List, Optional, Sequence
 from uuid import uuid4
 
 import pytest
@@ -48,6 +48,7 @@ from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
     start_machines,
     stop_machines,
 )
+from monkey_island.cc.models import Agent
 from monkey_island.cc.services.authentication_service.flask_resources.agent_otp import (
     MAX_OTP_REQUESTS_PER_SECOND,
 )
@@ -484,6 +485,12 @@ def test_agent_logout(island):
 # noinspection PyUnresolvedReferences
 class TestMonkeyBlackbox:
     @staticmethod
+    def assert_unique_agent_hashes(agents: Sequence[Agent]):
+        agent_hashes = [a.sha256 for a in agents]
+
+        assert len(agent_hashes) == len(set(agent_hashes))
+
+    @staticmethod
     def run_exploitation_test(
         island_client: MonkeyIslandClient,
         test_configuration: TestConfiguration,
@@ -518,9 +525,27 @@ class TestMonkeyBlackbox:
         )
 
     def test_depth_2_a(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, depth_2_a_test_configuration, "Depth2A test suite"
+        test_name = "Depth2A test suite"
+        communication_analyzer = CommunicationAnalyzer(
+            island_client,
+            get_target_ips(depth_2_a_test_configuration),
         )
+        log_handler = TestLogsHandler(
+            test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
+        )
+        exploitation_test = ExploitationTest(
+            name=test_name,
+            island_client=island_client,
+            test_configuration=depth_2_a_test_configuration,
+            masque=None,
+            analyzers=[communication_analyzer],
+            timeout=DEFAULT_TIMEOUT_SECONDS + 30,
+            log_handler=log_handler,
+        )
+        exploitation_test.run()
+
+        # asserting that Agent hashes are not unique
+        assert len({a.sha256 for a in exploitation_test.agents}) == 2
 
     def test_depth_1_a(self, island_client):
         test_name = "Depth1A test suite"
@@ -559,7 +584,7 @@ class TestMonkeyBlackbox:
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
-        ExploitationTest(
+        exploitation_test = ExploitationTest(
             name=test_name,
             island_client=island_client,
             test_configuration=depth_1_a_test_configuration,
@@ -567,12 +592,30 @@ class TestMonkeyBlackbox:
             analyzers=[stolen_credentials_analyzer, communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
-        ).run()
+        )
+        exploitation_test.run()
+        TestMonkeyBlackbox.assert_unique_agent_hashes(exploitation_test.agents)
 
     def test_depth_3_a(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, depth_3_a_test_configuration, "Depth3A test suite"
+        test_name = "Depth3A test suite"
+        communication_analyzer = CommunicationAnalyzer(
+            island_client,
+            get_target_ips(depth_3_a_test_configuration),
         )
+        log_handler = TestLogsHandler(
+            test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
+        )
+        exploitation_test = ExploitationTest(
+            name=test_name,
+            island_client=island_client,
+            test_configuration=depth_3_a_test_configuration,
+            masque=None,
+            analyzers=[communication_analyzer],
+            timeout=DEFAULT_TIMEOUT_SECONDS,
+            log_handler=log_handler,
+        )
+        exploitation_test.run()
+        TestMonkeyBlackbox.assert_unique_agent_hashes(exploitation_test.agents)
 
     def test_depth_4_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
