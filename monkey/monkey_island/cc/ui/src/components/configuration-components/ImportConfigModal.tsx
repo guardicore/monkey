@@ -94,28 +94,21 @@ const ConfigImportModal = (props: Props) => {
   }
 
   function submitImport() {
-    let configurationSubmissionStatus = false;
-    let credentialsSubmissionStatus = false;
-    let masqueStringsSubmissionStatus = false;
+    let configurationSubmissionStatus = sendConfigToServer();
+    let credentialsSubmissionStatus = sendConfigCredentialsToServer();
+    let masqueStringsSubmissionStatus = submitConfigMasqueStringsToServer();
 
-    sendConfigToServer().then(status => {
-      configurationSubmissionStatus = status;
-      sendConfigCredentialsToServer().then(status => {
-        credentialsSubmissionStatus = status;
-        submitConfigMasqueStringsToServer().then(status => {
-          masqueStringsSubmissionStatus = status;
-        }).then(() => {
-          if ((configurationSubmissionStatus && credentialsSubmissionStatus && masqueStringsSubmissionStatus) === true) {
-            resetState();
-            props.onClose(true);
-            setUploadStatus(UploadStatuses.success);
-          } else {
-            setUploadStatus(UploadStatuses.error);
-            setErrorMessage(BAD_CONFIGURATION_MESSAGE);
-          }
-        });
+    Promise.all([configurationSubmissionStatus, credentialsSubmissionStatus, masqueStringsSubmissionStatus])
+      .then((submissionStatuses) => {
+        if (submissionStatuses.every(status => status === true)) {
+          resetState();
+          props.onClose(true);
+          setUploadStatus(UploadStatuses.success);
+        } else {
+          setUploadStatus(UploadStatuses.error);
+          setErrorMessage(BAD_CONFIGURATION_MESSAGE);
+        }
       });
-    });
   }
 
   const submitConfigMasqueStringsToServer = () => {
