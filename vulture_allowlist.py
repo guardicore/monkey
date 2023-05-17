@@ -1,4 +1,5 @@
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
+from agent_plugins.exploiters.mssql.src.mssql_options import MSSQLOptions
 from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
 from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
@@ -153,3 +154,8 @@ commands.build_command_windows_powershell
 commands.build_download_command_linux_curl
 commands.build_dropper_script_download_command
 commands.download_command_windows_powershell
+
+# Remove after 3171
+MSSQLOptions
+MSSQLOptions.try_discovered_mssql_ports
+MSSQLOptions.server_timeout
