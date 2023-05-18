@@ -1,12 +1,18 @@
 from typing import Sequence
 
-from common.types import NetworkPort
+from common.types import NetworkPort, NetworkService
 from infection_monkey.i_puppet import TargetHost
 
 
 def all_tcp_ports_are_closed(host: TargetHost, tcp_ports: Sequence[NetworkPort]) -> bool:
     closed_tcp_ports = host.ports_status.tcp_ports.closed
     return all([p in closed_tcp_ports for p in tcp_ports])
+
+
+def all_service_tcp_ports_are_closed(host: TargetHost, network_service: NetworkService) -> bool:
+    service_tcp_ports = host.ports_status.tcp_ports.filter_ports_by_service(network_service)
+    closed_tcp_ports = host.ports_status.tcp_ports.closed
+    return all([p in closed_tcp_ports for p in service_tcp_ports])
 
 
 def all_udp_ports_are_closed(host: TargetHost, udp_ports: Sequence[NetworkPort]) -> bool:
