@@ -2,10 +2,19 @@ from itertools import product
 
 from pydantic import SecretStr
 
-from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
+from common.credentials import (
+    Credentials,
+    EmailAddress,
+    LMHash,
+    NTHash,
+    Password,
+    SSHKeypair,
+    Username,
+)
 
 USERNAME = "m0nk3y_user"
 SPECIAL_USERNAME = "m0nk3y.user"
+EMAIL_ADDRESS = "valid@email.com"
 PLAINTEXT_NT_HASH = "C1C58F96CDF212B50837BC11A00BE47C"
 PLAINTEXT_LM_HASH = "299BD128C1101FD6299BD128C1101FD6"
 PLAINTEXT_PASSWORD = "trytostealthis"
@@ -20,7 +29,12 @@ PUBLIC_KEY = "MY_PUBLIC_KEY"
 PRIVATE_KEY_1 = SecretStr(PLAINTEXT_PRIVATE_KEY_1)
 PRIVATE_KEY_2 = SecretStr(PLAINTEXT_PRIVATE_KEY_2)
 
-IDENTITIES = [Username(username=USERNAME), None, Username(username=SPECIAL_USERNAME)]
+IDENTITIES = [
+    Username(username=USERNAME),
+    None,
+    Username(username=SPECIAL_USERNAME),
+    EmailAddress(email_address=EMAIL_ADDRESS),
+]
 IDENTITY_DICTS = [{"username": USERNAME}, None]
 
 SECRETS = (

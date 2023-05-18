@@ -55,8 +55,11 @@ function getCredentialsTableData(credentials){
   for (let credential of credentials) {
     let rowData = {};
     rowData['username'] = '[No username]';
-    if (credential['identity'] !== null) {
-      rowData['username'] = credential['identity']['username'];
+    let identity = credential['identity'];
+    if (identity !== null) {
+      if ('username' in identity) {
+        rowData['username'] = identity['username'];
+      }
     }
     rowData['title'] = reformatSecret(credential['secret'])['title'];
     if (! _.find(tableData, rowData)) {

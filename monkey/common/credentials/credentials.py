@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import Optional, Union
 
 from ..base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
-from . import LMHash, NTHash, Password, SSHKeypair, Username
+from . import EmailAddress, LMHash, NTHash, Password, SSHKeypair, Username
 from .encoding import SecretEncodingConfig
 
-Identity = Username
+Identity = Union[Username, EmailAddress]
 Secret = Union[Password, LMHash, NTHash, SSHKeypair]
 CredentialsComponent = Union[Identity, Secret]
 
