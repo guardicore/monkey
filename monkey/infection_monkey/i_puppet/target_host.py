@@ -7,7 +7,7 @@ from pydantic import Field, validate_arguments
 
 from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel, MutableInfectionMonkeyModelConfig
-from common.types import NetworkPort, PortStatus
+from common.types import NetworkPort, NetworkService, PortStatus
 
 from . import PortScanData
 
@@ -28,6 +28,13 @@ class PortScanDataDict(UserDict[NetworkPort, PortScanData]):
     def _filter_ports_by_status(self, status: PortStatus) -> Set[NetworkPort]:
         return {
             port for port, port_scan_data in self.data.items() if port_scan_data.status == status
+        }
+
+    def filter_ports_by_service(self, service: NetworkService) -> Set[NetworkPort]:
+        return {
+            port
+            for port, port_scan_data in self.data.items()
+            if port_scan_data.service == service or port_scan_data.service == NetworkService.UNKNOWN
         }
 
 

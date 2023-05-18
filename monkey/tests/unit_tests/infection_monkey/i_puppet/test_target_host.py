@@ -1,6 +1,6 @@
 import pytest
 
-from common.types import NetworkPort, PortStatus
+from common.types import NetworkPort, NetworkService, PortStatus
 from infection_monkey.i_puppet import PortScanData, PortScanDataDict
 
 
@@ -84,3 +84,28 @@ def test_open_tcp_ports():
     )
 
     assert tcp_ports.open == expected_open_ports
+
+
+def test_filter_ports_by_service():
+    expected_service_ports = {1, 3, 5}
+    tcp_ports = PortScanDataDict(
+        {
+            NetworkPort(1): PortScanData(
+                port=1, status=PortStatus.OPEN, service=NetworkService.SSH
+            ),
+            NetworkPort(2): PortScanData(
+                port=2, status=PortStatus.CLOSED, service=NetworkService.SMB
+            ),
+            NetworkPort(3): PortScanData(
+                port=3, status=PortStatus.OPEN, service=NetworkService.SSH
+            ),
+            NetworkPort(4): PortScanData(
+                port=4, status=PortStatus.CLOSED, service=NetworkService.MSSQL
+            ),
+            NetworkPort(5): PortScanData(
+                port=5, status=PortStatus.CLOSED, service=NetworkService.UNKNOWN
+            ),
+        }
+    )
+
+    assert tcp_ports.filter_ports_by_service(NetworkService.SSH) == expected_service_ports
