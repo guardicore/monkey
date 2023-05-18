@@ -160,3 +160,4 @@ commands.download_command_windows_powershell_webrequest
 MSSQLOptions
 MSSQLOptions.try_discovered_mssql_ports
 MSSQLOptions.server_timeout
+_mssql_client
