@@ -17,8 +17,7 @@ const windowsUncPathRegex = /^\\{2}/ // Path starts like `\\`
 
 const emptyRegex = /^$/
 
-const emailAddressRegex = new RegExp(/^[\S\-.]+@([\w-]+\.)+[\w-]{2,4}$/)
-
+import * as emailValidator from 'email-validator';
 
 export const IP_RANGE = 'ip-range';
 export const IP = 'ip';
@@ -36,7 +35,7 @@ export const formValidationFormats = {
   [VALID_RANSOMWARE_TARGET_PATH_LINUX]: buildValidRansomwarePathLinuxRegex(),
   [VALID_RANSOMWARE_TARGET_PATH_WINDOWS]: buildValidRansomwarePathWindowsRegex(),
   [VALID_BASE64]: isBase64,
-  [VALID_EMAIL_ADDRESS]: emailAddressRegex
+  [VALID_EMAIL_ADDRESS]: emailValidator.validate
 };
 
 var base64 = require('base64-js');
