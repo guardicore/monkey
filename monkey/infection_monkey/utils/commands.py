@@ -65,6 +65,10 @@ def build_download_command_linux_curl(url: str, dst: PurePath) -> str:
     return f"curl -so {dst} {url}; {set_permissions_command_linux(dst)}"
 
 
+def download_command_windows_powershell_webclient(url: str, dst: PurePath) -> str:
+    return f"(new-object System.Net.WebClient).DownloadFile(^''{url}^'' , ^''{dst}^'')"
+
+
 def download_command_windows_powershell_webrequest(url: str, dst: PurePath) -> str:
     return f"Invoke-WebRequest -Uri '{url}' -OutFile '{dst}' -UseBasicParsing"
 
