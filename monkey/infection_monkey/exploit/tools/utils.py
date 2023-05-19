@@ -1,6 +1,6 @@
-from typing import Sequence
+from typing import Optional, Sequence, Set
 
-from common.types import NetworkPort
+from common.types import NetworkPort, NetworkService
 from infection_monkey.i_puppet import TargetHost
 
 
@@ -19,3 +19,27 @@ def all_udp_ports_are_closed(host: TargetHost, udp_ports: Sequence[NetworkPort])
     """
     closed_udp_ports = host.ports_status.udp_ports.closed
     return all([p in closed_udp_ports for p in udp_ports])
+
+
+def any_tcp_port_status_is_unknown(host: TargetHost, tcp_ports: Sequence[NetworkPort]) -> bool:
+    all_host_tcp_ports = host.ports_status.tcp_ports
+    return any([p not in all_host_tcp_ports for p in tcp_ports])
+
+
+def get_open_tcp_ports(
+    host: TargetHost, services_to_filter: Optional[Set[NetworkService]] = None
+) -> Set[NetworkPort]:
+    """
+    Get open TCP ports on the host, filtered by services if specified
+
+    :param host: The host to check
+    :param services_to_filter: The required network services to filter the ports
+    :return: All open TCP ports, or open TCP ports hosting specified network services
+    """
+    tcp_ports = host.ports_status.tcp_ports
+
+    # if no services are specified for filtering, return all open TCP ports
+    if not services_to_filter:
+        return tcp_ports.open
+
+    return {port for port in tcp_ports.open if tcp_ports[port].service in services_to_filter}
