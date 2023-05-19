@@ -12,8 +12,9 @@ from infection_monkey.model import DROPPER_ARG
 from infection_monkey.utils.ids import get_agent_id
 
 AGENT_EXE_PATH = PureWindowsPath("C:\\agent.exe")
-OTP = "123456"
 AGENT_ID = get_agent_id()
+OTP = "123456"
+SERVERS = ["127.0.0.1", "192.168.1.100", "172.1.2.3"]
 
 
 @pytest.fixture
@@ -23,59 +24,22 @@ def otp_provider() -> IAgentOTPProvider:
     return provider
 
 
-def test_launch_command__servers(
-    otp_provider: IAgentOTPProvider,
-):
-    servers = ["127.0.0.1", "192.168.1.100", "172.1.2.3"]
+def test_launch_command(otp_provider: IAgentOTPProvider):
     command = build_mssql_agent_launch_command(
         AGENT_ID,
-        servers,
-        2,
-        AGENT_EXE_PATH,
-        otp_provider,
-    )
-
-    for s in servers:
-        assert s in command
-
-
-def test_launch_command__monkey_used(otp_provider: IAgentOTPProvider):
-    command = build_mssql_agent_launch_command(
-        AGENT_ID,
-        ["127.0.0.1"],
-        2,
-        AGENT_EXE_PATH,
-        otp_provider,
-    )
-
-    assert DROPPER_ARG in command
-
-
-def test_launch_command__otp_used(otp_provider: IAgentOTPProvider):
-    command = build_mssql_agent_launch_command(
-        AGENT_ID,
-        ["127.0.0.1"],
-        2,
-        AGENT_EXE_PATH,
-        otp_provider,
-    )
-
-    assert OTP in command
-
-
-def test_launch_command__xp_cmdshell(otp_provider: IAgentOTPProvider):
-    command = build_mssql_agent_launch_command(
-        AGENT_ID,
-        ["127.0.0.1"],
+        SERVERS,
         2,
         AGENT_EXE_PATH,
         otp_provider,
     )
 
     assert command.startswith("xp_cmdshell")
+    assert DROPPER_ARG in command
+    assert OTP in command
+    assert all([server in command for server in SERVERS])
 
 
-def test_download_command__xp_cmdshell(otp_provider: IAgentOTPProvider):
+def test_download_command():
     command = build_mssql_agent_download_command(
         "http://some_link.com",
         AGENT_EXE_PATH,
