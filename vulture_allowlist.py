@@ -153,7 +153,8 @@ commands.build_agent_download_command
 commands.build_command_windows_powershell
 commands.build_download_command_linux_curl
 commands.build_dropper_script_download_command
-commands.download_command_windows_powershell
+commands.download_command_windows_powershell_webclient
+commands.download_command_windows_powershell_webrequest
 
 # Remove after 3171
 MSSQLOptions
