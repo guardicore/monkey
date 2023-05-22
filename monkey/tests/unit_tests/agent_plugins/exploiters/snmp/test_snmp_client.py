@@ -77,12 +77,12 @@ def get_called_mib_symbols(mib_view_controller):
     return inner
 
 
-def test_set_command__registers_command(
+def test_create_command__registers_command(
     mock_snmp_set, snmp_client: SNMPClient, get_called_mib_symbols
 ):
     expected_mib_symbols = [ExpectedMIBSymbol("NET-SNMP-EXTEND-MIB", "nsExtendArgs", COMMAND)]
 
-    snmp_client.set_command(HOST_IP, COMMAND_NAME, COMMUNITY_STRING, COMMAND)
+    snmp_client.create_command(HOST_IP, COMMAND_NAME, COMMUNITY_STRING, COMMAND)
 
     assert mock_snmp_set.called
     called_mib_symbols = get_called_mib_symbols(mock_snmp_set.call_args_list)
@@ -98,7 +98,7 @@ def test_exception_raised_on_failure(mock_snmp_set, mock_snmp_get, return_value,
     mock_snmp_get.return_value = return_value
 
     with pytest.raises(Exception):
-        snmp_client.set_command(HOST_IP, COMMAND_NAME, COMMUNITY_STRING, COMMAND)
+        snmp_client.create_command(HOST_IP, COMMAND_NAME, COMMUNITY_STRING, COMMAND)
     with pytest.raises(Exception):
         snmp_client.execute_command(HOST_IP, COMMAND_NAME, COMMUNITY_STRING)
     with pytest.raises(Exception):
@@ -109,7 +109,7 @@ def test_snmp_error_raised_on_request_timeout(mock_snmp_set, mock_snmp_get, snmp
     mock_snmp_set.return_value = repeat(TIMED_OUT_RESULT)
     mock_snmp_get.return_value = repeat(TIMED_OUT_RESULT)
     with pytest.raises(SNMPRequestTimedOut):
-        snmp_client.set_command(HOST_IP, COMMAND_NAME, COMMUNITY_STRING, COMMAND)
+        snmp_client.create_command(HOST_IP, COMMAND_NAME, COMMUNITY_STRING, COMMAND)
     with pytest.raises(SNMPRequestTimedOut):
         snmp_client.execute_command(HOST_IP, COMMAND_NAME, COMMUNITY_STRING)
     with pytest.raises(SNMPRequestTimedOut):
