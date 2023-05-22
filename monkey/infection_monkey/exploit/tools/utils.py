@@ -21,11 +21,6 @@ def all_udp_ports_are_closed(host: TargetHost, udp_ports: Sequence[NetworkPort])
     return all([p in closed_udp_ports for p in udp_ports])
 
 
-def any_tcp_port_status_is_unknown(host: TargetHost, tcp_ports: Sequence[NetworkPort]) -> bool:
-    all_host_tcp_ports = host.ports_status.tcp_ports
-    return any([p not in all_host_tcp_ports for p in tcp_ports])
-
-
 def get_open_tcp_ports(
     host: TargetHost, services_to_filter: Optional[Set[NetworkService]] = None
 ) -> Set[NetworkPort]:
