@@ -35,7 +35,12 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
             "yarn_application_suffix": "M0NK3Y3XPL01T",
         },
         "Log4ShellExploiter": {},
-        "MSSQLExploiter": {},
+        "MSSQL": {
+            "target_ports": [1433],
+            "try_discovered_mssql_ports": False,
+            "server_timeout": 15,
+            "agent_binary_download_timeout": 60,
+        },
         "SMB": {"agent_binary_upload_timeout": 30, "smb_connect_timeout": 15},
         "SNMP": {
             "snmp_request_timeout": 0.5,
