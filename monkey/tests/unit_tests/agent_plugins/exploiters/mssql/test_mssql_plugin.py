@@ -212,7 +212,7 @@ def test_run__skips_exploit_if_port_status_closed(
         host=host,
         servers=SERVERS,
         current_depth=1,
-        options={"target_ports": MSSQL_PORTS},
+        options={"target_ports": MSSQL_PORTS, "try_discovered_unknown_ports": True},
         interrupt=Event(),
     )
 
