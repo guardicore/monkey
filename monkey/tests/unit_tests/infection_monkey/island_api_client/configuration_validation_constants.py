@@ -206,14 +206,6 @@ SCHEMA = {
                             "link": "https://techdocs.akamai.com/infection-monkey/docs/powershell",
                             "properties": {},
                         },
-                        "MSSQLExploiter": {
-                            "type": "object",
-                            "title": "MSSQL Exploiter",
-                            "safe": True,
-                            "description": "Tries to brute force into MsSQL server and uses insecure configuration to execute commands on server.",
-                            "link": "https://techdocs.akamai.com/infection-monkey/docs/mssql/",
-                            "properties": {},
-                        },
                         "SSHExploiter": {
                             "type": "object",
                             "title": "SSH Exploiter",
