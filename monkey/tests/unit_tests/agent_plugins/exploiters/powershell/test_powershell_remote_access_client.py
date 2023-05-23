@@ -43,7 +43,7 @@ def mock_powershell_client():
     def set_connected(value: bool):
         client.connected.return_value = value
 
-    client.connect_with_user.side_effect = lambda *_, **__: set_connected(True)
+    client.connect.side_effect = lambda *_, **__: set_connected(True)
 
     return client
 
@@ -75,7 +75,7 @@ def test_login__fails(
     powershell_remote_access_client: PowerShellRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
-    mock_powershell_client.connect_with_user.side_effect = Exception()
+    mock_powershell_client.connect.side_effect = Exception()
 
     with pytest.raises(RemoteAuthenticationError):
         powershell_remote_access_client.login(FULL_CREDENTIALS[0], tags)
