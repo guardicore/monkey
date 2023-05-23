@@ -38,6 +38,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
         "MSSQL": {
             "target_ports": [1433],
             "try_discovered_mssql_ports": False,
+            "try_unknown_service_ports": False,
             "server_timeout": 15,
             "agent_binary_download_timeout": 60,
         },
