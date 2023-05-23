@@ -246,7 +246,7 @@ def test_run__if_discovered_mssql_unknown_ports(
         options={
             "target_ports": MSSQL_PORTS,
             "try_discovered_mssql_ports": True,
-            "try_discovered_unknown_ports": True,
+            "try_unknown_service_ports": True,
         },
         interrupt=Event(),
     )

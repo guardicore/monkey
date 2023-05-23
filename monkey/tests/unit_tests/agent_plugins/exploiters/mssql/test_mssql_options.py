@@ -6,7 +6,7 @@ from common.types import NetworkPort
 
 TARGET_PORTS = [NetworkPort(22), NetworkPort(80), NetworkPort(443), NetworkPort(2222)]
 TRY_DISCOVERED_MSSQL_PORTS = True
-TRY_DISCOVERED_UNKNOWN_PORTS = True
+TRY_UNKNOWN_SERVICE_PORTS = True
 SERVER_TIMEOUT = 11.2
 DOWNLOAD_TIMEOUT = 44
 
@@ -14,7 +14,7 @@ DOWNLOAD_TIMEOUT = 44
 MSSQL_OPTIONS_DICT = {
     "target_ports": TARGET_PORTS,
     "try_discovered_mssql_ports": TRY_DISCOVERED_MSSQL_PORTS,
-    "try_discovered_unknown_ports": TRY_DISCOVERED_UNKNOWN_PORTS,
+    "try_unknown_service_ports": TRY_UNKNOWN_SERVICE_PORTS,
     "server_timeout": SERVER_TIMEOUT,
     "agent_binary_download_timeout": DOWNLOAD_TIMEOUT,
 }
@@ -23,7 +23,7 @@ MSSQL_OPTIONS_DICT = {
 MSSQL_OPTIONS_OBJECT = MSSQLOptions(
     target_ports=TARGET_PORTS,
     try_discovered_mssql_ports=TRY_DISCOVERED_MSSQL_PORTS,
-    try_discovered_unknown_ports=TRY_DISCOVERED_UNKNOWN_PORTS,
+    try_unknown_service_ports=TRY_UNKNOWN_SERVICE_PORTS,
     server_timeout=SERVER_TIMEOUT,
     agent_binary_download_timeout=DOWNLOAD_TIMEOUT,
 )
@@ -50,7 +50,7 @@ def test_MSSQL_options__default():
 
     assert mssql_options.target_ports == [1433]
     assert mssql_options.try_discovered_mssql_ports is False
-    assert mssql_options.try_discovered_unknown_ports is False
+    assert mssql_options.try_unknown_service_ports is False
     assert mssql_options.server_timeout == 15.0
     assert mssql_options.agent_binary_download_timeout == 60.0
 
