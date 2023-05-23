@@ -27,7 +27,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
         # Look at envs/monkey_zoo/docs/network_diagrams/powershell_credential_reuse.drawio.png
         "Log4ShellExploiter": {},
         "SSHExploiter": {},
-        "PowerShellExploiter": {},
+        "PowerShell": {},
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
