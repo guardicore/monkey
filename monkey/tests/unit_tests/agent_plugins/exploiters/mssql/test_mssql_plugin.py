@@ -212,13 +212,47 @@ def test_run__skips_exploit_if_port_status_closed(
         host=host,
         servers=SERVERS,
         current_depth=1,
-        options={"target_ports": MSSQL_PORTS},
+        options={
+            "target_ports": MSSQL_PORTS,
+        },
         interrupt=Event(),
     )
 
     mock_mssql_exploiter.exploit_host.assert_not_called()
     assert result.exploitation_success is False
     assert result.propagation_success is False
+
+
+def test_run__if_discovered_mssql_unknown_ports(
+    plugin: Plugin,
+    mock_mssql_exploiter,
+    target_host: TargetHost,
+):
+    host = target_host
+    host.ports_status.tcp_ports = PortScanDataDict(
+        {
+            MSSQL_PORTS[0]: PortScanData(
+                port=MSSQL_PORTS[0], status=PortStatus.OPEN, service=NetworkService.MSSQL
+            ),
+            NetworkPort(1234): PortScanData(port=NetworkPort(1234), status=PortStatus.OPEN),
+            NetworkPort(1235): PortScanData(port=NetworkPort(1235), status=PortStatus.CLOSED),
+        }
+    )
+
+    result = plugin.run(
+        host=host,
+        servers=SERVERS,
+        current_depth=1,
+        options={
+            "target_ports": MSSQL_PORTS,
+            "try_discovered_mssql_ports": True,
+            "try_unknown_service_ports": True,
+        },
+        interrupt=Event(),
+    )
+
+    mock_mssql_exploiter.exploit_host.assert_called_once()
+    assert result == EXPLOITER_RESULT_DATA
 
 
 def test_run__returns_exploiter_result_data(plugin: Plugin, target_host: TargetHost):
