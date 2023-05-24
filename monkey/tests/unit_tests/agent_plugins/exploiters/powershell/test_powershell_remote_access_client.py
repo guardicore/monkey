@@ -109,7 +109,6 @@ def test_execute__fails_if_command_not_executed(
 
 
 def test_execute__succeeds(
-    mock_powershell_client: PowerShellClient,
     powershell_remote_access_client: PowerShellRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
@@ -148,7 +147,6 @@ def test_copy_file__fails_if_client_copy_fails(
 
 
 def test_copy_file__success(
-    mock_powershell_client: PowerShellClient,
     powershell_remote_access_client: PowerShellRemoteAccessClient,
 ):
     tags = EXPLOITER_TAGS.copy()
