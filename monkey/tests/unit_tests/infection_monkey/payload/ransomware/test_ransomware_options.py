@@ -49,6 +49,21 @@ def test_file_extension(options_from_island):
     assert options.file_extension == EXTENSION
 
 
+def test_empty_file_extension(options_from_island):
+    options_from_island["encryption"]["file_extension"] = ""
+    options = RansomwareOptions(options_from_island)
+
+    assert options.file_extension == ""
+
+
+@pytest.mark.parametrize("invalid_extension", ["test", "test.", ".te\\st", ".test/", ".test/test"])
+def test_invalid_file_extension(options_from_island, invalid_extension: str):
+    options_from_island["encryption"]["file_extension"] = invalid_extension
+
+    with pytest.raises(ValueError):
+        RansomwareOptions(options_from_island)
+
+
 def test_linux_target_dir(monkeypatch, options_from_island):
     monkeypatch.setattr(ransomware_options, "is_windows_os", lambda: False)
 
