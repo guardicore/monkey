@@ -1,22 +1,18 @@
-import re
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Literal, Union
 
-FILE_EXTENSION_REGEX = re.compile(r"^\.[^\\/]+$")
+from common.types import FileExtension
 
 
 class InPlaceFileEncryptor:
     def __init__(
         self,
         encrypt_bytes: Callable[[bytes], bytes],
-        new_file_extension: str = "",
+        new_file_extension: Union[Literal[""], FileExtension] = "",
         chunk_size: int = 64,
     ):
         self._encrypt_bytes = encrypt_bytes
         self._chunk_size = chunk_size
-
-        if new_file_extension and not FILE_EXTENSION_REGEX.match(new_file_extension):
-            raise ValueError(f'"{new_file_extension}" is not a valid file extension.')
 
         self._new_file_extension = new_file_extension
 
