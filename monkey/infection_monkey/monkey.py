@@ -53,7 +53,6 @@ from infection_monkey.exploit import (
     PolymorphicAgentBinaryRepositoryDecorator,
 )
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
-from infection_monkey.exploit.powershell import PowerShellExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
@@ -459,11 +458,6 @@ class InfectionMonkey:
             AgentPluginType.EXPLOITER,
             "Log4ShellExploiter",
             exploit_wrapper.wrap(Log4ShellExploiter),
-        )
-        puppet.load_plugin(
-            AgentPluginType.EXPLOITER,
-            "PowerShellExploiter",
-            exploit_wrapper.wrap(PowerShellExploiter),
         )
         puppet.load_plugin(
             AgentPluginType.EXPLOITER, "SSHExploiter", exploit_wrapper.wrap(SSHExploiter)
