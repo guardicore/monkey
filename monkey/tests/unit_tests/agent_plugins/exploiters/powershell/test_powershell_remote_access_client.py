@@ -139,7 +139,6 @@ def test_copy_file__fails_if_client_copy_fails(
 ):
     tags = EXPLOITER_TAGS.copy()
     mock_powershell_client.connected.return_value = True
-    mock_powershell_client.copy_file.return_value = True
     mock_powershell_client.copy_file.side_effect = Exception("file")
 
     with pytest.raises(RemoteFileCopyError):
