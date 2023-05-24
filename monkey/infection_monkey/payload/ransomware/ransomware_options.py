@@ -1,4 +1,5 @@
 import logging
+import re
 from pathlib import Path
 from typing import Optional
 
@@ -6,6 +7,8 @@ from common.utils.environment import is_windows_os
 from common.utils.file_utils import InvalidPath, expand_path
 
 logger = logging.getLogger(__name__)
+
+FILE_EXTENSION_REGEX = re.compile(r"^\.[^\\/]+$")
 
 
 class RansomwareOptions:
@@ -16,6 +19,9 @@ class RansomwareOptions:
 
         self.target_directory: Optional[Path] = None
         self._set_target_directory(options["encryption"]["directories"])
+
+        if self.file_extension and not FILE_EXTENSION_REGEX.match(self.file_extension):
+            raise ValueError(f'"{self.file_extension}" is not a valid file extension.')
 
     def _set_target_directory(self, os_target_directories: dict):
         if is_windows_os():
