@@ -12,6 +12,7 @@ from common.utils.file_utils import (
     append_bytes,
     create_secure_directory,
     get_all_regular_files_in_directory,
+    get_all_subdirectories_of_directory,
     make_fileobj_copy,
     open_new_securely_permissioned_file,
 )
@@ -220,3 +221,17 @@ def test_get_all_regular_files_in_directory(
 
     for d in test_dirs:
         assert d not in all_files
+
+
+def test_get_all_subdirectories_of_directory(
+    tmp_path: Path, test_files: List[Path], test_dirs: List[Path]
+):
+    all_dirs = list(get_all_subdirectories_of_directory(tmp_path))
+
+    assert len(all_dirs) == len(test_dirs)
+
+    for d in all_dirs:
+        assert d in test_dirs
+
+    for f in test_files:
+        assert f not in all_dirs
