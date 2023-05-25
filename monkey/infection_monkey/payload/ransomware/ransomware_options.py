@@ -33,6 +33,8 @@ class RansomwareOptions:
         except KeyError:
             raise ValueError(f"Invalid encryption algorithm: {options['encryption']['algorithm']}")
 
+        self.recursive = options["encryption"]["recursive"]
+
     def _set_target_directory(self, os_target_directories: dict):
         if is_windows_os():
             target_directory = os_target_directories["windows_target_dir"]
