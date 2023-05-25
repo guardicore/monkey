@@ -27,6 +27,7 @@ def options_from_island():
                 "windows_target_dir": WINDOWS_DIR,
             },
             "algorithm": ALGORITHM,
+            "recursive": False,
         },
         "other_behaviors": {"readme": None},
     }
@@ -117,3 +118,11 @@ def test_invalid_encryption_algorithms(options_from_island):
 
     with pytest.raises(ValueError):
         RansomwareOptions(options_from_island)
+
+
+@pytest.mark.parametrize("recursive", [True, False])
+def test_recursive(options_from_island, recursive: bool):
+    options_from_island["encryption"]["recursive"] = recursive
+
+    options = RansomwareOptions(options_from_island)
+    assert options.recursive is recursive

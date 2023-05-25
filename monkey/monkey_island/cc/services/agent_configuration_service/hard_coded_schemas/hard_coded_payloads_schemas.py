@@ -56,6 +56,14 @@ HARD_CODED_PAYLOADS_SCHEMAS = {
                         "only. Files encrypted with the AES256 algorithm should be considered to "
                         "be unrecoverable.",
                     },
+                    "recursive": {
+                        "title": "Recursive file discovery",
+                        "type": "boolean",
+                        "default": False,
+                        "description": "Searches through the target directory recursively to find "
+                        "all files in the directory and its subdirectories. WARNING: This option "
+                        "is not safe for use in production environments.",
+                    },
                 },
             },
             "other_behaviors": {
