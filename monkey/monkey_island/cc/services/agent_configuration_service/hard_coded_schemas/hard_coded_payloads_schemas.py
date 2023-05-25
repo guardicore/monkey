@@ -44,6 +44,18 @@ HARD_CODED_PAYLOADS_SCHEMAS = {
                             },
                         },
                     },
+                    "algorithm": {
+                        "title": "Encryption algorithm",
+                        "type": "string",
+                        "enum": ["BIT_FLIP", "AES256"],
+                        "default": "BIT_FLIP",
+                        "description": "The algorithm to use for encrypting files. WARNING: The "
+                        "BIT_FLIP algorithm is the only one that is considered to be safe for "
+                        "use in production environments. The AES256 algorithm provides a more "
+                        "realistic simulation and is intended for use in testing environments "
+                        "only. Files encrypted with the AES256 algorithm should be considered to "
+                        "be unrecoverable.",
+                    },
                 },
             },
             "other_behaviors": {
