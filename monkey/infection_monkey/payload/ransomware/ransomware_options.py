@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 
+from common.types import FileExtension
 from common.utils.environment import is_windows_os
 from common.utils.file_utils import InvalidPath, expand_path
 
@@ -11,7 +12,11 @@ logger = logging.getLogger(__name__)
 class RansomwareOptions:
     def __init__(self, options: dict):
         self.encryption_enabled = options["encryption"]["enabled"]
+
         self.file_extension = options["encryption"]["file_extension"]
+        if self.file_extension != "":
+            self.file_extension = FileExtension(self.file_extension)
+
         self.readme_enabled = options["other_behaviors"]["readme"]
 
         self.target_directory: Optional[Path] = None
