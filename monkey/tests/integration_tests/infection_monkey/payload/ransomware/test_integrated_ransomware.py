@@ -140,3 +140,21 @@ def test_uses_bit_flip__recursive(
     assert f1.file.stat().st_size == original_size
     assert f1.file.read_bytes() == f1.inverted_contents
     assert f2.file.read_bytes() == f2.inverted_contents
+
+
+def test_uses_stealth_aes256(
+    ransomware_options_dict: dict,
+    f1: TargetFile,
+):
+    ransomware_options_dict["encryption"]["algorithm"] = "stealth_aes256"
+    ransomware_options_dict["encryption"]["file_extension"] = ""
+    ransomware = ransomware_builder.build_ransomware(
+        ransomware_options_dict, MagicMock(spec=IAgentEventQueue), AGENT_ID
+    )
+
+    original_size = f1.file.stat().st_size
+    ransomware.run(threading.Event())
+
+    assert f1.file.stat().st_size == original_size
+    assert f1.file.read_bytes() != f1.contents
+    assert f1.file.read_bytes() != f1.inverted_contents

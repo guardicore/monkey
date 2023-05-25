@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 class EncryptionAlgorithm(StrEnum):
     BIT_FLIP = "bit_flip"
     AES256 = "AES256"
+    STEALTH_AES256 = "STEALTH_AES256"
 
 
 class RansomwareOptions:
