@@ -27,10 +27,9 @@ def target_file(target_dir: Path) -> Path:
 
 
 @pytest.fixture
-def ransomware_options_dict(ransomware_file_extension: str, target_dir: Path) -> dict:
+def ransomware_options_dict(target_dir: Path) -> dict:
     options = deepcopy(RANSOMWARE_OPTIONS)
 
-    options["encryption"]["file_extension"] = ransomware_file_extension
     ransomware_directories = options["encryption"]["directories"]
     ransomware_directories["linux_target_dir"] = target_dir
     ransomware_directories["windows_target_dir"] = target_dir
@@ -46,6 +45,7 @@ def test_uses_correct_extension(
     target_file: Path,
     ransomware_file_extension: str,
 ):
+    ransomware_options_dict["encryption"]["file_extension"] = ransomware_file_extension
     ransomware = ransomware_builder.build_ransomware(
         ransomware_options_dict, MagicMock(spec=IAgentEventQueue), AGENT_ID
     )
@@ -55,3 +55,37 @@ def test_uses_correct_extension(
     # Verify that the file has been encrypted with the correct ending
     encrypted_file = target_file.with_suffix(target_file.suffix + ransomware_file_extension)
     assert encrypted_file.is_file()
+
+
+def test_uses_aes256(
+    ransomware_options_dict: dict,
+    target_file: Path,
+):
+    ransomware_options_dict["encryption"]["algorithm"] = "aes256"
+    ransomware_options_dict["encryption"]["file_extension"] = ""
+    ransomware = ransomware_builder.build_ransomware(
+        ransomware_options_dict, MagicMock(spec=IAgentEventQueue), AGENT_ID
+    )
+
+    original_size = target_file.stat().st_size
+    ransomware.run(threading.Event())
+
+    assert target_file.stat().st_size > original_size
+    assert b"pyAesCrypt" in target_file.read_bytes()
+
+
+def test_uses_bit_flip(
+    ransomware_options_dict: dict,
+    target_file: Path,
+):
+    ransomware_options_dict["encryption"]["algorithm"] = "bit_flip"
+    ransomware_options_dict["encryption"]["file_extension"] = ""
+    ransomware = ransomware_builder.build_ransomware(
+        ransomware_options_dict, MagicMock(spec=IAgentEventQueue), AGENT_ID
+    )
+
+    original_size = target_file.stat().st_size
+    ransomware.run(threading.Event())
+
+    assert target_file.stat().st_size == original_size
+    assert target_file.read_bytes() == b"\xbb\x90\xdf\x86\x90\x8a\x8d\xdf\x88\x90\x8d\x8c\x8b\xde"
