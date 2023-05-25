@@ -21,6 +21,7 @@ RANSOMWARE_OPTIONS = {
         "enabled": True,
         "file_extension": ".m0nk3y",
         "directories": {"linux_target_dir": "", "windows_target_dir": ""},
+        "algorithm": "BIT_FLIP",
     },
     "other_behaviors": {"readme": True},
 }
