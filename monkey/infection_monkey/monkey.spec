@@ -66,7 +66,7 @@ def get_hidden_imports():
     # of its own vendored version. Since the agent doesn't use
     # `cryptography.hazmat.primitives.padding`, pyinstaller will not include it unless we
     # explicitly tell it to.
-    imports = ['_cffi_backend', '_mssql', 'asyncore', 'logging.config', 'cryptography.hazmat.primitives.padding']
+    imports = ['_cffi_backend', '_mssql', 'asyncore', 'logging.config', 'cryptography.hazmat.primitives.padding', 'xml.dom']
     if is_windows():
         imports.append('queue')
         imports.append('pkg_resources.py2_warn')
