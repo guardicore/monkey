@@ -1,6 +1,8 @@
 import io
 import os
 import stat
+from pathlib import Path
+from typing import List
 
 import pytest
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
@@ -9,6 +11,7 @@ from common.utils.environment import is_windows_os
 from common.utils.file_utils import (
     append_bytes,
     create_secure_directory,
+    get_all_regular_files_in_directory,
     make_fileobj_copy,
     open_new_securely_permissioned_file,
 )
@@ -179,3 +182,41 @@ def test_append_bytes__pos_5():
     assert bytes_io.read() == b"5678abcd"
     bytes_io.seek(0, io.SEEK_SET)
     assert bytes_io.read() == b"1234 5678abcd"
+
+
+@pytest.fixture
+def test_files(tmp_path: Path) -> List[Path]:
+    test_files = []
+
+    for i in range(5):
+        test_file = tmp_path / f"test_file_{i}"
+        test_file.write_text(f"test file {i}")
+        test_files.append(test_file)
+
+    return test_files
+
+
+@pytest.fixture
+def test_dirs(tmp_path: Path) -> List[Path]:
+    test_dirs = []
+
+    for i in range(7):
+        test_dir = tmp_path / f"test_dir_{i}"
+        test_dir.mkdir()
+        test_dirs.append(test_dir)
+
+    return test_dirs
+
+
+def test_get_all_regular_files_in_directory(
+    tmp_path: Path, test_files: List[Path], test_dirs: List[Path]
+):
+    all_files = list(get_all_regular_files_in_directory(tmp_path))
+
+    assert len(all_files) == len(test_files)
+
+    for f in all_files:
+        assert f in test_files
+
+    for d in test_dirs:
+        assert d not in all_files
