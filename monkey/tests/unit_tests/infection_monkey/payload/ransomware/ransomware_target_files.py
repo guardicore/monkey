@@ -1,9 +1,13 @@
-SUBDIR = "subdir"
+SUBDIR1 = "subdir1"
+SUBDIR1A = "subdir1a"
+SUBDIR2 = "subdir2"
 ALL_ZEROS_PDF = "all_zeros.pdf"
 HELLO_TXT = "hello.txt"
+GOODBYE_TXT = "goodbye.txt"
 SHORTCUT_LNK = "shortcut.lnk"
 TEST_KEYBOARD_TXT = "test_keyboard.txt"
 TEST_LIB_DLL = "test_lib.dll"
+FOO_JPG = "foo.jpg"
 
 ALL_ZEROS_PDF_CLEARTEXT_SHA256 = "ab3df617aaa3140f04dc53f65b5446f34a6b2bdbb1f7b78db8db4d067ba14db9"
 TEST_KEYBOARD_TXT_CLEARTEXT_SHA256 = (
