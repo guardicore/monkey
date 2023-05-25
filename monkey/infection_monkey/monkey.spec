@@ -61,7 +61,7 @@ def process_datas(orig_datas):
 
 
 def get_hidden_imports():
-    imports = ['_cffi_backend', '_mssql', 'asyncore']
+    imports = ['_cffi_backend', '_mssql', 'asyncore', 'logging.config']
     if is_windows():
         imports.append('queue')
         imports.append('pkg_resources.py2_warn')
