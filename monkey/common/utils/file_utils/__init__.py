@@ -1,6 +1,7 @@
 from .file_utils import (
     expand_path,
     get_all_regular_files_in_directory,
+    get_all_subdirectories_of_directory,
     get_binary_io_sha256_hash,
     get_text_file_contents,
     InvalidPath,

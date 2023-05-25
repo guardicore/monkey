@@ -41,6 +41,10 @@ def get_all_regular_files_in_directory(dir_path: Path) -> Iterable[Path]:
     return filter(lambda f: f.is_file(), dir_path.iterdir())
 
 
+def get_all_subdirectories_of_directory(dir_path: Path) -> Iterable[Path]:
+    return filter(lambda f: f.is_dir(), dir_path.iterdir())
+
+
 def get_text_file_contents(file_path: Path) -> str:
     with open(file_path, "rt") as f:
         file_contents = f.read()
