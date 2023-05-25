@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8feb8b5ad799a60ad491c0a8b8fd5a68e7a187c5885d813f3b19c082c85cf4e5"
+            "sha256": "8e1d41a8ddb1703bba33ed3ab54d73ddfca7b36e2e830ff7b1121b8495cc84a5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -384,6 +384,14 @@
             "index": "pypi",
             "version": "==5.9.5"
         },
+        "pyaescrypt": {
+            "hashes": [
+                "sha256:a26731960fb24b80bd3c77dbff781cab20e77715906699837f73c9fcb2f44a57",
+                "sha256:cfbc05f0bac12d9f0446bb9c824648786cfa5c1ee7bf73674e396bd0749e2963"
+            ],
+            "index": "pypi",
+            "version": "==6.0.0"
+        },
         "pyasn1": {
             "hashes": [
                 "sha256:014c0e9976956a08139dc0712ae195324a75e142284d5f87f1a87ee1b068a359",
@@ -671,11 +679,11 @@
         },
         "typing-extensions": {
             "hashes": [
-                "sha256:6ad00b63f849b7dcc313b70b6b304ed67b2b2963b3098a33efe18056b1a9a223",
-                "sha256:ff6b238610c747e44c268aa4bb23c8c735d665a63726df3f9431ce707f2aa768"
+                "sha256:558bc0c4145f01e6405f4a5fdbd82050bd221b119f4bf72a961a1cfd471349d6",
+                "sha256:6bac751f4789b135c43228e72de18637e9a6c29d12777023a703fd1a6858469f"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==4.6.0"
+            "version": "==4.6.1"
         },
         "urllib3": {
             "hashes": [
@@ -874,11 +882,11 @@
         },
         "typing-extensions": {
             "hashes": [
-                "sha256:6ad00b63f849b7dcc313b70b6b304ed67b2b2963b3098a33efe18056b1a9a223",
-                "sha256:ff6b238610c747e44c268aa4bb23c8c735d665a63726df3f9431ce707f2aa768"
+                "sha256:558bc0c4145f01e6405f4a5fdbd82050bd221b119f4bf72a961a1cfd471349d6",
+                "sha256:6bac751f4789b135c43228e72de18637e9a6c29d12777023a703fd1a6858469f"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==4.6.0"
+            "version": "==4.6.1"
         }
     }
 }

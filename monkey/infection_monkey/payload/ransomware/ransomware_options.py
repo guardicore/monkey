@@ -1,4 +1,5 @@
 import logging
+from enum import StrEnum
 from pathlib import Path
 from typing import Optional
 
@@ -7,6 +8,11 @@ from common.utils.environment import is_windows_os
 from common.utils.file_utils import InvalidPath, expand_path
 
 logger = logging.getLogger(__name__)
+
+
+class EncryptionAlgorithm(StrEnum):
+    BIT_FLIP = "bit_flip"
+    AES256 = "AES256"
 
 
 class RansomwareOptions:
@@ -21,6 +27,11 @@ class RansomwareOptions:
 
         self.target_directory: Optional[Path] = None
         self._set_target_directory(options["encryption"]["directories"])
+
+        try:
+            self.algorithm = EncryptionAlgorithm[options["encryption"]["algorithm"].upper()]
+        except KeyError:
+            raise ValueError(f"Invalid encryption algorithm: {options['encryption']['algorithm']}")
 
     def _set_target_directory(self, os_target_directories: dict):
         if is_windows_os():

@@ -26,6 +26,7 @@ jsonschema = "*"
 semver = "==2.13.0"
 pyasn1 = "==0.4.8"
 email-validator = "*"
+pyaescrypt = "*"
 
 [dev-packages]
 ldap3 = "*"
