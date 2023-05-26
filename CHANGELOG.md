@@ -15,6 +15,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Randomize Agent binary hash (polymorphism) feature. #3244
 - Agent binary's SHA256 to `AgentRegistrationData`. #3244
 - `EmailAddress` identity type. #3270
+- SNMP exploiter (CVE-2020-15862). #3234
 
 ### Changed
 - Renamed "Credential collector" to "Credentials collector". #3167
@@ -25,6 +26,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - SSH credentials collector's private-key search algorithm. #1882
 - Manual run command includes all Island IP addresses. #2593
 - Hard-coded MSSQL exploiter to a plugin. #3171
+- Hard-coded PowerShell exploiter to a plugin. #3165
 
 ### Fixed
 - Plugins are now being checked for local OS compatibility. #3275
