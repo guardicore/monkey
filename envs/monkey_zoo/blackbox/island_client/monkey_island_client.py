@@ -46,6 +46,10 @@ class MonkeyIslandClient(object):
                 LOGGER.error(f"Failed to set {operating_system} masque")
                 assert False
 
+    def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
+        response = self.requests.get(f"api/agent-binaries/{operating_system.name}")
+        return response.content
+
     def get_propagation_credentials(self) -> Sequence[Credentials]:
         response = self.requests.get("api/propagation-credentials")
         return [Credentials(**credentials) for credentials in response.json()]
