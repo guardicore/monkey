@@ -1,15 +1,17 @@
 import logging
 import os
+import random
 from copy import deepcopy
 from http import HTTPStatus
 from threading import Thread
 from time import sleep
-from typing import List, Optional, Sequence
+from typing import Iterable, List, Optional, Sequence
 from uuid import uuid4
 
 import pytest
 import requests
 
+from common import OperatingSystem
 from common.credentials import Credentials, NTHash, Password, Username
 from common.types import OTP, SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
@@ -478,6 +480,38 @@ def test_agent_logout(island):
 
     # After logout, agent should not be able to access any endpoints
     assert agent_requests.get(GET_AGENT_OTP_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
+
+
+RANDBYTES_SIZE = 1024 * 1024 * 2  # 2MB
+LINUX_DATA = [
+    b"This is a string for Linux!",
+    random.randbytes(RANDBYTES_SIZE),  # noqa: DUO102
+    b"More strings",
+    b"A much longer supercalifragilisticexpialidocious string to be included in the masque.",
+]
+WINDOWS_DATA = [
+    b"This is a string for Windows!",
+    random.randbytes(RANDBYTES_SIZE),  # noqa: DUO102
+    LINUX_DATA[2],
+    LINUX_DATA[3],
+]
+
+
+@pytest.mark.parametrize(
+    "data, operating_system",
+    [(LINUX_DATA, OperatingSystem.LINUX), (WINDOWS_DATA, OperatingSystem.WINDOWS)],
+    ids=["Linux", "Windows"],
+)
+def test_masquerade(
+    island_client: MonkeyIslandClient, data: Iterable[bytes], operating_system: OperatingSystem
+):
+    masque_data = b"\0".join(data)
+
+    island_client.set_masque(masque_data)
+    agent_binary = island_client.get_agent_binary(operating_system)
+
+    for d in data:
+        assert d in agent_binary
 
 
 # NOTE: These test methods are ordered to give time for the slower zoo machines

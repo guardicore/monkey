@@ -1,4 +1,3 @@
-from functools import lru_cache
 from typing import BinaryIO
 
 from common import OperatingSystem
@@ -35,7 +34,6 @@ class MasqueradeAgentBinaryRepositoryDecorator(IAgentBinaryRepository):
 
         return make_fileobj_copy(original_file)
 
-    @lru_cache()
     def _get_agent_binary(self, operating_system: OperatingSystem) -> BinaryIO:
         agent_binary = self._agent_binary_repository.get_agent_binary(operating_system)
         return self._apply_masque(operating_system, agent_binary)
