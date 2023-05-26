@@ -38,7 +38,7 @@ def in_memory_agent_binary_repository() -> InMemoryAgentBinaryRepository:
 
 
 @pytest.fixture
-def in_memory_masquerade_repository() -> InMemoryAgentBinaryRepository:
+def in_memory_masquerade_repository() -> IMasqueradeRepository:
     return InMemoryMasqueradeRepository()
 
 
