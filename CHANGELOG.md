@@ -5,7 +5,7 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [2.2.0]
 ### Added
 - `PortScanData.open` property. #3238
 - `{GET,PUT} /api/agent-binaries/<string:os>/masque`. #3249
