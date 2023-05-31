@@ -40,10 +40,15 @@ class MonkeyIslandClient(object):
         masque = b"" if masque is None else masque
         for operating_system in [operating_system.name for operating_system in OperatingSystem]:
             if self.requests.put(f"api/agent-binaries/{operating_system}/masque", data=masque).ok:
-                LOGGER.info(f'Setting {operating_system} masque to "{masque}"')
+                formatted_masque = masque if len(masque) <= 64 else (masque[:64] + b"...")
+                LOGGER.info(f'Setting {operating_system} masque to "{formatted_masque}"')
             else:
                 LOGGER.error(f"Failed to set {operating_system} masque")
                 assert False
+
+    def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
+        response = self.requests.get(f"api/agent-binaries/{operating_system.name}")
+        return response.content
 
     def get_propagation_credentials(self) -> Sequence[Credentials]:
         response = self.requests.get("api/propagation-credentials")

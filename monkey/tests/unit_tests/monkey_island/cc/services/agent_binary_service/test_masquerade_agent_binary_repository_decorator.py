@@ -38,7 +38,7 @@ def in_memory_agent_binary_repository() -> InMemoryAgentBinaryRepository:
 
 
 @pytest.fixture
-def in_memory_masquerade_repository() -> InMemoryAgentBinaryRepository:
+def in_memory_masquerade_repository() -> IMasqueradeRepository:
     return InMemoryMasqueradeRepository()
 
 
@@ -70,40 +70,6 @@ def test_get_agent_binary(
     actual_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
 
     assert actual_binary.read() == expected_agent_binary.getvalue()
-
-
-@pytest.mark.parametrize(
-    "operating_system",
-    (OperatingSystem.LINUX, OperatingSystem.WINDOWS),
-)
-def test_get_agent_binary__cached(
-    in_memory_agent_binary_repository: InMemoryAgentBinaryRepository,
-    mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
-    operating_system: OperatingSystem,
-):
-    actual_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
-    in_memory_agent_binary_repository.agent_binaries[operating_system] = b"new_binary"
-    cached_binary = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
-
-    assert actual_binary.read() == cached_binary.read()
-
-
-def test_get_agent_binary__cached_multiple_calls(
-    in_memory_agent_binary_repository: InMemoryAgentBinaryRepository,
-    mock_masquerade_agent_binary_repository: MasqueradeAgentBinaryRepositoryDecorator,
-):
-    operating_system = OperatingSystem.WINDOWS
-
-    cached_binary_1 = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
-    in_memory_agent_binary_repository.agent_binaries[operating_system] = b"new_binary"
-    cached_binary_2 = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
-    cached_binary_3 = mock_masquerade_agent_binary_repository.get_agent_binary(operating_system)
-
-    # Writing the assertion this way verifies that returned files have had their positions reset to
-    # the beginning (i.e. seek(0)).
-    assert cached_binary_1.read() == MASQUED_WINDOWS_AGENT_BINARY.getvalue()
-    assert cached_binary_2.read() == MASQUED_WINDOWS_AGENT_BINARY.getvalue()
-    assert cached_binary_3.read() == MASQUED_WINDOWS_AGENT_BINARY.getvalue()
 
 
 def test_one_unset_masque(

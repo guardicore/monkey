@@ -5,17 +5,18 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [2.2.0 - 2023-05-31]
 ### Added
 - `PortScanData.open` property. #3238
 - `{GET,PUT} /api/agent-binaries/<string:os>/masque`. #3249
 - Placeholder values for empty plugin configuration fields having defaults. #3310
-- Malware masquerading. #3241, #3242
+- Malware masquerading. #3241, #3242, #3243
 - Support for plugin manifest files with the "yml" extension. #3097
 - Randomize Agent binary hash (polymorphism) feature. #3244
 - Agent binary's SHA256 to `AgentRegistrationData`. #3244
 - `EmailAddress` identity type. #3270
 - SNMP exploiter (CVE-2020-15862). #3234
+- A plugin interface for credentials collectors. #3167
 
 ### Changed
 - Renamed "Credential collector" to "Credentials collector". #3167
@@ -34,6 +35,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Exceptions being raised when WMI and Zerologon are used together. #1774
 - A bug that caused failing configuration imports to be marked as successful. #3341
 - A bug where target hostnames with dashes were not being scanned. #3231
+- A bug in URL sanitization. #3318
 
 ### Security
 - Fixes a bug where OTPs can be leaked by the hadoop exploiter. #3296
