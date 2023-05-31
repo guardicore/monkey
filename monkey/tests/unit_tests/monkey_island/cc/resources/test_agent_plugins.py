@@ -36,6 +36,7 @@ def test_get_plugin(flask_client, agent_plugin_repository):
     expected_response = {
         "config_schema": FAKE_PLUGIN_CONFIG_SCHEMA_1,
         "plugin_manifest": {
+            "custom_events": None,
             "description": None,
             "link_to_documentation": "http://www.beefface.com",
             "name": FAKE_NAME,

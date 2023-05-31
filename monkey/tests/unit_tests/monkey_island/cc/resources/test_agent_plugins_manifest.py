@@ -29,6 +29,7 @@ def test_get_plugin_manifest(flask_client, agent_plugin_repository):
     agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
 
     expected_response = {
+        "custom_events": None,
         "description": None,
         "link_to_documentation": "http://www.beefface.com",
         "name": "rdp_exploiter",

@@ -29,6 +29,7 @@ FAKE_AGENT_MANIFEST_DICT_OUT: Dict[str, Any] = copy.deepcopy(FAKE_AGENT_MANIFEST
 FAKE_AGENT_MANIFEST_DICT_OUT["description"] = None
 FAKE_AGENT_MANIFEST_DICT_OUT["safe"] = False
 FAKE_AGENT_MANIFEST_DICT_OUT["remediation_suggestion"] = None
+FAKE_AGENT_MANIFEST_DICT_OUT["custom_events"] = None
 
 FAKE_AGENT_MANIFEST_DICT = {
     "name": FAKE_NAME,
@@ -161,3 +162,13 @@ def test_agent_plugin_manifest__remediation_suggestion():
     agent_manifest_object = AgentPluginManifest(**agent_manifest_dict)
 
     assert agent_manifest_object.remediation_suggestion == remediation_suggestion
+
+
+def test_agent_plugin_manifest__custom_events():
+    custom_events = ("test_event_1", "test_event_2")
+    agent_manifest_dict = FAKE_AGENT_MANIFEST_DICT.copy()
+    agent_manifest_dict["custom_events"] = [e for e in custom_events]
+
+    agent_manifest_object = AgentPluginManifest(**agent_manifest_dict)
+
+    assert agent_manifest_object.custom_events == custom_events

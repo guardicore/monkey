@@ -24,6 +24,7 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
         :param link_to_documentation: Link to the documentation of the plugin
         :param safe: Is the plugin safe to run. If there's a chance that running the plugin could
          disrupt the regular activities of the servers or the network, then the plugin is not safe.
+        :param custom_events: Custom events that the plugin can emit
     """
 
     name: PluginName
@@ -42,6 +43,7 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
     remediation_suggestion: Optional[str]
     link_to_documentation: Optional[HttpUrl]
     safe: bool = False
+    custom_events: Optional[Tuple[str, ...]] = None
 
     class Config(InfectionMonkeyModelConfig):
         json_encoders: Mapping[Type, Callable] = {PluginVersion: lambda v: str(v)}
