@@ -6,8 +6,8 @@ from .i_puppet import (
     IPuppet,
     UnknownPluginError,
     RejectedRequestError,
-    IncompatibleOperatingSystemError,
+    IncompatibleLocalOperatingSystemError,
+    IncompatibleTargetOperatingSystemError,
 )
 from .i_fingerprinter import IFingerprinter
-from .i_credential_collector import ICredentialCollector
 from .target_host import TargetHost, TargetHostPorts, PortScanDataDict

@@ -29,7 +29,7 @@ NETWORK_SCAN_CONFIGURATION = {
     "targets": SCAN_TARGET_CONFIGURATION,
 }
 
-EXPLOITERS: Dict[str, Dict] = {"SSHExploiter": {}, "WmiExploiter": {}, "Log4ShellExploiter": {}}
+EXPLOITERS: Dict[str, Dict] = {"SSHExploiter": {}, "Log4ShellExploiter": {}}
 
 EXPLOITATION_CONFIGURATION = {
     "options": {"http_ports": PORTS},
@@ -42,9 +42,16 @@ PROPAGATION_CONFIGURATION = {
     "exploitation": EXPLOITATION_CONFIGURATION,
 }
 
+CREDENTIALS_COLLECTORS: Dict[str, Dict] = {
+    "credentials_collectors": {"SSHCollector": {}, "MimikatzCollector": {}}
+}
+
+POLYMORPHISM_CONFIGURATION = {"randomize_agent_hash": False}
+
 AGENT_CONFIGURATION = {
     "keep_tunnel_open_time": 30,
-    "credential_collectors": [PLUGIN_CONFIGURATION],
+    "credentials_collectors": CREDENTIALS_COLLECTORS,
     "payloads": {},
     "propagation": PROPAGATION_CONFIGURATION,
+    "polymorphism": POLYMORPHISM_CONFIGURATION,
 }

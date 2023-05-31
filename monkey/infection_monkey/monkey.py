@@ -14,7 +14,7 @@ from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
 
 from pubsub.core import Publisher
-from serpentarium import PluginLoader
+from serpentarium import PluginLoader, PluginThreadName
 from serpentarium.logging import configure_child_process_logger
 
 from common import HARD_CODED_EXPLOITER_MANIFESTS, OperatingSystem
@@ -38,27 +38,22 @@ from common.tags.attack import SYSTEM_INFORMATION_DISCOVERY_T1082_TAG
 from common.types import OTP, NetworkPort, SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.code_utils import del_key, secure_generate_random_string
-from common.utils.file_utils import create_secure_directory
+from common.utils.environment import get_os
+from common.utils.file_utils import create_secure_directory, get_binary_io_sha256_hash
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
     add_stolen_credentials_to_propagation_credentials_repository,
     notify_relay_on_propagation,
 )
-from infection_monkey.credential_collectors import (
-    MimikatzCredentialCollector,
-    SSHCredentialCollector,
-)
 from infection_monkey.exploit import (
     CachingAgentBinaryRepository,
     ExploiterWrapper,
+    IAgentBinaryRepository,
     IslandAPIAgentOTPProvider,
+    PolymorphicAgentBinaryRepositoryDecorator,
 )
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
-from infection_monkey.exploit.mssqlexec import MSSQLExploiter
-from infection_monkey.exploit.powershell import PowerShellExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
-from infection_monkey.exploit.wmiexec import WmiExploiter
-from infection_monkey.exploit.zerologon import ZerologonExploiter
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import (
@@ -82,12 +77,17 @@ from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerpri
 from infection_monkey.network_scanning.smb_fingerprinter import SMBFingerprinter
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
+from infection_monkey.plugin.credentials_collector_plugin_factory import (
+    CredentialsCollectorPluginFactory,
+)
+from infection_monkey.plugin.exploiter_plugin_factory import ExploiterPluginFactory
+from infection_monkey.plugin.multiprocessing_plugin_wrapper import MultiprocessingPluginWrapper
 from infection_monkey.propagation_credentials_repository import (
     AggregatingPropagationCredentialsRepository,
     PropagationCredentialsRepository,
 )
 from infection_monkey.puppet import (
-    PluginCompatabilityVerifier,
+    PluginCompatibilityVerifier,
     PluginRegistry,
     PluginSourceExtractor,
 )
@@ -112,8 +112,11 @@ class InfectionMonkey:
 
         self._agent_id = get_agent_id()
         self._log_path = log_path
+        self._running_from_source = "python" in Path(sys.executable).name
+        self._sha256 = self._calculate_agent_sha256_hash()
         logger.info(f"Agent ID: {self._agent_id}")
         logger.info(f"Process ID: {os.getpid()}")
+        logger.info(f"SHA256: {self._sha256}")
 
         context = multiprocessing.get_context("spawn")
 
@@ -148,6 +151,8 @@ class InfectionMonkey:
         self._island_address, self._island_api_client = self._connect_to_island_api()
         self._register_agent()
 
+        self._operating_system = get_os()
+
         self._control_channel = ControlChannel(str(self._island_address), self._island_api_client)
         self._legacy_propagation_credentials_repository = (
             AggregatingPropagationCredentialsRepository(self._control_channel)
@@ -163,6 +168,23 @@ class InfectionMonkey:
         self._master: Optional[IMaster] = None
         self._relay: Optional[TCPRelay] = None
         self._tcp_port_selector = TCPPortSelector(context, self._manager)
+
+    def _calculate_agent_sha256_hash(self) -> str:
+        sha256 = "0" * 64
+
+        if self._running_from_source:
+            return sha256
+
+        try:
+            with open(sys.executable, "rb") as f:
+                sha256 = get_binary_io_sha256_hash(f)
+        except Exception:
+            logger.exception(
+                "An error occurred while attempting to calculate the agent binary's SHA256 hash."
+            )
+
+        logger.info(f"Agent Binary SHA256: {sha256}")
+        return sha256
 
     @staticmethod
     def _get_arguments(args):
@@ -244,6 +266,7 @@ class InfectionMonkey:
             parent_id=self._opts.parent,
             cc_server=self._island_address,
             network_interfaces=get_network_interfaces(),
+            sha256=self._sha256,
         )
         self._island_api_client.register_agent(agent_registration_data)
 
@@ -376,44 +399,46 @@ class InfectionMonkey:
         #           insecure permissions.
         logger.debug(f"Created {self._plugin_dir} to store agent plugins")
 
-        agent_binary_repository = CachingAgentBinaryRepository(
-            island_api_client=self._island_api_client,
-            manager=self._manager,
-        )
+        agent_binary_repository = self._build_agent_binary_repository()
 
         plugin_source_extractor = PluginSourceExtractor(self._plugin_dir)
         plugin_loader = PluginLoader(
             self._plugin_dir, partial(configure_child_process_logger, self._ipc_logger_queue)
         )
         otp_provider = IslandAPIAgentOTPProvider(self._island_api_client)
+        create_plugin = partial(
+            MultiprocessingPluginWrapper,
+            plugin_loader=plugin_loader,
+            reset_modules_cache=False,
+            main_thread_name=PluginThreadName.CALLING_THREAD,
+        )
+        plugin_factories = {
+            AgentPluginType.CREDENTIALS_COLLECTOR: CredentialsCollectorPluginFactory(
+                self._agent_id, self._agent_event_publisher, create_plugin
+            ),
+            AgentPluginType.EXPLOITER: ExploiterPluginFactory(
+                self._agent_id,
+                agent_binary_repository,
+                self._agent_event_publisher,
+                self._propagation_credentials_repository,
+                self._tcp_port_selector,
+                otp_provider,
+                create_plugin,
+            ),
+        }
         plugin_registry = PluginRegistry(
             operating_system,
             self._island_api_client,
             plugin_source_extractor,
-            plugin_loader,
-            agent_binary_repository,
-            self._agent_event_publisher,
-            self._propagation_credentials_repository,
-            self._tcp_port_selector,
-            otp_provider,
-            self._agent_id,
+            plugin_factories,
         )
-        plugin_compatability_verifier = PluginCompatabilityVerifier(
-            self._island_api_client, HARD_CODED_EXPLOITER_MANIFESTS
+        plugin_compatibility_verifier = PluginCompatibilityVerifier(
+            self._island_api_client,
+            self._operating_system,
+            HARD_CODED_EXPLOITER_MANIFESTS,
         )
         puppet = Puppet(
-            self._agent_event_queue, plugin_registry, plugin_compatability_verifier, self._agent_id
-        )
-
-        puppet.load_plugin(
-            AgentPluginType.CREDENTIAL_COLLECTOR,
-            "MimikatzCollector",
-            MimikatzCredentialCollector(self._agent_event_queue, self._agent_id),
-        )
-        puppet.load_plugin(
-            AgentPluginType.CREDENTIAL_COLLECTOR,
-            "SSHCollector",
-            SSHCredentialCollector(self._agent_event_queue, self._agent_id),
+            self._agent_event_queue, plugin_registry, plugin_compatibility_verifier, self._agent_id
         )
 
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "http", HTTPFingerprinter())
@@ -435,24 +460,7 @@ class InfectionMonkey:
             exploit_wrapper.wrap(Log4ShellExploiter),
         )
         puppet.load_plugin(
-            AgentPluginType.EXPLOITER,
-            "PowerShellExploiter",
-            exploit_wrapper.wrap(PowerShellExploiter),
-        )
-        puppet.load_plugin(
             AgentPluginType.EXPLOITER, "SSHExploiter", exploit_wrapper.wrap(SSHExploiter)
-        )
-        puppet.load_plugin(
-            AgentPluginType.EXPLOITER, "WmiExploiter", exploit_wrapper.wrap(WmiExploiter)
-        )
-        puppet.load_plugin(
-            AgentPluginType.EXPLOITER, "MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter)
-        )
-
-        puppet.load_plugin(
-            AgentPluginType.EXPLOITER,
-            "ZerologonExploiter",
-            exploit_wrapper.wrap(ZerologonExploiter),
         )
 
         puppet.load_plugin(
@@ -462,6 +470,20 @@ class InfectionMonkey:
         )
 
         return puppet
+
+    def _build_agent_binary_repository(self) -> IAgentBinaryRepository:
+        agent_configuration = self._island_api_client.get_config()
+        agent_binary_repository: IAgentBinaryRepository = CachingAgentBinaryRepository(
+            island_api_client=self._island_api_client,
+            manager=self._manager,
+        )
+
+        if agent_configuration.polymorphism.randomize_agent_hash:
+            agent_binary_repository = PolymorphicAgentBinaryRepositoryDecorator(
+                agent_binary_repository
+            )
+
+        return agent_binary_repository
 
     def _subscribe_events(self):
         self._agent_event_queue.subscribe_type(
@@ -491,7 +513,7 @@ class InfectionMonkey:
                 firewall.remove_firewall_rule()
                 firewall.close()
 
-            deleted = InfectionMonkey._self_delete()
+            deleted = self._self_delete()
 
             self._send_log()
 
@@ -511,7 +533,7 @@ class InfectionMonkey:
         except Exception as e:
             logger.exception(f"An error occurred while cleaning up the monkey agent: {e}")
             if deleted is None:
-                InfectionMonkey._self_delete()
+                self._self_delete()
         finally:
             self._plugin_event_forwarder.stop()
             if self._agent_event_forwarder:
@@ -560,12 +582,11 @@ class InfectionMonkey:
         except Exception as err:
             logger.warning(f"Failed to cleanup the plugin directory: {err}")
 
-    @staticmethod
-    def _self_delete() -> bool:
+    def _self_delete(self) -> bool:
         logger.info("Cleaning up the Agent's artifacts")
         remove_monkey_dir()
 
-        if "python" in Path(sys.executable).name:
+        if self._running_from_source:
             return False
 
         try:

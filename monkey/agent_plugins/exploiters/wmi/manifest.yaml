@@ -1,0 +1,17 @@
+name: WMI
+plugin_type: Exploiter
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - windows
+title: WMI Exploiter
+version: 1.0.0
+description: Attempts a brute-force attack against WMI using known credentials.
+safe: true
+remediation_suggestion: >-
+    Change user passwords to complex one-use passwords that are not shared with other computers on the network.
+
+    The machine is vulnerable to a WMI attack.
+    An Infection Monkey Agent authenticated over the WMI protocol using stolen/configured credentials.
+link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/wmiexec/

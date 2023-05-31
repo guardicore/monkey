@@ -3,7 +3,7 @@ title: "Configuration"
 date: 2020-06-07T19:08:51+03:00
 draft: false
 chapter: true
-weight: 3
+weight: 6
 pre: "<i class='fas fa-sliders-h'></i> "
 ---
 

@@ -5,6 +5,42 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2.2.0 - 2023-05-31]
+### Added
+- `PortScanData.open` property. #3238
+- `{GET,PUT} /api/agent-binaries/<string:os>/masque`. #3249
+- Placeholder values for empty plugin configuration fields having defaults. #3310
+- Malware masquerading. #3241, #3242, #3243
+- Support for plugin manifest files with the "yml" extension. #3097
+- Randomize Agent binary hash (polymorphism) feature. #3244
+- Agent binary's SHA256 to `AgentRegistrationData`. #3244
+- `EmailAddress` identity type. #3270
+- SNMP exploiter (CVE-2020-15862). #3234
+- A plugin interface for credentials collectors. #3167
+
+### Changed
+- Renamed "Credential collector" to "Credentials collector". #3167
+- Hard-coded WMI exploiter to a plugin. #3163
+- Hard-coded Mimikatz credentials collector to a plugin. #3168
+- Hard-coded Zerologon exploiter to a plugin. #3164
+- Hard-coded SSH credentials collector to a plugin. #3169
+- SSH credentials collector's private-key search algorithm. #1882
+- Manual run command includes all Island IP addresses. #2593
+- Hard-coded MSSQL exploiter to a plugin. #3171
+- Hard-coded PowerShell exploiter to a plugin. #3165
+
+### Fixed
+- Plugins are now being checked for local OS compatibility. #3275
+- A bug that could prevent multi-hop propagation via SMB. #3173
+- Exceptions being raised when WMI and Zerologon are used together. #1774
+- A bug that caused failing configuration imports to be marked as successful. #3341
+- A bug where target hostnames with dashes were not being scanned. #3231
+- A bug in URL sanitization. #3318
+
+### Security
+- Fixes a bug where OTPs can be leaked by the hadoop exploiter. #3296
+- Fixes pypykatz leaking sensitive information into the logs. #3168, #3293
+
 ## [2.1.0] - 2023-04-19
 ### Added
 - Logout button. #3063

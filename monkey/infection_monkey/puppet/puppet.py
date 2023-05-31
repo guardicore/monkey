@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Mapping, Sequence
+from typing import Any, Dict, Mapping, Sequence
 
 from common.agent_plugins import AgentPluginType
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
@@ -10,13 +10,14 @@ from infection_monkey import network_scanning
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
-    IncompatibleOperatingSystemError,
+    IncompatibleLocalOperatingSystemError,
+    IncompatibleTargetOperatingSystemError,
     IPuppet,
     PingScanData,
     PortScanDataDict,
     TargetHost,
 )
-from infection_monkey.puppet import PluginCompatabilityVerifier
+from infection_monkey.puppet import PluginCompatibilityVerifier
 
 from . import PluginRegistry
 
@@ -30,22 +31,35 @@ class Puppet(IPuppet):
         self,
         agent_event_queue: IAgentEventQueue,
         plugin_registry: PluginRegistry,
-        plugin_compatability_verifier: PluginCompatabilityVerifier,
+        plugin_compatibility_verifier: PluginCompatibilityVerifier,
         agent_id: AgentID,
     ) -> None:
         self._plugin_registry = plugin_registry
         self._agent_event_queue = agent_event_queue
-        self._plugin_compatability_verifier = plugin_compatability_verifier
+        self._plugin_compatibility_verifier = plugin_compatibility_verifier
         self._agent_id = agent_id
 
     def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
         self._plugin_registry.load_plugin(plugin_type, plugin_name, plugin)
 
-    def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
-        credential_collector = self._plugin_registry.get_plugin(
-            AgentPluginType.CREDENTIAL_COLLECTOR, name
+    def run_credentials_collector(
+        self, name: str, options: Mapping[str, Any], interrupt: Event
+    ) -> Sequence[Credentials]:
+        compatible_with_local_os = (
+            self._plugin_compatibility_verifier.verify_local_operating_system_compatibility(
+                AgentPluginType.CREDENTIALS_COLLECTOR, name
+            )
         )
-        return credential_collector.collect_credentials(options)
+        if not compatible_with_local_os:
+            raise IncompatibleLocalOperatingSystemError(
+                f'The credentials collector, "{name}" is not compatible with the '
+                "local operating system"
+            )
+
+        credentials_collector = self._plugin_registry.get_plugin(
+            AgentPluginType.CREDENTIALS_COLLECTOR, name
+        )
+        return credentials_collector.run(options=options, interrupt=interrupt)
 
     def ping(self, host: str, timeout: float = CONNECTION_TIMEOUT) -> PingScanData:
         return network_scanning.ping(host, timeout, self._agent_event_queue, self._agent_id)
@@ -83,10 +97,26 @@ class Puppet(IPuppet):
         options: Mapping,
         interrupt: Event,
     ) -> ExploiterResultData:
-        if self._plugin_compatability_verifier.verify_exploiter_compatibility(name, host) is False:
-            raise IncompatibleOperatingSystemError(
+        compatible_with_local_os = (
+            self._plugin_compatibility_verifier.verify_local_operating_system_compatibility(
+                AgentPluginType.EXPLOITER, name
+            )
+        )
+        if not compatible_with_local_os:
+            raise IncompatibleLocalOperatingSystemError(
+                f'The exploiter, "{name}" is not compatible with the local operating system'
+            )
+
+        compatible_with_target_os = (
+            self._plugin_compatibility_verifier.verify_target_operating_system_compatibility(
+                AgentPluginType.EXPLOITER, name, host
+            )
+        )
+        if not compatible_with_target_os:
+            raise IncompatibleTargetOperatingSystemError(
                 f'The exploiter, "{name}", is not compatible with the operating system on {host.ip}'
             )
+
         exploiter = self._plugin_registry.get_plugin(AgentPluginType.EXPLOITER, name)
         exploiter_result_data = exploiter.run(
             host=host,

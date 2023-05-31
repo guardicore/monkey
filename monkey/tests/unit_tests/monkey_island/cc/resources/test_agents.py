@@ -19,8 +19,10 @@ AGENT_REGISTRATION_DICT = {
     "parent_id": UUID("9d55ba33-95c2-417d-bd86-d3d11e47daeb"),
     "cc_server": {"ip": "10.0.0.1", "port": "5000"},
     "network_interfaces": ["10.1.1.2/24"],
+    "sha256": "cf5c10a8073aa923877ee66df8c1912cac2dbb4b85a97d09cb95d57bde4d2876",
 }
 
+AGENT_SHA256 = "7ac0f5c62a9bcb81af3e9d67a764d7bbd3cce9af7cd26c211f136400ebe703c4"
 AGENTS = (
     Agent(
         id=UUID("12345678-1234-1234-1234-123456789abc"),
@@ -28,6 +30,7 @@ AGENTS = (
         start_time=0,
         stop_time=10,
         cc_server=SocketAddress(ip="10.0.0.1", port=5000),
+        sha256=AGENT_SHA256,
     ),
     Agent(
         id=UUID("abcdef78-abcd-abcd-abcd-abcdef123456"),
@@ -35,6 +38,7 @@ AGENTS = (
         start_time=5,
         stop_time=15,
         cc_server=SocketAddress(ip="10.0.0.1", port=5000),
+        sha256=AGENT_SHA256,
     ),
 )
 

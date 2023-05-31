@@ -139,7 +139,7 @@ class AppComponent extends AuthComponent {
   };
 
   setMode = () => {
-    return IslandHttpClient.get(APIEndpoint.mode)
+    return IslandHttpClient.getJSON(APIEndpoint.mode)
       .then(res => {
         this.setState({islandMode: res.body});
       });

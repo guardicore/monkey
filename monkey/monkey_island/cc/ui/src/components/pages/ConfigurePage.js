@@ -1,5 +1,4 @@
 import React from 'react';
-import Form from '@rjsf/bootstrap-4';
 import {Col, Nav} from 'react-bootstrap';
 import _ from 'lodash';
 import AuthComponent from '../AuthComponent';
@@ -11,10 +10,17 @@ import {formValidationFormats} from '../configuration-components/ValidationForma
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import PropagationConfig, {
   EXPLOITERS_CONFIG_PATH
-} from '../configuration-components/PropagationConfig'
+} from '../configuration-components/PropagationConfig';
+import MasqueradeConfig from '../configuration-components/MasqueradeConfig';
+import {CREDENTIALS_COLLECTORS_CONFIG_PATH} from '../configuration-components/PluginSelectorTemplate';
+import FormConfig from '../configuration-components/FormConfig';
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
+import {
+  getStringsFromBytes,
+  getMasqueradesBytesArrays, getMasqueradeBytesSubsets, MASQUE_TYPES
+} from '../utils/MasqueradeUtils.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
@@ -30,6 +36,8 @@ import LoadingIcon from '../ui-components/LoadingIcon';
 import mergeAllOf from 'json-schema-merge-allof';
 import RefParser from '@apidevtools/json-schema-ref-parser';
 import CREDENTIALS from '../../services/configuration/propagation/credentials';
+import {MASQUERADE} from '../../services/configuration/masquerade';
+import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
@@ -38,6 +46,9 @@ const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/con
 const configSubmitAction = 'config-submit';
 const configExportAction = 'config-export';
 const configSaveAction = 'config-saved';
+
+const EMPTY_BYTES_ARRAY = new Uint8Array(new ArrayBuffer(0));
+
 
 class ConfigurePageComponent extends AuthComponent {
 
@@ -49,6 +60,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.state = {
       configuration: {},
       credentials: {},
+      masqueStrings: {},
       currentFormData: {},
       importCandidateConfig: null,
       lastAction: 'none',
@@ -58,7 +70,7 @@ class ConfigurePageComponent extends AuthComponent {
       showUnsafeOptionsConfirmation: false,
       showConfigExportModal: false,
       showConfigImportModal: false,
-      selectedExploiters: new Set()
+      selectedPlugins: {}
     };
   }
 
@@ -101,12 +113,16 @@ class ConfigurePageComponent extends AuthComponent {
         }
         this.setState({
           configuration: monkeyConfig,
-          selectedExploiters: new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
+          selectedPlugins: {
+              'propagation': new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
+              'credentials_collectors': new Set(Object.keys(_.get(monkeyConfig, CREDENTIALS_COLLECTORS_CONFIG_PATH)))
+          },
           sections: sections,
           currentFormData: _.cloneDeep(monkeyConfig[this.state.selectedSection])
         })
       });
     this.updateCredentials();
+    this.updateMasqueStrings();
   };
 
   onUnsafeConfirmationCancelClick = () => {
@@ -136,22 +152,56 @@ class ConfigurePageComponent extends AuthComponent {
       });
   }
 
+  updateMasqueStrings = async () => {
+    const [linuxRes, windowsRes] = await Promise.all([
+      IslandHttpClient.get(APIEndpoint.linuxMasque, {}, true),
+      IslandHttpClient.get(APIEndpoint.windowsMasque, {}, true)
+    ]);
+
+    const linuxMasqueBytes = await linuxRes.body.arrayBuffer();
+    const linuxMasquesSubsets = getMasqueradeBytesSubsets(linuxMasqueBytes);
+    const linuxMasqueTexts = getStringsFromBytes(linuxMasqueBytes, MASQUE_TYPES.TEXTS, linuxMasquesSubsets[MASQUE_TYPES.TEXTS.key]);
+    const linuxMasqueBase64 = getStringsFromBytes(linuxMasqueBytes, MASQUE_TYPES.BASE64, linuxMasquesSubsets[MASQUE_TYPES.BASE64.key]);
+
+    const windowsMasqueBytes = await windowsRes.body.arrayBuffer();
+    const windowsMasquesSubsets = getMasqueradeBytesSubsets(windowsMasqueBytes);
+    const windowsMasqueTexts = getStringsFromBytes(windowsMasqueBytes, MASQUE_TYPES.TEXTS, windowsMasquesSubsets[MASQUE_TYPES.TEXTS.key]);
+    const windowsMasqueBase64 = getStringsFromBytes(windowsMasqueBytes, MASQUE_TYPES.BASE64, windowsMasquesSubsets[MASQUE_TYPES.BASE64.key]);
+
+    this.setState({
+      masqueStrings: {
+        linux: {
+          masque_texts: linuxMasqueTexts,
+          masque_base64: linuxMasqueBase64
+        },
+        windows: {
+          masque_texts: windowsMasqueTexts,
+          masque_base64: windowsMasqueBase64
+        }
+      }
+    });
+  }
+
   updateConfig = () => {
     this.updateCredentials();
+    this.updateMasqueStrings();
     this.authFetch(CONFIG_URL, {}, true)
       .then(res => res.json())
       .then(data => {
         data = reformatConfig(data);
         this.setState({
-          selectedExploiters: new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
+          selectedPlugins: {
+              'propagation': new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
+              'credentials_collectors': new Set(Object.keys(_.get(data, CREDENTIALS_COLLECTORS_CONFIG_PATH)))
+          },
           configuration: data,
           currentFormData: _.cloneDeep(data[this.state.selectedSection])
         });
       });
   }
 
-  setSelectedExploiters = (exploiters) => {
-    this.setState({selectedExploiters: exploiters})
+  setSelectedPlugins = (plugins, key) => {
+    this.setState({selectedPlugins: {...this.state.selectedPlugins, [key]: plugins}});
   }
 
   onSubmit = () => {
@@ -179,26 +229,51 @@ class ConfigurePageComponent extends AuthComponent {
   // Until the issue is fixed, we need to manually remove plugins that were not selected before
   // submitting/exporting the configuration
   filterUnselectedPlugins() {
-    let filteredExploiters = {};
-    let exploiterFormData = _.get(this.state.configuration, EXPLOITERS_CONFIG_PATH);
-    for (let exploiter of [...this.state.selectedExploiters]) {
-      if (exploiterFormData[exploiter] === undefined) {
-        filteredExploiters[exploiter] = {};
-      } else {
-        filteredExploiters[exploiter] = exploiterFormData[exploiter];
-      }
-    }
+    let pluginTypes = {'propagation': EXPLOITERS_CONFIG_PATH, 'credentials_collectors': CREDENTIALS_COLLECTORS_CONFIG_PATH};
     let config = _.cloneDeep(this.state.configuration)
-    _.set(config, EXPLOITERS_CONFIG_PATH, filteredExploiters)
+
+    for (let pluginType in pluginTypes){
+      let pluginPath = pluginTypes[pluginType];
+      let pluginFormData = _.get(this.state.configuration, pluginPath);
+      let filteredPlugins = {};
+      for (let plugin of [...this.state.selectedPlugins[pluginType] ?? []]){
+        if (pluginFormData[plugin] === undefined) {
+          filteredPlugins[plugin] = {};
+        } else {
+          filteredPlugins[plugin] = pluginFormData[plugin];
+        }
+      }
+      _.set(config, pluginPath, filteredPlugins)
+    }
     return config;
   }
 
   configSubmit(config) {
-    this.sendCredentials().then(res => {
-      if (res.ok) {
-        this.sendConfig(config);
-      }
-    });
+    const sendCredentialsPromise = this.sendCredentials();
+
+    const {linuxMasqueBytes, windowsMasqueBytes} = getMasqueradesBytesArrays(this.state.masqueStrings);
+
+    const sendLinuxMasqueStringsPromise = this.sendMasqueStrings(
+      APIEndpoint.linuxMasque,
+      linuxMasqueBytes
+    );
+
+    const sendWindowsMasqueStringsPromise = this.sendMasqueStrings(
+      APIEndpoint.windowsMasque,
+      windowsMasqueBytes
+    );
+
+    Promise.all([sendCredentialsPromise, sendLinuxMasqueStringsPromise, sendWindowsMasqueStringsPromise])
+      .then(responses => {
+        if (responses.every(res => res.status === 204)) {
+          this.sendConfig(config);
+        } else {
+          console.log('One or more requests failed.');
+        }
+      })
+      .catch(error => {
+        console.log('Error occurred:', error);
+      });
   }
 
   onChange = (formData) => {
@@ -211,10 +286,16 @@ class ConfigurePageComponent extends AuthComponent {
     this.setState({credentials: credentials});
   }
 
+  onMasqueStringsChange = (masqueStrings) => {
+    this.setState({masqueStrings: masqueStrings});
+  }
+
+
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
                                configuration={this.filterUnselectedPlugins()}
                                credentials={this.state.credentials}
+                               masqueStrings={this.state.masqueStrings}
                                onHide={() => {
                                  this.setState({showConfigExportModal: false});
                                }}/>);
@@ -269,14 +350,18 @@ class ConfigurePageComponent extends AuthComponent {
     )
       .then(res => res.json())
       .then(() => {
+          this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'}, true);
+          IslandHttpClient.put(APIEndpoint.linuxMasque, EMPTY_BYTES_ARRAY, true);
+          IslandHttpClient.put(APIEndpoint.windowsMasque, EMPTY_BYTES_ARRAY, true);
+      })
+      .then(() => {
           this.setState({
             lastAction: 'reset'
           });
           this.updateConfig();
           this.props.onStatusChange();
         }
-      )
-      .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'}, true));
+      );
   };
 
   exportConfig = async () => {
@@ -331,11 +416,26 @@ class ConfigurePageComponent extends AuthComponent {
       }));
   }
 
+  sendMasqueStrings(endpoint, masqueBytes){
+    return IslandHttpClient.put(
+      endpoint, masqueBytes, true)
+        .then(res => {
+        if (res.status !== 204) {
+          throw Error();
+        }
+        return res;
+      })
+      .catch((error) => {
+        console.log(`bad configuration ${error}`);
+        this.setState({lastAction: 'invalid_configuration'});
+      });
+  }
+
   renderConfigContent = (displayedSchema) => {
     let formProperties = {};
     let fullUiSchema = UiSchema({
       selectedSection: this.state.selectedSection
-    })
+    });
     formProperties['schema'] = displayedSchema
     formProperties['onChange'] = this.onChange;
     formProperties['onFocus'] = this.resetLastAction;
@@ -347,27 +447,33 @@ class ConfigurePageComponent extends AuthComponent {
 
     applyUiSchemaManipulators(this.state.selectedSection,
       formProperties['formData'],
-      fullUiSchema);
-
+      fullUiSchema,
+      formProperties?.schema);
     if (this.state.selectedSection === 'propagation') {
       delete Object.assign(formProperties, {'configuration': formProperties.formData}).formData;
       return (<PropagationConfig {...formProperties}
                                  fullUiSchema={fullUiSchema}
                                  credentials={this.state.credentials}
-                                 selectedExploiters={this.state.selectedExploiters}
-                                 setSelectedExploiters={this.setSelectedExploiters}
+                                 selectedPlugins={this.state.selectedPlugins}
+                                 setSelectedPlugins={this.setSelectedPlugins}
+                                 selectedConfigSection={this.state.selectedSection}
                                  onCredentialChange={this.onCredentialChange}/>)
-    } else {
+    }
+    else if(this.state.selectedSection === 'masquerade'){
+      return (<MasqueradeConfig {...formProperties}
+                                fullUiSchema={fullUiSchema}
+                                masqueStrings={this.state.masqueStrings}
+                                onChange={this.onMasqueStringsChange}/>)
+    }else {
       formProperties['onChange'] = (formData) => {
         this.onChange(formData.formData)
       };
-      return (
-        <div>
-          <Form {...formProperties} uiSchema={fullUiSchema} key={displayedSchema.title}>
-            <button type='submit' className={'hidden'}>Submit</button>
-          </Form>
-        </div>
-      )
+      return (<FormConfig {...formProperties}
+                      fullUiSchema={fullUiSchema}
+                      selectedPlugins={this.state.selectedPlugins[this.state.selectedSection]}
+                      setSelectedPlugins={this.setSelectedPlugins}
+                      selectedSection={this.state.selectedSection}
+                      key={displayedSchema.title}/>)
     }
   };
 
@@ -392,7 +498,8 @@ class ConfigurePageComponent extends AuthComponent {
     }
     let errors = this.validator.validateFormData(this.state.configuration, this.state.schema);
     let credentialErrors = this.validator.validateFormData(this.state.credentials, CREDENTIALS);
-    return errors.errors.length+credentialErrors.errors.length > 0
+    let masqueradeErrors = this.validator.validateFormData(this.state.masqueStrings, MASQUERADE);
+    return errors.errors.length+credentialErrors.errors.length+masqueradeErrors.errors.length > 0
   }
 
   render() {

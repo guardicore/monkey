@@ -14,13 +14,13 @@ from monkey_island.cc.services.authentication_service.user import User
 
 AGENT_ID = UUID("9614480d-471b-4568-86b5-cb922a34ed8a")
 
+AGENT_OTP_LOGIN_URL = get_url_for_resource(AgentOTPLogin)
+
 
 @pytest.fixture
 def agent_otp_login(flask_client):
-    url = get_url_for_resource(AgentOTPLogin)
-
     def _agent_otp_login(request_body):
-        return flask_client.post(url, json=request_body, follow_redirects=True)
+        return flask_client.post(AGENT_OTP_LOGIN_URL, json=request_body, follow_redirects=True)
 
     return _agent_otp_login
 
@@ -56,13 +56,24 @@ def test_invalid_request(agent_otp_login, data):
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
-def test_invalid_json(flask_client):
-    url = get_url_for_resource(AgentOTPLogin)
-    invalid_json = "{'key1': 'value1', 'key2: 'value2'}"
+INVALID_JSON = "{'key1': 'value1', 'key2: 'value2'}"
 
-    response = flask_client.post(url, data=invalid_json, follow_redirects=True)
+
+def test_invalid_json__json_content_type(flask_client):
+    response = flask_client.post(
+        AGENT_OTP_LOGIN_URL,
+        data=INVALID_JSON,
+        follow_redirects=True,
+        content_type="application/json",
+    )
 
     assert response.status_code == HTTPStatus.BAD_REQUEST
+
+
+def test_invalid_json__no_content_type(flask_client):
+    response = flask_client.post(AGENT_OTP_LOGIN_URL, data=INVALID_JSON, follow_redirects=True)
+
+    assert response.status_code == HTTPStatus.UNSUPPORTED_MEDIA_TYPE
 
 
 def test_unauthorized(mock_authentication_facade, agent_otp_login):

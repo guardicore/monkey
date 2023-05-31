@@ -26,9 +26,11 @@ export default function PropagationConfig(props) {
     configuration,
     credentials,
     onCredentialChange,
-    selectedExploiters,
-    setSelectedExploiters,
-    validator
+    selectedPlugins,
+    setSelectedPlugins,
+    selectedConfigSection,
+    validator,
+    transformErrors
   } = props;
 
   const [selectedSection, setSelectedSection] = useState(initialSection);
@@ -72,7 +74,9 @@ export default function PropagationConfig(props) {
                                 credentials={credentials}
                                 onChange={onCredentialChange}
                                 customFormats={customFormats}
-                                className={className}/>
+                                className={className}
+                                validator={validator}
+                                transformErrors={transformErrors}/>
     } else {
       let selectedSectionData = configuration[selectedSection];
       return <Form schema={displayedSchema}
@@ -90,9 +94,10 @@ export default function PropagationConfig(props) {
                    // children={true} hides the submit button
                    children={true}
                    formContext={{
-                     'selectedExploiters': selectedExploiters,
-                     'setSelectedExploiters': setSelectedExploiters,
-                     'setUiSchema': setUiSchemaForCurrentSection
+                     'selectedPlugins': selectedPlugins[selectedConfigSection],
+                     'setSelectedPlugins': setSelectedPlugins,
+                     'section': selectedConfigSection,
+                     setUiSchema: setUiSchemaForCurrentSection
                    }}/>
     }
   }

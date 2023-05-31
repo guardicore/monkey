@@ -27,8 +27,14 @@ SEED_ID = 99
 AGENT_ID = UUID("1d8ce743-a0f4-45c5-96af-91106529d3e2")
 SOURCE_MACHINE_ID = 11
 CC_SERVER = SocketAddress(ip="10.10.10.100", port="5000")
+AGENT_SHA256 = "c21dafe326222ba3ba65f5aebb6ea09c50696bf40eebca184caffe54f102746c"
 AGENT = Agent(
-    id=AGENT_ID, machine_id=SOURCE_MACHINE_ID, start_time=0, parent_id=None, cc_server=CC_SERVER
+    id=AGENT_ID,
+    machine_id=SOURCE_MACHINE_ID,
+    start_time=0,
+    parent_id=None,
+    cc_server=CC_SERVER,
+    sha256=AGENT_SHA256,
 )
 SOURCE_MACHINE = Machine(
     id=SOURCE_MACHINE_ID,

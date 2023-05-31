@@ -3,14 +3,20 @@ from typing import Optional
 from unittest.mock import MagicMock
 
 import pytest
+from tests.data_for_tests.propagation_credentials import CREDENTIALS
 from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_NAME, FAKE_NAME2
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
 from common.types import AgentID
-from infection_monkey.i_puppet import IncompatibleOperatingSystemError, PingScanData, TargetHost
-from infection_monkey.puppet import PluginCompatabilityVerifier, PluginRegistry
+from infection_monkey.i_puppet import (
+    IncompatibleLocalOperatingSystemError,
+    IncompatibleTargetOperatingSystemError,
+    PingScanData,
+    TargetHost,
+)
+from infection_monkey.puppet import PluginCompatibilityVerifier, PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
 
@@ -26,19 +32,14 @@ def mock_plugin_registry() -> PluginRegistry:
         MagicMock(),
         MagicMock(),
         MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        MagicMock(),
-        AgentID("fd838244-385f-41b4-9904-495e3c7b644e"),
     )
 
 
 @pytest.fixture
-def mock_plugin_compatability_verifier() -> PluginCompatabilityVerifier:
-    pcv = MagicMock(spec=PluginCompatabilityVerifier)
-    pcv.verify_exploiter_compatibility = MagicMock(return_value=True)
+def mock_plugin_compatibility_verifier() -> PluginCompatibilityVerifier:
+    pcv = MagicMock(spec=PluginCompatibilityVerifier)
+    pcv.verify_target_operating_system_compatibility = MagicMock(return_value=True)
+    pcv.verify_local_operating_system_compatibility = MagicMock(return_value=True)  # type: ignore [assignment]  # noqa: E501
 
     return pcv
 
@@ -47,14 +48,36 @@ def mock_plugin_compatability_verifier() -> PluginCompatabilityVerifier:
 def puppet(
     mock_agent_event_queue: IAgentEventQueue,
     mock_plugin_registry: PluginRegistry,
-    mock_plugin_compatability_verifier: PluginCompatabilityVerifier,
+    mock_plugin_compatibility_verifier: PluginCompatibilityVerifier,
 ) -> Puppet:
     return Puppet(
         agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
-        plugin_compatability_verifier=mock_plugin_compatability_verifier,
+        plugin_compatibility_verifier=mock_plugin_compatibility_verifier,
         agent_id=AgentID("4277aa81-660b-4673-b96c-443ed525b4d0"),
     )
+
+
+def test_run_credentials_collector(puppet: Puppet):
+    plugin_name = "cc_1"
+    credentials_collector = MagicMock()
+    credentials_collector.run = MagicMock(return_value=CREDENTIALS)
+    puppet.load_plugin(AgentPluginType.CREDENTIALS_COLLECTOR, plugin_name, credentials_collector)
+
+    collected_credentials = puppet.run_credentials_collector(plugin_name, {}, threading.Event())
+
+    assert collected_credentials == CREDENTIALS
+
+
+def test_run_credentials_collector__incompatible_local_os(
+    mock_plugin_compatibility_verifier: PluginCompatibilityVerifier, puppet: Puppet
+):
+    mock_plugin_compatibility_verifier.verify_local_operating_system_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
+        return_value=False
+    )
+
+    with pytest.raises(IncompatibleLocalOperatingSystemError):
+        puppet.run_credentials_collector("test", {}, threading.Event())
 
 
 def test_puppet_run_payload_success(puppet: Puppet):
@@ -127,17 +150,17 @@ def test_exploit_host(
     "target_host_os, exploiter_name",
     [(OperatingSystem.WINDOWS, FAKE_NAME), (OperatingSystem.LINUX, FAKE_NAME2)],
 )
-def test_exploit_host__incompatable(
+def test_exploit_host__incompatible(
     target_host_os: Optional[OperatingSystem],
     exploiter_name: str,
     puppet: Puppet,
-    mock_plugin_compatability_verifier: PluginCompatabilityVerifier,
+    mock_plugin_compatibility_verifier: PluginCompatibilityVerifier,
 ):
-    mock_plugin_compatability_verifier.verify_exploiter_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
+    mock_plugin_compatibility_verifier.verify_target_operating_system_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
         return_value=False
     )
 
-    with pytest.raises(IncompatibleOperatingSystemError):
+    with pytest.raises(IncompatibleTargetOperatingSystemError):
         puppet.exploit_host(
             name=exploiter_name,
             host=TargetHost(ip="1.1.1.1", operating_system=target_host_os),
@@ -165,3 +188,22 @@ def test_malfunctioning_plugin__exploiter(puppet: Puppet):
     assert exploiter_result_data.exploitation_success is False
     assert exploiter_result_data.propagation_success is False
     assert exploiter_result_data.error_message != ""
+
+
+def test_exploit_host__incompatible_local_operating_system(
+    puppet: Puppet,
+    mock_plugin_compatibility_verifier: PluginCompatibilityVerifier,
+):
+    mock_plugin_compatibility_verifier.verify_local_operating_system_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
+        return_value=False
+    )
+
+    with pytest.raises(IncompatibleLocalOperatingSystemError):
+        puppet.exploit_host(
+            name=FAKE_NAME,
+            host=TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.WINDOWS),
+            current_depth=1,
+            servers=[],
+            options={},
+            interrupt=threading.Event(),
+        )

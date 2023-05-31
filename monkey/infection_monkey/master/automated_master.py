@@ -2,14 +2,13 @@ import logging
 import multiprocessing
 import time
 from ipaddress import IPv4Interface
-from typing import Any, Callable, Collection, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, List, Optional, Sequence
 
 from egg_timer import EggTimer
 
-from common.agent_configuration import PluginConfiguration
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
-from infection_monkey.i_puppet import IPuppet
+from infection_monkey.i_puppet import IPuppet, RejectedRequestError
 from infection_monkey.propagation_credentials_repository import (
     ILegacyPropagationCredentialsRepository,
 )
@@ -126,19 +125,19 @@ class AutomatedMaster(IMaster):
             logger.error(f"An error occurred while fetching configuration: {e}")
             return
 
-        credential_collector_thread = create_daemon_thread(
-            target=self._run_plugins_legacy,
-            name="CredentialCollectorThread",
+        credentials_collector_thread = create_daemon_thread(
+            target=self._run_plugins,
+            name="CredentialsCollectorThread",
             args=(
-                config.credential_collectors,
-                "credential collector",
+                config.credentials_collectors,
+                "credentials collector",
                 self._collect_credentials,
             ),
         )
         # We don't need to use multithreading here, but it's likely that in the
         # future we'll like to run other tasks while credentials are being collected
-        credential_collector_thread.start()
-        credential_collector_thread.join()
+        credentials_collector_thread.start()
+        credentials_collector_thread.join()
 
         current_depth = self._current_depth if self._current_depth is not None else 0
         logger.info(f"Current depth is {current_depth}")
@@ -156,11 +155,13 @@ class AutomatedMaster(IMaster):
         payload_thread.start()
         payload_thread.join()
 
-    def _collect_credentials(self, collector: PluginConfiguration):
-        credentials = self._puppet.run_credential_collector(collector.name, collector.options)
+    def _collect_credentials(self, collector_name: str, collector_options: Dict[str, Any]):
+        credentials = self._puppet.run_credentials_collector(
+            collector_name, collector_options, self._stop
+        )
 
         if not credentials:
-            logger.debug(f"No credentials were collected by {collector}")
+            logger.debug(f"No credentials were collected by {collector_name}")
 
     def _run_payload(self, name: str, options: Dict):
         self._puppet.run_payload(name, options, self._stop)
@@ -177,28 +178,11 @@ class AutomatedMaster(IMaster):
         interrupted_message = f"Received a stop signal, skipping remaining {plugin_type}s"
         for p in interruptible_iter(plugins, self._stop, interrupted_message):
             try:
+                logger.info(f'Trying to run plugin "{p}" of type "{plugin_type}"')
                 callback(p, plugins[p])
-            except Exception:
-                logger.exception(
-                    f"Got unhandled exception when running {plugin_type} plugin {p}. "
-                    f"Plugin was passed to {callback}"
-                )
-
-        logger.info(f"Finished running {plugin_type}s")
-
-    def _run_plugins_legacy(
-        self,
-        plugins: Collection[PluginConfiguration],
-        plugin_type: str,
-        callback: Callable[[Any], None],
-    ):
-        logger.info(f"Running {plugin_type}s")
-        logger.debug(f"Found {len(plugins)} {plugin_type}(s) to run")
-
-        interrupted_message = f"Received a stop signal, skipping remaining {plugin_type}s"
-        for p in interruptible_iter(plugins, self._stop, interrupted_message):
-            try:
-                callback(p)
+            except RejectedRequestError as err:
+                logger.info(f"Skipping plugin {p} of type {plugin_type}: {err}")
+                continue
             except Exception:
                 logger.exception(
                     f"Got unhandled exception when running {plugin_type} plugin {p}. "

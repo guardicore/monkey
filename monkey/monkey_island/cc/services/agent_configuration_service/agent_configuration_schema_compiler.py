@@ -7,16 +7,12 @@ from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_configuration import AgentConfiguration
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.hard_coded_manifests import HARD_CODED_PAYLOADS_MANIFESTS
-from common.hard_coded_manifests.hard_coded_credential_collector_manifests import (
-    HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS,
-)
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )
 from monkey_island.cc.repositories import IAgentPluginRepository
 
 from .hard_coded_schemas import (
-    HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS,
     HARD_CODED_EXPLOITER_SCHEMAS,
     HARD_CODED_FINGERPRINTER_SCHEMAS,
     HARD_CODED_PAYLOADS_SCHEMAS,
@@ -24,7 +20,7 @@ from .hard_coded_schemas import (
 
 PLUGIN_PATH_IN_SCHEMA = {
     AgentPluginType.EXPLOITER: "definitions.ExploitationConfiguration.properties.exploiters",
-    AgentPluginType.CREDENTIAL_COLLECTOR: "properties.credential_collectors",
+    AgentPluginType.CREDENTIALS_COLLECTOR: "properties.credentials_collectors",
     AgentPluginType.FINGERPRINTER: "definitions.NetworkScanConfiguration.properties.fingerprinters",
     AgentPluginType.PAYLOAD: "properties.payloads",
 }
@@ -67,7 +63,6 @@ class AgentConfigurationSchemaCompiler:
     def _add_hard_coded_plugins(self, schema: Dict[str, Any]) -> Dict[str, Any]:
         schema = self._add_non_plugin_exploiters(schema)
         schema = self._add_non_plugin_fingerprinters(schema)
-        schema = self._add_non_plugin_credential_collectors(schema)
         schema = self._add_non_plugin_payloads(schema)
         return schema
 
@@ -93,16 +88,6 @@ class AgentConfigurationSchemaCompiler:
             HARD_CODED_EXPLOITER_SCHEMAS, HARD_CODED_EXPLOITER_MANIFESTS
         )
         properties.update(exploiter_schemas)
-        return schema
-
-    def _add_non_plugin_credential_collectors(self, schema: Dict[str, Any]) -> Dict[str, Any]:
-        properties = dpath.get(
-            schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.CREDENTIAL_COLLECTOR] + ".properties", "."
-        )
-        credential_collector_schemas = self._add_manifests_to_plugins_schema(
-            HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS, HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS
-        )
-        properties.update(credential_collector_schemas)
         return schema
 
     def _add_non_plugin_fingerprinters(self, schema: Dict[str, Any]) -> Dict[str, Any]:

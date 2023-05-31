@@ -19,23 +19,45 @@ export enum APIEndpoint {
   agentEvents = '/api/agent-events',
   mode = '/api/island/mode',
   monkey_exploitation = '/api/exploitations/monkey',
-  stolenCredentials = '/api/propagation-credentials/stolen-credentials'
+  stolenCredentials = '/api/propagation-credentials/stolen-credentials',
+  linuxMasque = '/api/agent-binaries/linux/masque',
+  windowsMasque = '/api/agent-binaries/windows/masque'
 }
 
 class IslandHttpClient extends AuthComponent {
   put(endpoint: string, contents: any, refreshToken: boolean = false): Promise<Response> {
+    const headers = {'Content-Type': 'application/octet-stream'};
+    return this._put(endpoint, contents, headers, refreshToken);
+  }
+
+  putJSON(endpoint: string, contents: any, refreshToken: boolean = false): Promise<Response> {
+    const headers = {'Content-Type': 'application/json'};
+    return this._put(endpoint, JSON.stringify(contents), headers, refreshToken);
+  }
+
+  _put(endpoint: string, contents: any, headers: Record<string, any>, refreshToken: boolean = false): Promise<Response> {
     let status = null;
     return this.authFetch(endpoint,
       {
         method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(contents)
+        headers: headers,
+        body: contents
       },
       refreshToken
     )
       .then(res => {
         status = res.status;
         return res
+      })
+      .then(res => new Response(res, status));
+  }
+
+  getJSON(endpoint: APIEndpoint, args: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
+    let status = null;
+    return this.get(endpoint, args, refreshToken)
+      .then(res => {
+        status = res.status;
+        return res.body.json()
       })
       .then(res => new Response(res, status));
   }
@@ -50,7 +72,7 @@ class IslandHttpClient extends AuthComponent {
     return this.authFetch(url, {}, refreshToken)
       .then(res => {
         status = res.status;
-        return res.json()
+        return res;
       })
       .then(res => new Response(res, status));
   }

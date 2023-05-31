@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Sequence
+from typing import Any, Dict, Mapping, Sequence
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
@@ -9,7 +9,7 @@ from infection_monkey.i_puppet import (
     DiscoveredService,
     ExploiterResultData,
     FingerprintData,
-    IncompatibleOperatingSystemError,
+    IncompatibleTargetOperatingSystemError,
     IPuppet,
     PingScanData,
     PortScanData,
@@ -29,8 +29,10 @@ class MockPuppet(IPuppet):
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
         logger.debug(f"load_plugin({plugin}, {plugin_type})")
 
-    def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
-        logger.debug(f"run_credential_collector({name})")
+    def run_credentials_collector(
+        self, name: str, options: Mapping[str, Any], interrupt: Event
+    ) -> Sequence[Credentials]:
+        logger.debug(f"run_credentials_collector({name})")
 
         if name == "SSHCollector":
             ssh_credentials = [
@@ -204,7 +206,7 @@ class MockPuppet(IPuppet):
                     info_ssh,
                     "Failed exploiting",
                 ),
-                "WmiExploiter": ExploiterResultData(
+                "Exploiter1": ExploiterResultData(
                     True, True, OperatingSystem.WINDOWS.value, info_wmi
                 ),
             },
@@ -232,7 +234,7 @@ class MockPuppet(IPuppet):
         supported_os = {
             "SSHExploiter": [OperatingSystem.LINUX],
             "ZerologonExploiter": [OperatingSystem.WINDOWS],
-            "WmiExploiter": [OperatingSystem.WINDOWS],
+            "Exploiter1": [OperatingSystem.WINDOWS],
             "PowerShellExploiter": [OperatingSystem.WINDOWS],
             "MSSQLExploiter": [OperatingSystem.WINDOWS],
         }
@@ -240,7 +242,7 @@ class MockPuppet(IPuppet):
         try:
             if host.operating_system in supported_os[name] or host.operating_system is None:
                 return successful_exploiters[host.ip][name]
-            raise IncompatibleOperatingSystemError
+            raise IncompatibleTargetOperatingSystemError
         except KeyError:
             return ExploiterResultData(
                 False,

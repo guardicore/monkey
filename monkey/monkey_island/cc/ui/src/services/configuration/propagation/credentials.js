@@ -11,6 +11,17 @@ const CREDENTIALS = {
       'description': 'List of usernames that will be used by exploiters that need ' +
         'credentials, like SSH brute-forcing.'
     },
+    'exploit_email_list': {
+      'title': 'Exploit email address list',
+      'type': 'array',
+      'uniqueItems': true,
+      'items': {
+        'type': 'string',
+        'format': 'valid-email-address'
+      },
+      'default': [],
+      'description': 'List of email addresses that will be used by exploiters.'
+    },
     'exploit_password_list': {
       'title': 'Exploit password list',
       'type': 'array',
@@ -62,6 +73,7 @@ const CREDENTIALS = {
 
 export const defaultCredentials = {
  'exploit_user_list': [],
+ 'exploit_email_list': [],
  'exploit_password_list': [],
  'exploit_lm_hash_list': [],
  'exploit_ntlm_hash_list': [],

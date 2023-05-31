@@ -14,7 +14,6 @@ from gevent.pywsgi import WSGIServer
 from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
-from monkey_island.cc.server_utils.island_logger import get_log_file_path
 from monkey_island.cc.setup.config_setup import get_server_config
 
 # Add the monkey_island directory to the path, to make sure imports that don't start with
@@ -132,7 +131,6 @@ def _initialize_di_container(
     container.register_convention(Sequence[IPv4Address], "ip_addresses", ip_addresses)
     container.register_instance(Version, version)
     container.register_convention(Path, "data_dir", data_dir)
-    container.register_convention(Path, "island_log_file_path", get_log_file_path(data_dir))
 
     initialize_services(container, data_dir)
 

@@ -17,7 +17,7 @@ const MapPageWrapper = (props) => {
 
   function getPropagationEvents(refreshToken: boolean) {
     let url_args = {'type': 'PropagationEvent', 'success': true};
-    return IslandHttpClient.get(APIEndpoint.agentEvents, url_args, refreshToken)
+    return IslandHttpClient.getJSON(APIEndpoint.agentEvents, url_args, refreshToken)
       .then(res => arrayToObject(res.body, 'target'));
   }
 

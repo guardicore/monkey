@@ -1,0 +1,23 @@
+name: MSSQL
+plugin_type: Exploiter
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - windows
+title: MSSQL Exploiter
+version: 1.0.0
+description: >-
+    Attempts a brute-force attack against Microsoft SQL using known credentials
+    and takes advantage of insecure configuration to execute commands on the
+    server.
+safe: true
+remediation_suggestion: >-
+    Disable the `xp_cmdshell` option.
+
+    The machine is vulnerable to an MSSQL exploit.
+    This attack was possible because the target machine used an outdated MSSQL
+    server configuration, allowing the usage of the `xp_cmdshell` command. To
+    learn more about how to disable this feature, read
+    [Microsoft's documentation](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/xp-cmdshell-server-configuration-option?view=sql-server-2017).
+link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/mssql/

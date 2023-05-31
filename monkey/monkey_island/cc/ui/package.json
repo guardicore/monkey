@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "2.1.0",
+  "version": "2.2.0",
   "name": "infection-monkey",
   "description": "Infection Monkey C&C UI",
   "scripts": {
@@ -76,10 +76,12 @@
     "@rjsf/validator-ajv8": "5.1.0",
     "@types/react-router-dom": "5.3.3",
     "async-mutex": "^0.4.0",
+    "base64-js": "^1.5.1",
     "bootstrap": "^4.6.2",
     "core-js": "3.29.0",
     "crypto-js": "4.1.1",
     "downloadjs": "1.4.7",
+    "email-validator": "^2.0.4",
     "file-saver": "2.0.5",
     "json-schema-merge-allof": "0.8.1",
     "lodash": "4.17.21",

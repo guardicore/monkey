@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class AgentPluginType(Enum):
-    CREDENTIAL_COLLECTOR = "CredentialCollector"
+    CREDENTIALS_COLLECTOR = "Credentials_Collector"
     EXPLOITER = "Exploiter"
     FINGERPRINTER = "Fingerprinter"
     PAYLOAD = "Payload"

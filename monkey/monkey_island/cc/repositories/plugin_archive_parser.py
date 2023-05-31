@@ -16,7 +16,7 @@ import yaml
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
 
-MANIFEST_FILENAME = "manifest.yaml"
+MANIFEST_FILENAMES = ["manifest.yaml", "manifest.yml"]
 CONFIG_SCHEMA_FILENAME = "config-schema.json"
 SOURCE_ARCHIVE_FILENAME = "source.tar"
 
@@ -101,7 +101,17 @@ def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
     :raises KeyError: If the manifest is not found in the tar file
     :raises ValueError: If the manifest is not a file
     """
-    manifest_buf = _safe_extract_file(tar, MANIFEST_FILENAME)
+    manifest_buf = None
+    for manifest_filename in MANIFEST_FILENAMES:
+        try:
+            manifest_buf = _safe_extract_file(tar, manifest_filename)
+            break
+        except KeyError:
+            pass
+
+    if not manifest_buf:
+        raise KeyError(f"Plugin manifest file (one of {MANIFEST_FILENAMES}) not found")
+
     manifest = yaml.safe_load(manifest_buf)
 
     return AgentPluginManifest(**manifest)
@@ -197,7 +207,6 @@ def _parse_plugin_with_multiple_vendors(
 def _get_os_specific_plugin_source_archives(
     plugin_source_tar: TarFile, plugin_source_vendors: Sequence[VendorDirName]
 ) -> Mapping[OperatingSystem, bytes]:
-
     os_specific_plugin_source_archives = {}
 
     for vendor in plugin_source_vendors:

@@ -4,6 +4,5 @@ from .depth_2_a import depth_2_a_test_configuration
 from .depth_3_a import depth_3_a_test_configuration
 from .depth_4_a import depth_4_a_test_configuration
 from .smb_pth import smb_pth_test_configuration
-from .wmi_mimikatz import wmi_mimikatz_test_configuration
 from .zerologon import zerologon_test_configuration
 from .credentials_reuse_ssh_key import credentials_reuse_ssh_key_test_configuration

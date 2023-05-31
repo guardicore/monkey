@@ -1,17 +1,21 @@
 import logging
 import os
+import random
 from copy import deepcopy
 from http import HTTPStatus
 from threading import Thread
 from time import sleep
-from typing import List
+from typing import Iterable, List, Optional, Sequence
 from uuid import uuid4
 
 import pytest
 import requests
 
+from common import OperatingSystem
+from common.credentials import Credentials, NTHash, Password, Username
 from common.types import OTP, SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
+from envs.monkey_zoo.blackbox.analyzers.stolen_credentials_analyzer import StolenCredentialsAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.island_client.agent_requests import AgentRequests
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
@@ -37,7 +41,6 @@ from envs.monkey_zoo.blackbox.test_configurations import (
     depth_3_a_test_configuration,
     depth_4_a_test_configuration,
     smb_pth_test_configuration,
-    wmi_mimikatz_test_configuration,
     zerologon_test_configuration,
 )
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
@@ -47,6 +50,7 @@ from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
     start_machines,
     stop_machines,
 )
+from monkey_island.cc.models import Agent
 from monkey_island.cc.services.authentication_service.flask_resources.agent_otp import (
     MAX_OTP_REQUESTS_PER_SECOND,
 )
@@ -478,16 +482,55 @@ def test_agent_logout(island):
     assert agent_requests.get(GET_AGENT_OTP_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
 
 
+RANDBYTES_SIZE = 1024 * 1024 * 2  # 2MB
+LINUX_DATA = [
+    b"This is a string for Linux!",
+    random.randbytes(RANDBYTES_SIZE),  # noqa: DUO102
+    b"More strings",
+    b"A much longer supercalifragilisticexpialidocious string to be included in the masque.",
+]
+WINDOWS_DATA = [
+    b"This is a string for Windows!",
+    random.randbytes(RANDBYTES_SIZE),  # noqa: DUO102
+    LINUX_DATA[2],
+    LINUX_DATA[3],
+]
+
+
+@pytest.mark.parametrize(
+    "data, operating_system",
+    [(LINUX_DATA, OperatingSystem.LINUX), (WINDOWS_DATA, OperatingSystem.WINDOWS)],
+    ids=["Linux", "Windows"],
+)
+def test_masquerade(
+    island_client: MonkeyIslandClient, data: Iterable[bytes], operating_system: OperatingSystem
+):
+    masque_data = b"\0".join(data)
+
+    island_client.set_masque(masque_data)
+    agent_binary = island_client.get_agent_binary(operating_system)
+
+    for d in data:
+        assert d in agent_binary
+
+
 # NOTE: These test methods are ordered to give time for the slower zoo machines
 # to boot up and finish starting services.
 # noinspection PyUnresolvedReferences
 class TestMonkeyBlackbox:
+    @staticmethod
+    def assert_unique_agent_hashes(agents: Sequence[Agent]):
+        agent_hashes = [a.sha256 for a in agents]
+
+        assert len(agent_hashes) == len(set(agent_hashes))
+
     @staticmethod
     def run_exploitation_test(
         island_client: MonkeyIslandClient,
         test_configuration: TestConfiguration,
         test_name: str,
         timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS,
+        masque: Optional[bytes] = None,
     ):
         analyzer = CommunicationAnalyzer(
             island_client,
@@ -500,6 +543,7 @@ class TestMonkeyBlackbox:
             name=test_name,
             island_client=island_client,
             test_configuration=test_configuration,
+            masque=masque,
             analyzers=[analyzer],
             timeout=timeout_in_seconds,
             log_handler=log_handler,
@@ -515,33 +559,113 @@ class TestMonkeyBlackbox:
         )
 
     def test_depth_2_a(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, depth_2_a_test_configuration, "Depth2A test suite"
+        test_name = "Depth2A test suite"
+        communication_analyzer = CommunicationAnalyzer(
+            island_client,
+            get_target_ips(depth_2_a_test_configuration),
         )
+        log_handler = TestLogsHandler(
+            test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
+        )
+        exploitation_test = ExploitationTest(
+            name=test_name,
+            island_client=island_client,
+            test_configuration=depth_2_a_test_configuration,
+            masque=None,
+            analyzers=[communication_analyzer],
+            timeout=DEFAULT_TIMEOUT_SECONDS + 30,
+            log_handler=log_handler,
+        )
+        exploitation_test.run()
+
+        # asserting that Agent hashes are not unique
+        assert len({a.sha256 for a in exploitation_test.agents}) == 2
 
     def test_depth_1_a(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, depth_1_a_test_configuration, "Depth1A test suite"
+        test_name = "Depth1A test suite"
+        masque = b"m0nk3y"
+
+        expected_credentials = {
+            Credentials(
+                identity=Username(username="m0nk3y"),
+                secret=NTHash(nt_hash="5da0889ea2081aa79f6852294cba4a5e"),
+            ),
+            Credentials(
+                identity=Username(username="m0nk3y"), secret=Password(password="pAJfG56JX><")
+            ),
+            Credentials(
+                identity=Username(username="m0nk3y"), secret=Password(password="Ivrrw5zEzs")
+            ),
+            Credentials(
+                identity=Username(username="vakaris_zilius"),
+                secret=NTHash(nt_hash="e1c0dc690821c13b10a41dccfc72e43a"),
+            ),
+            Credentials(
+                identity=Username(username="m0nk3y"),
+                secret=NTHash(nt_hash="fc525c9683e8fe067095ba2ddc971889"),
+            ),
+            Credentials(
+                identity=Username(username="m0nk3y"),
+                secret=NTHash(nt_hash="201fe0a0db9733e419875201c6bd36f2"),
+            ),
+        }
+
+        stolen_credentials_analyzer = StolenCredentialsAnalyzer(island_client, expected_credentials)
+        communication_analyzer = CommunicationAnalyzer(
+            island_client,
+            get_target_ips(depth_1_a_test_configuration),
         )
+        log_handler = TestLogsHandler(
+            test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
+        )
+        exploitation_test = ExploitationTest(
+            name=test_name,
+            island_client=island_client,
+            test_configuration=depth_1_a_test_configuration,
+            masque=masque,
+            analyzers=[stolen_credentials_analyzer, communication_analyzer],
+            timeout=DEFAULT_TIMEOUT_SECONDS + 30,
+            log_handler=log_handler,
+        )
+        exploitation_test.run()
+        TestMonkeyBlackbox.assert_unique_agent_hashes(exploitation_test.agents)
 
     def test_depth_3_a(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, depth_3_a_test_configuration, "Depth3A test suite"
+        test_name = "Depth3A test suite"
+        communication_analyzer = CommunicationAnalyzer(
+            island_client,
+            get_target_ips(depth_3_a_test_configuration),
         )
+        log_handler = TestLogsHandler(
+            test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
+        )
+        exploitation_test = ExploitationTest(
+            name=test_name,
+            island_client=island_client,
+            test_configuration=depth_3_a_test_configuration,
+            masque=None,
+            analyzers=[communication_analyzer],
+            timeout=DEFAULT_TIMEOUT_SECONDS,
+            log_handler=log_handler,
+        )
+        exploitation_test.run()
+        TestMonkeyBlackbox.assert_unique_agent_hashes(exploitation_test.agents)
 
     def test_depth_4_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
-            island_client, depth_4_a_test_configuration, "Depth4A test suite"
+            island_client, depth_4_a_test_configuration, "Depth4A test suite", masque=b"m0nk3y"
         )
 
     # Not grouped because it's slow
     def test_zerologon_exploiter(self, island_client):
         test_name = "Zerologon_exploiter"
+
         expected_creds = [
             "Administrator",
             "aad3b435b51404eeaad3b435b51404ee",
             "2864b62ea4496934a5d6e86f50b834a5",
         ]
+
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
             island_client,
@@ -554,17 +678,11 @@ class TestMonkeyBlackbox:
             name=test_name,
             island_client=island_client,
             test_configuration=zerologon_test_configuration,
+            masque=b"",
             analyzers=[zero_logon_analyzer, communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         ).run()
-
-    # Not grouped because conflicts with SMB.
-    # Consider grouping when more depth 1 exploiters collide with group depth_1_a
-    def test_wmi_and_mimikatz_exploiters(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, wmi_mimikatz_test_configuration, "WMI_exploiter,_mimikatz"
-        )
 
     # Not grouped because it's depth 1 but conflicts with SMB exploiter in group depth_1_a
     def test_smb_pth(self, island_client):

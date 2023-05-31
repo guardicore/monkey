@@ -6,6 +6,11 @@ export enum CredentialTitle {
   Username = 'Username'
 }
 
+export enum IdentityType {
+  Username = 'username',
+  EmailAddress = 'email_address'
+}
+
 export enum SecretType {
   Password = 'password',
   PrivateKey = 'private_key',

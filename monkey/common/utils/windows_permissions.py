@@ -2,7 +2,6 @@ from typing import Any, Mapping
 
 import ntsecuritycon
 import win32api
-import win32con
 import win32security
 
 ACCESS_MODE_GRANT_ACCESS = win32security.GRANT_ACCESS
@@ -20,18 +19,24 @@ def get_security_descriptor_for_owner_only_permissions():
     dacl.SetEntriesInAcl(entries)
 
     security_descriptor = win32security.SECURITY_DESCRIPTOR()
+    security_descriptor.SetSecurityDescriptorControl(
+        win32security.SE_DACL_PROTECTED, win32security.SE_DACL_PROTECTED
+    )
     security_descriptor.SetSecurityDescriptorDacl(1, dacl, 0)
 
     return security_descriptor
 
 
 def _get_user_pySID_object():
-    # get current user's name
-    username = win32api.GetUserNameEx(win32con.NameSamCompatible)
-    # pySID object for the current user
-    user, _, _ = win32security.LookupAccountName("", username)
+    # Note: We do this using the process handle and token instead of by account name, as some SIDs
+    # have no corresponding account name, such as a logon SID that identifies a logon session. This
+    # is particularly an issue when using the SMB exploiter. See issue #3173.
+    process_handle = win32api.GetCurrentProcess()
+    token_handle = win32security.OpenProcessToken(process_handle, win32security.TOKEN_ALL_ACCESS)
 
-    return user
+    sid, _ = win32security.GetTokenInformation(token_handle, win32security.TokenUser)
+
+    return sid
 
 
 def _get_ace_for_owner_only_permissions(user_sid) -> Mapping[str, Any]:

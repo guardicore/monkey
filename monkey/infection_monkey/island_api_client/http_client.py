@@ -43,25 +43,29 @@ def handle_island_errors(fn):
         except (requests.exceptions.ConnectionError, requests.exceptions.TooManyRedirects) as err:
             raise IslandAPIConnectionError(err)
         except requests.exceptions.HTTPError as err:
-            if err.response.status_code in [
-                HTTPStatus.UNAUTHORIZED.value,
-                HTTPStatus.FORBIDDEN.value,
-            ]:
-                raise IslandAPIAuthenticationError(err)
-            if err.response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
-                raise IslandAPIRequestLimitExceededError(err)
-            if 400 <= err.response.status_code < 500:
-                raise IslandAPIRequestError(err)
-            if 500 <= err.response.status_code < 600:
-                raise IslandAPIRequestFailedError(err)
-
-            raise IslandAPIError(err)
+            _handle_http_error(err)
         except TimeoutError as err:
             raise IslandAPITimeoutError(err)
         except Exception as err:
             raise IslandAPIError(err)
 
     return decorated
+
+
+def _handle_http_error(http_error: requests.exceptions.HTTPError):
+    if http_error.response.status_code in [
+        HTTPStatus.UNAUTHORIZED.value,
+        HTTPStatus.FORBIDDEN.value,
+    ]:
+        raise IslandAPIAuthenticationError(http_error)
+    if http_error.response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
+        raise IslandAPIRequestLimitExceededError(http_error)
+    if 400 <= http_error.response.status_code < 500:
+        raise IslandAPIRequestError(http_error)
+    if 500 <= http_error.response.status_code < 600:
+        raise IslandAPIRequestFailedError(http_error)
+
+    raise IslandAPIError(http_error)
 
 
 class HTTPClient:

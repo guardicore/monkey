@@ -1,8 +1,16 @@
+from ipaddress import IPv4Address
+from typing import Callable
+from uuid import UUID
+
 import pytest
 
+from common import OperatingSystem
+from infection_monkey.i_puppet import TargetHost
 from infection_monkey.utils.commands import (
+    build_agent_download_command,
+    build_dropper_script_download_command,
     build_monkey_commandline,
-    build_monkey_commandline_explicitly,
+    build_monkey_commandline_parameters,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
@@ -14,10 +22,11 @@ def agent_id():
     return get_agent_id()
 
 
-def test_build_monkey_commandline_explicitly_arguments():
+def test_build_monkey_commandline_parameters_arguments():
+    agent_id = UUID("9614480d-471b-4568-86b5-cb922a34ed8a")
     expected = [
         "-p",
-        "101010",
+        str(agent_id),
         "-s",
         "127.127.127.127:5000,138.138.138.138:5007",
         "-d",
@@ -25,19 +34,22 @@ def test_build_monkey_commandline_explicitly_arguments():
         "-l",
         "C:\\windows\\abc",
     ]
-    actual = build_monkey_commandline_explicitly(
-        "101010", ["127.127.127.127:5000", "138.138.138.138:5007"], 0, "C:\\windows\\abc"
+    actual = build_monkey_commandline_parameters(
+        agent_id,
+        ["127.127.127.127:5000", "138.138.138.138:5007"],
+        0,
+        "C:\\windows\\abc",
     )
 
     assert expected == actual
 
 
-def test_build_monkey_commandline_explicitly_depth_condition_greater():
+def test_build_monkey_commandline_parameters_depth_condition_greater():
     expected = [
         "-d",
         "50",
     ]
-    actual = build_monkey_commandline_explicitly(depth=50)
+    actual = build_monkey_commandline_parameters(depth=50)
 
     assert expected == actual
 
@@ -97,3 +109,27 @@ def test_build_monkey_commandline_empty_servers(agent_id, servers):
     )
 
     assert expected == actual
+
+
+@pytest.mark.parametrize(
+    "build_command_fn", [build_agent_download_command, build_dropper_script_download_command]
+)
+def test_build_agent_download_command__linux(build_command_fn: Callable[[TargetHost, str], str]):
+    target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.LINUX)
+    url = "https://example.com/agent"
+
+    linux_download_command = build_command_fn(target_host, url)
+
+    assert linux_download_command.startswith("wget")
+    assert url in linux_download_command
+
+
+@pytest.mark.parametrize(
+    "build_command_fn", [build_agent_download_command, build_dropper_script_download_command]
+)
+def test_build_agent_download_command__windows(build_command_fn: Callable[[TargetHost, str], str]):
+    target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.WINDOWS)
+    url = "https://example.com/agent"
+
+    with pytest.raises(NotImplementedError):
+        build_command_fn(target_host, url)

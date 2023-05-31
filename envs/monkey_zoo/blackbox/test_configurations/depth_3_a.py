@@ -13,6 +13,7 @@ from .utils import (
     replace_propagation_credentials,
     set_keep_tunnel_open_time,
     set_maximum_depth,
+    set_randomize_agent_hash,
 )
 
 # Tests:
@@ -23,9 +24,9 @@ from .utils import (
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
-        "PowerShellExploiter": {},
+        "PowerShell": {},
         "SSHExploiter": {},
-        "WmiExploiter": {"smb_download_timeout": 30},
+        "WMI": {"agent_binary_upload_timeout": 30},
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
@@ -54,6 +55,7 @@ test_agent_configuration = set_keep_tunnel_open_time(test_agent_configuration, 2
 test_agent_configuration = _add_exploiters(test_agent_configuration)
 test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
+test_agent_configuration = set_randomize_agent_hash(test_agent_configuration, True)
 
 CREDENTIALS = (
     Credentials(identity=Username(username="m0nk3y"), secret=None),

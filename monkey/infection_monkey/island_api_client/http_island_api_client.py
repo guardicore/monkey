@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Sequence
 
 import requests
 from egg_timer import EggTimer
-from flask import Response
+from requests import Response
 
 from common import AgentHeartbeat, AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration

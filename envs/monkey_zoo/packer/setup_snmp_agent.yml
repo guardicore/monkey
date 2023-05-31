@@ -1,0 +1,43 @@
+---
+- name: Configure SNMP agent
+  hosts: all
+  remote_user: root
+  vars:
+    community_string: c0mmun1ty
+
+  tasks:
+    - name: Install SNMP
+      apt:
+        name:
+          # These specific versions are required, as newer versions of SNMP are
+          # patched to prevent adding commands to the nsExtendObjects table
+          - snmp=5.7.3+dfsg-1.8ubuntu3
+          - snmpd=5.7.3+dfsg-1.8ubuntu3
+          - libsnmp30=5.7.3+dfsg-1.8ubuntu3
+        update_cache: yes
+    - name: Remove default SNMP configuration
+      file:
+        path: /etc/snmp/snmpd.conf
+        state: absent
+    - name: Configure SNMP
+      blockinfile:
+        path: /etc/snmp/snmpd.conf
+        create: yes
+        block: |
+          master          agentx
+          agentAddress udp:161,udp6:[::1]:161
+
+          view   systemonly  included   .1.3.6.1.2.1.1
+          view   systemonly  included   .1.3.6.1.2.1.25.1
+
+          rocommunity public  default    -V systemonly
+          rocommunity6 public  default   -V systemonly
+          rwcommunity {{ community_string }}
+    - name: Remove snmp.conf
+      file:
+        path: /etc/snmp/snmp.conf
+        state: absent
+    - name: Disable security updates
+      apt:
+        name: unattended-upgrades
+        state: absent

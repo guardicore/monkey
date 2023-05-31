@@ -35,7 +35,7 @@ def patch_report_service_for_stats(monkeypatch):
     TEST_EXPLOITED_RESULTS = [
         MonkeyExploitation("", [], "", exploits=["SSH Exploiter"]),
         MonkeyExploitation("", [], "", exploits=["SSH Exploiter", "SMB Exploiter"]),
-        MonkeyExploitation("", [], "", exploits=["WMI Exploiter"]),
+        MonkeyExploitation("", [], "", exploits=["Exploiter 1"]),
     ]
 
     monkeypatch.setattr(ReportService, "get_scanned", lambda: TEST_SCANNED_RESULTS)
@@ -73,4 +73,4 @@ def test_get_propagation_stats__num_exploited_per_exploit(
 
     assert stats["num_exploited_per_exploit"]["SSH Exploiter"] == 2
     assert stats["num_exploited_per_exploit"]["SMB Exploiter"] == 1
-    assert stats["num_exploited_per_exploit"]["WMI Exploiter"] == 1
+    assert stats["num_exploited_per_exploit"]["Exploiter 1"] == 1

@@ -1,0 +1,21 @@
+name: PowerShell
+plugin_type: Exploiter
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - windows
+title: PowerShell Exploiter
+version: 1.0.0
+description: >-
+    Exploits PowerShell remote execution setups. PowerShell Remoting uses
+    Windows Remote Management (WinRM) to allow users to run PowerShell commands
+    on remote computers.
+safe: true
+remediation_suggestion: >-
+    Restrict PowerShell remote command execution and/or harden the credentials of relevant users.
+
+    The machine is vulnerable to a PowerShell Remoting attack.
+    This attack was possible because the target machine had PowerShell Remoting enabled
+    and Infection Monkey had access to correct credentials.
+link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/powershell

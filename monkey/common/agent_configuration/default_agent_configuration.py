@@ -1,4 +1,5 @@
 from copy import deepcopy
+from typing import Dict
 
 from . import AgentConfiguration
 from .agent_sub_configurations import (
@@ -7,16 +8,13 @@ from .agent_sub_configurations import (
     ICMPScanConfiguration,
     NetworkScanConfiguration,
     PluginConfiguration,
+    PolymorphismConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
     TCPScanConfiguration,
 )
 
-CREDENTIAL_COLLECTORS = ("MimikatzCollector", "SSHCollector")
-
-CREDENTIAL_COLLECTOR_CONFIGURATION = tuple(
-    PluginConfiguration(name=collector, options={}) for collector in CREDENTIAL_COLLECTORS
-)
+CREDENTIALS_COLLECTORS: Dict[str, Dict] = {}
 
 RANSOMWARE_OPTIONS = {
     "encryption": {
@@ -72,12 +70,9 @@ NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
 EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports=HTTP_PORTS)
 
 # Order is preserved and agent will run exploiters in this sequence
-EXPLOITERS = {
+EXPLOITERS: Dict[str, Dict] = {
     "Log4ShellExploiter": {},
-    "MSSQLExploiter": {},
-    "PowerShellExploiter": {},
     "SSHExploiter": {},
-    "WmiExploiter": {"smb_download_timeout": 30},
 }
 
 EXPLOITATION_CONFIGURATION = ExploitationConfiguration(
@@ -93,10 +88,11 @@ PROPAGATION_CONFIGURATION = PropagationConfiguration(
 
 DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     keep_tunnel_open_time=30,
-    credential_collectors=CREDENTIAL_COLLECTOR_CONFIGURATION,
+    credentials_collectors=CREDENTIALS_COLLECTORS,
     payloads=PAYLOAD_CONFIGURATION,
     propagation=PROPAGATION_CONFIGURATION,
+    polymorphism=PolymorphismConfiguration(randomize_agent_hash=False),
 )
 
 DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = deepcopy(DEFAULT_AGENT_CONFIGURATION)
-DEFAULT_RANSOMWARE_AGENT_CONFIGURATION.credential_collectors = tuple()
+DEFAULT_RANSOMWARE_AGENT_CONFIGURATION.credentials_collectors = {}

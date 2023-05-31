@@ -1,7 +1,8 @@
+from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
-from serpentarium import MultiprocessingPlugin, PluginLoader
+from serpentarium import MultiprocessingPlugin, PluginLoader, SingleUsePlugin
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
@@ -15,6 +16,7 @@ from infection_monkey.island_api_client import (
     IslandAPIRequestError,
 )
 from infection_monkey.network import TCPPortSelector
+from infection_monkey.plugin.i_plugin_factory import IPluginFactory
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor
 
@@ -62,12 +64,7 @@ def dummy_otp_provider() -> IAgentOTPProvider:
 )
 def test_get_plugin__error_handling(
     dummy_plugin_source_extractor: PluginSourceExtractor,
-    dummy_plugin_loader: PluginLoader,
-    dummy_agent_binary_repository: IAgentBinaryRepository,
-    dummy_agent_event_publisher: IAgentEventPublisher,
-    dummy_propagation_credentials_repository: IPropagationCredentialsRepository,
-    dummy_tcp_port_selector: TCPPortSelector,
-    dummy_otp_provider: IAgentOTPProvider,
+    mock_plugin_factories: Dict[AgentPluginType, IPluginFactory],
     error_raised_by_island_api_client: Exception,
     error_raised_by_plugin_registry: Exception,
 ):
@@ -79,13 +76,7 @@ def test_get_plugin__error_handling(
         OperatingSystem.LINUX,
         mock_island_api_client,
         dummy_plugin_source_extractor,
-        dummy_plugin_loader,
-        dummy_agent_binary_repository,
-        dummy_agent_event_publisher,
-        dummy_propagation_credentials_repository,
-        dummy_tcp_port_selector,
-        dummy_otp_provider,
-        AGENT_ID,
+        mock_plugin_factories,
     )
 
     with pytest.raises(error_raised_by_plugin_registry):
@@ -95,17 +86,19 @@ def test_get_plugin__error_handling(
 PLUGIN_NAME = "test_plugin"
 
 
-@pytest.fixture
-def agent_plugin() -> AgentPlugin:
-    manifest = AgentPluginManifest(
-        name=PLUGIN_NAME, version="1.0.0", plugin_type=AgentPluginType.EXPLOITER
-    )
+def agent_plugin_of_type(plugin_type: AgentPluginType) -> AgentPlugin:
+    manifest = AgentPluginManifest(name=PLUGIN_NAME, version="1.0.0", plugin_type=plugin_type)
     return AgentPlugin(
         plugin_manifest=manifest,
         config_schema={},
         source_archive=b"1234",
         supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     )
+
+
+@pytest.fixture
+def agent_plugin() -> AgentPlugin:
+    return agent_plugin_of_type(AgentPluginType.EXPLOITER)
 
 
 @pytest.fixture
@@ -131,27 +124,24 @@ def mock_plugin_loader() -> PluginLoader:
 
 
 @pytest.fixture
+def mock_plugin_factories() -> Dict[AgentPluginType, IPluginFactory]:
+    return {
+        AgentPluginType.EXPLOITER: MagicMock(spec=IPluginFactory),
+        AgentPluginType.CREDENTIALS_COLLECTOR: MagicMock(spec=IPluginFactory),
+    }
+
+
+@pytest.fixture
 def plugin_registry(
     mock_island_api_client: IIslandAPIClient,
     mock_plugin_source_extractor: PluginSourceExtractor,
-    mock_plugin_loader: PluginLoader,
-    dummy_agent_binary_repository: IAgentBinaryRepository,
-    dummy_agent_event_publisher: IAgentEventPublisher,
-    dummy_propagation_credentials_repository: IPropagationCredentialsRepository,
-    dummy_tcp_port_selector: TCPPortSelector,
-    dummy_otp_provider: IAgentOTPProvider,
+    mock_plugin_factories,
 ) -> PluginRegistry:
     return PluginRegistry(
         OperatingSystem.LINUX,
         mock_island_api_client,
         mock_plugin_source_extractor,
-        mock_plugin_loader,
-        dummy_agent_binary_repository,
-        dummy_agent_event_publisher,
-        dummy_propagation_credentials_repository,
-        dummy_tcp_port_selector,
-        dummy_otp_provider,
-        AGENT_ID,
+        mock_plugin_factories,
     )
 
 
@@ -169,15 +159,44 @@ def test_load_plugin_from_island__only_downloaded_once(
 
 
 def test_load_plugin_from_island__return_copy(
-    agent_plugin: AgentPlugin,
-    mock_island_api_client: IIslandAPIClient,
-    mock_plugin_source_extractor: PluginSourceExtractor,
-    mock_plugin_loader: PluginLoader,
+    mock_plugin_factories: Dict[AgentPluginType, IPluginFactory],
     plugin_registry: PluginRegistry,
 ):
+    mock_plugin_factories[AgentPluginType.EXPLOITER].create.return_value = MagicMock(
+        spec=SingleUsePlugin
+    )
     plugin1 = plugin_registry.get_plugin(AgentPluginType.EXPLOITER, PLUGIN_NAME)
     plugin2 = plugin_registry.get_plugin(AgentPluginType.EXPLOITER, PLUGIN_NAME)
 
     assert plugin1.__class__ == plugin2.__class__
     assert plugin1.name == plugin2.name
     assert id(plugin1) != id(plugin2)
+
+
+@pytest.mark.parametrize(
+    "plugin_type",
+    [AgentPluginType.CREDENTIALS_COLLECTOR, AgentPluginType.EXPLOITER],
+)
+def test_get_plugin__loads_supported_plugin_types(
+    mock_island_api_client: IIslandAPIClient,
+    mock_plugin_factories: Dict[AgentPluginType, IPluginFactory],
+    plugin_registry: PluginRegistry,
+    plugin_type,
+):
+    agent_plugin = agent_plugin_of_type(plugin_type)
+    mock_island_api_client.get_agent_plugin = MagicMock(return_value=agent_plugin)
+
+    plugin_registry.get_plugin(plugin_type, PLUGIN_NAME)
+
+    assert mock_plugin_factories[plugin_type].create.called
+
+
+@pytest.mark.parametrize(
+    "plugin_type",
+    [AgentPluginType.FINGERPRINTER, AgentPluginType.PAYLOAD],
+)
+def test_get_plugin__raises_error_for_unsupported_plugin_types(
+    plugin_registry: PluginRegistry, plugin_type
+):
+    with pytest.raises(UnknownPluginError):
+        plugin_registry.get_plugin(plugin_type, PLUGIN_NAME)

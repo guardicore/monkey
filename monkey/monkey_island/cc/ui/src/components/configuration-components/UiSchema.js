@@ -95,10 +95,30 @@ export default function UiSchema(props) {
         }
       }
     },
-    credential_collectors: {
-      'ui:widget': AdvancedMultiSelect,
-      credential_collectors_classes: {
-        'ui:classNames': 'config-template-no-header'
+    credentials_collectors: {
+      'ui:ObjectFieldTemplate': PluginSelectorTemplate
+    },
+    masquerade: {
+      linux: {
+        masque_base64: {
+          'ui:widget': 'textarea',
+          'ui:options': {
+            rows: 3
+          }
+        }
+      },
+      windows: {
+        masque_base64: {
+          'ui:widget': 'textarea',
+          'ui:options': {
+            rows: 3
+          }
+        }
+      }
+    },
+    polymorphism: {
+      randomize_agent_hash: {
+        'ui:widget': CheckboxWithMessage
       }
     }
   };

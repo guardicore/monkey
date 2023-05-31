@@ -16,7 +16,7 @@ jsonschema = "==3.2.0"
 requests = ">=2.24"
 ring = ">=0.7.3"
 Flask-RESTful = ">=0.3.8"
-Flask = ">=1.1"
+Flask = "==2.2.5"  # v2.3.0 removes JSONEncoder which causes exceptions
 Flask-Limiter = "*"
 Werkzeug = ">=1.0.1"
 pyaescrypt = "*"
@@ -37,6 +37,7 @@ semver = "==2.13.0"
 flask-security-too = "*"
 flask-mongoengine = "*"
 bleach = "*"
+email-validator = "*"
 
 [dev-packages]
 virtualenv = "==20.16.2" # Pinned to 20.16.2 due to importlib-metadat/flake8 issue

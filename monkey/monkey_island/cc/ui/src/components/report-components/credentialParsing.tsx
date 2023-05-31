@@ -10,9 +10,11 @@ export function getAllUsernames(stolen, configured): string[]{
 export function getCredentialsUsernames(credentials): string[]{
   let usernames = [];
   for (let credential of credentials) {
-    let username = credential['identity'];
-    if (username !== null && username !== undefined) {
-      usernames.push(username['username']);
+    let identity = credential['identity'];
+    if (identity !== null && identity !== undefined) {
+      if ('username' in identity) {
+        usernames.push(identity['username']);
+      }
     }
   }
   return usernames;

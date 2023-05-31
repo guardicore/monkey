@@ -21,8 +21,12 @@ VICTIM_ZERO_ID = uuid4()
 VICTIM_TWO_ID = uuid4()
 VICTIM_THREE_ID = uuid4()
 
+AGENT_SHA256 = "087ef38f6c65013519853f192decca09ca45a1ed289fe12a7829e1d29d198362"
 PROGENITOR_AGENT = Agent(
-    id=VICTIM_ZERO_ID, machine_id=1, start_time=datetime.fromtimestamp(1661856718)
+    id=VICTIM_ZERO_ID,
+    machine_id=1,
+    start_time=datetime.fromtimestamp(1661856718),
+    sha256=AGENT_SHA256,
 )
 
 DESCENDANT_AGENT = Agent(
@@ -30,6 +34,7 @@ DESCENDANT_AGENT = Agent(
     machine_id=4,
     start_time=datetime.fromtimestamp(1661856868),
     parent_id=VICTIM_TWO_ID,
+    sha256=AGENT_SHA256,
 )
 
 RUNNING_AGENTS = (
@@ -39,6 +44,7 @@ RUNNING_AGENTS = (
         machine_id=2,
         start_time=datetime.fromtimestamp(1661856818),
         parent_id=VICTIM_ZERO_ID,
+        sha256=AGENT_SHA256,
     ),
     DESCENDANT_AGENT,
 )
@@ -49,6 +55,7 @@ STOPPED_AGENTS = (
         start_time=datetime.fromtimestamp(1661856758),
         parent_id=VICTIM_ZERO_ID,
         stop_time=datetime.fromtimestamp(1661856773),
+        sha256=AGENT_SHA256,
     ),
 )
 AGENTS = (
@@ -99,6 +106,7 @@ def test_upsert_agent__insert(agent_repository):
         machine_id=2,
         start_time=datetime.fromtimestamp(1661858139),
         parent_id=VICTIM_ZERO_ID,
+        sha256=AGENT_SHA256,
     )
 
     agent_repository.upsert_agent(new_agent)
@@ -208,7 +216,9 @@ def test_get_progenitor(agent_repository, agent):
 
 
 def test_get_progenitor__id_not_found(agent_repository):
-    dummy_agent = Agent(id=uuid4(), machine_id=10, start_time=datetime.now(), parent_id=uuid4())
+    dummy_agent = Agent(
+        id=uuid4(), machine_id=10, start_time=datetime.now(), parent_id=uuid4(), sha256=AGENT_SHA256
+    )
     with pytest.raises(UnknownRecordError):
         agent_repository.get_progenitor(dummy_agent)
 

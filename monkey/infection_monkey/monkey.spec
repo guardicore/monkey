@@ -61,7 +61,13 @@ def process_datas(orig_datas):
 
 
 def get_hidden_imports():
-    imports = ['_cffi_backend', '_mssql']
+    # Powershell plugin requires `cryptography.hazmat.primitives.padding`. Unfortunately, since the
+    # agent already imports `cryptography`, the plugin will use the agent's `cryptography` instead
+    # of its own vendored version. Since the agent doesn't use
+    # `cryptography.hazmat.primitives.padding`, pyinstaller will not include it unless we
+    # explicitly tell it to. Once the remainder of the exploiters (SSH and Log4Shell) are migrated
+    # to plugins, we can attempt to remove the cryptography dependency from the agent entirely.
+    imports = ['_cffi_backend', '_mssql', 'asyncore', 'logging.config', 'cryptography.hazmat.primitives.padding', 'xml.dom']
     if is_windows():
         imports.append('queue')
         imports.append('pkg_resources.py2_warn')

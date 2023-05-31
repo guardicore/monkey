@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Iterable, Mapping
 from unittest.mock import MagicMock
 
 import mongomock
@@ -136,7 +136,7 @@ def test_mongo_repository_reset__removal_error(error_raising_credentials_reposit
 def test_configured_secrets_encrypted(
     mongo_repository: MongoCredentialsRepository,
     mongo_client: MongoClient,
-    credentials: Sequence[Credentials],
+    credentials: Credentials,
 ):
     mongo_repository.save_configured_credentials([credentials])
     check_if_stored_credentials_encrypted(mongo_client, credentials)
@@ -158,11 +158,16 @@ def check_if_stored_credentials_encrypted(mongo_client: MongoClient, original_cr
                 assert credentials_component is None
             else:
                 for key, value in credentials_component.items():
-                    assert original_credentials_mapping[identity_or_secret][key] != value.decode()
+                    if original_credentials_mapping[identity_or_secret][key] is not None:
+                        assert original_credentials_mapping[identity_or_secret][key] != (
+                            value.decode()
+                        )
+                        assert "***" not in value.decode()
+                    else:
+                        assert value is None
 
                     # Since secrets use the pydantic.SecretType, make sure we're not just storing
                     # all '*' characters.
-                    assert "***" not in value.decode()
 
 
 def get_all_credentials_in_mongo(mongo_client: MongoClient) -> Iterable[Mapping[str, Any]]:

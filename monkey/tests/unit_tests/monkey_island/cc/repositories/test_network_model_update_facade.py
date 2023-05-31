@@ -32,6 +32,7 @@ SOURCE_MACHINE = Machine(
     network_interfaces=[IPv4Interface(SOURCE_IP_ADDRESS)],
 )
 
+AGENT_SHA256 = "0204d7e486443c17c30a822ac191feca4fcfd038b3a33d8227499a69828dca1f"
 SOURCE_AGENT_ID = UUID("655fd01c-5eec-4e42-b6e3-1fb738c2978d")
 SOURCE_AGENT = Agent(
     id=SOURCE_AGENT_ID,
@@ -39,6 +40,7 @@ SOURCE_AGENT = Agent(
     start_time=0,
     parent_id=None,
     cc_server=(SocketAddress(ip="10.10.10.10", port=5000)),
+    sha256=AGENT_SHA256,
 )
 
 TARGET_IP_ADDRESS = IPv4Address("10.10.10.100")

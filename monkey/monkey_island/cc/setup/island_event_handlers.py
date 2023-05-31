@@ -5,14 +5,11 @@ from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.island_event_handlers import (
     AgentHeartbeatMonitor,
     handle_agent_registration,
-    reset_agent_configuration,
     reset_machine_repository,
-    set_agent_configuration_per_island_mode,
 )
 from monkey_island.cc.repositories import (
     AgentMachineFacade,
     IAgentEventRepository,
-    IAgentLogRepository,
     IAgentRepository,
     ICredentialsRepository,
     INodeRepository,
@@ -27,7 +24,6 @@ def setup_island_event_handlers(container: DIContainer):
 
     _subscribe_agent_heartbeat_events(island_event_queue, container)
     _subscribe_agent_registration_events(island_event_queue, container)
-    _subscribe_reset_agent_configuration_events(island_event_queue, container)
     _subscribe_clear_simulation_data_events(island_event_queue, container)
     _subscribe_set_island_mode_events(island_event_queue, container)
     _subscribe_terminate_agents_events(island_event_queue, container)
@@ -53,14 +49,6 @@ def _subscribe_agent_registration_events(
     island_event_queue.subscribe(topic, container.resolve(handle_agent_registration))
 
 
-def _subscribe_reset_agent_configuration_events(
-    island_event_queue: IIslandEventQueue, container: DIContainer
-):
-    topic = IslandEventTopic.RESET_AGENT_CONFIGURATION
-
-    island_event_queue.subscribe(topic, container.resolve(reset_agent_configuration))
-
-
 def _subscribe_clear_simulation_data_events(
     island_event_queue: IIslandEventQueue, container: DIContainer
 ):
@@ -79,7 +67,6 @@ def _subscribe_clear_simulation_data_events(
 
     for i_repository in [
         IAgentEventRepository,
-        IAgentLogRepository,
         IAgentRepository,
         INodeRepository,
     ]:
@@ -91,8 +78,6 @@ def _subscribe_set_island_mode_events(
     island_event_queue: IIslandEventQueue, container: DIContainer
 ):
     topic = IslandEventTopic.SET_ISLAND_MODE
-
-    island_event_queue.subscribe(topic, container.resolve(set_agent_configuration_per_island_mode))
 
     simulation_repository = container.resolve(ISimulationRepository)
     island_event_queue.subscribe(topic, simulation_repository.set_mode)

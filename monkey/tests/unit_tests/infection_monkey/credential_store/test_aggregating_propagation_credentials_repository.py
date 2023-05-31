@@ -1,3 +1,4 @@
+from typing import List
 from unittest.mock import MagicMock
 
 import pytest
@@ -9,7 +10,8 @@ from tests.data_for_tests.propagation_credentials import (
     PASSWORD_1,
     PASSWORD_2,
     PASSWORD_3,
-    PRIVATE_KEY,
+    PRIVATE_KEY_1,
+    PRIVATE_KEY_2,
     PUBLIC_KEY,
     SPECIAL_USERNAME,
     USERNAME,
@@ -25,10 +27,16 @@ TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS = {
     "exploit_password_list": {PASSWORD_1, PASSWORD_2, PASSWORD_3},
     "exploit_lm_hash_list": {LM_HASH},
     "exploit_ntlm_hash_list": {NT_HASH},
-    "exploit_ssh_keys": [{"public_key": PUBLIC_KEY, "private_key": PRIVATE_KEY}],
 }
 
-EMPTY_CHANNEL_CREDENTIALS = []
+TRANSFORMED_CONTROL_CHANNEL_SSH_KEYS = {
+    "exploit_ssh_keys": [
+        {"public_key": PUBLIC_KEY, "private_key": PRIVATE_KEY_1},
+        {"public_key": None, "private_key": PRIVATE_KEY_2},
+    ],
+}
+
+EMPTY_CHANNEL_CREDENTIALS: List[Credentials] = []
 
 STOLEN_USERNAME_1 = "user1"
 STOLEN_USERNAME_2 = "user2"
@@ -88,6 +96,19 @@ def test_get_credentials_from_repository(aggregating_credentials_repository, key
     assert actual_stored_credentials[key] == TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS[key]
 
 
+def test_get_ssh_keys_from_repository(aggregating_credentials_repository):
+    actual_stored_credentials = aggregating_credentials_repository.get_credentials()
+    actual_stored_credentials_set = {
+        frozenset(ssh_key.items()) for ssh_key in actual_stored_credentials["exploit_ssh_keys"]
+    }
+
+    expected_credentials_set = {
+        frozenset(ssh_key.items())
+        for ssh_key in TRANSFORMED_CONTROL_CHANNEL_SSH_KEYS["exploit_ssh_keys"]
+    }
+    assert actual_stored_credentials_set == expected_credentials_set
+
+
 def test_add_credentials_to_repository(aggregating_credentials_repository):
     aggregating_credentials_repository.add_credentials(STOLEN_CREDENTIALS)
     aggregating_credentials_repository.add_credentials(STOLEN_SSH_KEYS_CREDENTIALS)
@@ -115,7 +136,7 @@ def test_add_credentials_to_repository(aggregating_credentials_repository):
     assert actual_stored_credentials["exploit_lm_hash_list"] == set([LM_HASH, STOLEN_LM_HASH])
     assert actual_stored_credentials["exploit_ntlm_hash_list"] == set([NT_HASH, STOLEN_NT_HASH])
 
-    assert len(actual_stored_credentials["exploit_ssh_keys"]) == 3
+    assert len(actual_stored_credentials["exploit_ssh_keys"]) == 4
 
 
 def test_all_keys_if_credentials_empty():

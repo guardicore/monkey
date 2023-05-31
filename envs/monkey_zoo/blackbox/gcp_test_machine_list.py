@@ -29,6 +29,7 @@ GCP_TEST_MACHINE_LIST = {
         "log4j-solr-50",
         "log4j-tomcat-51",
         "log4j-tomcat-52",
+        "snmp-20",
     ],
 }
 
@@ -53,6 +54,7 @@ DEPTH_1_A = {
         "log4j-solr-50",
         "log4j-tomcat-51",
         "log4j-tomcat-52",
+        "snmp-20",
     ],
 }
 
@@ -93,13 +95,6 @@ CREDENTIALS_REUSE_SSH_KEY = {
     ],
 }
 
-WMI_AND_MIMIKATZ = {
-    "europe-west3-a": [
-        "mimikatz-14",
-        "mimikatz-15",
-    ]
-}
-
 SMB_PTH = {"europe-west3-a": ["mimikatz-15"]}
 
 GCP_SINGLE_TEST_LIST = {
@@ -109,6 +104,5 @@ GCP_SINGLE_TEST_LIST = {
     "test_depth_4_a": DEPTH_4_A,
     "test_zerologon_exploiter": ZEROLOGON,
     "test_credentials_reuse_ssh_key": CREDENTIALS_REUSE_SSH_KEY,
-    "test_wmi_and_mimikatz_exploiters": WMI_AND_MIMIKATZ,
     "test_smb_pth": SMB_PTH,
 }

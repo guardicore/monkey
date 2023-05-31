@@ -12,13 +12,19 @@ from monkey_island.cc.models import Agent
 from monkey_island.cc.repositories import IAgentRepository, UnknownRecordError
 
 AGENT_ID = UUID("1d8ce743-a0f4-45c5-96af-91106529d3e2")
+AGENT_SHA256 = "35f129207bbe966ef786d0db4aab5113f3d6ea673a0c6890c2e9116617c9816f"
 MACHINE_ID = 11
 CC_SERVER = SocketAddress(ip="10.10.10.100", port="5000")
 
 
 def get_agent_object() -> Agent:
     return Agent(
-        id=AGENT_ID, machine_id=MACHINE_ID, start_time=0, parent_id=None, cc_server=CC_SERVER
+        id=AGENT_ID,
+        machine_id=MACHINE_ID,
+        start_time=0,
+        parent_id=None,
+        cc_server=CC_SERVER,
+        sha256=AGENT_SHA256,
     )
 
 

@@ -1,4 +1,4 @@
-from pathlib import WindowsPath
+from pathlib import PosixPath, WindowsPath
 
 from common.utils.environment import is_windows_os
 
@@ -41,7 +41,7 @@ def _get_acl_and_sid_from_path(path: WindowsPath):
     return acl, sid
 
 
-def assert_linux_permissions(path: str):
+def assert_linux_permissions(path: PosixPath):
     st = os.stat(path)
 
     expected_mode = stat.S_IRWXU

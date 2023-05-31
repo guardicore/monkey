@@ -33,6 +33,12 @@ lower() {
 get_plugin_filename() {
     _plugin_path=${1:-"."}
 
+    # if "manifest.yaml" doesn't exist, assume the file is called "manifest.yml"
+    # the script will fail if that doesn't exist either
+    if [ ! -f "${_plugin_path}/$MANIFEST_FILENAME" ]; then
+        MANIFEST_FILENAME=manifest.yml
+    fi
+
     _name=$(get_value_from_key "${_plugin_path}/$MANIFEST_FILENAME" name) || fail "Failed to get plugin name"
     _name=$(ltrim "$_name")
     _type=$(get_value_from_key "${_plugin_path}/$MANIFEST_FILENAME" plugin_type) || fail "Failed to get plugin type"

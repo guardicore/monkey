@@ -4,6 +4,7 @@ import time
 from http import HTTPStatus
 from typing import List, Mapping, Optional, Sequence
 
+from common import OperatingSystem
 from common.credentials import Credentials
 from common.types import AgentID, MachineID
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
@@ -34,8 +35,27 @@ class MonkeyIslandClient(object):
     def get_api_status(self):
         return self.requests.get("api")
 
+    @avoid_race_condition
+    def set_masque(self, masque):
+        masque = b"" if masque is None else masque
+        for operating_system in [operating_system.name for operating_system in OperatingSystem]:
+            if self.requests.put(f"api/agent-binaries/{operating_system}/masque", data=masque).ok:
+                formatted_masque = masque if len(masque) <= 64 else (masque[:64] + b"...")
+                LOGGER.info(f'Setting {operating_system} masque to "{formatted_masque}"')
+            else:
+                LOGGER.error(f"Failed to set {operating_system} masque")
+                assert False
+
+    def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
+        response = self.requests.get(f"api/agent-binaries/{operating_system.name}")
+        return response.content
+
     def get_propagation_credentials(self) -> Sequence[Credentials]:
         response = self.requests.get("api/propagation-credentials")
+        return [Credentials(**credentials) for credentials in response.json()]
+
+    def get_stolen_credentials(self) -> Sequence[Credentials]:
+        response = self.requests.get("api/propagation-credentials/stolen-credentials")
         return [Credentials(**credentials) for credentials in response.json()]
 
     @avoid_race_condition
@@ -113,6 +133,7 @@ class MonkeyIslandClient(object):
         self._reset_simulation_data()
         self._reset_credentials()
         self._reset_island_mode()
+        self.set_masque(b"")
 
     def _reset_agent_configuration(self):
         if self.requests.post("api/reset-agent-configuration", data=None).ok:

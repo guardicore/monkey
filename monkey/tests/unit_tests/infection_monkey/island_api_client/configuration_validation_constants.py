@@ -9,10 +9,9 @@ SCHEMA = {
             "minimum": 0,
             "type": "number",
         },
-        "credential_collectors": {
-            "title": "Credential collectors",
-            "type": "array",
-            "items": {"$ref": "#/definitions/PluginConfiguration"},
+        "credentials_collectors": {
+            "title": "Credentials collectors",
+            "type": "object",
         },
         "payloads": {
             "title": "Payloads",
@@ -22,8 +21,12 @@ SCHEMA = {
             "title": "Propagation",
             "allOf": [{"$ref": "#/definitions/PropagationConfiguration"}],
         },
+        "polymorphism": {
+            "title": "Polymorphism",
+            "allOf": [{"$ref": "#/definitions/PolymorphismConfiguration"}],
+        },
     },
-    "required": ["credential_collectors", "payloads", "propagation"],
+    "required": ["credentials_collectors", "payloads", "propagation"],
     "additionalProperties": False,
     "definitions": {
         "PluginConfiguration": {
@@ -203,31 +206,6 @@ SCHEMA = {
                             "link": "https://techdocs.akamai.com/infection-monkey/docs/powershell",
                             "properties": {},
                         },
-                        "WmiExploiter": {
-                            "type": "object",
-                            "title": "WMI Exploiter",
-                            "safe": True,
-                            "description": "Brute forces WMI (Windows Management Instrumentation) using credentials provided by user and hashes gathered by mimikatz.",
-                            "link": "https://techdocs.akamai.com/infection-monkey/docs/wmiexec/",
-                            "properties": {
-                                "smb_download_timeout": {
-                                    "title": "SMB download timeout",
-                                    "description": "Maximum time allowd for uploading the Agent binary to the target",
-                                    "type": "number",
-                                    "default": 30,
-                                    "minimum": 0,
-                                    "maximum": 100,
-                                }
-                            },
-                        },
-                        "MSSQLExploiter": {
-                            "type": "object",
-                            "title": "MSSQL Exploiter",
-                            "safe": True,
-                            "description": "Tries to brute force into MsSQL server and uses insecure configuration to execute commands on server.",
-                            "link": "https://techdocs.akamai.com/infection-monkey/docs/mssql/",
-                            "properties": {},
-                        },
                         "SSHExploiter": {
                             "type": "object",
                             "title": "SSH Exploiter",
@@ -318,6 +296,19 @@ SCHEMA = {
                 },
             },
             "required": ["network_scan", "exploitation"],
+            "additionalProperties": False,
+        },
+        "PolymorphismConfiguration": {
+            "title": "PolymorphismConfiguration",
+            "description": "A configuration for polymorphism\n\nAttributes:\n    :param randomize_agent_hash: If true, the Agent will emulate the property of polymorphism that all copies have unique hashes",
+            "type": "object",
+            "properties": {
+                "randomize_agent_hash": {
+                    "title": "Randomize Agent hash",
+                    "default": False,
+                },
+            },
+            "required": ["randomize_agent_hash"],
             "additionalProperties": False,
         },
     },

@@ -60,7 +60,7 @@ const getContents = (props) => {
   }
 
   function getOtp() {
-    IslandHttpClient.get(APIEndpoint.agent_otp, {}, true).then(res => {
+    IslandHttpClient.getJSON(APIEndpoint.agent_otp, {}, true).then(res => {
       setOtp(res.body.otp);
       restart(newExpirationTime());
     });
@@ -84,21 +84,31 @@ const getContents = (props) => {
 
   return (
     <>
+      <p style={{'fontSize': '1.2em'}}>
+        Choose the platform of the machine on which you want to run the Monkey:
+      </p>
       <DropdownSelect defaultKey={OS_TYPES.WINDOWS_64} options={osTypes} onClick={setOsType} variant={'outline-monkey'}/>
+      <p/>
+
+      <p style={{'fontSize': '1.2em'}}>
+        Choose the server from which the machine should download the binary:
+      </p>
       <DropdownSelect defaultKey={0} options={props.ips} onClick={setIp} variant={'outline-monkey'}/>
-      <div style={{'marginTop': '1.4em'}}>
-        <p style={{'fontSize': '1.2em'}}>
-          Run as a user by entering their username:
-        </p>
-        <div>
-          <Form>
-            <Form.Control
-              type="text"
-              onChange={input => setUsername(input.target.value.trim())}
-            />
-          </Form>
-        </div>
+      <p/>
+
+      <p style={{'fontSize': '1.2em'}}>
+        Run as a user by entering their username:
+      </p>
+      <div>
+        <Form>
+          <Form.Control
+            type="text"
+            onChange={input => setUsername(input.target.value.trim())}
+          />
+        </Form>
       </div>
+
+      <div style={{'marginTop': '1.4em'}}></div>
       <CommandDisplay commands={commands} onCopy={getOtp} />
       <div style={{marginTop: '-0.5em', marginBottom: '0.5em'}}>
         <CommandExpirationTimer minutes={minutes} seconds={seconds}/>

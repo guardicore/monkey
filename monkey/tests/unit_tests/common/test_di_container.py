@@ -2,7 +2,7 @@ import abc
 
 import pytest
 
-from common import DIContainer
+from common import DIContainer, UnresolvableDependencyError
 
 
 class IServiceA(metaclass=abc.ABCMeta):
@@ -113,7 +113,7 @@ def test_register_mixed_instance_and_type(container):
 
 
 def test_unregistered_type(container):
-    with pytest.raises(ValueError):
+    with pytest.raises(UnresolvableDependencyError):
         container.resolve(TestClass1)
 
 
@@ -166,7 +166,7 @@ def test_release_type(container):
     container.register(IServiceA, ServiceA)
     container.release(IServiceA)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(UnresolvableDependencyError):
         container.resolve(TestClass1)
 
 
@@ -176,7 +176,7 @@ def test_release_instance(container):
 
     container.release(IServiceA)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(UnresolvableDependencyError):
         container.resolve(TestClass1)
 
 
@@ -370,9 +370,9 @@ def test_register_convention__instance_properly_resolved(container):
 def test_release_convention(container):
     my_str = "test_string"
     container.register_convention(str, "my_str", my_str)
+    container.release_convention(str, "my_str")
 
-    with pytest.raises(ValueError):
-        container.release_convention(str, "my_str")
+    with pytest.raises(UnresolvableDependencyError):
         container.resolve(TestClass6)
 
 
