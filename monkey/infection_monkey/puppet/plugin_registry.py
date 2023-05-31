@@ -6,12 +6,10 @@ from typing import Dict
 from serpentarium import SingleUsePlugin
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginType, PluginSourceExtractor
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIRequestError
 from infection_monkey.plugin.i_plugin_factory import IPluginFactory
-
-from . import PluginSourceExtractor
 
 logger = logging.getLogger()
 

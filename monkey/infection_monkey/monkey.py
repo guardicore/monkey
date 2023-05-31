@@ -29,7 +29,7 @@ from common.agent_events import (
     OSDiscoveryEvent,
     PropagationEvent,
 )
-from common.agent_plugins import AgentPluginType
+from common.agent_plugins import AgentPluginType, PluginSourceExtractor
 from common.agent_registration_data import AgentRegistrationData
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
@@ -86,11 +86,7 @@ from infection_monkey.propagation_credentials_repository import (
     AggregatingPropagationCredentialsRepository,
     PropagationCredentialsRepository,
 )
-from infection_monkey.puppet import (
-    PluginCompatibilityVerifier,
-    PluginRegistry,
-    PluginSourceExtractor,
-)
+from infection_monkey.puppet import PluginCompatibilityVerifier, PluginRegistry
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.utils import agent_process, environment
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
