@@ -4,6 +4,7 @@ import logging
 import sys
 from ipaddress import IPv4Address
 from pathlib import Path
+from tempfile import gettempdir
 from threading import Thread
 from typing import Optional, Sequence, Tuple
 
@@ -13,6 +14,7 @@ from gevent.pywsgi import WSGIServer
 
 from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment
+from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.setup.config_setup import get_server_config
 
@@ -23,7 +25,14 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
 from common import DIContainer  # noqa: E402
+from common.agent_event_serializers import AgentEventSerializerRegistry  # noqa: E402
+from common.agent_events import AgentEventRegistry  # noqa: E402
+from common.agent_plugins import PluginSourceExtractor, load_events  # noqa: E402
+from common.event_queue import IAgentEventQueue  # noqa: E402
 from common.network.network_utils import get_my_ip_addresses  # noqa: E402
+from common.utils.code_utils import secure_generate_random_string  # noqa: E402
+from common.utils.environment import get_os  # noqa: E402
+from common.utils.file_utils import create_secure_directory  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
@@ -68,7 +77,36 @@ def run_monkey_island():
     setup_island_event_handlers(container)
     setup_agent_event_handlers(container)
 
+    load_plugins(container)
+
     _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
+
+
+def load_plugins(container: DIContainer):
+    plugin_repository = container.resolve(IAgentPluginRepository)
+    plugin_dir = (
+        Path(gettempdir()) / f"infection_monkey_plugins_{secure_generate_random_string(n=20)}"
+    )
+    # TODO: Clean up the directory on exit
+    create_secure_directory(plugin_dir)
+    plugin_source_extractor = PluginSourceExtractor(plugin_dir)
+    agent_event_registry = container.resolve(AgentEventRegistry)
+    agent_event_serializer_registry = container.resolve(AgentEventSerializerRegistry)
+    agent_event_queue = container.resolve(IAgentEventQueue)
+
+    for plugin_type, manifest_dict in plugin_repository.get_all_plugin_manifests().items():
+        for name, manifest in manifest_dict.items():
+            if manifest.custom_events is not None:
+                # TODO: Alter IAgentPluginRepository to get agent_plugin without OS filter
+                agent_plugin = plugin_repository.get_plugin(get_os(), plugin_type, name)
+                plugin_source_extractor.extract_plugin_source(agent_plugin)
+                plugin_dir = plugin_source_extractor.plugin_destination_directory
+
+                plugin_events = load_events(name, plugin_dir)
+
+                plugin_events.register_events(agent_event_registry)
+                plugin_events.register_event_serializers(agent_event_serializer_registry)
+                plugin_events.register_event_handlers(container, agent_event_queue)
 
 
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
