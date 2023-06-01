@@ -248,9 +248,3 @@ class IIslandAPIClient(ABC):
         :raises IslandAPIError: If an unexpected error occurs while attempting to send the
                                 contents of the agent's log to the island
         """
-
-    @abstractmethod
-    def load_plugin_events(self, plugin_name: str, plugin_dir: Path):
-        """
-        Load plugin events from a plugin directory
-        """

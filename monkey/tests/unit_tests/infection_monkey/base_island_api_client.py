@@ -55,6 +55,3 @@ class BaseIslandAPIClient(IIslandAPIClient):
 
     def send_log(self, log_contents: str):
         return
-
-    def load_plugin_events(self, plugin_name: str, plugin_dir: Path):
-        return
