@@ -1,0 +1,34 @@
+from typing import Iterable, Type
+
+from common.agent_event_serializers import (
+    AgentEventSerializerRegistry,
+    PydanticAgentEventSerializer,
+)
+from common.agent_events import AgentEventRegistry
+from common.di_container import DIContainer
+from common.event_queue import IAgentEventQueue
+
+from .message_event import MessageEvent
+
+
+def handle_message_event(event: MessageEvent):
+    print(f"Received event: {event.message}")
+
+
+class Events:
+    def __init__(self):
+        self._event_classes = [MessageEvent]
+
+    def get_event_classes(self) -> Iterable[Type]:
+        return self._event_classes
+
+    def register_event_serializers(self, event_serializer_registry: AgentEventSerializerRegistry):
+        event_serializer_registry[MessageEvent] = PydanticAgentEventSerializer(MessageEvent)
+
+    def register_events(self, agent_event_registry: AgentEventRegistry):
+        agent_event_registry.register(MessageEvent)
+
+    def register_event_handlers(
+        self, di_container: DIContainer, agent_event_queue: IAgentEventQueue
+    ):
+        agent_event_queue.subscribe_type(MessageEvent, handle_message_event)
