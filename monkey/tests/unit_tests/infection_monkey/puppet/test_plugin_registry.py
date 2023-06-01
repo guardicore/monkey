@@ -5,6 +5,7 @@ import pytest
 from serpentarium import MultiprocessingPlugin, PluginLoader, SingleUsePlugin
 
 from common import OperatingSystem
+from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_plugins import (
     AgentPlugin,
     AgentPluginManifest,
@@ -63,6 +64,11 @@ def dummy_otp_provider() -> IAgentOTPProvider:
     return MagicMock(spec=IAgentOTPProvider)
 
 
+@pytest.fixture
+def dummy_agent_event_serializer_registry() -> AgentEventSerializerRegistry:
+    return MagicMock(spec=AgentEventSerializerRegistry)
+
+
 @pytest.mark.parametrize(
     "error_raised_by_island_api_client, error_raised_by_plugin_registry",
     [(IslandAPIRequestError, UnknownPluginError), (IslandAPIError, IslandAPIError)],
@@ -70,6 +76,7 @@ def dummy_otp_provider() -> IAgentOTPProvider:
 def test_get_plugin__error_handling(
     dummy_plugin_source_extractor: PluginSourceExtractor,
     mock_plugin_factories: Dict[AgentPluginType, IPluginFactory],
+    dummy_agent_event_serializer_registry: AgentEventSerializerRegistry,
     error_raised_by_island_api_client: Exception,
     error_raised_by_plugin_registry: Exception,
 ):
@@ -82,6 +89,7 @@ def test_get_plugin__error_handling(
         mock_island_api_client,
         dummy_plugin_source_extractor,
         mock_plugin_factories,
+        dummy_agent_event_serializer_registry,
     )
 
     with pytest.raises(error_raised_by_plugin_registry):
@@ -141,12 +149,14 @@ def plugin_registry(
     mock_island_api_client: IIslandAPIClient,
     mock_plugin_source_extractor: PluginSourceExtractor,
     mock_plugin_factories,
+    dummy_agent_event_serializer_registry: AgentEventSerializerRegistry,
 ) -> PluginRegistry:
     return PluginRegistry(
         OperatingSystem.LINUX,
         mock_island_api_client,
         mock_plugin_source_extractor,
         mock_plugin_factories,
+        dummy_agent_event_serializer_registry,
     )
 
 

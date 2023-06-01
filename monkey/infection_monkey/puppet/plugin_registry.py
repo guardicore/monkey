@@ -6,7 +6,8 @@ from typing import Dict
 from serpentarium import SingleUsePlugin
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginType, PluginSourceExtractor
+from common.agent_event_serializers import AgentEventSerializerRegistry
+from common.agent_plugins import AgentPlugin, AgentPluginType, PluginSourceExtractor, load_events
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIRequestError
 from infection_monkey.plugin.i_plugin_factory import IPluginFactory
@@ -21,6 +22,7 @@ class PluginRegistry:
         island_api_client: IIslandAPIClient,
         plugin_source_extractor: PluginSourceExtractor,
         plugin_factories: Dict[AgentPluginType, IPluginFactory],
+        agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
         """
         `self._registry` looks like -
@@ -37,6 +39,7 @@ class PluginRegistry:
         self._island_api_client = island_api_client
         self._plugin_source_extractor = plugin_source_extractor
         self._plugin_factories = plugin_factories
+        self._agent_event_serializer_registry = agent_event_serializer_registry
 
         self._lock = RLock()
 
@@ -62,6 +65,16 @@ class PluginRegistry:
     def _load_plugin_from_island(self, plugin_name: str, plugin_type: AgentPluginType):
         agent_plugin = self._download_plugin_from_island(plugin_name, plugin_type)
         self._plugin_source_extractor.extract_plugin_source(agent_plugin)
+
+        if agent_plugin.plugin_manifest.custom_events is not None:
+            plugin_dir = self._plugin_source_extractor.plugin_destination_directory
+
+            # The local event serializer registry must be updated
+            plugin_events = load_events(plugin_name, plugin_dir)
+            plugin_events.register_event_serializers(self._agent_event_serializer_registry)
+
+            # This is needed in order for the event to be present in the Manager process
+            self._island_api_client.load_plugin_events(plugin_name, plugin_dir)
 
         if plugin_type in self._plugin_factories:
             factory = self._plugin_factories[plugin_type]

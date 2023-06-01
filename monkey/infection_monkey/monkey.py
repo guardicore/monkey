@@ -427,6 +427,7 @@ class InfectionMonkey:
             self._island_api_client,
             plugin_source_extractor,
             plugin_factories,
+            self._agent_event_serializer_registry,
         )
         plugin_compatibility_verifier = PluginCompatibilityVerifier(
             self._island_api_client,
