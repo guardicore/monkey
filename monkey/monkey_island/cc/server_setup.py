@@ -27,7 +27,8 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
 from common import DIContainer  # noqa: E402
 from common.agent_event_serializers import AgentEventSerializerRegistry  # noqa: E402
 from common.agent_events import AgentEventRegistry  # noqa: E402
-from common.agent_plugins import PluginSourceExtractor, load_events  # noqa: E402
+from common.agent_plugins import PluginSourceExtractor  # noqa: E402
+from common.agent_plugins.plugin_events_loader import load_events  # noqa: E402
 from common.event_queue import IAgentEventQueue  # noqa: E402
 from common.network.network_utils import get_my_ip_addresses  # noqa: E402
 from common.utils.code_utils import secure_generate_random_string  # noqa: E402

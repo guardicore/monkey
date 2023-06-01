@@ -123,7 +123,11 @@ class InfectionMonkey:
 
         self._agent_event_forwarder = None
         self._agent_event_queue = self._setup_agent_event_queue()
-        self._agent_event_serializer_registry = self._setup_agent_event_serializers()
+        SyncManager.register(
+            "AgentEventSerializerRegistry",
+            AgentEventSerializerRegistry,
+            exposed=("__getitem__", "__setitem__", "load_plugin_events"),
+        )
 
         plugin_event_queue = context.Queue()
         self._plugin_event_forwarder = PluginEventForwarder(
@@ -131,14 +135,13 @@ class InfectionMonkey:
         )
         self._agent_event_publisher = QueuedAgentEventPublisher(plugin_event_queue)
 
-        http_island_api_client_factory = HTTPIslandAPIClientFactory(
-            self._agent_event_serializer_registry, self._agent_id, context.Lock()
-        )
+        http_island_api_client_factory = HTTPIslandAPIClientFactory(self._agent_id, context.Lock())
         # Register a proxy for HTTPIslandAPIClient. The manager will create and own the instance
         SyncManager.register(
             "HTTPIslandAPIClient", http_island_api_client_factory.create_island_api_client
         )
         self._manager = context.Manager()
+        self._agent_event_serializer_registry = self._setup_agent_event_serializers(self._manager)
 
         self._plugin_dir = (
             Path(gettempdir())
@@ -244,7 +247,7 @@ class InfectionMonkey:
             if island_api_statuses[server]:
                 try:
                     island_api_client = manager.HTTPIslandAPIClient(  # type: ignore[attr-defined]
-                        server
+                        server, self._agent_event_serializer_registry
                     )
                     island_api_client.login(self._otp)
 
@@ -360,8 +363,10 @@ class InfectionMonkey:
         return pypubsub_agent_event_queue
 
     # TODO: This is just a placeholder for now. We will modify/integrate it with PR #2279.
-    def _setup_agent_event_serializers(self) -> AgentEventSerializerRegistry:
-        agent_event_serializer_registry = AgentEventSerializerRegistry()
+    def _setup_agent_event_serializers(self, manager: SyncManager) -> AgentEventSerializerRegistry:
+        agent_event_serializer_registry = (
+            manager.AgentEventSerializerRegistry()  # type: ignore[attr-defined]
+        )
         register_common_agent_event_serializers(agent_event_serializer_registry)
 
         return agent_event_serializer_registry

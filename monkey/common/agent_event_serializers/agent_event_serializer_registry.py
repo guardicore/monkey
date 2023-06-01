@@ -1,10 +1,12 @@
+from pathlib import Path
 from typing import Type, Union
 
-from common.agent_event_serializers import IAgentEventSerializer
+from common.agent_event_serializers import IAgentEventSerializer, IAgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
+from common.agent_plugins.plugin_events_loader import load_events
 
 
-class AgentEventSerializerRegistry:
+class AgentEventSerializerRegistry(IAgentEventSerializerRegistry):
     """
     Registry for event serializers using event class.
 
@@ -43,3 +45,7 @@ class AgentEventSerializerRegistry:
             )
 
         return self._registry[event_class]
+
+    def load_plugin_events(self, plugin_name: str, plugin_dir: Path):
+        plugin_events = load_events(plugin_name, plugin_dir)
+        plugin_events.register_event_serializers(self)

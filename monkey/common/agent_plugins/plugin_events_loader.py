@@ -5,7 +5,7 @@ from typing import Iterable, Type
 
 from typing_extensions import Protocol
 
-from common.agent_event_serializers import AgentEventSerializerRegistry
+from common.agent_event_serializers import IAgentEventSerializerRegistry
 from common.agent_events import AgentEventRegistry
 from common.di_container import DIContainer
 from common.event_queue import IAgentEventQueue
@@ -15,7 +15,7 @@ class PluginEvents(Protocol):
     def get_event_classes(self) -> Iterable[Type]:
         pass
 
-    def register_event_serializers(self, registry: AgentEventSerializerRegistry):
+    def register_event_serializers(self, registry: IAgentEventSerializerRegistry):
         pass
 
     def register_events(self, registry: AgentEventRegistry):
