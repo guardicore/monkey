@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, Dict, Sequence
 
 from jsonschema import validate
@@ -79,3 +80,6 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
 
     def send_log(self, log_contents: str):
         return self._island_api_client.send_log(log_contents)
+
+    def load_plugin_events(self, plugin_name: str, plugin_dir: Path):
+        return self._island_api_client.load_plugin_events(plugin_name, plugin_dir)

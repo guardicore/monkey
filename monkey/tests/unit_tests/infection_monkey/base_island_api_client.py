@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, Dict, Sequence
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
@@ -53,4 +54,7 @@ class BaseIslandAPIClient(IIslandAPIClient):
         return
 
     def send_log(self, log_contents: str):
+        return
+
+    def load_plugin_events(self, plugin_name: str, plugin_dir: Path):
         return

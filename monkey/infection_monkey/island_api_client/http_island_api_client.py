@@ -1,6 +1,7 @@
 import functools
 import json
 import logging
+from pathlib import Path
 from pprint import pformat
 from time import sleep
 from typing import Any, Dict, List, Sequence
@@ -13,7 +14,7 @@ from common import AgentHeartbeat, AgentRegistrationData, AgentSignals, Operatin
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType, load_events
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from common.credentials import Credentials
@@ -228,3 +229,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             f"/agent-logs/{self._agent_id}",
             log_contents,
         )
+
+    def load_plugin_events(self, plugin_name: str, plugin_dir: Path):
+        plugin_events = load_events(plugin_name, plugin_dir)
+        plugin_events.register_event_serializers(self._agent_event_serializer_registry)

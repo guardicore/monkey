@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any, Dict, Sequence
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
@@ -246,4 +247,10 @@ class IIslandAPIClient(ABC):
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
         :raises IslandAPIError: If an unexpected error occurs while attempting to send the
                                 contents of the agent's log to the island
+        """
+
+    @abstractmethod
+    def load_plugin_events(self, plugin_name: str, plugin_dir: Path):
+        """
+        Load plugin events from a plugin directory
         """
