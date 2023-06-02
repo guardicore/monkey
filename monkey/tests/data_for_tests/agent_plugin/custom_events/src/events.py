@@ -1,5 +1,3 @@
-from typing import Iterable, Type
-
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     PydanticAgentEventSerializer,
@@ -16,12 +14,6 @@ def handle_message_event(event: MessageEvent):
 
 
 class Events:
-    def __init__(self):
-        self._event_classes = [MessageEvent]
-
-    def get_event_classes(self) -> Iterable[Type]:
-        return self._event_classes
-
     def register_event_serializers(self, event_serializer_registry: AgentEventSerializerRegistry):
         event_serializer_registry[MessageEvent] = PydanticAgentEventSerializer(MessageEvent)
 

@@ -29,7 +29,6 @@ from common.agent_event_serializers import AgentEventSerializerRegistry  # noqa:
 from common.agent_events import AgentEventRegistry  # noqa: E402
 from common.agent_plugins import PluginSourceExtractor  # noqa: E402
 from common.agent_plugins.plugin_events_loader import load_events  # noqa: E402
-from common.event_queue import IAgentEventQueue  # noqa: E402
 from common.network.network_utils import get_my_ip_addresses  # noqa: E402
 from common.utils.code_utils import secure_generate_random_string  # noqa: E402
 from common.utils.environment import get_os  # noqa: E402
@@ -93,7 +92,6 @@ def load_plugins(container: DIContainer):
     plugin_source_extractor = PluginSourceExtractor(plugin_dir)
     agent_event_registry = container.resolve(AgentEventRegistry)
     agent_event_serializer_registry = container.resolve(AgentEventSerializerRegistry)
-    agent_event_queue = container.resolve(IAgentEventQueue)
 
     for plugin_type, manifest_dict in plugin_repository.get_all_plugin_manifests().items():
         for name, manifest in manifest_dict.items():
@@ -107,7 +105,6 @@ def load_plugins(container: DIContainer):
 
                 plugin_events.register_events(agent_event_registry)
                 plugin_events.register_event_serializers(agent_event_serializer_registry)
-                plugin_events.register_event_handlers(container, agent_event_queue)
 
 
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:

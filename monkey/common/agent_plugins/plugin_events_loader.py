@@ -7,8 +7,6 @@ from typing_extensions import Protocol
 
 from common.agent_event_serializers import IAgentEventSerializerRegistry
 from common.agent_events import AgentEventRegistry
-from common.di_container import DIContainer
-from common.event_queue import IAgentEventQueue
 
 
 class PluginEvents(Protocol):
@@ -19,9 +17,6 @@ class PluginEvents(Protocol):
         pass
 
     def register_events(self, registry: AgentEventRegistry):
-        pass
-
-    def register_event_handlers(self, container: DIContainer, queue: IAgentEventQueue):
         pass
 
 
