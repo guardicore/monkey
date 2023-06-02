@@ -8,7 +8,7 @@ from serpentarium import SingleUsePlugin
 from common import OperatingSystem
 from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_plugins import AgentPlugin, AgentPluginType, PluginSourceExtractor
-from common.agent_plugins.plugin_events_loader import load_events
+from common.agent_plugins.plugin_events_loader import get_plugin_event_classes
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIRequestError
 from infection_monkey.plugin.i_plugin_factory import IPluginFactory
@@ -67,13 +67,14 @@ class PluginRegistry:
         agent_plugin = self._download_plugin_from_island(plugin_name, plugin_type)
         self._plugin_source_extractor.extract_plugin_source(agent_plugin)
 
-        if agent_plugin.plugin_manifest.custom_events is not None:
+        plugin_event_names = agent_plugin.plugin_manifest.custom_events
+        if plugin_event_names is not None:
             plugin_dir = self._plugin_source_extractor.plugin_destination_directory
 
-            # The local event serializer registry must be updated
-            load_events(plugin_name, plugin_dir)
+            # This is needed in order to load the plugin events module in the main process
+            get_plugin_event_classes(plugin_name, plugin_dir, plugin_event_names)
 
-            # This is needed in order for the event to be present in the Manager process
+            # This is needed in order for the events to be present in the Manager process
             self._agent_event_serializer_registry.load_plugin_events(plugin_name, plugin_dir)
 
         if plugin_type in self._plugin_factories:
