@@ -6,7 +6,7 @@ from ipaddress import IPv4Address
 from pathlib import Path
 from tempfile import gettempdir
 from threading import Thread
-from typing import Optional, Sequence, Tuple
+from typing import Iterable, Optional, Sequence, Tuple, Type
 
 import gevent.hub
 import requests
@@ -26,9 +26,12 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
 
 from common import DIContainer  # noqa: E402
 from common.agent_event_serializers import AgentEventSerializerRegistry  # noqa: E402
-from common.agent_events import AgentEventRegistry  # noqa: E402
+from common.agent_events import AbstractAgentEvent, AgentEventRegistry  # noqa: E402
 from common.agent_plugins import PluginSourceExtractor  # noqa: E402
-from common.agent_plugins.plugin_events_loader import load_events  # noqa: E402
+from common.agent_plugins.plugin_events_loader import (  # noqa: E402
+    get_plugin_event_classes,
+    load_events,
+)
 from common.network.network_utils import get_my_ip_addresses  # noqa: E402
 from common.utils.code_utils import secure_generate_random_string  # noqa: E402
 from common.utils.environment import get_os  # noqa: E402
@@ -103,8 +106,18 @@ def load_plugins(container: DIContainer):
 
                 plugin_events = load_events(name, plugin_dir)
 
-                plugin_events.register_events(agent_event_registry)
+                custom_event_types = get_plugin_event_classes(
+                    name, plugin_dir, manifest.custom_events
+                )
+                _register_plugin_events(agent_event_registry, custom_event_types)
                 plugin_events.register_event_serializers(agent_event_serializer_registry)
+
+
+def _register_plugin_events(
+    agent_event_registry: AgentEventRegistry, plugin_events: Iterable[Type[AbstractAgentEvent]]
+):
+    for event_type in plugin_events:
+        agent_event_registry.register(event_type)
 
 
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
