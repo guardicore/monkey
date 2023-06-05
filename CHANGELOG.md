@@ -30,6 +30,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Hard-coded PowerShell exploiter to a plugin. #3165
 
 ### Fixed
+- Agents were being caught by Windows Defender (and other antiviruses). #1289
 - Plugins are now being checked for local OS compatibility. #3275
 - A bug that could prevent multi-hop propagation via SMB. #3173
 - Exceptions being raised when WMI and Zerologon are used together. #1774
