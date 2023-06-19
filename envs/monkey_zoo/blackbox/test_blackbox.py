@@ -549,7 +549,7 @@ class TestMonkeyBlackbox:
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
-        ExploitationTest(
+        exploitation_test = ExploitationTest(
             name=test_name,
             island_client=island_client,
             test_configuration=test_configuration,
@@ -557,7 +557,13 @@ class TestMonkeyBlackbox:
             analyzers=[analyzer],
             timeout=timeout_in_seconds,
             log_handler=log_handler,
-        ).run()
+        )
+        exploitation_test.run()
+
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=test_configuration.agent_configuration.propagation.maximum_depth,
+        )
 
     @staticmethod
     def get_log_dir_path():
@@ -590,6 +596,11 @@ class TestMonkeyBlackbox:
 
         # asserting that Agent hashes are not unique
         assert len({a.sha256 for a in exploitation_test.agents}) == 2
+
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=depth_2_a_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
+        )
 
     def test_depth_1_a(self, island_client):
         test_name = "Depth1A test suite"
@@ -638,7 +649,12 @@ class TestMonkeyBlackbox:
             log_handler=log_handler,
         )
         exploitation_test.run()
+
         TestMonkeyBlackbox.assert_unique_agent_hashes(exploitation_test.agents)
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=depth_1_a_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
+        )
 
     def test_depth_3_a(self, island_client):
         test_name = "Depth3A test suite"
@@ -659,7 +675,12 @@ class TestMonkeyBlackbox:
             log_handler=log_handler,
         )
         exploitation_test.run()
+
         TestMonkeyBlackbox.assert_unique_agent_hashes(exploitation_test.agents)
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=depth_3_a_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
+        )
 
     def test_depth_4_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
@@ -684,7 +705,7 @@ class TestMonkeyBlackbox:
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
-        ExploitationTest(
+        exploitation_test = ExploitationTest(
             name=test_name,
             island_client=island_client,
             test_configuration=zerologon_test_configuration,
@@ -692,7 +713,13 @@ class TestMonkeyBlackbox:
             analyzers=[zero_logon_analyzer, communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
-        ).run()
+        )
+        exploitation_test.run()
+
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=zerologon_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
+        )
 
     # Not grouped because it's depth 1 but conflicts with SMB exploiter in group depth_1_a
     def test_smb_pth(self, island_client):
