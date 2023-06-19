@@ -1,7 +1,6 @@
-import React from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {JSONTree} from 'react-json-tree';
-import MUIDataTable from 'mui-datatables';
-import AuthService from '../../services/AuthService';
+import {DataGrid} from '@mui/x-data-grid';
 import '../../styles/pages/EventPage.scss';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 import LoadingIcon from './LoadingIcon';
@@ -10,33 +9,22 @@ import {parseTimeToDateString} from '../utils/DateUtils';
 import _ from 'lodash';
 
 const columns = [
-  {label: 'Time', name: 'timestamp'},
-  {label: 'Source', name: 'source'},
-  {label: 'Target', name: 'target'},
-  {label: 'Type', name: 'type'},
-  {label: 'Tags', name: 'tags'},
-  {label: 'Fields', name: 'fields',  options: {
-      setCellProps: () => ({ style: { width: '30%' }}),
-      filter: false,
-      sort: false
-    }
-  }
+  {headerName: 'Time', field: 'timestamp'},
+  {headerName: 'Source', field: 'source'},
+  {headerName: 'Target', field: 'target'},
+  {headerName: 'Type', field: 'type'},
+  {headerName: 'Tags', field: 'tags'},
+  {headerName: 'Fields', field: 'fields', filterable: false, sortable: false}
 ];
 
-const table_options = {
-  filterType: 'textField',
-  sortOrder: {
-      name: 'timestamp',
-      direction: 'desc'
-    },
-  print: false,
-  download: false,
-  rowHover: false,
-  rowsPerPageOptions: [10, 20, 50, 100],
-  selectableRows: 'none'
+const gridInitialState = {
+  sorting: {
+    sortModel: [{field: 'timestamp', sort: 'desc'}]
+  },
+  pagination: {paginationModel: {pageSize: 10}}
 };
 
-const renderTime = (val) => parseTimeToDateString(val*1000);
+const renderTime = (val) => parseTimeToDateString(val * 1000);
 
 const renderTarget = (event_target, machines) => {
   // event_target is null
@@ -60,8 +48,7 @@ const renderTarget = (event_target, machines) => {
     if (machine_ips.includes(event_target)) {
       if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
         return machine['hostname'];
-      }
-      else {
+      } else {
         return event_target;
       }
     }
@@ -110,57 +97,60 @@ function redactSecretsInEventFields(myObj) {
 }
 
 
-class EventsTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.auth = new AuthService();
-    this.authFetch = this.auth.authFetch;
-    this.state = {
-      events: [],
-      agents: [],
-      machines: [],
-      loading: false
-    };
-  }
+const EventsTable = () => {
+  const [events, setEvents] = useState([]);
+  const [agents, setAgents] = useState([]);
+  const [machines, setMachines] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  componentDidMount = () => {
-    this.setState({loading: true})
+  const data = useMemo(() => {
+    return events.map(item => {
+      return {
+        timestamp: renderTime(item.timestamp),
+        source: getEventSourceHostname(item.source, agents, machines),
+        target: renderTarget(item.target, machines),
+        type: item.type,
+        tags: renderTags(item.tags),
+        fields: formatEventFields(item)
+      }
+    });
+  }, [events]);
+
+
+  useEffect(() => {
+    setLoading(true);
+
     IslandHttpClient.getJSON(APIEndpoint.agents, {}, true)
-      .then(res => this.setState({agents: res.body}))
+      .then(res => setAgents(res.body));
 
     IslandHttpClient.getJSON(APIEndpoint.machines, {}, true)
-      .then(res => this.setState({machines: res.body}))
+      .then(res => setMachines(res.body));
 
     IslandHttpClient.getJSON(APIEndpoint.agentEvents, {}, true)
-      .then(res => this.setState({events: res.body, loading: false}))
-  };
+      .then(res => {
+        setLoading(false);
+        setEvents(res.body);
+      });
+  }, []);
 
-  render() {
-    return (
+
+  return (
     <>
       <div className="data-table-container">
-      {
-        this.state.loading ?
-        <LoadingIcon/>
-        :
-        <MUIDataTable
-          columns={columns}
-          data={this.state.events.map(item => {
-            return [
-              renderTime(item.timestamp),
-              getEventSourceHostname(item.source, this.state.agents, this.state.machines),
-              renderTarget(item.target, this.state.machines),
-              item.type,
-              renderTags(item.tags),
-              formatEventFields(item)
-            ]})}
-          options={table_options}
-        />
-      }
+        {
+          loading ?
+            <LoadingIcon/>
+            :
+            <DataGrid
+              columns={columns}
+              rows={[...data]}
+              initialState={{...gridInitialState}}
+              pageSizeOptions={[10, 25, 50, 100]}
+            />
+        }
       </div>
     </>
-    );
-  }
+  );
 }
 
 export default EventsTable;

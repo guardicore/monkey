@@ -1,11 +1,19 @@
 .getting-started-page h1.page-title {
-  margin-bottom: 0px;
-}
-
-#homepage-shortcuts a.d-block {
-  height: 100%;
+  margin-bottom: 0;
 }
 
 #homepage-shortcuts {
   margin-bottom: 20px;
+
+  a {
+    text-decoration: none;
+
+    &.d-block {
+      height: 100%;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }

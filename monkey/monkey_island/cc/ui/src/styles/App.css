@@ -73,6 +73,7 @@ body {
     display: block;
     padding: 0.5em 1em;
     margin: 0.1em 0;
+    text-decoration: none;
   }
 
   li a:hover {
@@ -105,6 +106,14 @@ body {
     font-size: 1.3em;
     margin-right: -10px;
     color: #ffcc00;
+  }
+
+  i a {
+    text-decoration: none;
+  }
+
+  i a:hover {
+    text-decoration: underline;
   }
 
   hr {

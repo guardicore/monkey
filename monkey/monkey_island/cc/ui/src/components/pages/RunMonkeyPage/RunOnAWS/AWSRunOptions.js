@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Nav} from 'react-bootstrap';
-
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSync} from '@fortawesome/free-solid-svg-icons/faSync';
-import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
-import AwsRunTable from './AWSInstanceTable';
+// import AwsRunTable from './AWSInstanceTable';
+import {faInfoCircle, faSync} from '@fortawesome/free-solid-svg-icons';
 import AuthComponent from '../../../AuthComponent';
 import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
 import {getAllMachines, getIslandIPsFromMachines} from '../../../utils/ServerUtils';
+
 
 const AWSRunOptions = (props) => {
   return InlineSelection(getContents, {
@@ -24,6 +23,7 @@ const getContents = (props) => {
   let [allIPs, setAllIPs] = useState([]);
   let [selectedIp, setSelectedIp] = useState(null);
   let [AWSClicked, setAWSClicked] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   let [runResults, setRunResults] = useState([]);
   let [selectedInstances, setSelectedInstances] = useState([]);
 
@@ -92,12 +92,12 @@ const getContents = (props) => {
           </Nav>
           : <div style={{'marginBottom': '2em'}}/>
       }
-      <AwsRunTable
-        data={props.AWSInstances}
-        results={runResults}
-        selection={selectedInstances}
-        setSelection={setSelectedInstances}
-      />
+      {/*<AwsRunTable*/}
+      {/*  data={props.AWSInstances}*/}
+      {/*  results={runResults}*/}
+      {/*  selection={selectedInstances}*/}
+      {/*  setSelection={setSelectedInstances}*/}
+      {/*/>*/}
       <div className={'aws-run-button-container'}>
         <Button
           size={'lg'}

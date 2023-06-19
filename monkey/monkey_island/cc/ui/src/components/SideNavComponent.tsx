@@ -99,7 +99,7 @@ const SideNavComponent = ({
       </ul>
 
       <hr/>
-      <ul>
+      <ul className='general-nav-items'>
         <li><NavLink to={IslandRoutes.ConfigurePage}
                      className={getNavLinkClass()}>
           Configuration

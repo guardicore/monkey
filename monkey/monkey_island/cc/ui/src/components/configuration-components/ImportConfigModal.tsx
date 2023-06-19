@@ -238,7 +238,7 @@ const ConfigImportModal = (props: Props) => {
                        onChange={uploadFile}
                        className={'file-input'}
                        key={fileFieldKey}/>
-            <UploadStatusIcon status={uploadStatus}/>
+            {/*<UploadStatusIcon status={uploadStatus}/>*/}
 
             {showPassword && <PasswordInput onChange={(password) => {
               setPassword(password);

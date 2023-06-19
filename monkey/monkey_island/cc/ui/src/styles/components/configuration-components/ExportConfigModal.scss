@@ -14,11 +14,14 @@
   transform: none;
 }
 
-.config-export-modal .export-type-radio-buttons .password-radio-button input{
-  margin-top: 0;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
+.config-export-modal .export-type-radio-buttons .password-radio-button {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+
+  input {
+    margin-top: 0;
+  }
 }
 
 .config-export-modal div.config-export-plaintext p.export-warning {

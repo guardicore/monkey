@@ -105,8 +105,8 @@ class MapPageComponent extends AuthComponent {
               <ReactiveGraph graph={this.props.graph} events={this.events} />
             </div>
           </Col>
-          <div>
-            <Col xs={4} id="map-preview-column">
+          <div style={{width: 0}}>
+            <Col xs={3} id="map-preview-column">
               <div style={{ 'overflow': 'auto', 'marginBottom': '1em' }}>
                 <Link to="/infection/events" className="btn btn-light pull-left" style={{ 'width': '48%' }}>Monkey
                   Events</Link>
