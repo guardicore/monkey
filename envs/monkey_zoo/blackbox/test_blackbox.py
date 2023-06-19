@@ -10,6 +10,7 @@ from uuid import uuid4
 
 import pytest
 import requests
+from treelib import Tree
 
 from common import OperatingSystem
 from common.credentials import Credentials, NTHash, Password, Username
@@ -523,6 +524,15 @@ class TestMonkeyBlackbox:
         agent_hashes = [a.sha256 for a in agents]
 
         assert len(agent_hashes) == len(set(agent_hashes))
+
+    @staticmethod
+    def assert_depth_restriction(agents: Sequence[Agent], configured_depth: int):
+        propagation_tree = Tree()
+
+        for agent in agents:
+            propagation_tree.create_node(tag=agent.id, identifier=agent.id, parent=agent.parent_id)
+
+        assert propagation_tree.depth() == configured_depth
 
     @staticmethod
     def run_exploitation_test(
