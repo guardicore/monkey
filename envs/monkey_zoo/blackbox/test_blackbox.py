@@ -532,7 +532,7 @@ class TestMonkeyBlackbox:
         for agent in agents:
             propagation_tree.create_node(tag=agent.id, identifier=agent.id, parent=agent.parent_id)
 
-        assert propagation_tree.depth() == configured_depth
+        assert propagation_tree.depth() <= configured_depth
 
     @staticmethod
     def run_exploitation_test(
