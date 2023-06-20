@@ -7,6 +7,7 @@ import LoadingIcon from './LoadingIcon';
 import {getEventSourceHostname, getMachineHostname, getMachineIPs} from '../utils/ServerUtils';
 import {parseTimeToDateString} from '../utils/DateUtils';
 import _ from 'lodash';
+import {nanoid} from 'nanoid';
 
 const columns = [
   {headerName: 'Time', field: 'timestamp'},
@@ -14,7 +15,7 @@ const columns = [
   {headerName: 'Target', field: 'target'},
   {headerName: 'Type', field: 'type'},
   {headerName: 'Tags', field: 'tags'},
-  {headerName: 'Fields', field: 'fields', filterable: false, sortable: false}
+  {headerName: 'Fields', field: 'fields', renderCell: ({value})=>{return value;}, filterable: false, sortable: false, flex: 1}
 ];
 
 const gridInitialState = {
@@ -106,6 +107,7 @@ const EventsTable = () => {
   const data = useMemo(() => {
     return events.map(item => {
       return {
+        id: nanoid(),
         timestamp: renderTime(item.timestamp),
         source: getEventSourceHostname(item.source, agents, machines),
         target: renderTarget(item.target, machines),
@@ -146,6 +148,8 @@ const EventsTable = () => {
               rows={[...data]}
               initialState={{...gridInitialState}}
               pageSizeOptions={[10, 25, 50, 100]}
+              getRowHeight={() => 'auto'}
+              disableRowSelectionOnClick
             />
         }
       </div>

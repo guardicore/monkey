@@ -105,3 +105,12 @@ div.collapse.card-body ul, div.collapsing.card-body ul {
     }
   }
 }
+
+.MuiDataGrid-root {
+  .MuiDataGrid-cell:focus,
+  .MuiDataGrid-cell:focus-within,
+  .MuiDataGrid-columnHeader:focus,
+  .MuiDataGrid-columnHeader:focus-within {
+    outline: none !important;
+  }
+}
