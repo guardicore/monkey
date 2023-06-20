@@ -74,6 +74,8 @@ function AWSRunButton(props) {
   } else if (isOnAWS) {
     displayed = getAWSButton();
   }
+  displayed = getAWSButton();
+
   return displayed;
 }
 

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Nav} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-// import AwsRunTable from './AWSInstanceTable';
+import AwsRunTable from './AWSInstanceTable';
 import {faInfoCircle, faSync} from '@fortawesome/free-solid-svg-icons';
 import AuthComponent from '../../../AuthComponent';
 import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
@@ -17,6 +17,7 @@ const AWSRunOptions = (props) => {
 
 
 const getContents = (props) => {
+  let AWSInstances = [{'id': '1', 'instance_id': 'instance_id-1', 'os': 'linux'}, {'instance_id': 'instance_id-2', 'os': 'windows', 'id': '2'}];
 
   const authComponent = new AuthComponent({});
 
@@ -92,12 +93,12 @@ const getContents = (props) => {
           </Nav>
           : <div style={{'marginBottom': '2em'}}/>
       }
-      {/*<AwsRunTable*/}
-      {/*  data={props.AWSInstances}*/}
-      {/*  results={runResults}*/}
-      {/*  selection={selectedInstances}*/}
-      {/*  setSelection={setSelectedInstances}*/}
-      {/*/>*/}
+      <AwsRunTable
+        data={AWSInstances}
+        results={runResults}
+        selection={selectedInstances}
+        setSelection={setSelectedInstances}
+      />
       <div className={'aws-run-button-container'}>
         <Button
           size={'lg'}
