@@ -1,4 +1,26 @@
 .x-data-grid {
+  .x-data-grid-title-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .x-data-grid-title {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem;
+      text-decoration: underline;
+      font-weight: bold;
+      color: #141414bd;
+    }
+  }
+
+  .MuiDataGrid-toolbarContainer {
+    .MuiButtonBase-root.MuiButton-root.MuiButton-text {
+      line-height: 1;
+    }
+  }
+
   p {
     margin-bottom: 0;
   }

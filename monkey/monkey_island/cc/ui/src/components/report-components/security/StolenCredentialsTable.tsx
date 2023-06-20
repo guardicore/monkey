@@ -1,22 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import ReactTable from 'react-table'
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import {reformatSecret} from '../credentialParsing';
 import _ from 'lodash';
-import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
+import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
+import XGrid, {XGridTitle} from '../../ui-components/XGrid';
 
+const customToolbar = () => {
+  return <XGridTitle title={'Stolen Credentials'} showDataActionsToolbar={false}/>;
+}
 
 const columns = [
-  {
-    Header: 'Stolen Credentials',
-    columns: [
-      {Header: 'Username', accessor: 'username'},
-      {Header: 'Type', accessor: 'title'}
-    ]
-  }
+  {headerName: 'Username', field: 'username', sortable: false},
+  {headerName: 'Type', field: 'title', sortable: false}
 ];
-
-const pageSize = 10;
 
 const StolenCredentialsTable = () => {
 
@@ -24,32 +20,30 @@ const StolenCredentialsTable = () => {
 
   useEffect(() => {
     IslandHttpClient.getJSON(APIEndpoint.stolenCredentials, {}, true).then(
-      res => setCredentialsTableData(getCredentialsTableData(res.body))
-    );
+      res => {
+        console.log(getCredentialsTableData(res.body));
+        setCredentialsTableData(getCredentialsTableData(res.body));
+      });
   }, [])
 
   if (credentialsTableData === null) {
-    return <LoadingIcon />
+    return <LoadingIcon/>
   }
 
-  let defaultPageSize = credentialsTableData.length > pageSize ? pageSize : credentialsTableData.length;
-  let showPagination = credentialsTableData.length > pageSize;
   return (
-    <div className="data-table-container">
-      <ReactTable
-        columns={columns}
-        data={credentialsTableData}
-        showPagination={showPagination}
-        defaultPageSize={defaultPageSize}
-      />
-    </div>
+    <XGrid
+      toolbar={customToolbar}
+      showToolbar={true}
+      columns={columns}
+      data={credentialsTableData}
+    />
   );
 }
 
 export default StolenCredentialsTable;
 
 
-function getCredentialsTableData(credentials){
+function getCredentialsTableData(credentials) {
   let tableData = [];
 
   for (let credential of credentials) {
@@ -62,7 +56,7 @@ function getCredentialsTableData(credentials){
       }
     }
     rowData['title'] = reformatSecret(credential['secret'])['title'];
-    if (! _.find(tableData, rowData)) {
+    if (!_.find(tableData, rowData)) {
       tableData.push(rowData);
     }
   }
