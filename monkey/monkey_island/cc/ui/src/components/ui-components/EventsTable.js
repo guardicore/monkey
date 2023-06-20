@@ -1,10 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {JSONTree} from 'react-json-tree';
-import {
-  DataGrid,
-  gridFilteredTopLevelRowCountSelector,
-  GridToolbar
-} from '@mui/x-data-grid';
 import '../../styles/pages/EventPage.scss';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 import LoadingIcon from './LoadingIcon';
@@ -12,22 +7,21 @@ import {getEventSourceHostname, getMachineHostname, getMachineIPs} from '../util
 import {parseTimeToDateString} from '../utils/DateUtils';
 import _ from 'lodash';
 import {nanoid} from 'nanoid';
-import CustomNoRowsOverlay from './utils/GridNoRowsOverlay';
+import XGrid from './XGrid';
 
 const columns = [
-  {headerName: 'Time', field: 'timestamp', flex: 0.5, minWidth: '150px'},
-  {headerName: 'Source', field: 'source', flex: 0.5, minWidth: '150px'},
-  {headerName: 'Target', field: 'target', flex: 0.5, minWidth: '150px'},
-  {headerName: 'Type', field: 'type', flex: 0.5, minWidth: '150px'},
-  {headerName: 'Tags', field: 'tags', flex: 0.5, minWidth: '150px'},
+  {headerName: 'Time', field: 'timestamp'},
+  {headerName: 'Source', field: 'source'},
+  {headerName: 'Target', field: 'target'},
+  {headerName: 'Type', field: 'type'},
+  {headerName: 'Tags', field: 'tags'},
   {headerName: 'Fields', field: 'fields', renderCell: ({value})=>{return value;}, filterable: false, sortable: false, flex: 1, minWidth: '200px'}
 ];
 
 const gridInitialState = {
   sorting: {
     sortModel: [{field: 'timestamp', sort: 'desc'}]
-  },
-  pagination: {paginationModel: {pageSize: 10}}
+  }
 };
 
 const renderTime = (val) => parseTimeToDateString(val * 1000);
@@ -108,7 +102,6 @@ const EventsTable = () => {
   const [agents, setAgents] = useState([]);
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [gridVisibleFilteredRowsCount, setGridVisibleFilteredRowsCount] = useState(0);
 
   const data = useMemo(() => {
     return events.map(item => {
@@ -140,32 +133,17 @@ const EventsTable = () => {
       });
   }, []);
 
-  const handleGridState = (state) => {
-    console.log(state);
-    const visibleFilteredRowsCount = state ? (gridFilteredTopLevelRowCountSelector(state) || 0) : 0;
-    setGridVisibleFilteredRowsCount(visibleFilteredRowsCount);
-  }
-
   return (
     <>
-      <div className="data-table-container" style={{height: `${!data?.length || !gridVisibleFilteredRowsCount ? '300px' : 'auto'}`}}>
+      <div>
         {
           loading ?
             <LoadingIcon/>
             :
-            <DataGrid
-              onStateChange={handleGridState}
+            <XGrid
               columns={columns}
               rows={[...data]}
               initialState={{...gridInitialState}}
-              pageSizeOptions={[10, 25, 50, 100]}
-              getRowHeight={() => 'auto'}
-              slots={{
-                toolbar: GridToolbar,
-                noRowsOverlay: CustomNoRowsOverlay,
-                noResultsOverlay: CustomNoRowsOverlay
-              }}
-              disableRowSelectionOnClick
             />
         }
       </div>
