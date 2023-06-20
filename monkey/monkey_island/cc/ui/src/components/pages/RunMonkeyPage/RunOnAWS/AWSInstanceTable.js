@@ -1,80 +1,66 @@
-import React from 'react';
+import React, {useEffect, useMemo} from 'react';
 import PropTypes from 'prop-types';
-import XDataGrid from '../../../ui-components/XDataGrid';
+import {DataGrid} from '@mui/x-data-grid';
+import {nanoid} from 'nanoid';
 
 
 const columns = [
-  {headerName: 'Machine', field: 'name'},
-  {headerName: 'Instance ID', field: 'instance_id'},
-  {headerName: 'IP Address', field: 'ip_address'},
-  {headerName: 'OS', field: 'os'}
-];
+      {headerName: 'Machine', field: 'name'},
+      {headerName: 'Instance ID', field: 'instance_id'},
+      {headerName: 'IP Address', field: 'ip_address'},
+      {headerName: 'OS', field: 'os'}
+    ];
+
+function getSelectedInstances(selectedRows, data) {
+  let selectedInstances = [];
+  for (let row of selectedRows) {
+    let instance = data.find((inst) => { return inst['id'] === row; });
+    selectedInstances.push(instance['instance_id']);
+  }
+  return selectedInstances;
+}
+
+function getSelectedRows(selectedInstances, data) {
+  let selectedRows = [];
+  for (let instance of selectedInstances) {
+    let row = data.find((inst) => { return inst['instance_id'] === instance; });
+    selectedRows.push(row['id']);
+  }
+  return selectedRows;
+}
 
 function AWSInstanceTable(props) {
-  // eslint-disable-next-line no-unused-vars
-  const {data, setSelection, selection, results} = {...props};
+  const [selectedRows, setSelectedRows] = React.useState([]);
 
-  // function isSelected(key) {
-  //   return props.selection.includes(key);
-  // }
+  const data = useMemo(() => {
+    return props.data.map((row) => {
+      return {
+        ...row,
+        id: nanoid()
+      };
+    });
+  } ,[props.data]);
 
-  //
-  // function getTrProps(_, r) {
-  //   let color = 'inherit';
-  //   if (r) {
-  //     let instId = r.original.instance_id;
-  //     let runResult = getRunResults(instId);
-  //     if (isSelected(instId)) {
-  //       color = '#ffed9f';
-  //     } else if (runResult) {
-  //       color = runResult.status === 'error' ? '#f00000' : '#00f01b'
-  //     }
-  //   }
-  //
-  //   return {
-  //     style: {backgroundColor: color}
-  //   };
-  // }
-
-  const getRowBackgroundColor = (instanceId) => {
-    if(instanceId) {
-      let runResult = getRunResults(instanceId);
-      if (!selection.includes(instanceId) && runResult) {
-        if (runResult.status === 'error') {
-          return 'run-error';
-        } else {
-          return 'run-success';
-        }
-      }
-    }
-    return null;
-  }
-
-  const getRunResults = (instanceId) => {
-    for(let result of results){
-      if (result.instance_id === instanceId){
-        return result
-      }
-    }
-    return false
-  }
-
-  const [rowSelectionModel, setRowSelectionModel] = React.useState(selection || []);
-
-  const onRowsSelectionHandler = (newRowSelectionModel) => {
-    setRowSelectionModel(newRowSelectionModel);
-    setSelection(newRowSelectionModel);
-  };
+  useEffect(() => {
+    setSelectedRows(getSelectedRows(props.selection, data));
+  }, [props.selection]);
 
   return (
-    <XDataGrid
-      columns={columns}
-      rows={data}
-      checkboxSelection
-      onRowSelectionModelChange={(newRowSelectionModel) => {onRowsSelectionHandler(newRowSelectionModel)}}
-      rowSelectionModel={rowSelectionModel}
-      getRowClassName={(params) => `x-data-grid-row ${getRowBackgroundColor(params.row.instance_id)}`}
-    />
+    <div className="data-table-container">
+      <DataGrid
+        columns={columns}
+        rows={data}
+        pageSizeOptions={[10, 25, 50, 100]}
+        getRowHeight={() => 'auto'}
+        checkboxSelection
+        disableRowSelectionOnClick
+        onRowSelectionModelChange={(selectedRows) => {
+          setSelectedRows(selectedRows);
+          props.setSelection(getSelectedInstances(selectedRows, data));
+        }}
+        rowSelectionModel={selectedRows}
+        />
+     </div>
   );
 
 }

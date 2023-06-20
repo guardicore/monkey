@@ -22,26 +22,31 @@ function AWSRunButton(props) {
   }, []);
 
   function checkIsOnAWS() {
-    authComponent.authFetch('/api/remote-monkey?action=list_aws', {}, true)
-      .then(res => res.json())
-      .then(res => {
-        let isAws = res['is_aws'];
-        setComponentLoading(false);
-        if (isAws) {
-          // On AWS!
-          // Checks if there was an error while collecting the aws machines.
-          let isErrorWhileCollectingAwsMachines = (res['error'] != null);
-          if (isErrorWhileCollectingAwsMachines) {
-            // There was an error. Finish loading, and display error message.
-            setIsOnAWS(true);
-            setAwsMachineCollectionError(res['error']);
-          } else {
-            // No error! Finish loading and display machines for user
-            setIsOnAWS(true);
-            setAWSInstances(res['instances']);
-          }
-        }
-      });
+    // TODO: Revert these changes
+    setComponentLoading(false);
+    setIsOnAWS(true);
+    setAwsMachineCollectionError('');
+    setAWSInstances([{'instance_id': 'instance_id-1', 'os': 'linux'}, {'instance_id': 'instance_id-2', 'os': 'windows'}]);
+    // authComponent.authFetch('/api/remote-monkey?action=list_aws', {}, true)
+    //   .then(res => res.json())
+    //   .then(res => {
+    //     let isAws = res['is_aws'];
+    //     setComponentLoading(false);
+    //     if (isAws) {
+    //       // On AWS!
+    //       // Checks if there was an error while collecting the aws machines.
+    //       let isErrorWhileCollectingAwsMachines = (res['error'] != null);
+    //       if (isErrorWhileCollectingAwsMachines) {
+    //         // There was an error. Finish loading, and display error message.
+    //         setIsOnAWS(true);
+    //         setAwsMachineCollectionError(res['error']);
+    //       } else {
+    //         // No error! Finish loading and display machines for user
+    //         setIsOnAWS(true);
+    //         setAWSInstances(res['instances']);
+    //       }
+    //     }
+    //   });
   }
 
   function getAWSButton() {
@@ -74,7 +79,6 @@ function AWSRunButton(props) {
   } else if (isOnAWS) {
     displayed = getAWSButton();
   }
-  displayed = getAWSButton();
 
   return displayed;
 }

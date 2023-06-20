@@ -15,21 +15,8 @@ const AWSRunOptions = (props) => {
   })
 }
 
-const addInstancesIds = (AWSInstances) => {
-  return AWSInstances.map(instance => {
-    return Object.assign({...instance}, {id: `row-${instance['instance_id']}`});
-  })
-}
 
 const getContents = (props) => {
-  // TODO: change to const
-  let {AWSInstances} = {...props};
-
-  // TODO: remove
-  AWSInstances = [{id: 'abc', instance_id: 'instance_id-1', os: 'linux'}, {instance_id: 'instance_id-2', os: 'windows', id: 123}];
-
-  const [awsInstances, setAwsInstances] = useState(AWSInstances);
-
   const authComponent = new AuthComponent({});
 
   let [allIPs, setAllIPs] = useState([]);
@@ -41,7 +28,6 @@ const getContents = (props) => {
 
   useEffect(() => {
     getIps();
-    setAwsInstances(addInstancesIds(AWSInstances));
   }, []);
 
   function getIps() {
@@ -54,7 +40,7 @@ const getContents = (props) => {
 
   function runOnAws() {
     setAWSClicked(true);
-    let instances = selectedInstances.map(id => instanceIdToInstance(id));
+    let instances = selectedInstances.map(x => instanceIdToInstance(x));
 
     authComponent.authFetch('/api/remote-monkey',
       {
@@ -78,12 +64,13 @@ const getContents = (props) => {
       });
   }
 
-  function instanceIdToInstance(id) {
-    let instance = awsInstances.find(currentInstance => {
-        return currentInstance.id === id;
+  function instanceIdToInstance(instance_id) {
+    let instance = props.AWSInstances.find(
+      function (inst) {
+        return inst['instance_id'] === instance_id;
       });
 
-    return {'instance_id': instance?.instance_id, 'os': instance?.os}
+    return {'instance_id': instance_id, 'os': instance['os']}
   }
 
   return (
@@ -105,7 +92,7 @@ const getContents = (props) => {
           : <div style={{'marginBottom': '2em'}}/>
       }
       <AwsRunTable
-        data={awsInstances}
+        data={props.AWSInstances}
         results={runResults}
         selection={selectedInstances}
         setSelection={setSelectedInstances}
@@ -115,7 +102,7 @@ const getContents = (props) => {
           size={'lg'}
           onClick={runOnAws}
           className={'btn btn-default btn-md center-block'}
-          disabled={AWSClicked}>
+          disabled={AWSClicked || selectedInstances.length == 0}>
           Run on selected machines
           {AWSClicked ?
             <FontAwesomeIcon icon={faSync} className={`text-success spinning-icon`} style={{'marginLeft': '5px'}}/> : null}
