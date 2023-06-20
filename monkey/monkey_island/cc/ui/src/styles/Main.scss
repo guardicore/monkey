@@ -113,4 +113,8 @@ div.collapse.card-body ul, div.collapsing.card-body ul {
   .MuiDataGrid-columnHeader:focus-within {
     outline: none !important;
   }
+
+  .MuiDataGrid-columnHeaderTitle {
+    font-weight: bold !important;
+  }
 }
