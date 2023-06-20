@@ -527,9 +527,12 @@ class TestMonkeyBlackbox:
 
     @staticmethod
     def assert_depth_restriction(agents: Sequence[Agent], configured_depth: int):
-        propagation_tree = Tree()
+        # Trying to add a node to the tree whose parent doesn't exist in the tree yet
+        # raises `NodeIDAbsentError`. Sorting the agents by registration time prevents that.
+        sorted_agents = sorted(agents, key=lambda agent: agent.registration_time)
 
-        for agent in agents:
+        propagation_tree = Tree()
+        for agent in sorted_agents:
             propagation_tree.create_node(tag=agent.id, identifier=agent.id, parent=agent.parent_id)
 
         assert propagation_tree.depth() <= configured_depth
