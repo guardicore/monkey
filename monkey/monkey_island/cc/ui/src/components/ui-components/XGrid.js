@@ -39,7 +39,8 @@ const XGrid = (props) => {
     disableColumnFilter = false,
     disableDensitySelector = true,
     disableColumnMenu = true,
-    height
+    height,
+    ...rest
   } = {...props}
 
   const [updatedColumns, setUpdatedColumns] = useState(columns);
@@ -109,6 +110,7 @@ const XGrid = (props) => {
         disableColumnMenu={disableColumnMenu}
         hideFooter={hideFooter}
         hideFooterPagination={hideFooter}
+        {...rest}
       />
     </div>
   );

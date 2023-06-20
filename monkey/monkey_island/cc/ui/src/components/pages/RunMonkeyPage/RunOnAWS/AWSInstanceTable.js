@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {DataGrid} from '@mui/x-data-grid';
-
+import XGrid from '../../../ui-components/XGrid';
 
 
 const columns = [
-      {headerName: 'Machine', field: 'name'},
-      {headerName: 'Instance ID', field: 'instance_id'},
-      {headerName: 'IP Address', field: 'ip_address'},
-      {headerName: 'OS', field: 'os'}
-    ];
-
+  {headerName: 'Machine', field: 'name'},
+  {headerName: 'Instance ID', field: 'instance_id'},
+  {headerName: 'IP Address', field: 'ip_address'},
+  {headerName: 'OS', field: 'os'}
+];
 
 function AWSInstanceTable(props) {
 
@@ -86,21 +84,16 @@ function AWSInstanceTable(props) {
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
 
   return (
-    <div className="data-table-container">
-      <DataGrid
-        columns={columns}
-        rows={props.data}
-        pageSizeOptions={[10, 25, 50, 100]}
-        getRowHeight={() => 'auto'}
-        checkboxSelection
-        disableRowSelectionOnClick
-        onRowSelectionModelChange={(newRowSelectionModel) => {
-          setRowSelectionModel(newRowSelectionModel);
-          props.setSelection(rowSelectionModel);
-        }}
-        rowSelectionModel={rowSelectionModel}
-        />
-     </div>
+    <XGrid
+      columns={columns}
+      rows={props.data}
+      checkboxSelection
+      onRowSelectionModelChange={(newRowSelectionModel) => {
+        setRowSelectionModel(newRowSelectionModel);
+        props.setSelection(rowSelectionModel);
+      }}
+      rowSelectionModel={rowSelectionModel}
+    />
 
     // <div className="data-table-container">
     //   <CheckboxTable
