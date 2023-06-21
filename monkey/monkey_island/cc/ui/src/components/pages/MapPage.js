@@ -25,7 +25,6 @@ class MapPageComponent extends AuthComponent {
 
   componentDidUpdate(prevProps) {
     if ((JSON.stringify(this.props.graph?.nodes) !== JSON.stringify(prevProps.graph?.nodes)) || (JSON.stringify(this.props.graph?.edges) !== JSON.stringify(prevProps.graph?.edges))) {
-      console.log(1);
      this.setState({graphId: nanoid()});
     }
   }
