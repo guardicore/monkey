@@ -5,6 +5,13 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2.1.1 - 2023-06-21]
+
+### Fixed
+- A configuration issue that prevents Mimikatz from being used. #3433
+
+
+
 ## [2.2.0 - 2023-05-31]
 ### Added
 - `PortScanData.open` property. #3238
