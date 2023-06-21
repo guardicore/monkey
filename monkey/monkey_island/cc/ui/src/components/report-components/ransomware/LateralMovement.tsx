@@ -46,8 +46,8 @@ function LateralMovement({propagationStats}: {propagationStats: PropagationStats
 function getScannedVsExploitedStats(num_scanned_nodes: number, num_exploited_nodes: number): ReactElement {
   return(
     <p>
-      Infection Monkey discovered <span className='badge badge-warning'>{num_scanned_nodes}</span> machines
-      and successfully breached <span className='badge badge-danger'>{num_exploited_nodes}</span> of them.
+      Infection Monkey discovered <span className='badge text-bg-warning'>{num_scanned_nodes}</span> machines
+      and successfully breached <span className='badge text-bg-danger'>{num_exploited_nodes}</span> of them.
     </p>
   );
 }
@@ -59,9 +59,9 @@ function getExploitationStatsPerExploit(num_exploited_per_exploit: Array<number>
     let count = num_exploited_per_exploit[exploit];
     exploitation_details.push(
       <div key={exploit}>
-        <span className='badge badge-danger'>{count}</span>&nbsp;
+        <span className='badge text-bg-danger'>{count}</span>&nbsp;
         {pluralize('machine', count)} {pluralize('was', count)} exploited by the&nbsp;
-        <span className='badge badge-danger'>{exploit}</span>.
+        <span className='badge text-bg-danger'>{exploit}</span>.
       </div>
     );
   }

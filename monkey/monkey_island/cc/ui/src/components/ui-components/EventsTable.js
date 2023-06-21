@@ -7,7 +7,7 @@ import {getEventSourceHostname, getMachineHostname, getMachineIPs} from '../util
 import {parseTimeToDateString} from '../utils/DateUtils';
 import _ from 'lodash';
 import {nanoid} from 'nanoid';
-import XGrid from './XGrid';
+import XDataGrid from './XDataGrid';
 
 const columns = [
   {headerName: 'Time', field: 'timestamp'},
@@ -140,7 +140,7 @@ const EventsTable = () => {
           loading ?
             <LoadingIcon/>
             :
-            <XGrid
+            <XDataGrid
               columns={columns}
               rows={[...data]}
               initialState={{...gridInitialState}}

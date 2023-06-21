@@ -21,6 +21,28 @@
     }
   }
 
+  .x-data-grid-row {
+    &.run-error, &.run-success {
+      color: white;
+    }
+
+    &.run-error {
+      background-color: rgb(255 34 20 / 70%);
+
+      &:hover {
+        background-color: rgb(255 34 20 / 80%);
+      }
+    }
+
+    &.run-success {
+      background-color: rgb(73 175 79 / 70%);
+
+      &:hover {
+        background-color: rgb(73 175 79 / 80%);
+      }
+    }
+  }
+
   p {
     margin-bottom: 0;
   }

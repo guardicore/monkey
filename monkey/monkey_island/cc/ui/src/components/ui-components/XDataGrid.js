@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {DataGrid, gridFilteredTopLevelRowCountSelector, GridToolbar, GridToolbarContainer} from '@mui/x-data-grid';
 import CustomNoRowsOverlay from './utils/GridNoRowsOverlay';
 import _ from 'lodash';
-import '../../styles/components/XGrid.scss';
+import '../../styles/components/XDataGrid.scss';
 
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_MIN_WIDTH = '150px';
@@ -29,7 +29,34 @@ const gridInitialState = {
   pagination: {paginationModel: {pageSize: DEFAULT_PAGE_SIZE}}
 };
 
-const XGrid = (props) => {
+const prepareColsWidth = (columns) => {
+    let updatedColumns = _.cloneDeep(columns);
+    updatedColumns?.forEach((col) => {
+      if (!(FLEX in col)) {
+        col[FLEX] = 0.5;
+      }
+      if (!(MIN_WIDTH in col)) {
+        col[MIN_WIDTH] = DEFAULT_MIN_WIDTH;
+      }
+    });
+
+    return updatedColumns;
+}
+
+ const prepareSlots = (toolbar, showToolbar) => {
+    let slotsObj = {
+      noRowsOverlay: CustomNoRowsOverlay,
+      noResultsOverlay: CustomNoRowsOverlay
+    };
+
+    if (showToolbar) {
+      slotsObj[TOOLBAR] = toolbar
+    }
+
+    return slotsObj;
+  }
+
+const XDataGrid = (props) => {
   const {
     columns = [],
     rows = [],
@@ -50,39 +77,11 @@ const XGrid = (props) => {
   const [hideFooter, setHideFooter] = useState(false);
 
   useEffect(() => {
-    console.log(toolbar);
-    handleColsWidth();
-    prepareSlots();
+    setUpdatedColumns(prepareColsWidth(columns));
+    setSlots(prepareSlots(toolbar, showToolbar));
     prepareInitialState();
     setHideFooter(rows?.length === 0 || rows?.length <= DEFAULT_PAGE_SIZE);
   }, []);
-
-  const handleColsWidth = () => {
-    let columnsToUpdate = _.cloneDeep(columns);
-    columnsToUpdate?.forEach((col) => {
-      if (!(FLEX in col)) {
-        col[FLEX] = 0.5;
-      }
-      if (!(MIN_WIDTH in col)) {
-        col[MIN_WIDTH] = DEFAULT_MIN_WIDTH;
-      }
-    });
-
-    setUpdatedColumns(columnsToUpdate);
-  }
-
-  const prepareSlots = () => {
-    let slotsObj = {
-      noRowsOverlay: CustomNoRowsOverlay,
-      noResultsOverlay: CustomNoRowsOverlay
-    };
-
-    if (showToolbar) {
-      slotsObj[TOOLBAR] = toolbar
-    }
-
-    setSlots(slotsObj);
-  }
 
   const prepareInitialState = () => {
     setUpdatedInitialState(Object.assign(_.cloneDeep(gridInitialState), initialState));
@@ -116,4 +115,4 @@ const XGrid = (props) => {
   );
 }
 
-export default XGrid;
+export default XDataGrid;

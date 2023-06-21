@@ -3,7 +3,8 @@ import LoadingIcon from '../../ui-components/LoadingIcon';
 import {reformatSecret} from '../credentialParsing';
 import _ from 'lodash';
 import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
-import XGrid, {XGridTitle} from '../../ui-components/XGrid';
+import XDataGrid, {XGridTitle} from '../../ui-components/XDataGrid';
+import {nanoid} from 'nanoid';
 
 const customToolbar = () => {
   return <XGridTitle title={'Stolen Credentials'} showDataActionsToolbar={false}/>;
@@ -31,11 +32,11 @@ const StolenCredentialsTable = () => {
   }
 
   return (
-    <XGrid
+    <XDataGrid
       toolbar={customToolbar}
       showToolbar={true}
       columns={columns}
-      data={credentialsTableData}
+      rows={credentialsTableData}
     />
   );
 }
@@ -56,6 +57,7 @@ function getCredentialsTableData(credentials) {
       }
     }
     rowData['title'] = reformatSecret(credential['secret'])['title'];
+    rowData['id'] = nanoid();
     if (!_.find(tableData, rowData)) {
       tableData.push(rowData);
     }

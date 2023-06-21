@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import XGrid from '../../../ui-components/XGrid';
+import XDataGrid from '../../../ui-components/XDataGrid';
 
 
 const columns = [
@@ -11,50 +11,13 @@ const columns = [
 ];
 
 function AWSInstanceTable(props) {
+  // eslint-disable-next-line no-unused-vars
+  const {data, setSelection, selection, results} = {...props};
 
-  // const [allToggled, setAllToggled] = useState(false);
-  // let checkboxTable = null;
-  //
-  // function toggleSelection(key) {
-  //   // key = key.replace('select-', '');
-  //   // start off with the existing state
-  //   let modifiedSelection = [...props.selection];
-  //   const keyIndex = modifiedSelection.indexOf(key);
-  //   // check to see if the key exists
-  //   if (keyIndex >= 0) {
-  //     // it does exist so we will remove it using destructing
-  //     modifiedSelection = [
-  //       ...modifiedSelection.slice(0, keyIndex),
-  //       ...modifiedSelection.slice(keyIndex + 1)
-  //     ];
-  //   } else {
-  //     // it does not exist so add it
-  //     modifiedSelection.push(key);
-  //   }
-  //   // update the state
-  //   props.setSelection(modifiedSelection);
-  // }
-  //
   // function isSelected(key) {
   //   return props.selection.includes(key);
   // }
-  //
-  // function toggleAll() {
-  //   const selectAll = !allToggled;
-  //   const selection = [];
-  //   if (selectAll) {
-  //     // we need to get at the internals of ReactTable
-  //     const wrappedInstance = checkboxTable.getWrappedInstance();
-  //     // the 'sortedData' property contains the currently accessible records based on the filter and sort
-  //     const currentRecords = wrappedInstance.getResolvedState().sortedData;
-  //     // we just push all the IDs onto the selection array
-  //     currentRecords.forEach(item => {
-  //       selection.push(item._original.instance_id);
-  //     });
-  //   }
-  //   setAllToggled(selectAll);
-  //   props.setSelection(selection);
-  // }
+
   //
   // function getTrProps(_, r) {
   //   let color = 'inherit';
@@ -72,46 +35,46 @@ function AWSInstanceTable(props) {
   //     style: {backgroundColor: color}
   //   };
   // }
-  //
-  // function getRunResults(instanceId) {
-  //   for(let result of props.results){
-  //     if (result.instance_id === instanceId){
-  //       return result
-  //     }
-  //   }
-  //   return false
-  // }
-  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+
+  const getRowBackgroundColor = (instanceId) => {
+    if(instanceId) {
+      let runResult = getRunResults(instanceId);
+      if (!selection.includes(instanceId) && runResult) {
+        if (runResult.status === 'error') {
+          return 'run-error';
+        } else {
+          return 'run-success';
+        }
+      }
+    }
+    return null;
+  }
+
+  const getRunResults = (instanceId) => {
+    for(let result of results){
+      if (result.instance_id === instanceId){
+        return result
+      }
+    }
+    return false
+  }
+
+  const [rowSelectionModel, setRowSelectionModel] = React.useState(selection || []);
+
+  const onRowsSelectionHandler = (newRowSelectionModel) => {
+    setRowSelectionModel(newRowSelectionModel);
+    setSelection(newRowSelectionModel);
+  };
 
   return (
-    <XGrid
+    <XDataGrid
       columns={columns}
-      rows={props.data}
+      rows={data}
       checkboxSelection
-      onRowSelectionModelChange={(newRowSelectionModel) => {
-        setRowSelectionModel(newRowSelectionModel);
-        props.setSelection(rowSelectionModel);
-      }}
+      onRowSelectionModelChange={(newRowSelectionModel) => {onRowsSelectionHandler(newRowSelectionModel)}}
       rowSelectionModel={rowSelectionModel}
+      getRowClassName={(params) => `x-data-grid-row ${getRowBackgroundColor(params.row.instance_id)}`}
     />
-
-    // <div className="data-table-container">
-    //   <CheckboxTable
-    //     ref={r => (checkboxTable = r)}
-    //     keyField="instance_id"
-    //     columns={columns}
-    //     data={props.data}
-    //     showPagination={true}
-    //     defaultPageSize={pageSize}
-    //     className="-highlight"
-    //     selectType="checkbox"
-    //     toggleSelection={toggleSelection}
-    //     isSelected={isSelected}
-    //     toggleAll={toggleAll}
-    //     selectAll={allToggled}
-    //     getTrProps={getTrProps}
-    //   />
-    // </div>
   );
 
 }

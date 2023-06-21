@@ -4,7 +4,8 @@ import {APIEndpoint} from '../../IslandHttpClient';
 import _ from 'lodash';
 import {CommunicationType} from '../../types/MapNode';
 import {getCollectionObject} from '../../utils/ServerUtils';
-import XGrid, {XGridTitle} from '../../ui-components/XGrid';
+import XDataGrid, {XGridTitle} from '../../ui-components/XDataGrid';
+import {nanoid} from 'nanoid';
 
 const customToolbar = () => {
   return <XGridTitle title={'Scanned Servers'} showDataActionsToolbar={false}/>;
@@ -15,11 +16,13 @@ function getMachineRepresentationString(machine) {
 }
 
 function getMachineServices(machine) {
-  let services = [];
-  for (const [socketAddress, serviceName] of Object.entries(machine.network_services)) {
-    services.push(<div key={socketAddress}>{socketAddress} - {serviceName}</div>);
-  }
-  return services
+  return <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%'}}>
+    {
+      Object.entries(machine?.network_services || {})?.map(([socketAddress, serviceName]) => {
+        return <div key={socketAddress}>{socketAddress} - {serviceName}</div>
+      })
+    }
+  </div>
 }
 
 const columns = [
@@ -30,6 +33,7 @@ const columns = [
 const prepareData = (scannedMachines) => {
   return scannedMachines.map((scannedMachine)=>{
     return {
+      id: nanoid(),
       machine: getMachineRepresentationString(scannedMachine),
       services: getMachineServices(scannedMachine)
     }
@@ -76,16 +80,16 @@ function ScannedServersComponent(props) {
     <>
       <p>
         Infection Monkey discovered&nbsp;
-        <span className="badge badge-danger">{scannedServicesAmount}</span> open&nbsp;
+        <span className="badge text-bg-danger">{scannedServicesAmount}</span> open&nbsp;
         {Pluralize('service', scannedServicesAmount)} on&nbsp;
-        <span className="badge badge-warning">{scannedMachinesCount}</span>&nbsp;
+        <span className="badge text-bg-warning">{scannedMachinesCount}</span>&nbsp;
         {Pluralize('machine', scannedMachinesCount)}:
       </p>
-      <XGrid
+      <XDataGrid
         toolbar={customToolbar}
         showToolbar={true}
         columns={columns}
-        data={scannedMachines}
+        rows={scannedMachines}
       />
     </>
   );

@@ -15,9 +15,20 @@ const AWSRunOptions = (props) => {
   })
 }
 
+const addInstancesIds = (AWSInstances) => {
+  return AWSInstances.map(instance => {
+    return Object.assign({...instance}, {id: `row-${instance['instance_id']}`});
+  })
+}
 
 const getContents = (props) => {
-  let AWSInstances = [{'id': '1', 'instance_id': 'instance_id-1', 'os': 'linux'}, {'instance_id': 'instance_id-2', 'os': 'windows', 'id': '2'}];
+  // TODO: change to const
+  let {AWSInstances} = {...props};
+
+  // TODO: remove
+  AWSInstances = [{id: 'abc', instance_id: 'instance_id-1', os: 'linux'}, {instance_id: 'instance_id-2', os: 'windows', id: 123}];
+
+  const [awsInstances, setAwsInstances] = useState(AWSInstances);
 
   const authComponent = new AuthComponent({});
 
@@ -30,6 +41,7 @@ const getContents = (props) => {
 
   useEffect(() => {
     getIps();
+    setAwsInstances(addInstancesIds(AWSInstances));
   }, []);
 
   function getIps() {
@@ -42,7 +54,7 @@ const getContents = (props) => {
 
   function runOnAws() {
     setAWSClicked(true);
-    let instances = selectedInstances.map(x => instanceIdToInstance(x));
+    let instances = selectedInstances.map(id => instanceIdToInstance(id));
 
     authComponent.authFetch('/api/remote-monkey',
       {
@@ -66,13 +78,12 @@ const getContents = (props) => {
       });
   }
 
-  function instanceIdToInstance(instance_id) {
-    let instance = props.AWSInstances.find(
-      function (inst) {
-        return inst['instance_id'] === instance_id;
+  function instanceIdToInstance(id) {
+    let instance = awsInstances.find(currentInstance => {
+        return currentInstance.id === id;
       });
 
-    return {'instance_id': instance_id, 'os': instance['os']}
+    return {'instance_id': instance?.instance_id, 'os': instance?.os}
   }
 
   return (
@@ -94,7 +105,7 @@ const getContents = (props) => {
           : <div style={{'marginBottom': '2em'}}/>
       }
       <AwsRunTable
-        data={AWSInstances}
+        data={awsInstances}
         results={runResults}
         selection={selectedInstances}
         setSelection={setSelectedInstances}

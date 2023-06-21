@@ -129,7 +129,7 @@ class ReportPageComponent extends AuthComponent {
     if (this.state.report.overview.monkey_duration) {
       return <>
         After <span
-        className='badge badge-info'>{this.state.report.overview.monkey_duration}</span>, all Agents finished
+        className='badge text-bg-success'>{this.state.report.overview.monkey_duration}</span>, all Agents finished
         propagation attempts.
       </>
     } else {
@@ -158,7 +158,7 @@ class ReportPageComponent extends AuthComponent {
         }
         <p>
           The first Infection Monkey Agent ran on <span
-            className='badge badge-info'>{parseTimeToDateString(this.state.report.overview.monkey_start_time)}</span>. {this.getMonkeyDuration()}
+            className='badge text-bg-success'>{parseTimeToDateString(this.state.report.overview.monkey_start_time)}</span>. {this.getMonkeyDuration()}
         </p>
         <p>
           Infection Monkey started propagating from the following machines where it was manually installed:
@@ -262,9 +262,9 @@ class ReportPageComponent extends AuthComponent {
         <div>
           <p>
             Infection Monkey discovered <span
-              className='badge badge-warning'>{this.state.report.glance.scanned.length}</span> machines and
+              className='badge text-bg-warning'>{this.state.report.glance.scanned.length}</span> machines and
             successfully breached <span
-              className='badge badge-danger'>{this.state.report.glance.exploited_cnt}</span> of them.
+              className='badge text-bg-danger'>{this.state.report.glance.exploited_cnt}</span> of them.
           </p>
           {exploitPercentageSection}
         </div>
@@ -276,7 +276,7 @@ class ReportPageComponent extends AuthComponent {
         <div style={{ marginBottom: '20px' }}>
           <p>
             Infection Monkey successfully breached&nbsp;
-            <span className="badge badge-danger">
+            <span className="badge text-bg-danger">
               {this.state.report.glance.exploited_cnt}
             </span> {Pluralize('machine', this.state.report.glance.exploited_cnt)}:
           </p>

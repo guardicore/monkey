@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {renderArray, renderIpAddresses} from '../common/RenderArrays';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
-import XGrid, {XGridTitle} from '../../ui-components/XGrid';
+import XDataGrid, {XGridTitle} from '../../ui-components/XDataGrid';
+import {nanoid} from 'nanoid';
 
 const customToolbar = () => {
   return <XGridTitle title={'Breached Servers'} showDataActionsToolbar={false}/>;
@@ -17,6 +18,7 @@ const columns = [
 const prepareData = (exploitations) => {
   return exploitations.map((exploitation)=>{
     return {
+      id: nanoid(),
       label: exploitation?.label,
       ip_addresses: renderIpAddresses(exploitation),
       exploits: renderArray(exploitation?.exploits)
@@ -41,11 +43,11 @@ function BreachedServersComponent() {
 
   return (
     <>
-      <XGrid
+      <XDataGrid
         toolbar={customToolbar}
         showToolbar={true}
         columns={columns}
-        data={exploitations}
+        rows={exploitations}
       />
     </>
   );

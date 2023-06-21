@@ -73,8 +73,8 @@ export function tunnelIssueReportByMachine(machineId, allTunnels) {
 
 function machineNameComponent(tunnelMachineInfo) {
   return <>
-    <span className="badge badge-primary">{tunnelMachineInfo.hostname}</span> (
-    <span className="badge badge-info" style={{margin: '2px'}}>{tunnelMachineInfo.ip}</span>)</>
+    <span className="badge text-bg-primary">{tunnelMachineInfo.hostname}</span> (
+    <span className="badge text-bg-info" style={{margin: '2px'}}>{tunnelMachineInfo.ip}</span>)</>
 }
 
 function getTunnelIssuesByMachine(machineId, allTunnels) {
