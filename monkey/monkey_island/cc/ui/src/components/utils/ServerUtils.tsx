@@ -26,7 +26,7 @@ export function getCollectionObject(collectionEndpoint: APIEndpoint, key: string
 }
 
 export function arrayToObject(array: object[], key: string): Record<string, any>{
-  return array.reduce((prev, curr) => ({...prev, [curr[key]]: curr}), {});
+  return array?.reduce((prev, curr) => ({...prev, [curr[key]]: curr}), {});
 }
 
 export function getAllAgents(refreshToken: boolean) {

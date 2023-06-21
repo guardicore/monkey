@@ -37,7 +37,7 @@ const MapPageWrapper = (props) => {
   async function fetchMapNodes(refreshToken: boolean) {
     await getCollectionObject(APIEndpoint.nodes, 'machine_id', refreshToken).then(nodeObj => setNodes(nodeObj));
     await getCollectionObject(APIEndpoint.machines, 'id', refreshToken).then(machineObj => setMachines(machineObj));
-    await getAllAgents(refreshToken).then(agents => setAgents(agents.sort()));
+    await getAllAgents(refreshToken).then(agents => setAgents(agents?.sort()));
     return getPropagationEvents(refreshToken).then(events => setPropagationEvents(events));
   }
 

@@ -9,6 +9,7 @@ import '../../styles/components/Map.scss';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import ReactiveGraph from '../reactive-graph/ReactiveGraph';
 import NodePreviewPane from '../map/preview-pane/NodePreviewPane';
+import {nanoid} from 'nanoid';
 
 class MapPageComponent extends AuthComponent {
   constructor(props) {
@@ -17,8 +18,16 @@ class MapPageComponent extends AuthComponent {
       selected: null,
       selectedType: null,
       killPressed: false,
-      showKillDialog: false
+      showKillDialog: false,
+      graphId: nanoid()
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if ((JSON.stringify(this.props.graph?.nodes) !== JSON.stringify(prevProps.graph?.nodes)) || (JSON.stringify(this.props.graph?.edges) !== JSON.stringify(prevProps.graph?.edges))) {
+      console.log(1);
+     this.setState({graphId: nanoid()});
+    }
   }
 
   events = {
@@ -102,7 +111,9 @@ class MapPageComponent extends AuthComponent {
               <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{ color: '#a9aaa9' }} /></span>
             </div>
             <div style={{ height: '80vh' }} className={'map-window'}>
-              <ReactiveGraph graph={this.props.graph} events={this.events} />
+              {
+                this.props.graph?.nodes.length > 0 && <ReactiveGraph key={this.state.graphId} graph={this.props.graph} events={this.events} />
+              }
             </div>
           </Col>
           <div style={{width: 0}}>

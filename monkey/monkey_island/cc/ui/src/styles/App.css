@@ -54,9 +54,15 @@ body {
     padding: 15px;
   }
 
+  .navigation li a.step {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   ul {
     list-style: none;
-    padding-left: 0px;
+    padding-left: 0;
   }
 
   li {
