@@ -31,7 +31,7 @@ $ sha256sum <FILE_NAME>
 | Filename                                             | Type              | Version | SHA256                                                             |
 |------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
 | monkey-linux-64                                      | Linux Agent       | 2.2.1   | `333a9f5c32780aa32e822f95801a13263015afd3fa11d5e5b1c4fb0af30279fc` |
-| monkey-windows-64.exe                                | Windows Agent     | 2.2.1   | `cb13c6675627aa2ed1fb8af2aeb21d1837f486006e263d260d28459d91423b16` |
+| monkey-windows-64.exe                                | Windows Agent     | 2.2.1   | `d49b233a31f808af4786b8cedd3772f8b79f28fe726915387542d5c8bed2fafc` |
 | InfectionMonkey-docker-v2.2.1.tgz                    | Docker            | 2.2.1   | `21f84970ef69d21d779c43046a475cd8acefaaf16836f801d5c4c4ca987f86e8` |
 | InfectionMonkey-v2.2.1.AppImage                      | Linux Package     | 2.2.1   | `cc9af5fe29cd978bbecafe454c9d722921870361fd1351c2447681b4cbe1b4a4` |
 | InfectionMonkey-v2.2.1.exe                           | Windows Installer | 2.2.1   | `74cd99dd087334ab7a87aafc5cc21faca48f32baa5bb38b51223434c548776b3` |
