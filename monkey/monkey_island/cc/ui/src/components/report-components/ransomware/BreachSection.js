@@ -6,18 +6,22 @@ import ExternalLink from '../common/ExternalLink';
 import {getAllAgents, getAllMachines, getManuallyStartedAgents, getMachineByAgent, getMachineHostname, getMachineIPs} from '../../utils/ServerUtils';
 import {parseTimeToDateString} from '../../utils/DateUtils';
 
-const BREACH_DESCRIPTION = <>
-                             Ransomware attacks start after machines in the internal network get
-                             compromised. The initial compromise was simulated by running Infection Monkey Agents
-                             manually. Detecting ransomware at this stage will minimize the impact to the
-                             organization.
-                             <br />
-                             <br />
-                             <ExternalLink
-                               url="https://www.akamai.com/blog/security/4-techniques-for-early-ransomware-detection/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
-                               text="Learn techniques for early ransomware detection on Akamai's blog"
-                             />
-                           </>
+const getBreachDescription = () => {
+  return (
+    <>
+      Ransomware attacks start after machines in the internal network get
+      compromised. The initial compromise was simulated by running Infection Monkey Agents
+      manually. Detecting ransomware at this stage will minimize the impact to the
+      organization.
+      <br/>
+      <br/>
+      <ExternalLink
+        url="https://www.akamai.com/blog/security/4-techniques-for-early-ransomware-detection/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
+        text="Learn techniques for early ransomware detection on Akamai's blog"
+      />
+    </>
+  )
+}
 
 function BreachSection() {
   const [agents, setAgents] = useState(null);
@@ -31,7 +35,7 @@ function BreachSection() {
   if((machines !== null) && (agents !== null)){
     let manuallyExploitedMachines = getManuallyExploitedMachines(agents, machines);
     let body = getBreachSectionBody(manuallyExploitedMachines);
-    return (<NumberedReportSection index={1} title={'Breach'} description={BREACH_DESCRIPTION} body={body}/>)
+    return (<NumberedReportSection index={1} title={'Breach'} description={getBreachDescription()} body={body}/>)
   } else {
     return <LoadingIcon />
   }

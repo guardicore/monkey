@@ -1,28 +1,33 @@
-import React, {ReactElement, ReactFragment, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
-import {FileEncryptionTable, TableRow} from './FileEncryptionTable';
+import {FileEncryptionTable} from './FileEncryptionTable';
 import NumberedReportSection from './NumberedReportSection';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import ExternalLink from '../common/ExternalLink';
 import {getEventSourceHostname} from '../../utils/ServerUtils';
 
 // TODO: Fix the url
-const ATTACK_DESCRIPTION = <>
-                             After the attacker or malware has propagated through your network,
-                             your data is at risk on any machine the attacker can access. It can be
-                             encrypted and held for ransom, exfiltrated, or manipulated in
-                             whatever way the attacker chooses.
-                             <br />
-                             <br />
-                             <ExternalLink
-                               url="https://web.archive.org/web/20210510221915/https://www.guardicore.com/blog/what-are-ransomware-costs/"
-                               text="Learn about the financial impact of ransomware on Akamai's blog"
-                             />
-                           </>
+const getAttackDescription = () => {
+  return (
+    <>
+      After the attacker or malware has propagated through your network,
+      your data is at risk on any machine the attacker can access. It can be
+      encrypted and held for ransom, exfiltrated, or manipulated in
+      whatever way the attacker chooses.
+      <br/>
+      <br/>
+      <ExternalLink
+        url="https://web.archive.org/web/20210510221915/https://www.guardicore.com/blog/what-are-ransomware-costs/"
+        text="Learn about the financial impact of ransomware on Akamai's blog"
+      />
+    </>
+  );
+}
 
+// eslint-disable-next-line no-unused-vars
 const HOSTNAME_REGEX = /^(.* - )?(\S+) :.*$/;
 
-function AttackSection(): ReactElement {
+function AttackSection() {
   const [tableData, setTableData] = useState(null);
 
   useEffect(() => {
@@ -42,36 +47,36 @@ function AttackSection(): ReactElement {
 
 
   if (tableData == null) {
-      return <LoadingIcon />
+    return <LoadingIcon/>
   }
 
   return (
     <NumberedReportSection
       index={3}
       title='Attack'
-      description={ATTACK_DESCRIPTION}
+      description={getAttackDescription()}
       body={getBody(tableData)}
     />
   );
 }
 
-function getBody(tableData): ReactFragment {
+function getBody(tableData) {
   return (
     <>
       <p>Infection Monkey has encrypted <strong>{tableData.length} files</strong> on your network.</p>
-      {(tableData.length > 0) && <FileEncryptionTable tableData={tableData} />}
+      {(tableData.length > 0) && <FileEncryptionTable tableData={tableData}/>}
     </>
   );
 }
 
-function processEvents(events, agents, machines): Array<TableRow> {
-  // Sort events by timestamp, latest first
+function processEvents(events, agents, machines) {
+  // Sort events by timestamp, the latest first
   sortEvents(events);
   let tableData = getDataForTable(events, agents, machines);
   return tableData;
 }
 
-function sortEvents(events): void {
+function sortEvents(events) {
   events.sort((a, b) => {
     if (a.timestamp > b.timestamp) {
       return 1;
@@ -83,12 +88,15 @@ function sortEvents(events): void {
   });
 }
 
-function getDataForTable(events, agents, machines): Array<TableRow> {
+function getDataForTable(events, agents, machines) {
   let tableData = [];
 
   for (let event of events) {
     if (event['success'] === true) {
-      tableData.push({'hostname': getEventSourceHostname(event['source'], agents, machines), 'file_path': event['file_path']['path']});
+      tableData.push({
+        'hostname': getEventSourceHostname(event['source'], agents, machines),
+        'file_path': event['file_path']['path']
+      });
     }
   }
 
