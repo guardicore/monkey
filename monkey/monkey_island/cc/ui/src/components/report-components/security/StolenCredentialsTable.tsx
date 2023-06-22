@@ -3,11 +3,11 @@ import LoadingIcon from '../../ui-components/LoadingIcon';
 import {reformatSecret} from '../credentialParsing';
 import _ from 'lodash';
 import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
-import XDataGrid, {XGridTitle} from '../../ui-components/XDataGrid';
+import XDataGrid, {XDataGridTitle} from '../../ui-components/XDataGrid';
 import {nanoid} from 'nanoid';
 
 const customToolbar = () => {
-  return <XGridTitle title={'Stolen Credentials'} showDataActionsToolbar={false}/>;
+  return <XDataGridTitle title={'Stolen Credentials'} showDataActionsToolbar={false}/>;
 }
 
 const columns = [
@@ -22,7 +22,6 @@ const StolenCredentialsTable = () => {
   useEffect(() => {
     IslandHttpClient.getJSON(APIEndpoint.stolenCredentials, {}, true).then(
       res => {
-        console.log(getCredentialsTableData(res.body));
         setCredentialsTableData(getCredentialsTableData(res.body));
       });
   }, [])
@@ -39,12 +38,12 @@ const StolenCredentialsTable = () => {
       rows={credentialsTableData}
     />
   );
-}
+};
 
 export default StolenCredentialsTable;
 
 
-function getCredentialsTableData(credentials) {
+const getCredentialsTableData = (credentials) => {
   let tableData = [];
 
   for (let credential of credentials) {
@@ -64,4 +63,4 @@ function getCredentialsTableData(credentials) {
   }
 
   return tableData;
-}
+};

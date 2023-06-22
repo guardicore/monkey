@@ -23,10 +23,14 @@ class MapPageComponent extends AuthComponent {
     };
   }
 
-  componentDidUpdate(prevProps) {
-    if ((JSON.stringify(this.props.graph?.nodes) !== JSON.stringify(prevProps.graph?.nodes)) || (JSON.stringify(this.props.graph?.edges) !== JSON.stringify(prevProps.graph?.edges))) {
+  shouldComponentUpdate(nextProps, nextState) {
+    if ((JSON.stringify(this.props.graph?.nodes) !== JSON.stringify(nextProps.graph?.nodes)) || (JSON.stringify(this.props.graph?.edges) !== JSON.stringify(nextProps.graph?.edges))) {
      this.setState({graphId: nanoid()});
+     return true;
+    } else if(this.state.selected?.machineId !== nextState.selected?.machineId) {
+      return true;
     }
+    return false;
   }
 
   events = {

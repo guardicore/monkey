@@ -1,11 +1,14 @@
 import React from 'react';
 
 export let renderArray = function (val, className='') {
-    return <>{val.map(x => <div key={x} className={className}>{x}</div>)}</>;
+    return <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'flex-start'}}>
+      {val.map(x => <div key={x} className={className}>{x}</div>)}
+    </div>;
 };
 export let renderIpAddresses = function (val) {
-    return <div>
-      {renderArray(val.ip_addresses, 'ip-address')} {(val.domain_name ? ' ('.concat(val.domain_name, ')') : '')}
+    return <div style={{display: 'flex', width: '100%', gap: '0.875rem'}}>
+      {renderArray(val.ip_addresses, 'ip-address')}
+      {(!!val?.domain_name) && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>{val.domain_name}</div>}
     </div>;
 };
 

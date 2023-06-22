@@ -21,6 +21,10 @@
     }
   }
 
+  .hidden, .toolbar-actions-hidden .x-data-grid-title-wrapper .x-data-grid-title + .x-grid-actions-toolbar-wrapper {
+    display: none !important;
+  }
+
   .x-data-grid-row {
     &.run-error, &.run-success {
       color: white;

@@ -4,11 +4,11 @@ import {APIEndpoint} from '../../IslandHttpClient';
 import _ from 'lodash';
 import {CommunicationType} from '../../types/MapNode';
 import {getCollectionObject} from '../../utils/ServerUtils';
-import XDataGrid, {XGridTitle} from '../../ui-components/XDataGrid';
+import XDataGrid, {XDataGridTitle} from '../../ui-components/XDataGrid';
 import {nanoid} from 'nanoid';
 
 const customToolbar = () => {
-  return <XGridTitle title={'Scanned Servers'} showDataActionsToolbar={false}/>;
+  return <XDataGridTitle title={'Scanned Servers'} showDataActionsToolbar={false}/>;
 }
 
 function getMachineRepresentationString(machine) {
