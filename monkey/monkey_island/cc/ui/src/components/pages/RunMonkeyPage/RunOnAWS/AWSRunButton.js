@@ -81,9 +81,6 @@ function AWSRunButton(props) {
     displayed = getAWSButton();
   }
 
-  // TODO: remove
-  // displayed = getAWSButton();
-
   return displayed;
 }
 

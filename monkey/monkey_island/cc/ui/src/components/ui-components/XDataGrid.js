@@ -57,6 +57,7 @@ const XDataGrid = (props) => {
     disableDensitySelector = true,
     disableColumnMenu = true,
     height,
+    maxHeight,
     ...rest
   } = {...props}
 
@@ -66,6 +67,8 @@ const XDataGrid = (props) => {
   const [gridVisibleFilteredRowsCount, setGridVisibleFilteredRowsCount] = useState(0);
   const [hidePagination, setHidePagination] = useState(false);
   const [isDataEmpty, setIsDataEmpty] = useState(false);
+
+  const sx = {maxHeight: maxHeight || height || 'auto'};
 
   useEffect(() => {
     setUpdatedColumns(prepareColsWidth(columns));
@@ -106,6 +109,8 @@ const XDataGrid = (props) => {
         hideFooter={hidePagination}
         hideFooterPagination={hidePagination}
         classes={{columnHeaders: isDataEmpty ? HIDDEN : '', toolbarContainer: isDataEmpty ? HIDE_TOOLBAR_ACTIONS : ''}}
+        slotProps={{toolbar: {printOptions: {disableToolbarButton: true}}}}
+        sx={sx}
         {...rest}
       />
     </div>

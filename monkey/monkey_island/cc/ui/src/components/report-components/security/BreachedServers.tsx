@@ -15,14 +15,6 @@ const columns = [
   {headerName: 'Exploits', field: 'exploits', renderCell: ({value})=>{return value;}, sortable: false}
 ];
 
-// TODO: remove
-// eslint-disable-next-line no-unused-vars
-const mockData = [
-  {id: nanoid(), label: 'label1', domain_name: '', ip_addresses: ['1.2.3', '4.5.6'], exploits: ['exploit1', 'exploit2', 'exploit23']},
-  {id: nanoid(), label: 'label2', domain_name: 'domain', ip_addresses: ['120.130.140.150'], exploits: ['exploit4', 'exploit45']},
-  {id: nanoid(), label: 'label3', domain_name: 'kuku or domain', ip_addresses: ['120.130.140.150', '192.168.1.1', '127.0.0.1'], exploits: ['exploit6', 'exploit66', 'ex90', 'ex 123']}
-];
-
 const prepareData = (exploitations) => {
   return exploitations.map((exploitation)=>{
     return {
@@ -56,6 +48,7 @@ function BreachedServersComponent() {
         showToolbar={true}
         columns={columns}
         rows={exploitations}
+        maxHeight={'250px'}
       />
     </>
   );

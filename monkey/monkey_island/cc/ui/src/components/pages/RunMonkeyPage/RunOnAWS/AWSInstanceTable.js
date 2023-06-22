@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import XDataGrid from '../../../ui-components/XDataGrid';
 
-
 const columns = [
   {headerName: 'Machine', field: 'name'},
   {headerName: 'Instance ID', field: 'instance_id'},
@@ -11,31 +10,7 @@ const columns = [
 ];
 
 function AWSInstanceTable(props) {
-  // eslint-disable-next-line no-unused-vars
   const {data, setSelection, selection, results} = {...props};
-
-  // TODO: remove
-  // function isSelected(key) {
-  //   return props.selection.includes(key);
-  // }
-
-  //
-  // function getTrProps(_, r) {
-  //   let color = 'inherit';
-  //   if (r) {
-  //     let instId = r.original.instance_id;
-  //     let runResult = getRunResults(instId);
-  //     if (isSelected(instId)) {
-  //       color = '#ffed9f';
-  //     } else if (runResult) {
-  //       color = runResult.status === 'error' ? '#f00000' : '#00f01b'
-  //     }
-  //   }
-  //
-  //   return {
-  //     style: {backgroundColor: color}
-  //   };
-  // }
 
   const getRowBackgroundColor = (instanceId) => {
     if(instanceId) {

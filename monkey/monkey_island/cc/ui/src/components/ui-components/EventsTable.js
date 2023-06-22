@@ -144,6 +144,7 @@ const EventsTable = () => {
               columns={columns}
               rows={[...data]}
               initialState={{...gridInitialState}}
+              maxHeight={'800px'}
             />
         }
       </div>

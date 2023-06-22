@@ -1,7 +1,5 @@
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 
-
-
 export function doesAnyAgentExist(refreshToken: boolean) {
   return getAllAgents(refreshToken).then(all_agents => {
       return all_agents.length > 0;

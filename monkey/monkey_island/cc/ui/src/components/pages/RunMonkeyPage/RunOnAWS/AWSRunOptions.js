@@ -15,26 +15,18 @@ const AWSRunOptions = (props) => {
 }
 
 const getContents = (props) => {
-  // TODO: change to const
   const {AWSInstances} = {...props};
-
-  // TODO: remove
-  // AWSInstances = [{id: 'abc', instance_id: 'instance_id-1', os: 'linux'}, {instance_id: 'instance_id-2', os: 'windows', id: 123}];
-
-  // const [awsInstances, setAwsInstances] = useState(AWSInstances);
 
   const authComponent = new AuthComponent({});
 
   let [allIPs, setAllIPs] = useState([]);
   let [selectedIp, setSelectedIp] = useState(null);
   let [AWSClicked, setAWSClicked] = useState(false);
-  // eslint-disable-next-line no-unused-vars
   let [runResults, setRunResults] = useState([]);
   let [selectedInstances, setSelectedInstances] = useState([]);
 
   useEffect(() => {
     getIps();
-    // setAwsInstances(addInstancesIds(AWSInstances));
   }, []);
 
   function getIps() {

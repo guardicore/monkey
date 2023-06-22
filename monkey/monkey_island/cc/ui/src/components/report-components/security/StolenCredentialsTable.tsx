@@ -36,6 +36,7 @@ const StolenCredentialsTable = () => {
       showToolbar={true}
       columns={columns}
       rows={credentialsTableData}
+      maxHeight={'250px'}
     />
   );
 };

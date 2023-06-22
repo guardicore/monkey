@@ -4,7 +4,6 @@ import {InputGroup} from 'react-bootstrap';
 function SensitiveTextInput(props){
 
     return (
-    // <div>
       <InputGroup>
         {props.inputComponent}
         <InputGroup.Append style={{display: 'flex'}}>
@@ -13,7 +12,6 @@ function SensitiveTextInput(props){
           </InputGroup.Text>
         </InputGroup.Append>
       </InputGroup>
-    // </div>
     );
 }
 

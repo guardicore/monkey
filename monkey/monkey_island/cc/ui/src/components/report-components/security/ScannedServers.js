@@ -90,6 +90,7 @@ function ScannedServersComponent(props) {
         showToolbar={true}
         columns={columns}
         rows={scannedMachines}
+        maxHeight={'250px'}
       />
     </>
   );
