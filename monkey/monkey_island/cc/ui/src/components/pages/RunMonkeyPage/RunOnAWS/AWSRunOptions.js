@@ -7,17 +7,10 @@ import AuthComponent from '../../../AuthComponent';
 import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
 import {getAllMachines, getIslandIPsFromMachines} from '../../../utils/ServerUtils';
 
-
 const AWSRunOptions = (props) => {
   return InlineSelection(getContents, {
     ...props,
     onBackButtonClick: () => {props.setComponent()}
-  })
-}
-
-const addInstancesIds = (AWSInstances) => {
-  return AWSInstances.map(instance => {
-    return Object.assign({...instance}, {id: `row-${instance['instance_id']}`});
   })
 }
 
@@ -28,7 +21,7 @@ const getContents = (props) => {
   // TODO: remove
   // AWSInstances = [{id: 'abc', instance_id: 'instance_id-1', os: 'linux'}, {instance_id: 'instance_id-2', os: 'windows', id: 123}];
 
-  const [awsInstances, setAwsInstances] = useState(AWSInstances);
+  // const [awsInstances, setAwsInstances] = useState(AWSInstances);
 
   const authComponent = new AuthComponent({});
 
@@ -41,7 +34,7 @@ const getContents = (props) => {
 
   useEffect(() => {
     getIps();
-    setAwsInstances(addInstancesIds(AWSInstances));
+    // setAwsInstances(addInstancesIds(AWSInstances));
   }, []);
 
   function getIps() {
@@ -79,7 +72,7 @@ const getContents = (props) => {
   }
 
   function instanceIdToInstance(id) {
-    let instance = awsInstances.find(currentInstance => {
+    let instance = AWSInstances.find(currentInstance => {
         return currentInstance.id === id;
       });
 
@@ -105,7 +98,7 @@ const getContents = (props) => {
           : <div style={{'marginBottom': '2em'}}/>
       }
       <AwsRunTable
-        data={awsInstances}
+        data={AWSInstances}
         results={runResults}
         selection={selectedInstances}
         setSelection={setSelectedInstances}
