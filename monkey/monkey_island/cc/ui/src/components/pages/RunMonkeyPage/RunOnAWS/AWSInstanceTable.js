@@ -71,6 +71,7 @@ function AWSInstanceTable(props) {
     <XDataGrid
       columns={columns}
       rows={data}
+      showToolbar={false}
       checkboxSelection
       onRowSelectionModelChange={(newRowSelectionModel) => {onRowsSelectionHandler(newRowSelectionModel)}}
       rowSelectionModel={rowSelectionModel}
