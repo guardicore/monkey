@@ -71,9 +71,12 @@ const XDataGrid = (props) => {
     setUpdatedColumns(prepareColsWidth(columns));
     setSlots(prepareSlots(toolbar, showToolbar));
     prepareInitialState();
+  }, []);
+
+  useEffect(() => {
     setHidePagination(rows?.length <= DEFAULT_PAGE_SIZE);
     setIsDataEmpty(rows?.length === 0)
-  }, []);
+  }, [rows?.length])
 
   const prepareInitialState = () => {
     setUpdatedInitialState(Object.assign(_.cloneDeep(gridInitialState), initialState));
@@ -100,7 +103,7 @@ const XDataGrid = (props) => {
         disableColumnFilter={disableColumnFilter}
         disableDensitySelector={disableDensitySelector}
         disableColumnMenu={disableColumnMenu}
-        hideFooter={isDataEmpty}
+        hideFooter={hidePagination}
         hideFooterPagination={hidePagination}
         classes={{columnHeaders: isDataEmpty ? HIDDEN : '', toolbarContainer: isDataEmpty ? HIDE_TOOLBAR_ACTIONS : ''}}
         {...rest}
