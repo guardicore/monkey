@@ -1,36 +1,44 @@
 import React, {useEffect, useState} from 'react';
-import ReactTable from 'react-table';
 import Pluralize from 'pluralize';
 import {APIEndpoint} from '../../IslandHttpClient';
 import _ from 'lodash';
 import {CommunicationType} from '../../types/MapNode';
 import {getCollectionObject} from '../../utils/ServerUtils';
+import XDataGrid, {XDataGridTitle} from '../../ui-components/XDataGrid';
+import {nanoid} from 'nanoid';
 
+const customToolbar = () => {
+  return <XDataGridTitle title={'Scanned Servers'} showDataActionsToolbar={false}/>;
+}
 
 function getMachineRepresentationString(machine) {
   return `${machine.hostname}(${machine.network_interfaces.toString()})`;
 }
 
-
 function getMachineServices(machine) {
-  let services = [];
-  for (const [socketAddress, serviceName] of Object.entries(machine.network_services)) {
-    services.push(<div key={socketAddress}>{socketAddress} - {serviceName}</div>);
-  }
-  return services
+  return <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '100%'}}>
+    {
+      Object.entries(machine?.network_services || {})?.map(([socketAddress, serviceName]) => {
+        return <div key={socketAddress}>{socketAddress} - {serviceName}</div>
+      })
+    }
+  </div>
 }
 
 const columns = [
-  {
-    Header: 'Scanned Servers',
-    columns: [
-      {Header: 'Machine', id: 'machine', accessor: getMachineRepresentationString},
-      {Header: 'Services found', id: 'services', accessor: getMachineServices}
-    ]
-  }
+    {headerName: 'Machine', field: 'machine', sortable: false},
+    {headerName: 'Services found', field: 'services', renderCell: ({value})=>{return value;}, sortable: false}
 ];
 
-const pageSize = 10;
+const prepareData = (scannedMachines) => {
+  return scannedMachines.map((scannedMachine)=>{
+    return {
+      id: nanoid(),
+      machine: getMachineRepresentationString(scannedMachine),
+      services: getMachineServices(scannedMachine)
+    }
+  });
+}
 
 function ScannedServersComponent(props) {
 
@@ -61,11 +69,8 @@ function ScannedServersComponent(props) {
     if (_.isEmpty(allNodes) || _.isEmpty(allMachines)) {
       return;
     }
-    setScannedMachines(getScannedMachines());
+    setScannedMachines(prepareData(getScannedMachines()));
   }, [allNodes, allMachines])
-
-  let defaultPageSize = props.data.length > pageSize ? pageSize : props.data.length;
-  let showPagination = props.data.length > pageSize;
 
   const scannedMachinesCount = props.data.length;
   const reducerFromScannedServerToServicesAmount = (accumulated, scannedServer) => accumulated + scannedServer['services'].length;
@@ -75,19 +80,18 @@ function ScannedServersComponent(props) {
     <>
       <p>
         Infection Monkey discovered&nbsp;
-        <span className="badge badge-danger">{scannedServicesAmount}</span> open&nbsp;
+        <span className="badge text-bg-danger">{scannedServicesAmount}</span> open&nbsp;
         {Pluralize('service', scannedServicesAmount)} on&nbsp;
-        <span className="badge badge-warning">{scannedMachinesCount}</span>&nbsp;
+        <span className="badge text-bg-warning">{scannedMachinesCount}</span>&nbsp;
         {Pluralize('machine', scannedMachinesCount)}:
       </p>
-      <div className="data-table-container">
-        <ReactTable
-          columns={columns}
-          data={scannedMachines}
-          showPagination={showPagination}
-          defaultPageSize={defaultPageSize}
-        />
-      </div>
+      <XDataGrid
+        toolbar={customToolbar}
+        showToolbar={true}
+        columns={columns}
+        rows={scannedMachines}
+        maxHeight={'250px'}
+      />
     </>
   );
 }

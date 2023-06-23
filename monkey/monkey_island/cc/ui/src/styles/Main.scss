@@ -1,6 +1,5 @@
 @import './variables';
-
-@import '../../node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap/scss/bootstrap';
 
 // Imports that require variables
 @import 'components/Buttons';
@@ -19,8 +18,6 @@
 @import 'components/inline-selection/NextSelectionButton';
 @import 'components/inline-selection/BackButton';
 @import 'components/inline-selection/CommandDisplay';
-@import 'components/Buttons';
-
 
 // Define custom elements after bootstrap import
 .btn-outline-monkey, button {
@@ -81,4 +78,41 @@ div.collapse.card-body ul, div.collapsing.card-body ul {
 
 .hidden{
   display: None;
+}
+
+.btn-info {
+  color: $monkey-white;
+
+  &:hover, &:active, &:disabled {
+    color: $monkey-white !important;
+  }
+}
+
+.modal-dialog {
+  .close {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    background-color: transparent;
+    border: none;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.MuiDataGrid-root {
+  .MuiDataGrid-cell:focus,
+  .MuiDataGrid-cell:focus-within,
+  .MuiDataGrid-columnHeader:focus,
+  .MuiDataGrid-columnHeader:focus-within {
+    outline: none !important;
+  }
+
+  .MuiDataGrid-columnHeaderTitle {
+    font-weight: bold !important;
+  }
 }

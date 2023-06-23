@@ -1,7 +1,6 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import {Container} from 'react-bootstrap';
-
 import ConfigurePage from './pages/ConfigurePage.js';
 import RunMonkeyPage from './pages/RunMonkeyPage/RunMonkeyPage';
 import MapPageWrapper from './map/MapPageWrapper';
@@ -15,11 +14,8 @@ import LandingPage from "./pages/LandingPage";
 import Notifier from 'react-desktop-notification';
 import NotFoundPage from './pages/NotFoundPage';
 import GettingStartedPage from './pages/GettingStartedPage';
-
-
 import 'normalize.css/normalize.css';
 import 'styles/App.css';
-import 'react-table/react-table.css';
 import LoadingScreen from './ui-components/LoadingScreen';
 import SidebarLayoutComponent from "./layouts/SidebarLayoutComponent";
 import {CompletedSteps} from "./side-menu/CompletedSteps";

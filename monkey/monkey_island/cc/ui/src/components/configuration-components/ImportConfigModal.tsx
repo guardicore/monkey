@@ -2,12 +2,11 @@ import {Button, Modal, Form, Alert} from 'react-bootstrap';
 import React, {useEffect, useState} from 'react';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/configuration-components/ImportConfigModal.scss';
 import UnsafeConfigOptionsConfirmationModal
   from './UnsafeConfigOptionsConfirmationModal.js';
-import UploadStatusIcon, {UploadStatuses} from '../ui-components/UploadStatusIcon';
+import {UploadStatuses} from '../ui-components/UploadStatusIcon';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import {getMasqueradesBytesArrays} from '../utils/MasqueradeUtils.js';
 import {decryptText} from '../utils/PasswordBasedEncryptor';
@@ -238,7 +237,7 @@ const ConfigImportModal = (props: Props) => {
                        onChange={uploadFile}
                        className={'file-input'}
                        key={fileFieldKey}/>
-            <UploadStatusIcon status={uploadStatus}/>
+            {/*<UploadStatusIcon status={uploadStatus}/>*/}
 
             {showPassword && <PasswordInput onChange={(password) => {
               setPassword(password);

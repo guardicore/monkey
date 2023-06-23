@@ -9,6 +9,7 @@ import '../../styles/components/Map.scss';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import ReactiveGraph from '../reactive-graph/ReactiveGraph';
 import NodePreviewPane from '../map/preview-pane/NodePreviewPane';
+import {nanoid} from 'nanoid';
 
 class MapPageComponent extends AuthComponent {
   constructor(props) {
@@ -17,8 +18,19 @@ class MapPageComponent extends AuthComponent {
       selected: null,
       selectedType: null,
       killPressed: false,
-      showKillDialog: false
+      showKillDialog: false,
+      graphId: nanoid()
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if ((JSON.stringify(this.props.graph?.nodes) !== JSON.stringify(nextProps.graph?.nodes)) || (JSON.stringify(this.props.graph?.edges) !== JSON.stringify(nextProps.graph?.edges))) {
+     this.setState({graphId: nanoid()});
+     return true;
+    } else if(this.state.selected?.machineId !== nextState.selected?.machineId) {
+      return true;
+    }
+    return false;
   }
 
   events = {
@@ -102,11 +114,13 @@ class MapPageComponent extends AuthComponent {
               <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{ color: '#a9aaa9' }} /></span>
             </div>
             <div style={{ height: '80vh' }} className={'map-window'}>
-              <ReactiveGraph graph={this.props.graph} events={this.events} />
+              {
+                this.props.graph?.nodes.length > 0 && <ReactiveGraph key={this.state.graphId} graph={this.props.graph} events={this.events} />
+              }
             </div>
           </Col>
-          <div>
-            <Col xs={4} id="map-preview-column">
+          <div style={{width: 0}}>
+            <Col xs={3} id="map-preview-column">
               <div style={{ 'overflow': 'auto', 'marginBottom': '1em' }}>
                 <Link to="/infection/events" className="btn btn-light pull-left" style={{ 'width': '48%' }}>Monkey
                   Events</Link>

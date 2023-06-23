@@ -13,10 +13,20 @@ export default function nextSelectionButton(props) {
       <Col>
         <Button variant={'outline-monkey'} size='lg' className={'selection-button'}
                 onClick={props.onButtonClick}>
-          {icon}
-          <h1>{props.title}</h1>
-          {description}
-          <FontAwesomeIcon icon={faAngleRight} className={'angle-right'}/>
+          <div className="selection-button-content-wrapper">
+            <div className="selection-button-details-wrapper">
+              <div className="selection-button-title">
+                {icon}
+                <h1>{props.title}</h1>
+              </div>
+              <div className="selection-button-description">
+                {description}
+              </div>
+            </div>
+            <div className="selection-button-side-icon">
+              <FontAwesomeIcon icon={faAngleRight} className={'angle-right'}/>
+            </div>
+          </div>
         </Button>
       </Col>
     </Row>

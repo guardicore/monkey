@@ -1,10 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Nav} from 'react-bootstrap';
-
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSync} from '@fortawesome/free-solid-svg-icons/faSync';
-import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import AwsRunTable from './AWSInstanceTable';
+import {faInfoCircle, faSync} from '@fortawesome/free-solid-svg-icons';
 import AuthComponent from '../../../AuthComponent';
 import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
 import {getAllMachines, getIslandIPsFromMachines} from '../../../utils/ServerUtils';
@@ -16,8 +14,8 @@ const AWSRunOptions = (props) => {
   })
 }
 
-
 const getContents = (props) => {
+  const {AWSInstances} = {...props};
 
   const authComponent = new AuthComponent({});
 
@@ -41,7 +39,7 @@ const getContents = (props) => {
 
   function runOnAws() {
     setAWSClicked(true);
-    let instances = selectedInstances.map(x => instanceIdToInstance(x));
+    let instances = selectedInstances.map(id => instanceIdToInstance(id));
 
     authComponent.authFetch('/api/remote-monkey',
       {
@@ -65,13 +63,12 @@ const getContents = (props) => {
       });
   }
 
-  function instanceIdToInstance(instance_id) {
-    let instance = props.AWSInstances.find(
-      function (inst) {
-        return inst['instance_id'] === instance_id;
+  function instanceIdToInstance(id) {
+    let instance = AWSInstances.find(currentInstance => {
+        return currentInstance.id === id;
       });
 
-    return {'instance_id': instance_id, 'os': instance['os']}
+    return {'instance_id': instance?.instance_id, 'os': instance?.os}
   }
 
   return (
@@ -93,7 +90,7 @@ const getContents = (props) => {
           : <div style={{'marginBottom': '2em'}}/>
       }
       <AwsRunTable
-        data={props.AWSInstances}
+        data={AWSInstances}
         results={runResults}
         selection={selectedInstances}
         setSelection={setSelectedInstances}
@@ -103,7 +100,7 @@ const getContents = (props) => {
           size={'lg'}
           onClick={runOnAws}
           className={'btn btn-default btn-md center-block'}
-          disabled={AWSClicked}>
+          disabled={AWSClicked || selectedInstances.length === 0}>
           Run on selected machines
           {AWSClicked ?
             <FontAwesomeIcon icon={faSync} className={`text-success spinning-icon`} style={{'marginLeft': '5px'}}/> : null}

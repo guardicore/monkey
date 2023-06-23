@@ -7,7 +7,7 @@ const SidebarLayoutComponent = ({component: Component,
                                   sideNavDisabled = false,
                                   completedSteps = null,
                                   defaultReport = '',
-                                  sideNavHeader = (<></>),
+                                  sideNavHeader = null,
                                   onStatusChange = () => {},
                                   onLogout = () => {},
                                   ...other
