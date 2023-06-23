@@ -48,6 +48,11 @@
   margin-left: 10px;
 }
 
+.advanced-multi-select .form-control[readonly]{
+  background-color: $light-gray;
+  opacity: 1;
+}
+
 .active-checkbox {
   background-color: $monkey-alt-active;
 }
