@@ -5,6 +5,7 @@ import NumberedReportSection from './NumberedReportSection';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import ExternalLink from '../common/ExternalLink';
 import {getEventSourceHostname} from '../../utils/ServerUtils';
+import {nanoid} from 'nanoid';
 
 // TODO: Fix the url
 const getAttackDescription = () => {
@@ -94,8 +95,10 @@ function getDataForTable(events, agents, machines) {
   for (let event of events) {
     if (event['success'] === true) {
       tableData.push({
-        'hostname': getEventSourceHostname(event['source'], agents, machines),
-        'file_path': event['file_path']['path']
+        id: nanoid(),
+        hostname: getEventSourceHostname(event['source'], agents, machines),
+        file_path: event['file_path']['path'],
+        encryption_algorithm: 'Bit Flip'
       });
     }
   }
