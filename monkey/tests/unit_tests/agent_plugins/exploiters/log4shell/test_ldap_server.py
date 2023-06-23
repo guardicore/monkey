@@ -39,4 +39,4 @@ def test_ldap_server(tmp_path, tcp_port_selector):
     assert attributes.get("javaCodeBase", None) == [f"http://{http_ip}:{http_port}/"]
     assert attributes.get("javaFactory", None) == ["Exploit"]
 
-    ldap_server.stop()
+    ldap_server.stop(0.01)
