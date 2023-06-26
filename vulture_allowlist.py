@@ -1,4 +1,5 @@
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
+from agent_plugins.exploiters.log4shell.src.log4shell_command_builder import build_log4shell_command
 from agent_plugins.exploiters.log4shell.src.log4shell_options import Log4ShellOptions
 from agent_plugins.exploiters.mssql.src.mssql_options import MSSQLOptions
 from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
@@ -160,3 +161,4 @@ commands.download_command_windows_powershell_webrequest
 # Remove after #3388 is completed
 Log4ShellOptions
 Log4ShellOptions.exploit_download_timeout
+build_log4shell_command
