@@ -131,5 +131,7 @@ def test_build_agent_download_command__windows(build_command_fn: Callable[[Targe
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.WINDOWS)
     url = "https://example.com/agent"
 
-    with pytest.raises(NotImplementedError):
-        build_command_fn(target_host, url)
+    windows_download_command = build_command_fn(target_host, url)
+
+    assert "System.Net.WebClient" in windows_download_command
+    assert url in windows_download_command
