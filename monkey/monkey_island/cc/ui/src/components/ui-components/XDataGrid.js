@@ -58,6 +58,7 @@ const XDataGrid = (props) => {
     disableColumnMenu = true,
     height,
     maxHeight,
+    rowHeight,
     ...rest
   } = {...props}
 
@@ -81,6 +82,16 @@ const XDataGrid = (props) => {
     setIsDataEmpty(rows?.length === 0)
   }, [rows?.length])
 
+  useEffect(()=>{
+    console.log('x props', props?.rowModesModel);
+  }, [props?.rowModesModel])
+
+  useEffect(()=>{
+    return () => {
+      console.log('unmount');
+    }
+  }, [])
+
   const prepareInitialState = () => {
     setUpdatedInitialState(Object.assign(_.cloneDeep(gridInitialState), initialState));
   }
@@ -99,7 +110,7 @@ const XDataGrid = (props) => {
         rows={[...rows]}
         initialState={{...updatedInitialState}}
         pageSizeOptions={PAGE_SIZE_OPTIONS}
-        getRowHeight={() => 'auto'}
+        getRowHeight={() => rowHeight || 'auto'}
         density={density}
         slots={slots}
         disableRowSelectionOnClick

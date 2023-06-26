@@ -2,7 +2,8 @@ import Form from '@rjsf/bootstrap-4';
 import React, {useState} from 'react';
 import {Nav} from 'react-bootstrap';
 import _ from 'lodash';
-import CredentialsConfig from './CredentialsConfig';
+// import CredentialsConfig from './CredentialsConfig';
+import CredentialPairs from '../ui-components/CredentialPairs';
 
 const sectionOrder = [
   'exploitation',
@@ -69,14 +70,16 @@ export default function PropagationConfig(props) {
     let displayedSchema = getSchemaByKey(schema, selectedSection);
     let displayedUiSchema = getUiSchemaByKey(propagationUiSchema, selectedSection);
     if (selectedSection === 'credentials') {
-      return <CredentialsConfig schema={displayedSchema}
-                                uiSchema={displayedUiSchema}
-                                credentials={credentials}
-                                onChange={onCredentialChange}
-                                customFormats={customFormats}
-                                className={className}
-                                validator={validator}
-                                transformErrors={transformErrors}/>
+      return <CredentialPairs />
+      // eslint-disable-next-line no-unreachable
+      // return <CredentialsConfig schema={displayedSchema}
+      //                           uiSchema={displayedUiSchema}
+      //                           credentials={credentials}
+      //                           onChange={onCredentialChange}
+      //                           customFormats={customFormats}
+      //                           className={className}
+      //                           validator={validator}
+      //                           transformErrors={transformErrors}/>
     } else {
       let selectedSectionData = configuration[selectedSection];
       return <Form schema={displayedSchema}

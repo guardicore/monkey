@@ -75,7 +75,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   componentDidUpdate() {
-    if (!this.getSectionsOrder().includes(this.currentSection)) {
+    if (!this.getSectionsOrder()?.includes(this.currentSection)) {
       this.currentSection = this.getSectionsOrder()[0]
       this.setState({selectedSection: this.currentSection})
     }
