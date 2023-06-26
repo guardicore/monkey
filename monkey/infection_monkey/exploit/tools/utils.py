@@ -3,6 +3,10 @@ from typing import Sequence, Set
 from common.types import NetworkPort, NetworkService
 from infection_monkey.i_puppet import TargetHost
 
+# NOTE: Don't migrate these functions to a user-facing interface
+#       without properly thinking about it. Are these functions stable enough?
+#       Are they promises that we want to keep to users who build their own plugins?
+
 
 def all_tcp_ports_are_closed(host: TargetHost, tcp_ports: Sequence[NetworkPort]) -> bool:
     closed_tcp_ports = host.ports_status.tcp_ports.closed
