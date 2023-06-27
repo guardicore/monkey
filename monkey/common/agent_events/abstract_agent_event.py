@@ -3,7 +3,7 @@ from abc import ABC
 from ipaddress import IPv4Address
 from typing import FrozenSet, Union
 
-from pydantic import ConstrainedStr, Field, constr
+from pydantic import ConstrainedStr, Field
 
 from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 from common.types import AgentID, MachineID
@@ -33,9 +33,7 @@ class AbstractAgentEvent(InfectionMonkeyBaseModel, ABC):
     source: AgentID
     target: Union[MachineID, IPv4Address, None] = Field(default=None)
     timestamp: float = Field(default_factory=time.time)
-    tags: FrozenSet[constr(regex=EVENT_TAG_REGEX)] = Field(  # type: ignore [valid-type]
-        default_factory=frozenset
-    )
+    tags: FrozenSet[AgentEventTag] = Field(default_factory=frozenset)
 
     class Config(InfectionMonkeyModelConfig):
         smart_union = True
