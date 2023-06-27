@@ -8,8 +8,8 @@ from pubsub.core import Publisher
 from common.agent_events import AbstractAgentEvent
 from common.event_queue import AgentEventSubscriber, IAgentEventQueue, PyPubSubAgentEventQueue
 
-EVENT_TAG_1 = "event tag 1"
-EVENT_TAG_2 = "event tag 2"
+EVENT_TAG_1 = "event-tag-1"
+EVENT_TAG_2 = "event-tag-2"
 
 
 class FakeEvent1(AbstractAgentEvent):
