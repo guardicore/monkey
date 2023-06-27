@@ -1,12 +1,15 @@
+import re
 import time
 from abc import ABC
 from ipaddress import IPv4Address
 from typing import FrozenSet, Union
 
-from pydantic import Field
+from pydantic import Field, constr
 
 from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 from common.types import AgentID, MachineID
+
+event_tag_regex = re.compile(r"^[a-zA-Z0-9_-]+$")
 
 
 class AbstractAgentEvent(InfectionMonkeyBaseModel, ABC):
@@ -27,7 +30,9 @@ class AbstractAgentEvent(InfectionMonkeyBaseModel, ABC):
     source: AgentID
     target: Union[MachineID, IPv4Address, None] = Field(default=None)
     timestamp: float = Field(default_factory=time.time)
-    tags: FrozenSet[str] = Field(default_factory=frozenset)
+    tags: FrozenSet[constr(regex=event_tag_regex)] = Field(  # type: ignore [valid-type]
+        default_factory=frozenset
+    )
 
     class Config(InfectionMonkeyModelConfig):
         smart_union = True
