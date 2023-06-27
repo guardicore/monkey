@@ -4,7 +4,7 @@ import {APIEndpoint} from '../../IslandHttpClient';
 import _ from 'lodash';
 import {CommunicationType} from '../../types/MapNode';
 import {getCollectionObject} from '../../utils/ServerUtils';
-import XDataGrid, {XDataGridTitle} from '../../ui-components/XDataGrid';
+import XDataGrid, {X_DATA_GRID_CLASSES, XDataGridTitle} from '../../ui-components/XDataGrid';
 import {nanoid} from 'nanoid';
 
 const customToolbar = () => {
@@ -91,6 +91,8 @@ function ScannedServersComponent(props) {
         columns={columns}
         rows={scannedMachines}
         maxHeight={'250px'}
+        columnWidth={{min: 150, max: -1}}
+        getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
       />
     </>
   );

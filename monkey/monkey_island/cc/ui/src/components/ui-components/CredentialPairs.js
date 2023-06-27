@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
-import React, {useEffect, useState} from 'react';
-import XDataGrid from './XDataGrid';
+import React, {useState} from 'react';
+import XDataGrid, {X_DATA_GRID_CLASSES} from './XDataGrid';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
@@ -50,6 +50,7 @@ const mockRows = [
   }
 ];
 
+// eslint-disable-next-line no-unused-vars
 const newRowColumns = getMainColumns();
 
 const updateFilterAndSortPropertiesToColumn = (col, filterable = true, sortable = true) => {
@@ -64,11 +65,6 @@ const CredentialPairs = () => {
   const [rowModesModel, setRowModesModel] = useState({});
   const [rows, setRows] = useState(mockRows);
 
-  useEffect(() => {
-    console.log(rowModesModel);
-  }, [rowModesModel])
-
-  // eslint-disable-next-line no-unused-vars
   const getRowActions = (rowId) => {
     const isInEditMode = rowModesModel[rowId]?.mode === GridRowModes.Edit;
 
@@ -159,8 +155,10 @@ const CredentialPairs = () => {
       headerName: '',
       field: 'row_actions',
       type: 'actions',
-      cellClassName: 'row-actions',
-      flex: 0.3,
+      minWidth: 100,
+      flexValue: 0.5,
+      headerClassName: `row-actions--header`,
+      cellClassName: `row-actions`,
       getActions: ({id}) => {
         return getRowActions(id);
       }
@@ -172,31 +170,33 @@ const CredentialPairs = () => {
 
   return (
     <>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<></>}
-          aria-controls="new-credential-pairs-content"
-          id="new-credential-pairs-panel"
-        >
-          <Typography>ADD NEW ROW</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
-            <XDataGrid columns={newRowColumns} rows={[]} showToolbar={false}/>
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
+      {/*<Accordion>*/}
+      {/*  <AccordionSummary*/}
+      {/*    expandIcon={<></>}*/}
+      {/*    aria-controls="new-credential-pairs-content"*/}
+      {/*    id="new-credential-pairs-panel"*/}
+      {/*  >*/}
+      {/*    <Typography>ADD NEW ROW</Typography>*/}
+      {/*  </AccordionSummary>*/}
+      {/*  <AccordionDetails>*/}
+      {/*    <Typography>*/}
+      {/*      <XDataGrid columns={newRowColumns} rows={[]} showToolbar={false}/>*/}
+      {/*    </Typography>*/}
+      {/*  </AccordionDetails>*/}
+      {/*</Accordion>*/}
 
       <XDataGrid columns={getDataColumns()}
                  rows={rows}
                  rowHeight={'25px'}
                  showToolbar={false}
                  maxHeight={'400px'}
+                 columnWidth={{min: 150, max: -1}}
                  editMode="row"
                  rowModesModel={rowModesModel}
                  onRowModesModelChange={handleRowModesModelChange}
                  onRowEditStop={handleRowEditStop}
                  processRowUpdate={processRowUpdate}
+                 getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
       />
     </>
   );

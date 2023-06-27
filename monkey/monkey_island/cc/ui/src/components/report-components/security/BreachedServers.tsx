@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {renderArray, renderIpAddresses} from '../common/RenderArrays';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
-import XDataGrid, {XDataGridTitle} from '../../ui-components/XDataGrid';
+import XDataGrid, {XDataGridTitle, X_DATA_GRID_CLASSES} from '../../ui-components/XDataGrid';
 import {nanoid} from 'nanoid';
 
 const customToolbar = () => {
@@ -11,7 +11,7 @@ const customToolbar = () => {
 
 const columns = [
   {headerName: 'Machine', field: 'label', sortable: false},
-  {headerName: 'IP Addresses', field: 'ip_addresses', renderCell: ({value})=>{return value;}, sortable: false, flex: 1},
+  {headerName: 'IP Addresses', field: 'ip_addresses', renderCell: ({value})=>{return value;}, sortable: false},
   {headerName: 'Exploits', field: 'exploits', renderCell: ({value})=>{return value;}, sortable: false}
 ];
 
@@ -49,6 +49,8 @@ function BreachedServersComponent() {
         columns={columns}
         rows={exploitations}
         maxHeight={'250px'}
+        columnWidth={{min: 150, max: -1}}
+        getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
       />
     </>
   );
