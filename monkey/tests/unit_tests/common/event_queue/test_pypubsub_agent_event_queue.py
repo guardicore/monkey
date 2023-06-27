@@ -5,25 +5,25 @@ from uuid import UUID
 import pytest
 from pubsub.core import Publisher
 
-from common.agent_events import AbstractAgentEvent
+from common.agent_events import AbstractAgentEvent, AgentEventTag
 from common.event_queue import AgentEventSubscriber, IAgentEventQueue, PyPubSubAgentEventQueue
 
-EVENT_TAG_1 = "event tag 1"
-EVENT_TAG_2 = "event tag 2"
+EVENT_TAG_1 = "event-tag-1"
+EVENT_TAG_2 = "event-tag-2"
 
 
 class FakeEvent1(AbstractAgentEvent):
     source: UUID = UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5")
     target: Union[UUID, IPv4Address, None] = None
     timestamp: float = 0.0
-    tags: FrozenSet = frozenset()
+    tags: FrozenSet[AgentEventTag] = frozenset()
 
 
 class FakeEvent2(AbstractAgentEvent):
     source: UUID = UUID("e810ad01-6b67-9446-fc58-9b8d717653f7")
     target: Union[UUID, IPv4Address, None] = None
     timestamp: float = 0.0
-    tags: FrozenSet = frozenset()
+    tags: FrozenSet[AgentEventTag] = frozenset()
 
 
 @pytest.fixture

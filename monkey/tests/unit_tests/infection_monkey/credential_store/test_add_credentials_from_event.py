@@ -21,7 +21,7 @@ credentials_stolen_event = CredentialsStolenEvent(
     source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"),
     target=None,
     timestamp=0.0,
-    tags=frozenset({"stolen credentials"}),
+    tags=frozenset({"stolen-credentials"}),
     stolen_credentials=credentials,
 )
 
