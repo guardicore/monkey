@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export SCHEMA_FILENAME=config-schema.json
-export SOURCE_FILENAME=source.tar
+export SOURCE_FILENAME=source.tar.gz
 
 
 fail() {

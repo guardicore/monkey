@@ -35,7 +35,7 @@ rm requirements.txt
 pushd "$PLUGIN_PATH/src" || fail "$PLUGIN_PATH/src does not exist"
 
 source_archive=$PLUGIN_PATH/$SOURCE_FILENAME
-tar -cf "$source_archive" --exclude __pycache__ --exclude .mypy_cache --exclude .pytest_cache --exclude .git --exclude .gitignore --exclude .DS_Store -- *
+tar -zcf "$source_archive" --exclude __pycache__ --exclude .mypy_cache --exclude .pytest_cache --exclude .git --exclude .gitignore --exclude .DS_Store -- *
 
 rm -rf vendor*
 popd || exit 1
