@@ -18,7 +18,7 @@ from common.agent_plugins import AgentPlugin, AgentPluginManifest
 
 MANIFEST_FILENAMES = ["manifest.yaml", "manifest.yml"]
 CONFIG_SCHEMA_FILENAME = "config-schema.json"
-SOURCE_ARCHIVE_FILENAME = "source.tar"
+SOURCE_ARCHIVE_FILENAME = "source.tar.gz"
 
 logger = logging.getLogger(__name__)
 
