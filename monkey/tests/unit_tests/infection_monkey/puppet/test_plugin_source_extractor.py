@@ -1,3 +1,4 @@
+import gzip
 from pathlib import Path
 
 import pytest
@@ -16,7 +17,7 @@ def build_agent_plugin(source_tar_path: Path, name="test_plugin") -> AgentPlugin
     return AgentPlugin.construct(
         plugin_manifest=manifest,
         config_schema={},
-        source_archive=read_file_to_bytes(source_tar_path),
+        source_archive=gzip.compress(read_file_to_bytes(source_tar_path)),
         supported_operating_systems=(OperatingSystem.WINDOWS,),
     )
 
@@ -91,5 +92,18 @@ def test_plugin_name_directory_traversal(
 ):
     agent_plugin = build_agent_plugin(dircmp_path / "dir1.tar", malicious_plugin_name)
 
+    with pytest.raises(ValueError):
+        extractor.extract_plugin_source(agent_plugin)
+
+
+def test_extract_nongzip_raises_value_error(dircmp_path: Path, extractor: PluginSourceExtractor):
+    source_tar_path = dircmp_path / "dir1.tar"
+    manifest = AgentPluginManifest.construct(name="test", plugin_type=AgentPluginType.EXPLOITER)
+    agent_plugin = AgentPlugin.construct(
+        plugin_manifest=manifest,
+        config_schema={},
+        source_archive=read_file_to_bytes(source_tar_path),  # Not gzipped
+        supported_operating_systems=(OperatingSystem.WINDOWS,),
+    )
     with pytest.raises(ValueError):
         extractor.extract_plugin_source(agent_plugin)
