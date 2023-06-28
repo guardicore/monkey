@@ -40,8 +40,8 @@ tar -zcf "$source_archive" --exclude __pycache__ --exclude .mypy_cache --exclude
 rm -rf vendor*
 popd || exit 1
 
-plugin_filename=$(get_plugin_filename "$ROOT/$PLUGIN_PATH") || fail "Failed to get plugin filename: $plugin_filename"
-plugin_manifest_filename=$(get_plugin_manifest_filename)
+plugin_filename=$(get_plugin_filename "$PLUGIN_PATH") || fail "Failed to get plugin filename: $plugin_filename"
+plugin_manifest_filename=$(get_plugin_manifest_filename "$PLUGIN_PATH")
 tar -cf "$PLUGIN_PATH/$plugin_filename" "$plugin_manifest_filename" "$SCHEMA_FILENAME" "$SOURCE_FILENAME"
 rm "$source_archive"
 popd || exit 1
