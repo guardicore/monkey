@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import gzip
 import io
 import json
 import logging
@@ -136,18 +137,21 @@ def get_plugin_source(tar: TarFile) -> bytes:
     :raises KeyError: If the source is not found in the tar file
     :raises ValueError: If the source is not a file
     """
-    return _safe_extract_file(tar, SOURCE_ARCHIVE_FILENAME).read()
+    source_tar_archive = _safe_extract_file(tar, SOURCE_ARCHIVE_FILENAME).read()
+
+    try:
+        return gzip.decompress(source_tar_archive)
+    except gzip.BadGzipFile:
+        raise ValueError("The provided source archive is not a valid gzip archive")
 
 
 def _safe_extract_file(tar: TarFile, filename: str) -> IO[bytes]:
     member = tar.getmember(filename)
-
     # SECURITY: File types other than "regular file" have security implications. Don't extract them.
     if not member.isfile():
         raise ValueError(f'File "{filename}" has incorrect type {tarinfo_type(member)}')
 
     file_obj = tar.extractfile(member)
-
     # Since we're sure that `member.isfile()`, then `TarFile.extractfile()` should never return
     # None. This assert prevents mypy errors, since technically `extractfile()` returns
     # `Optional[IO[bytes]]`.
