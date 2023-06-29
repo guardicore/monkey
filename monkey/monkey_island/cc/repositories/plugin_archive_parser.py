@@ -179,7 +179,7 @@ def _parse_plugin_with_generic_vendor(
     plugin = AgentPlugin(
         plugin_manifest=manifest,
         config_schema=schema,
-        source_archive=source,
+        source_archive=gzip.compress(source),
         supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     )
 
@@ -201,7 +201,7 @@ def _parse_plugin_with_multiple_vendors(
         parsed_plugin[os_] = AgentPlugin(
             plugin_manifest=manifest,
             config_schema=schema,
-            source_archive=os_specific_plugin_source_archive,
+            source_archive=gzip.compress(os_specific_plugin_source_archive),
             supported_operating_systems=(os_,),
         )
 
