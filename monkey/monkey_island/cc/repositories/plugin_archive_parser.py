@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import gzip
 import io
 import json
 import logging
@@ -18,7 +19,7 @@ from common.agent_plugins import AgentPlugin, AgentPluginManifest
 
 MANIFEST_FILENAMES = ["manifest.yaml", "manifest.yml"]
 CONFIG_SCHEMA_FILENAME = "config-schema.json"
-SOURCE_ARCHIVE_FILENAME = "source.tar"
+SOURCE_ARCHIVE_FILENAME = "source.tar.gz"
 
 logger = logging.getLogger(__name__)
 
@@ -136,18 +137,21 @@ def get_plugin_source(tar: TarFile) -> bytes:
     :raises KeyError: If the source is not found in the tar file
     :raises ValueError: If the source is not a file
     """
-    return _safe_extract_file(tar, SOURCE_ARCHIVE_FILENAME).read()
+    source_tar_archive = _safe_extract_file(tar, SOURCE_ARCHIVE_FILENAME).read()
+
+    try:
+        return gzip.decompress(source_tar_archive)
+    except gzip.BadGzipFile:
+        raise ValueError("The provided source archive is not a valid gzip archive")
 
 
 def _safe_extract_file(tar: TarFile, filename: str) -> IO[bytes]:
     member = tar.getmember(filename)
-
     # SECURITY: File types other than "regular file" have security implications. Don't extract them.
     if not member.isfile():
         raise ValueError(f'File "{filename}" has incorrect type {tarinfo_type(member)}')
 
     file_obj = tar.extractfile(member)
-
     # Since we're sure that `member.isfile()`, then `TarFile.extractfile()` should never return
     # None. This assert prevents mypy errors, since technically `extractfile()` returns
     # `Optional[IO[bytes]]`.
@@ -175,7 +179,7 @@ def _parse_plugin_with_generic_vendor(
     plugin = AgentPlugin(
         plugin_manifest=manifest,
         config_schema=schema,
-        source_archive=source,
+        source_archive=gzip.compress(source),
         supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     )
 
@@ -197,7 +201,7 @@ def _parse_plugin_with_multiple_vendors(
         parsed_plugin[os_] = AgentPlugin(
             plugin_manifest=manifest,
             config_schema=schema,
-            source_archive=os_specific_plugin_source_archive,
+            source_archive=gzip.compress(os_specific_plugin_source_archive),
             supported_operating_systems=(os_,),
         )
 

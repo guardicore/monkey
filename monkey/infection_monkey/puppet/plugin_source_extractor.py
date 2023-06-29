@@ -1,3 +1,4 @@
+import gzip
 import io
 from pathlib import Path
 from tarfile import TarFile, TarInfo
@@ -41,7 +42,8 @@ class PluginSourceExtractor:
         destination = self._get_plugin_destination_directory(agent_plugin)
         create_secure_directory(destination)
 
-        archive = TarFile(fileobj=io.BytesIO(agent_plugin.source_archive), mode="r")
+        decompressed_archive = _decompress_archive(agent_plugin.source_archive)
+        archive = TarFile(fileobj=io.BytesIO(decompressed_archive), mode="r")
 
         # We check the entire archive to detect any malicious activity **before** we extract any
         # files. This is a paranoid approach that prevents against partial extraction of malicious
@@ -64,6 +66,13 @@ class PluginSourceExtractor:
                 f'Can not create directory "{destination}": directories must children of '
                 f'"{self.plugin_destination_directory}"'
             )
+
+
+def _decompress_archive(archive: bytes) -> bytes:
+    try:
+        return gzip.decompress(archive)
+    except gzip.BadGzipFile:
+        raise ValueError("The provided source archive is not a valid gzip archive")
 
 
 UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE = (

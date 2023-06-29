@@ -1,3 +1,4 @@
+import gzip
 import io
 import json
 import tarfile
@@ -58,7 +59,7 @@ def build_agent_plugin(agent_plugin_manifest: AgentPluginManifest, config_schema
         return AgentPlugin(
             plugin_manifest=agent_plugin_manifest,
             config_schema=config_schema,
-            source_archive=source_archive,
+            source_archive=gzip.compress(source_archive),
             supported_operating_systems=supported_operating_systems,
         )
 
@@ -96,7 +97,7 @@ def build_agent_plugin_tar(
         config_schema_tarinfo.size = len(config_schema_bytes)
         tar.addfile(config_schema_tarinfo, io.BytesIO(config_schema_bytes))
 
-        plugin_source_archive_tarinfo = TarInfo("source.tar")
+        plugin_source_archive_tarinfo = TarInfo("source.tar.gz")
         plugin_source_archive_tarinfo.size = len(agent_plugin.source_archive)
         tar.addfile(plugin_source_archive_tarinfo, io.BytesIO(agent_plugin.source_archive))
 
@@ -150,9 +151,8 @@ def test_parse_plugin_config_schema(
 def assert_parsed_plugin_archive_equals_expected(
     actual_source_archive: bytes, expected_tar_path: Path
 ):
-    actual = TarFile(fileobj=io.BytesIO(actual_source_archive))
-
-    with TarFile(fileobj=io.BytesIO(actual_source_archive)) as actual:
+    decompressed_actual_source_archive = gzip.decompress(actual_source_archive)
+    with TarFile(fileobj=io.BytesIO(decompressed_actual_source_archive)) as actual:
         with open(expected_tar_path, "rb") as f:
             with TarFile(fileobj=f) as expected:
                 assert actual.getnames() == expected.getnames()

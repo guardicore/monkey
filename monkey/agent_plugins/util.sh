@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export SCHEMA_FILENAME=config-schema.json
-export SOURCE_FILENAME=source.tar
+export SOURCE_FILENAME=source.tar.gz
 
 
 fail() {
@@ -33,7 +33,7 @@ lower() {
 get_plugin_filename() {
     _plugin_path=${1:-"."}
 
-    manifest_filename=$(get_plugin_manifest_filename)
+    manifest_filename=$(get_plugin_manifest_filename "$_plugin_path")
 
     _name=$(get_value_from_key "${_plugin_path}/${manifest_filename}" name) || fail "Failed to get plugin name"
     _name=$(ltrim "$_name")
