@@ -72,7 +72,6 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.5",
     "@mui/x-data-grid": "^6.7.0",
-    "@mui/x-data-grid-generator": "^6.9.0",
     "@rjsf/bootstrap-4": "^5.8.1",
     "@rjsf/core": "^5.8.1",
     "@rjsf/utils": "^5.8.1",
