@@ -4,6 +4,7 @@ import CustomNoRowsOverlay from './utils/GridNoRowsOverlay';
 import _ from 'lodash';
 import '../../styles/components/XDataGrid.scss';
 
+const X_DATA_GRID_CLASS = 'x-data-grid';
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 const DEFAULT_MIN_WIDTH = 150;
@@ -100,10 +101,12 @@ const XDataGrid = (props) => {
     disableColumnFilter = false,
     disableDensitySelector = true,
     disableColumnMenu = true,
+    hideHeaders = false,
     height,
     maxHeight,
     rowHeight,
     columnWidth,
+    className,
     ...rest
   } = {...props}
 
@@ -113,6 +116,7 @@ const XDataGrid = (props) => {
   const [hidePagination, setHidePagination] = useState(false);
   const [isDataEmpty, setIsDataEmpty] = useState(false);
 
+  const gridWrapperClassName = className ? `${X_DATA_GRID_CLASS} ${className}` : X_DATA_GRID_CLASS;
   const sx = {maxHeight: maxHeight || height || 'auto'};
 
   const updatedColumns = useMemo(() => {
@@ -139,7 +143,7 @@ const XDataGrid = (props) => {
   }
 
   return (
-    <div className="x-data-grid"
+    <div className={gridWrapperClassName}
          style={{height: `${!rows?.length || !gridVisibleFilteredRowsCount ? '300px' : (height || 'auto')}`}}>
       <DataGrid
         onStateChange={handleGridState}
@@ -156,7 +160,7 @@ const XDataGrid = (props) => {
         disableColumnMenu={disableColumnMenu}
         hideFooter={hidePagination}
         hideFooterPagination={hidePagination}
-        classes={{columnHeaders: isDataEmpty ? HIDDEN : '', toolbarContainer: isDataEmpty ? HIDE_TOOLBAR_ACTIONS : ''}}
+        classes={{columnHeaders: isDataEmpty || hideHeaders ? HIDDEN : '', toolbarContainer: isDataEmpty ? HIDE_TOOLBAR_ACTIONS : ''}}
         slotProps={{toolbar: {printOptions: {disableToolbarButton: true}}}}
         sx={sx}
         {...rest}

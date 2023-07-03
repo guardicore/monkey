@@ -35,10 +35,8 @@ import {customizeValidator} from '@rjsf/validator-ajv8';
 import LoadingIcon from '../ui-components/LoadingIcon';
 import mergeAllOf from 'json-schema-merge-allof';
 import RefParser from '@apidevtools/json-schema-ref-parser';
-import CREDENTIALS from '../../services/configuration/propagation/credentials';
 import {MASQUERADE} from '../../services/configuration/masquerade';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
-
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
 const RESET_URL = '/api/reset-agent-configuration';
@@ -49,6 +47,17 @@ const configSaveAction = 'config-saved';
 
 const EMPTY_BYTES_ARRAY = new Uint8Array(new ArrayBuffer(0));
 
+const mockRows = [
+    {
+        'id': 'K40kaXuxB15qrx-klxqh_',
+        'identity': 'id1',
+        'password': '2',
+        'lm': '3',
+        'ntlm': 'ntlm1',
+        'ssh_public_key': 'pub1',
+        'ssh_private_key': 'prv1'
+    }
+]
 
 class ConfigurePageComponent extends AuthComponent {
 
@@ -59,7 +68,7 @@ class ConfigurePageComponent extends AuthComponent {
 
     this.state = {
       configuration: {},
-      credentials: {},
+      credentials: {credentialsData: [], errors: []},
       masqueStrings: {},
       currentFormData: {},
       importCandidateConfig: null,
@@ -76,7 +85,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   componentDidUpdate() {
     if (!this.getSectionsOrder()?.includes(this.currentSection)) {
-      this.currentSection = this.getSectionsOrder()[0]
+      this.currentSection = this.getSectionsOrder()?.[0]
       this.setState({selectedSection: this.currentSection})
     }
   }
@@ -144,10 +153,10 @@ class ConfigurePageComponent extends AuthComponent {
   updateCredentials = () => {
     this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {}, true)
       .then(res => res.json())
-      .then(credentials => {
-        credentials = formatCredentialsForForm(credentials);
+      .then(credentialsData => {
+        const formattedCredentialsData = formatCredentialsForForm(credentialsData);
         this.setState({
-          credentials: credentials
+          credentials: {credentialsData: formattedCredentialsData, errors: []}
         });
       });
   }
@@ -265,7 +274,7 @@ class ConfigurePageComponent extends AuthComponent {
 
     Promise.all([sendCredentialsPromise, sendLinuxMasqueStringsPromise, sendWindowsMasqueStringsPromise])
       .then(responses => {
-        if (responses.every(res => res.status === 204)) {
+        if (responses.every(res => res?.status === 204)) {
           this.sendConfig(config);
         } else {
           console.log('One or more requests failed.');
@@ -283,7 +292,9 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   onCredentialChange = (credentials) => {
-    this.setState({credentials: credentials});
+    this.setState(() => {
+     return {credentials: {credentialsData: [...credentials.credentialsData], errors: [...credentials.errors]}}
+    });
   }
 
   onMasqueStringsChange = (masqueStrings) => {
@@ -294,7 +305,7 @@ class ConfigurePageComponent extends AuthComponent {
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
                                configuration={this.filterUnselectedPlugins()}
-                               credentials={this.state.credentials}
+                               credentials={this.state.credentials.credentialsData}
                                masqueStrings={this.state.masqueStrings}
                                onHide={() => {
                                  this.setState({showConfigExportModal: false});
@@ -401,7 +412,7 @@ class ConfigurePageComponent extends AuthComponent {
         {
           method: 'PUT',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(formatCredentialsForIsland(this.state.credentials))
+          body: JSON.stringify(formatCredentialsForIsland(this.state.credentials.credentialsData))
         },
         true
       )
@@ -497,9 +508,9 @@ class ConfigurePageComponent extends AuthComponent {
       return true;
     }
     let errors = this.validator.validateFormData(this.state.configuration, this.state.schema);
-    let credentialErrors = this.validator.validateFormData(this.state.credentials, CREDENTIALS);
+    let credentialErrors = this.state.credentials.errors?.length > 0;
     let masqueradeErrors = this.validator.validateFormData(this.state.masqueStrings, MASQUERADE);
-    return errors.errors.length+credentialErrors.errors.length+masqueradeErrors.errors.length > 0
+    return errors.errors.length+masqueradeErrors.errors.length > 0 || credentialErrors;
   }
 
   render() {
@@ -512,7 +523,7 @@ class ConfigurePageComponent extends AuthComponent {
     let displayedSchema = {};
     if (Object.prototype.hasOwnProperty.call(this.state.schema, 'properties')) {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
-      displayedSchema['definitions'] = this.state.schema['definitions'];
+      displayedSchema['definitions'] = this.state.schema?.['definitions'];
     }
 
     let content = '';

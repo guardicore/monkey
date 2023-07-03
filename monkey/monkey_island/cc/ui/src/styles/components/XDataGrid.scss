@@ -55,6 +55,21 @@
         &.max-width-none {
             max-width: none !important;
         }
+
+        &.MuiDataGrid-cell--editing {
+          > div {
+            height: 100%;
+            border: 1px solid #1976d2;
+
+            &.Mui-error {
+              border-color: red;
+            }
+
+            textarea {
+              padding-left: 16px;
+            }
+          }
+        }
       }
     }
   }

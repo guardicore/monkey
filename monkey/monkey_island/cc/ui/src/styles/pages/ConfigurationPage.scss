@@ -112,3 +112,16 @@ div.form-group div:not([class]) {
     }
   }
 }
+
+#configure-propagation-credentials {
+  .MuiPaper-root {
+    background-color: #f9f9f9;
+
+    .add-new-credentials-row {
+      background-color: #ffffff;
+    }
+  }
+  .x-data-grid.configured-credentials {
+    margin-bottom: 2rem;
+  }
+}
