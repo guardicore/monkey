@@ -140,7 +140,11 @@ def get_plugin_source(tar: TarFile) -> bytes:
     source_tar_archive = _safe_extract_file(tar, SOURCE_ARCHIVE_FILENAME).read()
 
     try:
-        return gzip.decompress(source_tar_archive)
+        logger.debug("Decompressing source archive")
+        decompressed_tar_archive = gzip.decompress(source_tar_archive)
+        logger.debug("Decompression complete")
+
+        return decompressed_tar_archive
     except gzip.BadGzipFile:
         raise ValueError("The provided source archive is not a valid gzip archive")
 
