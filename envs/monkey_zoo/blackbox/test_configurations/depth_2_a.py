@@ -16,16 +16,23 @@ from .utils import (
     set_maximum_depth,
 )
 
-
 # Tests:
 #     SSH password and key brute-force, key stealing (10.2.2.11, 10.2.2.12)
 #     Powershell credential reuse (logging in without credentials
 #       to an identical user on another machine)(10.2.3.44, 10.2.3.46)
+
+
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
         # Log4Shell is required to hop into 46, which then uses credential reuse on 44.
         # Look at envs/monkey_zoo/docs/network_diagrams/powershell_credential_reuse.drawio.png
-        "Log4ShellExploiter": {},
+        "Log4Shell": {
+            # no ports are configured but because `try_all_discovered_http_ports` is
+            # set to true, the exploiter should exploit 10.2.3.46 on port 8080 (configured
+            # at `agent_configuration.propagation.exploitation.options.http_ports`)
+            "try_all_discovered_http_ports": True,
+            "target_ports": [],
+        },
         "SSHExploiter": {},
         "PowerShell": {},
     }

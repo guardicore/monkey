@@ -9,7 +9,6 @@ from .utils import (
     add_credentials_collectors,
     add_exploiters,
     add_fingerprinters,
-    add_http_ports,
     add_subnets,
     add_tcp_ports,
     replace_agent_configuration,
@@ -34,7 +33,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
             "agent_binary_download_timeout": 60,
             "yarn_application_suffix": "M0NK3Y3XPL01T",
         },
-        "Log4ShellExploiter": {},
+        "Log4Shell": {"target_ports": [8080, 8983, 9600]},
         "MSSQL": {
             "target_ports": [1433],
             "try_discovered_mssql_ports": False,
@@ -83,16 +82,9 @@ def _add_credentials_collectors(agent_configuration: AgentConfiguration) -> Agen
     )
 
 
-HTTP_PORTS = [8080, 8983, 9600]
-
-
 def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    ports = [22, 445] + HTTP_PORTS
+    ports = [22, 445]
     return add_tcp_ports(agent_configuration, ports)
-
-
-def _add_http_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    return add_http_ports(agent_configuration, HTTP_PORTS)
 
 
 test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
@@ -101,7 +93,6 @@ test_agent_configuration = _add_fingerprinters(test_agent_configuration)
 test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 test_agent_configuration = _add_credentials_collectors(test_agent_configuration)
-test_agent_configuration = _add_http_ports(test_agent_configuration)
 test_agent_configuration = set_randomize_agent_hash(test_agent_configuration, True)
 
 CREDENTIALS = (
