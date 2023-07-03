@@ -71,7 +71,6 @@ EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports
 
 # Order is preserved and agent will run exploiters in this sequence
 EXPLOITERS: Dict[str, Dict] = {
-    "Log4ShellExploiter": {},
     "SSHExploiter": {},
 }
 
