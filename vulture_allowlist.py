@@ -1,6 +1,4 @@
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
-from agent_plugins.exploiters.log4shell.src.log4shell_command_builder import build_log4shell_command
-from agent_plugins.exploiters.log4shell.src.log4shell_options import Log4ShellOptions
 from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
 from agent_plugins.exploiters.ssh.src.ssh_command_builder import build_ssh_command
@@ -162,11 +160,6 @@ commands.build_download_command_linux_curl
 commands.build_dropper_script_download_command
 commands.build_download_command_windows_powershell_webclient
 commands.build_download_command_windows_powershell_webrequest
-
-# Remove after #3388 is completed
-Log4ShellOptions
-Log4ShellOptions.exploit_download_timeout
-build_log4shell_command
 
 # Remove after #3170 is done
 SSHOptions
