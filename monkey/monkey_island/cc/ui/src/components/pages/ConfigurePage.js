@@ -37,6 +37,7 @@ import mergeAllOf from 'json-schema-merge-allof';
 import RefParser from '@apidevtools/json-schema-ref-parser';
 import {MASQUERADE} from '../../services/configuration/masquerade';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
+import {nanoid} from 'nanoid';
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
 const RESET_URL = '/api/reset-agent-configuration';
@@ -47,18 +48,6 @@ const configSaveAction = 'config-saved';
 
 const EMPTY_BYTES_ARRAY = new Uint8Array(new ArrayBuffer(0));
 
-const mockRows = [
-    {
-        'id': 'K40kaXuxB15qrx-klxqh_',
-        'identity': 'id1',
-        'password': '2',
-        'lm': '3',
-        'ntlm': 'ntlm1',
-        'ssh_public_key': 'pub1',
-        'ssh_private_key': 'prv1'
-    }
-]
-
 class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
@@ -68,7 +57,7 @@ class ConfigurePageComponent extends AuthComponent {
 
     this.state = {
       configuration: {},
-      credentials: {credentialsData: [], errors: []},
+      credentials: {credentialsData: [], errors: [], id: null},
       masqueStrings: {},
       currentFormData: {},
       importCandidateConfig: null,
@@ -88,6 +77,14 @@ class ConfigurePageComponent extends AuthComponent {
       this.currentSection = this.getSectionsOrder()?.[0]
       this.setState({selectedSection: this.currentSection})
     }
+  }
+
+  setCredentialsState = (rows = [], errors = [], isRequiredToUpdateId) => {
+    let newState = {credentials: {credentialsData: rows, errors: errors, id: this.state.credentials.id}};
+    if(isRequiredToUpdateId) {
+      newState.credentials['id'] = nanoid();
+    }
+    this.setState(newState);
   }
 
   resetLastAction = () => {
@@ -155,9 +152,7 @@ class ConfigurePageComponent extends AuthComponent {
       .then(res => res.json())
       .then(credentialsData => {
         const formattedCredentialsData = formatCredentialsForForm(credentialsData);
-        this.setState({
-          credentials: {credentialsData: formattedCredentialsData, errors: []}
-        });
+        this.setCredentialsState(formattedCredentialsData, [], true);
       });
   }
 
@@ -292,9 +287,7 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   onCredentialChange = (credentials) => {
-    this.setState(() => {
-     return {credentials: {credentialsData: [...credentials.credentialsData], errors: [...credentials.errors]}}
-    });
+    this.setCredentialsState(credentials.credentialsData, credentials.errors, false);
   }
 
   onMasqueStringsChange = (masqueStrings) => {

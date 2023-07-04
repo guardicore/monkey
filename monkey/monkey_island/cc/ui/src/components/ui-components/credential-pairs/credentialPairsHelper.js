@@ -6,6 +6,8 @@ export const CREDENTIALS_ROW_KEYS = ['identity', 'password', 'lm', 'ntlm', 'ssh_
 export const IDENTITY_KEY = 'identity';
 export const COLUMN_WIDTH = 166.5;
 
+const HIDDEN_PASSWORD_STRING = '*****';
+
 const multilineColumn = {
   type: 'string',
   renderEditCell: (params) => <EditTextarea {...params} />
@@ -16,7 +18,7 @@ const valueFormatter = {
     if (!params.value) {
       return '';
     }
-    return `*****`;
+    return HIDDEN_PASSWORD_STRING;
   }
 }
 const EditTextarea = (props) => {
@@ -56,7 +58,7 @@ const EditTextarea = (props) => {
         multiline
         rows={1}
         value={valueState}
-        sx={{textarea: {resize: 'vertical'}, width: '100%', height: '100%'}}
+        sx={{textarea: {resize: 'none'}, width: '100%', height: '100%'}}
         onChange={handleChange}
         inputRef={(ref) => setInputRef(ref)}
       />
@@ -151,4 +153,12 @@ export const setErrorsForRow = (prevState, rowId, isAddingError) => {
     return copyOfPrevSate;
   }
   return prevState;
+}
+
+export const trimRowValues = (row) => {
+  const rowCopy = {...row};
+  CREDENTIALS_ROW_KEYS.forEach(key => {
+    rowCopy[key] = rowCopy[key].trim();
+  })
+  return rowCopy;
 }

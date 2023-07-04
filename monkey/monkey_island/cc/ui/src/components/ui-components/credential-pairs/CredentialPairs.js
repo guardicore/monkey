@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import XDataGrid, {X_DATA_GRID_CLASSES} from '../XDataGrid';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -12,7 +12,7 @@ import {
   getDataColumns, IDENTITY_KEY,
   isAllValuesInRowAreEmpty,
   isRowDuplicated,
-  setErrorsForRow
+  setErrorsForRow, trimRowValues
 } from './credentialPairsHelper';
 import NewCredentialPair from './NewCredentialPair';
 import {useStateCallback} from '../utils/useStateCallback';
@@ -29,6 +29,14 @@ const CredentialPairs = (props) => {
   const [rowModesModel, setRowModesModel] = useStateCallback({});
   const [rows, setRows] = useStateCallback(credentials?.credentialsData || []);
   const [errors, setErrors] = useStateCallback([]);
+  const [previousCredentialsId, setPreviousCredentialsId] = useState(credentials.id);
+
+  useEffect(() => {
+    if (previousCredentialsId !== credentials.id) {
+      setRows(credentials.credentialsData);
+      setPreviousCredentialsId(credentials.id);
+    }
+  });
 
   const setErrorForRow = (rowId, isAddingError = true) => {
     setErrors((prevState) => {
@@ -103,7 +111,7 @@ const CredentialPairs = (props) => {
   };
 
   const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id), s =>
+    setRows(rows.filter((row) => row.id !== id),
       s => onCredentialChange({credentialsData: [...s], errors: [...errors]}));
   };
 
@@ -120,11 +128,14 @@ const CredentialPairs = (props) => {
   };
 
   const processRowUpdate = (newRow) => {
-    const updatedRow = {...newRow, isNew: false};
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)), s => onCredentialChange({
-      credentialsData: [...s],
-      errors: [...errors]
-    }));
+    const updatedRow = trimRowValues({...newRow, isNew: false});
+    const isRowEmpty = isAllValuesInRowAreEmpty(updatedRow);
+    if(!isRowEmpty) {
+      setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)), s => onCredentialChange({
+        credentialsData: [...s],
+        errors: [...errors]
+      }));
+    }
     return updatedRow;
   };
 

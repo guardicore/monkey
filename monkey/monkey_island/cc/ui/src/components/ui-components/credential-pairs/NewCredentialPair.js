@@ -5,7 +5,7 @@ import {GridActionsCellItem, GridRowEditStopReasons, GridRowModes} from '@mui/x-
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import {
   getDataColumns, isAllValuesInRowAreEmpty,
-  setErrorsForRow
+  setErrorsForRow, trimRowValues
 } from './credentialPairsHelper';
 
 const getEmptyRow = () => {
@@ -63,10 +63,11 @@ const NewCredentialPair = (props) => {
   const processRowUpdate = useCallback(
     (newRow, oldRow) =>
       new Promise((resolve, reject) => {
-        if(!isAllValuesInRowAreEmpty(newRow)) {
-          upsertRow(newRow);
+        const newRowCopy = trimRowValues({...newRow});
+        if(!isAllValuesInRowAreEmpty(newRowCopy)) {
+          upsertRow(newRowCopy);
           setRows(getEmptyRow());
-          resolve(newRow);
+          resolve(newRowCopy);
         } else {
           setRows([{...oldRow}]);
           reject(oldRow);

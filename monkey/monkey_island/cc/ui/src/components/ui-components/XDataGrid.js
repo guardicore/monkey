@@ -10,6 +10,7 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 const DEFAULT_MIN_WIDTH = 150;
 const DEFAULT_MAX_WIDTH = DEFAULT_MIN_WIDTH;
 const FLEX = 'flex';
+const WIDTH = 'width';
 const MIN_WIDTH = 'minWidth';
 const MAX_WIDTH = 'maxWidth';
 const TOOLBAR = 'toolbar';
@@ -53,13 +54,15 @@ const prepareColsWidth = (columns, columnWidth) => {
   const colWidth = getColumnWidth(columnWidth);
   let updatedColumns = _.cloneDeep(columns) || [];
   updatedColumns?.forEach((col) => {
-    if (!(MIN_WIDTH in col)) {
-      col[MIN_WIDTH] = colWidth?.min || DEFAULT_MIN_WIDTH;
-    }
-    if (!(MAX_WIDTH in col) && colWidth?.max >= 0) {
-      col[MAX_WIDTH] = colWidth?.max || DEFAULT_MAX_WIDTH;
-    } else {
-      col[MAX_WIDTH] = Infinity;
+    if(!(WIDTH in col)) {
+      if (!(MIN_WIDTH in col)) {
+        col[MIN_WIDTH] = colWidth?.min || DEFAULT_MIN_WIDTH;
+      }
+      if (!(MAX_WIDTH in col) && colWidth?.max >= 0) {
+        col[MAX_WIDTH] = colWidth?.max || DEFAULT_MAX_WIDTH;
+      } else {
+        col[MAX_WIDTH] = Infinity;
+      }
     }
   });
 
