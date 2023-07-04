@@ -52,7 +52,6 @@ from infection_monkey.exploit import (
     IslandAPIAgentOTPProvider,
     PolymorphicAgentBinaryRepositoryDecorator,
 )
-from infection_monkey.exploit.log4shell import Log4ShellExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
@@ -454,11 +453,6 @@ class InfectionMonkey:
             otp_provider,
         )
 
-        puppet.load_plugin(
-            AgentPluginType.EXPLOITER,
-            "Log4ShellExploiter",
-            exploit_wrapper.wrap(Log4ShellExploiter),
-        )
         puppet.load_plugin(
             AgentPluginType.EXPLOITER, "SSHExploiter", exploit_wrapper.wrap(SSHExploiter)
         )
