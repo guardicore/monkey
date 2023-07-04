@@ -1,0 +1,18 @@
+name: SSH
+plugin_type: Exploiter
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - linux
+title: SSH Exploiter
+version: 1.0.0
+description: Attempts a brute-force attack against SSH using known credentials, including SSH keys.
+safe: true
+remediation_suggestion: >-
+    Change user passwords to complex one-use passwords that are not shared with other computers on the network.
+    Protect private keys with a pass phrase.
+
+    The machine is vulnerable to an SSH attack.
+    An Infection Monkey Agent authenticated over the SSH protocol using stolen/configured credentials.
+link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/sshexec/
