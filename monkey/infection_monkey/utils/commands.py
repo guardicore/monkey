@@ -48,7 +48,7 @@ def build_dropper_script_download_command(target_host: TargetHost, url: str) -> 
 
 def build_download_command(target_host: TargetHost, url: str, dst: PurePath) -> str:
     if target_host.operating_system == OperatingSystem.WINDOWS:
-        return build_download_command_windows_powershell_webclient(url, dst)
+        return build_download_command_windows_powershell_webrequest(url, dst)
 
     return build_download_command_linux_wget(url, dst)
 
