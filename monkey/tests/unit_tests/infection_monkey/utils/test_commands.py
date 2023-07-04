@@ -130,7 +130,7 @@ def test_build_agent_download_command__windows():
 
     windows_download_command = build_agent_download_command(target_host, url)
 
-    assert "System.Net.WebClient" in windows_download_command
+    assert "Invoke-WebRequest" in windows_download_command
     assert url in windows_download_command
 
 
