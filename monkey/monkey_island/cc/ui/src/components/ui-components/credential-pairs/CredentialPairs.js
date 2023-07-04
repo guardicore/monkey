@@ -106,7 +106,7 @@ const CredentialPairs = (props) => {
       setRowModesModel({
         ...rowModesModel,
         [id]: {mode: GridRowModes.View}
-      }, s => onCredentialChange({credentialsData: [...rows], errors: [...errors]}));
+      }, () => onCredentialChange({credentialsData: [...rows], errors: [...errors]}));
     }
   };
 

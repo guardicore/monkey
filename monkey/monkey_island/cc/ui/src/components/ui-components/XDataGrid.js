@@ -9,7 +9,6 @@ const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 const DEFAULT_MIN_WIDTH = 150;
 const DEFAULT_MAX_WIDTH = DEFAULT_MIN_WIDTH;
-const FLEX = 'flex';
 const WIDTH = 'width';
 const MIN_WIDTH = 'minWidth';
 const MAX_WIDTH = 'maxWidth';
