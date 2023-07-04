@@ -67,7 +67,7 @@ def get_hidden_imports():
     # `cryptography.hazmat.primitives.padding`, pyinstaller will not include it unless we
     # explicitly tell it to. Once the remainder of the exploiters (SSH and Log4Shell) are migrated
     # to plugins, we can attempt to remove the cryptography dependency from the agent entirely.
-    imports = ['_cffi_backend', '_mssql', 'asyncore', 'logging.config', 'cryptography.hazmat.primitives.padding', 'xml.dom']
+    imports = ['_cffi_backend', '_mssql', 'asyncore', 'logging.config', 'cryptography.hazmat.primitives.padding', 'xml.dom', 'timeit']
     if is_windows():
         imports.append('queue')
         imports.append('pkg_resources.py2_warn')
