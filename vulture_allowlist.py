@@ -4,6 +4,7 @@ from agent_plugins.exploiters.log4shell.src.log4shell_options import Log4ShellOp
 from agent_plugins.exploiters.mssql.src.mssql_options import MSSQLOptions
 from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
+from agent_plugins.exploiters.ssh.src.ssh_options import SSHOptions
 from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
 from flask_security import Security
 
@@ -162,3 +163,7 @@ commands.build_download_command_windows_powershell_webrequest
 Log4ShellOptions
 Log4ShellOptions.exploit_download_timeout
 build_log4shell_command
+
+# Remove after #3170 is done
+SSHOptions
+SSHOptions.connect_timeout
