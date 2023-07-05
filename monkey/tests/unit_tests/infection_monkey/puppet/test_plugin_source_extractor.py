@@ -17,7 +17,7 @@ def build_agent_plugin(source_tar_path: Path, name="test_plugin") -> AgentPlugin
     return AgentPlugin.construct(
         plugin_manifest=manifest,
         config_schema={},
-        source_archive=gzip.compress(read_file_to_bytes(source_tar_path)),
+        source_archive=gzip.compress(read_file_to_bytes(source_tar_path), compresslevel=1),
         supported_operating_systems=(OperatingSystem.WINDOWS,),
     )
 
