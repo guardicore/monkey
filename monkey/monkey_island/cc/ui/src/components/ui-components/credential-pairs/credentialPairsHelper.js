@@ -13,12 +13,14 @@ const multilineColumn = {
   renderEditCell: (params) => <EditTextarea {...params} />
 };
 
-const valueFormatter = {
-  valueFormatter: (params) => {
-    if (!params.value) {
-      return '';
+const valueFormatter = (showSecrets = false) => {
+  return {
+    valueFormatter: (params) => {
+      if (!params.value || showSecrets) {
+        return params.value;
+      }
+      return HIDDEN_PASSWORD_STRING;
     }
-    return HIDDEN_PASSWORD_STRING;
   }
 }
 const EditTextarea = (props) => {
@@ -66,14 +68,14 @@ const EditTextarea = (props) => {
   );
 }
 
-export const getMainColumns = (setErrorForRow) => {
+export const getMainColumns = (setErrorForRow, showSecrets) => {
   return [
     {headerName: 'Identity', field: 'identity', editable: true},
-    {headerName: 'Password', field: 'password', editable: true, ...valueFormatter},
-    {headerName: 'LM', field: 'lm', editable: true, ...valueFormatter},
-    {headerName: 'NTLM', field: 'ntlm', editable: true, ...valueFormatter},
-    {headerName: 'SSH Public key', field: 'ssh_public_key', editable: true, ...multilineColumn, ...valueFormatter},
-    {headerName: 'SSH Private key', field: 'ssh_private_key', editable: true, ...multilineColumn, ...valueFormatter,
+    {headerName: 'Password', field: 'password', editable: true, ...valueFormatter(showSecrets)},
+    {headerName: 'LM', field: 'lm', editable: true, ...valueFormatter(showSecrets)},
+    {headerName: 'NTLM', field: 'ntlm', editable: true, ...valueFormatter(showSecrets)},
+    {headerName: 'SSH Public key', field: 'ssh_public_key', editable: true, ...multilineColumn, ...valueFormatter(showSecrets)},
+    {headerName: 'SSH Private key', field: 'ssh_private_key', editable: true, ...multilineColumn, ...valueFormatter(showSecrets),
     preProcessEditCellProps: (params) => {
         const isSSHPublicKeyProps = params.otherFieldsProps.ssh_public_key;
         const hasError = isSSHPublicKeyProps.value && !params.props.value;
@@ -93,8 +95,8 @@ export const updateFilterAndSortPropertiesToColumn = (col, filterable = true, so
   return colObj;
 };
 
-export const getDataColumns = (getRowActions, disableAllColumnsFilterAndSort, setErrorForRow) => {
-  let mainColumns = getMainColumns(setErrorForRow);
+export const getDataColumns = (getRowActions, disableAllColumnsFilterAndSort, setErrorForRow, rowActionsHeaderComponent, showSecrets = false) => {
+  let mainColumns = getMainColumns(setErrorForRow, showSecrets);
 
   mainColumns.push({
     headerName: '',
@@ -104,6 +106,7 @@ export const getDataColumns = (getRowActions, disableAllColumnsFilterAndSort, se
     flexValue: 0.5,
     headerClassName: `row-actions--header`,
     cellClassName: `row-actions`,
+    renderHeader: () => rowActionsHeaderComponent,
     getActions: ({id}) => {
       return getRowActions(id);
     }

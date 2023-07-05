@@ -5,6 +5,8 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {Accordion, AccordionDetails, AccordionSummary, Typography} from '@mui/material';
 import {GridActionsCellItem, GridRowEditStopReasons, GridRowModes} from '@mui/x-data-grid';
 import {
@@ -30,6 +32,7 @@ const CredentialPairs = (props) => {
   const [rows, setRows] = useStateCallback(credentials?.credentialsData || []);
   const [errors, setErrors] = useStateCallback([]);
   const [previousCredentialsId, setPreviousCredentialsId] = useState(credentials.id);
+  const [showSecrets, setShowSecrets] = useState(false);
 
   useEffect(() => {
     if (previousCredentialsId !== credentials.id) {
@@ -194,6 +197,9 @@ const CredentialPairs = (props) => {
     );
   }
 
+  const rowActionsHeaderComponent = <div className="secrets-visibility-button" onClick={() => setShowSecrets(prevState => !prevState)}>{showSecrets ?
+    <VisibilityIcon/> : <VisibilityOffIcon/>}</div>;
+
   return (
     <div id="configure-propagation-credentials">
       <Accordion>
@@ -211,7 +217,7 @@ const CredentialPairs = (props) => {
         </AccordionDetails>
       </Accordion>
 
-      <XDataGrid columns={getDataColumns(getRowActions, false, setErrorForRow)}
+      <XDataGrid columns={getDataColumns(getRowActions, false, setErrorForRow, rowActionsHeaderComponent, showSecrets)}
                  rows={[...rows]}
                  rowHeight={'25px'}
                  showToolbar={false}

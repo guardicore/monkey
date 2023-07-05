@@ -124,6 +124,12 @@ div.form-group div:not([class]) {
 
   .x-data-grid.configured-credentials {
     margin-bottom: 2rem;
+
+    .secrets-visibility-button {
+      &:hover {
+        cursor: pointer;
+      }
+    }
   }
 
   .MuiDataGrid-columnHeader, .MuiDataGrid-cell {
