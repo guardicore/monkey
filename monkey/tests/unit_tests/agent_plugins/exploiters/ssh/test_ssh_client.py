@@ -1,4 +1,3 @@
-from io import BytesIO
 from pathlib import PurePath
 from unittest.mock import MagicMock, patch
 
@@ -12,7 +11,7 @@ from infection_monkey.i_puppet import TargetHost
 
 SSH_PORT = NetworkPort(22)
 SSH_TIMEOUT = 10.0
-FILE_BUFFER = BytesIO(b"some bytes")
+FILE_BUFFER = b"some bytes"
 DESTINATION_PATH = PurePath("/tmp/dest")
 
 
