@@ -130,12 +130,22 @@ const CredentialPairs = (props) => {
   const processRowUpdate = (newRow) => {
     const updatedRow = trimRowValues({...newRow, isNew: false});
     const isRowEmpty = isAllValuesInRowAreEmpty(updatedRow);
-    if(!isRowEmpty) {
+
+    let isRowDuplicate = false;
+    for (let existingRow of rows) {
+      if (isRowDuplicated(newRow, existingRow)) {
+        isRowDuplicate = true;
+        break;
+      }
+    }
+
+    if(!isRowEmpty && !isRowDuplicate) {
       setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)), s => onCredentialChange({
         credentialsData: [...s],
         errors: [...errors]
       }));
     }
+
     return updatedRow;
   };
 
