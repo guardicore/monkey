@@ -21,7 +21,7 @@ from .utils import (
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
-        "SSHExploiter": {},
+        "SSH": {},
         "WMI": {"agent_binary_upload_timeout": 30},
     }
 
