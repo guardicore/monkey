@@ -121,7 +121,16 @@ div.form-group div:not([class]) {
       background-color: #ffffff;
     }
   }
+
   .x-data-grid.configured-credentials {
     margin-bottom: 2rem;
+  }
+
+  .MuiDataGrid-columnHeader, .MuiDataGrid-cell {
+    width: 15% !important;
+  }
+
+  .row-actions--header, .row-actions {
+    width: 10% !important;
   }
 }

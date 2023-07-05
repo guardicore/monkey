@@ -74,8 +74,8 @@ class ConfigurePageComponent extends AuthComponent {
 
   componentDidUpdate() {
     if (!this.getSectionsOrder()?.includes(this.currentSection)) {
-      this.currentSection = this.getSectionsOrder()?.[0]
-      this.setState({selectedSection: this.currentSection})
+      this.currentSection = this.getSectionsOrder()?.[0];
+      this.setState({selectedSection: this.currentSection});
     }
   }
 
@@ -416,7 +416,7 @@ class ConfigurePageComponent extends AuthComponent {
           return res;
         }).catch((error) => {
         console.log(`bad configuration ${error}`);
-        this.setState({lastAction: 'invalid_configuration'});
+        this.setState({lastAction: 'invalid_credentials_configuration'});
       }));
   }
 
@@ -569,6 +569,12 @@ class ConfigurePageComponent extends AuthComponent {
             <div className='alert alert-success'>
               <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration saved successfully.
+            </div>
+            : ''}
+          {this.state.lastAction === 'invalid_credentials_configuration' ?
+            <div className='alert alert-danger'>
+              <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
+              An invalid configuration file was imported or submitted. One or more of the credentials are invalid.
             </div>
             : ''}
           {this.state.lastAction === 'invalid_configuration' ?

@@ -33,38 +33,42 @@ const setColumnClass = (column, classToAppend) => {
   column[CELL_CLASS_NAME] = column[CELL_CLASS_NAME] ? `${column[CELL_CLASS_NAME]} ${classToAppend}` : classToAppend;
 }
 
-const prepareColsClasses = (columns) => {
+const prepareColsClasses = (columns, setFlex) => {
   let updatedColumns = _.cloneDeep(columns) || [];
   updatedColumns?.forEach((col) => {
     if(col[MAX_WIDTH] === Infinity) {
       setColumnClass(col, X_DATA_GRID_CLASSES.MAX_WIDTH_NONE);
     }
-    if(col?.flexValue >= 0) {
-      setColumnClass(col, FLEX_VALUES[col.flexValue] || FLEX_VALUES[1]);
-    } else {
-      setColumnClass(col, FLEX_VALUES[1]);
+
+    if(setFlex) {
+      if(col?.flexValue >= 0) {
+        setColumnClass(col, FLEX_VALUES[col.flexValue] || FLEX_VALUES[1]);
+      } else {
+        setColumnClass(col, FLEX_VALUES[1]);
+      }
     }
   });
 
   return updatedColumns;
 }
 
-const prepareColsWidth = (columns, columnWidth) => {
+const prepareColsWidth = (columns, columnWidth, setColWidth) => {
   const colWidth = getColumnWidth(columnWidth);
   let updatedColumns = _.cloneDeep(columns) || [];
-  updatedColumns?.forEach((col) => {
-    if(!(WIDTH in col)) {
-      if (!(MIN_WIDTH in col)) {
-        col[MIN_WIDTH] = colWidth?.min || DEFAULT_MIN_WIDTH;
+  if(setColWidth) {
+    updatedColumns?.forEach((col) => {
+      if (!(WIDTH in col)) {
+        if (!(MIN_WIDTH in col)) {
+          col[MIN_WIDTH] = colWidth?.min || DEFAULT_MIN_WIDTH;
+        }
+        if (!(MAX_WIDTH in col) && colWidth?.max >= 0) {
+          col[MAX_WIDTH] = colWidth?.max || DEFAULT_MAX_WIDTH;
+        } else {
+          col[MAX_WIDTH] = Infinity;
+        }
       }
-      if (!(MAX_WIDTH in col) && colWidth?.max >= 0) {
-        col[MAX_WIDTH] = colWidth?.max || DEFAULT_MAX_WIDTH;
-      } else {
-        col[MAX_WIDTH] = Infinity;
-      }
-    }
-  });
-
+    });
+  }
   return updatedColumns;
 }
 
@@ -104,6 +108,8 @@ const XDataGrid = (props) => {
     disableDensitySelector = true,
     disableColumnMenu = true,
     hideHeaders = false,
+    setColWidth = true,
+    setFlex = true,
     height,
     maxHeight,
     rowHeight,
@@ -122,7 +128,7 @@ const XDataGrid = (props) => {
   const sx = {maxHeight: maxHeight || height || 'auto'};
 
   const updatedColumns = useMemo(() => {
-    return prepareColsClasses(prepareColsWidth(columns, columnWidth));
+      return prepareColsClasses(prepareColsWidth(columns, columnWidth, setColWidth), setFlex);
   }, [columns]);
 
   useEffect(() => {

@@ -93,7 +93,7 @@ const NewCredentialPair = (props) => {
       rowHeight={'25px'}
       showToolbar={false}
       maxHeight={'400px'}
-      columnWidth={{min: 160, max: 160}}
+      columnWidth={{min: 160, max: -1}}
       hideHeaders={false}
       processRowUpdate={processRowUpdate}
       onRowModesModelChange={handleRowModesModelChange}
@@ -103,6 +103,7 @@ const NewCredentialPair = (props) => {
       onProcessRowUpdateError={()=>{void 0;}}
       getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
       className={'add-new-credentials-row'}
+      setFlex={false}
     />
   );
 }

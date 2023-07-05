@@ -206,7 +206,7 @@ const CredentialPairs = (props) => {
                  rowHeight={'25px'}
                  showToolbar={false}
                  maxHeight={'400px'}
-                 columnWidth={{min: COLUMN_WIDTH, max: COLUMN_WIDTH}}
+                 columnWidth={{min: COLUMN_WIDTH, max: -1}}
                  editMode="row"
                  rowModesModel={rowModesModel}
                  onRowModesModelChange={handleRowModesModelChange}
@@ -215,6 +215,7 @@ const CredentialPairs = (props) => {
                  getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
                  className="configured-credentials"
                  initialState={initialState}
+                 setFlex={false}
       />
     </div>
   );
