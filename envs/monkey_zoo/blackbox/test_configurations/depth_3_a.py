@@ -58,9 +58,8 @@ test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 test_agent_configuration = set_randomize_agent_hash(test_agent_configuration, True)
 
 CREDENTIALS = (
-    Credentials(identity=Username(username="m0nk3y"), secret=None),
+    Credentials(identity=Username(username="m0nk3y"), secret=Password(password="Passw0rd!")),
     Credentials(identity=Username(username="m0nk3y-user"), secret=None),
-    Credentials(identity=None, secret=Password(password="Passw0rd!")),
     Credentials(identity=None, secret=Password(password="3Q=(Ge(+&w]*")),
     Credentials(identity=None, secret=Password(password="`))jU7L(w}")),
     Credentials(identity=None, secret=NTHash(nt_hash="d0f0132b308a0c4e5d1029cc06f48692")),
