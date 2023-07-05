@@ -196,7 +196,11 @@ def _compress_source(source: bytes) -> bytes:
     # WARNING: Calls to gzip.compress() lock up the Island. For some reason, it does not appear that
     # the threading system (or gevent?) preempts this function while it's running. Setting the
     # compression level to 5 offers us a good balance between time and size.
-    return gzip.compress(source, compresslevel=COMPRESS_LEVEL)
+    logger.debug("Compressing source archive...")
+    compressed_source = gzip.compress(source, compresslevel=COMPRESS_LEVEL)
+    logger.debug("Finished compressing source archive...")
+
+    return compressed_source
 
 
 def _parse_plugin_with_multiple_vendors(
