@@ -72,20 +72,17 @@ export const getMainColumns = (setErrorForRow) => {
     {headerName: 'Password', field: 'password', editable: true, ...valueFormatter},
     {headerName: 'LM', field: 'lm', editable: true, ...valueFormatter},
     {headerName: 'NTLM', field: 'ntlm', editable: true, ...valueFormatter},
-    {
-      headerName: 'SSH Public key', field: 'ssh_public_key', editable: true,
-      preProcessEditCellProps: (params) => {
-        const isSSHPrivateKeyProps = params.otherFieldsProps.ssh_private_key;
-        const hasError = isSSHPrivateKeyProps.value && !params.props.value;
+    {headerName: 'SSH Public key', field: 'ssh_public_key', editable: true, ...multilineColumn, ...valueFormatter},
+    {headerName: 'SSH Private key', field: 'ssh_private_key', editable: true, ...multilineColumn, ...valueFormatter,
+    preProcessEditCellProps: (params) => {
+        const isSSHPublicKeyProps = params.otherFieldsProps.ssh_public_key;
+        const hasError = isSSHPublicKeyProps.value && !params.props.value;
         if (setErrorForRow) {
           hasError ? setErrorForRow(params.id, true) : setErrorForRow(params.id, false);
         }
         return {...params.props, error: hasError};
-      },
-      ...multilineColumn,
-      ...valueFormatter
-    },
-    {headerName: 'SSH Private key', field: 'ssh_private_key', editable: true, ...multilineColumn, ...valueFormatter}
+      }
+    }
   ];
 };
 
