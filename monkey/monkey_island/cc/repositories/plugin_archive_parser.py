@@ -23,6 +23,8 @@ SOURCE_ARCHIVE_FILENAME = "source.tar.gz"
 
 logger = logging.getLogger(__name__)
 
+COMPRESS_LEVEL = 5
+
 
 class VendorDirName(Enum):
     LINUX_VENDOR = "vendor-linux"
@@ -183,11 +185,18 @@ def _parse_plugin_with_generic_vendor(
     plugin = AgentPlugin(
         plugin_manifest=manifest,
         config_schema=schema,
-        source_archive=gzip.compress(source),
+        source_archive=_compress_source(source),
         supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     )
 
     return {OperatingSystem.LINUX: plugin, OperatingSystem.WINDOWS: plugin}
+
+
+def _compress_source(source: bytes) -> bytes:
+    # WARNING: Calls to gzip.compress() lock up the Island. For some reason, it does not appear that
+    # the threading system (or gevent?) preempts this function while it's running. Setting the
+    # compression level to 5 offers us a good balance between time and size.
+    return gzip.compress(source, compresslevel=COMPRESS_LEVEL)
 
 
 def _parse_plugin_with_multiple_vendors(
@@ -205,7 +214,7 @@ def _parse_plugin_with_multiple_vendors(
         parsed_plugin[os_] = AgentPlugin(
             plugin_manifest=manifest,
             config_schema=schema,
-            source_archive=gzip.compress(os_specific_plugin_source_archive),
+            source_archive=_compress_source(os_specific_plugin_source_archive),
             supported_operating_systems=(os_,),
         )
 
