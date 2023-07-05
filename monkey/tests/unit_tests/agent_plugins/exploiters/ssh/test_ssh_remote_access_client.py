@@ -155,7 +155,7 @@ def test_copy_file__success(
     assert tags == EXPLOITER_TAGS.union(COPY_FILE_TAGS)
 
 
-def test_get_writtable_paths__is_empty(
+def test_get_writable_paths__is_empty(
     ssh_remote_access_client: SSHRemoteAccessClient,
 ):
     assert ssh_remote_access_client.get_writable_paths() == []
