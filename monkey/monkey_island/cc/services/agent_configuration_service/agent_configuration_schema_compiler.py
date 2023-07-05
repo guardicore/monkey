@@ -3,7 +3,6 @@ from typing import Any, Dict
 
 import dpath
 
-from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_configuration import AgentConfiguration
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.hard_coded_manifests import HARD_CODED_PAYLOADS_MANIFESTS
@@ -12,11 +11,7 @@ from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
 )
 from monkey_island.cc.repositories import IAgentPluginRepository
 
-from .hard_coded_schemas import (
-    HARD_CODED_EXPLOITER_SCHEMAS,
-    HARD_CODED_FINGERPRINTER_SCHEMAS,
-    HARD_CODED_PAYLOADS_SCHEMAS,
-)
+from .hard_coded_schemas import HARD_CODED_FINGERPRINTER_SCHEMAS, HARD_CODED_PAYLOADS_SCHEMAS
 
 PLUGIN_PATH_IN_SCHEMA = {
     AgentPluginType.EXPLOITER: "definitions.ExploitationConfiguration.properties.exploiters",
@@ -61,7 +56,6 @@ class AgentConfigurationSchemaCompiler:
         return schema
 
     def _add_hard_coded_plugins(self, schema: Dict[str, Any]) -> Dict[str, Any]:
-        schema = self._add_non_plugin_exploiters(schema)
         schema = self._add_non_plugin_fingerprinters(schema)
         schema = self._add_non_plugin_payloads(schema)
         return schema
@@ -78,16 +72,6 @@ class AgentConfigurationSchemaCompiler:
     ) -> Dict[str, Any]:
         for plugin_name, manifest in manifests.items():
             schema[plugin_name].update(manifest.dict(simplify=True))
-        return schema
-
-    def _add_non_plugin_exploiters(self, schema: Dict[str, Any]) -> Dict[str, Any]:
-        properties = dpath.get(
-            schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.EXPLOITER] + ".properties", "."
-        )
-        exploiter_schemas = self._add_manifests_to_plugins_schema(
-            HARD_CODED_EXPLOITER_SCHEMAS, HARD_CODED_EXPLOITER_MANIFESTS
-        )
-        properties.update(exploiter_schemas)
         return schema
 
     def _add_non_plugin_fingerprinters(self, schema: Dict[str, Any]) -> Dict[str, Any]:

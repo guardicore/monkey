@@ -4,6 +4,7 @@ from common.agent_plugins import AgentPluginManifest, AgentPluginType
 EXPLOITER_NAME_1 = "MockExploiter"
 EXPLOITER_NAME_2 = "MockExploiter2"
 EXPLOITER_INCOMPLETE_MANIFEST = "MockExploiter3"
+EXPLOITER_TITLE_1 = "Mock Exploiter"
 
 REMEDIATION_SUGGESTION_1 = "Fix it!"
 REMEDIATION_SUGGESTION_2 = "Patch it!"
@@ -13,7 +14,7 @@ PLUGIN_MANIFESTS = {
         EXPLOITER_NAME_1: AgentPluginManifest(
             name=EXPLOITER_NAME_1,
             plugin_type=AgentPluginType.EXPLOITER,
-            title="Mock Exploiter",
+            title=EXPLOITER_TITLE_1,
             version="1.0.0",
             target_operating_systems=(OperatingSystem.WINDOWS,),
             description="Mocked description",

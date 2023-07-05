@@ -17,7 +17,7 @@ from pubsub.core import Publisher
 from serpentarium import PluginLoader, PluginThreadName
 from serpentarium.logging import configure_child_process_logger
 
-from common import HARD_CODED_EXPLOITER_MANIFESTS, OperatingSystem
+from common import OperatingSystem
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
@@ -47,12 +47,10 @@ from infection_monkey.agent_event_handlers import (
 )
 from infection_monkey.exploit import (
     CachingAgentBinaryRepository,
-    ExploiterWrapper,
     IAgentBinaryRepository,
     IslandAPIAgentOTPProvider,
     PolymorphicAgentBinaryRepositoryDecorator,
 )
-from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import (
@@ -434,7 +432,7 @@ class InfectionMonkey:
         plugin_compatibility_verifier = PluginCompatibilityVerifier(
             self._island_api_client,
             self._operating_system,
-            HARD_CODED_EXPLOITER_MANIFESTS,
+            {},
         )
         puppet = Puppet(
             self._agent_event_queue, plugin_registry, plugin_compatibility_verifier, self._agent_id
@@ -444,18 +442,6 @@ class InfectionMonkey:
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "mssql", MSSQLFingerprinter())
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "smb", SMBFingerprinter())
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "ssh", SSHFingerprinter())
-
-        exploit_wrapper = ExploiterWrapper(
-            self._agent_id,
-            self._agent_event_queue,
-            agent_binary_repository,
-            self._tcp_port_selector,
-            otp_provider,
-        )
-
-        puppet.load_plugin(
-            AgentPluginType.EXPLOITER, "SSHExploiter", exploit_wrapper.wrap(SSHExploiter)
-        )
 
         puppet.load_plugin(
             AgentPluginType.PAYLOAD,

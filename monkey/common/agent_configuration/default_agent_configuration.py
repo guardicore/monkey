@@ -69,14 +69,9 @@ NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
 
 EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports=HTTP_PORTS)
 
-# Order is preserved and agent will run exploiters in this sequence
-EXPLOITERS: Dict[str, Dict] = {
-    "SSHExploiter": {},
-}
-
 EXPLOITATION_CONFIGURATION = ExploitationConfiguration(
     options=EXPLOITATION_OPTIONS_CONFIGURATION,
-    exploiters=EXPLOITERS,
+    exploiters={},
 )
 
 PROPAGATION_CONFIGURATION = PropagationConfiguration(
