@@ -141,7 +141,7 @@ def test_copy_file__fails_if_client_copy_fails(
     with pytest.raises(RemoteFileCopyError):
         ssh_remote_access_client.copy_file(FILE, DESTINATION_PATH, tags)
 
-    assert tags == EXPLOITER_TAGS
+    assert tags == EXPLOITER_TAGS.union(COPY_FILE_TAGS)
 
 
 def test_copy_file__success(
