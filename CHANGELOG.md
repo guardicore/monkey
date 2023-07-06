@@ -10,6 +10,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Plugin source is now gzipped. #3392
 - Allowed characters in Agent event tags. #3399
 - Hard-coded Log4Shell exploiter to a plugin. #3388
+- Identities and secrets can be associated when configuring credentials in the
+  UI. #3393
 
 ## [2.2.1 - 2023-06-21]
 
