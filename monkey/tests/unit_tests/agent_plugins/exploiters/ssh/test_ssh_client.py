@@ -142,3 +142,8 @@ def test_copy_file__raises_when_sftp_putfo_fails(connected_ssh_client, mock_para
 
     with pytest.raises(Exception):
         connected_ssh_client.copy_file(FILE_BUFFER, DESTINATION_PATH)
+
+
+def test_connect__rasies_exception_on_wrong_credential_type(ssh_client, mock_target_host):
+    with pytest.raises(ValueError):
+        ssh_client.connect(mock_target_host, FULL_CREDENTIALS[3], SSH_PORT, SSH_TIMEOUT)
