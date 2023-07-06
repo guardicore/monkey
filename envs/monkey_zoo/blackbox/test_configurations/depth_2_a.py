@@ -33,7 +33,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
             "try_all_discovered_http_ports": True,
             "target_ports": [],
         },
-        "SSHExploiter": {},
+        "SSH": {},
         "PowerShell": {},
     }
 
