@@ -7,6 +7,7 @@ from typing import Tuple
 
 import pytest
 
+from common.types import NetworkPort
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.ports import COMMON_PORTS
 
@@ -30,6 +31,16 @@ def tcp_port_selector(context) -> TCPPortSelector:
     return TCPPortSelector(context, manager)
 
 
+def test_tcp_port_selector__checks_preferred_ports(tcp_port_selector: TCPPortSelector, monkeypatch):
+    preferred_ports = [NetworkPort(1111), NetworkPort(2222), NetworkPort(3333)]
+    preferred_port = SystemRandom().choice(preferred_ports)
+    unavailable_ports = [Connection(("", p)) for p in preferred_ports if p is not preferred_port]
+    monkeypatch.setattr(
+        "infection_monkey.network.info.psutil.net_connections", lambda: unavailable_ports
+    )
+    assert tcp_port_selector.get_free_tcp_port(preferred_ports=preferred_ports) in preferred_ports
+
+
 @pytest.mark.slow
 @pytest.mark.parametrize("number_of_runs", range(RANDOM_PORTS_NUMBER))
 def test_tcp_port_selector__checks_common_ports(
@@ -44,6 +55,7 @@ def test_tcp_port_selector__checks_common_ports(
     assert tcp_port_selector.get_free_tcp_port() is common_port
 
 
+@pytest.mark.slow
 def test_tcp_port_selector__checks_other_ports_if_common_ports_unavailable(
     tcp_port_selector, monkeypatch
 ):
@@ -55,6 +67,7 @@ def test_tcp_port_selector__checks_other_ports_if_common_ports_unavailable(
     assert tcp_port_selector.get_free_tcp_port() not in COMMON_PORTS
 
 
+@pytest.mark.slow
 def test_tcp_port_selector__none_if_no_available_ports(
     tcp_port_selector: TCPPortSelector, monkeypatch
 ):
@@ -109,11 +122,11 @@ def test_tcp_port_selector__uses_multiprocess_leases_same_random_port(
 ):
     queue = context.Queue()
 
-    p1 = context.Process(
+    p1 = context.Process(  # type: ignore[attr-defined]
         target=get_multiprocessing_tcp_port,
         args=(tcp_port_selector, MULTIPROCESSING_PORT, queue, monkeypatch),
     )
-    p2 = context.Process(
+    p2 = context.Process(  # type: ignore[attr-defined]
         target=get_multiprocessing_tcp_port,
         args=(tcp_port_selector, MULTIPROCESSING_PORT, queue, monkeypatch),
     )
@@ -136,7 +149,7 @@ def test_tcp_port_selector__uses_multiprocess_leases(
 ):
     queue = context.Queue()
 
-    p1 = context.Process(
+    p1 = context.Process(  # type: ignore[attr-defined]
         target=get_multiprocessing_tcp_port,
         args=(tcp_port_selector, MULTIPROCESSING_PORT, queue, monkeypatch, 0.0001),
     )
@@ -145,7 +158,7 @@ def test_tcp_port_selector__uses_multiprocess_leases(
     free_tcp_port_1 = queue.get()
     p1.join()
 
-    p2 = context.Process(
+    p2 = context.Process(  # type: ignore[attr-defined]
         target=get_multiprocessing_tcp_port,
         args=(tcp_port_selector, MULTIPROCESSING_PORT, queue, monkeypatch),
     )
