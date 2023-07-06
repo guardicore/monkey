@@ -3,7 +3,6 @@ import XDataGrid, {X_DATA_GRID_CLASSES} from '../XDataGrid';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -202,9 +201,8 @@ const CredentialPairs = (props) => {
 
   return (
     <div id="configure-propagation-credentials">
-      <Accordion>
+      <Accordion expanded={true}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon/>}
           aria-controls="new-credential-pairs-content"
           id="new-credential-pairs-panel"
         >
