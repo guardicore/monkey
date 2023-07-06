@@ -23,6 +23,8 @@ SOURCE_ARCHIVE_FILENAME = "source.tar.gz"
 
 logger = logging.getLogger(__name__)
 
+COMPRESS_LEVEL = 5
+
 
 class VendorDirName(Enum):
     LINUX_VENDOR = "vendor-linux"
@@ -140,7 +142,11 @@ def get_plugin_source(tar: TarFile) -> bytes:
     source_tar_archive = _safe_extract_file(tar, SOURCE_ARCHIVE_FILENAME).read()
 
     try:
-        return gzip.decompress(source_tar_archive)
+        logger.debug("Decompressing source archive")
+        decompressed_tar_archive = gzip.decompress(source_tar_archive)
+        logger.debug("Decompression complete")
+
+        return decompressed_tar_archive
     except gzip.BadGzipFile:
         raise ValueError("The provided source archive is not a valid gzip archive")
 
@@ -179,11 +185,22 @@ def _parse_plugin_with_generic_vendor(
     plugin = AgentPlugin(
         plugin_manifest=manifest,
         config_schema=schema,
-        source_archive=gzip.compress(source),
+        source_archive=_compress_source(source),
         supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     )
 
     return {OperatingSystem.LINUX: plugin, OperatingSystem.WINDOWS: plugin}
+
+
+def _compress_source(source: bytes) -> bytes:
+    # WARNING: Calls to gzip.compress() lock up the Island. For some reason, it does not appear that
+    # the threading system (or gevent?) preempts this function while it's running. Setting the
+    # compression level to 5 offers us a good balance between time and size.
+    logger.debug("Compressing source archive...")
+    compressed_source = gzip.compress(source, compresslevel=COMPRESS_LEVEL)
+    logger.debug("Finished compressing source archive...")
+
+    return compressed_source
 
 
 def _parse_plugin_with_multiple_vendors(
@@ -201,7 +218,7 @@ def _parse_plugin_with_multiple_vendors(
         parsed_plugin[os_] = AgentPlugin(
             plugin_manifest=manifest,
             config_schema=schema,
-            source_archive=gzip.compress(os_specific_plugin_source_archive),
+            source_archive=_compress_source(os_specific_plugin_source_archive),
             supported_operating_systems=(os_,),
         )
 

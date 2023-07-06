@@ -59,7 +59,7 @@ def build_agent_plugin(agent_plugin_manifest: AgentPluginManifest, config_schema
         return AgentPlugin(
             plugin_manifest=agent_plugin_manifest,
             config_schema=config_schema,
-            source_archive=gzip.compress(source_archive),
+            source_archive=gzip.compress(source_archive, compresslevel=1),
             supported_operating_systems=supported_operating_systems,
         )
 
