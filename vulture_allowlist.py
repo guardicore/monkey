@@ -19,6 +19,7 @@ from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServer
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFirewall
 from infection_monkey.utils import commands
+from infection_monkey.utils.decorators import request_cache
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
@@ -158,3 +159,5 @@ commands.build_download_command_linux_curl
 commands.build_dropper_script_download_command
 commands.build_download_command_windows_powershell_webclient
 commands.build_download_command_windows_powershell_webrequest
+
+request_cache
