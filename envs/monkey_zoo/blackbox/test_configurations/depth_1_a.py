@@ -33,7 +33,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
             "agent_binary_download_timeout": 60,
             "yarn_application_suffix": "M0NK3Y3XPL01T",
         },
-        "Log4Shell": {"target_ports": [8080, 8983, 9600]},
+        "Log4Shell": {},
         "MSSQL": {
             "target_ports": [1433],
             "try_discovered_mssql_ports": False,

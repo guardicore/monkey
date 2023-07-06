@@ -37,7 +37,7 @@ def test_hadoop_options__deserialization():
 def test_log4shell_options__default():
     log4shell_options = Log4ShellOptions()
 
-    assert log4shell_options.target_ports == []
+    assert log4shell_options.target_ports == [8000, 8080, 8983, 9600]
     assert log4shell_options.try_all_discovered_http_ports is False
     assert log4shell_options.exploit_download_timeout == 5.0
     assert log4shell_options.agent_binary_download_timeout == 15.0
