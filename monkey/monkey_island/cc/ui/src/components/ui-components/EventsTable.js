@@ -15,7 +15,7 @@ const columns = [
   {headerName: 'Target', field: 'target'},
   {headerName: 'Type', field: 'type'},
   {headerName: 'Tags', field: 'tags'},
-  {headerName: 'Fields', field: 'fields', renderCell: ({value})=>{return value;}, filterable: false, sortable: false, flex: 1, minWidth: '200px'}
+  {headerName: 'Fields', field: 'fields', renderCell: ({value})=>{return value;}, filterable: false, sortable: false, flexValue: 1, minWidth: 250}
 ];
 
 const gridInitialState = {
@@ -145,6 +145,7 @@ const EventsTable = () => {
               rows={[...data]}
               initialState={{...gridInitialState}}
               maxHeight={'800px'}
+              columnWidth={{min: 150, max: -1}}
             />
         }
       </div>

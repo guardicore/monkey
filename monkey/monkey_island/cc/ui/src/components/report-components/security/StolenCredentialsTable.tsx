@@ -3,7 +3,7 @@ import LoadingIcon from '../../ui-components/LoadingIcon';
 import {reformatSecret} from '../credentialParsing';
 import _ from 'lodash';
 import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
-import XDataGrid, {XDataGridTitle} from '../../ui-components/XDataGrid';
+import XDataGrid, {X_DATA_GRID_CLASSES, XDataGridTitle} from '../../ui-components/XDataGrid';
 import {nanoid} from 'nanoid';
 
 const customToolbar = () => {
@@ -37,6 +37,8 @@ const StolenCredentialsTable = () => {
       columns={columns}
       rows={credentialsTableData}
       maxHeight={'250px'}
+      columnWidth={{min: 150, max: -1}}
+      getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
     />
   );
 };

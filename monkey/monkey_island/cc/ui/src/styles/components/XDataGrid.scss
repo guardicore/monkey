@@ -25,6 +25,55 @@
     display: none !important;
   }
 
+  .MuiDataGrid-columnHeadersInner {
+    width: 100%;
+
+    div[role=row] {
+      width: 100%;
+
+      .MuiDataGrid-columnHeader {
+        &.max-width-none {
+            max-width: none !important;
+          }
+      }
+    }
+  }
+
+  .MuiDataGrid-virtualScrollerRenderZone {
+    width: 100%;
+
+    div[role=row] {
+      min-width: 100%;
+
+      &.last-empty-cell-hidden {
+        .MuiDataGrid-cell:not([role=cell]) {
+          display: none;
+        }
+      }
+
+      .MuiDataGrid-cell {
+        &.max-width-none {
+            max-width: none !important;
+        }
+
+        &.MuiDataGrid-cell--editing {
+          > div {
+            height: 100%;
+            border: 1px solid #1976d2;
+
+            &.Mui-error {
+              border-color: red;
+            }
+
+            textarea {
+              padding-left: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+
   .x-data-grid-row {
     &.run-error, &.run-success {
       color: white;
@@ -49,5 +98,15 @@
 
   p {
     margin-bottom: 0;
+  }
+
+  .flex-0 {
+    flex: 0 !important;
+  }
+  .flex-0\.5 {
+    flex: 0.5 !important;
+  }
+  .flex-1 {
+    flex: 1 !important;
   }
 }
