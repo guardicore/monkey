@@ -1,8 +1,6 @@
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
 from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
-from agent_plugins.exploiters.ssh.src.ssh_command_builder import build_ssh_command
-from agent_plugins.exploiters.ssh.src.ssh_options import SSHOptions
 from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
 from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
 from flask_security import Security
@@ -160,8 +158,3 @@ commands.build_download_command_linux_curl
 commands.build_dropper_script_download_command
 commands.build_download_command_windows_powershell_webclient
 commands.build_download_command_windows_powershell_webrequest
-
-# Remove after #3170 is done
-SSHOptions
-SSHOptions.connect_timeout
-build_ssh_command
