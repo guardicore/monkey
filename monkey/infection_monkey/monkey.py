@@ -79,10 +79,7 @@ from infection_monkey.plugin.credentials_collector_plugin_factory import (
 )
 from infection_monkey.plugin.exploiter_plugin_factory import ExploiterPluginFactory
 from infection_monkey.plugin.multiprocessing_plugin_wrapper import MultiprocessingPluginWrapper
-from infection_monkey.propagation_credentials_repository import (
-    AggregatingPropagationCredentialsRepository,
-    PropagationCredentialsRepository,
-)
+from infection_monkey.propagation_credentials_repository import PropagationCredentialsRepository
 from infection_monkey.puppet import (
     PluginCompatibilityVerifier,
     PluginRegistry,
@@ -151,9 +148,6 @@ class InfectionMonkey:
         self._operating_system = get_os()
 
         self._control_channel = ControlChannel(str(self._island_address), self._island_api_client)
-        self._legacy_propagation_credentials_repository = (
-            AggregatingPropagationCredentialsRepository(self._control_channel)
-        )
         self._propagation_credentials_repository = PropagationCredentialsRepository(
             self._island_api_client, self._manager
         )
@@ -377,7 +371,6 @@ class InfectionMonkey:
             puppet,
             self._control_channel,
             local_network_interfaces,
-            self._legacy_propagation_credentials_repository,
         )
 
     def _build_server_list(self, relay_port: Optional[NetworkPort]) -> Sequence[str]:
@@ -470,7 +463,6 @@ class InfectionMonkey:
             CredentialsStolenEvent,
             add_stolen_credentials_to_propagation_credentials_repository(
                 self._propagation_credentials_repository,
-                self._legacy_propagation_credentials_repository,
             ),
         )
 
