@@ -29,6 +29,7 @@ const IslandResetModal = (props: Props) => {
 
   return (
     <Modal show={props.show} onHide={() => {
+      setResetAll(Idle);
       setDeleteStatus(Idle);
       props.onClose()
     }} size={'lg'}>
@@ -80,7 +81,6 @@ const IslandResetModal = (props: Props) => {
                       setResetAll(Done);
                       props.onReset();
                     });
-                    props.onClose();
                   } catch (err) {
                     // TODO: Display error message to user
                     console.error(err)
