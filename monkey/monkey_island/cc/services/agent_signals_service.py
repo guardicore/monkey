@@ -80,8 +80,7 @@ class AgentSignalsService:
 
         :param timestamp: Timestamp of the terminate signal
         """
-        simulation = self._simulation_repository.get_simulation()
         timestamp = terminate_all_agents.timestamp
-        updated_simulation = Simulation(mode=simulation.mode, terminate_signal_time=timestamp)
+        updated_simulation = Simulation(terminate_signal_time=timestamp)
 
         self._simulation_repository.save_simulation(updated_simulation)
