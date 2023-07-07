@@ -60,17 +60,8 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def import_config(self, test_configuration: TestConfiguration):
-        self._set_island_mode()
         self._import_config(test_configuration)
         self._import_credentials(test_configuration.propagation_credentials)
-
-    @avoid_race_condition
-    def _set_island_mode(self):
-        if self.requests.put_json("api/island/mode", json="advanced").ok:
-            LOGGER.info("Setting island mode to Custom.")
-        else:
-            LOGGER.error("Failed to set island mode")
-            assert False
 
     @avoid_race_condition
     def _import_config(self, test_configuration: TestConfiguration):
@@ -132,7 +123,6 @@ class MonkeyIslandClient(object):
         self._reset_agent_configuration()
         self._reset_simulation_data()
         self._reset_credentials()
-        self._reset_island_mode()
         self.set_masque(b"")
 
     def _reset_agent_configuration(self):
@@ -154,13 +144,6 @@ class MonkeyIslandClient(object):
             LOGGER.info("Resseting configured credentials after the test.")
         else:
             LOGGER.error("Failed to reset configured credentials")
-            assert False
-
-    def _reset_island_mode(self):
-        if self.requests.put_json("api/island/mode", json="unset").ok:
-            LOGGER.info("Resetting island mode after the test.")
-        else:
-            LOGGER.error("Failed to reset island mode")
             assert False
 
     def get_agents(self) -> Sequence[Agent]:
