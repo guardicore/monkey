@@ -34,7 +34,7 @@ class RegisterPageComponent extends React.Component {
   };
 
   redirectToHome = () => {
-    window.location.href = '/landing-page';
+    window.location.href = '/';
   };
 
   constructor(props) {

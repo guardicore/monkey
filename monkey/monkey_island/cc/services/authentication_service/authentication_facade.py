@@ -8,7 +8,6 @@ from flask_security import UserDatastore
 from common.types import OTP, Token
 from common.utils.code_utils import secure_generate_random_string
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import IslandMode
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
@@ -152,9 +151,6 @@ class AuthenticationFacade:
         """
         self._island_event_queue.publish(IslandEventTopic.CLEAR_SIMULATION_DATA)
         self._island_event_queue.publish(IslandEventTopic.RESET_AGENT_CONFIGURATION)
-        self._island_event_queue.publish(
-            topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET
-        )
 
     def _reset_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)

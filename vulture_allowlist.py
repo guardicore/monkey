@@ -21,7 +21,7 @@ from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFi
 from infection_monkey.utils import commands
 from infection_monkey.utils.decorators import request_cache
 from monkey_island.cc.deployment import Deployment
-from monkey_island.cc.models import IslandMode, Machine
+from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
@@ -112,8 +112,6 @@ Machine.Config.json_dumps
 Machine._socketaddress_from_string
 # Unused, but potentially useful
 Machine.island
-
-IslandMode.ADVANCED
 
 # We anticipate using these in the future
 IAgentEventRepository.get_events_by_tag

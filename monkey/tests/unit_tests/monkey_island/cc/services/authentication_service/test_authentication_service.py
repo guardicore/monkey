@@ -10,7 +10,6 @@ from tests.common import StubDIContainer
 from common.event_queue import IAgentEventQueue
 from common.types import OTP
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import IslandMode
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service.authentication_facade import (
@@ -101,14 +100,13 @@ def test_handle_successful_registration(
 
     assert mock_repository_encryptor.unlock.call_args[0][0] != USERNAME
     assert mock_repository_encryptor.unlock.call_args[0][0] != PASSWORD
-    assert mock_island_event_queue.publish.call_count == 3
+    assert mock_island_event_queue.publish.call_count == 2
     mock_repository_encryptor.reset_key.assert_called_once()
     mock_repository_encryptor.unlock.assert_called_once()
     mock_island_event_queue.publish.assert_has_calls(
         [
             call(IslandEventTopic.CLEAR_SIMULATION_DATA),
             call(IslandEventTopic.RESET_AGENT_CONFIGURATION),
-            call(topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET),
         ]
     )
 
