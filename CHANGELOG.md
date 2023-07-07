@@ -14,6 +14,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Identities and secrets can be associated when configuring credentials in the
   UI. #3393
 
+### Removed
+- Island mode configuration. #3400
+
 ## [2.2.1 - 2023-06-21]
 
 ### Fixed
