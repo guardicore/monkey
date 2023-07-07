@@ -78,6 +78,48 @@ class AppComponent extends AuthComponent {
           });
         })
     }
+
+    if (res) {
+      // update status: report generation
+      this.authFetch('/api/report-generation-status', {}, false)
+        .then(res => res.json())
+        .then(res => {
+          this.setState({
+            completedSteps: new CompletedSteps(
+                                  this.state.completedSteps.runMonkey,
+                                  this.state.completedSteps.infectionDone,
+                                  res.report_done
+                                )
+          });
+        })
+
+      // update status: if any agent ran
+      doesAnyAgentExist(false).then(anyAgentExists => {
+        this.setState({
+          completedSteps: new CompletedSteps(
+                                anyAgentExists,
+                                this.state.completedSteps.infectionDone,
+                                this.state.completedSteps.reportDone
+                              )
+        });
+      });
+
+      // update status: if infection (running and shutting down of all agents) finished
+      didAllAgentsShutdown(false).then(allAgentsShutdown => {
+        let infectionDone = this.state.completedSteps.runMonkey && allAgentsShutdown;
+        if(this.state.completedSteps.infectionDone === false
+          && infectionDone){
+          this.showInfectionDoneNotification();
+        }
+        this.setState({
+          completedSteps: new CompletedSteps(
+                                this.state.completedSteps.runMonkey,
+                                infectionDone,
+                                this.state.completedSteps.reportDone
+                              )
+        });
+      });
+    }
   };
 
   renderRoute = (route_path, page_component) => {
