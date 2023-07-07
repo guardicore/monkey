@@ -327,7 +327,6 @@ TERMINATE_AGENTS_ENDPOINT = "/api/agent-signals/terminate-all-agents"
 CLEAR_SIMULATION_DATA_ENDPOINT = "/api/clear-simulation-data"
 MONKEY_EXPLOITATION_ENDPOINT = "/api/exploitations/monkey"
 GET_ISLAND_LOG_ENDPOINT = "/api/island/log"
-ISLAND_MODE_ENDPOINT = "/api/island/mode"
 ISLAND_RUN_ENDPOINT = "/api/local-monkey"
 GET_NODES_ENDPOINT = "/api/nodes"
 PROPAGATION_CREDENTIALS_ENDPOINT = "/api/propagation-credentials"
@@ -362,8 +361,6 @@ def test_agent__cannot_access_nonagent_endpoints(island):
     )
     assert agent_requests.get(MONKEY_EXPLOITATION_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
     assert agent_requests.get(GET_ISLAND_LOG_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
-    assert agent_requests.get(ISLAND_MODE_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
-    assert agent_requests.put(ISLAND_MODE_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
     assert agent_requests.post(ISLAND_RUN_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
     assert agent_requests.get(GET_MACHINES_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
     assert agent_requests.get(GET_NODES_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
@@ -420,10 +417,6 @@ def test_unauthenticated_user_cannot_access_API(island):
     )
     assert island_requests.get(MONKEY_EXPLOITATION_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
     assert island_requests.get(GET_ISLAND_LOG_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
-    assert island_requests.get(ISLAND_MODE_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
-    assert (
-        island_requests.put(ISLAND_MODE_ENDPOINT, data=None).status_code == HTTPStatus.UNAUTHORIZED
-    )
     assert (
         island_requests.post(ISLAND_RUN_ENDPOINT, data=None).status_code == HTTPStatus.UNAUTHORIZED
     )
