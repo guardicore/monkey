@@ -19,7 +19,7 @@ class RunMonkeyPageComponent extends AuthComponent {
           configuration</Link>)
           </i>
         </p>
-        <RunOptions islandMode={this.props.islandMode}/>
+        <RunOptions/>
       </Col>
     );
   }

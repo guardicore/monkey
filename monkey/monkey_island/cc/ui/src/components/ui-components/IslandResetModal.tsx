@@ -116,17 +116,6 @@ const IslandResetModal = (props: Props) => {
               return auth.authFetch('/api/propagation-credentials/configured-credentials', {method: 'PUT', body:'[]'})
           }})
        .then(res => {
-        if (res.ok) {
-            return auth.authFetch(
-              '/api/island/mode',
-              {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/json'},
-                body: '"unset"'
-              }
-            )
-        }})
-      .then(res => {
         if (! res.ok) {
           throw 'Error resetting the simulation'
         }

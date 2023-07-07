@@ -9,18 +9,14 @@ import {doesAnyAgentExist, didAllAgentsShutdown} from '../utils/ServerUtils'
 import {useNavigate} from 'react-router-dom';
 
 
-type Props = {
-  islandMode: string,
-};
-
-function ReportPage(props: Props) {
+function ReportPage() {
   const sections = ['security', 'ransomware'];
   const [securityReport, setSecurityReport] = useState({});
   const [ransomwareReport, setRansomwareReport] = useState({});
   const [allMonkeysAreDead, setAllMonkeysAreDead] = useState(false);
   const [runStarted, setRunStarted] = useState(true);
   const [selectedSection, setSelectedSection] = useState(selectReport(sections));
-  const [orderedSections, setOrderedSections] = useState([{key: 'security', title: 'Security report'}]);
+  const orderedSections = [{key: 'security', title: 'Security report'}, {key: 'ransomware', title: 'Ransomware report'}];
   const authComponent = new AuthComponent({});
 
   function selectReport(reports) {
@@ -99,31 +95,8 @@ function ReportPage(props: Props) {
     }
   };
 
-  function addRansomwareTab() {
-    let ransomwareTab = {key: 'ransomware', title: 'Ransomware report'};
-    if(isRansomwareTabMissing(ransomwareTab)){
-      if (props.islandMode === 'ransomware') {
-        orderedSections.splice(0, 0, ransomwareTab);
-      }
-      else {
-        orderedSections.push(ransomwareTab);
-      }
-    }
-  };
-
-  function isRansomwareTabMissing(ransomwareTab) {
-    return (
-      props.islandMode !== undefined &&
-      !orderedSections.some(tab =>
-      (tab.key === ransomwareTab.key
-      && tab.title === ransomwareTab.title)
-    ));
-  };
-
   function renderContent() {
     let content = <MustRunMonkeyWarning/>;
-
-    addRansomwareTab();
 
     if (runStarted) {
       content = getReportContent();

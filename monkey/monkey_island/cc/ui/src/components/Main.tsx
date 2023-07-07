@@ -10,7 +10,6 @@ import LicensePage from './pages/LicensePage';
 import AuthComponent from './AuthComponent';
 import LoginPageComponent from './pages/LoginPage';
 import RegisterPageComponent from './pages/RegisterPage';
-import LandingPage from "./pages/LandingPage";
 import Notifier from 'react-desktop-notification';
 import NotFoundPage from './pages/NotFoundPage';
 import GettingStartedPage from './pages/GettingStartedPage';
@@ -29,7 +28,6 @@ import LogoutPage from './pages/LogoutPage';
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
 export const IslandRoutes = {
-  LandingPage: '/landing-page',
   GettingStartedPage: '/',
   Report: '/report',
   SecurityReport: '/report/security',
@@ -55,10 +53,8 @@ class AppComponent extends AuthComponent {
     super(props);
     this.state = {
       completedSteps: new CompletedSteps(false),
-      islandMode: undefined,
     };
     this.interval = undefined;
-    this.setMode();
   }
 
   updateStatus = () => {
@@ -82,74 +78,12 @@ class AppComponent extends AuthComponent {
           });
         })
     }
-
-    if (res) {
-      this.setMode()
-        .then(() => {
-          if (this.state.islandMode === "unset") {
-            return
-          }
-
-          // update status: report generation
-          this.authFetch('/api/report-generation-status', {}, false)
-            .then(res => res.json())
-            .then(res => {
-              this.setState({
-                completedSteps: new CompletedSteps(
-                                      this.state.completedSteps.runMonkey,
-                                      this.state.completedSteps.infectionDone,
-                                      res.report_done
-                                    )
-              });
-            })
-
-          // update status: if any agent ran
-          doesAnyAgentExist(false).then(anyAgentExists => {
-            this.setState({
-              completedSteps: new CompletedSteps(
-                                    anyAgentExists,
-                                    this.state.completedSteps.infectionDone,
-                                    this.state.completedSteps.reportDone
-                                  )
-            });
-          });
-
-          // update status: if infection (running and shutting down of all agents) finished
-          didAllAgentsShutdown(false).then(allAgentsShutdown => {
-            let infectionDone = this.state.completedSteps.runMonkey && allAgentsShutdown;
-            if(this.state.completedSteps.infectionDone === false
-              && infectionDone){
-              this.showInfectionDoneNotification();
-            }
-            this.setState({
-              completedSteps: new CompletedSteps(
-                                    this.state.completedSteps.runMonkey,
-                                    infectionDone,
-                                    this.state.completedSteps.reportDone
-                                  )
-            });
-          });
-        }
-      )
-    }
   };
-
-  setMode = () => {
-    return IslandHttpClient.getJSON(APIEndpoint.mode)
-      .then(res => {
-        this.setState({islandMode: res.body});
-      });
-  }
 
   renderRoute = (route_path, page_component) => {
     let render_func = () => {
       switch (this.state.isLoggedIn) {
         case true:
-          if (this.needsRedirectionToLandingPage(route_path)) {
-            return <Navigate replace to={IslandRoutes.LandingPage}/>;
-          } else if (this.needsRedirectionToGettingStarted(route_path)) {
-            return <Navigate replace to={IslandRoutes.GettingStartedPage}/>;
-          }
           return page_component;
         case false:
           switch (this.state.needsRegistration) {
@@ -168,15 +102,6 @@ class AppComponent extends AuthComponent {
     return <Route path={route_path} element={render_func()}/>;
   };
 
-  needsRedirectionToLandingPage = (route_path) => {
-    return (this.state.islandMode === "unset" && route_path !== IslandRoutes.LandingPage)
-  }
-
-  needsRedirectionToGettingStarted = (route_path) => {
-    return route_path === IslandRoutes.LandingPage &&
-      this.state.islandMode !== "unset" && this.state.islandMode !== undefined
-  }
-
   redirectTo = (userPath, targetPath) => {
     let pathQuery = new RegExp(userPath + '[/]?$', 'g');
     if (window.location.pathname.match(pathQuery)) {
@@ -194,36 +119,14 @@ class AppComponent extends AuthComponent {
   }
 
   getDefaultReport() {
-    if(this.state.islandMode === 'ransomware'){
-      return IslandRoutes.RansomwareReport;
-    } else {
-      return IslandRoutes.SecurityReport;
-    }
-  }
-
-  getIslandModeTitle(){
-    if(this.state.islandMode === 'ransomware'){
-      return this.formIslandModeTitle("Ransomware", faFileCode);
-    } else {
-      return this.formIslandModeTitle("Custom", faLightbulb);
-    }
-  }
-
-  formIslandModeTitle(title, icon){
-    return (<>
-      <h5 className={'text-muted'}>
-        <FontAwesomeIcon icon={icon} /> {title}
-      </h5>
-    </>)
+    return IslandRoutes.SecurityReport;
   }
 
   render() {
 
     let defaultSideNavProps = {completedSteps: this.state.completedSteps,
                                onStatusChange: this.updateStatus,
-                               islandMode: this.state.islandMode,
                                defaultReport: this.getDefaultReport(),
-                               sideNavHeader: this.getIslandModeTitle(),
                                onLogout: () => {this.auth.logout()
                                  .then(() => this.updateStatus())}};
 
@@ -234,12 +137,6 @@ class AppComponent extends AuthComponent {
             <Route path={IslandRoutes.LoginPage} element={<LoginPageComponent onStatusChange={this.updateStatus}/>}/>
             <Route path={IslandRoutes.Logout} element={<LogoutPage onStatusChange={this.updateStatus}/>}/>
             <Route path={IslandRoutes.RegisterPage} element={<RegisterPageComponent onStatusChange={this.updateStatus}/>}/>
-            {this.renderRoute(IslandRoutes.LandingPage,
-              <SidebarLayoutComponent component={LandingPage}
-                                      sideNavShow={false}
-                                      sideNavDisabled={true}
-                                      completedSteps={new CompletedSteps()}
-                                      onStatusChange={this.updateStatus}/>)}
             {this.renderRoute(IslandRoutes.GettingStartedPage,
               <SidebarLayoutComponent component={GettingStartedPage} {...defaultSideNavProps}/>)}
             {this.renderRoute(IslandRoutes.ConfigurePage,
@@ -253,15 +150,12 @@ class AppComponent extends AuthComponent {
             {this.redirectToReport()}
             {this.renderRoute(IslandRoutes.SecurityReport,
               <SidebarLayoutComponent component={ReportPage}
-                                      islandMode={this.state.islandMode}
                                       {...defaultSideNavProps}/>)}
             {this.renderRoute(IslandRoutes.RansomwareReport,
               <SidebarLayoutComponent component={ReportPage}
-                                      islandMode={this.state.islandMode}
                                       {...defaultSideNavProps}/>)}
             {this.renderRoute(IslandRoutes.LicensePage,
               <SidebarLayoutComponent component={LicensePage}
-                                      islandMode={this.state.islandMode}
                                       {...defaultSideNavProps}/>)}
             <Route path='*' element={<NotFoundPage/>}/>
           </Routes>
@@ -271,11 +165,7 @@ class AppComponent extends AuthComponent {
   }
 
   redirectToReport() {
-    if (this.state.islandMode === 'ransomware') {
-      return this.redirectTo(IslandRoutes.Report, IslandRoutes.RansomwareReport)
-    } else {
-      return this.redirectTo(IslandRoutes.Report, IslandRoutes.SecurityReport)
-    }
+    return this.redirectTo(IslandRoutes.Report, IslandRoutes.SecurityReport)
   }
 
   showInfectionDoneNotification() {
