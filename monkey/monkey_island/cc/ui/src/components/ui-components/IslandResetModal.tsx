@@ -109,17 +109,25 @@ const IslandResetModal = (props: Props) => {
     return auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
       .then(res => {
         if (res.ok) {
-            return auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
+          return auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
         }})
-        .then(res => {
-          if (res.ok) {
-              return auth.authFetch('/api/propagation-credentials/configured-credentials', {method: 'PUT', body:'[]'})
-          }})
-       .then(res => {
+      .then(res => {
+        if (res.ok) {
+          return auth.authFetch('/api/propagation-credentials/configured-credentials', {method: 'PUT', body:'[]'})
+        }})
+      .then(res => {
+        if (res.ok) {
+          return auth.authFetch('/api/agent-binaries/linux/masque', {method: 'PUT'})
+          .then(res => {
+            if (res.ok) {
+              return auth.authFetch('/api/agent-binaries/windows/masque', {method: 'PUT'})
+            }
+          })
+        }})
+      .then(res => {
         if (! res.ok) {
           throw 'Error resetting the simulation'
-        }
-      })
+        }})
   }
 
   function showModalButtons() {
