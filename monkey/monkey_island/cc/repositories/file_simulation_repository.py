@@ -1,7 +1,7 @@
 import io
 
 from monkey_island.cc import repositories
-from monkey_island.cc.models import IslandMode, Simulation
+from monkey_island.cc.models import Simulation
 from monkey_island.cc.repositories import IFileRepository, ISimulationRepository, RetrievalError
 
 SIMULATION_STATE_FILE_NAME = "simulation_state.json"
@@ -28,9 +28,3 @@ class FileSimulationRepository(ISimulationRepository):
         self._file_repository.save_file(
             SIMULATION_STATE_FILE_NAME, io.BytesIO(simulation_json.encode())
         )
-
-    def get_mode(self) -> IslandMode:
-        return self.get_simulation().mode
-
-    def set_mode(self, mode: IslandMode):
-        self.save_simulation(Simulation(mode=mode))
