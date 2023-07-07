@@ -24,7 +24,7 @@ import {
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
-import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
+import CONFIGURATION_TABS_ORDER from '../configuration-components/ConfigurationTabs.js';
 import {SCHEMA} from '../../services/configuration/configSchema.js';
 import {
   reformatConfig,
@@ -52,7 +52,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.currentSection = this.getSectionsOrder()[0];
+    this.currentSection = CONFIGURATION_TABS_ORDER[0];
     this.validator = customizeValidator( {customFormats: formValidationFormats});
 
     this.state = {
@@ -72,13 +72,6 @@ class ConfigurePageComponent extends AuthComponent {
     };
   }
 
-  componentDidUpdate() {
-    if (!this.getSectionsOrder()?.includes(this.currentSection)) {
-      this.currentSection = this.getSectionsOrder()?.[0];
-      this.setState({selectedSection: this.currentSection});
-    }
-  }
-
   setCredentialsState = (rows = [], errors = [], isRequiredToUpdateId) => {
     let newState = {credentials: {credentialsData: rows, errors: errors, id: this.state.credentials.id}};
     if(isRequiredToUpdateId) {
@@ -89,12 +82,6 @@ class ConfigurePageComponent extends AuthComponent {
 
   resetLastAction = () => {
     this.setState({lastAction: 'none'});
-  }
-
-  getSectionsOrder() {
-    let islandModeSet = (this.props.islandMode !== 'unset' && this.props.islandMode !== undefined)
-    let islandMode = islandModeSet ? this.props.islandMode : 'advanced'
-    return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
   componentDidMount = () => {
@@ -111,7 +98,7 @@ class ConfigurePageComponent extends AuthComponent {
         let sections = [];
         monkeyConfig = reformatConfig(monkeyConfig);
 
-        for (let sectionKey of this.getSectionsOrder()) {
+        for (let sectionKey of CONFIGURATION_TABS_ORDER) {
           sections.push({
             key: sectionKey,
             title: SCHEMA.properties[sectionKey].title

@@ -29,6 +29,7 @@ const IslandResetModal = (props: Props) => {
 
   return (
     <Modal show={props.show} onHide={() => {
+      setResetAll(Idle);
       setDeleteStatus(Idle);
       props.onClose()
     }} size={'lg'}>
@@ -80,7 +81,6 @@ const IslandResetModal = (props: Props) => {
                       setResetAll(Done);
                       props.onReset();
                     });
-                    props.onClose();
                   } catch (err) {
                     // TODO: Display error message to user
                     console.error(err)
@@ -109,28 +109,25 @@ const IslandResetModal = (props: Props) => {
     return auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
       .then(res => {
         if (res.ok) {
-            return auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
+          return auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
         }})
-        .then(res => {
-          if (res.ok) {
-              return auth.authFetch('/api/propagation-credentials/configured-credentials', {method: 'PUT', body:'[]'})
-          }})
-       .then(res => {
+      .then(res => {
         if (res.ok) {
-            return auth.authFetch(
-              '/api/island/mode',
-              {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/json'},
-                body: '"unset"'
-              }
-            )
+          return auth.authFetch('/api/propagation-credentials/configured-credentials', {method: 'PUT', body:'[]'})
+        }})
+      .then(res => {
+        if (res.ok) {
+          return auth.authFetch('/api/agent-binaries/linux/masque', {method: 'PUT'})
+          .then(res => {
+            if (res.ok) {
+              return auth.authFetch('/api/agent-binaries/windows/masque', {method: 'PUT'})
+            }
+          })
         }})
       .then(res => {
         if (! res.ok) {
           throw 'Error resetting the simulation'
-        }
-      })
+        }})
   }
 
   function showModalButtons() {
