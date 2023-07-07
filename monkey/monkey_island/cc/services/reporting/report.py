@@ -12,7 +12,6 @@ from itertools import chain, product
 from threading import Lock
 from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
 
-from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_events import (
     AbstractAgentEvent,
     ExploitationEvent,
@@ -531,8 +530,6 @@ class ReportService:
         exploiter_manifests = deepcopy(exploiter_manifests)
         if not exploiter_manifests:
             logger.debug("No plugin exploiter manifests were found")
-
-        exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
 
         return exploiter_manifests
 

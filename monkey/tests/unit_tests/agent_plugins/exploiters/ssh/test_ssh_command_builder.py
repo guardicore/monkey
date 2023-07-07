@@ -1,4 +1,6 @@
+from ipaddress import IPv4Address
 from pathlib import PurePosixPath
+from typing import Optional
 from unittest.mock import MagicMock
 
 import pytest
@@ -24,22 +26,9 @@ def otp_provider() -> IAgentOTPProvider:
     return provider
 
 
-def test_exception_raised_for_windows(otp_provider: IAgentOTPProvider):
-    target_host = TargetHost(ip="127.0.0.1", operating_system=OperatingSystem.WINDOWS)
-
-    with pytest.raises(Exception):
-        build_ssh_command(
-            AGENT_ID,
-            target_host,
-            SERVERS,
-            DEPTH,
-            AGENT_EXE_PATH,
-            otp_provider,
-        )
-
-
-def test_command(otp_provider: IAgentOTPProvider):
-    target_host = TargetHost(ip="127.0.0.1", operating_system=OperatingSystem.LINUX)
+@pytest.mark.parametrize("os", [OperatingSystem.LINUX, None])
+def test_command(otp_provider: IAgentOTPProvider, os: Optional[OperatingSystem]):
+    target_host = TargetHost(ip=IPv4Address("127.0.0.1"), operating_system=os)
 
     command = build_ssh_command(
         AGENT_ID,

@@ -1,6 +1,2 @@
-from .i_legacy_propagation_credentials_repository import ILegacyPropagationCredentialsRepository
-from .aggregating_propagation_credentials_repository import (
-    AggregatingPropagationCredentialsRepository,
-)
 from .i_propagation_credentials_repository import IPropagationCredentialsRepository
 from .propagation_credentials_repository import PropagationCredentialsRepository

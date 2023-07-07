@@ -4,7 +4,6 @@ from http import HTTPStatus
 from flask import make_response
 from flask_security import auth_token_required, roles_accepted
 
-from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
@@ -52,9 +51,7 @@ class AgentPluginsManifest(AbstractResource):
         try:
             return plugin_manifests[plugin_type][name]
         except KeyError as err:
-            if plugin_type == AgentPluginType.EXPLOITER:
-                return HARD_CODED_EXPLOITER_MANIFESTS[name]
-            elif plugin_type == AgentPluginType.FINGERPRINTER:
+            if plugin_type == AgentPluginType.FINGERPRINTER:
                 return HARD_CODED_FINGERPRINTER_MANIFESTS[name]
             else:
                 raise err

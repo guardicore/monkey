@@ -37,7 +37,6 @@ raw_exploitation_configuration = {
         "Exploiter5": {},
         "Exploiter4": {"timeout": 30},
         "Exploiter2": {},
-        "SSHExploiter": {},
         "Exploiter3": {},
         "Exploiter1": {},
         "Exploiter6": {},
