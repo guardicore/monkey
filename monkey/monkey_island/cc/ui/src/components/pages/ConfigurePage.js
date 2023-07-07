@@ -72,10 +72,6 @@ class ConfigurePageComponent extends AuthComponent {
     };
   }
 
-  // componentDidUpdate() {
-      // this.setState({selectedSection: this.currentSection});
-    // }
-
   setCredentialsState = (rows = [], errors = [], isRequiredToUpdateId) => {
     let newState = {credentials: {credentialsData: rows, errors: errors, id: this.state.credentials.id}};
     if(isRequiredToUpdateId) {
