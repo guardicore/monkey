@@ -1,5 +1,5 @@
-import AES from 'crypto-js/aes';
-import Utf8 from 'crypto-js/enc-utf8';
+import AES from "crypto-js/aes";
+import Utf8 from "crypto-js/enc-utf8";
 
 export function encryptText(content: string, password: string): string {
   return AES.encrypt(content, password).toString();

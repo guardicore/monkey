@@ -1,10 +1,10 @@
 const CONFIGURATION_TABS = {
-  PROPAGATION: 'propagation',
-  PAYLOADS: 'payloads',
-  CREDENTIALS_COLLECTORS: 'credentials_collectors',
-  MASQUERADE: 'masquerade',
-  POLYMORPHISM: 'polymorphism',
-  ADVANCED: 'advanced'
+  PROPAGATION: "propagation",
+  PAYLOADS: "payloads",
+  CREDENTIALS_COLLECTORS: "credentials_collectors",
+  MASQUERADE: "masquerade",
+  POLYMORPHISM: "polymorphism",
+  ADVANCED: "advanced",
 };
 
 const CONFIGURATION_TABS_ORDER = [
@@ -13,7 +13,7 @@ const CONFIGURATION_TABS_ORDER = [
   CONFIGURATION_TABS.CREDENTIALS_COLLECTORS,
   CONFIGURATION_TABS.MASQUERADE,
   CONFIGURATION_TABS.POLYMORPHISM,
-  CONFIGURATION_TABS.ADVANCED
+  CONFIGURATION_TABS.ADVANCED,
 ];
 
 export default CONFIGURATION_TABS_ORDER;

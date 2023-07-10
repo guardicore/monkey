@@ -1,6 +1,6 @@
 {
   "log_level": "DEBUG",
   "mongodb": {
-        "start_mongodb": true
+    "start_mongodb": true
   }
 }

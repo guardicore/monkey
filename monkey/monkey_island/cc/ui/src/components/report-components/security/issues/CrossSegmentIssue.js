@@ -1,18 +1,18 @@
-import React from 'react';
-import CollapsibleWellComponent from '../CollapsibleWell';
-
+import React from "react";
+import CollapsibleWellComponent from "../CollapsibleWell";
 
 export function crossSegmentIssueReport(crossSegmentIssue) {
-  let crossSegmentIssueOverview = 'Communication possible from '
-    + `${crossSegmentIssue['source_subnet']} to ${crossSegmentIssue['target_subnet']}`;
+  let crossSegmentIssueOverview =
+    "Communication possible from " +
+    `${crossSegmentIssue["source_subnet"]} to ${crossSegmentIssue["target_subnet"]}`;
 
   return (
     <li key={crossSegmentIssueOverview}>
       {crossSegmentIssueOverview}
       <CollapsibleWellComponent>
-        <ul className='cross-segment-issues'>
-          {crossSegmentIssue['issues'].map(
-            issue => getCrossSegmentIssueListItem(issue)
+        <ul className="cross-segment-issues">
+          {crossSegmentIssue["issues"].map((issue) =>
+            getCrossSegmentIssueListItem(issue),
           )}
         </ul>
       </CollapsibleWellComponent>
@@ -21,7 +21,7 @@ export function crossSegmentIssueReport(crossSegmentIssue) {
 }
 
 export function getCrossSegmentIssueListItem(issue) {
-  if (issue['is_self']) {
+  if (issue["is_self"]) {
     return getCrossSegmentSingleHostMessage(issue);
   }
 
@@ -30,17 +30,17 @@ export function getCrossSegmentIssueListItem(issue) {
 
 export function getCrossSegmentSingleHostMessage(issue) {
   return (
-    <li key={issue['hostname']}>
-      {`Machine ${issue['hostname']} has both ips: ${issue['source']} and ${issue['target']}`}
+    <li key={issue["hostname"]}>
+      {`Machine ${issue["hostname"]} has both ips: ${issue["source"]} and ${issue["target"]}`}
     </li>
   );
 }
 
 export function getCrossSegmentMultiHostMessage(issue) {
   return (
-    <li key={issue['source'] + issue['target']}>
-      IP {issue['source']} ({issue['hostname']}) was able to communicate with
-      IP {issue['target']} using:
+    <li key={issue["source"] + issue["target"]}>
+      IP {issue["source"]} ({issue["hostname"]}) was able to communicate with IP{" "}
+      {issue["target"]} using:
       <ul>
         {getScanTypeListItems(issue)}
         {getCrossSegmentServiceListItems(issue)}
@@ -52,10 +52,8 @@ export function getCrossSegmentMultiHostMessage(issue) {
 export function getScanTypeListItems(issue) {
   let scan_type_list_items = [];
 
-  for (const scan_type of issue['types']) {
-    scan_type_list_items.push(
-      <li key={scan_type}>{scan_type}</li>
-    );
+  for (const scan_type of issue["types"]) {
+    scan_type_list_items.push(<li key={scan_type}>{scan_type}</li>);
   }
 
   return scan_type_list_items;
@@ -64,11 +62,11 @@ export function getScanTypeListItems(issue) {
 export function getCrossSegmentServiceListItems(issue) {
   let service_list_items = [];
 
-  for (const [service, info] of Object.entries(issue['services'])) {
+  for (const [service, info] of Object.entries(issue["services"])) {
     service_list_items.push(
       <li key={service}>
-        <span className='cross-segment-service'>{service}</span> ({info})
-      </li>
+        <span className="cross-segment-service">{service}</span> ({info})
+      </li>,
     );
   }
 

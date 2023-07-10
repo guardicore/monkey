@@ -1,18 +1,18 @@
-import React from 'react';
-import {Button, Col, Container, Form, Row} from 'react-bootstrap';
+import React from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
-import AuthService, {getErrors} from '../../services/AuthService';
-import monkeyGeneral from '../../images/militant-monkey.svg';
-import ParticleBackground from '../ui-components/ParticleBackground';
+import AuthService, { getErrors } from "../../services/AuthService";
+import monkeyGeneral from "../../images/militant-monkey.svg";
+import ParticleBackground from "../ui-components/ParticleBackground";
 
 class LoginPageComponent extends React.Component {
   login = (event) => {
-    event.preventDefault()
-    this.auth.login(this.username, this.password).then(res => {
-      if (res['result']) {
+    event.preventDefault();
+    this.auth.login(this.username, this.password).then((res) => {
+      if (res["result"]) {
         this.redirectToHome();
       } else {
-        this.setState({failed: true, errors: res['errors']});
+        this.setState({ failed: true, errors: res["errors"] });
       }
     });
   };
@@ -26,67 +26,84 @@ class LoginPageComponent extends React.Component {
   };
 
   redirectToHome = () => {
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
   redirectToRegistration = () => {
-    window.location.href = '/register';
+    window.location.href = "/register";
   };
 
   constructor(props) {
     super(props);
-    this.username = '';
-    this.password = '';
+    this.username = "";
+    this.password = "";
     this.auth = new AuthService();
     this.state = {
-      failed: false
+      failed: false,
     };
 
-    this.auth.needsRegistration()
-      .then(result => {
-        if (result) {
-          this.redirectToRegistration()
-        }
-      })
+    this.auth.needsRegistration().then((result) => {
+      if (result) {
+        this.redirectToRegistration();
+      }
+    });
 
     if (this.auth.loggedIn()) {
       this.redirectToHome();
     }
-
   }
 
   render() {
     return (
-      <Container fluid className={'auth-container'}>
-        <ParticleBackground/>
+      <Container fluid className={"auth-container"}>
+        <ParticleBackground />
         <Row>
-          <Col xs={12} lg={{span: 6, offset: 3}} md={{span: 7, offset: 3}} className={'auth-block'}>
+          <Col
+            xs={12}
+            lg={{ span: 6, offset: 3 }}
+            md={{ span: 7, offset: 3 }}
+            className={"auth-block"}
+          >
             <Row>
               <Col lg={8} md={8} sm={8}>
-                <h1 className='auth-title'>Login</h1>
+                <h1 className="auth-title">Login</h1>
                 <div>
-                  <Form className={'auth-form'} onSubmit={this.login}>
-                    <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
-                    <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
-                    <Button className={'monkey-submit-button'} type={'submit'}>
+                  <Form className={"auth-form"} onSubmit={this.login}>
+                    <Form.Control
+                      onChange={(evt) => this.updateUsername(evt)}
+                      type="text"
+                      placeholder="Username"
+                    />
+                    <Form.Control
+                      onChange={(evt) => this.updatePassword(evt)}
+                      type="password"
+                      placeholder="Password"
+                    />
+                    <Button className={"monkey-submit-button"} type={"submit"}>
                       Login
                     </Button>
-                    {
-                      this.state.failed ?
-                        <div className="alert alert-danger" role="alert">{getErrors(this.state.errors)}</div>
-                        :
-                        ''
-                    }
+                    {this.state.failed ? (
+                      <div className="alert alert-danger" role="alert">
+                        {getErrors(this.state.errors)}
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </Form>
                 </div>
               </Col>
               <Col lg={4} md={4} sm={4}>
-                <img alt="infection monkey" className={'monkey-detective'} src={monkeyGeneral}/>
+                <img
+                  alt="infection monkey"
+                  className={"monkey-detective"}
+                  src={monkeyGeneral}
+                />
               </Col>
             </Row>
           </Col>
         </Row>
-      </Container>)
+      </Container>
+    );
   }
 }
 

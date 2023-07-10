@@ -1,12 +1,7 @@
 {
   "parser": "@babel/eslint-parser",
-  "plugins": [
-    "react"
-  ],
-  "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended"
-  ],
+  "plugins": ["react"],
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
   "parserOptions": {
     "requireConfigFile": false,
     "ecmaVersion": 6,
@@ -68,9 +63,7 @@
     "react/no-unknown-property": [
       1,
       {
-        "ignore": [
-          "class"
-        ]
+        "ignore": ["class"]
       }
     ],
     "react/no-string-refs": 1,

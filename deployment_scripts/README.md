@@ -16,7 +16,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/guardicore/monkey/develop/de
 
 This will download our deploy script. It's a good idea to read it quickly before executing it!
 
-After downloading that script, execute it in  `powershell`.
+After downloading that script, execute it in `powershell`.
 
 The first argument is an empty directory (script can create one). The second argument is which branch you want to clone - by default, the script will check out the `develop` branch. Some example usages:
 

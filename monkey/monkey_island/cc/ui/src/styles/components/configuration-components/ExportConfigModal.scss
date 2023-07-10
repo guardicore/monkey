@@ -6,8 +6,11 @@
   margin-right: 10px;
 }
 
-.config-export-modal .export-type-radio-buttons
-.password-radio-button .config-export-password-input input {
+.config-export-modal
+  .export-type-radio-buttons
+  .password-radio-button
+  .config-export-password-input
+  input {
   display: inline-block;
   width: auto;
   top: 0;
@@ -16,7 +19,7 @@
 
 .config-export-modal .export-type-radio-buttons .password-radio-button {
   display: flex;
-  gap: .5rem;
+  gap: 0.5rem;
   align-items: center;
 
   input {

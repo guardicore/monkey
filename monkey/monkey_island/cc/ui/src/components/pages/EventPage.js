@@ -1,10 +1,9 @@
-import React from 'react';
-import {Col} from 'react-bootstrap';
-import AuthService from '../../services/AuthService';
-import EventsTable from '../ui-components/EventsTable'
+import React from "react";
+import { Col } from "react-bootstrap";
+import AuthService from "../../services/AuthService";
+import EventsTable from "../ui-components/EventsTable";
 
-import '../../styles/pages/EventPage.scss';
-
+import "../../styles/pages/EventPage.scss";
 
 class EventPageComponent extends React.Component {
   constructor(props) {
@@ -12,18 +11,22 @@ class EventPageComponent extends React.Component {
     this.auth = new AuthService();
     this.authFetch = this.auth.authFetch;
     this.state = {
-      data: []
+      data: [],
     };
   }
 
   render() {
     return (
-      <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
-           lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
-           className={'main'}>
+      <Col
+        sm={{ offset: 3, span: 9 }}
+        md={{ offset: 3, span: 9 }}
+        lg={{ offset: 3, span: 9 }}
+        xl={{ offset: 2, span: 7 }}
+        className={"main"}
+      >
         <div>
           <h1 className="page-title">Agent Events</h1>
-          <EventsTable/>
+          <EventsTable />
         </div>
       </Col>
     );

@@ -10,8 +10,5 @@
     ],
     "@babel/preset-react"
   ],
-  "plugins": [
-    "@emotion",
-    "@babel/plugin-proposal-class-properties"
-  ]
+  "plugins": ["@emotion", "@babel/plugin-proposal-class-properties"]
 }

@@ -1,15 +1,15 @@
 // colors
-$light-gray: #EAF4F4;
-$medium-gray: #7B9EA8;
+$light-gray: #eaf4f4;
+$medium-gray: #7b9ea8;
 $dark-green: #007d02;
-$green: #44CF6C;
+$green: #44cf6c;
 $black: #000000;
 
 .ui-checkbox-btn {
   position: relative;
   display: flex;
   align-items: center;
-  background-color: rgba(red, .6);
+  background-color: rgba(red, 0.6);
   text-align: center;
   width: 100%;
   height: 100%;
@@ -83,25 +83,25 @@ $black: #000000;
 
   // set the square
   &:before {
-    content: '';
+    content: "";
     transform: scale(0, 0); // center center by default
     transition-property: background-color transform;
-    transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
     display: block;
     padding-bottom: 100%;
     border-radius: 50%;
-    background-color: rgba(white, .84);;
+    background-color: rgba(white, 0.84);
   }
 
   .do-ping &:before {
     transform: scale(2.5, 2.5);
-    transition-duration: .35s;
-    background-color: rgba(white, .08);
+    transition-duration: 0.35s;
+    background-color: rgba(white, 0.08);
   }
 }
 
 .icon-checked {
-  color: $green
+  color: $green;
 }
 
 .icon-mandatory {

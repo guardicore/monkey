@@ -1,4 +1,4 @@
 export const OS_TYPES = {
-  WINDOWS_64: 'win64',
-  LINUX_64: 'linux64'
-}
+  WINDOWS_64: "win64",
+  LINUX_64: "linux64",
+};

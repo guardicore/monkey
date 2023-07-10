@@ -7,15 +7,15 @@
   font-size: large;
 }
 
-.report-nav>li>a {
+.report-nav > li > a {
   height: 50px !important;
 }
 
-.report-nav .nav-item>a {
+.report-nav .nav-item > a {
   color: $black;
 }
 
-.report-nav .nav-item>a.active {
+.report-nav .nav-item > a.active {
   font-weight: bold;
   color: $black;
 }
@@ -62,8 +62,8 @@ div.report-wrapper {
   padding-bottom: 20px;
 }
 
-div.report-wrapper .nav-tabs>.nav-item>a:hover:not(.active),
-.nav-tabs>.nav-item>a:focus:not(.active) {
+div.report-wrapper .nav-tabs > .nav-item > a:hover:not(.active),
+.nav-tabs > .nav-item > a:focus:not(.active) {
   text-decoration: none;
   background-color: $light-gray;
 }

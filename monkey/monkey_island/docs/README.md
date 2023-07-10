@@ -21,28 +21,28 @@ The make script generates the documentation using autosummary and deletes previo
 ## Linux
 
 1. From `monkey/monkey_island`, install python dependencies:
-    - `pipenv sync --dev`
+
+   - `pipenv sync --dev`
 
 1. Activate the python venv
 
-    - `pipenv shell`
+   - `pipenv shell`
 
 1. Generate the documentation:
-    - `cd monkey/monkey_island/docs`
-    - `make html`
-
+   - `cd monkey/monkey_island/docs`
+   - `make html`
 
 ## Windows
 
 1. From `monkey\monkey_island`, install python dependencies:
-    - `pipenv sync --dev`
+
+   - `pipenv sync --dev`
 
 1. Activate the python virtual enviroment using `activate` script from the venv.
 
 1. Generate the documentation:
    - `cd monkey\monkey_island\docs`
    - `make.bat html`
-
 
 # Deployment
 

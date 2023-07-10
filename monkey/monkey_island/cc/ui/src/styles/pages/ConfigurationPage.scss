@@ -57,7 +57,6 @@ div.form-group.field.field-array .align-items-center {
   align-items: flex-start !important;
 }
 
-
 div.form-group.field.field-array .py-4.col-lg-3.col-3 {
   padding: 0 !important;
 }
@@ -68,8 +67,8 @@ div.form-group div:not([class]) {
 
 .warning-icon {
   text-transform: uppercase;
-  color: #FFC107;
-  margin-left: .75em;
+  color: #ffc107;
+  margin-left: 0.75em;
 }
 
 .form-group h5 {
@@ -80,12 +79,15 @@ div.form-group div:not([class]) {
   font-weight: bold;
 }
 
-.config-form #root_exploit_user_password_pairs_list__title ~ .container-fluid [id^=root_exploit_user_password_pairs_list] {
+.config-form
+  #root_exploit_user_password_pairs_list__title
+  ~ .container-fluid
+  [id^="root_exploit_user_password_pairs_list"] {
   &[id$="__title"] {
     margin-bottom: -2rem !important;
   }
 
-  &~ .container-fluid .row {
+  & ~ .container-fluid .row {
     margin-bottom: 0 !important;
 
     &:first-child {
@@ -132,11 +134,13 @@ div.form-group div:not([class]) {
     }
   }
 
-  .MuiDataGrid-columnHeader, .MuiDataGrid-cell {
+  .MuiDataGrid-columnHeader,
+  .MuiDataGrid-cell {
     width: 15% !important;
   }
 
-  .row-actions--header, .row-actions {
+  .row-actions--header,
+  .row-actions {
     width: 10% !important;
   }
 }

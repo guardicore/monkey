@@ -1,37 +1,55 @@
-@import './variables';
-@import 'node_modules/bootstrap/scss/bootstrap';
+@import "./variables";
+@import "node_modules/bootstrap/scss/bootstrap";
 
 // Imports that require variables
-@import 'components/Buttons';
-@import 'pages/report/ReportPage.scss';
-@import 'pages/ConfigurationPage';
-@import 'pages/AuthPage';
-@import 'pages/MonkeyRunPage';
-@import 'components/InfoPane';
-@import 'components/PreviewPane';
-@import 'components/AdvancedMultiSelect';
-@import 'components/SenstiveTextareaInput';
-@import 'components/particle-component/ParticleBackground';
-@import 'components/ImageModal';
-@import 'components/Icons';
-@import 'components/inline-selection/InlineSelection';
-@import 'components/inline-selection/NextSelectionButton';
-@import 'components/inline-selection/BackButton';
-@import 'components/inline-selection/CommandDisplay';
+@import "components/Buttons";
+@import "pages/report/ReportPage.scss";
+@import "pages/ConfigurationPage";
+@import "pages/AuthPage";
+@import "pages/MonkeyRunPage";
+@import "components/InfoPane";
+@import "components/PreviewPane";
+@import "components/AdvancedMultiSelect";
+@import "components/SenstiveTextareaInput";
+@import "components/particle-component/ParticleBackground";
+@import "components/ImageModal";
+@import "components/Icons";
+@import "components/inline-selection/InlineSelection";
+@import "components/inline-selection/NextSelectionButton";
+@import "components/inline-selection/BackButton";
+@import "components/inline-selection/CommandDisplay";
 
 // Define custom elements after bootstrap import
-.btn-outline-monkey, button {
-  @include button-outline-variant($monkey-yellow, $monkey-black, $monkey-yellow, $monkey-yellow);
+.btn-outline-monkey,
+button {
+  @include button-outline-variant(
+    $monkey-yellow,
+    $monkey-black,
+    $monkey-yellow,
+    $monkey-yellow
+  );
   color: $monkey-black;
 }
 
-.btn-outline-monkey-alt, button {
-  @include button-outline-variant($monkey-alt, $monkey-white, $monkey-alt, $monkey-alt);
+.btn-outline-monkey-alt,
+button {
+  @include button-outline-variant(
+    $monkey-alt,
+    $monkey-white,
+    $monkey-alt,
+    $monkey-alt
+  );
   color: $monkey-black;
 }
 
-.btn-outline-standard, button {
-  @include button-outline-variant($light-gray, $monkey-black, $light-gray, $light-gray);
+.btn-outline-standard,
+button {
+  @include button-outline-variant(
+    $light-gray,
+    $monkey-black,
+    $light-gray,
+    $light-gray
+  );
   color: $monkey-black;
 }
 
@@ -60,7 +78,9 @@
   border-radius: 10px;
 }
 
-.btn-link:active, .btn-link:hover, .btn-link:focus {
+.btn-link:active,
+.btn-link:hover,
+.btn-link:focus {
   color: $monkey-alt !important;
   background-color: transparent !important;
   border-color: transparent !important;
@@ -72,18 +92,21 @@ div.card-header.collapse-control:hover {
   cursor: pointer;
 }
 
-div.collapse.card-body ul, div.collapsing.card-body ul {
+div.collapse.card-body ul,
+div.collapsing.card-body ul {
   padding: 0;
 }
 
-.hidden{
+.hidden {
   display: None;
 }
 
 .btn-info {
   color: $monkey-white;
 
-  &:hover, &:active, &:disabled {
+  &:hover,
+  &:active,
+  &:disabled {
     color: $monkey-white !important;
   }
 }
@@ -94,7 +117,7 @@ div.collapse.card-body ul, div.collapsing.card-body ul {
     font-weight: 700;
     color: #000;
     text-shadow: 0 1px 0 #fff;
-    opacity: .5;
+    opacity: 0.5;
     background-color: transparent;
     border: none;
 

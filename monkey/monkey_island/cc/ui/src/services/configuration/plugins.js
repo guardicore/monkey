@@ -1,15 +1,15 @@
 export const pluginConfigurationSchema = {
-  'type': 'object',
-  'properties': {
-    'name': {
-      'title': 'Name',
-      'type': 'string'
+  type: "object",
+  properties: {
+    name: {
+      title: "Name",
+      type: "string",
     },
-    'safe': {
-      'type': 'boolean'
+    safe: {
+      type: "boolean",
     },
-    'options': {
-      'type': 'object'
-    }
-  }
-}
+    options: {
+      type: "object",
+    },
+  },
+};

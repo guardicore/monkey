@@ -1,4 +1,5 @@
-.info-pane, .card {
+.info-pane,
+.card {
   margin-top: 5px;
 }
 
@@ -22,19 +23,18 @@
   color: $gray-600;
 }
 
-
 .info-pane .pane-body {
   margin: 10px 15px;
   padding: 0;
 }
 
 .info-pane-warning {
-    margin-top: 1em;
-    display: flex;
+  margin-top: 1em;
+  display: flex;
 }
 
 .info-pane-warning .warning-icon {
-    margin-top: .188em;
-    margin-left: 0em;
-    margin-right: .75em;
+  margin-top: 0.188em;
+  margin-left: 0em;
+  margin-right: 0.75em;
 }

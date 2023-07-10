@@ -1,22 +1,22 @@
-import _ from 'lodash';
+import _ from "lodash";
 
 export enum OS {
   unknown = "unknown",
   linux = "linux",
-  windows = "windows"
+  windows = "windows",
 }
 
 export enum CommunicationType {
   cc = "cc",
   scanned = "scanned",
   exploited = "exploited",
-  relay = "relay"
+  relay = "relay",
 }
 
 export type Node = {
   machine_id: number;
   connections: Communications;
-}
+};
 
 export type Machine = {
   id: number;
@@ -24,7 +24,7 @@ export type Machine = {
   operating_system: OS;
   hostname: string;
   island: boolean;
-}
+};
 
 export type Agent = {
   id: string;
@@ -32,7 +32,7 @@ export type Agent = {
   parent_id: string | null;
   start_time: string;
   stop_time: string | null;
-}
+};
 
 export type Communications = Record<number, CommunicationType[]>;
 
@@ -48,8 +48,8 @@ export default class MapNode {
     public propagatedTo: boolean = false,
     public agentsStartTime: Record<string, Date> = {},
     public agentIds: string[] = [],
-    public parentIds: string[] = []) {
-  }
+    public parentIds: string[] = [],
+  ) {}
 
   getOperatingSystem(): OS {
     if (this.operatingSystem in OS) {
@@ -62,34 +62,35 @@ export default class MapNode {
   calculateNodeGroup(): string {
     let group_components = [];
     if (this.island) {
-      group_components.push('island');
+      group_components.push("island");
     }
 
     if (this.agentIds.length > 0) {
-      if (!this.island &&
-          (_.isEmpty(this.parentIds) || !this.parentIds.some(elem => elem !== null))) {
-        group_components.push('manual');
+      if (
+        !this.island &&
+        (_.isEmpty(this.parentIds) ||
+          !this.parentIds.some((elem) => elem !== null))
+      ) {
+        group_components.push("manual");
+      } else {
+        group_components.push("monkey");
       }
-      else {
-        group_components.push('monkey');
-      }
-    }
-    else if (this.propagatedTo) {
-      group_components.push('propagated');
-    }
-    else if (!this.island) { // No "clean" for island
-      group_components.push('clean');
+    } else if (this.propagatedTo) {
+      group_components.push("propagated");
+    } else if (!this.island) {
+      // No "clean" for island
+      group_components.push("clean");
     } else {
-      group_components.push('monkey');
+      group_components.push("monkey");
     }
 
     group_components.push(this.getOperatingSystem());
 
     if (this.agentRunning) {
-      group_components.push('running');
+      group_components.push("running");
     }
 
-    let group = group_components.join('_');
+    let group = group_components.join("_");
     if (!(group in NodeGroup)) {
       return NodeGroup.clean_unknown;
     }
@@ -115,7 +116,7 @@ export default class MapNode {
 }
 
 export function interfaceIp(iface: string): string {
-  return iface.split('/')[0];
+  return iface.split("/")[0];
 }
 
 export function getMachineIp(machine: Machine): string {
@@ -140,5 +141,5 @@ export enum NodeGroup {
   monkey_linux = "monkey_linux",
   monkey_linux_running = "monkey_linux_running",
   monkey_windows = "monkey_windows",
-  monkey_windows_running = "monkey_windows_running"
+  monkey_windows_running = "monkey_windows_running",
 }

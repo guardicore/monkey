@@ -5,4 +5,4 @@ export const reverseObject = (obj) => {
     reversedObj[value] = key;
   }
   return reversedObj;
-}
+};

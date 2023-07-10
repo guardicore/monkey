@@ -1,7 +1,6 @@
 class BaseConfig {
-
   isAuthEnabled() {
-    throw new Error('Abstract function');
+    throw new Error("Abstract function");
   }
 }
 

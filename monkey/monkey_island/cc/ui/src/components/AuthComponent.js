@@ -1,5 +1,5 @@
-import React from 'react';
-import AuthService from '../services/AuthService';
+import React from "react";
+import AuthService from "../services/AuthService";
 
 class AuthComponent extends React.Component {
   constructor(props) {
