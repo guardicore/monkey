@@ -68,7 +68,7 @@ class AgentEvents(AbstractResource):
 
     def _parse_event_filter_args(
         self,
-    ) -> Tuple[Optional[Type[AbstractAgentEvent]], Optional[bool], Optional[Tuple[str, str]]]:
+    ) -> Tuple[Optional[Type[AbstractAgentEvent]], Optional[bool], Optional[Tuple[str, float]]]:
         type_arg = request.args.get("type", None)
         success_arg = request.args.get("success", None)
         timestamp_arg = request.args.get("timestamp", None)
@@ -89,13 +89,16 @@ class AgentEvents(AbstractResource):
                 f'Invalid value for success "{success_arg}", expected "true" or "false"'
             )
 
-        if timestamp_arg:
+        if timestamp_arg is None:
+            timestamp_constraint = None
+        else:
             operator, timestamp = timestamp_arg.split(":")
             if not operator or not timestamp or operator not in ("gt", "lt"):
                 raise Exception(f'Invalid timestamp argument "{timestamp_arg}"')
-            timestamp_constraint = (operator, timestamp)
-        else:
-            timestamp_constraint = None
+            try:
+                timestamp_constraint = (operator, float(timestamp))
+            except Exception:
+                raise Exception(f'Invalid timestamp argument "{timestamp_arg}"')
 
         return type_, success, timestamp_constraint
 
@@ -103,7 +106,7 @@ class AgentEvents(AbstractResource):
         self,
         type_: Optional[Type[AbstractAgentEvent]],
         success: Optional[bool],
-        timestamp_constraint: Optional[Tuple[str, str]],
+        timestamp_constraint: Optional[Tuple[str, float]],
     ) -> Sequence[AbstractAgentEvent]:
         if type_ is not None:
             events: Sequence[AbstractAgentEvent] = self._agent_event_repository.get_events_by_type(
@@ -119,13 +122,11 @@ class AgentEvents(AbstractResource):
             operator, timestamp = timestamp_constraint
             if operator == "gt":
                 separation_point = bisect_right(
-                    events, float(timestamp), key=lambda event: event.timestamp
+                    events, timestamp, key=lambda event: event.timestamp
                 )
                 events = events[separation_point:]
             elif operator == "lt":
-                separation_point = bisect_left(
-                    events, float(timestamp), key=lambda event: event.timestamp
-                )
+                separation_point = bisect_left(events, timestamp, key=lambda event: event.timestamp)
                 events = events[:separation_point]
 
         return events
