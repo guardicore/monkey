@@ -6,9 +6,10 @@ from typing import Any, Callable, Dict, List, Optional, Sequence
 
 from egg_timer import EggTimer
 
-from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet, RejectedRequestError
+from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
+from infection_monkey.utils import should_agent_stop
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
@@ -26,16 +27,18 @@ logger = logging.getLogger()
 class AutomatedMaster(IMaster):
     def __init__(
         self,
+        island_address: str,
         current_depth: Optional[int],
         servers: Sequence[str],
         puppet: IPuppet,
-        control_channel: IControlChannel,
+        island_api_client: IIslandAPIClient,
         local_network_interfaces: List[IPv4Interface],
     ):
+        self._island_address = island_address
         self._current_depth = current_depth
         self._servers = servers
         self._puppet = puppet
-        self._control_channel = control_channel
+        self._island_api_client = island_api_client
 
         ip_scanner = IPScanner(self._puppet, NUM_SCAN_THREADS)
 
@@ -103,11 +106,11 @@ class AutomatedMaster(IMaster):
 
     def _check_for_stop(self):
         try:
-            stop = self._control_channel.should_agent_stop()
+            stop = should_agent_stop(self._island_address, self._island_api_client)
             if stop:
                 logger.info('Received the "stop" signal from the Island')
                 self._stop.set()
-        except IslandCommunicationError as e:
+        except IslandAPIError as e:
             logger.error(f"An error occurred while trying to check for agent stop: {e}")
             self._stop.set()
 
@@ -116,8 +119,8 @@ class AutomatedMaster(IMaster):
 
     def _run_simulation(self):
         try:
-            config = self._control_channel.get_config()
-        except IslandCommunicationError as e:
+            config = self._island_api_client.get_config()
+        except IslandAPIError as e:
             logger.error(f"An error occurred while fetching configuration: {e}")
             return
 

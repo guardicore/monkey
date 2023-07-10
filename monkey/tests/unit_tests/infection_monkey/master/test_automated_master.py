@@ -3,14 +3,15 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from infection_monkey.island_api_client import IslandAPIError
 from infection_monkey.master import AutomatedMaster
-from infection_monkey.master.control_channel import IslandCommunicationError
 
 INTERVAL = 0.001
+ISLAND_ADDRESS = "1.1.1.1"
 
 
 def test_terminate_without_start():
-    m = AutomatedMaster(None, [], None, MagicMock(), [])
+    m = AutomatedMaster(ISLAND_ADDRESS, None, [], None, MagicMock(), [])
 
     # Test that call to terminate does not raise exception
     m.terminate()
@@ -19,9 +20,7 @@ def test_terminate_without_start():
 def test_stop_if_cant_get_config_from_island(monkeypatch):
     cc = MagicMock()
     cc.should_agent_stop = MagicMock(return_value=False)
-    cc.get_config = MagicMock(
-        side_effect=IslandCommunicationError("Failed to communicate with island")
-    )
+    cc.get_config = MagicMock(side_effect=IslandAPIError("Failed to communicate with island"))
 
     monkeypatch.setattr(
         "infection_monkey.master.automated_master.CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC",
@@ -30,7 +29,7 @@ def test_stop_if_cant_get_config_from_island(monkeypatch):
     monkeypatch.setattr(
         "infection_monkey.master.automated_master.CHECK_FOR_TERMINATE_INTERVAL_SEC", INTERVAL
     )
-    m = AutomatedMaster(None, [], None, cc, [])
+    m = AutomatedMaster(ISLAND_ADDRESS, None, [], None, cc, [])
     m.start()
 
 
@@ -53,7 +52,7 @@ def sleep_and_return_config(default_agent_configuration):
 def test_stop_if_cant_get_stop_signal_from_island(monkeypatch, sleep_and_return_config):
     cc = MagicMock()
     cc.should_agent_stop = MagicMock(
-        side_effect=IslandCommunicationError("Failed to communicate with island")
+        side_effect=IslandAPIError("Failed to communicate with island")
     )
     cc.get_config = MagicMock(
         side_effect=sleep_and_return_config,
@@ -67,5 +66,5 @@ def test_stop_if_cant_get_stop_signal_from_island(monkeypatch, sleep_and_return_
         "infection_monkey.master.automated_master.CHECK_FOR_TERMINATE_INTERVAL_SEC", INTERVAL
     )
 
-    m = AutomatedMaster(None, [], None, cc, [])
+    m = AutomatedMaster(ISLAND_ADDRESS, None, [], None, cc, [])
     m.start()
