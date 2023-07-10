@@ -1,4 +1,5 @@
 import logging
+from bisect import bisect_left, bisect_right
 from http import HTTPStatus
 from typing import Iterable, Optional, Sequence, Tuple, Type
 
@@ -52,11 +53,11 @@ class AgentEvents(AbstractResource):
     @roles_accepted(AccountRole.ISLAND_INTERFACE.name)
     def get(self):
         try:
-            type_, success = self._parse_event_filter_args()
+            type_, success, timestamp_constraint = self._parse_event_filter_args()
         except Exception as err:
             return {"error": str(err)}, HTTPStatus.UNPROCESSABLE_ENTITY
 
-        events = self._get_filtered_events(type_, success)
+        events = self._get_filtered_events(type_, success, timestamp_constraint)
 
         try:
             serialized_events = self._serialize_events(events)
@@ -65,14 +66,17 @@ class AgentEvents(AbstractResource):
 
         return serialized_events, HTTPStatus.OK
 
-    def _parse_event_filter_args(self) -> Tuple[Optional[Type[AbstractAgentEvent]], Optional[bool]]:
+    def _parse_event_filter_args(
+        self,
+    ) -> Tuple[Optional[Type[AbstractAgentEvent]], Optional[bool], Optional[Tuple[str, float]]]:
         type_arg = request.args.get("type", None)
         success_arg = request.args.get("success", None)
+        timestamp_arg = request.args.get("timestamp", None)
 
         try:
             type_ = None if type_arg is None else self._agent_event_registry[type_arg]
         except KeyError:
-            raise Exception("Unknown agent event type {type_}")
+            raise Exception(f'Unknown agent event type "{type_}"')
 
         if success_arg is None:
             success = None
@@ -85,10 +89,30 @@ class AgentEvents(AbstractResource):
                 f'Invalid value for success "{success_arg}", expected "true" or "false"'
             )
 
-        return type_, success
+        if timestamp_arg is None:
+            timestamp_constraint = None
+        else:
+            operator, timestamp = timestamp_arg.split(":")
+            if not operator or not timestamp or operator not in ("gt", "lt"):
+                raise Exception(
+                    f'Invalid timestamp argument "{timestamp_arg}", '
+                    'expected format: "{gt,lt}:<timestamp>"'
+                )
+            try:
+                timestamp_constraint = (operator, float(timestamp))
+            except Exception:
+                raise Exception(
+                    f'Invalid timestamp argument "{timestamp_arg}", '
+                    "expected timestamp to be a number"
+                )
+
+        return type_, success, timestamp_constraint
 
     def _get_filtered_events(
-        self, type_: Optional[Type[AbstractAgentEvent]], success: Optional[bool]
+        self,
+        type_: Optional[Type[AbstractAgentEvent]],
+        success: Optional[bool],
+        timestamp_constraint: Optional[Tuple[str, float]],
     ) -> Sequence[AbstractAgentEvent]:
         if type_ is not None:
             events: Sequence[AbstractAgentEvent] = self._agent_event_repository.get_events_by_type(
@@ -99,6 +123,17 @@ class AgentEvents(AbstractResource):
 
         if success is not None:
             events = list(filter(lambda e: hasattr(e, "success") and e.success is success, events))  # type: ignore[attr-defined]  # noqa: E501
+
+        if timestamp_constraint is not None:
+            operator, timestamp = timestamp_constraint
+            if operator == "gt":
+                separation_point = bisect_right(
+                    events, timestamp, key=lambda event: event.timestamp
+                )
+                events = events[separation_point:]
+            elif operator == "lt":
+                separation_point = bisect_left(events, timestamp, key=lambda event: event.timestamp)
+                events = events[:separation_point]
 
         return events
 

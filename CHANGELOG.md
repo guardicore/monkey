@@ -6,6 +6,9 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- Ability to filter Agent events by timestamp. #3397
+
 ### Changed
 - Plugin source is now gzipped. #3392
 - Allowed characters in Agent event tags. #3399
