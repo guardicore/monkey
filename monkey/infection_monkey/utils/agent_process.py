@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Optional
 
 import psutil
 
@@ -13,7 +14,7 @@ def get_start_time() -> float:
     return agent_process.create_time()
 
 
-def should_agent_stop(server: str, island_api_client: IIslandAPIClient) -> bool:
+def should_agent_stop(server: Optional[str], island_api_client: IIslandAPIClient) -> bool:
     if not server:
         logger.error("Agent should stop because it can't connect to the C&C server.")
         return True
