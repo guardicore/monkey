@@ -1,9 +1,11 @@
+import uuid
 from http import HTTPStatus
 from ipaddress import IPv4Address
 from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from pydantic import Field
 from tests.common import StubDIContainer
 
 from common.agent_event_serializers import (
@@ -19,7 +21,7 @@ AGENT_EVENTS_URL = AgentEvents.urls[0]
 
 
 class SomeAgentEvent(AbstractAgentEvent):
-    some_field: int
+    some_field: int = Field(default=0)
 
 
 class OtherAgentEvent(AbstractAgentEvent):
@@ -81,10 +83,28 @@ EXPECTED_EVENT_3 = DifferentAgentEvent(
     tags=frozenset({"some-event3"}),
 )
 
+TIMESTAMP_EVENT_1 = SomeAgentEvent(source=uuid.uuid4(), timestamp=1)
+
+TIMESTAMP_EVENT_2 = SomeAgentEvent(source=uuid.uuid4(), timestamp=2)
+
+TIMESTAMP_EVENT_3 = SomeAgentEvent(source=uuid.uuid4(), timestamp=3)
+
+TIMESTAMP_EVENT_4 = SomeAgentEvent(source=uuid.uuid4(), timestamp=4)
+
+TIMESTAMP_EVENT_5 = SomeAgentEvent(source=uuid.uuid4(), timestamp=5)
+
 
 LIST_EVENTS = [SERIALIZED_EVENT_1, SERIALIZED_EVENT_2, SERIALIZED_EVENT_3]
 
 EXPECTED_EVENTS = [EXPECTED_EVENT_1, EXPECTED_EVENT_2, EXPECTED_EVENT_3]
+
+TIMESTAMP_EVENTS = [
+    TIMESTAMP_EVENT_1,
+    TIMESTAMP_EVENT_2,
+    TIMESTAMP_EVENT_3,
+    TIMESTAMP_EVENT_4,
+    TIMESTAMP_EVENT_5,
+]
 
 
 class PassFailAgentEvent_type1(AbstractAgentEvent):
@@ -288,7 +308,29 @@ def test_get_filter__event_missing_success(flask_client, agent_event_repository)
     assert resp_get.json == [SERIALIZED_PFAE1_1]
 
 
-def test_get_filter__type_and_success(flask_client, agent_event_repository):
+def test_get_filter__event_gt_timestamp(flask_client, agent_event_repository):
+    agent_event_repository.get_events = MagicMock(return_value=TIMESTAMP_EVENTS)
+
+    resp_get = flask_client.get(AGENT_EVENTS_URL + "?timestamp=gt:2")
+    assert resp_get.status_code == HTTPStatus.OK
+
+    returned_events = resp_get.json
+    assert len(returned_events) == 3
+    assert [event["timestamp"] for event in returned_events] == [3, 4, 5]
+
+
+def test_get_filter__event_lt_timestamp(flask_client, agent_event_repository):
+    agent_event_repository.get_events = MagicMock(return_value=TIMESTAMP_EVENTS)
+
+    resp_get = flask_client.get(AGENT_EVENTS_URL + "?timestamp=lt:2.5")
+    assert resp_get.status_code == HTTPStatus.OK
+
+    returned_events = resp_get.json
+    assert len(returned_events) == 2
+    assert [event["timestamp"] for event in returned_events] == [1, 2]
+
+
+def test_get_filter__type_and_success_and_timestamp(flask_client, agent_event_repository):
     agent_event_repository.get_events_by_type = MagicMock(return_value=[PFAE1_1, PFAE1_2])
 
     resp_get = flask_client.get(AGENT_EVENTS_URL + "?type=PassFailAgentEvent_type1&success=true")
