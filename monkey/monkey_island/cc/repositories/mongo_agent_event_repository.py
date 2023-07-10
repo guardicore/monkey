@@ -1,6 +1,7 @@
 import logging
 from typing import Any, Dict, Sequence, Type
 
+import pymongo
 from pymongo import MongoClient
 
 from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
@@ -107,5 +108,7 @@ class MongoAgentEventRepository(IAgentEventRepository):
         return serializer.deserialize(mongo_record)
 
     def _query_events(self, query: Dict[Any, Any]) -> Sequence[AbstractAgentEvent]:
-        serialized_events = self._events_collection.find(query, {MONGO_OBJECT_ID_KEY: False})
+        serialized_events = self._events_collection.find(query, {MONGO_OBJECT_ID_KEY: False}).sort(
+            "timestamp", pymongo.ASCENDING
+        )
         return list(map(self._deserialize, serialized_events))
