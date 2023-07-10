@@ -94,11 +94,17 @@ class AgentEvents(AbstractResource):
         else:
             operator, timestamp = timestamp_arg.split(":")
             if not operator or not timestamp or operator not in ("gt", "lt"):
-                raise Exception(f'Invalid timestamp argument "{timestamp_arg}"')
+                raise Exception(
+                    f'Invalid timestamp argument "{timestamp_arg}", '
+                    'expected format: "{gt,lt}:<timestamp>"'
+                )
             try:
                 timestamp_constraint = (operator, float(timestamp))
             except Exception:
-                raise Exception(f'Invalid timestamp argument "{timestamp_arg}"')
+                raise Exception(
+                    f'Invalid timestamp argument "{timestamp_arg}", '
+                    "expected timestamp to be a number"
+                )
 
         return type_, success, timestamp_constraint
 
