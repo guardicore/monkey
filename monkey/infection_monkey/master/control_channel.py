@@ -1,11 +1,9 @@
 import logging
 from functools import wraps
-from typing import Sequence
 
 from urllib3 import disable_warnings
 
 from common.agent_configuration import AgentConfiguration
-from common.credentials import Credentials
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 
@@ -41,7 +39,3 @@ class ControlChannel(IControlChannel):
     @handle_island_api_errors
     def get_config(self) -> AgentConfiguration:
         return self._island_api_client.get_config()
-
-    @handle_island_api_errors
-    def get_credentials_for_propagation(self) -> Sequence[Credentials]:
-        return self._island_api_client.get_credentials_for_propagation()

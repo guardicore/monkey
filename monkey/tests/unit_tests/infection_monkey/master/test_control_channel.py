@@ -69,18 +69,3 @@ def test_control_channel__get_config_raises_error(control_channel, island_api_cl
 
     with pytest.raises(IslandCommunicationError):
         control_channel.get_config()
-
-
-def test_control_channel__get_credentials_for_propagation(control_channel, island_api_client):
-    control_channel.get_credentials_for_propagation()
-    assert island_api_client.get_credentials_for_propagation.called_once()
-
-
-@pytest.mark.parametrize("api_error", CONTROL_CHANNEL_API_ERRORS)
-def test_control_channel__get_credentials_for_propagation_raises_error(
-    control_channel, island_api_client, api_error
-):
-    island_api_client.get_credentials_for_propagation.side_effect = api_error()
-
-    with pytest.raises(IslandCommunicationError):
-        control_channel.get_credentials_for_propagation()

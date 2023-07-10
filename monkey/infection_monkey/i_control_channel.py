@@ -1,8 +1,6 @@
 import abc
-from typing import Sequence
 
 from common.agent_configuration import AgentConfiguration
-from common.credentials import Credentials
 
 
 class IControlChannel(metaclass=abc.ABCMeta):
@@ -19,15 +17,6 @@ class IControlChannel(metaclass=abc.ABCMeta):
         """
         :return: An AgentConfiguration object
         :rtype: AgentConfiguration
-        """
-        pass
-
-    @abc.abstractmethod
-    def get_credentials_for_propagation(self) -> Sequence[Credentials]:
-        """
-        Get credentials to use during propagation
-
-        :return: A Sequence containing propagation credentials data
         """
         pass
 
