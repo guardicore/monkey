@@ -1,36 +1,36 @@
 .config-export-modal .config-export-password-input p {
-  display: inline-block;
-  width: auto;
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-right: 10px;
+    display: inline-block;
+    width: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 10px;
 }
 
 .config-export-modal
-  .export-type-radio-buttons
-  .password-radio-button
-  .config-export-password-input
-  input {
-  display: inline-block;
-  width: auto;
-  top: 0;
-  transform: none;
+    .export-type-radio-buttons
+    .password-radio-button
+    .config-export-password-input
+    input {
+    display: inline-block;
+    width: auto;
+    top: 0;
+    transform: none;
 }
 
 .config-export-modal .export-type-radio-buttons .password-radio-button {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 
-  input {
-    margin-top: 0;
-  }
+    input {
+        margin-top: 0;
+    }
 }
 
 .config-export-modal div.config-export-plaintext p.export-warning {
-  margin-left: 20px;
+    margin-left: 20px;
 }
 
 .config-export-modal div.config-export-plaintext {
-  margin-top: 15px;
+    margin-top: 15px;
 }

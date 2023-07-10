@@ -1,4 +1,5 @@
 # Changelog
+
 All notable changes to this project will be documented in this
 file.
 
@@ -6,7 +7,9 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
 ### Changed
+
 - Plugin source is now gzipped. #3392
 - Allowed characters in Agent event tags. #3399
 - Hard-coded Log4Shell exploiter to a plugin. #3388
@@ -14,16 +17,24 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Identities and secrets can be associated when configuring credentials in the
   UI. #3393
 
+- Formatteed the code with Pretter.
+- Added Prettier as a dependency and also in Husky Pre-Commit
+- Configured the Travis.yml file #3040
+
 ### Removed
+
 - Island mode configuration. #3400
 
 ## [2.2.1 - 2023-06-21]
 
 ### Fixed
+
 - A configuration issue that prevents Mimikatz from being used. #3433
 
 ## [2.2.0 - 2023-05-31]
+
 ### Added
+
 - `PortScanData.open` property. #3238
 - `{GET,PUT} /api/agent-binaries/<string:os>/masque`. #3249
 - Placeholder values for empty plugin configuration fields having defaults. #3310
@@ -36,6 +47,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - A plugin interface for credentials collectors. #3167
 
 ### Changed
+
 - Renamed "Credential collector" to "Credentials collector". #3167
 - Hard-coded WMI exploiter to a plugin. #3163
 - Hard-coded Mimikatz credentials collector to a plugin. #3168
@@ -47,6 +59,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Hard-coded PowerShell exploiter to a plugin. #3165
 
 ### Fixed
+
 - Agents were being caught by Windows Defender (and other antiviruses). #1289
 - Plugins are now being checked for local OS compatibility. #3275
 - A bug that could prevent multi-hop propagation via SMB. #3173
@@ -56,11 +69,14 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - A bug in URL sanitization. #3318
 
 ### Security
+
 - Fixes a bug where OTPs can be leaked by the hadoop exploiter. #3296
 - Fixes pypykatz leaking sensitive information into the logs. #3168, #3293
 
 ## [2.1.0] - 2023-04-19
+
 ### Added
+
 - Logout button. #3063
 - An option to the Hadoop exploiter to try all discovered HTTP ports. #2136
 - `GET /api/agent-otp`. #3076
@@ -70,11 +86,13 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   the access token. #3181
 
 ### Changed
+
 - Migrated the hard-coded SMB exploiter to a plugin. #2952
 - Python version from 3.7 to 3.11.2. #2705
 - MSI installer is now build with InnoSetup. #1911
 
 ### Fixed
+
 - A UI deficiency where invalid configurations could be submitted to the
   backend. #1301, #2989
 - Notification spam bug. #2731
@@ -87,6 +105,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Random logouts when the UI is being actively used. #2049, #3079, #3137
 
 ### Security
+
 - Fixed plaintext private key in SSHKey pair list in UI. #2950
 - Upgraded MongoDB version from 4.x to 6.0.4. #2706
 - Replaced the `SystemSingleton` component, which could allow local users to
@@ -98,7 +117,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed a potential XSS issue in exploiter plugins. #3081
 
 ## [2.0.0] - 2023-02-08
+
 ### Added
+
 - `credentials.json` file for storing Monkey Island user login information. #1206
 - `GET /api/propagation-credentials/<string:guid>` endpoint for agents to
   retrieve updated credentials from the Island. #1538
@@ -127,6 +148,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `GET /api/agent-binaries/<string:os>` endpoint. #1675, #1978
 
 ### Changed
+
 - Reset workflow. Now it's possible to delete data gathered by agents without
   resetting the configuration. Additionally, the reset procedure requires fewer
   clicks. #957
@@ -165,6 +187,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Guardicore logo to Akamai logo. #2913
 
 ### Removed
+
 - VSFTPD exploiter. #1533
 - Manual agent run command for CMD. #1556
 - Sambacry exploiter. #1567, #1693
@@ -219,8 +242,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - All `GET /api/netmap` endpoints. #2334, #2453
 - The MITRE ATT&CK report. #2440
 - The Zero Trust report. #2441
-- `GET /api/zero-trust/finding-event/<string:finding_id>` endpoint. #2441
--`"GET /api/report/zero-trust/<string:report_data>` endpoint. #2441
+- `GET /api/zero-trust/finding-event/<string:finding_id>` endpoint. #2441 -`"GET /api/report/zero-trust/<string:report_data>` endpoint. #2441
 - AWS Security Hub integration. #2443
 - The Post breach actions configuration tab. #2442
 - The Custom PBA configuration tab. #2442
@@ -236,6 +258,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - ElasticSearch fingerprinter. #2674
 
 ### Fixed
+
 - Various bugs that prevented agents from stopping reliably. #556, #578, #581,
   #594, #1635, #2261
 - A bug in the network map where it would drift away and
@@ -258,6 +281,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - A bug where the ransomware payload could follow a symlink. #2953
 
 ### Security
+
 - Upgrade Cryptography dependency. #1482
 - Log files are created with random names and secure permissions. #1761, #2775
 - Change SSH exploiter so that it does not set the permissions of the agent
@@ -269,24 +293,29 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   which could result in javascript execution. #2503
 
 ## [1.13.0] - 2022-01-25
+
 ### Added
+
 - A new exploiter that allows propagation via the Log4Shell vulnerability
- (CVE-2021-44228). #1663
+  (CVE-2021-44228). #1663
 
 ### Fixed
+
 - Exploiters attempting to start servers listening on privileged ports,
   resulting in failed propagation. 8f53a5c
 
-
 ## [1.12.0] - 2021-10-27
+
 ### Added
+
 - A new exploiter that allows propagation via PowerShell Remoting. #1246
 - A warning regarding antivirus when agent binaries are missing. #1450
 - A deployment.json file to store the deployment type. #1205
 
 ### Changed
+
 - The name of the "Communicate as new user" post-breach action to "Communicate
-   as backdoor user". #1410
+  as backdoor user". #1410
 - Resetting login credentials also cleans the contents of the database. #1495
 - ATT&CK report messages (more accurate now). #1483
 - T1086 (PowerShell) now also reports if ps1 scripts were run by PBAs. #1513
@@ -294,6 +323,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   for unscanned attack techniques. #1518
 
 ### Removed
+
 - Internet access check on agent start. #1402
 - The "internal.monkey.internet_services" configuration option that enabled
   internet access checks. #1402
@@ -308,6 +338,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Browser window pop-up when Monkey Island starts on Windows. #1428
 
 ### Fixed
+
 - Misaligned buttons and input fields on exploiter and network configuration
   pages. #1353
 - Credentials shown in plain text on configuration screens. #1183
@@ -337,15 +368,17 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Broken update links. #1524
 
 ### Security
+
 - Generate a random password when creating a new user for CommunicateAsNewUser
   PBA. #1434
 - Credentials gathered from victim machines are no longer stored plaintext in
   the database. #1454
 - Encrypt the database key with user's credentials. #1463
 
-
 ## [1.11.0] - 2021-08-13
+
 ### Added
+
 - A runtime-configurable option to specify a data directory where runtime
   configuration and other artifacts can be stored. #994
 - Scripts to build an AppImage for Monkey Island. #1069, #1090, #1136, #1381
@@ -357,6 +390,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - A script to build a docker image locally. #1140
 
 ### Changed
+
 - Select server_config.json at runtime. #963
 - Select Logger configuration at runtime. #971
 - Select `mongo_key.bin` file location at runtime. #994
@@ -391,16 +425,19 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   Linux. #1407
 
 ### Removed
+
 - Relevant dead code as reported by Vulture. #1149
 - Island logger config and --logger-config CLI option. #1151
 
 ### Fixed
+
 - Attempt to delete a directory when monkey config reset was called. #1054
 - An errant space in the windows commands to run monkey manually. #1153
 - Gevent tracebacks in console output. #859
 - Crash and failure to run PBAs if max depth reached. #1374
 
 ### Security
+
 - Address minor issues discovered by Dlint. #1075
 - Hash passwords on server-side instead of client side. #1139
 - Generate random passwords when creating a new user (create user PBA, ms08_67

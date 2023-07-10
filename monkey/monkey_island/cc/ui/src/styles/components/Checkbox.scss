@@ -6,108 +6,108 @@ $green: #44cf6c;
 $black: #000000;
 
 .ui-checkbox-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background-color: rgba(red, 0.6);
-  text-align: center;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: rgba(red, 0.6);
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
 
-  input {
-    display: none;
-  }
+    input {
+        display: none;
+    }
 
-  .icon,
-  .text {
-    display: inline-block;
-    color: inherit;
-  }
+    .icon,
+    .text {
+        display: inline-block;
+        color: inherit;
+    }
 
-  .text {
-    padding-top: 4px;
-    font-size: 14px;
-  }
+    .text {
+        padding-top: 4px;
+        font-size: 14px;
+    }
 
-  // color states
-  &.is-unchecked {
-    background-color: transparent;
-    color: $black;
-    fill: $black;
-  }
+    // color states
+    &.is-unchecked {
+        background-color: transparent;
+        color: $black;
+        fill: $black;
+    }
 
-  &.blocked {
-    background-color: $dark-green;
-    color: $light-gray;
-    fill: $light-gray;
-    cursor: default;
-  }
+    &.blocked {
+        background-color: $dark-green;
+        color: $light-gray;
+        fill: $light-gray;
+        cursor: default;
+    }
 
-  &.is-checked {
-    background-color: $green;
-    color: white;
-    fill: white;
-  }
+    &.is-checked {
+        background-color: $green;
+        color: white;
+        fill: white;
+    }
 }
 
 .icon {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    display: inline-block;
 
-  svg {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: auto;
-    width: 16px;
-    height: auto;
-    fill: inherit;
-  }
+    svg {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        width: 16px;
+        height: auto;
+        fill: inherit;
+    }
 
-  .is-checked & {
-    color: white;
-    fill: white;
-  }
+    .is-checked & {
+        color: white;
+        fill: white;
+    }
 }
 
 // ping animation magic
 .ui-btn-ping {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  transform: translate3d(-50%, -50%, 0); // center center by default
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate3d(-50%, -50%, 0); // center center by default
 
-  // set the square
-  &:before {
-    content: "";
-    transform: scale(0, 0); // center center by default
-    transition-property: background-color transform;
-    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
-    display: block;
-    padding-bottom: 100%;
-    border-radius: 50%;
-    background-color: rgba(white, 0.84);
-  }
+    // set the square
+    &:before {
+        content: '';
+        transform: scale(0, 0); // center center by default
+        transition-property: background-color transform;
+        transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        display: block;
+        padding-bottom: 100%;
+        border-radius: 50%;
+        background-color: rgba(white, 0.84);
+    }
 
-  .do-ping &:before {
-    transform: scale(2.5, 2.5);
-    transition-duration: 0.35s;
-    background-color: rgba(white, 0.08);
-  }
+    .do-ping &:before {
+        transform: scale(2.5, 2.5);
+        transition-duration: 0.35s;
+        background-color: rgba(white, 0.08);
+    }
 }
 
 .icon-checked {
-  color: $green;
+    color: $green;
 }
 
 .icon-mandatory {
-  color: $dark-green;
+    color: $dark-green;
 }
 
 .icon-unchecked {
-  color: $black;
+    color: $black;
 }

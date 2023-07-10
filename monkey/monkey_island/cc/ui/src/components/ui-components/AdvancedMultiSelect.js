@@ -1,218 +1,203 @@
-import React from "react";
-import { Button, Card } from "react-bootstrap";
+import React from 'react';
+import { Button, Card } from 'react-bootstrap';
 
-import { cloneDeep } from "lodash";
+import { cloneDeep } from 'lodash';
 
-import { getDefaultPaneParams, InfoPane, WarningType } from "./InfoPane";
-import { MasterCheckbox, MasterCheckboxState } from "./MasterCheckbox";
-import ChildCheckboxContainer from "./ChildCheckbox";
+import { getDefaultPaneParams, InfoPane, WarningType } from './InfoPane';
+import { MasterCheckbox, MasterCheckboxState } from './MasterCheckbox';
+import ChildCheckboxContainer from './ChildCheckbox';
 
 export function AdvancedMultiSelectHeader(props) {
-  const {
-    title,
-    onCheckboxClick,
-    checkboxState,
-    hideReset,
-    onResetClick,
-    resetButtonTitle,
-  } = props;
+    const { title, onCheckboxClick, checkboxState, hideReset, onResetClick, resetButtonTitle } =
+        props;
 
-  return (
-    <Card.Header className="d-flex justify-content-between">
-      <MasterCheckbox
-        title={title}
-        onClick={onCheckboxClick}
-        checkboxState={checkboxState}
-      />
-      <Button
-        className={"reset-safe-defaults"}
-        type={"reset"}
-        variant={"warning"}
-        hidden={hideReset}
-        onClick={onResetClick}
-      >
-        {resetButtonTitle}
-      </Button>
-    </Card.Header>
-  );
+    return (
+        <Card.Header className="d-flex justify-content-between">
+            <MasterCheckbox
+                title={title}
+                onClick={onCheckboxClick}
+                checkboxState={checkboxState}
+            />
+            <Button
+                className={'reset-safe-defaults'}
+                type={'reset'}
+                variant={'warning'}
+                hidden={hideReset}
+                onClick={onResetClick}>
+                {resetButtonTitle}
+            </Button>
+        </Card.Header>
+    );
 }
 
 class AdvancedMultiSelect extends React.Component {
-  constructor(props) {
-    super(props);
-    let nameOptions = this.getOptions();
-    let allPluginNames = nameOptions.map((v) => v.value);
+    constructor(props) {
+        super(props);
+        let nameOptions = this.getOptions();
+        let allPluginNames = nameOptions.map((v) => v.value);
 
-    this.state = {
-      nameOptions: nameOptions,
-      infoPaneParams: getDefaultPaneParams(
-        this.props.schema,
-        this.isUnsafeOptionSelected(this.getSelectedPluginNames()),
-      ),
-      allPluginNames: allPluginNames,
-      masterCheckboxState: this.getMasterCheckboxState(
-        this.getSelectedPluginNames(),
-      ),
+        this.state = {
+            nameOptions: nameOptions,
+            infoPaneParams: getDefaultPaneParams(
+                this.props.schema,
+                this.isUnsafeOptionSelected(this.getSelectedPluginNames())
+            ),
+            allPluginNames: allPluginNames,
+            masterCheckboxState: this.getMasterCheckboxState(this.getSelectedPluginNames())
+        };
+    }
+
+    getOptions(activeElementKey) {
+        let plugin_schemas = this.props.schema.properties;
+        plugin_schemas = Object.values(plugin_schemas).map((v) => ({
+            label: v.title,
+            schema: v,
+            value: v.name,
+            isActive: v.name === activeElementKey
+        }));
+        return plugin_schemas.sort(this.compareOptions);
+    }
+
+    getSelectedPluginNames = () => {
+        return this.props.value.map((v) => v.name);
     };
-  }
 
-  getOptions(activeElementKey) {
-    let plugin_schemas = this.props.schema.properties;
-    plugin_schemas = Object.values(plugin_schemas).map((v) => ({
-      label: v.title,
-      schema: v,
-      value: v.name,
-      isActive: v.name === activeElementKey,
-    }));
-    return plugin_schemas.sort(this.compareOptions);
-  }
+    onChange = (strValues) => {
+        let pluginArray = this.namesToPlugins(strValues);
+        this.props.onChange(pluginArray);
+    };
 
-  getSelectedPluginNames = () => {
-    return this.props.value.map((v) => v.name);
-  };
+    namesToPlugins = (names) => {
+        let plugins = [];
+        for (let i = 0; i < names.length; i++) {
+            plugins.push({ name: names[i], options: {} });
+        }
+        return plugins;
+    };
 
-  onChange = (strValues) => {
-    let pluginArray = this.namesToPlugins(strValues);
-    this.props.onChange(pluginArray);
-  };
+    // Sort options alphabetically. "Unsafe" options float to the top so that they
+    // do not get selected and hidden at the bottom of the list.
+    compareOptions = (a, b) => {
+        // Apparently, you can use additive operators with boolean types. Ultimately,
+        // the ToNumber() abstraction operation is called to convert the booleans to
+        // numbers: https://tc39.es/ecma262/#sec-tonumeric
+        if (this.isSafe(a.value) - this.isSafe(b.value) !== 0) {
+            return this.isSafe(a.value) - this.isSafe(b.value);
+        }
 
-  namesToPlugins = (names) => {
-    let plugins = [];
-    for (let i = 0; i < names.length; i++) {
-      plugins.push({ name: names[i], options: {} });
-    }
-    return plugins;
-  };
+        return a.value.localeCompare(b.value);
+    };
 
-  // Sort options alphabetically. "Unsafe" options float to the top so that they
-  // do not get selected and hidden at the bottom of the list.
-  compareOptions = (a, b) => {
-    // Apparently, you can use additive operators with boolean types. Ultimately,
-    // the ToNumber() abstraction operation is called to convert the booleans to
-    // numbers: https://tc39.es/ecma262/#sec-tonumeric
-    if (this.isSafe(a.value) - this.isSafe(b.value) !== 0) {
-      return this.isSafe(a.value) - this.isSafe(b.value);
-    }
+    onMasterCheckboxClick = () => {
+        let checkboxState = this.getMasterCheckboxState(this.getSelectedPluginNames());
+        if (checkboxState === MasterCheckboxState.ALL) {
+            var newValues = [];
+        } else {
+            newValues = this.getOptions().map(({ value }) => value);
+        }
 
-    return a.value.localeCompare(b.value);
-  };
+        this.onChange(newValues);
+    };
 
-  onMasterCheckboxClick = () => {
-    let checkboxState = this.getMasterCheckboxState(
-      this.getSelectedPluginNames(),
-    );
-    if (checkboxState === MasterCheckboxState.ALL) {
-      var newValues = [];
-    } else {
-      newValues = this.getOptions().map(({ value }) => value);
-    }
+    onChildCheckboxClick = (value) => {
+        let selectValues = this.getSelectValuesAfterClick(value);
+        this.onChange(selectValues);
+    };
 
-    this.onChange(newValues);
-  };
+    getSelectValuesAfterClick(clickedValue) {
+        const valueArray = cloneDeep(this.getSelectedPluginNames());
 
-  onChildCheckboxClick = (value) => {
-    let selectValues = this.getSelectValuesAfterClick(value);
-    this.onChange(selectValues);
-  };
-
-  getSelectValuesAfterClick(clickedValue) {
-    const valueArray = cloneDeep(this.getSelectedPluginNames());
-
-    if (valueArray.includes(clickedValue)) {
-      return valueArray.filter((e) => e !== clickedValue);
-    } else {
-      valueArray.push(clickedValue);
-      return valueArray;
-    }
-  }
-
-  getMasterCheckboxState(selectValues) {
-    if (selectValues.length === 0) {
-      return MasterCheckboxState.NONE;
+        if (valueArray.includes(clickedValue)) {
+            return valueArray.filter((e) => e !== clickedValue);
+        } else {
+            valueArray.push(clickedValue);
+            return valueArray;
+        }
     }
 
-    if (selectValues.length !== this.getOptions().length) {
-      return MasterCheckboxState.MIXED;
+    getMasterCheckboxState(selectValues) {
+        if (selectValues.length === 0) {
+            return MasterCheckboxState.NONE;
+        }
+
+        if (selectValues.length !== this.getOptions().length) {
+            return MasterCheckboxState.MIXED;
+        }
+
+        return MasterCheckboxState.ALL;
     }
 
-    return MasterCheckboxState.ALL;
-  }
+    onResetClick = () => {
+        this.setPaneInfoToSafe();
+    };
 
-  onResetClick = () => {
-    this.setPaneInfoToSafe();
-  };
+    getHideResetState(selectValues) {
+        return !this.isUnsafeOptionSelected(selectValues);
+    }
 
-  getHideResetState(selectValues) {
-    return !this.isUnsafeOptionSelected(selectValues);
-  }
+    isUnsafeOptionSelected(selectValues) {
+        return !selectValues.every((value) => this.isSafe(value));
+    }
 
-  isUnsafeOptionSelected(selectValues) {
-    return !selectValues.every((value) => this.isSafe(value));
-  }
+    isSafe = (itemKey) => {
+        let fullDef = this.props.schema.properties[itemKey];
+        return fullDef.safe;
+    };
 
-  isSafe = (itemKey) => {
-    let fullDef = this.props.schema.properties[itemKey];
-    return fullDef.safe;
-  };
+    setPaneInfo = (itemKey) => {
+        let definitionObj = this.props.schema.properties[itemKey];
+        this.setState({
+            nameOptions: this.getOptions(itemKey),
+            infoPaneParams: {
+                title: definitionObj.title,
+                content: definitionObj.description,
+                link: definitionObj.link,
+                warningType: this.isSafe(itemKey) ? WarningType.NONE : WarningType.SINGLE
+            }
+        });
+    };
 
-  setPaneInfo = (itemKey) => {
-    let definitionObj = this.props.schema.properties[itemKey];
-    this.setState({
-      nameOptions: this.getOptions(itemKey),
-      infoPaneParams: {
-        title: definitionObj.title,
-        content: definitionObj.description,
-        link: definitionObj.link,
-        warningType: this.isSafe(itemKey)
-          ? WarningType.NONE
-          : WarningType.SINGLE,
-      },
-    });
-  };
+    setPaneInfoToSafe() {
+        let safePluginNames = this.state.allPluginNames.filter((pluginName) =>
+            this.isSafe(pluginName)
+        );
+        this.onChange(safePluginNames);
+    }
 
-  setPaneInfoToSafe() {
-    let safePluginNames = this.state.allPluginNames.filter((pluginName) =>
-      this.isSafe(pluginName),
-    );
-    this.onChange(safePluginNames);
-  }
+    render() {
+        const { autofocus, id, multiple, required, schema } = this.props;
 
-  render() {
-    const { autofocus, id, multiple, required, schema } = this.props;
+        return (
+            <div className={'advanced-multi-select'} onFocus={this.props.onFocus}>
+                <AdvancedMultiSelectHeader
+                    title={schema.title}
+                    onCheckboxClick={this.onMasterCheckboxClick}
+                    checkboxState={this.getMasterCheckboxState(this.getSelectedPluginNames())}
+                    hideReset={this.getHideResetState(this.getSelectedPluginNames())}
+                    onResetClick={this.onResetClick}
+                />
 
-    return (
-      <div className={"advanced-multi-select"} onFocus={this.props.onFocus}>
-        <AdvancedMultiSelectHeader
-          title={schema.title}
-          onCheckboxClick={this.onMasterCheckboxClick}
-          checkboxState={this.getMasterCheckboxState(
-            this.getSelectedPluginNames(),
-          )}
-          hideReset={this.getHideResetState(this.getSelectedPluginNames())}
-          onResetClick={this.onResetClick}
-        />
+                <ChildCheckboxContainer
+                    id={id}
+                    multiple={multiple}
+                    required={required}
+                    autoFocus={autofocus}
+                    isSafe={this.isSafe}
+                    onPaneClick={this.setPaneInfo}
+                    onCheckboxClick={this.onChildCheckboxClick}
+                    selectedValues={this.getSelectedPluginNames()}
+                    enumOptions={this.state.nameOptions}
+                />
 
-        <ChildCheckboxContainer
-          id={id}
-          multiple={multiple}
-          required={required}
-          autoFocus={autofocus}
-          isSafe={this.isSafe}
-          onPaneClick={this.setPaneInfo}
-          onCheckboxClick={this.onChildCheckboxClick}
-          selectedValues={this.getSelectedPluginNames()}
-          enumOptions={this.state.nameOptions}
-        />
-
-        <InfoPane
-          title={this.state.infoPaneParams.title}
-          body={this.state.infoPaneParams.content}
-          link={this.state.infoPaneParams.link}
-          warningType={this.state.infoPaneParams.warningType}
-        />
-      </div>
-    );
-  }
+                <InfoPane
+                    title={this.state.infoPaneParams.title}
+                    body={this.state.infoPaneParams.content}
+                    link={this.state.infoPaneParams.link}
+                    warningType={this.state.infoPaneParams.warningType}
+                />
+            </div>
+        );
+    }
 }
 
 export default AdvancedMultiSelect;

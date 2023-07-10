@@ -1,13 +1,13 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "sourceMap": true,
-    "module": "commonjs",
-    "target": "es6",
-    "jsx": "react",
-    "esModuleInterop": true
-  },
-  "include": ["src"],
-  "compileOnSave": false,
-  "exclude": ["node_modules"]
+    "compilerOptions": {
+        "allowJs": true,
+        "sourceMap": true,
+        "module": "commonjs",
+        "target": "es6",
+        "jsx": "react",
+        "esModuleInterop": true
+    },
+    "include": ["src"],
+    "compileOnSave": false,
+    "exclude": ["node_modules"]
 }

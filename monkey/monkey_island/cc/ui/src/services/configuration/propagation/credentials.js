@@ -1,5 +1,5 @@
 const CREDENTIALS = {
-  title: "Credentials",
+    title: 'Credentials'
 };
 
 export default CREDENTIALS;

@@ -1,49 +1,49 @@
 .auth-container {
-  margin-top: 1em;
+    margin-top: 1em;
 }
 
 .auth-form input {
-  margin-bottom: 1em;
+    margin-bottom: 1em;
 }
 
 .auth-form input:focus {
-  border-color: $monkey-yellow;
-  box-shadow: 0 0 0 0.2rem rgba(255, 230, 0, 0.25);
+    border-color: $monkey-yellow;
+    box-shadow: 0 0 0 0.2rem rgba(255, 230, 0, 0.25);
 }
 
 .auth-form .alert {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .auth-form .alert > ul {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .monkey-detective {
-  max-height: 500px;
+    max-height: 500px;
 }
 
 .auth-block {
-  padding: 10px;
-  background-color: rgba(255, 255, 255, 0.89);
-  border-radius: 10px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.89);
+    border-radius: 10px;
 }
 
 .auth-block h1 {
-  font-size: 4.5em;
-  margin-bottom: 10px;
-  text-align: center;
+    font-size: 4.5em;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 .auth-block h3 {
-  margin-bottom: 20px;
-  text-align: center;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .auth-container .monkey-submit-button:hover .loading-icon {
-  color: $monkey-black;
+    color: $monkey-black;
 }
 
 .auth-container .monkey-submit-button:focus .loading-icon {
-  color: $monkey-black;
+    color: $monkey-black;
 }

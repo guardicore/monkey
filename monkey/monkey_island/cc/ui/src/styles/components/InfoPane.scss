@@ -1,40 +1,40 @@
 .info-pane,
 .card {
-  margin-top: 5px;
+    margin-top: 5px;
 }
 
 .info-pane svg {
-  font-size: 1.1em;
+    font-size: 1.1em;
 }
 
 .info-pane .pane-title {
-  margin: 10px 15px 3px 15px;
-  color: $monkey-alt;
+    margin: 10px 15px 3px 15px;
+    color: $monkey-alt;
 }
 
 .info-pane .pane-link {
-  position: absolute;
-  right: 0;
-  top: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 .info-pane .pane-subtitle {
-  margin: 0 15px;
-  color: $gray-600;
+    margin: 0 15px;
+    color: $gray-600;
 }
 
 .info-pane .pane-body {
-  margin: 10px 15px;
-  padding: 0;
+    margin: 10px 15px;
+    padding: 0;
 }
 
 .info-pane-warning {
-  margin-top: 1em;
-  display: flex;
+    margin-top: 1em;
+    display: flex;
 }
 
 .info-pane-warning .warning-icon {
-  margin-top: 0.188em;
-  margin-left: 0em;
-  margin-right: 0.75em;
+    margin-top: 0.188em;
+    margin-left: 0em;
+    margin-right: 0.75em;
 }

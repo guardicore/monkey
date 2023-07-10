@@ -1,45 +1,45 @@
 .inline-selection-component .selection-button {
-  width: 100%;
-  text-align: left;
-  margin-bottom: 20px;
-  padding-right: 20px;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px;
+    padding-right: 20px;
 
-  .selection-button-content-wrapper {
-    display: flex;
-    justify-content: space-between;
-
-    .selection-button-details-wrapper {
-      display: flex;
-      flex-direction: column;
-
-      .selection-button-title,
-      .selection-button-description {
+    .selection-button-content-wrapper {
         display: flex;
-      }
+        justify-content: space-between;
 
-      .selection-button-title {
-        align-items: center;
-        gap: 0.5rem;
-      }
-    }
+        .selection-button-details-wrapper {
+            display: flex;
+            flex-direction: column;
 
-    .selection-button-side-icon {
-      display: flex;
-      align-items: center;
+            .selection-button-title,
+            .selection-button-description {
+                display: flex;
+            }
+
+            .selection-button-title {
+                align-items: center;
+                gap: 0.5rem;
+            }
+        }
+
+        .selection-button-side-icon {
+            display: flex;
+            align-items: center;
+        }
     }
-  }
 }
 
 .inline-selection-component .selection-button h1 {
-  margin: 0;
-  font-size: 1.3em;
+    margin: 0;
+    font-size: 1.3em;
 }
 
 .inline-selection-component .selection-button p {
-  margin: 0;
-  font-size: 0.8em;
+    margin: 0;
+    font-size: 0.8em;
 }
 
 .inline-selection-component .selection-button .angle-right {
-  font-size: 1.7em;
+    font-size: 1.7em;
 }

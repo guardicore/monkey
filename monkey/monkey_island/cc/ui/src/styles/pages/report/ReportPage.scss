@@ -1,106 +1,106 @@
 .report-nav {
-  margin-bottom: 2em !important;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background-color: #ffffff;
-  font-size: large;
+    margin-bottom: 2em !important;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: #ffffff;
+    font-size: large;
 }
 
 .report-nav > li > a {
-  height: 50px !important;
+    height: 50px !important;
 }
 
 .report-nav .nav-item > a {
-  color: $black;
+    color: $black;
 }
 
 .report-nav .nav-item > a.active {
-  font-weight: bold;
-  color: $black;
+    font-weight: bold;
+    color: $black;
 }
 
 .report-page {
-  font-size: 1.1em;
-  border: 1px solid #fff;
-  padding: 2em;
-  -webkit-box-shadow: 1px 1px 7px -1px #ccc;
-  box-shadow: 1px 1px 7px -1px #ccc;
+    font-size: 1.1em;
+    border: 1px solid #fff;
+    padding: 2em;
+    -webkit-box-shadow: 1px 1px 7px -1px #ccc;
+    box-shadow: 1px 1px 7px -1px #ccc;
 }
 
 .report-page h1 {
-  margin-top: 30px;
+    margin-top: 30px;
 }
 
 .report-page h3 {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .report-page h4 {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .report-page ul {
-  list-style: disc;
-  padding-left: 40px;
+    list-style: disc;
+    padding-left: 40px;
 }
 
 .report-page li {
-  overflow: visible;
+    overflow: visible;
 }
 
 .report-page li a {
-  display: inline;
-  padding: 0em;
+    display: inline;
+    padding: 0em;
 }
 
 .modal-dialog {
-  top: 30%;
+    top: 30%;
 }
 
 div.report-wrapper {
-  padding-bottom: 20px;
+    padding-bottom: 20px;
 }
 
 div.report-wrapper .nav-tabs > .nav-item > a:hover:not(.active),
 .nav-tabs > .nav-item > a:focus:not(.active) {
-  text-decoration: none;
-  background-color: $light-gray;
+    text-decoration: none;
+    background-color: $light-gray;
 }
 
 ul.cross-segment-issues {
-  list-style-type: none;
-  padding: 0px;
-  margin: 0px;
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
 }
 
 span.cross-segment-service {
-  text-transform: uppercase;
+    text-transform: uppercase;
 }
 
 .report-page li a.btn,
 .security-report-link {
-  position: relative;
-  font-size: 1em;
-  padding: 0 5px;
-  line-height: 1em;
-  top: -3px;
+    position: relative;
+    font-size: 1em;
+    padding: 0 5px;
+    line-height: 1em;
+    top: -3px;
 }
 
 .zero-logon-overview-pass-restore-failed svg {
-  margin: 0 10px 0 0;
+    margin: 0 10px 0 0;
 }
 
 .rt-resizable-header {
-  text-align: left;
+    text-align: left;
 }
 
 .markdown a {
-  color: $monkey-alt;
+    color: $monkey-alt;
 }
 
 .markdown a:hover {
-  color: $monkey-alt;
-  background-color: unset;
-  text-decoration: underline;
+    color: $monkey-alt;
+    background-color: unset;
+    text-decoration: underline;
 }

@@ -1,31 +1,31 @@
 .config-import-modal .config-import-option .file-input {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 .config-import-modal .config-import-option .import-error {
-  margin-top: 10px;
+    margin-top: 10px;
 }
 .config-import-modal .config-import-option .config-import-password-input {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .config-import-modal .config-import-option .config-import-password-input p {
-  margin-right: 5px;
-  display: inline-block;
-  width: auto;
+    margin-right: 5px;
+    display: inline-block;
+    width: auto;
 }
 
 .config-import-modal .config-import-option .config-import-password-input input {
-  display: inline-block;
-  width: auto;
+    display: inline-block;
+    width: auto;
 }
 
 .fade.modal.show.unsafe-config-options-confirmation-modal {
-  z-index: 2000;
+    z-index: 2000;
 }
 
 .modal-backdrop.unsafe-config-options-confirmation-modal-backdrop {
-  z-index: 1900;
+    z-index: 1900;
 }

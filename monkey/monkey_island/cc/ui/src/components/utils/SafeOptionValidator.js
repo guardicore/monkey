@@ -1,82 +1,79 @@
 function getLegacyPluginDescriptors(schema, config) {
-  return [
-    {
-      name: "Fingerprinters",
-      allPlugins:
-        schema.properties.propagation.properties.network_scan.properties
-          .fingerprinters.properties,
-      selectedPlugins: config.propagation.network_scan.fingerprinters,
-    },
-  ];
+    return [
+        {
+            name: 'Fingerprinters',
+            allPlugins:
+                schema.properties.propagation.properties.network_scan.properties.fingerprinters
+                    .properties,
+            selectedPlugins: config.propagation.network_scan.fingerprinters
+        }
+    ];
 }
 
 function getPluginDescriptors(schema, config) {
-  return [
-    {
-      name: "Exploiters",
-      allPlugins:
-        schema.properties.propagation.properties.exploitation.properties
-          .exploiters.properties,
-      selectedPlugins: Object.keys(config.propagation.exploitation.exploiters),
-    },
-    {
-      name: "CredentialsCollectors",
-      allPlugins: schema.properties.credentials_collectors.properties,
-      selectedPlugins: Object.keys(config.credentials_collectors),
-    },
-  ];
+    return [
+        {
+            name: 'Exploiters',
+            allPlugins:
+                schema.properties.propagation.properties.exploitation.properties.exploiters
+                    .properties,
+            selectedPlugins: Object.keys(config.propagation.exploitation.exploiters)
+        },
+        {
+            name: 'CredentialsCollectors',
+            allPlugins: schema.properties.credentials_collectors.properties,
+            selectedPlugins: Object.keys(config.credentials_collectors)
+        }
+    ];
 }
 
 function isUnsafeOptionSelected(schema, config) {
-  return (
-    isUnsafeLegacyPluginEnabled(schema, config) ||
-    isUnsafePluginEnabled(schema, config)
-  );
+    return isUnsafeLegacyPluginEnabled(schema, config) || isUnsafePluginEnabled(schema, config);
 }
 
 function isUnsafeLegacyPluginEnabled(schema, config) {
-  let pluginDescriptors = getLegacyPluginDescriptors(schema, config);
+    let pluginDescriptors = getLegacyPluginDescriptors(schema, config);
 
-  for (let descriptor of pluginDescriptors) {
-    if (getUnsafeLegacyPlugins(descriptor).length > 0) {
-      return true;
+    for (let descriptor of pluginDescriptors) {
+        if (getUnsafeLegacyPlugins(descriptor).length > 0) {
+            return true;
+        }
     }
-  }
 
-  return false;
+    return false;
 }
 
 function getUnsafeLegacyPlugins(pluginDescriptor) {
-  let unsafePlugins = [];
-  for (const [name, subschema] of Object.entries(pluginDescriptor.allPlugins)) {
-    if (!isPluginSafe(subschema)) {
-      unsafePlugins.push(name);
+    let unsafePlugins = [];
+    for (const [name, subschema] of Object.entries(pluginDescriptor.allPlugins)) {
+        if (!isPluginSafe(subschema)) {
+            unsafePlugins.push(name);
+        }
     }
-  }
 
-  return unsafePlugins;
+    return unsafePlugins;
 }
 
 function isUnsafePluginEnabled(schema, config) {
-  let pluginDescriptors = getPluginDescriptors(schema, config);
+    let pluginDescriptors = getPluginDescriptors(schema, config);
 
-  for (let descriptor of pluginDescriptors) {
-    if (getUnsafePlugins(descriptor).length > 0) {
-      return true;
+    for (let descriptor of pluginDescriptors) {
+        if (getUnsafePlugins(descriptor).length > 0) {
+            return true;
+        }
     }
-  }
 
-  return false;
+    return false;
 }
 
 function getUnsafePlugins(pluginDescriptor) {
-  return pluginDescriptor.selectedPlugins.filter(
-    (pluginName) => !isPluginSafe(pluginDescriptor.allPlugins[pluginName]),
-  );
+    return pluginDescriptor.selectedPlugins.filter(
+        (pluginName) => !isPluginSafe(pluginDescriptor.allPlugins[pluginName])
+    );
 }
 
 function isPluginSafe(pluginSchema) {
-  return pluginSchema.safe !== undefined && pluginSchema.safe;
+    return pluginSchema.safe !== undefined && pluginSchema.safe;
 }
 
 export default isUnsafeOptionSelected;

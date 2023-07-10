@@ -1,49 +1,49 @@
 .image-modal .image-modal-thumbnail {
-  position: relative;
-  padding: 7px;
+    position: relative;
+    padding: 7px;
 }
 
 .image-modal .image-modal-thumbnail:focus {
-  background-color: white;
-  border-color: white;
-  box-shadow: 0 2px 6px #ccc;
+    background-color: white;
+    border-color: white;
+    box-shadow: 0 2px 6px #ccc;
 }
 
 .image-modal .image-modal-thumbnail:hover {
-  background-color: white;
-  border-color: white;
-  box-shadow: 0 2px 6px #ccc;
+    background-color: white;
+    border-color: white;
+    box-shadow: 0 2px 6px #ccc;
 }
 
 .image-modal .image-modal-thumbnail-icon {
-  left: 50%;
-  top: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  position: absolute;
-  min-width: 40px;
-  min-height: 40px;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    position: absolute;
+    min-width: 40px;
+    min-height: 40px;
 }
 
 .image-modal:hover .image-modal-thumbnail-icon {
-  color: $monkey-yellow;
+    color: $monkey-yellow;
 }
 
 .image-modal-screen {
-  padding: 0;
+    padding: 0;
 }
 
 .image-modal-screen .modal-dialog {
-  margin: 0;
-  top: 0;
-  width: 100%;
-  padding: 30px;
-  max-width: none;
-  max-height: none;
+    margin: 0;
+    top: 0;
+    width: 100%;
+    padding: 30px;
+    max-width: none;
+    max-height: none;
 }
 
 .image-modal-screen .modal-dialog .modal-content {
-  width: fit-content;
-  margin: auto;
+    width: fit-content;
+    margin: auto;
 }

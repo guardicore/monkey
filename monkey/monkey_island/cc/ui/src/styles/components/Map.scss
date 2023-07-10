@@ -1,25 +1,25 @@
 .map-legend {
-  font-size: 18px;
-  position: absolute;
-  z-index: 1;
+    font-size: 18px;
+    position: absolute;
+    z-index: 1;
 }
 
 .map-window {
-  position: relative;
+    position: relative;
 }
 
 #map-column {
-  flex: auto;
-  max-width: 100%;
+    flex: auto;
+    max-width: 100%;
 }
 
 .net-graph-wrapper {
-  height: 89vh;
-  width: 100%;
-  padding-bottom: 10px;
+    height: 89vh;
+    width: 100%;
+    padding-bottom: 10px;
 }
 
 .exploit-timeline {
-  overflow-y: auto;
-  max-height: 500px;
+    overflow-y: auto;
+    max-height: 500px;
 }

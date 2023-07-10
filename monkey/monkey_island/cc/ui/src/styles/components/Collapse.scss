@@ -8,103 +8,103 @@ $warning-color: #ffe28d;
 $success-color: #adf6a9;
 
 .collapse-item button {
-  font-size: inherit;
-  margin: 0;
-  padding: 1rem;
-  background: transparent;
-  border: 1px solid #ccc;
-  box-shadow: none;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    font-size: inherit;
+    margin: 0;
+    padding: 1rem;
+    background: transparent;
+    border: 1px solid #ccc;
+    box-shadow: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 .collapse-item button span:first-child {
-  text-align: left;
+    text-align: left;
 }
 
 .collapse-item button {
-  width: 100%;
-  box-shadow: 0 2px 6px #ccc;
-  border: none;
-  transition: background-color $transition;
-  display: flex;
-  font-family: inherit;
+    width: 100%;
+    box-shadow: 0 2px 6px #ccc;
+    border: none;
+    transition: background-color $transition;
+    display: flex;
+    font-family: inherit;
 
-  > span {
-    display: inline-block;
-    flex: 4;
-    text-align: right;
+    > span {
+        display: inline-block;
+        flex: 4;
+        text-align: right;
 
-    &:nth-child(2) {
-      flex: 3;
+        &:nth-child(2) {
+            flex: 3;
+        }
     }
-  }
 }
 
 .collapse-success {
-  background-color: $success-color !important;
+    background-color: $success-color !important;
 }
 
 .collapse-danger {
-  background-color: $danger-color !important;
+    background-color: $danger-color !important;
 }
 
 .collapse-warning {
-  background-color: $warning-color !important;
+    background-color: $warning-color !important;
 }
 
 .collapse-info {
-  background-color: $info-color !important;
+    background-color: $info-color !important;
 }
 
 .collapse-default {
-  background-color: $default-color !important;
-  color: #ffffff;
+    background-color: $default-color !important;
+    color: #ffffff;
 }
 
 .collapse-disabled {
-  background-color: $disabled-color !important;
+    background-color: $disabled-color !important;
 }
 
 .collapse-disabled {
-  background-color: $disabled-color !important;
+    background-color: $disabled-color !important;
 }
 
 .collapse-item {
-  padding: 0.5rem;
+    padding: 0.5rem;
 
-  &--active {
-    .btn-collapse {
-      background-color: #f7f7f7;
+    &--active {
+        .btn-collapse {
+            background-color: #f7f7f7;
+        }
     }
-  }
 }
 
 .collapse-item .collapse-comp {
-  padding: 0 7px 7px 7px;
-  border: 2px solid rgb(232, 228, 228);
-  border-top: 0;
-  display: block !important;
-  transition: height $transition;
-  overflow: hidden;
+    padding: 0 7px 7px 7px;
+    border: 2px solid rgb(232, 228, 228);
+    border-top: 0;
+    display: block !important;
+    transition: height $transition;
+    overflow: hidden;
 }
 
 .collapsing {
-  height: 100% !important;
+    height: 100% !important;
 }
 
 .collapse-item .content {
-  padding: 2rem 0;
+    padding: 2rem 0;
 }
 
 .collapse-item .text {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 .collapse-item .state {
-  display: inline-block;
-  min-width: 6em;
+    display: inline-block;
+    min-width: 6em;
 }
 
 .rule-collapse svg {
-  margin-right: 10px;
+    margin-right: 10px;
 }

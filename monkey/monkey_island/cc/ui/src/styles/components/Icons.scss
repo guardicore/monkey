@@ -1,36 +1,36 @@
 .loading-icon {
-  color: $monkey-yellow;
-  font-size: 20px;
-  margin-left: 50%;
-  margin-right: 50%;
+    color: $monkey-yellow;
+    font-size: 20px;
+    margin-left: 50%;
+    margin-right: 50%;
 }
 
 .spinning-icon {
-  animation: spin-animation 0.5s infinite;
-  display: inline-block;
+    animation: spin-animation 0.5s infinite;
+    display: inline-block;
 }
 
 .icon-success {
-  color: $success;
+    color: $success;
 }
 
 .icon-failed {
-  color: $danger;
+    color: $danger;
 }
 
 @keyframes spin-animation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(359deg);
-  }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(359deg);
+    }
 }
 
 .upload-status-icon-success {
-  color: $success;
+    color: $success;
 }
 
 .upload-status-icon-error {
-  color: $danger;
+    color: $danger;
 }
