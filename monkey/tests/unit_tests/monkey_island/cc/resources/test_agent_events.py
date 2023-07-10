@@ -308,26 +308,34 @@ def test_get_filter__event_missing_success(flask_client, agent_event_repository)
     assert resp_get.json == [SERIALIZED_PFAE1_1]
 
 
-def test_get_filter__event_gt_timestamp(flask_client, agent_event_repository):
+@pytest.mark.parametrize(
+    "query_param, index", [(-1, 0), (1.9999, 1), (2, 2), (2.1, 2), (2.99999, 2), (3, 3)]
+)
+def test_get_filter__event_gt_timestamp(flask_client, agent_event_repository, query_param, index):
     agent_event_repository.get_events = MagicMock(return_value=TIMESTAMP_EVENTS)
 
-    resp_get = flask_client.get(AGENT_EVENTS_URL + "?timestamp=gt:2")
+    resp_get = flask_client.get(AGENT_EVENTS_URL + f"?timestamp=gt:{query_param}")
     assert resp_get.status_code == HTTPStatus.OK
 
     returned_events = resp_get.json
-    assert len(returned_events) == 3
-    assert [event["timestamp"] for event in returned_events] == [3, 4, 5]
+    assert [event["timestamp"] for event in returned_events] == [
+        event.timestamp for event in TIMESTAMP_EVENTS[index:]
+    ]
 
 
-def test_get_filter__event_lt_timestamp(flask_client, agent_event_repository):
+@pytest.mark.parametrize(
+    "query_param, index", [(-1, 0), (1.9999, 1), (2, 1), (2.1, 2), (2.99999, 2), (4, 3)]
+)
+def test_get_filter__event_lt_timestamp(flask_client, agent_event_repository, query_param, index):
     agent_event_repository.get_events = MagicMock(return_value=TIMESTAMP_EVENTS)
 
-    resp_get = flask_client.get(AGENT_EVENTS_URL + "?timestamp=lt:2.5")
+    resp_get = flask_client.get(AGENT_EVENTS_URL + f"?timestamp=lt:{query_param}")
     assert resp_get.status_code == HTTPStatus.OK
 
     returned_events = resp_get.json
-    assert len(returned_events) == 2
-    assert [event["timestamp"] for event in returned_events] == [1, 2]
+    assert [event["timestamp"] for event in returned_events] == [
+        event.timestamp for event in TIMESTAMP_EVENTS[:index]
+    ]
 
 
 def test_get_filter__type_and_success_and_timestamp(flask_client, agent_event_repository):
