@@ -339,13 +339,19 @@ def test_get_filter__type_and_success_and_timestamp(flask_client, agent_event_re
     assert resp_get.json == [SERIALIZED_PFAE1_2]
 
 
-def test_get_filter__unknown_type(flask_client, agent_event_repository):
+def test_get_filter__unknown_type(flask_client):
     resp_get = flask_client.get(AGENT_EVENTS_URL + "?type=UnknownEventType")
     assert resp_get.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
-def test_get_filter__invalid_success(flask_client, agent_event_repository):
+def test_get_filter__invalid_success(flask_client):
     resp_get = flask_client.get(AGENT_EVENTS_URL + "?success=bogus")
+    assert resp_get.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.parametrize("timestamp_arg", ["never", "gt:xyz", "at:123", ":::", "a:b:c", "", "   "])
+def test_get_filter__invalid_timestamp(timestamp_arg, flask_client):
+    resp_get = flask_client.get(AGENT_EVENTS_URL + f"?timestamp={timestamp_arg}")
     assert resp_get.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
