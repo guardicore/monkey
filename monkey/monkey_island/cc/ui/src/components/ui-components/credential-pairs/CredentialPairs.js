@@ -226,6 +226,7 @@ const CredentialPairs = (props) => {
                  onRowModesModelChange={handleRowModesModelChange}
                  onRowEditStop={handleRowEditStop}
                  processRowUpdate={processRowUpdate}
+                 onProcessRowUpdateError={()=>void(0)}
                  getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
                  className="configured-credentials"
                  initialState={initialState}

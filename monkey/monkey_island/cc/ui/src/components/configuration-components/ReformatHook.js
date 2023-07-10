@@ -5,7 +5,7 @@ import {
   SECRET_TYPES
 } from '../utils/CredentialTitle.tsx';
 import _ from 'lodash';
-import {CREDENTIALS_ROW_KEYS} from '../ui-components/credential-pairs/credentialPairsHelper';
+import {CREDENTIALS_ROW_KEYS, isAllValuesInRowAreEmpty} from '../ui-components/credential-pairs/credentialPairsHelper';
 import {nanoid} from 'nanoid';
 import {reverseObject} from '../../utils/objectUtils';
 
@@ -51,7 +51,7 @@ export function reformatSchema(schema) {
   return schema;
 }
 
-export function formatCredentialsForForm(credentialsData) {
+export function formatCredentialsForForm(credentialsData = []) {
   const rows = [];
   const REVERSED_SECRET_TYPES = reverseObject(SECRET_TYPES)
 
@@ -114,27 +114,23 @@ export function formatCredentialsForIsland(credentialsData) {
       [SECRET_TYPES.ssh_public_key]: row?.ssh_public_key || null
     };
 
-    if(identityObj && !identitiesWithEmptySecret.includes(identityValue)) {
+    if(identityObj && !identitiesWithEmptySecret.includes(identityValue) && isAllValuesInRowAreEmpty(row, ['identity'])) {
       formattedCredentials.push(getCredentialPair(identityObj, null));
       identitiesWithEmptySecret.push(identityValue);
-    }
+    } else {
+      if (identityObj && (secretValue[SECRET_TYPES.ssh_private_key] || secretValue[SECRET_TYPES.ssh_public_key])) {
+        formattedCredentials.push(getCredentialPair(identityObj, secretValue));
+      }
 
-    if(identityObj && (secretValue[SECRET_TYPES.ssh_private_key] || secretValue[SECRET_TYPES.ssh_public_key])) {
-      formattedCredentials.push(getCredentialPair(identityObj, secretValue));
-    }
-
-    CREDENTIALS_ROW_KEYS.filter(key => !keysToIgnore.includes(key)).forEach(key => {
-      const currentSecretObj = row[key] !== '' ? {[SECRET_TYPES[key]]: row[key]} : null;
-      if(currentSecretObj || identityObj) {
-        if(!currentSecretObj && identitiesWithEmptySecret.includes(identityValue)) {
-          return;
+      CREDENTIALS_ROW_KEYS.filter(key => !keysToIgnore.includes(key)).forEach(key => {
+        const currentSecretObj = row[key] ? {[SECRET_TYPES[key]]: row[key]} : null;
+        if (currentSecretObj) {
+          formattedCredentials.push(getCredentialPair(identityObj, currentSecretObj));
+        } else if (identityObj && !currentSecretObj && !identitiesWithEmptySecret.includes(identityValue)) {
+          identitiesWithEmptySecret.push(identityValue);
         }
-        formattedCredentials.push(getCredentialPair(identityObj, currentSecretObj));
-      }
-      if(identityObj && !currentSecretObj && !identitiesWithEmptySecret.includes(identityValue)) {
-        identitiesWithEmptySecret.push(identityValue);
-      }
-    });
+      });
+    }
   });
 
   return formattedCredentials;
