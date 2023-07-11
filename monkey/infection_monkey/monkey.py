@@ -274,8 +274,7 @@ class InfectionMonkey:
 
         # This check must be done after the agent event forwarder is started, otherwise the agent
         # will be unable to send a shutdown event to the Island.
-        should_stop = self._island_api_client.terminate_signal_is_set()
-        if should_stop:
+        if self._island_api_client.terminate_signal_is_set():
             logger.info("The Monkey Island has instructed this agent to stop")
             return
 
