@@ -118,7 +118,7 @@ export function formatCredentialsForIsland(credentialsData) {
       formattedCredentials.push(getCredentialPair(identityObj, null));
       identitiesWithEmptySecret.push(identityValue);
     } else {
-      if (identityObj && (secretValue[SECRET_TYPES.ssh_private_key] || secretValue[SECRET_TYPES.ssh_public_key])) {
+      if (secretValue[SECRET_TYPES.ssh_private_key] || secretValue[SECRET_TYPES.ssh_public_key]) {
         formattedCredentials.push(getCredentialPair(identityObj, secretValue));
       }
 
@@ -126,8 +126,6 @@ export function formatCredentialsForIsland(credentialsData) {
         const currentSecretObj = row[key] ? {[SECRET_TYPES[key]]: row[key]} : null;
         if (currentSecretObj) {
           formattedCredentials.push(getCredentialPair(identityObj, currentSecretObj));
-        } else if (identityObj && !currentSecretObj && !identitiesWithEmptySecret.includes(identityValue)) {
-          identitiesWithEmptySecret.push(identityValue);
         }
       });
     }
