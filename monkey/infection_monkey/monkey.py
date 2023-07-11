@@ -59,7 +59,7 @@ from infection_monkey.island_api_client import (
     IslandAPIAuthenticationError,
     IslandAPIError,
 )
-from infection_monkey.master import AgentLifecycle, AutomatedMaster
+from infection_monkey.master import AutomatedMaster
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.relay import TCPRelay
@@ -143,7 +143,6 @@ class InfectionMonkey:
             / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
         )
         self._island_address, self._island_api_client = self._connect_to_island_api()
-        self._agent_lifecycle = AgentLifecycle(self._island_api_client)
         self._register_agent()
 
         self._operating_system = get_os()
@@ -275,7 +274,7 @@ class InfectionMonkey:
 
         # This check must be done after the agent event forwarder is started, otherwise the agent
         # will be unable to send a shutdown event to the Island.
-        should_stop = self._agent_lifecycle.should_agent_stop()
+        should_stop = self._island_api_client.terminate_signal_is_set()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
@@ -366,7 +365,6 @@ class InfectionMonkey:
         puppet = self._build_puppet(operating_system)
 
         return AutomatedMaster(
-            self._agent_lifecycle,
             self._current_depth,
             servers,
             puppet,
@@ -523,10 +521,10 @@ class InfectionMonkey:
         self._relay.stop()
 
         try:
-            while self._relay.is_alive() and not self._agent_lifecycle.should_agent_stop():
+            while self._relay.is_alive() and not self._island_api_client.terminate_signal_is_set():
                 self._relay.join(timeout=5)
 
-            if self._agent_lifecycle.should_agent_stop():
+            if self._island_api_client.terminate_signal_is_set():
                 self._relay.join(timeout=60)
         except IslandAPIError as err:
             logger.warning(f"Error communicating with the Island: {err}")
