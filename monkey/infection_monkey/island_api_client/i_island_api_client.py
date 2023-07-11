@@ -249,7 +249,7 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def terminate_signal_is_set(self):
+    def terminate_signal_is_set(self) -> bool:
         """
         Checks if the agent's terminate signal is set
 

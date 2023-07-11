@@ -229,6 +229,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             log_contents,
         )
 
-    def terminate_signal_is_set(self):
+    def terminate_signal_is_set(self) -> bool:
         agent_signals = self.get_agent_signals()
         return agent_signals.terminate is not None
