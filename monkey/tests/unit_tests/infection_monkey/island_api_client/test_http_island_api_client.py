@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 from http import HTTPStatus
-from typing import Dict, List
+from typing import Dict, List, Optional
 from unittest.mock import MagicMock
 from uuid import UUID
 
@@ -365,6 +365,23 @@ def test_island_api_client_get_agent_signals__bad_json(timestamp):
 
     with pytest.raises(IslandAPIResponseParsingError):
         api_client.get_agent_signals()
+
+
+@pytest.mark.parametrize("timestamp,expected", [(1663950115, True), (None, False)])
+def test_island_api_client_terminate_signal_is_set(
+    timestamp: Optional[int],
+    expected: bool,
+):
+    api_client = _build_client_with_json_response({"terminate": timestamp})
+    assert api_client.terminate_signal_is_set() is expected
+
+
+@pytest.mark.parametrize("timestamp", [TIMESTAMP, None])
+def test_island_api_client_terminate_signal_is_set__bad_json(timestamp):
+    api_client = _build_client_with_json_response({"terminate": timestamp, "discombobulate": 20})
+
+    with pytest.raises(IslandAPIResponseParsingError):
+        api_client.terminate_signal_is_set()
 
 
 def test_island_api_client_get_agent_configuration_schema():
