@@ -107,10 +107,10 @@ class AutomatedMaster(IMaster):
         try:
             stop = self._agent_lifecycle.should_agent_stop()
             if stop:
-                logger.info('Received the "stop" signal from the Island')
+                logger.info("Received the terminate signal from the Island")
                 self._stop.set()
         except IslandAPIError as e:
-            logger.error(f"An error occurred while trying to check for agent stop: {e}")
+            logger.error(f"An error occurred while trying to check for the terminate signal: {e}")
             self._stop.set()
 
     def _master_thread_should_run(self):
