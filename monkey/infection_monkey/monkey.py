@@ -57,9 +57,9 @@ from infection_monkey.island_api_client import (
     HTTPIslandAPIClientFactory,
     IIslandAPIClient,
     IslandAPIAuthenticationError,
+    IslandAPIError,
 )
 from infection_monkey.master import AutomatedMaster
-from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.relay import TCPRelay
@@ -147,7 +147,6 @@ class InfectionMonkey:
 
         self._operating_system = get_os()
 
-        self._control_channel = ControlChannel(str(self._island_address), self._island_api_client)
         self._propagation_credentials_repository = PropagationCredentialsRepository(
             self._island_api_client, self._manager
         )
@@ -275,8 +274,7 @@ class InfectionMonkey:
 
         # This check must be done after the agent event forwarder is started, otherwise the agent
         # will be unable to send a shutdown event to the Island.
-        should_stop = self._control_channel.should_agent_stop()
-        if should_stop:
+        if self._island_api_client.terminate_signal_is_set():
             logger.info("The Monkey Island has instructed this agent to stop")
             return
 
@@ -325,7 +323,7 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        config = self._control_channel.get_config()
+        config = self._island_api_client.get_config()
 
         relay_port = self._tcp_port_selector.get_free_tcp_port()
         if relay_port is None:
@@ -369,7 +367,7 @@ class InfectionMonkey:
             self._current_depth,
             servers,
             puppet,
-            self._control_channel,
+            self._island_api_client,
             local_network_interfaces,
         )
 
@@ -516,14 +514,20 @@ class InfectionMonkey:
         logger.info("Agent is shutting down")
 
     def _stop_relay(self):
-        if self._relay and self._relay.is_alive():
-            self._relay.stop()
+        if not self._relay or not self._relay.is_alive():
+            return
 
-            while self._relay.is_alive() and not self._control_channel.should_agent_stop():
+        self._relay.stop()
+
+        try:
+            while self._relay.is_alive() and not self._island_api_client.terminate_signal_is_set():
                 self._relay.join(timeout=5)
 
-            if self._control_channel.should_agent_stop():
+            if self._island_api_client.terminate_signal_is_set():
                 self._relay.join(timeout=60)
+        except IslandAPIError as err:
+            logger.warning(f"Error communicating with the Island: {err}")
+            self._relay.join(timeout=60)
 
     def _publish_agent_shutdown_event(self):
         agent_shutdown_event = AgentShutdownEvent(source=self._agent_id, timestamp=time.time())
