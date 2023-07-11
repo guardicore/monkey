@@ -9,11 +9,10 @@ from egg_timer import EggTimer
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet, RejectedRequestError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
-from infection_monkey.utils import should_agent_stop
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
-from . import Exploiter, IPScanner, Propagator
+from . import AgentLifecycle, Exploiter, IPScanner, Propagator
 
 CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC = 5
 CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 5
@@ -27,14 +26,14 @@ logger = logging.getLogger()
 class AutomatedMaster(IMaster):
     def __init__(
         self,
-        island_address: str,
+        agent_lifecycle: AgentLifecycle,
         current_depth: Optional[int],
         servers: Sequence[str],
         puppet: IPuppet,
         island_api_client: IIslandAPIClient,
         local_network_interfaces: List[IPv4Interface],
     ):
-        self._island_address = island_address
+        self._agent_lifecycle = agent_lifecycle
         self._current_depth = current_depth
         self._servers = servers
         self._puppet = puppet
@@ -106,7 +105,7 @@ class AutomatedMaster(IMaster):
 
     def _check_for_stop(self):
         try:
-            stop = should_agent_stop(self._island_address, self._island_api_client)
+            stop = self._agent_lifecycle.should_agent_stop()
             if stop:
                 logger.info('Received the "stop" signal from the Island')
                 self._stop.set()

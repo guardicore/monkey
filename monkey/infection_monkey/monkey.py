@@ -58,7 +58,7 @@ from infection_monkey.island_api_client import (
     IIslandAPIClient,
     IslandAPIAuthenticationError,
 )
-from infection_monkey.master import AutomatedMaster
+from infection_monkey.master import AgentLifecycle, AutomatedMaster
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.relay import TCPRelay
@@ -85,7 +85,7 @@ from infection_monkey.puppet import (
     PluginSourceExtractor,
 )
 from infection_monkey.puppet.puppet import Puppet
-from infection_monkey.utils import agent_process, environment, should_agent_stop
+from infection_monkey.utils import agent_process, environment
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
 from infection_monkey.utils.monkey_dir import create_monkey_dir, remove_monkey_dir
@@ -142,6 +142,7 @@ class InfectionMonkey:
             / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
         )
         self._island_address, self._island_api_client = self._connect_to_island_api()
+        self._agent_lifecycle = AgentLifecycle(self._island_api_client)
         self._register_agent()
 
         self._operating_system = get_os()
@@ -273,7 +274,7 @@ class InfectionMonkey:
 
         # This check must be done after the agent event forwarder is started, otherwise the agent
         # will be unable to send a shutdown event to the Island.
-        should_stop = should_agent_stop(str(self._island_address), self._island_api_client)
+        should_stop = self._agent_lifecycle.should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
@@ -364,7 +365,7 @@ class InfectionMonkey:
         puppet = self._build_puppet(operating_system)
 
         return AutomatedMaster(
-            str(self._island_address),
+            self._agent_lifecycle,
             self._current_depth,
             servers,
             puppet,
@@ -518,12 +519,10 @@ class InfectionMonkey:
         if self._relay and self._relay.is_alive():
             self._relay.stop()
 
-            while self._relay.is_alive() and not should_agent_stop(
-                str(self._island_address), self._island_api_client
-            ):
+            while self._relay.is_alive() and not self._agent_lifecycle.should_agent_stop():
                 self._relay.join(timeout=5)
 
-            if should_agent_stop(str(self._island_address), self._island_api_client):
+            if self._agent_lifecycle.should_agent_stop():
                 self._relay.join(timeout=60)
 
     def _publish_agent_shutdown_event(self):
