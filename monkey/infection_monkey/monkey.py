@@ -57,6 +57,7 @@ from infection_monkey.island_api_client import (
     HTTPIslandAPIClientFactory,
     IIslandAPIClient,
     IslandAPIAuthenticationError,
+    IslandAPIError,
 )
 from infection_monkey.master import AgentLifecycle, AutomatedMaster
 from infection_monkey.network import TCPPortSelector
@@ -516,14 +517,20 @@ class InfectionMonkey:
         logger.info("Agent is shutting down")
 
     def _stop_relay(self):
-        if self._relay and self._relay.is_alive():
-            self._relay.stop()
+        if not self._relay or not self._relay.is_alive():
+            return
 
+        self._relay.stop()
+
+        try:
             while self._relay.is_alive() and not self._agent_lifecycle.should_agent_stop():
                 self._relay.join(timeout=5)
 
             if self._agent_lifecycle.should_agent_stop():
                 self._relay.join(timeout=60)
+        except IslandAPIError as err:
+            logger.warning(f"Error communicating with the Island: {err}")
+            self._relay.join(timeout=60)
 
     def _publish_agent_shutdown_event(self):
         agent_shutdown_event = AgentShutdownEvent(source=self._agent_id, timestamp=time.time())
