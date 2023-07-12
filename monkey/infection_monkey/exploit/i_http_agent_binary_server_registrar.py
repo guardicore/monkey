@@ -1,8 +1,7 @@
 import abc
 from ipaddress import IPv4Address
+from pathlib import PurePath
 from typing import Optional, Sequence
-
-from patlib import PurePath
 
 from common import OperatingSystem
 
