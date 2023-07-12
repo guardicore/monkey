@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from enum import Enum
-from http.server import BaseHTTPRequestHandler
 from pathlib import PurePath
 from typing import Optional, Sequence, TypeAlias
 from uuid import UUID
@@ -25,13 +24,3 @@ class AgentBinaryRequest:
     args: Sequence[str]
     download_url: str
     bytes_downloaded: Event
-
-
-class AgentBinaryHTTPRequestHandler(BaseHTTPRequestHandler):
-    @classmethod
-    def register_request(cls, request: AgentBinaryRequest):
-        raise NotImplementedError()
-
-    @classmethod
-    def deregister_request(cls, request_id: RequestID):
-        raise NotImplementedError()
