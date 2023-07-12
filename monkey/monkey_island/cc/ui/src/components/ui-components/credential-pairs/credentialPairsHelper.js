@@ -49,7 +49,7 @@ const EditTextarea = (props) => {
 
   const keyPress = (e) => {
     if (e.keyCode === 13) {
-      e.stopPropagation();
+      e.preventDefault();
     }
   }
 
