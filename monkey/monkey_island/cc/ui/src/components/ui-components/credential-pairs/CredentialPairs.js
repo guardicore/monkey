@@ -155,15 +155,20 @@ const CredentialPairs = (props) => {
     setRowModesModel(newRowModesModel);
   };
 
+  const clearNewRowPropertyValue = (newRow, key) => {
+    newRow[key] = '';
+    return isAllValuesInRowAreEmpty(newRow, ['identity']);
+  }
+
   const upsertRow = (newRow) => {
     let newRowCopy = {...newRow};
-    let isNewRowMerged = false;
+    let isNewRowFullyMerged = false;
     setRows((prevState) => {
         let foundDuplicatedRow = false;
         let newRowsArr = prevState.map(existingRow => {
           if (isRowDuplicated(newRowCopy, existingRow)) {
             foundDuplicatedRow = true;
-          } else if (existingRow.identity === newRowCopy.identity) { // If the identity values match
+          } else if (!foundDuplicatedRow && (existingRow.identity === newRowCopy.identity)) { // If the identity values match
             const mergedRow = {...existingRow}; // Create a copy of the existing row
 
             for (const key of CREDENTIALS_ROW_KEYS) {
@@ -171,11 +176,10 @@ const CredentialPairs = (props) => {
                 if (mergedRow[key] === '') { // If the key is not identity and existing value is empty
                   mergedRow[key] = newRowCopy[key]; // Update the value in the merged row
                   if(newRowCopy[key]){
-                    isNewRowMerged = true;
+                    isNewRowFullyMerged = clearNewRowPropertyValue(newRowCopy, key);
                   }
-                  newRowCopy[key] = ''; // Update the value in the new row to empty
                 } else if (mergedRow[key] === newRowCopy[key]) {
-                  newRowCopy[key] = '';
+                   isNewRowFullyMerged = clearNewRowPropertyValue(newRowCopy, key);
                 }
               }
             }
@@ -186,8 +190,8 @@ const CredentialPairs = (props) => {
           return existingRow; // Return the existing row as is
         });
 
-        if (!foundDuplicatedRow && !isAllValuesInRowAreEmpty(newRowCopy) && !isNewRowMerged) { // If new row has non-empty values and not duplicated
-          newRowsArr.push(newRowCopy); // Insert the new row to the merged rows array
+        if(!foundDuplicatedRow && !isAllValuesInRowAreEmpty(newRowCopy) && !isNewRowFullyMerged) {
+          newRowsArr.push(newRowCopy);
         }
 
         return newRowsArr;
@@ -226,6 +230,7 @@ const CredentialPairs = (props) => {
                  onRowModesModelChange={handleRowModesModelChange}
                  onRowEditStop={handleRowEditStop}
                  processRowUpdate={processRowUpdate}
+                 onProcessRowUpdateError={()=>void(0)}
                  getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
                  className="configured-credentials"
                  initialState={initialState}

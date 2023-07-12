@@ -49,7 +49,7 @@ const EditTextarea = (props) => {
 
   const keyPress = (e) => {
     if (e.keyCode === 13) {
-      e.stopPropagation();
+      e.preventDefault();
     }
   }
 
@@ -158,7 +158,11 @@ export const setErrorsForRow = (prevState, rowId, isAddingError) => {
 export const trimRowValues = (row) => {
   const rowCopy = {...row};
   CREDENTIALS_ROW_KEYS.forEach(key => {
-    rowCopy[key] = rowCopy[key].trim();
+    if(rowCopy[key] !== undefined) {
+      rowCopy[key] = rowCopy[key].trim();
+    } else {
+      rowCopy[key] = '';
+    }
   })
   return rowCopy;
 }

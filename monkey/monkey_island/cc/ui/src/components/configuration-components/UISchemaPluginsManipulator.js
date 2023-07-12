@@ -3,12 +3,14 @@ import MarkdownDescriptionTemplate from './MarkdownDescriptionTemplate';
 const DEFAULT_VALUE_FIELD = 'default';
 const UI_SCHEMA_PLACEHOLDER_FIELD = 'ui:placeholder';
 
-const pluginsManipulator = (uiSchema, JSONSchema) => {
+const pluginsManipulator = (uiSchema, JSONSchema = {}) => {
   for (let pluginName of Object.keys(JSONSchema)) {
     uiSchema[pluginName] = {'ui:DescriptionFieldTemplate': MarkdownDescriptionTemplate, 'ui:readonly': false};
   }
 
-  traversePlugins(uiSchema, JSONSchema);
+  if(JSONSchema !== {}) {
+    traversePlugins(uiSchema, JSONSchema);
+  }
 }
 
 const getObjectByPath = (root, path) => {
