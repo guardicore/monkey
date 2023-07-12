@@ -20,7 +20,7 @@ class IHTTPAgentBinaryServerRegistrar(metaclass=abc.ABCMeta):
         args: Sequence[str],
     ) -> AgentBinaryRequest:
         """
-        Registers an Agent to be served
+        Registers an Agent to be served with HTTPAgentBinaryServer
 
         :param operating_system: The operating system for the Agent binary to serve
         :param request_type: The type of request to serve
