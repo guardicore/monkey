@@ -7,9 +7,10 @@ import subprocess
 import sys
 import time
 from functools import partial
+from ipaddress import IPv4Address
 from itertools import chain
 from multiprocessing.managers import SyncManager
-from pathlib import Path, WindowsPath
+from pathlib import Path, PurePath, WindowsPath
 from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
 
@@ -51,6 +52,14 @@ from infection_monkey.exploit import (
     IAgentBinaryRepository,
     IslandAPIAgentOTPProvider,
     PolymorphicAgentBinaryRepositoryDecorator,
+)
+from infection_monkey.exploit.http_agent_binary_server import (
+    HTTPAgentBinaryServer,
+    RequestID,
+    RequestType,
+)
+from infection_monkey.exploit.http_agent_binary_server_registrar import (
+    HTTPAgentBinaryServerRegistrar,
 )
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.i_master import IMaster
@@ -105,6 +114,30 @@ logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
 
 
+class StubHTTPAgentBinaryServer(HTTPAgentBinaryServer):
+    def __init__(self):
+        pass
+
+    def register(
+        self,
+        operating_system: OperatingSystem,
+        request_type: RequestType,
+        requestor_ip: IPv4Address,
+        destination_path: Optional[PurePath] = None,
+        args: Sequence[str] = [],
+    ):
+        pass
+
+    def deregister(self, request_id: RequestID):
+        pass
+
+    def start(self):
+        pass
+
+    def stop(self, timeout: Optional[float] = None):
+        pass
+
+
 class InfectionMonkey:
     def __init__(self, args, ipc_logger_queue: multiprocessing.Queue, log_path: Path):
         logger.info("Agent is initializing...")
@@ -142,7 +175,7 @@ class InfectionMonkey:
             "HTTPIslandAPIClient", http_island_api_client_factory.create_island_api_client
         )
         self._manager = context.Manager()
-
+        self._http_agent_binary_server = StubHTTPAgentBinaryServer()
         self._plugin_dir = (
             Path(gettempdir())
             / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
@@ -411,12 +444,18 @@ class InfectionMonkey:
             reset_modules_cache=False,
             main_thread_name=PluginThreadName.CALLING_THREAD,
         )
+
+        http_agent_binary_server_registrar = HTTPAgentBinaryServerRegistrar(
+            self._http_agent_binary_server
+        )
+
         plugin_factories = {
             AgentPluginType.CREDENTIALS_COLLECTOR: CredentialsCollectorPluginFactory(
                 self._agent_id, self._agent_event_publisher, create_plugin
             ),
             AgentPluginType.EXPLOITER: ExploiterPluginFactory(
                 self._agent_id,
+                http_agent_binary_server_registrar,
                 agent_binary_repository,
                 self._agent_event_publisher,
                 self._propagation_credentials_repository,
