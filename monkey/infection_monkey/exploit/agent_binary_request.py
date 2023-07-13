@@ -5,13 +5,13 @@ from uuid import UUID
 from common import OperatingSystem
 from common.types import Event
 
-RequestID: TypeAlias = UUID
+ReservationID: TypeAlias = UUID
 AgentBinaryTransform: TypeAlias = Callable[[bytes], bytes]
 
 
 @dataclass(frozen=True)
 class AgentBinaryDownloadReservation:
-    id: RequestID
+    id: ReservationID
     operating_system: OperatingSystem
     transform: AgentBinaryTransform
     download_url: str
@@ -20,6 +20,6 @@ class AgentBinaryDownloadReservation:
 
 @dataclass(frozen=True)
 class AgentBinaryDownloadTicket:
-    id: RequestID
+    id: ReservationID
     download_url: str
     download_completed: Event
