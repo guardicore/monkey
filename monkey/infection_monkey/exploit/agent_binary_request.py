@@ -23,11 +23,11 @@ class AgentBinaryDownloadReservation:
     destination_path: Optional[PurePath]
     args: Sequence[str]
     download_url: str
-    bytes_downloaded: Event
+    download_completed: Event
 
 
 @dataclass(frozen=True)
 class AgentBinaryDownloadTicket:
     id: RequestID
     download_url: str
-    bytes_downloaded: Event
+    download_completed: Event
