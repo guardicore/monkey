@@ -280,7 +280,10 @@ This prevents ssh exploitation, but allows tunneling.</td>
 </tr>
 <tr class="odd">
 <td>Server’s config:</td>
-<td>Configured to disable traffic from/to 10.2.0.10 and 10.2.0.11(via ufw and iptables)</td>
+<td>Configured to disable traffic from/to 10.2.0.10 and 10.2.0.11 (via ufw and iptables).
+This machine has iptables rules configured that don't allow any machine to ping it.
+We decided to keep it this way to ensure that plugins run even if the OS of a target is unknown.
+</td>
 </tr>
 <tr class="even">
 <td>Notes:</td>
