@@ -8,7 +8,7 @@ from .http_agent_binary_server import AgentBinaryDownloadTicket, AgentBinaryTran
 
 class IHTTPAgentBinaryServerRegistrar(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def register_request(
+    def reserve_download(
         self,
         operating_system: OperatingSystem,
         requestor_ip: IPv4Address,
@@ -26,11 +26,11 @@ class IHTTPAgentBinaryServerRegistrar(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def deregister_request(self, reservation_id: ReservationID):
+    def clear_reservation(self, reservation_id: ReservationID):
         """
         Deregister a AgentBinaryDownloadReservation from the registrar
 
-        :param reservation_id: The ID of the request to be deregistered
-        :raises KeyError: If the request ID is not registered
+        :param reservation_id: The ID of the reservation to be deregistered
+        :raises KeyError: If the reservation ID is not registered
         """
         pass
