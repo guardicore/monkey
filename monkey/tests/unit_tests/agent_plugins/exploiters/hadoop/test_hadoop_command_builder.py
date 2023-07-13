@@ -11,6 +11,7 @@ from infection_monkey.utils.ids import get_agent_id
 AGENT_ID = get_agent_id()
 SERVERS = ["192.168.1.100", "172.1.2.3"]
 DEPTH = 2
+AGENT_DESTINATION_PATH = "/tmp"
 AGENT_DOWNLOAD_URL = "http://download.here"
 OTP = "123456"
 
@@ -23,6 +24,7 @@ def build_command():
             host,
             SERVERS,
             DEPTH,
+            AGENT_DESTINATION_PATH,
             AGENT_DOWNLOAD_URL,
             OTP,
         )

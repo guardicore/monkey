@@ -43,9 +43,8 @@ def plugin(monkeypatch) -> Plugin:
     return Plugin(
         plugin_name="Hadoop",
         agent_id=AGENT_ID,
+        http_agent_binary_server_registrar=MagicMock(),
         agent_event_publisher=MagicMock(),
-        agent_binary_repository=MagicMock(),
-        tcp_port_selector=MagicMock(),
         otp_provider=MagicMock(),
     )
 
@@ -84,9 +83,8 @@ def test_run__exploit_host_raises_exception(monkeypatch, plugin: Plugin):
     plugin = Plugin(
         plugin_name="Hadoop",
         agent_id=AGENT_ID,
+        http_agent_binary_server_registrar=MagicMock(),
         agent_event_publisher=MagicMock(),
-        agent_binary_repository=MagicMock(),
-        tcp_port_selector=MagicMock(),
         otp_provider=MagicMock(),
     )
     result = plugin.run(
