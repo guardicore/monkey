@@ -5,7 +5,7 @@ from typing import Optional, Sequence
 
 from common import OperatingSystem
 
-from .http_agent_binary_server import AgentBinaryRequest, RequestID, RequestType
+from .http_agent_binary_server import AgentBinaryDownloadTicket, RequestID, RequestType
 
 
 class IHTTPAgentBinaryServerRegistrar(metaclass=abc.ABCMeta):
@@ -17,7 +17,7 @@ class IHTTPAgentBinaryServerRegistrar(metaclass=abc.ABCMeta):
         requestor_ip: IPv4Address,
         destination_path: Optional[PurePath],
         args: Sequence[str],
-    ) -> AgentBinaryRequest:
+    ) -> AgentBinaryDownloadTicket:
         """
         Registers an Agent to be served with HTTPAgentBinaryServer
 
@@ -29,14 +29,14 @@ class IHTTPAgentBinaryServerRegistrar(metaclass=abc.ABCMeta):
         :param args: The arguments to pass to the Agent binary. This only applies to the dropper
             script request type
         :raises RuntimeError: If the binary could not be served
-        :returns: The request
+        :returns: A ticket to download the Agent binary
         """
         pass
 
     @abc.abstractmethod
     def deregister_request(self, request_id: RequestID):
         """
-        Deregister a AgentBinaryRequest from the registrar
+        Deregister a AgentBinaryDownloadReservation from the registrar
 
         :param request_id: The ID of the request to be deregistered
         :raises KeyError: If the request ID is not registered
