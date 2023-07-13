@@ -7,7 +7,6 @@ import subprocess
 import sys
 import time
 from functools import partial
-from ipaddress import IPv4Address
 from itertools import chain
 from multiprocessing.managers import SyncManager
 from pathlib import Path, WindowsPath
@@ -52,11 +51,8 @@ from infection_monkey.exploit import (
     IslandAPIAgentOTPProvider,
     PolymorphicAgentBinaryRepositoryDecorator,
 )
-from infection_monkey.exploit.http_agent_binary_server import (
-    AgentBinaryTransform,
-    HTTPAgentBinaryServer,
-    ReservationID,
-)
+from infection_monkey.exploit.http_agent_binary_request_handler import get_threading_http_handler
+from infection_monkey.exploit.http_agent_binary_server import HTTPAgentBinaryServer
 from infection_monkey.exploit.http_agent_binary_server_registrar import (
     HTTPAgentBinaryServerRegistrar,
 )
@@ -109,28 +105,6 @@ logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
 
 
-class StubHTTPAgentBinaryServer(HTTPAgentBinaryServer):
-    def __init__(self):
-        pass
-
-    def register(
-        self,
-        operating_system: OperatingSystem,
-        requestor_ip: IPv4Address,
-        agent_binary_transform: AgentBinaryTransform = lambda x: x,
-    ):
-        pass
-
-    def deregister(self, reservation_id: ReservationID):
-        pass
-
-    def start(self):
-        pass
-
-    def stop(self, timeout: Optional[float] = None):
-        pass
-
-
 class InfectionMonkey:
     def __init__(self, args, ipc_logger_queue: multiprocessing.Queue, log_path: Path):
         logger.info("Agent is initializing...")
@@ -167,8 +141,9 @@ class InfectionMonkey:
         SyncManager.register(
             "HTTPIslandAPIClient", http_island_api_client_factory.create_island_api_client
         )
+        SyncManager.register("HTTPHandlerFactory", get_threading_http_handler)
+        SyncManager.register("HTTPAgentBinaryServer", HTTPAgentBinaryServer)
         self._manager = context.Manager()
-        self._http_agent_binary_server = StubHTTPAgentBinaryServer()
         self._plugin_dir = (
             Path(gettempdir())
             / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
@@ -432,8 +407,9 @@ class InfectionMonkey:
             main_thread_name=PluginThreadName.CALLING_THREAD,
         )
 
+        http_agent_binary_server = self._build_http_agent_binary_server(agent_binary_repository)
         http_agent_binary_server_registrar = HTTPAgentBinaryServerRegistrar(
-            self._http_agent_binary_server
+            http_agent_binary_server
         )
 
         plugin_factories = {
@@ -492,6 +468,19 @@ class InfectionMonkey:
             )
 
         return agent_binary_repository
+
+    def _build_http_agent_binary_server(
+        self, agent_binary_repository: IAgentBinaryRepository
+    ) -> HTTPAgentBinaryServer:
+        handler_factory_proxy = self._manager.HTTPHandlerFactory(  # type: ignore[attr-defined]
+            agent_binary_repository
+        )
+        return self._manager.HTTPAgentBinaryServer(  # type: ignore[attr-defined]
+            self._tcp_port_selector,
+            handler_factory_proxy,
+            self._manager.Event,
+            self._manager.Lock(),
+        )
 
     def _subscribe_events(self):
         self._agent_event_queue.subscribe_type(
