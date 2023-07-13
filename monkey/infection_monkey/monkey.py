@@ -10,7 +10,7 @@ from functools import partial
 from ipaddress import IPv4Address
 from itertools import chain
 from multiprocessing.managers import SyncManager
-from pathlib import Path, PurePath, WindowsPath
+from pathlib import Path, WindowsPath
 from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
 
@@ -53,9 +53,9 @@ from infection_monkey.exploit import (
     PolymorphicAgentBinaryRepositoryDecorator,
 )
 from infection_monkey.exploit.http_agent_binary_server import (
+    AgentBinaryTransform,
     HTTPAgentBinaryServer,
     RequestID,
-    RequestType,
 )
 from infection_monkey.exploit.http_agent_binary_server_registrar import (
     HTTPAgentBinaryServerRegistrar,
@@ -116,10 +116,8 @@ class StubHTTPAgentBinaryServer(HTTPAgentBinaryServer):
     def register(
         self,
         operating_system: OperatingSystem,
-        request_type: RequestType,
         requestor_ip: IPv4Address,
-        destination_path: Optional[PurePath] = None,
-        args: Sequence[str] = [],
+        agent_binary_transform: AgentBinaryTransform = lambda x: x,
     ):
         pass
 

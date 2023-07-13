@@ -1,27 +1,19 @@
 from dataclasses import dataclass
-from enum import Enum
-from pathlib import PurePath
-from typing import Optional, Sequence, TypeAlias
+from typing import Callable, TypeAlias
 from uuid import UUID
 
 from common import OperatingSystem
 from common.types import Event
 
 RequestID: TypeAlias = UUID
-
-
-class RequestType(Enum):
-    AGENT_BINARY = "agent_binary"
-    DROPPER_SCRIPT = "dropper_script"
+AgentBinaryTransform: TypeAlias = Callable[[bytes], bytes]
 
 
 @dataclass(frozen=True)
 class AgentBinaryDownloadReservation:
     id: RequestID
-    type: RequestType
     operating_system: OperatingSystem
-    destination_path: Optional[PurePath]
-    args: Sequence[str]
+    transform: AgentBinaryTransform
     download_url: str
     download_completed: Event
 
