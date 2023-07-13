@@ -55,7 +55,7 @@ from infection_monkey.exploit import (
 from infection_monkey.exploit.http_agent_binary_server import (
     AgentBinaryTransform,
     HTTPAgentBinaryServer,
-    RequestID,
+    ReservationID,
 )
 from infection_monkey.exploit.http_agent_binary_server_registrar import (
     HTTPAgentBinaryServerRegistrar,
@@ -121,7 +121,7 @@ class StubHTTPAgentBinaryServer(HTTPAgentBinaryServer):
     ):
         pass
 
-    def deregister(self, request_id: RequestID):
+    def deregister(self, reservation_id: ReservationID):
         pass
 
     def start(self):

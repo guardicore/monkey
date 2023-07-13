@@ -3,7 +3,7 @@ from ipaddress import IPv4Address
 
 from common import OperatingSystem
 
-from .http_agent_binary_server import AgentBinaryDownloadTicket, AgentBinaryTransform, RequestID
+from .http_agent_binary_server import AgentBinaryDownloadTicket, AgentBinaryTransform, ReservationID
 
 
 class IHTTPAgentBinaryServerRegistrar(metaclass=abc.ABCMeta):
@@ -26,11 +26,11 @@ class IHTTPAgentBinaryServerRegistrar(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def deregister_request(self, request_id: RequestID):
+    def deregister_request(self, reservation_id: ReservationID):
         """
         Deregister a AgentBinaryDownloadReservation from the registrar
 
-        :param request_id: The ID of the request to be deregistered
+        :param reservation_id: The ID of the request to be deregistered
         :raises KeyError: If the request ID is not registered
         """
         pass
