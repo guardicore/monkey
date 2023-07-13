@@ -15,7 +15,7 @@ class IHTTPAgentBinaryServerRegistrar(metaclass=abc.ABCMeta):
         agent_binary_transform: AgentBinaryTransform,
     ) -> AgentBinaryDownloadTicket:
         """
-        Registers an Agent to be served with HTTPAgentBinaryServer
+        Register to download an Agent over HTTP
 
         :param operating_system: The operating system for the Agent binary to serve
         :param requestor_ip: The IP address of the client that will download the Agent binary
