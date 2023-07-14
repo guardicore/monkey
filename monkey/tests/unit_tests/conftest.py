@@ -1,6 +1,5 @@
 import sys
 from copy import deepcopy
-from multiprocessing import get_context
 from pathlib import Path
 
 import pytest
@@ -71,5 +70,4 @@ def default_agent_configuration() -> AgentConfiguration:
 
 @pytest.fixture(scope="session")
 def tcp_port_selector() -> TCPPortSelector:
-    context = get_context("spawn")
-    return TCPPortSelector(context, context.Manager())
+    return TCPPortSelector()

@@ -53,6 +53,7 @@ from infection_monkey.exploit import (
 )
 from infection_monkey.exploit.http_agent_binary_request_handler import ThreadingHTTPHandlerFactory
 from infection_monkey.exploit.http_agent_binary_server import HTTPAgentBinaryServer
+from infection_monkey.exploit.http_agent_binary_server_factory import HTTPAgentBinaryServerFactory
 from infection_monkey.exploit.http_agent_binary_server_registrar import (
     HTTPAgentBinaryServerRegistrar,
 )
@@ -141,10 +142,8 @@ class InfectionMonkey:
         SyncManager.register(
             "HTTPIslandAPIClient", http_island_api_client_factory.create_island_api_client
         )
-        SyncManager.register(
-            "HTTPHandlerFactory", ThreadingHTTPHandlerFactory, exposed=("__call__",)
-        )
-        SyncManager.register("HTTPAgentBinaryServer", HTTPAgentBinaryServer)
+        SyncManager.register("HTTPAgentBinaryServer", HTTPAgentBinaryServerFactory)
+        SyncManager.register("TCPPortSelector", TCPPortSelector)
         self._manager = context.Manager()
         self._plugin_dir = (
             Path(gettempdir())
@@ -165,7 +164,7 @@ class InfectionMonkey:
         self._current_depth = self._opts.depth
         self._master: Optional[IMaster] = None
         self._relay: Optional[TCPRelay] = None
-        self._tcp_port_selector = TCPPortSelector(context, self._manager)
+        self._tcp_port_selector = self._manager.TCPPortSelector()  # type: ignore[attr-defined]
 
     def _calculate_agent_sha256_hash(self) -> str:
         sha256 = "0" * 64
@@ -474,19 +473,12 @@ class InfectionMonkey:
     def _build_http_agent_binary_server(
         self, agent_binary_repository: IAgentBinaryRepository
     ) -> HTTPAgentBinaryServer:
-        handler_factory_proxy = ThreadingHTTPHandlerFactory(
-            # handler_factory_proxy = self._manager.HTTPHandlerFactory(  # type: ignore[attr-defined]
-            agent_binary_repository
-        )
-        return HTTPAgentBinaryServer(  # type: ignore[attr-defined]
-            # Both the handler and the server need to run on the same process because
-            # the server needs to know the handler's class to be able to instantiate it.
-            # return self._manager.HTTPAgentBinaryServer(  # type: ignore[attr-defined]
+        server = self._manager.HTTPAgentBinaryServer(  # type: ignore[attr-defined]
             self._tcp_port_selector,
-            handler_factory_proxy,
-            self._manager.Event,
-            self._manager.Lock(),
+            agent_binary_repository,
+            ThreadingHTTPHandlerFactory,
         )
+        return server
 
     def _subscribe_events(self):
         self._agent_event_queue.subscribe_type(
