@@ -80,14 +80,28 @@ class AgentEvents(AbstractResource):
         success_arg = request.args.get("success", None)
         timestamp_arg = request.args.get("timestamp", None)
 
+        type_ = self._parse_type_arg(type_arg)
+        tag = self._parse_tag_arg(tag_arg)
+        success = self._parse_success_arg(success_arg)
+        timestamp_constraint = self._parse_timestamp_arg(timestamp_arg)
+
+        return type_, tag, success, timestamp_constraint
+
+    def _parse_type_arg(self, type_arg: Optional[str]) -> Optional[Type[AbstractAgentEvent]]:
         try:
             type_ = None if type_arg is None else self._agent_event_registry[type_arg]
         except KeyError:
-            raise Exception(f'Unknown agent event type "{type_}"')
+            raise Exception(f'Unknown agent event type "{type_arg}"')
 
+        return type_
+
+    def _parse_tag_arg(self, tag_arg: Optional[str]) -> Optional[str]:
         if tag_arg and not re.match(pattern=re.compile(EVENT_TAG_REGEX), string=tag_arg):
             raise Exception(f'Invalid event tag "{tag_arg}"')
 
+        return tag_arg
+
+    def _parse_success_arg(self, success_arg: Optional[str]) -> Optional[bool]:
         if success_arg is None:
             success = None
         elif success_arg == "true":
@@ -99,6 +113,9 @@ class AgentEvents(AbstractResource):
                 f'Invalid value for success "{success_arg}", expected "true" or "false"'
             )
 
+        return success
+
+    def _parse_timestamp_arg(self, timestamp_arg: Optional[str]) -> Optional[Tuple[str, float]]:
         if timestamp_arg is None:
             timestamp_constraint = None
         else:
@@ -116,7 +133,7 @@ class AgentEvents(AbstractResource):
                     "expected timestamp to be a number"
                 )
 
-        return type_, tag_arg, success, timestamp_constraint
+        return timestamp_constraint
 
     def _get_filtered_events(
         self,
