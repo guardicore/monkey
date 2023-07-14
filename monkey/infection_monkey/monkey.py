@@ -143,7 +143,7 @@ class InfectionMonkey:
             "HTTPIslandAPIClient", http_island_api_client_factory.create_island_api_client
         )
         SyncManager.register(
-            "HTTPAgentBinaryServer", HTTPAgentBinaryServerFactory, exposed=("__call__",)
+            "HTTPAgentBinaryServerFactory", HTTPAgentBinaryServerFactory, exposed=("__call__",)
         )
         SyncManager.register("TCPPortSelector", TCPPortSelector)
         self._manager = context.Manager()
@@ -475,12 +475,12 @@ class InfectionMonkey:
     def _build_http_agent_binary_server(
         self, agent_binary_repository: IAgentBinaryRepository
     ) -> HTTPAgentBinaryServer:
-        server = self._manager.HTTPAgentBinaryServer(  # type: ignore[attr-defined]
+        server_factory = self._manager.HTTPAgentBinaryServerFactory(  # type: ignore[attr-defined]
             self._tcp_port_selector,
             agent_binary_repository,
             ThreadingHTTPHandlerFactory,
         )
-        return server
+        return server_factory()
 
     def _subscribe_events(self):
         self._agent_event_queue.subscribe_type(
