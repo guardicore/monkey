@@ -51,7 +51,7 @@ from infection_monkey.exploit import (
     IslandAPIAgentOTPProvider,
     PolymorphicAgentBinaryRepositoryDecorator,
 )
-from infection_monkey.exploit.http_agent_binary_request_handler import get_threading_http_handler
+from infection_monkey.exploit.http_agent_binary_request_handler import ThreadingHTTPHandlerFactory
 from infection_monkey.exploit.http_agent_binary_server import HTTPAgentBinaryServer
 from infection_monkey.exploit.http_agent_binary_server_registrar import (
     HTTPAgentBinaryServerRegistrar,
@@ -141,7 +141,9 @@ class InfectionMonkey:
         SyncManager.register(
             "HTTPIslandAPIClient", http_island_api_client_factory.create_island_api_client
         )
-        SyncManager.register("HTTPHandlerFactory", get_threading_http_handler)
+        SyncManager.register(
+            "HTTPHandlerFactory", ThreadingHTTPHandlerFactory, exposed=("__call__",)
+        )
         SyncManager.register("HTTPAgentBinaryServer", HTTPAgentBinaryServer)
         self._manager = context.Manager()
         self._plugin_dir = (
@@ -472,10 +474,14 @@ class InfectionMonkey:
     def _build_http_agent_binary_server(
         self, agent_binary_repository: IAgentBinaryRepository
     ) -> HTTPAgentBinaryServer:
-        handler_factory_proxy = self._manager.HTTPHandlerFactory(  # type: ignore[attr-defined]
+        handler_factory_proxy = ThreadingHTTPHandlerFactory(
+            # handler_factory_proxy = self._manager.HTTPHandlerFactory(  # type: ignore[attr-defined]
             agent_binary_repository
         )
-        return self._manager.HTTPAgentBinaryServer(  # type: ignore[attr-defined]
+        return HTTPAgentBinaryServer(  # type: ignore[attr-defined]
+            # Both the handler and the server need to run on the same process because
+            # the server needs to know the handler's class to be able to instantiate it.
+            # return self._manager.HTTPAgentBinaryServer(  # type: ignore[attr-defined]
             self._tcp_port_selector,
             handler_factory_proxy,
             self._manager.Event,
