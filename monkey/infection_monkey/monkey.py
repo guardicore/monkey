@@ -142,7 +142,9 @@ class InfectionMonkey:
         SyncManager.register(
             "HTTPIslandAPIClient", http_island_api_client_factory.create_island_api_client
         )
-        SyncManager.register("HTTPAgentBinaryServer", HTTPAgentBinaryServerFactory)
+        SyncManager.register(
+            "HTTPAgentBinaryServer", HTTPAgentBinaryServerFactory, exposed=("__call__",)
+        )
         SyncManager.register("TCPPortSelector", TCPPortSelector)
         self._manager = context.Manager()
         self._plugin_dir = (
