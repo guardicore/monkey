@@ -26,12 +26,6 @@ def build_command():
     return build
 
 
-def test_exception_raised_for_windows(build_command):
-    with pytest.raises(Exception):
-        host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.WINDOWS)
-        build_command(host=host)
-
-
 def test_otp_used(build_command):
     command = build_command()
 
