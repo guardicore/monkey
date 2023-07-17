@@ -91,13 +91,13 @@ class AgentEvents(AbstractResource):
         try:
             type_ = None if type_arg is None else self._agent_event_registry[type_arg]
         except KeyError:
-            raise Exception(f'Unknown agent event type "{type_arg}"')
+            raise ValueError(f'Unknown agent event type "{type_arg}"')
 
         return type_
 
     def _parse_tag_arg(self, tag_arg: Optional[str]) -> Optional[str]:
         if tag_arg and not re.match(pattern=re.compile(EVENT_TAG_REGEX), string=tag_arg):
-            raise Exception(f'Invalid event tag "{tag_arg}"')
+            raise ValueError(f'Invalid event tag "{tag_arg}"')
 
         return tag_arg
 
@@ -109,7 +109,7 @@ class AgentEvents(AbstractResource):
         elif success_arg == "false":
             success = False
         else:
-            raise Exception(
+            raise ValueError(
                 f'Invalid value for success "{success_arg}", expected "true" or "false"'
             )
 
@@ -121,14 +121,14 @@ class AgentEvents(AbstractResource):
         else:
             operator, timestamp = timestamp_arg.split(":")
             if not operator or not timestamp or operator not in ("gt", "lt"):
-                raise Exception(
+                raise ValueError(
                     f'Invalid timestamp argument "{timestamp_arg}", '
                     'expected format: "{gt,lt}:<timestamp>"'
                 )
             try:
                 timestamp_constraint = (operator, float(timestamp))
             except Exception:
-                raise Exception(
+                raise ValueError(
                     f'Invalid timestamp argument "{timestamp_arg}", '
                     "expected timestamp to be a number"
                 )
