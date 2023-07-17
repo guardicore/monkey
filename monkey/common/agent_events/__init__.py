@@ -1,4 +1,4 @@
-from .abstract_agent_event import AbstractAgentEvent, AgentEventTag
+from .abstract_agent_event import AbstractAgentEvent, AgentEventTag, EVENT_TAG_REGEX
 from .agent_event_registry import AgentEventRegistry
 from .credentials_stolen_events import CredentialsStolenEvent
 from .ping_scan_event import PingScanEvent

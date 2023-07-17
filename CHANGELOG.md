@@ -8,6 +8,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - Ability to filter Agent events by timestamp. #3397
+- Ability to filter Agent events by tag. #3396
 
 ### Changed
 - Plugin source is now gzipped. #3392

@@ -12,7 +12,7 @@ from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     PydanticAgentEventSerializer,
 )
-from common.agent_events import AbstractAgentEvent, AgentEventRegistry
+from common.agent_events import AbstractAgentEvent, AgentEventRegistry, AgentEventTag
 from common.event_queue import IAgentEventQueue
 from monkey_island.cc.repositories import IAgentEventRepository
 from monkey_island.cc.resources import AgentEvents
@@ -116,7 +116,11 @@ class PassFailAgentEvent_type2(AbstractAgentEvent):
 
 
 PFAE1_1 = PassFailAgentEvent_type1(
-    source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"), timestamp=42, success=False, target=1
+    source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"),
+    timestamp=42,
+    success=False,
+    target=1,
+    tags={AgentEventTag("_1")},
 )
 SERIALIZED_PFAE1_1 = {
     "type": PassFailAgentEvent_type1.__name__,
@@ -124,10 +128,13 @@ SERIALIZED_PFAE1_1 = {
     "source": "f811ad00-5a68-4437-bd51-7b5cc1768ad5",
     "target": 1,
     "timestamp": 42.0,
-    "tags": [],
+    "tags": ["_1"],
 }
 PFAE1_2 = PassFailAgentEvent_type1(
-    source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"), timestamp=42, success=True
+    source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"),
+    timestamp=42,
+    success=True,
+    tags={AgentEventTag("_2")},
 )
 SERIALIZED_PFAE1_2 = {
     "type": PassFailAgentEvent_type1.__name__,
@@ -135,13 +142,14 @@ SERIALIZED_PFAE1_2 = {
     "source": "f811ad00-5a68-4437-bd51-7b5cc1768ad5",
     "target": None,
     "timestamp": 42.0,
-    "tags": [],
+    "tags": ["_2"],
 }
 PFAE2_1 = PassFailAgentEvent_type2(
     source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"),
     timestamp=42,
     success=True,
     target=IPv4Address("127.0.0.1"),
+    tags={AgentEventTag("_1")},
 )
 SERIALIZED_PFAE2_1 = {
     "type": PassFailAgentEvent_type2.__name__,
@@ -149,7 +157,7 @@ SERIALIZED_PFAE2_1 = {
     "source": "f811ad00-5a68-4437-bd51-7b5cc1768ad5",
     "target": "127.0.0.1",
     "timestamp": 42.0,
-    "tags": [],
+    "tags": ["_1"],
 }
 
 
@@ -270,13 +278,29 @@ def test_agent_events_endpoint__get_error(error_raising_flask_client):
 
 
 def test_get_filter__event_type(flask_client, agent_event_repository):
-    expected_events = [PFAE1_1, PFAE1_2]
-    agent_event_repository.get_events_by_type = MagicMock(return_value=expected_events)
+    all_events = [PFAE1_1, PFAE1_2, PFAE2_1]
+    expected_events_by_type = [PFAE1_1, PFAE1_2]
+
+    agent_event_repository.get_events = MagicMock(return_value=all_events)
+    agent_event_repository.get_events_by_type = MagicMock(return_value=expected_events_by_type)
 
     resp_get = flask_client.get(AGENT_EVENTS_URL + "?type=PassFailAgentEvent_type1")
     assert resp_get.status_code == HTTPStatus.OK
 
     assert resp_get.json == [SERIALIZED_PFAE1_1, SERIALIZED_PFAE1_2]
+
+
+def test_get_filter__event_tag(flask_client, agent_event_repository):
+    all_events = [PFAE1_1, PFAE1_2, PFAE2_1]
+    expected_events_by_tag = [PFAE1_1, PFAE2_1]
+
+    agent_event_repository.get_events = MagicMock(return_value=all_events)
+    agent_event_repository.get_events_by_tag = MagicMock(return_value=expected_events_by_tag)
+
+    resp_get = flask_client.get(AGENT_EVENTS_URL + "?tag=_1")
+    assert resp_get.status_code == HTTPStatus.OK
+
+    assert resp_get.json == [SERIALIZED_PFAE1_1, SERIALIZED_PFAE2_1]
 
 
 def test_get_filter__success_true(flask_client, agent_event_repository):
@@ -338,8 +362,12 @@ def test_get_filter__event_lt_timestamp(flask_client, agent_event_repository, qu
     ]
 
 
-def test_get_filter__type_and_success_and_timestamp(flask_client, agent_event_repository):
-    agent_event_repository.get_events_by_type = MagicMock(return_value=[PFAE1_1, PFAE1_2])
+def test_get_filter__type_and_success(flask_client, agent_event_repository):
+    all_events = [PFAE1_1, PFAE1_2, PFAE2_1]
+    expected_events_by_type = [PFAE1_1, PFAE1_2]
+
+    agent_event_repository.get_events = MagicMock(return_value=all_events)
+    agent_event_repository.get_events_by_type = MagicMock(return_value=expected_events_by_type)
 
     resp_get = flask_client.get(AGENT_EVENTS_URL + "?type=PassFailAgentEvent_type1&success=true")
     assert resp_get.status_code == HTTPStatus.OK
@@ -347,9 +375,30 @@ def test_get_filter__type_and_success_and_timestamp(flask_client, agent_event_re
     assert resp_get.json == [SERIALIZED_PFAE1_2]
 
 
+def test_get_filter__type_and_tag(flask_client, agent_event_repository):
+    all_events = [PFAE1_1, PFAE1_2, PFAE2_1]
+    expected_events_by_type = [PFAE1_1, PFAE1_2]
+    expected_events_by_tag = [PFAE1_1, PFAE2_1]
+
+    agent_event_repository.get_events = MagicMock(return_value=all_events)
+    agent_event_repository.get_events_by_type = MagicMock(return_value=expected_events_by_type)
+    agent_event_repository.get_events_by_tag = MagicMock(return_value=expected_events_by_tag)
+
+    resp_get = flask_client.get(AGENT_EVENTS_URL + "?type=PassFailAgentEvent_type1&tag=_1")
+    assert resp_get.status_code == HTTPStatus.OK
+
+    assert resp_get.json == [SERIALIZED_PFAE1_1]
+
+
 def test_get_filter__unknown_type(flask_client):
     resp_get = flask_client.get(AGENT_EVENTS_URL + "?type=UnknownEventType")
     assert resp_get.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+
+
+def test_get_filter__unknown_tag(flask_client):
+    resp_get = flask_client.get(AGENT_EVENTS_URL + "?tag=unknown-tag")
+    assert resp_get.status_code == HTTPStatus.OK
+    assert resp_get.json == []
 
 
 def test_get_filter__invalid_success(flask_client):
@@ -360,6 +409,11 @@ def test_get_filter__invalid_success(flask_client):
 @pytest.mark.parametrize("timestamp_arg", ["never", "gt:xyz", "at:123", ":::", "a:b:c", "", "   "])
 def test_get_filter__invalid_timestamp(timestamp_arg, flask_client):
     resp_get = flask_client.get(AGENT_EVENTS_URL + f"?timestamp={timestamp_arg}")
+    assert resp_get.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+
+
+def test_get_filter__invalid_tag(flask_client):
+    resp_get = flask_client.get(AGENT_EVENTS_URL + "?tag=invalid%20tag")
     assert resp_get.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 

@@ -1,4 +1,5 @@
 import logging
+import re
 from bisect import bisect_left, bisect_right
 from http import HTTPStatus
 from typing import Iterable, Optional, Sequence, Tuple, Type
@@ -7,7 +8,7 @@ from flask import request
 from flask_security import auth_token_required, roles_accepted
 
 from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
-from common.agent_events import AbstractAgentEvent, AgentEventRegistry
+from common.agent_events import EVENT_TAG_REGEX, AbstractAgentEvent, AgentEventRegistry
 from common.event_queue import IAgentEventQueue
 from common.types import JSONSerializable
 from monkey_island.cc.flask_utils import AbstractResource
@@ -53,11 +54,11 @@ class AgentEvents(AbstractResource):
     @roles_accepted(AccountRole.ISLAND_INTERFACE.name)
     def get(self):
         try:
-            type_, success, timestamp_constraint = self._parse_event_filter_args()
+            type_, tag, success, timestamp_constraint = self._parse_event_filter_args()
         except Exception as err:
             return {"error": str(err)}, HTTPStatus.UNPROCESSABLE_ENTITY
 
-        events = self._get_filtered_events(type_, success, timestamp_constraint)
+        events = self._get_filtered_events(type_, tag, success, timestamp_constraint)
 
         try:
             serialized_events = self._serialize_events(events)
@@ -68,16 +69,39 @@ class AgentEvents(AbstractResource):
 
     def _parse_event_filter_args(
         self,
-    ) -> Tuple[Optional[Type[AbstractAgentEvent]], Optional[bool], Optional[Tuple[str, float]]]:
+    ) -> Tuple[
+        Optional[Type[AbstractAgentEvent]],
+        Optional[str],
+        Optional[bool],
+        Optional[Tuple[str, float]],
+    ]:
         type_arg = request.args.get("type", None)
+        tag_arg = request.args.get("tag", None)
         success_arg = request.args.get("success", None)
         timestamp_arg = request.args.get("timestamp", None)
 
+        type_ = self._parse_type_arg(type_arg)
+        tag = self._parse_tag_arg(tag_arg)
+        success = self._parse_success_arg(success_arg)
+        timestamp_constraint = self._parse_timestamp_arg(timestamp_arg)
+
+        return type_, tag, success, timestamp_constraint
+
+    def _parse_type_arg(self, type_arg: Optional[str]) -> Optional[Type[AbstractAgentEvent]]:
         try:
             type_ = None if type_arg is None else self._agent_event_registry[type_arg]
         except KeyError:
-            raise Exception(f'Unknown agent event type "{type_}"')
+            raise Exception(f'Unknown agent event type "{type_arg}"')
 
+        return type_
+
+    def _parse_tag_arg(self, tag_arg: Optional[str]) -> Optional[str]:
+        if tag_arg and not re.match(pattern=re.compile(EVENT_TAG_REGEX), string=tag_arg):
+            raise Exception(f'Invalid event tag "{tag_arg}"')
+
+        return tag_arg
+
+    def _parse_success_arg(self, success_arg: Optional[str]) -> Optional[bool]:
         if success_arg is None:
             success = None
         elif success_arg == "true":
@@ -89,6 +113,9 @@ class AgentEvents(AbstractResource):
                 f'Invalid value for success "{success_arg}", expected "true" or "false"'
             )
 
+        return success
+
+    def _parse_timestamp_arg(self, timestamp_arg: Optional[str]) -> Optional[Tuple[str, float]]:
         if timestamp_arg is None:
             timestamp_constraint = None
         else:
@@ -106,20 +133,32 @@ class AgentEvents(AbstractResource):
                     "expected timestamp to be a number"
                 )
 
-        return type_, success, timestamp_constraint
+        return timestamp_constraint
 
     def _get_filtered_events(
         self,
         type_: Optional[Type[AbstractAgentEvent]],
+        tag: Optional[str],
         success: Optional[bool],
         timestamp_constraint: Optional[Tuple[str, float]],
     ) -> Sequence[AbstractAgentEvent]:
         if type_ is not None:
-            events: Sequence[AbstractAgentEvent] = self._agent_event_repository.get_events_by_type(
-                type_
-            )
+            events_by_type: Sequence[
+                AbstractAgentEvent
+            ] = self._agent_event_repository.get_events_by_type(type_)
         else:
-            events = self._agent_event_repository.get_events()
+            events_by_type = self._agent_event_repository.get_events()
+
+        if tag is not None:
+            events_by_tag: Sequence[
+                AbstractAgentEvent
+            ] = self._agent_event_repository.get_events_by_tag(tag)
+        else:
+            events_by_tag = self._agent_event_repository.get_events()
+
+        # this has better time complexity than converting both lists to sets,
+        # finding their intersection, and then sorting the resultant set by timestamp
+        events = [event for event in events_by_tag if event in events_by_type]
 
         if success is not None:
             events = list(filter(lambda e: hasattr(e, "success") and e.success is success, events))  # type: ignore[attr-defined]  # noqa: E501
