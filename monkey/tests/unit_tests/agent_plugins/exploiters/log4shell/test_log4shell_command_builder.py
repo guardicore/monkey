@@ -14,28 +14,29 @@ AGENT_ID = get_agent_id()
 SERVERS = ["1.1.1.1", "3.3.3.3", "127.0.0.1"]
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def otp_provider() -> IAgentOTPProvider:
     provider = MagicMock(spec=IAgentOTPProvider)
     provider.get_otp.return_value = OTP
     return provider
 
 
-def test_dropper_used(otp_provider: IAgentOTPProvider):
+def test_dropper_used():
     target_host = TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.WINDOWS)
     command = build_log4shell_command(AGENT_ID, target_host, SERVERS, 2, "http://some_link", OTP)
 
     assert DROPPER_ARG in command
 
 
-def test_windows_command(otp_provider: IAgentOTPProvider):
-    target_host = TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.WINDOWS)
+@pytest.mark.parametrize("os", [OperatingSystem.WINDOWS, None])
+def test_windows_command(os):
+    target_host = TargetHost(ip="1.1.1.1", operating_system=os)
     command = build_log4shell_command(AGENT_ID, target_host, SERVERS, 2, "http://some_link", OTP)
 
     assert "powershell" in command
 
 
-def test_linux_command(otp_provider: IAgentOTPProvider):
+def test_linux_command():
     target_host = TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.LINUX)
     command = build_log4shell_command(AGENT_ID, target_host, SERVERS, 2, "http://some_link", OTP)
 
