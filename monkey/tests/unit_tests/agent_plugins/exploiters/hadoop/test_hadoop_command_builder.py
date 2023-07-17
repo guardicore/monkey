@@ -44,22 +44,9 @@ def test_command__linux(build_command):
     assert OTP in command
 
 
-def test_command__windows(build_command):
-    command = build_command(
-        host=TargetHost(ip=IPv4Address("127.0.0.1"), operating_system=OperatingSystem.WINDOWS)
-    )
-
-    assert "powershell" in command
-    assert str(AGENT_DOWNLOAD_URL) in command
-    assert MONKEY_ARG in command
-    assert str(AGENT_ID) in command
-    assert all([server in command for server in SERVERS])
-    assert str(DEPTH + 1) in command
-    assert OTP in command
-
-
-def test_command__os_unknown(build_command):
-    command = build_command(host=TargetHost(ip=IPv4Address("127.0.0.1"), operating_system=None))
+@pytest.mark.parametrize("os", [OperatingSystem.WINDOWS, None])
+def test_command__windows(build_command, os):
+    command = build_command(host=TargetHost(ip=IPv4Address("127.0.0.1"), operating_system=os))
 
     assert "powershell" in command
     assert str(AGENT_DOWNLOAD_URL) in command
