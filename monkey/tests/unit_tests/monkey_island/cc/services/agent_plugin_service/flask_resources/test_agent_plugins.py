@@ -11,10 +11,9 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from monkey_island.cc.repositories import RetrievalError
+from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
+from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import AgentPluginService
 from monkey_island.cc.services.agent_plugin_service.flask_resources import AgentPlugins
-from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_repository import (
-    IAgentPluginRepository,
-)
 
 FAKE_PLUGIN_NAME = "plugin_abc"
 
@@ -25,9 +24,14 @@ def agent_plugin_repository():
 
 
 @pytest.fixture
-def flask_client(build_flask_client, agent_plugin_repository):
+def agent_plugin_service(agent_plugin_repository):
+    return AgentPluginService(agent_plugin_repository)
+
+
+@pytest.fixture
+def flask_client(build_flask_client, agent_plugin_service):
     container = StubDIContainer()
-    container.register_instance(IAgentPluginRepository, agent_plugin_repository)
+    container.register_instance(IAgentPluginService, agent_plugin_service)
 
     with build_flask_client(container) as flask_client:
         yield flask_client

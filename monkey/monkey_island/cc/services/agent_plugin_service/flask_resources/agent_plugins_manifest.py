@@ -11,7 +11,7 @@ from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 
-from ..i_agent_plugin_repository import IAgentPluginRepository
+from .. import IAgentPluginService
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 class AgentPluginsManifest(AbstractResource):
     urls = ["/api/agent-plugins/<string:plugin_type>/<string:name>/manifest"]
 
-    def __init__(self, agent_plugin_repository: IAgentPluginRepository):
-        self._agent_plugin_repository = agent_plugin_repository
+    def __init__(self, agent_plugin_service: IAgentPluginService):
+        self._agent_plugin_service = agent_plugin_service
 
     @auth_token_required
     @roles_accepted(AccountRole.AGENT.name)
@@ -48,7 +48,7 @@ class AgentPluginsManifest(AbstractResource):
         return make_response(plugin_manifest.dict(simplify=True), HTTPStatus.OK)
 
     def _get_plugin_manifest(self, plugin_type: AgentPluginType, name: str) -> AgentPluginManifest:
-        plugin_manifests = self._agent_plugin_repository.get_all_plugin_manifests()
+        plugin_manifests = self._agent_plugin_service.get_all_plugin_manifests()
         try:
             return plugin_manifests[plugin_type][name]
         except KeyError as err:
