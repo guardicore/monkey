@@ -57,10 +57,12 @@ from monkey_island.cc.repositories import (
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, PLUGIN_DIR_NAME
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import (
+    AgentPluginService,
     AgentSignalsService,
     AWSService,
     IAgentBinaryService,
     IAgentConfigurationService,
+    IAgentPluginService,
     build_agent_binary_service,
     build_agent_configuration_service,
 )
@@ -213,4 +215,5 @@ def _register_services(container: DIContainer):
     container.register_instance(
         IAgentConfigurationService, build_agent_configuration_service(container)
     )
+    container.register_instance(IAgentPluginService, container.resolve(AgentPluginService))
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
