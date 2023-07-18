@@ -10,6 +10,8 @@ from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.services.agent_configuration_service.agent_configuration_schema_compiler import (  # noqa: E501
     AgentConfigurationSchemaCompiler,
 )
+from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
+from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import AgentPluginService
 
 
 @pytest.fixture
@@ -18,14 +20,19 @@ def agent_plugin_repository() -> IAgentPluginRepository:
 
 
 @pytest.fixture
+def agent_plugin_service(agent_plugin_repository: IAgentPluginRepository) -> IAgentPluginService:
+    return AgentPluginService(agent_plugin_repository)
+
+
+@pytest.fixture
 def config_schema_compiler(
-    agent_plugin_repository: IAgentPluginRepository,
+    agent_plugin_service: IAgentPluginService,
 ) -> AgentConfigurationSchemaCompiler:
-    return AgentConfigurationSchemaCompiler(agent_plugin_repository)
+    return AgentConfigurationSchemaCompiler(agent_plugin_service)
 
 
 def test_get_schema__adds_exploiter_plugins_to_schema(
-    config_schema_compiler, agent_plugin_repository
+    config_schema_compiler: AgentConfigurationSchemaCompiler, agent_plugin_repository
 ):
     agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
     agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_2)
