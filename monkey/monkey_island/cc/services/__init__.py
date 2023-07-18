@@ -20,5 +20,6 @@ from .agent_binary_service import (
 )
 
 from .agent_plugin_service import IAgentPluginService, AgentPluginService
+from .agent_plugin_service import register_resources as register_agent_plugin_resources
 
 from .log_service import setup_log_service
