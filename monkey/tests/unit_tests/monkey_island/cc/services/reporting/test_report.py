@@ -29,11 +29,8 @@ from common.agent_events import (
 from common.agent_plugins import AgentPluginType
 from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
-from monkey_island.cc.repositories import (
-    IAgentEventRepository,
-    IAgentPluginRepository,
-    IAgentRepository,
-)
+from monkey_island.cc.repositories import IAgentEventRepository, IAgentRepository
+from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
 from monkey_island.cc.services.reporting.report import ReportService
 
 EVENT_1 = AgentShutdownEvent(source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"), timestamp=10)
@@ -233,15 +230,15 @@ def agent_event_repository() -> IAgentEventRepository:
 
 
 @pytest.fixture
-def mock_agent_plugin_repository() -> IAgentPluginRepository:
-    return MagicMock(spec=IAgentPluginRepository)
+def mock_agent_plugin_service() -> IAgentPluginService:
+    return MagicMock(spec=IAgentPluginService)
 
 
 @pytest.fixture(autouse=True)
 def report_service(
     agent_repository: IAgentRepository,
     agent_event_repository: IAgentEventRepository,
-    mock_agent_plugin_repository: IAgentPluginRepository,
+    mock_agent_plugin_service: IAgentPluginService,
 ):
     ReportService._machine_repository = MagicMock()
     ReportService._machine_repository.get_machines.return_value = MACHINES
@@ -251,7 +248,7 @@ def report_service(
     ReportService._node_repository.get_nodes.return_value = NODES
     ReportService._agent_event_repository = agent_event_repository
     ReportService._agent_configuration_service = InMemoryAgentConfigurationService()
-    ReportService._agent_plugin_repository = mock_agent_plugin_repository
+    ReportService._agent_plugin_service = mock_agent_plugin_service
 
 
 def test_get_scanned():
