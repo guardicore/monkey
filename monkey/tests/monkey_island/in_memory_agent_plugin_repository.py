@@ -2,7 +2,10 @@ from typing import Any, Dict
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
-from monkey_island.cc.repositories import IAgentPluginRepository, RetrievalError, UnknownRecordError
+from monkey_island.cc.repositories import RetrievalError, UnknownRecordError
+from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_repository import (
+    IAgentPluginRepository,
+)
 
 
 class InMemoryAgentPluginRepository(IAgentPluginRepository):

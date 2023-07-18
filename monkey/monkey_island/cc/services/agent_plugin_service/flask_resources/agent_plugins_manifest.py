@@ -9,8 +9,9 @@ from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )
 from monkey_island.cc.flask_utils import AbstractResource
-from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.services.authentication_service import AccountRole
+
+from ..i_agent_plugin_repository import IAgentPluginRepository
 
 logger = logging.getLogger(__name__)
 

@@ -7,8 +7,11 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAK
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from monkey_island.cc.repositories import IAgentPluginRepository, RetrievalError
+from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.services.agent_plugin_service.flask_resources import AgentPluginsManifest
+from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_repository import (
+    IAgentPluginRepository,
+)
 
 
 @pytest.fixture
