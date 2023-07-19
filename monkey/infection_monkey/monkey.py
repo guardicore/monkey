@@ -51,6 +51,12 @@ from infection_monkey.exploit import (
     IslandAPIAgentOTPProvider,
     PolymorphicAgentBinaryRepositoryDecorator,
 )
+from infection_monkey.exploit.http_agent_binary_request_handler import ThreadingHTTPHandlerFactory
+from infection_monkey.exploit.http_agent_binary_server import HTTPAgentBinaryServer
+from infection_monkey.exploit.http_agent_binary_server_factory import HTTPAgentBinaryServerFactory
+from infection_monkey.exploit.http_agent_binary_server_registrar import (
+    HTTPAgentBinaryServerRegistrar,
+)
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import (
@@ -136,8 +142,11 @@ class InfectionMonkey:
         SyncManager.register(
             "HTTPIslandAPIClient", http_island_api_client_factory.create_island_api_client
         )
+        SyncManager.register(
+            "HTTPAgentBinaryServerFactory", HTTPAgentBinaryServerFactory, exposed=("__call__",)
+        )
+        SyncManager.register("TCPPortSelector", TCPPortSelector)
         self._manager = context.Manager()
-
         self._plugin_dir = (
             Path(gettempdir())
             / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
@@ -157,7 +166,7 @@ class InfectionMonkey:
         self._current_depth = self._opts.depth
         self._master: Optional[IMaster] = None
         self._relay: Optional[TCPRelay] = None
-        self._tcp_port_selector = TCPPortSelector(context, self._manager)
+        self._tcp_port_selector = self._manager.TCPPortSelector()  # type: ignore[attr-defined]
 
     def _calculate_agent_sha256_hash(self) -> str:
         sha256 = "0" * 64
@@ -400,12 +409,19 @@ class InfectionMonkey:
             reset_modules_cache=False,
             main_thread_name=PluginThreadName.CALLING_THREAD,
         )
+
+        http_agent_binary_server = self._build_http_agent_binary_server(agent_binary_repository)
+        http_agent_binary_server_registrar = HTTPAgentBinaryServerRegistrar(
+            http_agent_binary_server
+        )
+
         plugin_factories = {
             AgentPluginType.CREDENTIALS_COLLECTOR: CredentialsCollectorPluginFactory(
                 self._agent_id, self._agent_event_publisher, create_plugin
             ),
             AgentPluginType.EXPLOITER: ExploiterPluginFactory(
                 self._agent_id,
+                http_agent_binary_server_registrar,
                 agent_binary_repository,
                 self._agent_event_publisher,
                 self._propagation_credentials_repository,
@@ -455,6 +471,16 @@ class InfectionMonkey:
             )
 
         return agent_binary_repository
+
+    def _build_http_agent_binary_server(
+        self, agent_binary_repository: IAgentBinaryRepository
+    ) -> HTTPAgentBinaryServer:
+        server_factory = self._manager.HTTPAgentBinaryServerFactory(  # type: ignore[attr-defined]
+            self._tcp_port_selector,
+            agent_binary_repository,
+            ThreadingHTTPHandlerFactory,
+        )
+        return server_factory()
 
     def _subscribe_events(self):
         self._agent_event_queue.subscribe_type(

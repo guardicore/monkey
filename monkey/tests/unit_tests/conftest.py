@@ -10,6 +10,7 @@ sys.path.insert(0, MONKEY_BASE_PATH)
 
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration  # noqa: E402
 from common.utils.environment import is_windows_os  # noqa: E402
+from infection_monkey.network import TCPPortSelector  # noqa: E402
 
 
 @pytest.fixture(scope="session")
@@ -65,3 +66,8 @@ def plugin_data_dir(data_for_tests_dir) -> Path:
 @pytest.fixture
 def default_agent_configuration() -> AgentConfiguration:
     return deepcopy(DEFAULT_AGENT_CONFIGURATION)
+
+
+@pytest.fixture(scope="session")
+def tcp_port_selector() -> TCPPortSelector:
+    return TCPPortSelector()

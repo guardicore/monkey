@@ -1,11 +1,10 @@
 import socket
 import struct
+import threading
 from dataclasses import dataclass
 from itertools import chain
-from multiprocessing.context import BaseContext
-from multiprocessing.managers import DictProxy, SyncManager
 from random import shuffle  # noqa: DUO102
-from typing import Iterable, Iterator, List, Optional, Sequence, Set, Tuple
+from typing import Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple
 
 import psutil
 from egg_timer import EggTimer
@@ -121,9 +120,9 @@ class TCPPortSelector:
     the requester's server is listening on the port, the OS will report the port as "LISTEN".
     """
 
-    def __init__(self, context: BaseContext, manager: SyncManager):
-        self._leases: DictProxy[NetworkPort, EggTimer] = manager.dict()
-        self._lock = context.Lock()
+    def __init__(self):
+        self._leases: Dict[NetworkPort, EggTimer] = {}
+        self._lock = threading.Lock()
 
     def get_free_tcp_port(
         self,
