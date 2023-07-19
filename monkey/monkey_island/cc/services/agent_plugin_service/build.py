@@ -1,5 +1,4 @@
 from common import DIContainer
-from monkey_island.cc.repositories import IFileRepository
 
 from .agent_plugin_repository_caching_decorator import AgentPluginRepositoryCachingDecorator
 from .agent_plugin_repository_logging_decorator import AgentPluginRepositoryLoggingDecorator
@@ -10,9 +9,7 @@ from .i_agent_plugin_service import IAgentPluginService
 
 
 def build(container: DIContainer) -> IAgentPluginService:
-    undecorated_agent_plugin_repository = FileAgentPluginRepository(
-        container.resolve(IFileRepository)
-    )
+    undecorated_agent_plugin_repository = container.resolve(FileAgentPluginRepository)
     agent_plugin_repository = _decorate_agent_plugin_repository(undecorated_agent_plugin_repository)
     agent_plugin_service = AgentPluginService(agent_plugin_repository)
     container.register_instance(IAgentPluginService, agent_plugin_service)
