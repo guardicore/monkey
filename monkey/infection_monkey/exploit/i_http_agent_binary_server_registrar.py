@@ -3,7 +3,7 @@ from ipaddress import IPv4Address
 
 from common import OperatingSystem
 
-from .http_agent_binary_server import AgentBinaryDownloadTicket, AgentBinaryTransform, ReservationID
+from .agent_binary_request import AgentBinaryDownloadTicket, AgentBinaryTransform, ReservationID
 
 
 class IHTTPAgentBinaryServerRegistrar(metaclass=abc.ABCMeta):
