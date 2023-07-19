@@ -9,8 +9,10 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
-from monkey_island.cc.repositories import (
+from monkey_island.cc.services.agent_plugin_service.agent_plugin_repository_caching_decorator import (
     AgentPluginRepositoryCachingDecorator,
+)
+from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_repository import (
     IAgentPluginRepository,
 )
 

@@ -6,7 +6,6 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
     FAKE_AGENT_PLUGIN_2,
 )
 
-from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.services.agent_configuration_service.agent_configuration_schema_compiler import (  # noqa: E501
     AgentConfigurationSchemaCompiler,
 )
@@ -15,12 +14,14 @@ from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import 
 
 
 @pytest.fixture
-def agent_plugin_repository() -> IAgentPluginRepository:
+def agent_plugin_repository() -> InMemoryAgentPluginRepository:
     return InMemoryAgentPluginRepository()
 
 
 @pytest.fixture
-def agent_plugin_service(agent_plugin_repository: IAgentPluginRepository) -> IAgentPluginService:
+def agent_plugin_service(
+    agent_plugin_repository: InMemoryAgentPluginRepository,
+) -> IAgentPluginService:
     return AgentPluginService(agent_plugin_repository)
 
 

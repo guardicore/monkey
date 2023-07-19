@@ -30,15 +30,11 @@ from monkey_island.cc.event_queue import (
 )
 from monkey_island.cc.repositories import (
     AgentMachineFacade,
-    AgentPluginRepositoryCachingDecorator,
-    AgentPluginRepositoryLoggingDecorator,
-    FileAgentPluginRepository,
     FileRepositoryCachingDecorator,
     FileRepositoryLockingDecorator,
     FileRepositoryLoggingDecorator,
     FileSimulationRepository,
     IAgentEventRepository,
-    IAgentPluginRepository,
     IAgentRepository,
     ICredentialsRepository,
     IFileRepository,
@@ -57,7 +53,6 @@ from monkey_island.cc.repositories import (
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, PLUGIN_DIR_NAME
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import (
-    AgentPluginService,
     AgentSignalsService,
     AWSService,
     IAgentBinaryService,
@@ -65,6 +60,7 @@ from monkey_island.cc.services import (
     IAgentPluginService,
     build_agent_binary_service,
     build_agent_configuration_service,
+    build_agent_plugin_service,
 )
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
@@ -167,10 +163,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(
         NetworkModelUpdateFacade, container.resolve(NetworkModelUpdateFacade)
     )
-    container.register_instance(
-        IAgentPluginRepository,
-        _decorate_agent_plugin_repository(container.resolve(FileAgentPluginRepository)),
-    )
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
@@ -184,14 +176,6 @@ def _build_machine_repository(container: DIContainer) -> IMachineRepository:
     initialize_machine_repository(machine_repository)
 
     return machine_repository
-
-
-def _decorate_agent_plugin_repository(
-    plugin_repository: IAgentPluginRepository,
-) -> IAgentPluginRepository:
-    return AgentPluginRepositoryLoggingDecorator(
-        AgentPluginRepositoryCachingDecorator(plugin_repository)
-    )
 
 
 def _setup_agent_event_registry(container: DIContainer):
@@ -212,7 +196,7 @@ def _register_services(container: DIContainer):
     container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
     container.register_instance(IAgentBinaryService, build_agent_binary_service(container))
-    container.register_instance(IAgentPluginService, container.resolve(AgentPluginService))
+    container.register_instance(IAgentPluginService, build_agent_plugin_service(container))
     container.register_instance(
         IAgentConfigurationService, build_agent_configuration_service(container)
     )

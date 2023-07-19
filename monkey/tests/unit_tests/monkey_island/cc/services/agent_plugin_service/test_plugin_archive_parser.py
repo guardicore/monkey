@@ -11,7 +11,7 @@ import yaml
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
-from monkey_island.cc.repositories.plugin_archive_parser import (
+from monkey_island.cc.services.agent_plugin_service.plugin_archive_parser import (
     VendorDirName,
     get_plugin_manifest,
     get_plugin_schema,

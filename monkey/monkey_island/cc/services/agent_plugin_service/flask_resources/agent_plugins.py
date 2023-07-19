@@ -7,8 +7,10 @@ from flask_security import auth_token_required, roles_accepted
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from monkey_island.cc.flask_utils import AbstractResource
-from monkey_island.cc.repositories import IAgentPluginRepository, UnknownRecordError
+from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.services.authentication_service import AccountRole
+
+from .. import IAgentPluginService
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +18,8 @@ logger = logging.getLogger(__name__)
 class AgentPlugins(AbstractResource):
     urls = ["/api/agent-plugins/<string:host_os>/<string:plugin_type>/<string:name>"]
 
-    def __init__(self, agent_plugin_repository: IAgentPluginRepository):
-        self._agent_plugin_repository = agent_plugin_repository
+    def __init__(self, agent_plugin_service: IAgentPluginService):
+        self._agent_plugin_service = agent_plugin_service
 
     @auth_token_required
     @roles_accepted(AccountRole.AGENT.name)
@@ -44,7 +46,7 @@ class AgentPlugins(AbstractResource):
             return make_response({"message": message}, HTTPStatus.NOT_FOUND)
 
         try:
-            agent_plugin = self._agent_plugin_repository.get_plugin(
+            agent_plugin = self._agent_plugin_service.get_plugin(
                 host_operating_system=host_operating_system,
                 plugin_type=agent_plugin_type,
                 name=name,

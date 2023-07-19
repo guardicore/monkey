@@ -2,9 +2,9 @@ from typing import Any, Dict
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
-from monkey_island.cc.repositories import IAgentPluginRepository
 
 from . import IAgentPluginService
+from .i_agent_plugin_repository import IAgentPluginRepository
 
 
 class AgentPluginService(IAgentPluginService):

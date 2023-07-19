@@ -2,8 +2,9 @@ from typing import Any, Dict, Generator, List, Mapping
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from monkey_island.cc.repositories import IFileRepository, RetrievalError
 
-from . import IAgentPluginRepository, IFileRepository, RetrievalError
+from .i_agent_plugin_repository import IAgentPluginRepository
 from .plugin_archive_parser import parse_plugin
 
 

@@ -5,10 +5,9 @@ from tests.monkey_island import InMemoryFileRepository
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
-from monkey_island.cc.repositories import (
+from monkey_island.cc.repositories import RetrievalError, UnknownRecordError
+from monkey_island.cc.services.agent_plugin_service.file_agent_plugin_repository import (
     FileAgentPluginRepository,
-    RetrievalError,
-    UnknownRecordError,
 )
 
 EXPECTED_MANIFEST = AgentPluginManifest(
