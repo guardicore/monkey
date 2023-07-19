@@ -13,7 +13,7 @@ AgentBinaryTransform: TypeAlias = Callable[[bytes], bytes]
 class AgentBinaryDownloadReservation:
     id: ReservationID
     operating_system: OperatingSystem
-    transform: AgentBinaryTransform
+    transform_agent_binary: AgentBinaryTransform
     download_url: str
     download_completed: Event
 
