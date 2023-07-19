@@ -9,7 +9,7 @@ from common.hard_coded_manifests import HARD_CODED_PAYLOADS_MANIFESTS
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )
-from monkey_island.cc.repositories import IAgentPluginRepository
+from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
 
 from .hard_coded_schemas import HARD_CODED_FINGERPRINTER_SCHEMAS, HARD_CODED_PAYLOADS_SCHEMAS
 
@@ -22,8 +22,8 @@ PLUGIN_PATH_IN_SCHEMA = {
 
 
 class AgentConfigurationSchemaCompiler:
-    def __init__(self, agent_plugin_repository: IAgentPluginRepository):
-        self._agent_plugin_repository = agent_plugin_repository
+    def __init__(self, agent_plugin_service: IAgentPluginService):
+        self._agent_plugin_service = agent_plugin_service
 
     def get_schema(self) -> Dict[str, Any]:
         try:
@@ -41,14 +41,12 @@ class AgentConfigurationSchemaCompiler:
         # proper plugins
         schema = self._add_hard_coded_plugins(schema)
 
-        config_schemas = deepcopy(
-            self._agent_plugin_repository.get_all_plugin_configuration_schemas()
-        )
+        config_schemas = deepcopy(self._agent_plugin_service.get_all_plugin_configuration_schemas())
 
         for plugin_type in config_schemas.keys():
             for plugin_name in config_schemas[plugin_type].keys():
                 config_schema = config_schemas[plugin_type][plugin_name]
-                plugin_manifest = self._agent_plugin_repository.get_all_plugin_manifests()[
+                plugin_manifest = self._agent_plugin_service.get_all_plugin_manifests()[
                     plugin_type
                 ][plugin_name]
                 config_schema.update(plugin_manifest.dict(simplify=True))

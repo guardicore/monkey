@@ -100,7 +100,7 @@ def initialize_services(container: DIContainer, data_dir: Path):
         container.resolve(IAgentEventRepository),
         container.resolve(IMachineRepository),
         container.resolve(INodeRepository),
-        container.resolve(IAgentPluginRepository),
+        container.resolve(IAgentPluginService),
     )
 
 
@@ -212,8 +212,8 @@ def _register_services(container: DIContainer):
     container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
     container.register_instance(IAgentBinaryService, build_agent_binary_service(container))
+    container.register_instance(IAgentPluginService, container.resolve(AgentPluginService))
     container.register_instance(
         IAgentConfigurationService, build_agent_configuration_service(container)
     )
-    container.register_instance(IAgentPluginService, container.resolve(AgentPluginService))
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
