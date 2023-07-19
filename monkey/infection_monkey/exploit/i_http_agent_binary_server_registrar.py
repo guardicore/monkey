@@ -19,7 +19,8 @@ class IHTTPAgentBinaryServerRegistrar(metaclass=abc.ABCMeta):
 
         :param operating_system: The operating system for the Agent binary to serve
         :param requestor_ip: The IP address of the client that will download the Agent binary
-        :param agent_binary_transform: A function that transforms the Agent binary before serving
+        :param agent_binary_transform: A callable that transforms the Agent binary before serving.
+            This may be used to, e.g., convert the binary into a self-extracting shell script.
         :raises RuntimeError: If the binary could not be served
         :returns: A ticket to download the Agent binary
         """
