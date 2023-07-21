@@ -69,9 +69,9 @@ prevdir=$(pwd)
 cd "$ROOT" || exit 1
 for file in "$@"; do
     if file_path=$(realpath -q "$file") && [ -f "$file_path" ]; then
-        packer build $FORCE -var "project_id=$PROJECT_ID" -var "account_file=$ACCOUNT_FILE" "$file_path"
+        packer build $FORCE -on-error=ask -var "project_id=$PROJECT_ID" -var "account_file=$ACCOUNT_FILE" "$file_path"
     elif file_path=$(realpath -q "$prevdir/$file") && [ -f "$file_path" ]; then
-        packer build $FORCE -var "project_id=$PROJECT_ID" -var "account_file=$ACCOUNT_FILE" "$file_path"
+        packer build $FORCE -on-error=ask -var "project_id=$PROJECT_ID" -var "account_file=$ACCOUNT_FILE" "$file_path"
     else
         printerr "File does not exist: '$file'. Skipping."
     fi
