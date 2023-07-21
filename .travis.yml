@@ -5,139 +5,138 @@
 group: travis_latest
 
 branches:
-  only:
-    - develop
-    - master
-    - fix-travis
+    only:
+        - develop
+        - master
+        - fix-travis
 
 jobs:
-  include:
-    - name: "Monkey Linux"
-      language: python
-      python:
-        - 3.11
-      os: linux
-      dist: focal
-      vm:
-        size: x-large
-      env:
-        - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv LIBSODIUM_MAKE_ARGS=-j8
+    include:
+        - name: 'Monkey Linux'
+          language: python
+          python:
+              - 3.11
+          os: linux
+          dist: focal
+          vm:
+              size: x-large
+          env:
+              - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv LIBSODIUM_MAKE_ARGS=-j8
 
-      cache:
-        - pip: true
-        - npm: true
-        - directories:
-            - "$HOME/.npm"
-            - $PIP_CACHE_DIR
-            - $PIPENV_CACHE_DIR
+          cache:
+              - pip: true
+              - npm: true
+              - directories:
+                    - '$HOME/.npm'
+                    - $PIP_CACHE_DIR
+                    - $PIPENV_CACHE_DIR
 
-      install:
-        # Python
-        - nproc
-        - npm install --save-dev prettier
-        - pip install pip --upgrade
-        - pipenv --version
-        # Install island and monkey requirements as they are needed by UT's
-        - pushd monkey/monkey_island
-        - pipenv sync --dev # This installs dependencies from lock
-        - popd
-        - pushd monkey/infection_monkey
-        - pipenv sync --dev # This installs dependencies from lock
-        - popd
+          install:
+              # Python
+              - nproc
+              - npm install --save-dev prettier
+              - pip install pip --upgrade
+              - pipenv --version
+              # Install island and monkey requirements as they are needed by UT's
+              - pushd monkey/monkey_island
+              - pipenv sync --dev # This installs dependencies from lock
+              - popd
+              - pushd monkey/infection_monkey
+              - pipenv sync --dev # This installs dependencies from lock
+              - popd
 
-        # node + npm + eslint
-        - node --version
-        - npm --version
-        - nvm --version
-        - nvm install 16
-        - nvm use node
-        - npm i -g eslint
-        - node --version
-        - npm --version
+              # node + npm + eslint
+              - node --version
+              - npm --version
+              - nvm --version
+              - nvm install 16
+              - nvm use node
+              - npm i -g eslint
+              - node --version
+              - npm --version
 
-        # hugo (for documentation)
-        - curl -L https://github.com/gohugoio/hugo/releases/download/v0.92.0/hugo_0.92.0_Linux-64bit.tar.gz --output hugo.tar.gz
-        # print hugo version (useful for debugging documentation build errors)
-        - tar -zxf hugo.tar.gz
-        - ./hugo version
+              # hugo (for documentation)
+              - curl -L https://github.com/gohugoio/hugo/releases/download/v0.92.0/hugo_0.92.0_Linux-64bit.tar.gz --output hugo.tar.gz
+              # print hugo version (useful for debugging documentation build errors)
+              - tar -zxf hugo.tar.gz
+              - ./hugo version
 
-      script:
-        # check python code
-        ## check syntax errors and fail the build if any are found.
-        - flake8 .
-        ## check import order
-        - python -m isort ./monkey --check-only
+          script:
+              # check python code
+              ## check syntax errors and fail the build if any are found.
+              - flake8 .
+              ## check import order
+              - python -m isort ./monkey --check-only
 
-        ## check that all python is properly formatted. fail otherwise.
-        - python -m black --check .
+              ## check that all python is properly formatted. fail otherwise.
+              - python -m black --check .
 
-        ## check that there is no dead python code
-        - python -m vulture .
+              ## check that there is no dead python code
+              - python -m vulture .
 
-        ## run unit tests and generate coverage data
-        - cd monkey # this is our source dir
-        - pip install pytest-xdist
-        - python -m pytest -n auto --dist worksteal --cov=. # have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
+              ## run unit tests and generate coverage data
+              - cd monkey # this is our source dir
+              - pip install pytest-xdist
+              - python -m pytest -n auto --dist worksteal --cov=. # have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
-        # check js code. the npm install must happen after the flake8 because the node_modules folder will cause a lot of errors.
-        - cd monkey_island/cc/ui
-        - npm ci # see https://docs.npmjs.com/cli/ci.html
-        - eslint ./src --quiet # test for errors
-        - JS_WARNINGS_AMOUNT_UPPER_LIMIT=0
-        - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT # test for max warnings
+              # check js code. the npm install must happen after the flake8 because the node_modules folder will cause a lot of errors.
+              - cd monkey_island/cc/ui
+              - npm ci # see https://docs.npmjs.com/cli/ci.html
+              - eslint ./src --quiet # test for errors
+              - JS_WARNINGS_AMOUNT_UPPER_LIMIT=0
+              - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT # test for max warnings
 
-        # build documentation
-        - cd $TRAVIS_BUILD_DIR/docs
-        - ../hugo --verbose --environment staging
+              # build documentation
+              - cd $TRAVIS_BUILD_DIR/docs
+              - ../hugo --verbose --environment staging
 
-        # prettier formatting check
-script:
-  - npx prettier --check "monkey/monkey_island/cc/ui/**/*.js"
+              # prettier formatting check
+              - npx prettier --check "monkey/monkey_island/cc/ui/**/*.js"
 
-      after_success:
-        # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
-        - bash <(curl -s https://codecov.io/bash)
+          after_success:
+              # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
+              - bash <(curl -s https://codecov.io/bash)
 
-    - name: "Monkey Windows"
-      language: bash
-      os: windows
-      vm:
-        size: x-large
-      before_install:
-        - choco install python --version=3.11
-        - python -m pip install -U pip setuptools virtualenv
-        - python -m virtualenv $HOME/venv
-        - source $HOME/venv/Scripts/activate
-      env: PATH=/c/Python311:/c/Python311/Scripts:$PATH
-      cache:
-        pip: true
-        directories:
-          - $LOCALAPPDATA/pip/Cache
-          - $LOCALAPPDATA/pipenv/Cache
-      install:
-        # Python
-        - nproc
-        - pip install pipenv
-          # Install island and monkey requirements as they are needed by UT's
-        - pushd monkey/monkey_island
-        - pipenv sync --dev # This installs dependencies from lock
-        - popd
-        - pushd monkey/infection_monkey
-        - pipenv sync --dev # This installs dependencies from lock
-        - popd
+        - name: 'Monkey Windows'
+          language: bash
+          os: windows
+          vm:
+              size: x-large
+          before_install:
+              - choco install python --version=3.11
+              - python -m pip install -U pip setuptools virtualenv
+              - python -m virtualenv $HOME/venv
+              - source $HOME/venv/Scripts/activate
+          env: PATH=/c/Python311:/c/Python311/Scripts:$PATH
+          cache:
+              pip: true
+              directories:
+                  - $LOCALAPPDATA/pip/Cache
+                  - $LOCALAPPDATA/pipenv/Cache
+          install:
+              # Python
+              - nproc
+              - pip install pipenv
+                # Install island and monkey requirements as they are needed by UT's
+              - pushd monkey/monkey_island
+              - pipenv sync --dev # This installs dependencies from lock
+              - popd
+              - pushd monkey/infection_monkey
+              - pipenv sync --dev # This installs dependencies from lock
+              - popd
 
-      script:
-        ## run unit tests and generate coverage data
-        - cd monkey # this is our source dir
-        - pip install pytest-xdist
-        - python -m pytest -n auto --dist worksteal
+          script:
+              ## run unit tests and generate coverage data
+              - cd monkey # this is our source dir
+              - pip install pytest-xdist
+              - python -m pytest -n auto --dist worksteal
 
 notifications:
-  slack: # Notify to slack
-    rooms:
-      - infectionmonkey:QaXbsx4g7tHFJW0lhtiBmoAg#ci # room: #ci
-    on_success: change
-    on_failure: always
-  email:
-    on_success: change
-    on_failure: always
+    slack: # Notify to slack
+        rooms:
+            - infectionmonkey:QaXbsx4g7tHFJW0lhtiBmoAg#ci # room: #ci
+        on_success: change
+        on_failure: always
+    email:
+        on_success: change
+        on_failure: always
