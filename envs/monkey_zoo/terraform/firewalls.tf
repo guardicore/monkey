@@ -286,7 +286,7 @@ resource "google_compute_firewall" "allow-rdp64-from-island" {
 }
 
 resource "google_compute_firewall" "allow-rdp64-to-island" {
-  name    = "allow-rdp64-from-island"
+  name    = "allow-rdp64-to-island"
   network = google_compute_network.monkeyzoo.name
 
   allow {
@@ -309,6 +309,21 @@ resource "google_compute_firewall" "allow-rdp65-from-rdp64" {
   source_tags = ["rdp-64"]
   target_tags = ["rdp-65"]
 }
+
+resource "google_compute_firewall" "allow-rdp65-to-rdp64" {
+  name    = "allow-rdp65-to-rdp64"
+  network = google_compute_network.monkeyzoo.name
+
+  allow {
+    protocol = "all"
+  }
+  priority = "999"
+
+  source_tags = ["rdp-65"]
+  target_tags = ["rdp-64"]
+}
+
+
 
 resource "google_compute_firewall" "deny-rdp64-from-others" {
   name    = "deny-rdp64-from-others"
