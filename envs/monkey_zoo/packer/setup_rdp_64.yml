@@ -7,7 +7,8 @@
     - name: Create user
       win_user:
         name: m0nk3y
-        password: "{{ 'P@ssw0rd!' | password_hash('sha512') }}"
+        password: P@ssw0rd!
+        password_never_expires: yes
         state: present
         update_password: on_create
         groups_action: add
