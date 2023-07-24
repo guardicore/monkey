@@ -272,3 +272,75 @@ resource "google_compute_firewall" "allow-all-tunneling2" {
   // Here goes your public IP so you can SSH/RDP in the instances
   source_ranges = ["127.0.0.1/32"]
 }
+
+resource "google_compute_firewall" "allow-rdp64-from-island" {
+  name    = "allow-rdp64-from-island"
+  network = google_compute_network.monkeyzoo.name
+
+  allow {
+    protocol = "all"
+  }
+  priority = "999"
+  source_tags = ["island"]
+  target_tags = ["rdp-64"]
+}
+
+resource "google_compute_firewall" "allow-rdp64-to-island" {
+  name    = "allow-rdp64-from-island"
+  network = google_compute_network.monkeyzoo.name
+
+  allow {
+    protocol = "all"
+  }
+  priority = "999"
+  source_tags = ["rdp-64"]
+  target_tags = ["island"]
+}
+
+resource "google_compute_firewall" "allow-rdp65-from-rdp64" {
+  name    = "allow-rdp65-from-rdp64"
+  network = google_compute_network.monkeyzoo.name
+
+  allow {
+    protocol = "all"
+  }
+  priority = "999"
+
+  source_tags = ["rdp-64"]
+  target_tags = ["rdp-65"]
+}
+
+resource "google_compute_firewall" "deny-rdp64-from-others" {
+  name    = "deny-rdp64-from-others"
+  network = google_compute_network.monkeyzoo.name
+
+  deny {
+    protocol = "all"
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["rdp-64"]
+}
+
+resource "google_compute_firewall" "deny-rdp65-from-others" {
+  name    = "deny-rdp65-from-others"
+  network = google_compute_network.monkeyzoo.name
+
+  deny {
+    protocol = "all"
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["rdp-65"]
+}
+
+resource "google_compute_firewall" "deny-rdp64-rdp65-to-others" {
+  name    = "deny-rdp64-rdp65-to-others"
+  network = google_compute_network.monkeyzoo.name
+
+  deny {
+    protocol = "all"
+  }
+
+  source_tags = ["rdp-64", "rdp-65"]
+}
