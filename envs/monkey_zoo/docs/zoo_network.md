@@ -33,8 +33,10 @@ This document describes Infection Monkey’s test network.
 [Nr. 3-52 Log4j Tomcat](#_Toc536021486)<br>
 [Nr. 3-55 Log4j Logstash](#_Toc536021487)<br>
 [Nr. 3-56 Log4j Logstash](#_Toc536021488)<br>
-[Nr. 250 MonkeyIsland](#_Toc536021489)<br>
-[Nr. 251 MonkeyIsland](#_Toc536021490)<br>
+[Nr. 3-64 RDP](#_Toc536021489)<br>
+[Nr. 3-65 RDP](#_Toc536021490)<br>
+[Nr. 250 MonkeyIsland](#_Toc536021491)<br>
+[Nr. 251 MonkeyIsland](#_Toc536021492)<br>
 [Network topography](#network-topography)<br>
 
 
@@ -1095,11 +1097,66 @@ setting:
 </tbody>
 </table>
 
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021489" class="anchor"></span>Nr. <strong>3-64 RDP</strong></p>
+<p>(10.2.3.64)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Remote Desktop Protocol</td>
+</tr>
+<tr class="odd">
+<td>Default RDP port:</td>
+<td>3389</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: P@ssw0rd!</td>
+</tr>
+</tbody>
+</table>
 
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021489" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021490" class="anchor"></span>Nr. <strong>3-65 RDP</strong></p>
+<p>(10.2.3.65)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Remote Desktop Protocol</td>
+</tr>
+<tr class="odd">
+<td>Default RDP port:</td>
+<td>3389</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: S3Cr3T1#</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021491" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
 <p>(10.2.2.250)</p></th>
 <th></th>
 </tr>
@@ -1131,7 +1188,7 @@ setting:
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021490" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021492" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
 <p>(10.2.2.251)</p></th>
 <th></th>
 </tr>
