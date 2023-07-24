@@ -128,6 +128,7 @@ def mock_plugin_factories() -> Dict[AgentPluginType, IPluginFactory]:
     return {
         AgentPluginType.EXPLOITER: MagicMock(spec=IPluginFactory),
         AgentPluginType.CREDENTIALS_COLLECTOR: MagicMock(spec=IPluginFactory),
+        AgentPluginType.PAYLOAD: MagicMock(spec=IPluginFactory),
     }
 
 
@@ -193,7 +194,7 @@ def test_get_plugin__loads_supported_plugin_types(
 
 @pytest.mark.parametrize(
     "plugin_type",
-    [AgentPluginType.FINGERPRINTER, AgentPluginType.PAYLOAD],
+    [AgentPluginType.FINGERPRINTER],
 )
 def test_get_plugin__raises_error_for_unsupported_plugin_types(
     plugin_registry: PluginRegistry, plugin_type
