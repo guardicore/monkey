@@ -443,7 +443,6 @@ class InfectionMonkey:
         plugin_compatibility_verifier = PluginCompatibilityVerifier(
             self._island_api_client,
             self._operating_system,
-            {},
         )
         puppet = Puppet(
             self._agent_event_queue, plugin_registry, plugin_compatibility_verifier, self._agent_id
