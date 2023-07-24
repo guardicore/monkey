@@ -85,6 +85,7 @@ from infection_monkey.plugin.credentials_collector_plugin_factory import (
 )
 from infection_monkey.plugin.exploiter_plugin_factory import ExploiterPluginFactory
 from infection_monkey.plugin.multiprocessing_plugin_wrapper import MultiprocessingPluginWrapper
+from infection_monkey.plugin.payload_plugin_factory import PayloadPluginFactory
 from infection_monkey.propagation_credentials_repository import PropagationCredentialsRepository
 from infection_monkey.puppet import (
     PluginCompatibilityVerifier,
@@ -428,6 +429,9 @@ class InfectionMonkey:
                 self._tcp_port_selector,
                 otp_provider,
                 create_plugin,
+            ),
+            AgentPluginType.PAYLOAD: PayloadPluginFactory(
+                self._agent_id, self._agent_event_publisher, create_plugin
             ),
         }
         plugin_registry = PluginRegistry(

@@ -52,7 +52,7 @@ class Puppet(IPuppet):
         )
         if not compatible_with_local_os:
             raise IncompatibleLocalOperatingSystemError(
-                f'The credentials collector, "{name}" is not compatible with the '
+                f'The credentials collector, "{name}", is not compatible with the '
                 "local operating system"
             )
 
@@ -104,7 +104,7 @@ class Puppet(IPuppet):
         )
         if not compatible_with_local_os:
             raise IncompatibleLocalOperatingSystemError(
-                f'The exploiter, "{name}" is not compatible with the local operating system'
+                f'The exploiter, "{name}", is not compatible with the local operating system'
             )
 
         compatible_with_target_os = (
@@ -139,6 +139,16 @@ class Puppet(IPuppet):
         return exploiter_result_data
 
     def run_payload(self, name: str, options: Dict, interrupt: Event):
+        compatible_with_local_os = (
+            self._plugin_compatibility_verifier.verify_local_operating_system_compatibility(
+                AgentPluginType.PAYLOAD, name
+            )
+        )
+        if not compatible_with_local_os:
+            raise IncompatibleLocalOperatingSystemError(
+                f'The payload, "{name}", is not compatible with the local operating system'
+            )
+
         payload = self._plugin_registry.get_plugin(AgentPluginType.PAYLOAD, name)
         payload.run(options, interrupt)
 
