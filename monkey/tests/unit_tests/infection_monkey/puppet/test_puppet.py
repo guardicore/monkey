@@ -114,10 +114,27 @@ def test_puppet_run_multiple_payloads(puppet: Puppet):
     payload_3.run.assert_called_once()
 
 
+def test_run_payload__incompatible_local_os(
+    mock_plugin_compatibility_verifier: PluginCompatibilityVerifier, puppet: Puppet
+):
+    mock_plugin_compatibility_verifier.verify_local_operating_system_compatibility = MagicMock(  # type: ignore [assignment]  # noqa: E501
+        return_value=False
+    )
+
+    with pytest.raises(IncompatibleLocalOperatingSystemError):
+        puppet.run_payload("test", {}, threading.Event())
+
+
 def test_fingerprint_exception_handling(puppet: Puppet, mock_plugin_registry: PluginRegistry):
     mock_plugin_registry.get_plugin = MagicMock(side_effect=Exception)  # type: ignore [assignment]
     assert (
-        puppet.fingerprint("", "", PingScanData(response_received=False, os="windows"), {}, {})
+        puppet.fingerprint(
+            "",
+            "",
+            PingScanData(response_received=False, os="windows"),
+            {},  # type: ignore [arg-type]
+            {},  # type: ignore [arg-type]
+        )
         == EMPTY_FINGERPRINT
     )
 
