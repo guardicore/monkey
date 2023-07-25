@@ -36,17 +36,23 @@ class AgentEvents(AbstractResource):
     @auth_token_required
     @roles_accepted(AccountRole.AGENT.name)
     def post(self):
-        events = request.json
+        serialized_events = request.json
+        deserialized_events = []
 
-        for event in events:
+        logger.debug(f"Deserializing {len(serialized_events)} events")
+        for event in serialized_events:
             try:
                 serializer = self._event_serializer_registry[event[EVENT_TYPE_FIELD]]
-                deserialized_event = serializer.deserialize(event)
+                deserialized_events.append(serializer.deserialize(event))
             except (TypeError, ValueError) as err:
                 logger.exception(f"Error occurred while deserializing an event {event}: {err}")
                 return {"error": str(err)}, HTTPStatus.BAD_REQUEST
+        logger.debug(f"Completed deserialization of {len(serialized_events)} events")
 
+        logger.debug(f"Publishing {len(deserialized_events)} events to the queue")
+        for deserialized_event in deserialized_events:
             self._agent_event_queue.publish(deserialized_event)
+        logger.debug(f"Completed publishing {len(deserialized_events)} events to the queue")
 
         return {}, HTTPStatus.NO_CONTENT
 
