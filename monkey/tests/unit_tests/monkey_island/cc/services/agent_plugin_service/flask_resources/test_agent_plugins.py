@@ -4,10 +4,7 @@ import pytest
 from tests.common import StubDIContainer
 from tests.monkey_island import InMemoryAgentPluginRepository
 from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_NAME, FAKE_TYPE
-from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
-    FAKE_AGENT_PLUGIN_1,
-    FAKE_PLUGIN_CONFIG_SCHEMA_1,
-)
+from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from monkey_island.cc.repositories import RetrievalError
@@ -41,7 +38,7 @@ def test_get_plugin(flask_client, agent_plugin_repository):
     agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
 
     expected_response = {
-        "config_schema": FAKE_PLUGIN_CONFIG_SCHEMA_1,
+        "config_schema": FAKE_AGENT_PLUGIN_1.config_schema,
         "plugin_manifest": {
             "description": None,
             "link_to_documentation": "http://www.beefface.com",
