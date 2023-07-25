@@ -19,6 +19,11 @@ function getPluginDescriptors(schema, config) {
       name: 'CredentialsCollectors',
       allPlugins: schema.properties.credentials_collectors.properties,
       selectedPlugins: Object.keys(config.credentials_collectors)
+    },
+    {
+      name: 'Payloads',
+      allPlugins: schema.properties.payloads.properties,
+      selectedPlugins: Object.keys(config.payloads)
     }
   ])
 }

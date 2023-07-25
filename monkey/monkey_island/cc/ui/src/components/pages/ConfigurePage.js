@@ -12,7 +12,8 @@ import PropagationConfig, {
   EXPLOITERS_CONFIG_PATH
 } from '../configuration-components/PropagationConfig';
 import MasqueradeConfig from '../configuration-components/MasqueradeConfig';
-import {CREDENTIALS_COLLECTORS_CONFIG_PATH} from '../configuration-components/PluginSelectorTemplate';
+import {CREDENTIALS_COLLECTORS_CONFIG_PATH, PAYLOADS_CONFIG_PATH} from '../configuration-components/PluginSelectorTemplate';
+import {CONFIGURATION_TABS} from '../configuration-components/ConfigurationTabs.js'
 import FormConfig from '../configuration-components/FormConfig';
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
@@ -107,9 +108,10 @@ class ConfigurePageComponent extends AuthComponent {
         this.setState({
           configuration: monkeyConfig,
           selectedPlugins: {
-              'propagation': new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
-              'credentials_collectors': new Set(Object.keys(_.get(monkeyConfig, CREDENTIALS_COLLECTORS_CONFIG_PATH)))
-          },
+              [CONFIGURATION_TABS.PROPAGATION]: this.getSelectedPlugins(monkeyConfig, EXPLOITERS_CONFIG_PATH),
+              [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: this.getSelectedPlugins(monkeyConfig, CREDENTIALS_COLLECTORS_CONFIG_PATH),
+              [CONFIGURATION_TABS.PAYLOADS]: this.getSelectedPlugins(monkeyConfig, PAYLOADS_CONFIG_PATH)
+            },
           sections: sections,
           currentFormData: _.cloneDeep(monkeyConfig[this.state.selectedSection])
         })
@@ -117,6 +119,10 @@ class ConfigurePageComponent extends AuthComponent {
     this.updateCredentials();
     this.updateMasqueStrings();
   };
+
+  getSelectedPlugins = (config, pluginTypeConfigPath) => {
+    return new Set(Object.keys(_.get(config, pluginTypeConfigPath)))
+  }
 
   onUnsafeConfirmationCancelClick = () => {
     this.setState({showUnsafeOptionsConfirmation: false, lastAction: 'none'});
@@ -182,8 +188,9 @@ class ConfigurePageComponent extends AuthComponent {
         data = reformatConfig(data);
         this.setState({
           selectedPlugins: {
-              'propagation': new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
-              'credentials_collectors': new Set(Object.keys(_.get(data, CREDENTIALS_COLLECTORS_CONFIG_PATH)))
+              [CONFIGURATION_TABS.PROPAGATION]: this.getSelectedPlugins(data, EXPLOITERS_CONFIG_PATH),
+              [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: this.getSelectedPlugins(data, CREDENTIALS_COLLECTORS_CONFIG_PATH),
+              [CONFIGURATION_TABS.PAYLOADS]: this.getSelectedPlugins(data, PAYLOADS_CONFIG_PATH)
           },
           configuration: data,
           currentFormData: _.cloneDeep(data[this.state.selectedSection])
@@ -220,7 +227,11 @@ class ConfigurePageComponent extends AuthComponent {
   // Until the issue is fixed, we need to manually remove plugins that were not selected before
   // submitting/exporting the configuration
   filterUnselectedPlugins() {
-    let pluginTypes = {'propagation': EXPLOITERS_CONFIG_PATH, 'credentials_collectors': CREDENTIALS_COLLECTORS_CONFIG_PATH};
+    let pluginTypes = {
+      [CONFIGURATION_TABS.PROPAGATION]: EXPLOITERS_CONFIG_PATH,
+      [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: CREDENTIALS_COLLECTORS_CONFIG_PATH,
+      [CONFIGURATION_TABS.PAYLOADS]: PAYLOADS_CONFIG_PATH
+    };
     let config = _.cloneDeep(this.state.configuration)
 
     for (let pluginType in pluginTypes){

@@ -5,10 +5,15 @@ import {AdvancedMultiSelectHeader} from '../ui-components/AdvancedMultiSelect';
 import {MasterCheckboxState} from '../ui-components/MasterCheckbox';
 import {InfoPane, WarningType} from '../ui-components/InfoPane';
 import {EXPLOITERS_PATH_PROPAGATION} from './PropagationConfig';
-import MarkdownDescriptionTemplate from './MarkdownDescriptionTemplate';
+import {CONFIGURATION_TABS} from './ConfigurationTabs.js'
 
 export const CREDENTIALS_COLLECTORS_CONFIG_PATH = 'credentials_collectors';
-const PLUGIN_SCHEMA_PATH = {'propagation': EXPLOITERS_PATH_PROPAGATION, 'credentials_collectors': CREDENTIALS_COLLECTORS_CONFIG_PATH};
+export const PAYLOADS_CONFIG_PATH = 'payloads';
+const PLUGIN_SCHEMA_PATH = {
+  [CONFIGURATION_TABS.PROPAGATION]: EXPLOITERS_PATH_PROPAGATION,
+  [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: CREDENTIALS_COLLECTORS_CONFIG_PATH,
+  [CONFIGURATION_TABS.PAYLOADS]: PAYLOADS_CONFIG_PATH
+};
 
 
 export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) {
