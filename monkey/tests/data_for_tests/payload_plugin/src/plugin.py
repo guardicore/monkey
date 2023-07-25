@@ -1,5 +1,6 @@
 import logging
 import time
+from pathlib import PurePosixPath
 from threading import Event, current_thread
 from typing import Any, Dict
 
@@ -61,7 +62,7 @@ class Plugin:
         self._agent_event_publisher.publish(
             FileEncryptionEvent(
                 source=self._agent_id,
-                file_path="filepath",
+                file_path=PurePosixPath("/home/ubuntu/encrypted.txt"),
                 success=True,
                 error_message="error",
                 tags=frozenset({AgentEventTag("payload-tag")}),
