@@ -1,4 +1,4 @@
-const CONFIGURATION_TABS = {
+export const CONFIGURATION_TABS = {
   PROPAGATION: 'propagation',
   PAYLOADS: 'payloads',
   CREDENTIALS_COLLECTORS: 'credentials_collectors',

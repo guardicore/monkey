@@ -9,7 +9,12 @@ export const SCHEMA = {
   'type': 'object',
   'properties': {
     'propagation': PROPAGATION_CONFIGURATION_SCHEMA,
-    'payloads': RANSOMWARE_SCHEMA,
+    'payloads': {
+      'title': 'Payloads',
+      'type': 'array',
+      'uniqueItems': true,
+      'items': RANSOMWARE_SCHEMA
+    },
     'credentials_collectors': {
       'title': 'Credentials collectors',
       'type': 'array',
