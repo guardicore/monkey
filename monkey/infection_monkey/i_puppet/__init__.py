@@ -10,5 +10,5 @@ from .i_puppet import (
     IncompatibleTargetOperatingSystemError,
 )
 from .i_fingerprinter import IFingerprinter
-from .payload_result_data import PayloadResultData
+from .payload_result import PayloadResult
 from .target_host import TargetHost, TargetHostPorts, PortScanDataDict
