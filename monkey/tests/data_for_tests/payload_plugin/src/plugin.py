@@ -8,7 +8,7 @@ import mock_dependency
 from common.agent_events import AgentEventTag, FileEncryptionEvent
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
-from infection_monkey.i_puppet import PayloadResultData
+from infection_monkey.i_puppet import PayloadResult
 from infection_monkey.utils.threading import interruptible_iter
 
 logger = logging.getLogger(__name__)
@@ -55,8 +55,8 @@ class Plugin:
             logger.info(f"Passed {time_passed} seconds")
             time.sleep(1)
 
-    def _run_payload(self, options: Dict[str, Any]) -> PayloadResultData:
-        payload_result_data = PayloadResultData(run_success=True)
+    def _run_payload(self, options: Dict[str, Any]) -> PayloadResult:
+        payload_result = PayloadResult(run_success=True)
 
         self._agent_event_publisher.publish(
             FileEncryptionEvent(
@@ -68,4 +68,4 @@ class Plugin:
             )
         )
 
-        return payload_result_data
+        return payload_result
