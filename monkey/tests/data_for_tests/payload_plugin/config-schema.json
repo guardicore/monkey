@@ -1,0 +1,19 @@
+{
+    "title": "Mock payload",
+    "description": "Configuration settings for mock payload.",
+    "type": "object",
+    "properties": {
+         "random_boolean": {
+            "title": "Random boolean",
+            "description": "A random boolean field for testing",
+            "type": "boolean",
+            "default": true
+        },
+        "sleep_duration": {
+            "title": "Sleep duration",
+            "description": "Duration in seconds for which the plugin should sleep",
+            "type": "number",
+            "default": 0
+        }
+    }
+}
