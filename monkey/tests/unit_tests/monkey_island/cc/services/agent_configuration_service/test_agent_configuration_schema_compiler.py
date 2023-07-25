@@ -1,3 +1,5 @@
+import copy
+
 import pytest
 from tests.monkey_island import InMemoryAgentPluginRepository
 from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_NAME, FAKE_NAME2
@@ -37,10 +39,10 @@ def test_get_schema__adds_exploiter_plugins_to_schema(
 ):
     agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
     agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_2)
-    expected_fake_schema1 = FAKE_AGENT_PLUGIN_1.config_schema
+    expected_fake_schema1 = copy.deepcopy(FAKE_AGENT_PLUGIN_1.config_schema)
     expected_fake_schema1.update(FAKE_AGENT_PLUGIN_1.plugin_manifest.dict(simplify=True))
 
-    expected_fake_schema2 = FAKE_AGENT_PLUGIN_2.config_schema
+    expected_fake_schema2 = copy.deepcopy(FAKE_AGENT_PLUGIN_2.config_schema)
     expected_fake_schema2.update(FAKE_AGENT_PLUGIN_2.plugin_manifest.dict(simplify=True))
 
     actual_config_schema = config_schema_compiler.get_schema()
