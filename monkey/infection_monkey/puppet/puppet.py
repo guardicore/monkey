@@ -150,7 +150,7 @@ class Puppet(IPuppet):
             )
 
         payload = self._plugin_registry.get_plugin(AgentPluginType.PAYLOAD, name)
-        payload.run(options, interrupt)
+        payload.run(options=options, interrupt=interrupt)
 
     def cleanup(self) -> None:
         pass
