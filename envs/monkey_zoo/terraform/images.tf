@@ -51,6 +51,14 @@ data "google_compute_image" "snmp-20" {
   name    = "snmp-20"
   project = local.monkeyzoo_project
 }
+data "google_compute_image" "rdp-64" {
+  name    = "rdp-64"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "rdp-65" {
+  name    = "rdp-65"
+  project = local.monkeyzoo_project
+}
 data "google_compute_image" "powershell-3-48" {
   name    = "powershell-3-48"
   project = local.monkeyzoo_project

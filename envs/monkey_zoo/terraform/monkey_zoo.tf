@@ -264,21 +264,45 @@ resource "google_compute_instance_from_template" "sshkeys-12" {
   }
 }
 
-/*
-resource "google_compute_instance_from_template" "rdpgrinder-13" {
-  name = "${local.resource_prefix}rdpgrinder-13"
-  source_instance_template = "${local.default_windows}"
+resource "google_compute_instance_from_template" "rdp-64" {
+  name                     = "${local.resource_prefix}rdp-64"
+  source_instance_template = local.default_windows
+  machine_type             = "e2-highcpu-4"
   boot_disk{
     initialize_params {
-      image = "${data.google_compute_image.rdpgrinder-13.self_link}"
+      image = "${data.google_compute_image.rdp-64.self_link}"
     }
   }
+  tags = ["rdp-64"]
   network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.13"
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
+    network_ip="10.2.3.64"
+    access_config {
+      // Allows Ephemeral IPs
+    }
   }
 }
-*/
+
+resource "google_compute_instance_from_template" "rdp-65" {
+  name                     = "${local.resource_prefix}rdp-65"
+  source_instance_template = local.default_windows
+  machine_type             = "e2-highcpu-4"
+  boot_disk{
+    initialize_params {
+      image = "${data.google_compute_image.rdp-65.self_link}"
+    }
+    auto_delete = true
+  }
+  tags = ["rdp-65"]
+  network_interface {
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
+    network_ip="10.2.3.65"
+    access_config {
+      // Allows Ephemeral IPs
+    }
+  }
+}
+
 
 resource "google_compute_instance_from_template" "mimikatz-14" {
   name                     = "${local.resource_prefix}mimikatz-14"

@@ -27,7 +27,7 @@ scanning times in a real-world scenario and many more.
 Run envs/monkey_zoo/build_images.sh to build the images for the MonkeyZoo. These are the images from which the zoo will be deployed.
 
 Example:
-  ./build_images.sh --project my-gcp-project --account-file /path/to/gcp_key.json packer/tunneling.pkr.hcl
+  ./build_images.sh --project-id my-gcp-project --account-file /path/to/gcp_key.json packer/tunneling.pkr.hcl
 
 ## MonkeyZoo network
 

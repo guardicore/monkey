@@ -1,0 +1,17 @@
+---
+- name: Create a new user and allow RDP access
+  hosts: all
+  vars:
+    ansible_remote_tmp: C:\Windows\Temp
+  tasks:
+    - name: Create user
+      win_user:
+        name: m0nk3y
+        password: P@ssw0rd!
+        password_never_expires: yes
+        state: present
+        update_password: on_create
+        groups_action: add
+        groups:
+          - Administrators
+          - "Remote Desktop Users"
