@@ -108,9 +108,9 @@ class ConfigurePageComponent extends AuthComponent {
         this.setState({
           configuration: monkeyConfig,
           selectedPlugins: {
-              [CONFIGURATION_TABS.PROPAGATION]: new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
-              [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: new Set(Object.keys(_.get(monkeyConfig, CREDENTIALS_COLLECTORS_CONFIG_PATH))),
-              [CONFIGURATION_TABS.PAYLOADS]: new Set(Object.keys(_.get(monkeyConfig, PAYLOADS_CONFIG_PATH)))
+              [CONFIGURATION_TABS.PROPAGATION]: this.getSelectedPlugins(monkeyConfig, EXPLOITERS_CONFIG_PATH),
+              [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: this.getSelectedPlugins(monkeyConfig, CREDENTIALS_COLLECTORS_CONFIG_PATH),
+              [CONFIGURATION_TABS.PAYLOADS]: this.getSelectedPlugins(monkeyConfig, PAYLOADS_CONFIG_PATH)
             },
           sections: sections,
           currentFormData: _.cloneDeep(monkeyConfig[this.state.selectedSection])
@@ -119,6 +119,10 @@ class ConfigurePageComponent extends AuthComponent {
     this.updateCredentials();
     this.updateMasqueStrings();
   };
+
+  getSelectedPlugins = (config, pluginTypeConfigPath) => {
+    return new Set(Object.keys(_.get(config, pluginTypeConfigPath)))
+  }
 
   onUnsafeConfirmationCancelClick = () => {
     this.setState({showUnsafeOptionsConfirmation: false, lastAction: 'none'});
@@ -184,9 +188,9 @@ class ConfigurePageComponent extends AuthComponent {
         data = reformatConfig(data);
         this.setState({
           selectedPlugins: {
-              [CONFIGURATION_TABS.PROPAGATION]: new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
-              [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: new Set(Object.keys(_.get(data, CREDENTIALS_COLLECTORS_CONFIG_PATH))),
-              [CONFIGURATION_TABS.PAYLOADS]: new Set(Object.keys(_.get(data, PAYLOADS_CONFIG_PATH)))
+              [CONFIGURATION_TABS.PROPAGATION]: this.getSelectedPlugins(data, EXPLOITERS_CONFIG_PATH),
+              [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: this.getSelectedPlugins(data, CREDENTIALS_COLLECTORS_CONFIG_PATH),
+              [CONFIGURATION_TABS.PAYLOADS]: this.getSelectedPlugins(data, PAYLOADS_CONFIG_PATH)
           },
           configuration: data,
           currentFormData: _.cloneDeep(data[this.state.selectedSection])
