@@ -13,7 +13,7 @@ from common.agent_configuration import (
 from common.types import Event, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import (
     DiscoveredService,
-    ExploiterResultData,
+    ExploiterResult,
     FingerprintData,
     PingScanData,
     PortScanData,
@@ -221,7 +221,7 @@ class Propagator:
         logger.info("Finished exploiting victims")
 
     def _process_exploit_attempts(
-        self, exploiter_name: str, host: TargetHost, result: ExploiterResultData
+        self, exploiter_name: str, host: TargetHost, result: ExploiterResult
     ):
         if result.propagation_success:
             logger.info(f"Successfully propagated to {host.ip} using {exploiter_name}")

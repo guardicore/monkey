@@ -8,7 +8,7 @@ from common.event_queue import IAgentEventQueue
 from common.types import AgentID, Event, NetworkPort
 from infection_monkey import network_scanning
 from infection_monkey.i_puppet import (
-    ExploiterResultData,
+    ExploiterResult,
     FingerprintData,
     IncompatibleLocalOperatingSystemError,
     IncompatibleTargetOperatingSystemError,
@@ -96,7 +96,7 @@ class Puppet(IPuppet):
         servers: Sequence[str],
         options: Mapping,
         interrupt: Event,
-    ) -> ExploiterResultData:
+    ) -> ExploiterResult:
         compatible_with_local_os = (
             self._plugin_compatibility_verifier.verify_local_operating_system_compatibility(
                 AgentPluginType.EXPLOITER, name
@@ -118,7 +118,7 @@ class Puppet(IPuppet):
             )
 
         exploiter = self._plugin_registry.get_plugin(AgentPluginType.EXPLOITER, name)
-        exploiter_result_data = exploiter.run(
+        exploiter_result = exploiter.run(
             host=host,
             servers=servers,
             current_depth=current_depth,
@@ -126,8 +126,8 @@ class Puppet(IPuppet):
             interrupt=interrupt,
         )
 
-        if exploiter_result_data is None:
-            exploiter_result_data = ExploiterResultData(
+        if exploiter_result is None:
+            exploiter_result = ExploiterResult(
                 exploitation_success=False,
                 propagation_success=False,
                 error_message=(
@@ -136,7 +136,7 @@ class Puppet(IPuppet):
                 ),
             )
 
-        return exploiter_result_data
+        return exploiter_result
 
     def run_payload(self, name: str, options: Dict, interrupt: Event):
         compatible_with_local_os = (

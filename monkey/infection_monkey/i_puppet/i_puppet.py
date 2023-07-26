@@ -5,7 +5,7 @@ from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials
 from common.types import Event, NetworkPort
 
-from . import ExploiterResultData, FingerprintData, PingScanData
+from . import ExploiterResult, FingerprintData, PingScanData
 from .target_host import PortScanDataDict, TargetHost
 
 
@@ -104,7 +104,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         servers: Sequence[str],
         options: Mapping,
         interrupt: Event,
-    ) -> ExploiterResultData:
+    ) -> ExploiterResult:
         """
         Runs an exploiter against a remote host
 
