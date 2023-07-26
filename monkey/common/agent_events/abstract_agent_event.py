@@ -37,3 +37,6 @@ class AbstractAgentEvent(InfectionMonkeyBaseModel, ABC):
 
     class Config(InfectionMonkeyModelConfig):
         smart_union = True
+
+    def __hash__(self):
+        return hash((type(self), *tuple(self.__dict__.values())))
