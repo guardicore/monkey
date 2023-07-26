@@ -168,14 +168,11 @@ class AgentEvents(AbstractResource):
     def _get_events_filtered_by_type_and_tag(
         self, type_: Type[AbstractAgentEvent], tag: str
     ) -> Sequence[AbstractAgentEvent]:
-        events_by_type = self._agent_event_repository.get_events_by_type(type_)
-        events_by_tag = self._agent_event_repository.get_events_by_tag(tag)
+        events_by_type = set(self._agent_event_repository.get_events_by_type(type_))
+        events_by_tag = set(self._agent_event_repository.get_events_by_tag(tag))
 
-        # this has better time complexity than converting both lists to sets,
-        # finding their intersection, and then sorting the resultant set by timestamp
-        events = [event for event in events_by_tag if event in events_by_type]
-
-        return events
+        intersection = events_by_type.intersection(events_by_tag)
+        return sorted(intersection, key=lambda x: x.timestamp)
 
     def _filter_events_by_success(
         self, events: Sequence[AbstractAgentEvent], success: bool
