@@ -29,4 +29,4 @@ docker run \
     --rm \
     -v "$SCRIPT_DIR:/plugins" \
     infectionmonkey/agent-builder:$TAG \
-    /bin/bash -c "$DOCKER_COMMANDS" | ts  '[%Y-%m-%d %H:%M:%S]'
+    /bin/bash -ci "$DOCKER_COMMANDS" | ts  '[%Y-%m-%d %H:%M:%S]'
