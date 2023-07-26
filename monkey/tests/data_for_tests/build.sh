@@ -1,13 +1,14 @@
 #!/bin/sh
 
 # Build the plugin package
-# Usage: ./build.sh <version>
+# Usage: ./build.sh <plugin-directory> <version>
 
 DEFAULT_DEPENDENCY_VERSION=1.0.0
 MANIFEST_FILENAME=manifest.yaml
 SCHEMA_FILENAME=config-schema.json
 DEPENDENCY_FILE="src/vendor/mock_dependency.py"
-ROOT="$( cd "$( dirname "$0" )" && pwd )"
+PLUGIN_DIRECTORY_PATH=$(realpath "$1")
+ROOT="$( cd $PLUGIN_DIRECTORY_PATH && pwd )"
 
 get_value_from_key() {
     _file="$1"
@@ -27,15 +28,15 @@ lower() {
 
 # Generate the dependency
 version=$DEFAULT_DEPENDENCY_VERSION
-if [ "$1" ]; then
-    version=$1
+if [ "$2" ]; then
+    version=$2
 fi
 echo "__version__ = \"${version}\"" > "$ROOT/$DEPENDENCY_FILE"
 
 
 # Package everything up
 cd "$ROOT/src" || exit 1
-tar -cf "$ROOT/source.tar" plugin.py vendor
+tar -czf $ROOT/source.tar.gz plugin.py vendor/
 cd "$ROOT" || exit 1
 
 
@@ -44,5 +45,5 @@ name=$(get_value_from_key $MANIFEST_FILENAME name | xargs)
 type=$(lower "$(get_value_from_key $MANIFEST_FILENAME plugin_type | xargs)")
 
 plugin_filename="${name}-${type}.tar"
-tar -cf "$ROOT/$plugin_filename" $MANIFEST_FILENAME $SCHEMA_FILENAME source.tar
-rm "$ROOT/source.tar"
+tar -cf "$ROOT/$plugin_filename" $MANIFEST_FILENAME $SCHEMA_FILENAME source.tar.gz
+rm "$ROOT/source.tar.gz"
