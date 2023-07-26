@@ -193,7 +193,7 @@ def test_malfunctioning_plugin__exploiter(puppet: Puppet):
     malfunctioning_exploiter.run = MagicMock(return_value=None)
     puppet.load_plugin(AgentPluginType.EXPLOITER, FAKE_NAME, malfunctioning_exploiter)
 
-    exploiter_result_data = puppet.exploit_host(
+    exploiter_result = puppet.exploit_host(
         name=FAKE_NAME,
         host=TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.WINDOWS),
         current_depth=1,
@@ -202,9 +202,9 @@ def test_malfunctioning_plugin__exploiter(puppet: Puppet):
         interrupt=threading.Event(),
     )
 
-    assert exploiter_result_data.exploitation_success is False
-    assert exploiter_result_data.propagation_success is False
-    assert exploiter_result_data.error_message != ""
+    assert exploiter_result.exploitation_success is False
+    assert exploiter_result.propagation_success is False
+    assert exploiter_result.error_message != ""
 
 
 def test_exploit_host__incompatible_local_operating_system(

@@ -8,7 +8,7 @@ from common.agent_events import ExploitationEvent
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 from infection_monkey.exploit import IAgentBinaryRepository
-from infection_monkey.i_puppet import ExploiterResultData, TargetHost
+from infection_monkey.i_puppet import ExploiterResult, TargetHost
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 
 logger = logging.getLogger(__name__)
@@ -39,8 +39,7 @@ class Plugin:
         options: Dict[str, Any],
         interrupt: Event,
         **kwargs,
-    ) -> ExploiterResultData:
-
+    ) -> ExploiterResult:
         logger.info(f"Main thread name {current_thread().name}")
         logger.info(
             f"Mock dependency package version/operating system: {mock_dependency.__version__}"
@@ -56,11 +55,11 @@ class Plugin:
             )
         )
 
-        exploiter_result_data = ExploiterResultData(
+        exploiter_result = ExploiterResult(
             exploitation_success=False,
             propagation_success=False,
             os=str(host.operating_system),
         )
-        logger.debug(f"Returning ExploiterResultData: {exploiter_result_data}")
+        logger.debug(f"Returning ExploiterResult: {exploiter_result}")
 
-        return exploiter_result_data
+        return exploiter_result
