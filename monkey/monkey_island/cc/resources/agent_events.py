@@ -158,7 +158,7 @@ class AgentEvents(AbstractResource):
             events = self._agent_event_repository.get_events()
 
         if success is not None:
-            events = list(filter(lambda e: hasattr(e, "success") and e.success is success, events))
+            events = self._filter_events_by_success(events, success)
 
         if timestamp_constraint is not None:
             operator, timestamp = timestamp_constraint
@@ -184,6 +184,11 @@ class AgentEvents(AbstractResource):
         events = [event for event in events_by_tag if event in events_by_type]
 
         return events
+
+    def _filter_events_by_success(
+        self, events: Sequence[AbstractAgentEvent], success: bool
+    ) -> Sequence[AbstractAgentEvent]:
+        return list(filter(lambda e: hasattr(e, "success") and e.success is success, events))
 
     def _serialize_events(self, events: Iterable[AbstractAgentEvent]) -> JSONSerializable:
         serialized_events = []
