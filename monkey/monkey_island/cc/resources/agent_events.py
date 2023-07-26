@@ -149,14 +149,7 @@ class AgentEvents(AbstractResource):
         timestamp_constraint: Optional[Tuple[str, float]],
     ) -> Sequence[AbstractAgentEvent]:
         if type_ is not None and tag is not None:
-            events_by_type = self._agent_event_repository.get_events_by_type(type_)
-            events_by_tag = self._agent_event_repository.get_events_by_tag(tag)
-
-            # this has better time complexity than converting both lists to sets,
-            # finding their intersection, and then sorting the resultant set by timestamp
-            events: Sequence[AbstractAgentEvent] = [
-                event for event in events_by_tag if event in events_by_type
-            ]
+            events = self._get_events_filtered_by_type_and_tag(type_, tag)
         elif type_ is not None and tag is None:
             events = self._agent_event_repository.get_events_by_type(type_)
         elif type_ is None and tag is not None:
@@ -177,6 +170,18 @@ class AgentEvents(AbstractResource):
             elif operator == "lt":
                 separation_point = bisect_left(events, timestamp, key=lambda event: event.timestamp)
                 events = events[:separation_point]
+
+        return events
+
+    def _get_events_filtered_by_type_and_tag(
+        self, type_: Type[AbstractAgentEvent], tag: str
+    ) -> Sequence[AbstractAgentEvent]:
+        events_by_type = self._agent_event_repository.get_events_by_type(type_)
+        events_by_tag = self._agent_event_repository.get_events_by_tag(tag)
+
+        # this has better time complexity than converting both lists to sets,
+        # finding their intersection, and then sorting the resultant set by timestamp
+        events = [event for event in events_by_tag if event in events_by_type]
 
         return events
 
