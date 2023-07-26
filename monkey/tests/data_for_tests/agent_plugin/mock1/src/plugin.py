@@ -10,7 +10,7 @@ from common.agent_events import ExploitationEvent, PropagationEvent
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 from infection_monkey.exploit import IAgentBinaryRepository
-from infection_monkey.i_puppet import ExploiterResultData, TargetHost
+from infection_monkey.i_puppet import ExploiterResult, TargetHost
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.utils.threading import interruptible_iter
 
@@ -42,8 +42,7 @@ class Plugin:
         options: Dict[str, Any],
         interrupt: Event,
         **kwargs,
-    ) -> ExploiterResultData:
-
+    ) -> ExploiterResult:
         logger.info(f"Main thread name {current_thread().name}")
         logger.info(f"Mock dependency package version: {mock_dependency.__version__}")
 
@@ -68,14 +67,14 @@ class Plugin:
         logger.debug(f"Exploit success: {exploitation_success}")
         logger.debug(f"Prop success: {propagation_success}")
         logger.debug(f"OS: {str(host.operating_system)}")
-        exploiter_result_data = ExploiterResultData(
+        exploiter_result = ExploiterResult(
             exploitation_success=exploitation_success,
             propagation_success=propagation_success,
             os=str(host.operating_system),
         )
-        logger.debug(f"Returning ExploiterResultData: {exploiter_result_data}")
+        logger.debug(f"Returning ExploiterResult: {exploiter_result}")
 
-        return exploiter_result_data
+        return exploiter_result
 
     @staticmethod
     def _log_options(options: Dict[str, Any]):
