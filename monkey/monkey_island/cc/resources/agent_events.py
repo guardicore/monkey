@@ -36,17 +36,23 @@ class AgentEvents(AbstractResource):
     @auth_token_required
     @roles_accepted(AccountRole.AGENT.name)
     def post(self):
-        events = request.json
+        serialized_events = request.json
+        deserialized_events = []
 
-        for event in events:
+        logger.debug(f"Deserializing {len(serialized_events)} events")
+        for event in serialized_events:
             try:
                 serializer = self._event_serializer_registry[event[EVENT_TYPE_FIELD]]
-                deserialized_event = serializer.deserialize(event)
+                deserialized_events.append(serializer.deserialize(event))
             except (TypeError, ValueError) as err:
                 logger.exception(f"Error occurred while deserializing an event {event}: {err}")
                 return {"error": str(err)}, HTTPStatus.BAD_REQUEST
+        logger.debug(f"Completed deserialization of {len(serialized_events)} events")
 
+        logger.debug(f"Publishing {len(deserialized_events)} events to the queue")
+        for deserialized_event in deserialized_events:
             self._agent_event_queue.publish(deserialized_event)
+        logger.debug(f"Completed publishing {len(deserialized_events)} events to the queue")
 
         return {}, HTTPStatus.NO_CONTENT
 
@@ -142,39 +148,49 @@ class AgentEvents(AbstractResource):
         success: Optional[bool],
         timestamp_constraint: Optional[Tuple[str, float]],
     ) -> Sequence[AbstractAgentEvent]:
-        if type_ is not None:
-            events_by_type: Sequence[
-                AbstractAgentEvent
-            ] = self._agent_event_repository.get_events_by_type(type_)
+        if type_ is not None and tag is not None:
+            events = self._get_events_filtered_by_type_and_tag(type_, tag)
+        elif type_ is not None and tag is None:
+            events = self._agent_event_repository.get_events_by_type(type_)
+        elif type_ is None and tag is not None:
+            events = self._agent_event_repository.get_events_by_tag(tag)
         else:
-            events_by_type = self._agent_event_repository.get_events()
-
-        if tag is not None:
-            events_by_tag: Sequence[
-                AbstractAgentEvent
-            ] = self._agent_event_repository.get_events_by_tag(tag)
-        else:
-            events_by_tag = self._agent_event_repository.get_events()
-
-        # this has better time complexity than converting both lists to sets,
-        # finding their intersection, and then sorting the resultant set by timestamp
-        events = [event for event in events_by_tag if event in events_by_type]
+            events = self._agent_event_repository.get_events()
 
         if success is not None:
-            events = list(filter(lambda e: hasattr(e, "success") and e.success is success, events))  # type: ignore[attr-defined]  # noqa: E501
+            events = self._filter_events_by_success(events, success)
 
         if timestamp_constraint is not None:
-            operator, timestamp = timestamp_constraint
-            if operator == "gt":
-                separation_point = bisect_right(
-                    events, timestamp, key=lambda event: event.timestamp
-                )
-                events = events[separation_point:]
-            elif operator == "lt":
-                separation_point = bisect_left(events, timestamp, key=lambda event: event.timestamp)
-                events = events[:separation_point]
+            events = self._filter_events_by_timestamp(events, timestamp_constraint)
 
         return events
+
+    def _get_events_filtered_by_type_and_tag(
+        self, type_: Type[AbstractAgentEvent], tag: str
+    ) -> Sequence[AbstractAgentEvent]:
+        events_by_type = set(self._agent_event_repository.get_events_by_type(type_))
+        events_by_tag = set(self._agent_event_repository.get_events_by_tag(tag))
+
+        intersection = events_by_type.intersection(events_by_tag)
+        return sorted(intersection, key=lambda x: x.timestamp)
+
+    def _filter_events_by_success(
+        self, events: Sequence[AbstractAgentEvent], success: bool
+    ) -> Sequence[AbstractAgentEvent]:
+        return list(filter(lambda e: hasattr(e, "success") and e.success is success, events))
+
+    def _filter_events_by_timestamp(
+        self, events: Sequence[AbstractAgentEvent], timestamp_constraint: Tuple[str, float]
+    ) -> Sequence[AbstractAgentEvent]:
+        operator, timestamp = timestamp_constraint
+
+        bisect_fn = bisect_left if operator == "lt" else bisect_right
+        separation_point = bisect_fn(events, timestamp, key=lambda event: event.timestamp)
+
+        if operator == "lt":
+            return events[:separation_point]
+
+        return events[separation_point:]
 
     def _serialize_events(self, events: Iterable[AbstractAgentEvent]) -> JSONSerializable:
         serialized_events = []
