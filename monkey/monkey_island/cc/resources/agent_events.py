@@ -148,26 +148,24 @@ class AgentEvents(AbstractResource):
         success: Optional[bool],
         timestamp_constraint: Optional[Tuple[str, float]],
     ) -> Sequence[AbstractAgentEvent]:
-        if type_ is not None:
-            events_by_type: Sequence[
-                AbstractAgentEvent
-            ] = self._agent_event_repository.get_events_by_type(type_)
-        else:
-            events_by_type = self._agent_event_repository.get_events()
+        if type_ is not None and tag is not None:
+            events_by_type = self._agent_event_repository.get_events_by_type(type_)
+            events_by_tag = self._agent_event_repository.get_events_by_tag(tag)
 
-        if tag is not None:
-            events_by_tag: Sequence[
-                AbstractAgentEvent
-            ] = self._agent_event_repository.get_events_by_tag(tag)
+            # this has better time complexity than converting both lists to sets,
+            # finding their intersection, and then sorting the resultant set by timestamp
+            events: Sequence[AbstractAgentEvent] = [
+                event for event in events_by_tag if event in events_by_type
+            ]
+        elif type_ is not None and tag is None:
+            events = self._agent_event_repository.get_events_by_type(type_)
+        elif type_ is None and tag is not None:
+            events = self._agent_event_repository.get_events_by_tag(tag)
         else:
-            events_by_tag = self._agent_event_repository.get_events()
-
-        # this has better time complexity than converting both lists to sets,
-        # finding their intersection, and then sorting the resultant set by timestamp
-        events = [event for event in events_by_tag if event in events_by_type]
+            events = self._agent_event_repository.get_events()
 
         if success is not None:
-            events = list(filter(lambda e: hasattr(e, "success") and e.success is success, events))  # type: ignore[attr-defined]  # noqa: E501
+            events = list(filter(lambda e: hasattr(e, "success") and e.success is success, events))
 
         if timestamp_constraint is not None:
             operator, timestamp = timestamp_constraint
