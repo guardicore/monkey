@@ -161,15 +161,7 @@ class AgentEvents(AbstractResource):
             events = self._filter_events_by_success(events, success)
 
         if timestamp_constraint is not None:
-            operator, timestamp = timestamp_constraint
-            if operator == "gt":
-                separation_point = bisect_right(
-                    events, timestamp, key=lambda event: event.timestamp
-                )
-                events = events[separation_point:]
-            elif operator == "lt":
-                separation_point = bisect_left(events, timestamp, key=lambda event: event.timestamp)
-                events = events[:separation_point]
+            events = self._filter_events_by_timestamp(events, timestamp_constraint)
 
         return events
 
@@ -189,6 +181,19 @@ class AgentEvents(AbstractResource):
         self, events: Sequence[AbstractAgentEvent], success: bool
     ) -> Sequence[AbstractAgentEvent]:
         return list(filter(lambda e: hasattr(e, "success") and e.success is success, events))
+
+    def _filter_events_by_timestamp(
+        self, events: Sequence[AbstractAgentEvent], timestamp_constraint: Tuple[str, float]
+    ) -> Sequence[AbstractAgentEvent]:
+        operator, timestamp = timestamp_constraint
+
+        bisect_fn = bisect_left if operator == "lt" else bisect_right
+        separation_point = bisect_fn(events, timestamp, key=lambda event: event.timestamp)
+
+        if operator == "lt":
+            return events[:separation_point]
+
+        return events[separation_point:]
 
     def _serialize_events(self, events: Iterable[AbstractAgentEvent]) -> JSONSerializable:
         serialized_events = []
