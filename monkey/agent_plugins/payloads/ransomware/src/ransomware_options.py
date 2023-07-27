@@ -4,7 +4,7 @@ from pydantic import Field, validator
 
 from common.base_models import InfectionMonkeyBaseModel
 
-valid_file_extension_regex = re.compile(r"^[\.(A-Za-z0-9_)+]*$")
+valid_file_extension_regex = re.compile(r"^(\.[A-Za-z0-9_]+)*$")  # TODO: # noqa: DUO138
 
 _empty_regex = re.compile("^$")
 
