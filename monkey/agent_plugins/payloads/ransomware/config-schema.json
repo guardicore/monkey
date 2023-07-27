@@ -5,16 +5,19 @@
             "description": "Ransomware encryption will be simulated by flipping every bit in the files contained within the target directories.",
             "properties": {
                 "file_extension": {
+                    "title": "File extension",
                     "type": "string",
                     "description": "The file extension that the Infection Monkey will use for the encrypted file.",
                     "default": ".m0nk3y"
                 },
                 "linux_target_dir": {
+                    "title": "Linux target directory",
                     "type": "string",
                     "description": "A path to a directory on Linux systems that contains files you will allow Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
                     "default": ""
                 },
                 "windows_target_dir": {
+                    "title": "Windows target directory",
                     "type": "string",
                     "description": "A path to a directory on Windows systems that contains files you will allow Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
                     "default": ""
