@@ -17,6 +17,6 @@ description: >-
   if a directory is not specified or if the specified directory doesn't exist on a
   victim machine.
 
-  Note that a README.txt will be left in the specified target directory.
+  Optionally, a README.txt file can be left in the specified target directory.
 safe: true
 link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/ransomware-simulation
