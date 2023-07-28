@@ -6,6 +6,8 @@ from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
 from agent_plugins.payloads.ransomware.src.ransomware_options import (
     EncryptionBehavior,
     RansomwareOptions,
+    linux_target_dir,
+    windows_target_dir,
 )
 from flask_security import Security
 
@@ -148,6 +150,9 @@ EncryptionBehavior.validate_linux_target_dir
 EncryptionBehavior.validate_windows_target_dir
 RansomwareOptions.encryption
 RansomwareOptions.other_behaviors
+linux_target_dir
+windows_target_dir
+
 
 # User model fields
 User.active

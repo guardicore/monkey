@@ -1,6 +1,6 @@
 import re
 
-from pydantic import Field, validator
+from pydantic import ConstrainedStr, Field
 
 from common.base_models import InfectionMonkeyBaseModel
 
@@ -40,42 +40,36 @@ valid_ransomware_path_windows_regex = re.compile(
 )
 
 
+class FileExtension(ConstrainedStr):
+    regex = valid_file_extension_regex
+
+
+class LinuxDirectory(ConstrainedStr):
+    regex = valid_ransomware_path_linux_regex
+
+
+class WindowsDirectory(ConstrainedStr):
+    regex = valid_ransomware_path_windows_regex
+
+
 class EncryptionBehavior(InfectionMonkeyBaseModel):
-    file_extension: str = Field(
+    file_extension: FileExtension = Field(
         default=".m0nk3y",
         description="The file extension that the Infection Monkey will use"
         " for the encrypted file.",
     )
-    linux_target_dir: str = Field(
+    linux_target_dir: LinuxDirectory = Field(
         default="",
         description="A path to a directory on Linux systems that contains"
         " files you will allow Infection Monkey to encrypt. If no"
         " directory is specified, no files will be encrypted.",
     )
-    windows_target_dir: str = Field(
+    windows_target_dir: WindowsDirectory = Field(
         default="",
         description="A path to a directory on Windows systems that contains"
         " files you will allow Infection Monkey to encrypt. If no"
         " directory is specified, no files will be encrypted.",
     )
-
-    @validator("file_extension")
-    def validate_file_extension(cls, file_extension):
-        if not re.match(valid_file_extension_regex, file_extension):
-            raise ValueError("Invalid file extension provided")
-        return file_extension
-
-    @validator("linux_target_dir")
-    def validate_linux_target_dir(cls, linux_target_dir):
-        if not re.match(valid_ransomware_path_linux_regex, linux_target_dir):
-            raise ValueError("Invalid Linux target directory provided")
-        return linux_target_dir
-
-    @validator("windows_target_dir")
-    def validate_windows_target_dir(cls, windows_target_dir):
-        if not re.match(valid_ransomware_path_windows_regex, windows_target_dir):
-            raise ValueError("Invalid Windows target directory provided")
-        return windows_target_dir
 
 
 class OtherBehaviors(InfectionMonkeyBaseModel):
