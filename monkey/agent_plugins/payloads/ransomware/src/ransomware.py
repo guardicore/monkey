@@ -1,7 +1,7 @@
 import logging
 import threading
 from pathlib import Path
-from typing import Callable, Iterable
+from typing import Iterable
 
 from common.agent_events import FileEncryptionEvent
 from common.event_queue import IAgentEventQueue
@@ -11,6 +11,7 @@ from infection_monkey.utils.threading import interruptible_function, interruptib
 
 from .consts import README_FILE_NAME, README_SRC
 from .internal_ransomware_options import InternalRansomwareOptions
+from .typedef import FileEncryptorCallable, FileSelectorCallable, ReadmeDropperCallable
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +23,9 @@ class Ransomware:
     def __init__(
         self,
         config: InternalRansomwareOptions,
-        encrypt_file: Callable[[Path], None],
-        select_files: Callable[[Path], Iterable[Path]],
-        leave_readme: Callable[[Path, Path], None],
+        encrypt_file: FileEncryptorCallable,
+        select_files: FileSelectorCallable,
+        leave_readme: ReadmeDropperCallable,
         agent_event_queue: IAgentEventQueue,
         agent_id: AgentID,
     ):
