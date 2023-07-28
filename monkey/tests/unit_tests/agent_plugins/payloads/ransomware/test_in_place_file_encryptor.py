@@ -1,7 +1,9 @@
 import os
+from pathlib import Path
 
 import pytest
 from agent_plugins.payloads.ransomware.src.in_place_file_encryptor import InPlaceFileEncryptor
+from agent_plugins.payloads.ransomware.src.typedef import FileEncryptorCallable
 from tests.unit_tests.agent_plugins.payloads.ransomware.ransomware_target_files import (
     ALL_ZEROS_PDF,
     ALL_ZEROS_PDF_CLEARTEXT_SHA256,
@@ -18,12 +20,12 @@ from infection_monkey.utils.bit_manipulators import flip_bits
 EXTENSION = FileExtension(".m0nk3y")
 
 
-def with_extension(filename):
+def with_extension(filename) -> str:
     return f"{filename}{EXTENSION}"
 
 
 @pytest.fixture(scope="module")
-def in_place_bitflip_file_encryptor():
+def in_place_bitflip_file_encryptor() -> FileEncryptorCallable:
     return InPlaceFileEncryptor(encrypt_bytes=flip_bits, chunk_size=64)
 
 
@@ -35,7 +37,11 @@ def in_place_bitflip_file_encryptor():
     ],
 )
 def test_file_encrypted(
-    in_place_bitflip_file_encryptor, ransomware_target, file_name, cleartext_hash, encrypted_hash
+    in_place_bitflip_file_encryptor: FileEncryptorCallable,
+    ransomware_target: Path,
+    file_name: str,
+    cleartext_hash: str,
+    encrypted_hash: str,
 ):
     test_keyboard = ransomware_target / file_name
 
@@ -46,7 +52,9 @@ def test_file_encrypted(
     assert get_file_sha256_hash(test_keyboard) == encrypted_hash
 
 
-def test_file_encrypted_in_place(in_place_bitflip_file_encryptor, ransomware_target):
+def test_file_encrypted_in_place(
+    in_place_bitflip_file_encryptor: FileEncryptorCallable, ransomware_target: Path
+):
     test_keyboard = ransomware_target / TEST_KEYBOARD_TXT
 
     expected_inode = os.stat(test_keyboard).st_ino
@@ -56,7 +64,7 @@ def test_file_encrypted_in_place(in_place_bitflip_file_encryptor, ransomware_tar
     assert expected_inode == actual_inode
 
 
-def test_encrypted_file_has_new_extension(ransomware_target):
+def test_encrypted_file_has_new_extension(ransomware_target: Path):
     test_keyboard = ransomware_target / TEST_KEYBOARD_TXT
     encrypted_test_keyboard = ransomware_target / with_extension(TEST_KEYBOARD_TXT)
     encryptor = InPlaceFileEncryptor(encrypt_bytes=flip_bits, new_file_extension=EXTENSION)
