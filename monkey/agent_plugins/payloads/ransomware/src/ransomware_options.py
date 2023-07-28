@@ -55,23 +55,20 @@ class WindowsDirectory(ConstrainedStr):
 class RansomwareOptions(InfectionMonkeyBaseModel):
     file_extension: FileExtension = Field(
         default=".m0nk3y",
-        description="The file extension that the Infection Monkey will use"
-        " for the encrypted file.",
+        description="The file extension that the Infection Monkey will use for the encrypted file.",
     )
     linux_target_dir: LinuxDirectory = Field(
         default="",
-        description="A path to a directory on Linux systems that contains"
-        " files you will allow Infection Monkey to encrypt. If no"
-        " directory is specified, no files will be encrypted.",
+        description="A path to a directory on Linux systems that contains files you will allow "
+        "Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
     )
     windows_target_dir: WindowsDirectory = Field(
         default="",
-        description="A path to a directory on Windows systems that contains"
-        " files you will allow Infection Monkey to encrypt. If no"
-        " directory is specified, no files will be encrypted.",
+        description="A path to a directory on Windows systems that contains files you will allow "
+        "Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
     )
     leave_readme: bool = Field(
         default=True,
-        description="If enabled, Infection Monkey will leave a  ransomware "
-        "not in the target directory.",
+        description="If enabled, Infection Monkey will leave a ransomware note in the target "
+        "directory.",
     )
