@@ -3,6 +3,12 @@ from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
 from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
 from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
+from agent_plugins.payloads.ransomware.src.ransomware_options import (
+    EncryptionBehavior,
+    RansomwareOptions,
+    linux_target_dir,
+    windows_target_dir,
+)
 from flask_security import Security
 
 from common import DIContainer
@@ -138,6 +144,15 @@ SMBPlugin
 WMIPlugin
 
 HostExploiter.add_vuln_url
+
+EncryptionBehavior.validate_file_extension
+EncryptionBehavior.validate_linux_target_dir
+EncryptionBehavior.validate_windows_target_dir
+RansomwareOptions.encryption
+RansomwareOptions.other_behaviors
+linux_target_dir
+windows_target_dir
+
 
 # User model fields
 User.active
