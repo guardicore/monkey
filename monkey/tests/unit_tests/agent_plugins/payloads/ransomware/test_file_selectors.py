@@ -23,7 +23,7 @@ TARGETED_FILE_EXTENSIONS = [".pdf", ".txt"]
 
 @pytest.fixture
 def file_selector() -> FileSelectorCallable:
-    return ProductionSafeTargetFileSelector(TARGETED_FILE_EXTENSIONS)
+    return ProductionSafeTargetFileSelector(set(TARGETED_FILE_EXTENSIONS))
 
 
 def test_select_targeted_files_only(
@@ -37,7 +37,7 @@ def test_select_targeted_files_only(
 
 
 def test_shortcut_not_selected(ransomware_test_data: Path):
-    extensions = TARGETED_FILE_EXTENSIONS + [".lnk"]
+    extensions = set(TARGETED_FILE_EXTENSIONS + [".lnk"])
     file_selector = ProductionSafeTargetFileSelector(extensions)
 
     selected_files = file_selector(ransomware_test_data)
