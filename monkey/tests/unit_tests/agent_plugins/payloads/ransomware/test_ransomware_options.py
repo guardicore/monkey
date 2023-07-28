@@ -1,18 +1,18 @@
 import pytest
-from agent_plugins.payloads.ransomware.src.ransomware_options import (
-    RansomwareOptions,
-)
+from agent_plugins.payloads.ransomware.src.ransomware_options import RansomwareOptions
 
 RANSOMWARE_OPTIONS_DICT = {
     "file_extension": ".encrypted",
     "linux_target_dir": "/tmp",
     "windows_target_dir": "C:/temp/",
+    "leave_readme": True,
 }
 
 RANSOMWARE_OPTIONS_OBJECT = RansomwareOptions(
     file_extension=".encrypted",
     linux_target_dir="/tmp",
     windows_target_dir="C:/temp/",
+    leave_readme=True,
 )
 
 

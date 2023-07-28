@@ -21,6 +21,12 @@
                     "type": "string",
                     "description": "A path to a directory on Windows systems that contains files you will allow Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
                     "default": ""
+                },
+                "leave_readme": {
+                    "title": "Leave a ransom note",
+                    "type": "boolean",
+                    "description": "If enabled, Infection Monkey will leave a ransom note in the target directory.",
+                    "default": true
                 }
             }
         },

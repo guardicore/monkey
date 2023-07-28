@@ -70,3 +70,8 @@ class RansomwareOptions(InfectionMonkeyBaseModel):
         " files you will allow Infection Monkey to encrypt. If no"
         " directory is specified, no files will be encrypted.",
     )
+    leave_readme: bool = Field(
+        default=True,
+        description="If enabled, Infection Monkey will leave a  ransomware "
+        "not in the target directory.",
+    )
