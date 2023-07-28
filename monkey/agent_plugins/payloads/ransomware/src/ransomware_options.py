@@ -52,7 +52,7 @@ class WindowsDirectory(ConstrainedStr):
     regex = valid_ransomware_path_windows_regex
 
 
-class EncryptionBehavior(InfectionMonkeyBaseModel):
+class RansomwareOptions(InfectionMonkeyBaseModel):
     file_extension: FileExtension = Field(
         default=".m0nk3y",
         description="The file extension that the Infection Monkey will use"
@@ -70,17 +70,3 @@ class EncryptionBehavior(InfectionMonkeyBaseModel):
         " files you will allow Infection Monkey to encrypt. If no"
         " directory is specified, no files will be encrypted.",
     )
-
-
-class OtherBehaviors(InfectionMonkeyBaseModel):
-    pass
-
-
-class RansomwareOptions(InfectionMonkeyBaseModel):
-    encryption: EncryptionBehavior = Field(
-        title="Encrypt files",
-        description="Ransomware encryption will be simulated by flipping every bit"
-        " in the files contained within the target directories.",
-        default=EncryptionBehavior(),
-    )
-    other_behaviors: OtherBehaviors = Field(default=OtherBehaviors())

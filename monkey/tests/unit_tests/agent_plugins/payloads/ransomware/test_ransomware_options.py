@@ -1,25 +1,18 @@
 import pytest
 from agent_plugins.payloads.ransomware.src.ransomware_options import (
-    EncryptionBehavior,
     RansomwareOptions,
 )
 
-ENCRYPTION_BEHAVIOR_DICT = {
+RANSOMWARE_OPTIONS_DICT = {
     "file_extension": ".encrypted",
     "linux_target_dir": "/tmp",
     "windows_target_dir": "C:/temp/",
 }
 
-ENCRYPTION_BEHAVIOR_OBJECT = EncryptionBehavior(
+RANSOMWARE_OPTIONS_OBJECT = RansomwareOptions(
     file_extension=".encrypted",
     linux_target_dir="/tmp",
     windows_target_dir="C:/temp/",
-)
-
-RANSOMWARE_OPTIONS_DICT = {"encryption": ENCRYPTION_BEHAVIOR_OBJECT, "other_behaviors": {}}
-
-RANSOMWARE_OPTIONS_OBJECT = RansomwareOptions(
-    encryption=ENCRYPTION_BEHAVIOR_OBJECT,
 )
 
 
@@ -41,10 +34,9 @@ def test_ransomware_options__deserialization():
 def test_ransomware_options__default():
     ransomware_options = RansomwareOptions()
 
-    assert ransomware_options.encryption.file_extension == ".m0nk3y"
-    assert ransomware_options.encryption.linux_target_dir == ""
-    assert ransomware_options.encryption.windows_target_dir == ""
-    assert ransomware_options.other_behaviors == {}
+    assert ransomware_options.file_extension == ".m0nk3y"
+    assert ransomware_options.linux_target_dir == ""
+    assert ransomware_options.windows_target_dir == ""
 
 
 @pytest.mark.parametrize(
@@ -53,7 +45,7 @@ def test_ransomware_options__default():
 )
 def test_ransomware_options__invalid_file_extension(file_extension):
     with pytest.raises(ValueError):
-        RansomwareOptions(encryption=EncryptionBehavior(file_extension=file_extension))
+        RansomwareOptions(encryption=RansomwareOptions(file_extension=file_extension))
 
 
 @pytest.mark.parametrize(
@@ -61,7 +53,7 @@ def test_ransomware_options__invalid_file_extension(file_extension):
 )
 def test_ransomware_options__invalid_windows_target_dir(windows_target_dir):
     with pytest.raises(ValueError):
-        RansomwareOptions(encryption=EncryptionBehavior(windows_target_dir=windows_target_dir))
+        RansomwareOptions(encryption=RansomwareOptions(windows_target_dir=windows_target_dir))
 
 
 @pytest.mark.parametrize(
@@ -70,4 +62,4 @@ def test_ransomware_options__invalid_windows_target_dir(windows_target_dir):
 )
 def test_ransomware_options__invalid_linux_target_dir(linux_target_dir):
     with pytest.raises(ValueError):
-        RansomwareOptions(encryption=EncryptionBehavior(linux_target_dir=linux_target_dir))
+        RansomwareOptions(encryption=RansomwareOptions(linux_target_dir=linux_target_dir))
