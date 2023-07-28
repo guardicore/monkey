@@ -35,8 +35,8 @@ def test_ransomware_options__default():
     ransomware_options = RansomwareOptions()
 
     assert ransomware_options.file_extension == ".m0nk3y"
-    assert ransomware_options.linux_target_dir == ""
-    assert ransomware_options.windows_target_dir == ""
+    assert ransomware_options.linux_target_dir is None
+    assert ransomware_options.windows_target_dir is None
 
 
 @pytest.mark.parametrize(

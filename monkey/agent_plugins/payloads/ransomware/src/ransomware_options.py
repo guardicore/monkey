@@ -1,4 +1,5 @@
 import re
+from typing import Optional
 
 from pydantic import ConstrainedStr, Field
 
@@ -57,13 +58,13 @@ class RansomwareOptions(InfectionMonkeyBaseModel):
         default=".m0nk3y",
         description="The file extension that the Infection Monkey will use for the encrypted file.",
     )
-    linux_target_dir: LinuxDirectory = Field(
-        default="",
+    linux_target_dir: Optional[LinuxDirectory] = Field(
+        default=None,
         description="A path to a directory on Linux systems that contains files you will allow "
         "Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
     )
-    windows_target_dir: WindowsDirectory = Field(
-        default="",
+    windows_target_dir: Optional[WindowsDirectory] = Field(
+        default=None,
         description="A path to a directory on Windows systems that contains files you will allow "
         "Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
     )

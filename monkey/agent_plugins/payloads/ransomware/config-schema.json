@@ -13,14 +13,14 @@
                 },
                 "linux_target_dir": {
                     "title": "Linux target directory",
-                    "type": "string",
+                    "type": ["null", "string"],
                     "pattern": "^$|^/|^\\$|^~",
                     "description": "A path to a directory on Linux systems that contains files you will allow Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
                     "default": ""
                 },
                 "windows_target_dir": {
                     "title": "Windows target directory",
-                    "type": "string",
+                    "type": ["null", "string"],
                     "pattern": "^$|^([A-Za-z]:(\\\\|/))|^%([A-Za-z#$'()*+,\\-\\.?@[\\]_`\\{\\}~ ]+([A-Za-z#$'()*+,\\-\\.?@[\\]_`\\{\\}~ ]|\\d)*)%|^\\\\{2}",
                     "description": "A path to a directory on Windows systems that contains files you will allow Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
                     "default": ""
