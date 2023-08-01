@@ -3,5 +3,5 @@ from dataclasses import dataclass
 
 @dataclass
 class PayloadResult:
-    run_success: bool = False
+    success: bool = False
     error_message: str = ""

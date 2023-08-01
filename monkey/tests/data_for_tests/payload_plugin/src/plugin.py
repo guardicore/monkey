@@ -33,7 +33,7 @@ class Plugin:
         options: Dict[str, Any],
         interrupt: Event,
         **kwargs,
-    ):
+    ) -> PayloadResult:
         logger.info(f"Main thread name {current_thread().name}")
         logger.info(f"Mock dependency package version: {mock_dependency.__version__}")
 
@@ -57,7 +57,7 @@ class Plugin:
             time.sleep(1)
 
     def _run_payload(self, options: Dict[str, Any]) -> PayloadResult:
-        payload_result = PayloadResult(run_success=True)
+        payload_result = PayloadResult(success=True)
 
         self._agent_event_publisher.publish(
             FileEncryptionEvent(

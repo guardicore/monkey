@@ -43,7 +43,7 @@ def test_ransomware_options__default():
     "file_extension",
     [" ", "..", "123", "xyz", ". .x", "x.", ".x\\y", ".x/", ".x/y", ".?", "!", "/", "~"],
 )
-def test_ransomware_options__invalid_file_extension(file_extension):
+def test_ransomware_options__invalid_file_extension(file_extension: str):
     with pytest.raises(ValueError):
         RansomwareOptions(encryption=RansomwareOptions(file_extension=file_extension))
 
@@ -51,7 +51,7 @@ def test_ransomware_options__invalid_file_extension(file_extension):
 @pytest.mark.parametrize(
     "windows_target_dir", ["C::", ":/temp", "\\", "...", "~", "/home/user", "-abc", "01234", " "]
 )
-def test_ransomware_options__invalid_windows_target_dir(windows_target_dir):
+def test_ransomware_options__invalid_windows_target_dir(windows_target_dir: str):
     with pytest.raises(ValueError):
         RansomwareOptions(encryption=RansomwareOptions(windows_target_dir=windows_target_dir))
 
@@ -60,6 +60,6 @@ def test_ransomware_options__invalid_windows_target_dir(windows_target_dir):
     "linux_target_dir",
     ["C:\hello", "\\\\", "C::", ":/temp", "\\", "...", "-abc", "01234", " ", "a~b"],  # noqa: W605
 )
-def test_ransomware_options__invalid_linux_target_dir(linux_target_dir):
+def test_ransomware_options__invalid_linux_target_dir(linux_target_dir: str):
     with pytest.raises(ValueError):
         RansomwareOptions(encryption=RansomwareOptions(linux_target_dir=linux_target_dir))
