@@ -57,7 +57,7 @@ class Plugin:
             time.sleep(1)
 
     def _run_payload(self, options: Dict[str, Any]) -> PayloadResult:
-        payload_result = PayloadResult(run_success=True)
+        payload_result = PayloadResult(success=True)
 
         self._agent_event_publisher.publish(
             FileEncryptionEvent(

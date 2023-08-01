@@ -180,4 +180,4 @@ request_cache
 # Remove after #3391
 PayloadPluginFactory
 PayloadResult
-PayloadResult.run_success
+PayloadResult.success
