@@ -6,7 +6,7 @@ supported_operating_systems:
 target_operating_systems:
   - linux
   - windows
-title: Ransomware Simulation Payload
+title: Ransomware
 version: 1.0.0
 description: >-
   Simulates a ransomware attack on your network using a set of configurable behaviors.
