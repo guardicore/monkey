@@ -3,8 +3,8 @@ from pprint import pformat
 
 from common.event_queue import IAgentEventQueue
 from common.types import AgentID
-from infection_monkey.utils.bit_manipulators import flip_bits
 
+from .bit_manipulators import flip_bits
 from .file_selectors import ProductionSafeTargetFileSelector
 from .in_place_file_encryptor import InPlaceFileEncryptor
 from .internal_ransomware_options import InternalRansomwareOptions
