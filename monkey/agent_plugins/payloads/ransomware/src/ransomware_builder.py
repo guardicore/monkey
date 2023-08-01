@@ -19,9 +19,9 @@ logger = logging.getLogger(__name__)
 
 
 def build_ransomware(
-    options: RansomwareOptions,
-    agent_event_queue: IAgentEventQueue,
     agent_id: AgentID,
+    agent_event_queue: IAgentEventQueue,
+    options: RansomwareOptions,
 ):
     logger.debug(f"Ransomware configuration:\n{pformat(options)}")
     internal_ransomware_options = InternalRansomwareOptions(options)
