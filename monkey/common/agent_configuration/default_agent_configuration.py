@@ -1,4 +1,3 @@
-from copy import deepcopy
 from typing import Dict
 
 from . import AgentConfiguration
@@ -78,6 +77,3 @@ DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     propagation=PROPAGATION_CONFIGURATION,
     polymorphism=PolymorphismConfiguration(randomize_agent_hash=False),
 )
-
-DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = deepcopy(DEFAULT_AGENT_CONFIGURATION)
-DEFAULT_RANSOMWARE_AGENT_CONFIGURATION.credentials_collectors = {}
