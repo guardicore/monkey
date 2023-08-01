@@ -33,7 +33,7 @@ class Plugin:
         options: Dict[str, Any],
         interrupt: Event,
         **kwargs,
-    ):
+    ) -> PayloadResult:
         logger.info(f"Main thread name {current_thread().name}")
         logger.info(f"Mock dependency package version: {mock_dependency.__version__}")
 
