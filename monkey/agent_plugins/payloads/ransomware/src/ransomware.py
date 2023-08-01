@@ -67,7 +67,7 @@ class Ransomware:
 
         # If a target directory was supplied and exists, then we can encrypt some files in it.
         files_to_encrypt = self._find_files()
-        self._encrypt_files(files_to_encrypt, interrupt)
+        self._encrypt_selected_files(files_to_encrypt, interrupt)
 
         if self._config.leave_readme:
             self._leave_readme_in_target_directory(interrupt=interrupt)
@@ -76,7 +76,7 @@ class Ransomware:
         logger.info(f"Collecting files in {self._target_directory}")
         return self._select_files(self._target_directory)  # type: ignore
 
-    def _encrypt_files(self, files_to_encrypt: Iterable[Path], interrupt: threading.Event):
+    def _encrypt_selected_files(self, files_to_encrypt: Iterable[Path], interrupt: threading.Event):
         logger.info(f"Encrypting files in {self._target_directory}")
 
         interrupted_message = "Received a stop signal, skipping encryption of remaining files"
