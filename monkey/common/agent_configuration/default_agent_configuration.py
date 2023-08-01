@@ -16,16 +16,7 @@ from .agent_sub_configurations import (
 
 CREDENTIALS_COLLECTORS: Dict[str, Dict] = {}
 
-RANSOMWARE_OPTIONS = {
-    "encryption": {
-        "enabled": True,
-        "file_extension": ".m0nk3y",
-        "directories": {"linux_target_dir": "", "windows_target_dir": ""},
-    },
-    "other_behaviors": {"readme": True},
-}
-
-PAYLOAD_CONFIGURATION = {"ransomware": RANSOMWARE_OPTIONS}
+PAYLOAD_CONFIGURATION: Dict[str, Dict] = {}
 
 TCP_PORTS = (
     22,
