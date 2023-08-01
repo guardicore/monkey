@@ -6,11 +6,7 @@ from pubsub.core import Publisher
 from pymongo import MongoClient
 
 from common import DIContainer
-from common.agent_configuration import (
-    DEFAULT_AGENT_CONFIGURATION,
-    DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
-    AgentConfiguration,
-)
+from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
@@ -103,11 +99,6 @@ def initialize_services(container: DIContainer, data_dir: Path):
 def _register_conventions(container: DIContainer):
     container.register_convention(
         AgentConfiguration, "default_agent_configuration", DEFAULT_AGENT_CONFIGURATION
-    )
-    container.register_convention(
-        AgentConfiguration,
-        "default_ransomware_agent_configuration",
-        DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
 
 
