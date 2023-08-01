@@ -23,9 +23,7 @@ from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFacto
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
-from infection_monkey.i_puppet import PayloadResult
 from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFirewall
-from infection_monkey.plugin.payload_plugin_factory import PayloadPluginFactory
 from infection_monkey.utils import commands
 from infection_monkey.utils.decorators import request_cache
 from monkey_island.cc.deployment import Deployment
@@ -176,8 +174,3 @@ commands.build_download_command_windows_powershell_webclient
 commands.build_download_command_windows_powershell_webrequest
 
 request_cache
-
-# Remove after #3391
-PayloadPluginFactory
-PayloadResult
-PayloadResult.success

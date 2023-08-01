@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import pytest
+from agent_plugins.payloads.ransomware.src.bit_manipulators import flip_bits
 from agent_plugins.payloads.ransomware.src.in_place_file_encryptor import InPlaceFileEncryptor
 from agent_plugins.payloads.ransomware.src.typedef import FileEncryptorCallable
 from tests.unit_tests.agent_plugins.payloads.ransomware.ransomware_target_files import (
@@ -15,7 +16,6 @@ from tests.unit_tests.agent_plugins.payloads.ransomware.ransomware_target_files 
 from tests.utils import get_file_sha256_hash
 
 from common.types import FileExtension
-from infection_monkey.utils.bit_manipulators import flip_bits
 
 EXTENSION = FileExtension(".m0nk3y")
 

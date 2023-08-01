@@ -1,5 +1,4 @@
-from infection_monkey.utils import bit_manipulators
-from infection_monkey.utils.bit_manipulators import flip_bits
+from agent_plugins.payloads.ransomware.src.bit_manipulators import flip_bits
 
 
 def test_flip_all_bits():
@@ -36,7 +35,7 @@ def test_flip_bits():
         b"\xcc\xcb\xca\xc9\xc8\xc7\xc6\xcf\xde\xbf\xdc\xdb\xda\xa1\xd9\xd5\xd7\xd6"
     )
 
-    assert bit_manipulators.flip_bits(test_input) == expected_output
+    assert flip_bits(test_input) == expected_output
 
 
 def test_flip_bits__reversible():
@@ -44,7 +43,7 @@ def test_flip_bits__reversible():
         b"ABCDEFGHIJNLM\xffNOPQRSTUVWXYZabcde\xf5fghijnlmnopqr\xC3stuvwxyz1\x87234567890!@#$%^&*()"
     )
 
-    test_output = bit_manipulators.flip_bits(test_input)
-    test_output = bit_manipulators.flip_bits(test_output)
+    test_output = flip_bits(test_input)
+    test_output = flip_bits(test_output)
 
     assert test_input == test_output

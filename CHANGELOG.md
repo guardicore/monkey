@@ -19,6 +19,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Hard-coded SSH exploiter to a plugin. #3170
 - Identities and secrets can be associated when configuring credentials in the
   UI. #3393
+- Hard-coded ransomware payload to a plugin. #3391
 
 ### Removed
 - Island mode configuration. #3400

@@ -1,1 +1,0 @@
-from .hard_coded_payloads_manifests import HARD_CODED_PAYLOADS_MANIFESTS

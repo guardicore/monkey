@@ -79,7 +79,6 @@ from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprint
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
 from infection_monkey.network_scanning.smb_fingerprinter import SMBFingerprinter
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
-from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.plugin.credentials_collector_plugin_factory import (
     CredentialsCollectorPluginFactory,
 )
@@ -452,12 +451,6 @@ class InfectionMonkey:
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "mssql", MSSQLFingerprinter())
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "smb", SMBFingerprinter())
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "ssh", SSHFingerprinter())
-
-        puppet.load_plugin(
-            AgentPluginType.PAYLOAD,
-            "ransomware",
-            RansomwarePayload(self._agent_event_queue, self._agent_id),
-        )
 
         return puppet
 
