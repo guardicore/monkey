@@ -11,7 +11,7 @@ from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
 )
 from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
 
-from .hard_coded_schemas import HARD_CODED_FINGERPRINTER_SCHEMAS, HARD_CODED_PAYLOADS_SCHEMAS
+from .hard_coded_schemas import HARD_CODED_FINGERPRINTER_SCHEMAS
 
 PLUGIN_PATH_IN_SCHEMA = {
     AgentPluginType.EXPLOITER: "definitions.ExploitationConfiguration.properties.exploiters",
@@ -55,7 +55,6 @@ class AgentConfigurationSchemaCompiler:
 
     def _add_hard_coded_plugins(self, schema: Dict[str, Any]) -> Dict[str, Any]:
         schema = self._add_non_plugin_fingerprinters(schema)
-        schema = self._add_non_plugin_payloads(schema)
         return schema
 
     def _add_properties_field_to_plugin_types(self, schema: Dict[str, Any]) -> Dict[str, Any]:
@@ -80,16 +79,6 @@ class AgentConfigurationSchemaCompiler:
             HARD_CODED_FINGERPRINTER_SCHEMAS, HARD_CODED_FINGERPRINTER_MANIFESTS
         )
         properties.update(fingerprinter_schemas)
-        return schema
-
-    def _add_non_plugin_payloads(self, schema: Dict[str, Any]) -> Dict[str, Any]:
-        properties = dpath.get(
-            schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.PAYLOAD] + ".properties", "."
-        )
-        payload_schemas = self._add_manifests_to_plugins_schema(
-            HARD_CODED_PAYLOADS_SCHEMAS, HARD_CODED_PAYLOADS_MANIFESTS
-        )
-        properties.update(payload_schemas)
         return schema
 
     def _add_plugin_to_schema(
