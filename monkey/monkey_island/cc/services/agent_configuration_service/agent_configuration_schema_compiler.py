@@ -5,7 +5,6 @@ import dpath
 
 from common.agent_configuration import AgentConfiguration
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
-from common.hard_coded_manifests import HARD_CODED_PAYLOADS_MANIFESTS
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )
