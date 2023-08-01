@@ -1,4 +1,4 @@
-name: RansomwareSimulation
+name: Ransomware
 plugin_type: Payload
 supported_operating_systems:
   - linux
