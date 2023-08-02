@@ -2,7 +2,7 @@ import dataclasses
 from typing import Dict, Mapping
 
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
-from common.credentials import Credentials, Password, Username
+from common.credentials import Credentials, Password, Username, NTHash
 
 from .noop import noop_test_configuration
 from .utils import (
@@ -35,6 +35,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
         },
         "SSH": {},
         "PowerShell": {},
+        "RDP": {},
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
@@ -46,6 +47,8 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
         "10.2.2.12",
         "10.2.3.44",
         "10.2.3.46",
+        "10.2.3.64",
+        "10.2.3.65",
     ]
     return add_subnets(agent_configuration, subnets)
 
@@ -57,7 +60,7 @@ def _add_fingerprinters(agent_configuration: AgentConfiguration) -> AgentConfigu
 
 
 def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    ports = [22, 5985, 5986, 8080]
+    ports = [22, 3389, 5985, 5986, 8080]
     return add_tcp_ports(agent_configuration, ports)
 
 
@@ -75,6 +78,8 @@ test_agent_configuration = _add_http_ports(test_agent_configuration)
 CREDENTIALS = (
     Credentials(identity=Username(username="m0nk3y"), secret=None),
     Credentials(identity=None, secret=Password(password="^NgDvY59~8")),
+    Credentials(identity=None, secret=Password(password="P@ssw0rd!")),
+    Credentials(identity=None, secret=NTHash(nt_hash="68965ABB32F8CE46F7E40075FA5B623E")),
 )
 
 depth_2_a_test_configuration = dataclasses.replace(noop_test_configuration)
