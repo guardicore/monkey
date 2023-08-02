@@ -6,7 +6,7 @@ from semver import VersionInfo
 
 from common.base_models import InfectionMonkeyBaseModel
 
-from . import AgentPluginMetadata
+from . import AgentPluginMetadata, AgentPluginType, PluginName
 
 DEVELOPMENT = "development"
 
@@ -29,10 +29,11 @@ class AgentPluginRepositoryIndex(InfectionMonkeyBaseModel):
     compatible_infection_monkey_version: Union[  # type: ignore[valid-type]
         VersionInfo, Literal[f"{DEVELOPMENT}"]
     ]
-    plugins: Dict[str, Dict[str, List[AgentPluginMetadata]]]
+    plugins: Dict[AgentPluginType, Dict[PluginName, List[AgentPluginMetadata]]]
 
     class Config:
         arbitrary_types_allowed = True
+        use_enum_values = True
         json_encoders = {
             **AgentPluginMetadata.Config.json_encoders,
             VersionInfo: lambda v: str(v),
