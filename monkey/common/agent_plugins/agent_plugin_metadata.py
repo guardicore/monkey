@@ -45,4 +45,4 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
         if isinstance(value, str):
             return PurePosixPath(value)
 
-        raise ValueError(f"Expected PurePosixPath or str but got {type(value)}")
+        raise TypeError(f"Expected PurePosixPath or str but got {type(value)}")
