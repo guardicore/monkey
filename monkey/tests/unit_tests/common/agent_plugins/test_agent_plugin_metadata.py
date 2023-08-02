@@ -1,8 +1,6 @@
 from common.agent_plugins import AgentPluginMetadata, AgentPluginType
 
-from .test_agent_plugin_repository_index import PLUGIN_VERSION_1_2_3
-
-PAYLOAD_PLUGIN_NAME = "awesome payload"
+from .test_agent_plugin_repository_index import PAYLOAD_PLUGIN_NAME, PLUGIN_VERSION_1_2_3
 
 PLUGIN_VERSION_1_2_3_SERIALIZED = {
     "name": PAYLOAD_PLUGIN_NAME,

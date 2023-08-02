@@ -6,7 +6,7 @@ from semver import VersionInfo
 
 from common.base_models import InfectionMonkeyBaseModel
 
-from . import AgentPluginType
+from . import AgentPluginType, PluginName
 
 
 class AgentPluginMetadata(InfectionMonkeyBaseModel):
@@ -23,7 +23,7 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
         :param safe: Whether the plugin is safe for use in production environments
     """
 
-    name: str
+    name: PluginName
     type_: AgentPluginType
     resource_path: PurePosixPath
     sha256: str = Field(regex=r"^[0-9a-fA-F]{64}$")

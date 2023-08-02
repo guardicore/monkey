@@ -10,7 +10,7 @@ from common.agent_plugins.agent_plugin_repository_index import (  # type: ignore
     DEVELOPMENT,
 )
 
-PAYLOAD_PLUGIN_NAME = "awesome payload"
+PAYLOAD_PLUGIN_NAME = "awesome_payload"
 
 
 def get_plugin_metadata_with_given_version(version: VersionInfo) -> AgentPluginMetadata:
