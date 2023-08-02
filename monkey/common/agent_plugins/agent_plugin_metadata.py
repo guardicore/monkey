@@ -2,11 +2,10 @@ from pathlib import PurePosixPath
 from typing import Dict, Union
 
 from pydantic import Field, validator
-from semver import VersionInfo
 
 from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 
-from . import AgentPluginType, PluginName
+from . import AgentPluginType, PluginName, PluginVersion
 
 
 class AgentPluginMetadata(InfectionMonkeyBaseModel):
@@ -28,14 +27,14 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
     resource_path: PurePosixPath
     sha256: str = Field(regex=r"^[0-9a-fA-F]{64}$")
     description: str
-    version: VersionInfo
+    version: PluginVersion
     safe: bool
 
     class Config(InfectionMonkeyModelConfig):
         arbitrary_types_allowed = True
         json_encoders = {
             PurePosixPath: lambda path: str(path),
-            VersionInfo: lambda version: version.to_dict(),
+            PluginVersion: lambda version: version.to_dict(),
         }
 
     @validator("resource_path", pre=True)
@@ -49,11 +48,13 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
         raise ValueError(f"Expected PurePosixPath or str but got {type(value)}")
 
     @validator("version", pre=True)
-    def _dict_to_version_info(cls, value: Union[VersionInfo, Dict[str, Union[int, None]]]):
-        if isinstance(value, VersionInfo):
-            return value
+    def _dict_to_version_info(cls, value: Union[PluginVersion, Dict[str, Union[int, None]]]) -> str:
+        # TODO: It's strange that this needs to return strings, otherwise validation fails. This
+        # method is going away anyway, so I won't investigate further.
+        if isinstance(value, PluginVersion):
+            return str(value)
 
         if isinstance(value, dict):
-            return VersionInfo(**value)
+            return str(PluginVersion(**value))
 
-        raise ValueError(f"Expected VersionInfo or dict but got {type(value)}")
+        raise ValueError(f"Expected PluginVersion or dict but got {type(value)}")

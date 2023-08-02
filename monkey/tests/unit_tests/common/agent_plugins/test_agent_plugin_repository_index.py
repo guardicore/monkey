@@ -3,9 +3,13 @@ from pathlib import PurePosixPath
 from typing import Dict, Union
 
 import pytest
-from semver import VersionInfo
 
-from common.agent_plugins import AgentPluginMetadata, AgentPluginRepositoryIndex, AgentPluginType
+from common.agent_plugins import (
+    AgentPluginMetadata,
+    AgentPluginRepositoryIndex,
+    AgentPluginType,
+    PluginVersion,
+)
 from common.agent_plugins.agent_plugin_repository_index import (  # type: ignore[attr-defined]
     DEVELOPMENT,
 )
@@ -13,7 +17,7 @@ from common.agent_plugins.agent_plugin_repository_index import (  # type: ignore
 PAYLOAD_PLUGIN_NAME = "awesome_payload"
 
 
-def get_plugin_metadata_with_given_version(version: VersionInfo) -> AgentPluginMetadata:
+def get_plugin_metadata_with_given_version(version: PluginVersion) -> AgentPluginMetadata:
     return AgentPluginMetadata(
         name=PAYLOAD_PLUGIN_NAME,
         type_=AgentPluginType.PAYLOAD,
@@ -25,12 +29,12 @@ def get_plugin_metadata_with_given_version(version: VersionInfo) -> AgentPluginM
     )
 
 
-PLUGIN_VERSION_1_0_0 = get_plugin_metadata_with_given_version(VersionInfo(1, 0, 0))
-PLUGIN_VERSION_1_0_1 = get_plugin_metadata_with_given_version(VersionInfo(1, 0, 1))
-PLUGIN_VERSION_1_2_0 = get_plugin_metadata_with_given_version(VersionInfo(1, 2, 0))
-PLUGIN_VERSION_1_2_3 = get_plugin_metadata_with_given_version(VersionInfo(1, 2, 3))
-PLUGIN_VERSION_2_0_0 = get_plugin_metadata_with_given_version(VersionInfo(2, 0, 0))
-PLUGIN_VERSION_3_0_1 = get_plugin_metadata_with_given_version(VersionInfo(3, 0, 1))
+PLUGIN_VERSION_1_0_0 = get_plugin_metadata_with_given_version(PluginVersion(1, 0, 0))
+PLUGIN_VERSION_1_0_1 = get_plugin_metadata_with_given_version(PluginVersion(1, 0, 1))
+PLUGIN_VERSION_1_2_0 = get_plugin_metadata_with_given_version(PluginVersion(1, 2, 0))
+PLUGIN_VERSION_1_2_3 = get_plugin_metadata_with_given_version(PluginVersion(1, 2, 3))
+PLUGIN_VERSION_2_0_0 = get_plugin_metadata_with_given_version(PluginVersion(2, 0, 0))
+PLUGIN_VERSION_3_0_1 = get_plugin_metadata_with_given_version(PluginVersion(3, 0, 1))
 PLUGIN_VERSION_3_0_1_SERIALIZED = {
     "name": PAYLOAD_PLUGIN_NAME,
     "type_": AgentPluginType.PAYLOAD.value,
@@ -59,7 +63,7 @@ REPOSITORY_INDEX_PLUGINS_SERIALIZED = {
 
 
 def get_repository_index_with_given_version(
-    version: Union[VersionInfo, str, Dict]
+    version: Union[PluginVersion, str, Dict]
 ) -> AgentPluginRepositoryIndex:
     return AgentPluginRepositoryIndex(
         timestamp=123, compatible_infection_monkey_version=version, plugins=REPOSITORY_INDEX_PLUGINS
@@ -74,7 +78,7 @@ REPOSITORY_INDEX_VERSION_DEVELOPMENT_SERIALIZED = {
 }
 
 
-REPOSITORY_INDEX_VERSION_OBJECT = get_repository_index_with_given_version(VersionInfo(7, 8, 9))
+REPOSITORY_INDEX_VERSION_OBJECT = get_repository_index_with_given_version(PluginVersion(7, 8, 9))
 REPOSITORY_INDEX_VERSION_DICT = get_repository_index_with_given_version(
     {"major": 7, "minor": 8, "patch": 9, "prerelease": None}
 )
