@@ -14,7 +14,12 @@ from flask_security import Security
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
-from common.agent_plugins import AgentPlugin, AgentPluginManifest
+from common.agent_plugins import (
+    AgentPlugin,
+    AgentPluginManifest,
+    AgentPluginMetadata,
+    AgentPluginRepositoryIndex,
+)
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.concurrency import BasicLock
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
@@ -174,3 +179,12 @@ commands.build_download_command_windows_powershell_webclient
 commands.build_download_command_windows_powershell_webrequest
 
 request_cache
+
+# Remove after the plugin interface is in place
+AgentPluginMetadata.resource_path
+AgentPluginMetadata._str_to_pure_posix_path
+AgentPluginMetadata._dict_to_version_info
+AgentPluginRepositoryIndex
+AgentPluginRepositoryIndex.compatible_infection_monkey_version
+AgentPluginRepositoryIndex._dict_to_version_info
+AgentPluginRepositoryIndex._sort_plugins_by_version
