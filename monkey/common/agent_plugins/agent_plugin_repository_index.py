@@ -6,7 +6,7 @@ from semver import VersionInfo
 
 from common.base_models import InfectionMonkeyBaseModel
 
-from . import AgentPluginMetadata, PluginVersion
+from . import AgentPluginMetadata
 
 DEVELOPMENT = "development"
 
@@ -38,14 +38,14 @@ class AgentPluginRepositoryIndex(InfectionMonkeyBaseModel):
         }
 
     @validator("compatible_infection_monkey_version", pre=True)
-    def _dict_to_version_info(cls, value: Union[PluginVersion, str, Dict[str, Any]]):
-        if (isinstance(value, str) and (value == DEVELOPMENT)) or isinstance(value, PluginVersion):
+    def _dict_to_version_info(cls, value: Union[VersionInfo, str, Dict[str, Any]]):
+        if (isinstance(value, str) and (value == DEVELOPMENT)) or isinstance(value, VersionInfo):
             return value
 
         if isinstance(value, dict):
-            return PluginVersion(**value)
+            return VersionInfo(**value)
 
-        raise ValueError(f'Expected "development", PluginVersion, or dict, but got {type(value)}')
+        raise ValueError(f'Expected "development", VersionInfo, or dict, but got {type(value)}')
 
     @validator("plugins")
     def _sort_plugins_by_version(cls, plugins):

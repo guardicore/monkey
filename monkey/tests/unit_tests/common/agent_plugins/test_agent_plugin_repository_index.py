@@ -17,7 +17,7 @@ from common.agent_plugins.agent_plugin_repository_index import (  # type: ignore
 PAYLOAD_PLUGIN_NAME = "awesome_payload"
 
 
-def get_plugin_metadata_with_given_version(version: PluginVersion) -> AgentPluginMetadata:
+def get_plugin_metadata_with_given_version(version: str) -> AgentPluginMetadata:
     return AgentPluginMetadata(
         name=PAYLOAD_PLUGIN_NAME,
         type_=AgentPluginType.PAYLOAD,
@@ -29,19 +29,19 @@ def get_plugin_metadata_with_given_version(version: PluginVersion) -> AgentPlugi
     )
 
 
-PLUGIN_VERSION_1_0_0 = get_plugin_metadata_with_given_version(PluginVersion(1, 0, 0))
-PLUGIN_VERSION_1_0_1 = get_plugin_metadata_with_given_version(PluginVersion(1, 0, 1))
-PLUGIN_VERSION_1_2_0 = get_plugin_metadata_with_given_version(PluginVersion(1, 2, 0))
-PLUGIN_VERSION_1_2_3 = get_plugin_metadata_with_given_version(PluginVersion(1, 2, 3))
-PLUGIN_VERSION_2_0_0 = get_plugin_metadata_with_given_version(PluginVersion(2, 0, 0))
-PLUGIN_VERSION_3_0_1 = get_plugin_metadata_with_given_version(PluginVersion(3, 0, 1))
+PLUGIN_VERSION_1_0_0 = get_plugin_metadata_with_given_version("1.0.0")
+PLUGIN_VERSION_1_0_1 = get_plugin_metadata_with_given_version("1.0.1")
+PLUGIN_VERSION_1_2_0 = get_plugin_metadata_with_given_version("1.2.0")
+PLUGIN_VERSION_1_2_3 = get_plugin_metadata_with_given_version("1.2.3")
+PLUGIN_VERSION_2_0_0 = get_plugin_metadata_with_given_version("2.0.0")
+PLUGIN_VERSION_3_0_1 = get_plugin_metadata_with_given_version("3.0.1")
 PLUGIN_VERSION_3_0_1_SERIALIZED = {
     "name": PAYLOAD_PLUGIN_NAME,
     "type_": AgentPluginType.PAYLOAD.value,
     "resource_path": "/tmp",
     "sha256": "7ac0f5c62a9bcb81af3e9d67a764d7bbd3cce9af7cd26c211f136400ebe703c4",
     "description": "an awesome payload plugin",
-    "version": {"major": 3, "minor": 0, "patch": 1, "prerelease": None, "build": None},
+    "version": "3.0.1",
     "safe": True,
 }
 

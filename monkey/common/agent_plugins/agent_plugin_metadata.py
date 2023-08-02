@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from typing import Dict, Union
+from typing import Union
 
 from pydantic import Field, validator
 
@@ -34,7 +34,7 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
         arbitrary_types_allowed = True
         json_encoders = {
             PurePosixPath: lambda path: str(path),
-            PluginVersion: lambda version: version.to_dict(),
+            PluginVersion: lambda v: str(v),
         }
 
     @validator("resource_path", pre=True)
@@ -46,15 +46,3 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
             return PurePosixPath(value)
 
         raise ValueError(f"Expected PurePosixPath or str but got {type(value)}")
-
-    @validator("version", pre=True)
-    def _dict_to_version_info(cls, value: Union[PluginVersion, Dict[str, Union[int, None]]]) -> str:
-        # TODO: It's strange that this needs to return strings, otherwise validation fails. This
-        # method is going away anyway, so I won't investigate further.
-        if isinstance(value, PluginVersion):
-            return str(value)
-
-        if isinstance(value, dict):
-            return str(PluginVersion(**value))
-
-        raise ValueError(f"Expected PluginVersion or dict but got {type(value)}")

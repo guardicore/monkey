@@ -183,7 +183,6 @@ request_cache
 # Remove after the plugin interface is in place
 AgentPluginMetadata.resource_path
 AgentPluginMetadata._str_to_pure_posix_path
-AgentPluginMetadata._dict_to_version_info
 AgentPluginRepositoryIndex
 AgentPluginRepositoryIndex.compatible_infection_monkey_version
 AgentPluginRepositoryIndex._dict_to_version_info

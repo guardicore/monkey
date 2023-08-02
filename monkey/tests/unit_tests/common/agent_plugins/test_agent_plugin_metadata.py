@@ -8,7 +8,7 @@ PLUGIN_VERSION_1_2_3_SERIALIZED = {
     "resource_path": "/tmp",
     "sha256": "7ac0f5c62a9bcb81af3e9d67a764d7bbd3cce9af7cd26c211f136400ebe703c4",
     "description": "an awesome payload plugin",
-    "version": {"major": 1, "minor": 2, "patch": 3, "prerelease": None, "build": None},
+    "version": "1.2.3",
     "safe": True,
 }
 
