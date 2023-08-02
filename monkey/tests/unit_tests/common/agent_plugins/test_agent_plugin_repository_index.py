@@ -123,9 +123,17 @@ def test_plugins_sorted_by_version():
 
     repository_index = AgentPluginRepositoryIndex(
         compatible_infection_monkey_version="development",
-        plugins={AgentPluginType.PAYLOAD.value: {PAYLOAD_PLUGIN_NAME: UNSORTED_PLUGIN_VERSIONS}},
+        plugins={
+            AgentPluginType.PAYLOAD.value: {PAYLOAD_PLUGIN_NAME: UNSORTED_PLUGIN_VERSIONS},
+            AgentPluginType.EXPLOITER.value: {},
+            AgentPluginType.CREDENTIALS_COLLECTOR.value: {
+                PAYLOAD_PLUGIN_NAME: [PLUGIN_VERSION_1_0_0]
+            },
+        },
     )
 
     assert repository_index.plugins == {
-        AgentPluginType.PAYLOAD.value: {PAYLOAD_PLUGIN_NAME: SORTED_PLUGIN_VERSIONS}
+        AgentPluginType.PAYLOAD.value: {PAYLOAD_PLUGIN_NAME: SORTED_PLUGIN_VERSIONS},
+        AgentPluginType.EXPLOITER.value: {},
+        AgentPluginType.CREDENTIALS_COLLECTOR.value: {PAYLOAD_PLUGIN_NAME: [PLUGIN_VERSION_1_0_0]},
     }
