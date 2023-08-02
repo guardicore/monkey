@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Literal, Union
 from pydantic import Field, validator
 from semver import VersionInfo
 
-from common.base_models import InfectionMonkeyBaseModel
+from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 
 from . import AgentPluginMetadata, AgentPluginType, PluginName
 
@@ -31,7 +31,7 @@ class AgentPluginRepositoryIndex(InfectionMonkeyBaseModel):
     ]
     plugins: Dict[AgentPluginType, Dict[PluginName, List[AgentPluginMetadata]]]
 
-    class Config:
+    class Config(InfectionMonkeyModelConfig):
         arbitrary_types_allowed = True
         use_enum_values = True
         json_encoders = {
