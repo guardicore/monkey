@@ -1,15 +1,10 @@
 import random
 from pathlib import PurePosixPath
-from typing import Dict, Union
 
 import pytest
+from semver import VersionInfo
 
-from common.agent_plugins import (
-    AgentPluginMetadata,
-    AgentPluginRepositoryIndex,
-    AgentPluginType,
-    PluginVersion,
-)
+from common.agent_plugins import AgentPluginMetadata, AgentPluginRepositoryIndex, AgentPluginType
 from common.agent_plugins.agent_plugin_repository_index import (  # type: ignore[attr-defined]
     DEVELOPMENT,
 )
@@ -62,9 +57,7 @@ REPOSITORY_INDEX_PLUGINS_SERIALIZED = {
 }
 
 
-def get_repository_index_with_given_version(
-    version: Union[PluginVersion, str, Dict]
-) -> AgentPluginRepositoryIndex:
+def get_repository_index_with_given_version(version: str) -> AgentPluginRepositoryIndex:
     return AgentPluginRepositoryIndex(
         timestamp=123, compatible_infection_monkey_version=version, plugins=REPOSITORY_INDEX_PLUGINS
     )
@@ -78,19 +71,11 @@ REPOSITORY_INDEX_VERSION_DEVELOPMENT_SERIALIZED = {
 }
 
 
-REPOSITORY_INDEX_VERSION_OBJECT = get_repository_index_with_given_version(PluginVersion(7, 8, 9))
-REPOSITORY_INDEX_VERSION_DICT = get_repository_index_with_given_version(
-    {"major": 7, "minor": 8, "patch": 9, "prerelease": None}
-)
+REPOSITORY_INDEX_VERSION_OBJECT = get_repository_index_with_given_version(VersionInfo(7, 8, 9))
+REPOSITORY_INDEX_VERSION_DICT = get_repository_index_with_given_version("7.8.9")
 REPOSITORY_INDEX_VERSION_SERIALIZED = {
     "timestamp": 123,
-    "compatible_infection_monkey_version": {
-        "major": 7,
-        "minor": 8,
-        "patch": 9,
-        "prerelease": None,
-        "build": None,
-    },
+    "compatible_infection_monkey_version": "7.8.9",
     "plugins": REPOSITORY_INDEX_PLUGINS_SERIALIZED,
 }
 
