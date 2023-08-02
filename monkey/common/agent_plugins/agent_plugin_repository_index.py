@@ -1,7 +1,7 @@
 import time
 from typing import Dict, List, Literal, Union
 
-from pydantic import Field
+from pydantic import Field, validator
 from semver import VersionInfo
 
 from common.base_models import InfectionMonkeyBaseModel
@@ -24,3 +24,13 @@ class AgentPluginRepositoryIndex(InfectionMonkeyBaseModel):
     timestamp: float = Field(default_factory=time.time)
     compatible_infection_monkey_version: Union[VersionInfo, Literal["development"]]
     plugins: Dict[AgentPluginType, Dict[str, List[AgentPluginMetadata]]]
+
+    @validator("plugins")
+    def sort_plugins_by_version(cls, plugins):
+        # if a plugin has multiple versions, this sorts them in ascending order
+        for plugin_type in plugins:
+            for plugin_name in plugins[plugin_type]:
+                plugin_versions = plugins[plugin_type][plugin_name]
+                plugin_versions.sort(lambda plugin_version: plugin_version.version)
+
+        return plugins
