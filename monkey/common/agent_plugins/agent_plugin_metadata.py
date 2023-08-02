@@ -4,7 +4,7 @@ from typing import Dict, Union
 from pydantic import Field, validator
 from semver import VersionInfo
 
-from common.base_models import InfectionMonkeyBaseModel
+from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 
 from . import AgentPluginType, PluginName
 
@@ -31,7 +31,7 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
     version: VersionInfo
     safe: bool
 
-    class Config:
+    class Config(InfectionMonkeyModelConfig):
         arbitrary_types_allowed = True
         json_encoders = {
             PurePosixPath: lambda path: str(path),
