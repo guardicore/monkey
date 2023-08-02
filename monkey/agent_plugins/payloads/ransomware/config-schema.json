@@ -3,7 +3,7 @@
         "file_extension": {
             "title": "File extension",
             "type": "string",
-            "pattern": "^(\\.[A-Za-z0-9_]+)*$",
+            "pattern": "^(\\.[A-Za-z0-9_]+)?$",
             "description": "The file extension that the Infection Monkey will use for the encrypted file.",
             "default": ".m0nk3y"
         },

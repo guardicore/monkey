@@ -24,6 +24,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - Island mode configuration. #3400
 
+### Security
+- Fixed a ReDoS issue when validating ransomware file extensions. #3391
+
 ## [2.2.1 - 2023-06-21]
 
 ### Fixed

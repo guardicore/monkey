@@ -5,7 +5,7 @@ from pydantic import ConstrainedStr, Field
 
 from common.base_models import InfectionMonkeyBaseModel
 
-valid_file_extension_regex = re.compile(r"^(\.[A-Za-z0-9_]+)*$")  # TODO: # noqa: DUO138
+valid_file_extension_regex = re.compile(r"^(\.[A-Za-z0-9_]+)?$")
 
 _empty_regex = re.compile("^$")
 
