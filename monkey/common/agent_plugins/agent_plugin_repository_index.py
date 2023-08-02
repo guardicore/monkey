@@ -1,12 +1,14 @@
 import time
-from typing import Dict, List, Literal, Union
+from typing import Any, Dict, List, Literal, Union
 
 from pydantic import Field, validator
 from semver import VersionInfo
 
 from common.base_models import InfectionMonkeyBaseModel
 
-from . import AgentPluginMetadata, AgentPluginType
+from . import AgentPluginMetadata
+
+DEVELOPMENT = "development"
 
 
 class AgentPluginRepositoryIndex(InfectionMonkeyBaseModel):
@@ -22,14 +24,32 @@ class AgentPluginRepositoryIndex(InfectionMonkeyBaseModel):
     """
 
     timestamp: float = Field(default_factory=time.time)
-    compatible_infection_monkey_version: Union[VersionInfo, Literal["development"]]
-    plugins: Dict[AgentPluginType, Dict[str, List[AgentPluginMetadata]]]
+    # We can't simply use `DEVELOPMENT` here because it throws `pydantic.errors.ConfigError`.
+    # This workaround requires us to ignore a mypy error.
+    compatible_infection_monkey_version: Union[  # type: ignore[valid-type]
+        VersionInfo, Literal[f"{DEVELOPMENT}"], Dict[str, Any]
+    ]
+    plugins: Dict[str, Dict[str, List[AgentPluginMetadata]]]
 
     class Config:
         arbitrary_types_allowed = True
+        json_encoders = {
+            VersionInfo: lambda version: version.to_dict(),
+            **AgentPluginMetadata.Config.json_encoders,
+        }
+
+    @validator("compatible_infection_monkey_version", pre=True)
+    def _dict_to_version_info(cls, value: Union[VersionInfo, str, Dict[str, Any]]):
+        if (isinstance(value, str) and (value == DEVELOPMENT)) or isinstance(value, VersionInfo):
+            return value
+
+        if isinstance(value, dict):
+            return VersionInfo(**value)
+
+        raise ValueError(f'Expected "development", VersionInfo, or dict, but got {type(value)}')
 
     @validator("plugins")
-    def sort_plugins_by_version(cls, plugins):
+    def _sort_plugins_by_version(cls, plugins):
         # if a plugin has multiple versions, this sorts them in ascending order
         for plugin_type in plugins:
             for plugin_name in plugins[plugin_type]:
