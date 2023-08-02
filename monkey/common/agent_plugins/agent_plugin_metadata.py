@@ -1,5 +1,5 @@
 from pathlib import PurePosixPath
-from typing import Union
+from typing import Any, Callable, Dict, Type, Union
 
 from pydantic import Field, validator
 
@@ -32,7 +32,7 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
 
     class Config(InfectionMonkeyModelConfig):
         arbitrary_types_allowed = True
-        json_encoders = {
+        json_encoders: Dict[Type, Callable[[Any], Any]] = {
             PurePosixPath: lambda path: str(path),
             PluginVersion: lambda v: str(v),
         }
