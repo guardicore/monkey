@@ -34,7 +34,6 @@ class AgentPluginRepositoryIndex(InfectionMonkeyBaseModel):
     class Config:
         arbitrary_types_allowed = True
         json_encoders = {
-            VersionInfo: lambda version: version.to_dict(),
             **AgentPluginMetadata.Config.json_encoders,
         }
 
