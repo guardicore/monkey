@@ -29,3 +29,6 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
     description: str
     version: VersionInfo
     safe: bool
+
+    class Config:
+        arbitrary_types_allowed = True

@@ -25,12 +25,15 @@ class AgentPluginRepositoryIndex(InfectionMonkeyBaseModel):
     compatible_infection_monkey_version: Union[VersionInfo, Literal["development"]]
     plugins: Dict[AgentPluginType, Dict[str, List[AgentPluginMetadata]]]
 
+    class Config:
+        arbitrary_types_allowed = True
+
     @validator("plugins")
     def sort_plugins_by_version(cls, plugins):
         # if a plugin has multiple versions, this sorts them in ascending order
         for plugin_type in plugins:
             for plugin_name in plugins[plugin_type]:
                 plugin_versions = plugins[plugin_type][plugin_name]
-                plugin_versions.sort(lambda plugin_version: plugin_version.version)
+                plugin_versions.sort(key=lambda plugin_version: plugin_version.version)
 
         return plugins
