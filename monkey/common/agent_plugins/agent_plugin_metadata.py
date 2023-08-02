@@ -15,7 +15,7 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
     Attributes:
         :param name: Plugin name
         :param type: Plugin type
-        :param resource_path: Path of the plugin file in the AWS S3 bucket
+        :param resource_path: Path of the plugin package withint the repository
         :param sha256: Plugin file checksum
         :param description: Plugin description
         :param version: Plugin version
