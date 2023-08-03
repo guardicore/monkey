@@ -19,6 +19,7 @@ source "$SCRIPT_DIR/util.sh"
 plugin_filename=$(get_plugin_filename "$SCRIPT_DIR/$PLUGIN_PATH") || fail "Failed to get plugin filename: $plugin_filename"
 
 DOCKER_COMMANDS="
+PATH=\$HOME/.cargo/bin:\$PATH &&
 cd /plugins &&
 bash build_plugin.sh \"${PLUGIN_PATH}\" &&
 chown ${UID}:${GID} \"/plugins/${PLUGIN_PATH}/$plugin_filename\"
@@ -29,4 +30,4 @@ docker run \
     --rm \
     -v "$SCRIPT_DIR:/plugins" \
     infectionmonkey/agent-builder:$TAG \
-    /bin/bash -ci "$DOCKER_COMMANDS" | ts  '[%Y-%m-%d %H:%M:%S]'
+    /bin/bash -c "$DOCKER_COMMANDS" | ts  '[%Y-%m-%d %H:%M:%S]'
