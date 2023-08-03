@@ -15,3 +15,12 @@
         groups:
           - Administrators
           - "Remote Desktop Users"
+
+    - name: Change the hostname to rdp-65
+      ansible.windows.win_hostname:
+        name: rdp-65
+      register: res
+
+    - name: Reboot
+      ansible.windows.win_reboot:
+      when: res.reboot_required
