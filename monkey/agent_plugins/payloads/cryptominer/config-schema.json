@@ -1,0 +1,33 @@
+{
+    "properties": {
+        "simulation_time": {
+            "title": "Simulation time",
+            "type": "number",
+            "description": "The time (in seconds) for which the cryptomining simulation should run on each machine",
+            "default": 0,
+            "minimum": 0
+        },
+        "cpu_utilization": {
+            "title": "CPU utilization",
+            "type": "integer",
+            "description": "The percentage of CPU to use on a machine",
+            "default": 20,
+            "minimum": 0,
+            "maximum": 100
+        },
+        "memory_utilization": {
+            "title": "Memory utilization",
+            "type": "integer",
+            "description": "The percentage of memory to use on a machine",
+            "default": 20,
+            "minimum": 0,
+            "maximum": 100
+        },
+        "send_dummy_request": {
+            "title": "Send dummy cryptomining request",
+            "type": "boolean",
+            "description": "If enabled, the Agent will send a request with the method `getblocktemplate` to the Island.",
+            "default": false
+        }
+    }
+}
