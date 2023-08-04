@@ -45,7 +45,7 @@ def test_ransomware_options__default():
 )
 def test_ransomware_options__invalid_file_extension(file_extension: str):
     with pytest.raises(ValueError):
-        RansomwareOptions(encryption=RansomwareOptions(file_extension=file_extension))
+        RansomwareOptions(file_extension=file_extension)
 
 
 @pytest.mark.parametrize(
@@ -53,7 +53,7 @@ def test_ransomware_options__invalid_file_extension(file_extension: str):
 )
 def test_ransomware_options__invalid_windows_target_dir(windows_target_dir: str):
     with pytest.raises(ValueError):
-        RansomwareOptions(encryption=RansomwareOptions(windows_target_dir=windows_target_dir))
+        RansomwareOptions(windows_target_dir=windows_target_dir)
 
 
 @pytest.mark.parametrize(
@@ -62,4 +62,4 @@ def test_ransomware_options__invalid_windows_target_dir(windows_target_dir: str)
 )
 def test_ransomware_options__invalid_linux_target_dir(linux_target_dir: str):
     with pytest.raises(ValueError):
-        RansomwareOptions(encryption=RansomwareOptions(linux_target_dir=linux_target_dir))
+        RansomwareOptions(linux_target_dir=linux_target_dir)
