@@ -1,0 +1,33 @@
+{
+    "properties": {
+        "duration": {
+            "title": "Duration",
+            "type": "number",
+            "description": "The duration (in seconds) for which the cryptojacking simulation should run on each machine",
+            "default": 300,
+            "minimum": 0
+        },
+        "cpu_utilization": {
+            "title": "CPU utilization",
+            "type": "integer",
+            "description": "The percentage of CPU to use on a machine",
+            "default": 80,
+            "minimum": 0,
+            "maximum": 100
+        },
+        "memory_utilization": {
+            "title": "Memory utilization",
+            "type": "integer",
+            "description": "The percentage of memory to use on a machine",
+            "default": 20,
+            "minimum": 0,
+            "maximum": 100
+        },
+        "simulate_bitcoin_mining_network_traffic": {
+            "title": "Simulate Bitcoin mining network traffic",
+            "type": "boolean",
+            "description": "If enabled, the Agent will periodically send requests used in Bitcoin mining over the network.",
+            "default": false
+        }
+    }
+}
