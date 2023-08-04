@@ -23,10 +23,10 @@
             "minimum": 0,
             "maximum": 100
         },
-        "send_dummy_request": {
-            "title": "Send dummy cryptomining request",
+        "simulate_bitcoin_mining_network_traffic": {
+            "title": "Simulate Bitcoin mining network traffic",
             "type": "boolean",
-            "description": "If enabled, the Agent will send a request with the method `getblocktemplate` to the Island.",
+            "description": "If enabled, the Agent will periodically send requests used in Bitcoin mining over the network.",
             "default": false
         }
     }

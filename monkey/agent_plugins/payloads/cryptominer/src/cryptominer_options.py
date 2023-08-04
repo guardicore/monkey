@@ -21,9 +21,9 @@ class CryptominerOptions(InfectionMonkeyBaseModel):
         description="The percentage of memory to use on a machine",
         default=20,
     )
-    send_dummy_request: bool = Field(
-        title="Send dummy cryptomining request",
+    simulate_bitcoin_mining_network_traffic: bool = Field(
+        title="Simulate Bitcoin mining network traffic",
         default=False,
-        description="If enabled, the Agent will send a request with the method `getblocktemplate`"
-        " to the Island",
+        description="If enabled, the Agent will periodically send requests used in Bitcoin mining"
+        " over the network.",
     )
