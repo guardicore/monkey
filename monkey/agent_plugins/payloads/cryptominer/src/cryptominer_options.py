@@ -8,7 +8,7 @@ class CryptominerOptions(InfectionMonkeyBaseModel):
         title="Simulation time",
         description="The time (in seconds) for which the cryptomining simulation should run"
         " on each machine",
-        default=0,
+        default=300,  # 5 minutes
         ge=0,
     )
     cpu_utilization: conint(ge=0, le=100) = Field(  # type: ignore[valid-type]

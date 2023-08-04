@@ -4,7 +4,7 @@
             "title": "Simulation time",
             "type": "number",
             "description": "The time (in seconds) for which the cryptomining simulation should run on each machine",
-            "default": 0,
+            "default": 300,
             "minimum": 0
         },
         "cpu_utilization": {
