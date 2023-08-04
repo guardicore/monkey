@@ -31,6 +31,7 @@ from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFirewall
 from infection_monkey.utils import commands
 from infection_monkey.utils.decorators import request_cache
+from monkey.common.types import Percent
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
@@ -188,3 +189,6 @@ AgentPluginRepositoryIndex.compatible_infection_monkey_version
 AgentPluginRepositoryIndex._infection_monkey_version_parser
 AgentPluginRepositoryIndex._sort_plugins_by_version
 AgentPluginRepositoryIndex.use_enum_values
+
+# Remove when cryptojacker is completed
+Percent.as_decimal_fraction
