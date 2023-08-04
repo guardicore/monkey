@@ -11,6 +11,8 @@ class Percent(NonNegativeFloat):
     (if quotas aren't strictly enforced).
     """
 
+    # This __init__() is required so that instances of Percent can be created. If you try to create
+    # an instance of NonNegativeFloat, no validation is performed.
     def __init__(self, v: Any):
         Percent._validate_range(v)
 
@@ -25,6 +27,8 @@ class Percent(NonNegativeFloat):
     def validate(cls, v: Any) -> Self:
         cls._validate_range(v)
 
+        # This is required so that floats passed into pydantic models are converted to instances of
+        # Percent objects.
         return cls(v)
 
     @staticmethod
@@ -41,3 +45,24 @@ class Percent(NonNegativeFloat):
         return: The percentage as a decimal fraction
         """
         return self / 100.0
+
+
+class PercentLimited(Percent):
+    """
+    A type representing a percentage limited to 100
+    """
+
+    le = 100
+
+    def __init__(self, v: Any):
+        PercentLimited._validate_range(v)
+
+    @classmethod
+    def __get_validators__(cls):
+        for v in super().__get_validators__():
+            yield v
+
+    @staticmethod
+    def _validate_range(v: Any):
+        if not (0.0 <= v <= 100.0):
+            raise ValueError("value must be between 0 and 100")
