@@ -4,9 +4,9 @@ from common.base_models import InfectionMonkeyBaseModel
 
 
 class CryptominerOptions(InfectionMonkeyBaseModel):
-    simulation_time: float = Field(
-        title="Simulation time",
-        description="The time (in seconds) for which the cryptomining simulation should run"
+    duration: float = Field(
+        title="Duration",
+        description="The duration (in seconds) for which the cryptomining simulation should run"
         " on each machine",
         default=300,  # 5 minutes
         ge=0,

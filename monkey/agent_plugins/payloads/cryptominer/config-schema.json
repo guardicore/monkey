@@ -1,9 +1,9 @@
 {
     "properties": {
-        "simulation_time": {
-            "title": "Simulation time",
+        "duration": {
+            "title": "Duration",
             "type": "number",
-            "description": "The time (in seconds) for which the cryptomining simulation should run on each machine",
+            "description": "The duration (in seconds) for which the cryptomining simulation should run on each machine",
             "default": 300,
             "minimum": 0
         },
