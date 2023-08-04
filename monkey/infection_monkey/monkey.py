@@ -430,7 +430,7 @@ class InfectionMonkey:
                 create_plugin,
             ),
             AgentPluginType.PAYLOAD: PayloadPluginFactory(
-                self._agent_id, self._agent_event_publisher, create_plugin
+                self._agent_id, self._agent_event_publisher, self._island_address, create_plugin
             ),
         }
         plugin_registry = PluginRegistry(
