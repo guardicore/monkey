@@ -3,10 +3,10 @@ from pydantic import Field, conint
 from common.base_models import InfectionMonkeyBaseModel
 
 
-class CryptominerOptions(InfectionMonkeyBaseModel):
+class CryptojackerOptions(InfectionMonkeyBaseModel):
     duration: float = Field(
         title="Duration",
-        description="The duration (in seconds) for which the cryptomining simulation should run"
+        description="The duration (in seconds) for which the cryptojacking simulation should run"
         " on each machine",
         default=300,  # 5 minutes
         ge=0,
