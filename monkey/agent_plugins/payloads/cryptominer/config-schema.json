@@ -11,7 +11,7 @@
             "title": "CPU utilization",
             "type": "integer",
             "description": "The percentage of CPU to use on a machine",
-            "default": 20,
+            "default": 80,
             "minimum": 0,
             "maximum": 100
         },

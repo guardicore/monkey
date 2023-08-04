@@ -14,7 +14,7 @@ class CryptominerOptions(InfectionMonkeyBaseModel):
     cpu_utilization: conint(ge=0, le=100) = Field(  # type: ignore[valid-type]
         title="CPU utilization",
         description="The percentage of CPU to use on a machine",
-        default=20,
+        default=80,
     )
     memory_utilization: conint(ge=0, le=100) = Field(  # type: ignore[valid-type]
         title="Memory utilization",
