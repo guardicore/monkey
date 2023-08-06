@@ -1,6 +1,7 @@
-from pydantic import Field, conint
+from pydantic import Field
 
 from common.base_models import InfectionMonkeyBaseModel
+from common.types import PercentLimited
 
 
 class CryptojackerOptions(InfectionMonkeyBaseModel):
@@ -11,12 +12,12 @@ class CryptojackerOptions(InfectionMonkeyBaseModel):
         default=300,  # 5 minutes
         ge=0,
     )
-    cpu_utilization: conint(ge=0, le=100) = Field(  # type: ignore[valid-type]
+    cpu_utilization: PercentLimited = Field(  # type: ignore[valid-type]
         title="CPU utilization",
         description="The percentage of CPU to use on a machine",
         default=80,
     )
-    memory_utilization: conint(ge=0, le=100) = Field(  # type: ignore[valid-type]
+    memory_utilization: PercentLimited = Field(  # type: ignore[valid-type]
         title="Memory utilization",
         description="The percentage of memory to use on a machine",
         default=20,
