@@ -13,7 +13,12 @@ from flask_security import Security
 
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
-from common.agent_events import AbstractAgentEvent, CPUConsumptionEvent, FileEncryptionEvent
+from common.agent_events import (
+    AbstractAgentEvent,
+    CPUConsumptionEvent,
+    FileEncryptionEvent,
+    RAMConsumptionEvent,
+)
 from common.agent_plugins import (
     AgentPlugin,
     AgentPluginManifest,
@@ -195,3 +200,6 @@ Percent.as_decimal_fraction
 CPUConsumptionEvent
 CPUConsumptionEvent.utilization
 CPUConsumptionEvent.cpu_number
+RAMConsumptionEvent
+RAMConsumptionEvent.utilization
+RAMConsumptionEvent.bytes
