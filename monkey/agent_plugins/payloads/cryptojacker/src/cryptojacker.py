@@ -1,5 +1,8 @@
 import logging
 import threading
+import time
+
+from egg_timer import EggTimer
 
 from common.event_queue import IAgentEventQueue
 from common.tags import RESOURCE_HIJACKING_T1496_TAG
@@ -19,6 +22,7 @@ CRYPTOJACKER_PAYLOAD_TAG = "cryptojacker-payload"
 CRYPTOJACKER_TAGS = frozenset({CRYPTOJACKER_PAYLOAD_TAG, RESOURCE_HIJACKING_T1496_TAG})
 
 THREAD_JOIN_TIMEOUT = 2  # seconds
+CHECK_DURATION_TIMER_INTERVAL = 5  # seconds
 
 
 class Cryptojacker:
@@ -41,19 +45,31 @@ class Cryptojacker:
         self._island_server_address = island_server_address
 
     def run(self, interrupt: threading.Event):
+        should_utilize_cpu = threading.Event()
         cpu_utilization_thread = create_daemon_thread(
             target=self._utilize_cpu,
             name="CPUUtilizationThread",
-            args=(interrupt),
+            args=(should_utilize_cpu),
         )
 
+        should_utilize_memory = threading.Event()
         memory_utilization_thread = create_daemon_thread(
             target=self._utilize_memory,
             name="MemoryUtilizationThread",
-            args=(interrupt),
+            args=(should_utilize_memory),
+        )
+
+        should_send_bitcoin_mining_network_traffic = threading.Event()
+        bitcoin_mining_network_traffic_thread = create_daemon_thread(
+            target=self._send_bitcoin_mining_network_traffic,
+            name="BitcoinMiningNetworkTrafficThread",
+            args=(should_send_bitcoin_mining_network_traffic),
         )
 
         logger.info("Running cryptojacker payload")
+
+        timer = EggTimer()
+        timer.set(self._options.duration)
 
         logger.info("Utilizing CPU")
         cpu_utilization_thread.start()
@@ -62,37 +78,49 @@ class Cryptojacker:
         memory_utilization_thread.start()
 
         if self._options.simulate_bitcoin_mining_network_traffic:
-            self._send_bitcoin_mining_network_traffic(interrupt)
+            logger.info("Sending Bitcoin mining network traffic")
+            bitcoin_mining_network_traffic_thread.start()
 
-        logger.info("Waiting for CPU utilization thread to stop")
+        while not timer.is_expired() and not interrupt.is_set():
+            time.sleep(CHECK_DURATION_TIMER_INTERVAL)
+
+        if bitcoin_mining_network_traffic_thread.is_alive():
+            logger.info("Stopping Bitcoin mining network traffic")
+            should_send_bitcoin_mining_network_traffic.set()
+            bitcoin_mining_network_traffic_thread.join(THREAD_JOIN_TIMEOUT)
+            if bitcoin_mining_network_traffic_thread.is_alive():
+                logger.info(
+                    "Timed out while waiting for Bitcoin mining network traffic thread to stop, "
+                    "it will be stopped forcefully when the parent process terminates"
+                )
+
+        logger.info("Stopping CPU utilization")
+        should_utilize_cpu.set()
         cpu_utilization_thread.join(THREAD_JOIN_TIMEOUT)
         if cpu_utilization_thread.is_alive():
             logger.info(
-                "Timed out while waiting for CPU utilization thread to stop, forcefully killing it"
+                "Timed out while waiting for CPU utilization thread to stop, "
+                "it will be stopped forcefully when the parent process terminates"
             )
 
-        logger.info("Waiting for memory utilization thread to stop")
+        logger.info("Stopping memory utilization")
+        should_utilize_memory.set()
         memory_utilization_thread.join(THREAD_JOIN_TIMEOUT)
         if memory_utilization_thread.is_alive():
             logger.info(
                 "Timed out while waiting for memory utilization thread to stop, "
-                "forcefully killing it"
+                "it will be stopped forcefully when the parent process terminates"
             )
 
-    def _send_bitcoin_mining_network_traffic(self, interrupt: threading.Event):
-        while True:  # TODO: Check simulation duration
-            if interrupt.is_set():
-                logger.debug("Received a stop signal, stopping Bitcoin mining network traffic")
-                break
-
+    def _send_bitcoin_mining_network_traffic(
+        self, should_send_bitcoin_mining_network_traffic: threading.Event
+    ):
+        while not should_send_bitcoin_mining_network_traffic.is_set():
             try:
-                logger.debug("Sending Bitcoin mining network traffic")
-
                 self._simulate_bitcoin_mining_network_traffic(self._island_server_address)
                 self._publish_some_event(success=True, error="")
             except Exception as err:
                 logger.warning(f"Error sending Bitcoing mining network traffic: {err}")
-
                 self._publish_some_event(success=False, error=str(err))
 
     # TODO: Replace with actual event
@@ -104,6 +132,6 @@ class Cryptojacker:
             source=self._agent_id,
             success=success,
             error_message=error,
-            tags=CRYPTOJACKER_TAGS,
+            tags=frozenset({CRYPTOJACKER_PAYLOAD_TAG}),
         )
         self._agent_event_queue.publish(some_event)
