@@ -11,6 +11,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Ability to filter Agent events by tag. #3396
 - Provide a server to the plugins that can be used to serve agent binaries to
   the exploited machine over HTTP. #3410
+- CPUConsumptionEvent. #3411
 
 ### Changed
 - Plugin source is now gzipped. #3392

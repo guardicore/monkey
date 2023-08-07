@@ -13,7 +13,7 @@ from flask_security import Security
 
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
-from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
+from common.agent_events import AbstractAgentEvent, CPUConsumptionEvent, FileEncryptionEvent
 from common.agent_plugins import (
     AgentPlugin,
     AgentPluginManifest,
@@ -192,3 +192,6 @@ AgentPluginRepositoryIndex.use_enum_values
 
 # Remove when cryptojacker is completed
 Percent.as_decimal_fraction
+CPUConsumptionEvent
+CPUConsumptionEvent.utilization
+CPUConsumptionEvent.cpu_number
