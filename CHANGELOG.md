@@ -13,6 +13,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   the exploited machine over HTTP. #3410
 - CPUConsumptionEvent. #3411
 - RAMConsumptionEvent. #3411
+- HTTPRequestEvent. #3411
 
 ### Changed
 - Plugin source is now gzipped. #3392

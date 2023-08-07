@@ -13,3 +13,4 @@ from .hostname_discovery_event import HostnameDiscoveryEvent
 from .register import register_common_agent_events
 from .cpu_consumption_event import CPUConsumptionEvent
 from .ram_consumption_event import RAMConsumptionEvent
+from .http_request_event import HTTPRequestEvent

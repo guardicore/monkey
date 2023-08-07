@@ -17,6 +17,7 @@ from common.agent_events import (
     AbstractAgentEvent,
     CPUConsumptionEvent,
     FileEncryptionEvent,
+    HTTPRequestEvent,
     RAMConsumptionEvent,
 )
 from common.agent_plugins import (
@@ -203,3 +204,6 @@ CPUConsumptionEvent.cpu_number
 RAMConsumptionEvent
 RAMConsumptionEvent.utilization
 RAMConsumptionEvent.bytes
+HTTPRequestEvent
+HTTPRequestEvent.method
+HTTPRequestEvent.url
