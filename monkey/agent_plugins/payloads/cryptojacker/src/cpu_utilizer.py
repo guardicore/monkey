@@ -3,13 +3,12 @@ import logging
 from typing import Optional
 import threading
 from random import randbytes  # noqa: DUO102 (this isn't for cryptographic use)
+from typing import Optional
 
 import psutil
 
 from common.types import PercentLimited
 from infection_monkey.utils.threading import create_daemon_thread
-
-from .cryptojacker import THREAD_JOIN_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +93,7 @@ class CPUUtilizer:
 
         self._should_stop_cpu_utilization.set()
 
-        self._cpu_utilizer_thread.join(THREAD_JOIN_TIMEOUT)
+        self._cpu_utilizer_thread.join(timeout)
         if self._cpu_utilizer_thread.is_alive():
             logger.info(
                 "Timed out while waiting for CPU utilization thread to stop, "
