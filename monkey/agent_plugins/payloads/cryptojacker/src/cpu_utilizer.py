@@ -96,7 +96,7 @@ class CPUUtilizer:
 
         self._cpu_utilizer_thread.join(timeout)
         if self._cpu_utilizer_thread.is_alive():
-            logger.info(
+            logger.warning(
                 "Timed out while waiting for CPU utilization thread to stop, "
                 "it will be stopped forcefully when the parent process terminates"
             )
