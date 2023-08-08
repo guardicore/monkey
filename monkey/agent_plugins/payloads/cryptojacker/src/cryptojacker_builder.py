@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 def build_cryptojacker(
+    options: CryptojackerOptions,
     agent_id: AgentID,
     agent_event_queue: IAgentEventQueue,
-    options: CryptojackerOptions,
     island_server_address: SocketAddress,
 ):
     logger.debug(f"Cryptojacker configuration:\n{pformat(options)}")
@@ -30,8 +30,8 @@ def build_cryptojacker(
         utilize_cpu=cpu_utilizer,
         utilize_memory=memory_utilizer,
         simulate_bitcoin_mining_network_traffic=bitcoin_mining_network_traffic_simulator,
-        agent_event_queue=agent_event_queue,
         agent_id=agent_id,
+        agent_event_queue=agent_event_queue,
         island_server_address=island_server_address,
     )
 

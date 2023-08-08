@@ -48,10 +48,10 @@ class Plugin:
 
         try:
             cryptojacker = build_cryptojacker(
-                self._agent_id,
-                self._agent_event_publisher,
-                cryptojacker_options,
-                self._island_server_address,
+                options=cryptojacker_options,
+                agent_id=self._agent_id,
+                agent_event_queue=self._agent_event_publisher,
+                island_server_address=self._island_server_address,
             )
         except Exception as err:
             msg = f"An unexpected error occurred while building the cryptojacker payload: {err}"
