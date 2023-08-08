@@ -3,6 +3,7 @@ from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
 from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
 from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
+from agent_plugins.payloads.cryptojacker.src import cpu_utilizer, cryptojacker, memory_utilizer
 from agent_plugins.payloads.ransomware.src.ransomware_options import (
     EncryptionBehavior,
     RansomwareOptions,
@@ -29,6 +30,7 @@ from common.agent_plugins import (
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.concurrency import BasicLock
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
+from common.tags import attack
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
@@ -207,3 +209,7 @@ RAMConsumptionEvent.bytes
 HTTPRequestEvent
 HTTPRequestEvent.method
 HTTPRequestEvent.url
+cpu_utilizer._cpu_utilization
+memory_utilizer._memory_utilization
+cryptojacker.CRYPTOJACKER_PAYLOAD_TAG
+attack.RESOURCE_HIJACKING_T1496_TAG
