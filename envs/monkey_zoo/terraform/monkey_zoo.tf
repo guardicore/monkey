@@ -2,7 +2,8 @@
 // Local variables
 locals {
   default_ubuntu  = google_compute_instance_template.ubuntu16.self_link
-  default_windows = google_compute_instance_template.windows2016.self_link
+  windows_2012 = google_compute_instance_template.windows2012.self_link
+  windows_2016 = google_compute_instance_template.windows2016.self_link
 }
 
 // Network
@@ -106,7 +107,7 @@ resource "google_compute_instance_from_template" "hadoop-2" {
 
 resource "google_compute_instance_from_template" "hadoop-3" {
   name                     = "${local.resource_prefix}hadoop-3"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-custom-4-8192"
   boot_disk {
     initialize_params {
@@ -190,7 +191,7 @@ resource "google_compute_instance_from_template" "tunneling-11" {
 
 resource "google_compute_instance_from_template" "tunneling-12" {
   name                     = "${local.resource_prefix}tunneling-12"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-highcpu-4"
   boot_disk {
     initialize_params {
@@ -266,7 +267,7 @@ resource "google_compute_instance_from_template" "sshkeys-12" {
 
 resource "google_compute_instance_from_template" "rdp-64" {
   name                     = "${local.resource_prefix}rdp-64"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-highcpu-4"
   boot_disk{
     initialize_params {
@@ -285,7 +286,7 @@ resource "google_compute_instance_from_template" "rdp-64" {
 
 resource "google_compute_instance_from_template" "rdp-65" {
   name                     = "${local.resource_prefix}rdp-65"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2012
   machine_type             = "e2-highcpu-4"
   boot_disk{
     initialize_params {
@@ -306,7 +307,7 @@ resource "google_compute_instance_from_template" "rdp-65" {
 
 resource "google_compute_instance_from_template" "mimikatz-14" {
   name                     = "${local.resource_prefix}mimikatz-14"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   boot_disk {
     initialize_params {
       image = data.google_compute_image.mimikatz-14.self_link
@@ -324,7 +325,7 @@ resource "google_compute_instance_from_template" "mimikatz-14" {
 
 resource "google_compute_instance_from_template" "mimikatz-15" {
   name                     = "${local.resource_prefix}mimikatz-15"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   boot_disk {
     initialize_params {
       image = data.google_compute_image.mimikatz-15.self_link
@@ -342,7 +343,7 @@ resource "google_compute_instance_from_template" "mimikatz-15" {
 
 resource "google_compute_instance_from_template" "mssql-16" {
   name                     = "${local.resource_prefix}mssql-16"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-highcpu-4"
   boot_disk {
     initialize_params {
@@ -385,7 +386,7 @@ resource "google_compute_instance" "snmp-20" {
 
 resource "google_compute_instance_from_template" "powershell-3-48" {
   name                     = "${local.resource_prefix}powershell-3-48"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-highcpu-4"
   zone                     = "europe-west1-b"
   boot_disk {
@@ -406,7 +407,7 @@ resource "google_compute_instance_from_template" "powershell-3-48" {
 
 resource "google_compute_instance_from_template" "powershell-3-47" {
   name                     = "${local.resource_prefix}powershell-3-47"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-highcpu-4"
   zone                     = "europe-west1-b"
   boot_disk {
@@ -427,7 +428,7 @@ resource "google_compute_instance_from_template" "powershell-3-47" {
 
 resource "google_compute_instance_from_template" "powershell-3-46" {
   name                     = "${local.resource_prefix}powershell-3-46"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-highcpu-4"
   zone                     = "europe-west1-b"
   boot_disk {
@@ -448,7 +449,7 @@ resource "google_compute_instance_from_template" "powershell-3-46" {
 
 resource "google_compute_instance_from_template" "powershell-3-44" {
   name                     = "${local.resource_prefix}powershell-3-44"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-highcpu-4"
   zone                     = "europe-west1-b"
   boot_disk {
@@ -469,7 +470,7 @@ resource "google_compute_instance_from_template" "powershell-3-44" {
 
 resource "google_compute_instance_from_template" "powershell-3-45" {
   name                     = "${local.resource_prefix}powershell-3-45"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-highcpu-4"
   zone                     = "europe-west1-b"
   boot_disk {
@@ -601,7 +602,7 @@ resource "google_compute_instance_from_template" "log4j-solr-49" {
 
 resource "google_compute_instance_from_template" "log4j-solr-50" {
   name                     = "${local.resource_prefix}log4j-solr-50"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-standard-4"
   zone                     = "europe-west1-b"
   boot_disk {
@@ -641,7 +642,7 @@ resource "google_compute_instance_from_template" "log4j-tomcat-51" {
 
 resource "google_compute_instance_from_template" "log4j-tomcat-52" {
   name                     = "${local.resource_prefix}log4j-tomcat-52"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-highcpu-4"
   zone                     = "europe-west1-b"
   boot_disk {
@@ -681,7 +682,7 @@ resource "google_compute_instance_from_template" "log4j-logstash-55" {
 
 resource "google_compute_instance_from_template" "log4j-logstash-56" {
   name                     = "${local.resource_prefix}log4j-logstash-56"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-highcpu-4"
   zone                     = "europe-west1-b"
   boot_disk {
@@ -701,7 +702,7 @@ resource "google_compute_instance_from_template" "log4j-logstash-56" {
 
 resource "google_compute_instance_from_template" "zerologon-25" {
   name                     = "${local.resource_prefix}zerologon-25"
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   machine_type             = "e2-custom-4-8192"
   boot_disk {
     initialize_params {
@@ -743,7 +744,7 @@ resource "google_compute_instance_from_template" "island-windows-251" {
   name                     = "${local.resource_prefix}island-windows-251"
   machine_type             = "e2-highcpu-4"
   tags                     = ["island", "windows", "windowsserver2016"]
-  source_instance_template = local.default_windows
+  source_instance_template = local.windows_2016
   boot_disk {
     initialize_params {
       image = data.google_compute_image.island-windows-251.self_link

@@ -61,7 +61,7 @@ source "googlecompute" "rdp-64" {
 source "googlecompute" "rdp-65" {
     image_name = "rdp-65"
     project_id = "${var.project_id}"
-    source_image = "${var.source_image}"
+    source_image = "windows-server-2012-r2-dc-v20230510"
     zone = "${var.zone}"
     disk_size = 50
     machine_type = "${var.machine_type}"
