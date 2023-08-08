@@ -41,7 +41,7 @@ class CPUUtilizer:
 
     def _utilize_cpu(self, cpu_utilization: PercentLimited):
         operation_count_modifier = OPERATION_COUNT_MODIFIER_START
-        sleep_seconds = INITIAL_SLEEP_SECONDS
+        sleep_seconds = INITIAL_SLEEP_SECONDS if cpu_utilization < 1.0 else 0
         block = randbytes(AVERAGE_BLOCK_SIZE_BYTES)
         nonce = 0
 
@@ -84,8 +84,9 @@ class CPUUtilizer:
         if abs(percent_error) < ACCURACY_THRESHOLD:
             return current_sleep
 
-        # Since our multiplication is based on sleep_seconds, don't ever let
-        # sleep_seconds == 0, otherwise it will never equal anything else.
+        # Since our multiplication is based on sleep_seconds, don't ever let sleep_seconds == 0,
+        # otherwise it will never equal anything else. CAVEAT: If the target utilization is 100%,
+        # current_sleep will be initialized to 0.
         return current_sleep * max((1 + percent_error), MINIMUM_SLEEP)
 
     def stop(self, timeout: Optional[float] = None):
