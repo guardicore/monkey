@@ -64,8 +64,8 @@ class CPUUtilizer:
 
                 self._should_stop_cpu_utilization.wait(sleep_seconds)
 
-            operation_count_modifier = max(  # type: ignore[assignment]
-                operation_count_modifier / OPERATION_COUNT_MODIFIER_FACTOR, 1
+            operation_count_modifier = max(
+                int(operation_count_modifier / OPERATION_COUNT_MODIFIER_FACTOR), 1
             )
 
             cpu_utilization = process.cpu_percent() / 100
