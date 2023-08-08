@@ -115,22 +115,4 @@ class Cryptojacker:
         self, should_send_bitcoin_mining_network_traffic: Event
     ):
         while not should_send_bitcoin_mining_network_traffic.is_set():
-            try:
-                self._simulate_bitcoin_mining_network_traffic(self._island_server_address)
-                self._publish_some_event(success=True, error="")
-            except Exception as err:
-                logger.warning(f"Error sending Bitcoing mining network traffic: {err}")
-                self._publish_some_event(success=False, error=str(err))
-
-    # TODO: Replace with actual event
-    def _publish_some_event(self, success: bool, error: str):
-        class SomeEvent:
-            pass
-
-        some_event = SomeEvent(
-            source=self._agent_id,
-            success=success,
-            error_message=error,
-            tags=frozenset({CRYPTOJACKER_PAYLOAD_TAG}),
-        )
-        self._agent_event_queue.publish(some_event)
+            self._simulate_bitcoin_mining_network_traffic(self._island_server_address)
