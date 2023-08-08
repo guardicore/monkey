@@ -49,8 +49,7 @@ class Cryptojacker:
             self._bitcoin_mining_network_traffic_simulator.start()
 
         while not timer.is_expired() and not interrupt.is_set():
-            if interrupt.wait(CHECK_DURATION_TIMER_INTERVAL):
-                break
+            interrupt.wait(CHECK_DURATION_TIMER_INTERVAL)
 
         logger.info("Stopping cryptojacker payload")
 
