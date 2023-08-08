@@ -1,5 +1,4 @@
 import logging
-import time
 
 from egg_timer import EggTimer
 
@@ -81,7 +80,8 @@ class Cryptojacker:
             bitcoin_mining_network_traffic_thread.start()
 
         while not timer.is_expired() and not interrupt.is_set():
-            time.sleep(CHECK_DURATION_TIMER_INTERVAL)
+            if interrupt.wait(CHECK_DURATION_TIMER_INTERVAL):
+                break
 
         if bitcoin_mining_network_traffic_thread.is_alive():
             logger.info("Stopping Bitcoin mining network traffic")
