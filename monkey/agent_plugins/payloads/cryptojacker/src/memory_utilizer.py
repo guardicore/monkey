@@ -1,3 +1,5 @@
+from typing import Optional
+
 from common.types import PercentLimited
 
 
@@ -8,5 +10,5 @@ class MemoryUtilizer:
     def start(self):
         pass
 
-    def stop(self):
+    def stop(self, timeout: Optional[float] = None):
         pass

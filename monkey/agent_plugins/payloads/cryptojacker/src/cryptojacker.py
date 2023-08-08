@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 CRYPTOJACKER_PAYLOAD_TAG = "cryptojacker-payload"
 
-THREAD_JOIN_TIMEOUT = 2  # seconds
+COMPONENT_STOP_TIMEOUT = 30  # seconds
 CHECK_DURATION_TIMER_INTERVAL = 5  # seconds
 
 
@@ -53,7 +53,7 @@ class Cryptojacker:
 
         logger.info("Stopping cryptojacker payload")
 
-        self._cpu_utilizer.stop()
-        self._memory_utilizer.stop()
+        self._cpu_utilizer.stop(timeout=COMPONENT_STOP_TIMEOUT)
+        self._memory_utilizer.stop(timeout=COMPONENT_STOP_TIMEOUT)
         if self._options.simulate_bitcoin_mining_network_traffic:
-            self._bitcoin_mining_network_traffic_simulator.stop()
+            self._bitcoin_mining_network_traffic_simulator.stop(timeout=COMPONENT_STOP_TIMEOUT)
