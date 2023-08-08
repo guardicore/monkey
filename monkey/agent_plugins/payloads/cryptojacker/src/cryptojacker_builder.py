@@ -27,22 +27,22 @@ def build_cryptojacker(
 
     return Cryptojacker(
         options=options,
-        utilize_cpu=cpu_utilizer,
-        utilize_memory=memory_utilizer,
-        simulate_bitcoin_mining_network_traffic=bitcoin_mining_network_traffic_simulator,
+        cpu_utilizer=cpu_utilizer,
+        memory_utilizer=memory_utilizer,
+        bitcoin_mining_network_traffic_simulator=bitcoin_mining_network_traffic_simulator,
         agent_id=agent_id,
         agent_event_queue=agent_event_queue,
         island_server_address=island_server_address,
     )
 
 
-def _build_cpu_utilizer(cpu_utilization: PercentLimited):
+def _build_cpu_utilizer(cpu_utilization: PercentLimited) -> CPUUtilizer:
     return CPUUtilizer(cpu_utilization)
 
 
-def _build_memory_utilizer(memory_utilization: PercentLimited):
+def _build_memory_utilizer(memory_utilization: PercentLimited) -> MemoryUtilizer:
     return MemoryUtilizer(memory_utilization)
 
 
-def _build_bitcoin_mining_network_traffic_simulator():
+def _build_bitcoin_mining_network_traffic_simulator() -> BitcoinMiningNetworkTrafficSimulator:
     return BitcoinMiningNetworkTrafficSimulator()
