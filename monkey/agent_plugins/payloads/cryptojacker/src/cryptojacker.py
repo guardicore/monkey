@@ -1,12 +1,11 @@
 import logging
-import threading
 import time
 
 from egg_timer import EggTimer
 
 from common.event_queue import IAgentEventQueue
 from common.tags import RESOURCE_HIJACKING_T1496_TAG
-from common.types import AgentID, SocketAddress
+from common.types import AgentID, Event, SocketAddress
 from infection_monkey.utils.threading import create_daemon_thread
 
 from .cryptojacker_options import CryptojackerOptions
@@ -44,22 +43,22 @@ class Cryptojacker:
         self._agent_id = agent_id
         self._island_server_address = island_server_address
 
-    def run(self, interrupt: threading.Event):
-        should_utilize_cpu = threading.Event()
+    def run(self, interrupt: Event):
+        should_utilize_cpu = Event()
         cpu_utilization_thread = create_daemon_thread(
             target=self._utilize_cpu,
             name="CPUUtilizationThread",
             args=(should_utilize_cpu),
         )
 
-        should_utilize_memory = threading.Event()
+        should_utilize_memory = Event()
         memory_utilization_thread = create_daemon_thread(
             target=self._utilize_memory,
             name="MemoryUtilizationThread",
             args=(should_utilize_memory),
         )
 
-        should_send_bitcoin_mining_network_traffic = threading.Event()
+        should_send_bitcoin_mining_network_traffic = Event()
         bitcoin_mining_network_traffic_thread = create_daemon_thread(
             target=self._send_bitcoin_mining_network_traffic,
             name="BitcoinMiningNetworkTrafficThread",
@@ -113,7 +112,7 @@ class Cryptojacker:
             )
 
     def _send_bitcoin_mining_network_traffic(
-        self, should_send_bitcoin_mining_network_traffic: threading.Event
+        self, should_send_bitcoin_mining_network_traffic: Event
     ):
         while not should_send_bitcoin_mining_network_traffic.is_set():
             try:
