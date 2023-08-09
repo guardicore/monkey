@@ -50,7 +50,7 @@ class Plugin:
             cryptojacker = build_cryptojacker(
                 options=cryptojacker_options,
                 agent_id=self._agent_id,
-                agent_event_queue=self._agent_event_publisher,
+                agent_event_publisher=self._agent_event_publisher,
                 island_server_address=self._island_server_address,
             )
         except Exception as err:
