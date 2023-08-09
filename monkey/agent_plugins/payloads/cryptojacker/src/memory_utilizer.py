@@ -6,8 +6,11 @@ import psutil
 
 from common.agent_events import RAMConsumptionEvent
 from common.event_queue import IAgentEventPublisher
+from common.tags import RESOURCE_HIJACKING_T1496_TAG
 from common.types import AgentID, PercentLimited
 from common.utils.code_utils import PeriodicCaller
+
+from .consts import CRYPTOJACKER_PAYLOAD_TAG
 
 MEMORY_CONSUMPTION_CHECK_INTERVAL = 30
 # If target memory consumption is within 2% of actual consumption, we'll consider it close enough.
@@ -127,6 +130,7 @@ class MemoryUtilizer:
                 timestamp=timestamp,
                 bytes=used_virtual_memory,
                 utilization=(used_virtual_memory / total_virtual_memory) * 100,
+                tags=frozenset({CRYPTOJACKER_PAYLOAD_TAG, RESOURCE_HIJACKING_T1496_TAG}),
             )
         )
 
