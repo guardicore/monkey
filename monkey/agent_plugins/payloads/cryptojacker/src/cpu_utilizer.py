@@ -37,7 +37,7 @@ class CPUUtilizer:
         agent_id: AgentID,
         agent_event_publisher: IAgentEventPublisher,
     ):
-        target_cpu_utilization = target_cpu_utilization_percent.as_decimal_fraction()
+        self._target_cpu_utilization = target_cpu_utilization_percent.as_decimal_fraction()
         self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
 
@@ -45,7 +45,6 @@ class CPUUtilizer:
         self._cpu_utilizer_thread = create_daemon_thread(
             target=self._utilize_cpu,
             name="CPUUtilizationThread",
-            args=(target_cpu_utilization,),
         )
 
     def start(self):
@@ -53,9 +52,9 @@ class CPUUtilizer:
 
         self._cpu_utilizer_thread.start()
 
-    def _utilize_cpu(self, target_cpu_utilization: NonNegativeFloat):
+    def _utilize_cpu(self):
         operation_count_modifier = OPERATION_COUNT_MODIFIER_START
-        sleep_seconds = INITIAL_SLEEP_SECONDS if target_cpu_utilization < 1.0 else 0
+        sleep_seconds = INITIAL_SLEEP_SECONDS if self._target_cpu_utilization < 1.0 else 0
         block = randbytes(AVERAGE_BLOCK_SIZE_BYTES)
         nonce = 0
 
@@ -89,8 +88,8 @@ class CPUUtilizer:
 
             self._publish_cpu_consumption_event(measured_cpu_utilization, process_cpu_number)
 
-            cpu_utilization_percent_error = CPUUtilizer._calculate_percent_error(
-                measured=measured_cpu_utilization, target=target_cpu_utilization
+            cpu_utilization_percent_error = self._calculate_percent_error(
+                measured=measured_cpu_utilization
             )
             sleep_seconds = CPUUtilizer._calculate_new_sleep(
                 sleep_seconds, cpu_utilization_percent_error
@@ -123,11 +122,10 @@ class CPUUtilizer:
 
         return get_current_processor_number()
 
-    @staticmethod
-    def _calculate_percent_error(measured: float, target: float) -> float:
+    def _calculate_percent_error(self, measured: float) -> float:
         # `target` can never be 0, we're checking the configured value before
         #  calling CPUUtilizer().start()
-        return (measured - target) / target
+        return (measured - self._target_cpu_utilization) / self._target_cpu_utilization
 
     @staticmethod
     def _calculate_new_sleep(current_sleep: float, percent_error: float):
