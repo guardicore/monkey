@@ -125,6 +125,8 @@ class CPUUtilizer:
 
     @staticmethod
     def _calculate_percent_error(measured: float, target: float) -> float:
+        # `target` can never be 0, we're checking the configured value before
+        #  calling CPUUtilizer().start()
         return (measured - target) / target
 
     @staticmethod
