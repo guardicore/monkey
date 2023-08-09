@@ -15,5 +15,5 @@ description: >-
   and how much CPU and memory to utilize on each infected machine. You can also instruct
   the Agent to send a request over the network with data that is commonly identified by
   security solutions as cryptomining activity.
-safe: true
+safe: false
 link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/cryptojacker
