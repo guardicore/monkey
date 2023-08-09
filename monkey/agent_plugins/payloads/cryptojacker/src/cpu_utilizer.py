@@ -65,6 +65,12 @@ class CPUUtilizer:
         # https://psutil.readthedocs.io/en/latest/#psutil.cpu_percent
         process.cpu_percent()
 
+        os = get_os()
+        if os == OperatingSystem.LINUX:
+            get_current_process_cpu_number = process.cpu_num
+        elif os == OperatingSystem.WINDOWS:
+            get_current_process_cpu_number = self._get_windows_process_cpu_number
+
         while not self._should_stop_cpu_utilization.is_set():
             # The operation_count_modifier decreases the number of hashes per iteration.
             # The modifier, itself, decreases by a factor of 1.5 each iteration, until
@@ -79,8 +85,9 @@ class CPUUtilizer:
                 self._should_stop_cpu_utilization.wait(sleep_seconds)
 
             measured_cpu_utilization = process.cpu_percent() / 100
+            process_cpu_number = get_current_process_cpu_number()
 
-            self._publish_cpu_consumption_event(measured_cpu_utilization, process)
+            self._publish_cpu_consumption_event(measured_cpu_utilization, process_cpu_number)
 
             cpu_utilization_percent_error = CPUUtilizer._calculate_percent_error(
                 measured=measured_cpu_utilization, target=target_cpu_utilization
@@ -94,36 +101,27 @@ class CPUUtilizer:
             )
 
     def _publish_cpu_consumption_event(
-        self, measured_cpu_utilization: NonNegativeFloat, process: psutil.Process
+        self, measured_cpu_utilization: NonNegativeFloat, process_cpu_number: int
     ):
         measured_cpu_utilization_percent = measured_cpu_utilization * 100
-        cpu_number = self._get_current_process_cpu_number(process)
 
         cpu_consumption_event = CPUConsumptionEvent(
             source=self._agent_id,
             utilization=measured_cpu_utilization_percent,
-            cpu_number=cpu_number,
+            cpu_number=process_cpu_number,
             tags=frozenset({CRYPTOJACKER_PAYLOAD_TAG, RESOURCE_HIJACKING_T1496_TAG}),
         )
         self._agent_event_publisher.publish(cpu_consumption_event)
 
-    def _get_current_process_cpu_number(self, process: psutil.Process) -> int:
-        os = get_os()
+    def _get_windows_process_cpu_number(self) -> int:
+        from ctypes import windll
+        from ctypes.wintypes import DWORD
 
-        if os == OperatingSystem.LINUX:
-            cpu_number = process.cpu_num()
+        get_current_processor_number = windll.kernel32.GetCurrentProcessorNumber
+        get_current_processor_number.argtypes = []
+        get_current_processor_number.restype = DWORD
 
-        elif os == OperatingSystem.WINDOWS:
-            from ctypes import windll
-            from ctypes.wintypes import DWORD
-
-            get_current_processor_number = windll.kernel32.GetCurrentProcessorNumber
-            get_current_processor_number.argtypes = []
-            get_current_processor_number.restype = DWORD
-
-            cpu_number = get_current_processor_number()
-
-        return cpu_number
+        return get_current_processor_number()
 
     @staticmethod
     def _calculate_percent_error(measured: float, target: float) -> float:
