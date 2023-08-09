@@ -1,11 +1,9 @@
 import base64
-import json
 import logging
 import random
-import urllib.request
 from typing import Optional
 
-import urllib3
+import requests
 
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID, SocketAddress
@@ -51,15 +49,12 @@ class BitcoinMiningNetworkTrafficSimulator:
         password = "bitcoin-password"
 
         url = self._island_server_address
-        data = json.dumps({"id": id_, "method": method, "params": params}).encode()
+        data = {"id": id_, "method": method, "params": params}
         auth = base64.encodebytes((user + ":" + password).encode()).decode().strip()
 
         logger.info(f"Sending Bitcoin mining request to {url}")
 
-        request = urllib.request.Request(
-            url=url, data=data, headers={"Authorization": "Basic {:s}".format(auth)}
-        )
-        urllib3.request.urlopen(request)
+        requests.post(url, json=data, headers={"Authorization": f"Basic {auth}"})
 
     def stop(self, timeout: Optional[float] = None):
         logger.info("Stopping Bitcoin mining network traffic simulator")
