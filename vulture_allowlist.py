@@ -1,4 +1,6 @@
+from aardwolf.commons.iosettings import RDPIOSettings
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
+from agent_plugins.exploiters.rdp.in_memory_file_provider import InMemoryFileProvider
 from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
 from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
@@ -10,6 +12,7 @@ from agent_plugins.payloads.ransomware.src.ransomware_options import (
     linux_target_dir,
     windows_target_dir,
 )
+from asyauth.common.credentials import UniCredential
 from flask_security import Security
 
 from common import DIContainer
@@ -213,3 +216,13 @@ cpu_utilizer._cpu_utilization
 memory_utilizer._memory_utilization
 cryptojacker.CRYPTOJACKER_PAYLOAD_TAG
 attack.RESOURCE_HIJACKING_T1496_TAG
+
+# RDP
+InMemoryFileProvider.get_file_data
+InMemoryFileProvider.get_file_size
+UniCredential.stype
+RDPIOSettings.video_width
+RDPIOSettings.video_height
+RDPIOSettings.video_bpp_max
+RDPIOSettings.video_out_format
+RDPIOSettings.clipboard_use_pyperclip
