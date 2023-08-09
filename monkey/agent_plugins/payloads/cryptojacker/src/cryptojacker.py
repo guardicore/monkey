@@ -11,8 +11,6 @@ from .memory_utilizer import MemoryUtilizer
 
 logger = logging.getLogger(__name__)
 
-CRYPTOJACKER_PAYLOAD_TAG = "cryptojacker-payload"
-
 COMPONENT_STOP_TIMEOUT = 30  # seconds
 CHECK_DURATION_TIMER_INTERVAL = 5  # seconds
 

@@ -7,8 +7,13 @@ from typing import Optional
 
 import psutil
 
-from common.types import NonNegativeFloat, PercentLimited
+from common.agent_events import CPUConsumptionEvent
+from common.event_queue import IAgentEventPublisher
+from common.tags import RESOURCE_HIJACKING_T1496_TAG
+from common.types import AgentID, NonNegativeFloat, PercentLimited
 from infection_monkey.utils.threading import create_daemon_thread
+
+from .consts import CRYPTOJACKER_PAYLOAD_TAG
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +30,15 @@ MINIMUM_SLEEP = 0.000001
 
 
 class CPUUtilizer:
-    def __init__(self, target_cpu_utilization_percent: PercentLimited):
+    def __init__(
+        self,
+        target_cpu_utilization_percent: PercentLimited,
+        agent_id: AgentID,
+        agent_event_publisher: IAgentEventPublisher,
+    ):
         target_cpu_utilization = target_cpu_utilization_percent.as_decimal_fraction()
+        self._agent_id = agent_id
+        self._agent_event_publisher = agent_event_publisher
 
         self._should_stop_cpu_utilization = threading.Event()
         self._cpu_utilizer_thread = create_daemon_thread(
@@ -65,18 +77,29 @@ class CPUUtilizer:
 
                 self._should_stop_cpu_utilization.wait(sleep_seconds)
 
+            measured_cpu_utilization = process.cpu_percent() / 100
+
+            self._publish_cpu_consumption_event(measured_cpu_utilization)
+
+            cpu_utilization_percent_error = CPUUtilizer._calculate_percent_error(
+                measured=measured_cpu_utilization, target=target_cpu_utilization
+            )
+            sleep_seconds = CPUUtilizer._calculate_new_sleep(
+                sleep_seconds, cpu_utilization_percent_error
+            )
+
             operation_count_modifier = max(
                 int(operation_count_modifier / OPERATION_COUNT_MODIFIER_FACTOR), 1
             )
 
-            measured_cpu_utilization = process.cpu_percent() / 100
-            cpu_utilization_percent_error = CPUUtilizer._calculate_percent_error(
-                measured=measured_cpu_utilization, target=target_cpu_utilization
-            )
-
-            sleep_seconds = CPUUtilizer._calculate_new_sleep(
-                sleep_seconds, cpu_utilization_percent_error
-            )
+    def _publish_cpu_consumption_event(self, measured_cpu_utilization: NonNegativeFloat):
+        measured_cpu_utilization_percent = measured_cpu_utilization * 100
+        cpu_consumption_event = CPUConsumptionEvent(
+            source=self._agent_id,
+            utilization=measured_cpu_utilization_percent,
+            tags=frozenset({CRYPTOJACKER_PAYLOAD_TAG, RESOURCE_HIJACKING_T1496_TAG}),
+        )
+        self._agent_event_publisher.publish(cpu_consumption_event)
 
     @staticmethod
     def _calculate_percent_error(measured: float, target: float) -> float:
