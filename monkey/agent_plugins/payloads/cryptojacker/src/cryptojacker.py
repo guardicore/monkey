@@ -2,8 +2,7 @@ import logging
 
 from egg_timer import EggTimer
 
-from common.event_queue import IAgentEventQueue
-from common.types import AgentID, Event, SocketAddress
+from common.types import Event
 
 from .bitcoin_mining_network_traffic_simulator import BitcoinMiningNetworkTrafficSimulator
 from .cpu_utilizer import CPUUtilizer
@@ -25,17 +24,11 @@ class Cryptojacker:
         cpu_utilizer: CPUUtilizer,
         memory_utilizer: MemoryUtilizer,
         bitcoin_mining_network_traffic_simulator: BitcoinMiningNetworkTrafficSimulator,
-        agent_id: AgentID,
-        agent_event_queue: IAgentEventQueue,
-        island_server_address: SocketAddress,
     ):
         self._options = options
         self._cpu_utilizer = cpu_utilizer
         self._memory_utilizer = memory_utilizer
         self._bitcoin_mining_network_traffic_simulator = bitcoin_mining_network_traffic_simulator
-        self._agent_id = agent_id
-        self._agent_event_queue = agent_event_queue
-        self._island_server_address = island_server_address
 
     def run(self, interrupt: Event):
         logger.info("Running cryptojacker payload")
