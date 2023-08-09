@@ -28,6 +28,7 @@ OPERATION_COUNT = 250
 OPERATION_COUNT_MODIFIER_START = int(OPERATION_COUNT / 10)
 OPERATION_COUNT_MODIFIER_FACTOR = 1.5
 MINIMUM_SLEEP = 0.000001
+MINIMUM_CPU_UTILIZATION_TARGET = 1  # 1%
 
 
 class CPUUtilizer:
@@ -37,7 +38,11 @@ class CPUUtilizer:
         agent_id: AgentID,
         agent_event_publisher: IAgentEventPublisher,
     ):
-        self._target_cpu_utilization = target_cpu_utilization_percent
+        # Target CPU utilization can never be zero, otherwise divide by zero errors could occur or
+        # sleeps could become so large that this process will hang indefinitely.
+        self._target_cpu_utilization = max(
+            target_cpu_utilization_percent, MINIMUM_CPU_UTILIZATION_TARGET
+        )
         self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
 
@@ -121,8 +126,7 @@ class CPUUtilizer:
         return get_current_processor_number()
 
     def _calculate_percent_error(self, measured: float) -> float:
-        # `target` can never be 0, we're checking the configured value before
-        #  calling CPUUtilizer().start()
+        # `self._target_cpu_utilization` can never be 0 because we prevent this in __init__()
         return (measured - self._target_cpu_utilization) / self._target_cpu_utilization
 
     @staticmethod
