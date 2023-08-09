@@ -12,7 +12,9 @@ from common.types import AgentID, SocketAddress
 from common.utils.code_utils import PeriodicCaller
 from infection_monkey.island_api_client.http_client import handle_island_errors
 
-REQUEST_INTERVAL = 10  # seconds
+# Based on some very unofficial sources, it seems like 60 seconds is a good interval.
+# https://bitcointalk.org/index.php?topic=1091724.0
+REQUEST_INTERVAL = 60  # seconds
 
 
 logger = logging.getLogger(__name__)
