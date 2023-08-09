@@ -1,16 +1,17 @@
 import hashlib
 import logging
-from typing import Optional
 import threading
 from random import randbytes  # noqa: DUO102 (this isn't for cryptographic use)
 from typing import Optional
 
 import psutil
 
+from common import OperatingSystem
 from common.agent_events import CPUConsumptionEvent
 from common.event_queue import IAgentEventPublisher
 from common.tags import RESOURCE_HIJACKING_T1496_TAG
 from common.types import AgentID, NonNegativeFloat, PercentLimited
+from common.utils.environment import get_os
 from infection_monkey.utils.threading import create_daemon_thread
 
 from .consts import CRYPTOJACKER_PAYLOAD_TAG
@@ -79,7 +80,7 @@ class CPUUtilizer:
 
             measured_cpu_utilization = process.cpu_percent() / 100
 
-            self._publish_cpu_consumption_event(measured_cpu_utilization)
+            self._publish_cpu_consumption_event(measured_cpu_utilization, process)
 
             cpu_utilization_percent_error = CPUUtilizer._calculate_percent_error(
                 measured=measured_cpu_utilization, target=target_cpu_utilization
@@ -92,14 +93,37 @@ class CPUUtilizer:
                 int(operation_count_modifier / OPERATION_COUNT_MODIFIER_FACTOR), 1
             )
 
-    def _publish_cpu_consumption_event(self, measured_cpu_utilization: NonNegativeFloat):
+    def _publish_cpu_consumption_event(
+        self, measured_cpu_utilization: NonNegativeFloat, process: psutil.Process
+    ):
         measured_cpu_utilization_percent = measured_cpu_utilization * 100
+        cpu_number = self._get_current_process_cpu_number(process)
+
         cpu_consumption_event = CPUConsumptionEvent(
             source=self._agent_id,
             utilization=measured_cpu_utilization_percent,
+            cpu_number=cpu_number,
             tags=frozenset({CRYPTOJACKER_PAYLOAD_TAG, RESOURCE_HIJACKING_T1496_TAG}),
         )
         self._agent_event_publisher.publish(cpu_consumption_event)
+
+    def _get_current_process_cpu_number(self, process: psutil.Process) -> int:
+        os = get_os()
+
+        if os == OperatingSystem.LINUX:
+            cpu_number = process.cpu_num()
+
+        elif os == OperatingSystem.WINDOWS:
+            from ctypes import windll
+            from ctypes.wintypes import DWORD
+
+            get_current_processor_number = windll.kernel32.GetCurrentProcessorNumber
+            get_current_processor_number.argtypes = []
+            get_current_processor_number.restype = DWORD
+
+            cpu_number = get_current_processor_number()
+
+        return cpu_number
 
     @staticmethod
     def _calculate_percent_error(measured: float, target: float) -> float:
