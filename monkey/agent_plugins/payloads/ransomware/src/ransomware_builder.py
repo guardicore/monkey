@@ -1,7 +1,7 @@
 import logging
 from pprint import pformat
 
-from common.event_queue import IAgentEventQueue
+from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 
 from .bit_manipulators import flip_bits
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 def build_ransomware(
     agent_id: AgentID,
-    agent_event_queue: IAgentEventQueue,
+    agent_event_publisher: IAgentEventPublisher,
     options: RansomwareOptions,
 ):
     logger.debug(f"Ransomware configuration:\n{pformat(options)}")
@@ -35,7 +35,7 @@ def build_ransomware(
         file_encryptor,
         file_selector,
         leave_readme,
-        agent_event_queue,
+        agent_event_publisher,
         agent_id,
     )
 

@@ -7,7 +7,7 @@ import pytest
 from agent_plugins.payloads.ransomware.src.ransomware_options import RansomwareOptions
 
 from common import OperatingSystem
-from common.event_queue import IAgentEventQueue
+from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 from common.utils.environment import get_os
 
@@ -47,7 +47,7 @@ def test_uses_correct_extension(
     ransomware_file_extension: str,
 ):
     ransomware = ransomware_builder.build_ransomware(
-        AGENT_ID, MagicMock(spec=IAgentEventQueue), ransomware_options_dict
+        AGENT_ID, MagicMock(spec=IAgentEventPublisher), ransomware_options_dict
     )
 
     ransomware.run(threading.Event())
