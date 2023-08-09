@@ -14,6 +14,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - CPUConsumptionEvent. #3411
 - RAMConsumptionEvent. #3411
 - HTTPRequestEvent. #3411
+- RDP exploiter plugin. #3425
 
 ### Changed
 - Plugin source is now gzipped. #3392
