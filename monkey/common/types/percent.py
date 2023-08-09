@@ -1,6 +1,8 @@
-from typing import Any, Self
+from typing import Any, Self, TypeAlias
 
-from pydantic import NonNegativeFloat
+from pydantic import NonNegativeFloat as PydanticNonNegativeFloat
+
+NonNegativeFloat: TypeAlias = PydanticNonNegativeFloat
 
 
 class Percent(NonNegativeFloat):
