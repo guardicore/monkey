@@ -11,8 +11,6 @@ from .memory_utilizer import MemoryUtilizer
 
 logger = logging.getLogger(__name__)
 
-CRYPTOJACKER_PAYLOAD_TAG = "cryptojacker-payload"
-
 COMPONENT_STOP_TIMEOUT = 30  # seconds
 CHECK_DURATION_TIMER_INTERVAL = 5  # seconds
 
@@ -31,22 +29,31 @@ class Cryptojacker:
         self._bitcoin_mining_network_traffic_simulator = bitcoin_mining_network_traffic_simulator
 
     def run(self, interrupt: Event):
-        logger.info("Running cryptojacker payload")
+        self._start()
 
         timer = EggTimer()
         timer.set(self._options.duration)
-
-        self._cpu_utilizer.start()
-        self._memory_utilizer.start()
-        if self._options.simulate_bitcoin_mining_network_traffic:
-            self._bitcoin_mining_network_traffic_simulator.start()
-
         while not timer.is_expired() and not interrupt.is_set():
             interrupt.wait(CHECK_DURATION_TIMER_INTERVAL)
 
-        logger.info("Stopping cryptojacker payload")
+        self._stop()
 
-        self._cpu_utilizer.stop(timeout=COMPONENT_STOP_TIMEOUT)
+    def _start(self):
+        logger.info("Starting the cryptojacker payload")
+        if self._options.cpu_utilization > 0:
+            self._cpu_utilizer.start()
+
+        self._memory_utilizer.start()
+
+        if self._options.simulate_bitcoin_mining_network_traffic:
+            self._bitcoin_mining_network_traffic_simulator.start()
+
+    def _stop(self):
+        logger.info("Stopping the cryptojacker payload")
+        if self._options.cpu_utilization > 0:
+            self._cpu_utilizer.stop(timeout=COMPONENT_STOP_TIMEOUT)
+
         self._memory_utilizer.stop(timeout=COMPONENT_STOP_TIMEOUT)
+
         if self._options.simulate_bitcoin_mining_network_traffic:
             self._bitcoin_mining_network_traffic_simulator.stop(timeout=COMPONENT_STOP_TIMEOUT)

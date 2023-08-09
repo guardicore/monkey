@@ -5,4 +5,4 @@ from .int_range import IntRange
 from .networking import NetworkService, NetworkPort, PortStatus, SocketAddress, NetworkProtocol
 from .secrets import OTP, Token
 from .file_extension import FileExtension
-from .percent import Percent, PercentLimited
+from .percent import Percent, PercentLimited, NonNegativeFloat
