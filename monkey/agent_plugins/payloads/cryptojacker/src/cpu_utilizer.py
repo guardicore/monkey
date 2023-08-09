@@ -7,13 +7,12 @@ from typing import Optional
 
 import psutil
 
-from common.types import PercentLimited
+from common.types import NonNegativeFloat, PercentLimited
 from infection_monkey.utils.threading import create_daemon_thread
 
 logger = logging.getLogger(__name__)
 
 
-TARGET_CPU_UTILIZATION = 0.10
 ACCURACY_THRESHOLD = 0.02
 INITIAL_SLEEP_SECONDS = 0.001
 AVERAGE_BLOCK_SIZE_BYTES = int(
@@ -26,12 +25,14 @@ MINIMUM_SLEEP = 0.000001
 
 
 class CPUUtilizer:
-    def __init__(self, cpu_utilization: PercentLimited):
+    def __init__(self, target_cpu_utilization_percent: PercentLimited):
+        target_cpu_utilization = target_cpu_utilization_percent.as_decimal_fraction()
+
         self._should_stop_cpu_utilization = threading.Event()
         self._cpu_utilizer_thread = create_daemon_thread(
             target=self._utilize_cpu,
             name="CPUUtilizationThread",
-            args=(cpu_utilization,),
+            args=(target_cpu_utilization,),
         )
 
     def start(self):
@@ -39,9 +40,9 @@ class CPUUtilizer:
 
         self._cpu_utilizer_thread.start()
 
-    def _utilize_cpu(self, cpu_utilization: PercentLimited):
+    def _utilize_cpu(self, target_cpu_utilization: NonNegativeFloat):
         operation_count_modifier = OPERATION_COUNT_MODIFIER_START
-        sleep_seconds = INITIAL_SLEEP_SECONDS if cpu_utilization < 1.0 else 0
+        sleep_seconds = INITIAL_SLEEP_SECONDS if target_cpu_utilization < 1.0 else 0
         block = randbytes(AVERAGE_BLOCK_SIZE_BYTES)
         nonce = 0
 
@@ -68,16 +69,18 @@ class CPUUtilizer:
                 int(operation_count_modifier / OPERATION_COUNT_MODIFIER_FACTOR), 1
             )
 
-            cpu_utilization = process.cpu_percent() / 100
-            cpu_utilization_percent_error = CPUUtilizer._calculate_percent_error(cpu_utilization)
+            measured_cpu_utilization = process.cpu_percent() / 100
+            cpu_utilization_percent_error = CPUUtilizer._calculate_percent_error(
+                measured=measured_cpu_utilization, target=target_cpu_utilization
+            )
 
             sleep_seconds = CPUUtilizer._calculate_new_sleep(
                 sleep_seconds, cpu_utilization_percent_error
             )
 
     @staticmethod
-    def _calculate_percent_error(measured: float) -> float:
-        return (measured - TARGET_CPU_UTILIZATION) / TARGET_CPU_UTILIZATION
+    def _calculate_percent_error(measured: float, target: float) -> float:
+        return (measured - target) / target
 
     @staticmethod
     def _calculate_new_sleep(current_sleep: float, percent_error: float):
