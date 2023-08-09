@@ -36,7 +36,7 @@ class BitcoinMiningNetworkTrafficSimulator:
         self._agent_event_publisher = agent_event_publisher
 
         self._send_bitcoin_mining_request_periodically = PeriodicCaller(
-            callback=self._send_bitcoin_mining_request,
+            callback=self.send_bitcoin_mining_request,
             period=REQUEST_INTERVAL,
             name="Cryptojacking.BitcoinMiningNetworkTrafficSimulator",
         )
@@ -56,7 +56,7 @@ class BitcoinMiningNetworkTrafficSimulator:
 
         self._send_bitcoin_mining_request_periodically.start()
 
-    def _send_bitcoin_mining_request(self):
+    def send_bitcoin_mining_request(self):
         url = f"http://{self._island_server_address}/"
         failure_warning_msg = f"Failed to establish a connection with {url}"
         body = BitcoinMiningNetworkTrafficSimulator._build_getblocktemplate_request_body()
