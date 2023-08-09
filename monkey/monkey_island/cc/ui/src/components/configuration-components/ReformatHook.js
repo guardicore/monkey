@@ -65,6 +65,7 @@ export function formatCredentialsForForm(credentialsData = []) {
     for (const existingRow of existingRows) {
       let canMutate = true;
 
+      if(!secret) break;
       for (const [key, value] of Object.entries(secret)) {
         const secretKey = REVERSED_SECRET_TYPES[key];
 
