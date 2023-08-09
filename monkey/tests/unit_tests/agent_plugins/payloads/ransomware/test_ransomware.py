@@ -23,7 +23,7 @@ from tests.unit_tests.agent_plugins.payloads.ransomware.ransomware_target_files 
 from tests.utils import is_user_admin
 
 from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
-from common.event_queue import AgentEventSubscriber, IAgentEventQueue
+from common.event_queue import AgentEventSubscriber, IAgentEventPublisher
 from common.types import AgentID, Event
 
 BuildRansomwareCallable: TypeAlias = Callable[
@@ -32,7 +32,7 @@ BuildRansomwareCallable: TypeAlias = Callable[
 ]
 
 
-class AgentEventQueueSpy(IAgentEventQueue):
+class AgentEventPublisherSpy(IAgentEventPublisher):
     def __init__(self):
         self.events = []
 
@@ -52,8 +52,8 @@ class AgentEventQueueSpy(IAgentEventQueue):
 
 
 @pytest.fixture
-def agent_event_queue_spy() -> IAgentEventQueue:
-    return AgentEventQueueSpy()
+def agent_event_publisher_spy() -> IAgentEventPublisher:
+    return AgentEventPublisherSpy()
 
 
 @pytest.fixture
@@ -69,7 +69,7 @@ def build_ransomware(
     mock_file_encryptor: FileEncryptorCallable,
     mock_file_selector: FileSelectorCallable,
     mock_leave_readme: ReadmeDropperCallable,
-    agent_event_queue_spy: IAgentEventQueue,
+    agent_event_publisher_spy: IAgentEventPublisher,
 ) -> BuildRansomwareCallable:
     def inner(
         config: InternalRansomwareOptions,
@@ -82,7 +82,7 @@ def build_ransomware(
             file_encryptor,
             file_selector,
             leave_readme,
-            agent_event_queue_spy,
+            agent_event_publisher_spy,
             AgentID("8f53f4fb-2d33-465a-aa9c-de704a7e42b3"),
         )
 
@@ -255,7 +255,7 @@ def test_leave_readme_exceptions_handled(
 
 
 def test_file_encryption_event_publishing(
-    agent_event_queue_spy: IAgentEventQueue,
+    agent_event_publisher_spy: IAgentEventPublisher,
     ransomware_test_data: Path,
     internal_ransomware_options: InternalRansomwareOptions,
     build_ransomware: BuildRansomwareCallable,
@@ -269,19 +269,19 @@ def test_file_encryption_event_publishing(
 
     build_ransomware(internal_ransomware_options, MagicMock(), mfs).run(threading.Event())  # type: ignore [call-arg]  # noqa: E501
 
-    assert len(agent_event_queue_spy.events) == 3
+    assert len(agent_event_publisher_spy.events) == 3
 
-    for event in agent_event_queue_spy.events:
+    for event in agent_event_publisher_spy.events:
         assert event.__class__ is FileEncryptionEvent
         assert event.success
         assert event.target is None
 
-    actual_file_paths = [event.file_path for event in agent_event_queue_spy.events]
+    actual_file_paths = [event.file_path for event in agent_event_publisher_spy.events]
     assert expected_selected_files == actual_file_paths
 
 
 def test_file_encryption_event_publishing__failed(
-    agent_event_queue_spy: IAgentEventQueue,
+    agent_event_publisher_spy: IAgentEventPublisher,
     ransomware_test_data: Path,
     internal_ransomware_options: InternalRansomwareOptions,
     build_ransomware: BuildRansomwareCallable,
@@ -297,9 +297,9 @@ def test_file_encryption_event_publishing__failed(
 
     ransomware.run(threading.Event())
 
-    assert len(agent_event_queue_spy.events) == 1
+    assert len(agent_event_publisher_spy.events) == 1
 
-    for event in agent_event_queue_spy.events:
+    for event in agent_event_publisher_spy.events:
         assert event.__class__ is FileEncryptionEvent
         assert not event.success
         assert event.target is None

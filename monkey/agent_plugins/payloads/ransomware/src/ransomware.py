@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Iterable
 
 from common.agent_events import FileEncryptionEvent
-from common.event_queue import IAgentEventQueue
+from common.event_queue import IAgentEventPublisher
 from common.tags import DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG
 from common.types import AgentID
 from infection_monkey.utils.threading import interruptible_function, interruptible_iter
@@ -26,7 +26,7 @@ class Ransomware:
         encrypt_file: FileEncryptorCallable,
         select_files: FileSelectorCallable,
         leave_readme: ReadmeDropperCallable,
-        agent_event_queue: IAgentEventQueue,
+        agent_event_publisher: IAgentEventPublisher,
         agent_id: AgentID,
     ):
         self._config = config
@@ -34,7 +34,7 @@ class Ransomware:
         self._encrypt_file = encrypt_file
         self._select_files = select_files
         self._leave_readme = leave_readme
-        self._agent_event_queue = agent_event_queue
+        self._agent_event_publisher = agent_event_publisher
         self._agent_id = agent_id
 
         self._target_directory = self._config.target_directory
@@ -100,7 +100,7 @@ class Ransomware:
             error_message=error,
             tags=RANSOMWARE_TAGS,
         )
-        self._agent_event_queue.publish(file_encryption_event)
+        self._agent_event_publisher.publish(file_encryption_event)
 
     @interruptible_function(msg="Received a stop signal, skipping leave readme")
     def _leave_readme_in_target_directory(self, *, interrupt: threading.Event):
