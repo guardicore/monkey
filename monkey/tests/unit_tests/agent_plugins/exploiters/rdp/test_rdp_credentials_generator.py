@@ -69,7 +69,7 @@ def test_brute_force_credentials_generation():
     assert_correct_identity_types(generated_credentials)
     assert_correct_secret_types(generated_credentials)
     assert_domain_users_added(generated_credentials, DOMAINS)
-    assert len(generated_credentials) == 30
+    assert len(generated_credentials) == 20
 
 
 def test_brute_force_credentials_generation__pulls_local_domains_on_windows():
@@ -88,7 +88,7 @@ def test_brute_force_credentials_generation__no_domains():
         TEST_CREDENTIALS, [], running_from_windows=False
     )
 
-    assert len(generated_credentials) == 10
+    assert len(generated_credentials) == 0
 
 
 def test_brute_force_credentials_generation__no_domains_still_uses_local_domains_on_windows():
@@ -110,4 +110,4 @@ def test_usernames_with_domain():
         input_credentials, [], running_from_windows=False
     )
 
-    assert len(generated_credentials) == 2
+    assert len(generated_credentials) == 1
