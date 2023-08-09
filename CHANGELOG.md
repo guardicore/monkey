@@ -15,6 +15,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - RAMConsumptionEvent. #3411
 - HTTPRequestEvent. #3411
 - RDP exploiter plugin. #3425
+- A cryptojacker payload to simulate cryptojacker attacks. #3411
 
 ### Changed
 - Plugin source is now gzipped. #3392

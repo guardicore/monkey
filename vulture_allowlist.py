@@ -17,13 +17,7 @@ from flask_security import Security
 
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
-from common.agent_events import (
-    AbstractAgentEvent,
-    CPUConsumptionEvent,
-    FileEncryptionEvent,
-    HTTPRequestEvent,
-    RAMConsumptionEvent,
-)
+from common.agent_events import AbstractAgentEvent, CPUConsumptionEvent, FileEncryptionEvent
 from common.agent_plugins import (
     AgentPlugin,
     AgentPluginManifest,
@@ -33,7 +27,6 @@ from common.agent_plugins import (
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.concurrency import BasicLock
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
-from common.tags import attack
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
@@ -201,21 +194,7 @@ AgentPluginRepositoryIndex._infection_monkey_version_parser
 AgentPluginRepositoryIndex._sort_plugins_by_version
 AgentPluginRepositoryIndex.use_enum_values
 
-# Remove when cryptojacker is completed
-Percent.as_decimal_fraction
-CPUConsumptionEvent
-CPUConsumptionEvent.utilization
 CPUConsumptionEvent.cpu_number
-RAMConsumptionEvent
-RAMConsumptionEvent.utilization
-RAMConsumptionEvent.bytes
-HTTPRequestEvent
-HTTPRequestEvent.method
-HTTPRequestEvent.url
-cpu_utilizer._cpu_utilization
-memory_utilizer._memory_utilization
-cryptojacker.CRYPTOJACKER_PAYLOAD_TAG
-attack.RESOURCE_HIJACKING_T1496_TAG
 
 # RDP
 InMemoryFileProvider.get_file_data
