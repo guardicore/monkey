@@ -37,7 +37,7 @@ class CPUUtilizer:
         agent_id: AgentID,
         agent_event_publisher: IAgentEventPublisher,
     ):
-        self._target_cpu_utilization = target_cpu_utilization_percent.as_decimal_fraction()
+        self._target_cpu_utilization = target_cpu_utilization_percent
         self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
 
@@ -54,7 +54,7 @@ class CPUUtilizer:
 
     def _utilize_cpu(self):
         operation_count_modifier = OPERATION_COUNT_MODIFIER_START
-        sleep_seconds = INITIAL_SLEEP_SECONDS if self._target_cpu_utilization < 1.0 else 0
+        sleep_seconds = INITIAL_SLEEP_SECONDS if self._target_cpu_utilization < 100 else 0
         block = randbytes(AVERAGE_BLOCK_SIZE_BYTES)
         nonce = 0
 
@@ -83,7 +83,7 @@ class CPUUtilizer:
 
                 self._should_stop_cpu_utilization.wait(sleep_seconds)
 
-            measured_cpu_utilization = process.cpu_percent() / 100
+            measured_cpu_utilization = process.cpu_percent()
             process_cpu_number = get_current_process_cpu_number()
 
             self._publish_cpu_consumption_event(measured_cpu_utilization, process_cpu_number)
@@ -102,11 +102,9 @@ class CPUUtilizer:
     def _publish_cpu_consumption_event(
         self, measured_cpu_utilization: NonNegativeFloat, process_cpu_number: int
     ):
-        measured_cpu_utilization_percent = measured_cpu_utilization * 100
-
         cpu_consumption_event = CPUConsumptionEvent(
             source=self._agent_id,
-            utilization=measured_cpu_utilization_percent,
+            utilization=measured_cpu_utilization,
             cpu_number=process_cpu_number,
             tags=frozenset({CRYPTOJACKER_PAYLOAD_TAG, RESOURCE_HIJACKING_T1496_TAG}),
         )
