@@ -50,11 +50,11 @@ class CPUUtilizer:
         self._should_stop_cpu_utilization = threading.Event()
         self._cpu_utilizer_thread = create_daemon_thread(
             target=self._utilize_cpu,
-            name="CPUUtilizationThread",
+            name="Cryptojacker.CPUUtilizer",
         )
 
     def start(self):
-        logger.info("Utilizing CPU")
+        logger.info("Starting CPUUtilizer")
 
         self._cpu_utilizer_thread.start()
 
@@ -141,7 +141,7 @@ class CPUUtilizer:
         return current_sleep * max((1 + percent_error), MINIMUM_SLEEP)
 
     def stop(self, timeout: Optional[float] = None):
-        logger.info("Stopping CPU utilization")
+        logger.info("Stopping CPUUtilizer")
 
         self._should_stop_cpu_utilization.set()
 
