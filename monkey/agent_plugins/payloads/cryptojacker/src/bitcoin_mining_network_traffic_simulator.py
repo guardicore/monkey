@@ -48,7 +48,7 @@ class BitcoinMiningNetworkTrafficSimulator:
         user = "bitcoin-user"
         password = "bitcoin-password"
 
-        url = self._island_server_address
+        url = f"http://{self._island_server_address}/"
         data = {"id": id_, "method": method, "params": params}
         auth = base64.encodebytes((user + ":" + password).encode()).decode().strip()
 
