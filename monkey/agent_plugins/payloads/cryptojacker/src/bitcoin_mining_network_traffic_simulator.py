@@ -1,14 +1,20 @@
 import base64
 import logging
 import random
+import time
+from http import HTTPMethod
 from typing import Optional
 
 import requests
+from requests.exceptions import ConnectionError, ConnectTimeout, ReadTimeout
 
+from common.agent_events import HTTPRequestEvent
+from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID, SocketAddress
 from common.utils.code_utils import PeriodicCaller
-from infection_monkey.island_api_client.http_client import handle_island_errors
+
+from .consts import CRYPTOJACKER_PAYLOAD_TAG
 
 # Based on some very unofficial sources, it seems like 60 seconds is a good interval.
 # https://bitcointalk.org/index.php?topic=1091724.0
@@ -35,26 +41,74 @@ class BitcoinMiningNetworkTrafficSimulator:
             name="Cryptojacking.BitcoinMiningNetworkTrafficSimulator",
         )
 
+        self._headers = BitcoinMiningNetworkTrafficSimulator._build_headers()
+
+    @staticmethod
+    def _build_headers():
+        user = "bitcoin-user"
+        password = "bitcoin-password"
+        auth = base64.encodebytes((user + ":" + password).encode()).decode().strip()
+
+        return {"Authorization": f"Basic {auth}"}
+
     def start(self):
         logger.info("Starting Bitcoin mining network traffic simulator")
 
         self._send_bitcoin_mining_request_periodically.start()
 
-    @handle_island_errors
     def _send_bitcoin_mining_request(self):
-        id_ = random.getrandbits(32)  # noqa: DUO102 (this isn't for cryptographic use)
-        method = "getblocktemplate"
-        params = [{"rules": ["segwit"]}]
-        user = "bitcoin-user"
-        password = "bitcoin-password"
-
         url = f"http://{self._island_server_address}/"
-        data = {"id": id_, "method": method, "params": params}
-        auth = base64.encodebytes((user + ":" + password).encode()).decode().strip()
+        failure_warning_msg = f"Failed to establish a connection with {url}"
+        body = BitcoinMiningNetworkTrafficSimulator._build_getblocktemplate_request_body()
 
         logger.info(f"Sending Bitcoin mining request to {url}")
 
-        requests.post(url, json=data, headers={"Authorization": f"Basic {auth}"})
+        timestamp = time.time()
+        try:
+            requests.post(
+                url,
+                json=body,
+                headers=self._headers,
+                timeout=MEDIUM_REQUEST_TIMEOUT,
+            )
+        except ConnectTimeout as err:
+            logger.warning(f"{failure_warning_msg}: {err}")
+        except (ReadTimeout, ConnectionResetError):
+            self._publish_http_request_event(timestamp, url)
+        except ConnectionError as err:
+            self._handle_connection_error(err, timestamp, url, failure_warning_msg)
+
+    @staticmethod
+    def _build_getblocktemplate_request_body():
+        id_ = random.getrandbits(32)  # noqa: DUO102 (this isn't for cryptographic use)
+        method = "getblocktemplate"
+        params = [{"rules": ["segwit"]}]
+
+        return {"id": id_, "method": method, "params": params}
+
+    def _publish_http_request_event(self, timestamp: float, url: str):
+        http_request_event = HTTPRequestEvent(
+            source=self._agent_id,
+            timestamp=timestamp,
+            tags=frozenset({CRYPTOJACKER_PAYLOAD_TAG}),
+            method=HTTPMethod.POST,
+            url=url,  # type: ignore [arg-type]
+        )
+        self._agent_event_publisher.publish(http_request_event)
+
+    def _handle_connection_error(
+        self, err: ConnectionError, timestamp: float, url: str, failure_warning_msg: str
+    ):
+        try:
+            expected_connection_reset_error = (
+                err.__context__.__context__
+            )  # ignore: type [union-attr]
+            if isinstance(expected_connection_reset_error, ConnectionResetError):
+                self._publish_http_request_event(timestamp, url)
+            else:
+                logger.warning(f"{failure_warning_msg}: {err}")
+        except AttributeError:
+            logger.warning(f"{failure_warning_msg}: {err}")
 
     def stop(self, timeout: Optional[float] = None):
         logger.info("Stopping Bitcoin mining network traffic simulator")
