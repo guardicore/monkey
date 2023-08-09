@@ -30,6 +30,8 @@ GCP_TEST_MACHINE_LIST = {
         "log4j-tomcat-51",
         "log4j-tomcat-52",
         "snmp-20",
+        "rdp-64",
+        "rdp-65",
     ],
 }
 
@@ -41,6 +43,8 @@ DEPTH_2_A = {
     "europe-west1-b": [
         "powershell-3-46",
         "powershell-3-44",
+        "rdp-64",
+        "rdp-65",
     ],
 }
 
