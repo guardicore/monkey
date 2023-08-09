@@ -1,6 +1,7 @@
 import hashlib
 import logging
 import threading
+import time
 from random import randbytes  # noqa: DUO102 (this isn't for cryptographic use)
 from typing import Optional
 
@@ -86,7 +87,7 @@ class CPUUtilizer:
                 digest.update(block)
                 nonce += 1
 
-                self._should_stop_cpu_utilization.wait(sleep_seconds)
+                time.sleep(sleep_seconds)
 
             measured_cpu_utilization = process.cpu_percent()
             process_cpu_number = get_current_process_cpu_number()
