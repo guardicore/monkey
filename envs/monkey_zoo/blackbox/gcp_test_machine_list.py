@@ -36,10 +36,7 @@ GCP_TEST_MACHINE_LIST = {
 }
 
 DEPTH_2_A = {
-    "europe-west3-a": [
-        "sshkeys-11",
-        "sshkeys-12",
-    ],
+    "europe-west3-a": ["sshkeys-11", "sshkeys-12", "mimikatz-14", "mimikatz-15"],
     "europe-west1-b": [
         "powershell-3-46",
         "powershell-3-44",
@@ -50,7 +47,7 @@ DEPTH_2_A = {
 
 
 DEPTH_1_A = {
-    "europe-west3-a": ["hadoop-2", "hadoop-3", "mssql-16", "mimikatz-14", "mimikatz-15"],
+    "europe-west3-a": ["hadoop-2", "hadoop-3", "mssql-16"],
     "europe-west1-b": [
         "log4j-logstash-55",
         "log4j-logstash-56",
