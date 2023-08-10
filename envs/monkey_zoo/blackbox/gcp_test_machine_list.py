@@ -45,9 +45,8 @@ DEPTH_2_A = {
     ],
 }
 
-
 DEPTH_1_A = {
-    "europe-west3-a": ["hadoop-2", "hadoop-3", "mssql-16"],
+    "europe-west3-a": ["hadoop-2", "hadoop-3", "mssql-16", "mimikatz-15"],
     "europe-west1-b": [
         "log4j-logstash-55",
         "log4j-logstash-56",
@@ -64,7 +63,6 @@ DEPTH_3_A = {
         "tunneling-9",
         "tunneling-10",
         "tunneling-11",
-        "mimikatz-15",
     ],
     "europe-west1-b": [
         "powershell-3-45",
