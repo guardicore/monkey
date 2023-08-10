@@ -60,7 +60,10 @@ const MapPageWrapper = (props) => {
   }, [mapNodes]);
 
   useEffect(() => {
-    setMapNodes(buildMapNodes());
+    let newNodes = buildMapNodes();
+    if (JSON.stringify(newNodes) !== JSON.stringify(mapNodes)) {
+      setMapNodes(newNodes);
+    }
   }, [nodes, machines, propagationEvents]);
 
   function addRelayCommunications(communications: Communications) {
@@ -132,7 +135,7 @@ const MapPageWrapper = (props) => {
     return ip in propagationEvents
   }
 
-  return (<MapPage mapNodes={mapNodes} graph={graph} {...props} />);
+  return (<MapPage mapNodes={mapNodes} graph={graph} />);
 }
 
 
