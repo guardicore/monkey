@@ -1,4 +1,5 @@
 import base64
+import json
 import logging
 import random
 import time
@@ -49,7 +50,11 @@ class BitcoinMiningNetworkTrafficSimulator:
         password = "bitcoin-password"
         auth = base64.encodebytes((user + ":" + password).encode()).decode().strip()
 
-        return {"Authorization": f"Basic {auth}"}
+        return {
+            "Accept-Encoding": "identity",
+            "Authorization": f"Basic {auth}",
+            "Content-Type": "application/x-www-form-urlencoded",
+        }
 
     def start(self):
         logger.info("Starting Bitcoin mining network traffic simulator")
@@ -59,7 +64,9 @@ class BitcoinMiningNetworkTrafficSimulator:
     def send_bitcoin_mining_request(self):
         url = f"http://{self._island_server_address}/"
         failure_warning_msg = f"Failed to establish a connection with {url}"
-        body = BitcoinMiningNetworkTrafficSimulator._build_getblocktemplate_request_body()
+        body = json.dumps(
+            BitcoinMiningNetworkTrafficSimulator._build_getblocktemplate_request_body()
+        ).encode()
 
         logger.info(f"Sending Bitcoin mining request to {url}")
 
@@ -67,7 +74,7 @@ class BitcoinMiningNetworkTrafficSimulator:
         try:
             requests.post(
                 url,
-                json=body,
+                data=body,
                 headers=self._headers,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
