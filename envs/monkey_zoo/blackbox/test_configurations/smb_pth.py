@@ -43,14 +43,10 @@ test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 
 CREDENTIALS = (
-    Credentials(identity=Username(username="Administrator"), secret=None),
     Credentials(identity=Username(username="m0nk3y"), secret=None),
-    Credentials(identity=Username(username="user"), secret=None),
-    Credentials(identity=None, secret=Password(password="Ivrrw5zEzs")),
-    Credentials(identity=None, secret=Password(password="Password1!")),
-    Credentials(identity=None, secret=NTHash(nt_hash="d0f0132b308a0c4e5d1029cc06f48692")),
-    Credentials(identity=None, secret=NTHash(nt_hash="5da0889ea2081aa79f6852294cba4a5e")),
-    Credentials(identity=None, secret=NTHash(nt_hash="50c9987a6bf1ac59398df9f911122c9b")),
+    Credentials(identity=Username(username="unused"), secret=None),
+    Credentials(identity=None, secret=Password(password="Unused")),
+    Credentials(identity=None, secret=NTHash(nt_hash="F7E457346F7743DAECE17258667C936D")),
 )
 
 smb_pth_test_configuration = dataclasses.replace(noop_test_configuration)
