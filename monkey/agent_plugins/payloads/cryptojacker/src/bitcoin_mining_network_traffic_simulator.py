@@ -51,6 +51,7 @@ class BitcoinMiningNetworkTrafficSimulator:
         auth = base64.encodebytes((user + ":" + password).encode()).decode().strip()
 
         return {
+            "Accept-Encoding": "identity",
             "Authorization": f"Basic {auth}",
             "Content-Type": "application/x-www-form-urlencoded",
         }
