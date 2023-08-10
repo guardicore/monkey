@@ -1,14 +1,14 @@
 import React from 'react';
-import Graph from 'react-graph-vis';
+import VisGraph, {GraphData, GraphEvents} from 'react-vis-graph-wrapper';
 import {getOptions, startingPosition} from '../map/MapOptions';
 
 
-const GraphWrapper = (props: { graph: Graph, events: any }) => {
+const GraphWrapper = (props: { graph: GraphData, events: GraphEvents }) => {
 
   let options = getOptions();
   return (
     <div className={'net-graph-wrapper'}>
-      <Graph graph={props.graph} options={options} events={props.events}
+      <VisGraph graph={props.graph} options={options} events={props.events}
       getNetwork={network => {
         network.moveTo(startingPosition);
       }}/>
