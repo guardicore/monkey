@@ -65,6 +65,8 @@ CREDENTIALS = (
     Credentials(identity=None, secret=NTHash(nt_hash="d0f0132b308a0c4e5d1029cc06f48692")),
     Credentials(identity=None, secret=NTHash(nt_hash="5da0889ea2081aa79f6852294cba4a5e")),
     Credentials(identity=None, secret=NTHash(nt_hash="50c9987a6bf1ac59398df9f911122c9b")),
+    # Hash for Mimikatz-15
+    Credentials(identity=None, secret=NTHash(nt_hash="F7E457346F7743DAECE17258667C936D")),
 )
 
 depth_3_a_test_configuration = dataclasses.replace(noop_test_configuration)
