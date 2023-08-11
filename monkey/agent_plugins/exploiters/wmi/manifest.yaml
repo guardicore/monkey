@@ -6,7 +6,7 @@ supported_operating_systems:
 target_operating_systems:
   - windows
 title: WMI Exploiter
-version: 1.0.3
+version: 1.1.0
 description: Attempts a brute-force attack against WMI using known credentials.
 safe: true
 remediation_suggestion: >-
