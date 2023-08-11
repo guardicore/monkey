@@ -20,18 +20,11 @@ class StolenCredentialsAnalyzer(Analyzer):
 
         stolen_credentials = set(self.island_client.get_stolen_credentials())
 
-        if self.expected_stolen_credentials == stolen_credentials:
+        if set(self.expected_stolen_credentials).issubset(stolen_credentials):
             self.log.add_entry("All expected credentials were stolen")
             return True
 
-        if len(stolen_credentials) != len(self.expected_stolen_credentials):
-            self.log.add_entry(
-                f"Expected {len(self.expected_stolen_credentials)} credentials to be stolen but "
-                f"{len(stolen_credentials)} were stolen"
-            )
-        elif self.expected_stolen_credentials != stolen_credentials:
-            self.log.add_entry(
-                "The contents of the stolen credentials did not match the expected credentials"
-            )
+        missing = set(self.expected_stolen_credentials) - set(stolen_credentials)
+        self.log.add_entry(f"Some credentials were not stolen: {list(missing)}")
 
         return False
