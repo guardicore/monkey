@@ -1,5 +1,5 @@
 ---
-- name: Create a new user
+- name: Create a mimikatz-15 machine image
   hosts: all
   vars:
     ansible_remote_tmp: C:\Windows\Temp
@@ -41,3 +41,8 @@
     - name: Reboot
       ansible.windows.win_reboot:
       when: res.reboot_required
+
+    - name: Delete packer_user
+      win_user:
+        name: packer_user
+        state: absent
