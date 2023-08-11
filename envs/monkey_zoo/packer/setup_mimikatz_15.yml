@@ -1,0 +1,48 @@
+---
+- name: Create a mimikatz-15 machine image
+  hosts: all
+  vars:
+    ansible_remote_tmp: C:\Windows\Temp
+  tasks:
+    - name: Create user
+      win_user:
+        name: m0nk3y
+        password: pAJfG56JX><
+        password_never_expires: yes
+        state: present
+        update_password: on_create
+        groups_action: add
+        groups:
+          - Administrators
+          - "Remote Desktop Users"
+
+    - name: Enable SMBv1
+      ansible.windows.win_optional_feature:
+        name: SMB1Protocol
+        state: present
+
+    - name: Disable SMBv2 using win_regedit
+      ansible.windows.win_regedit:
+        path: HKLM:\System\CurrentControlSet\Services\LanmanServer\Parameters
+        name: SMB2
+        data: 0
+        type: dword
+        state: present
+
+    - name: Allow port 445 SMB
+      win_command:
+        cmd: netsh advfirewall firewall add rule name="Allow Port 445" dir=in action=allow protocol=TCP localport=445
+
+    - name: Change the hostname to mimikatz-15
+      ansible.windows.win_hostname:
+        name: mimikatz-15
+      register: res
+
+    - name: Reboot
+      ansible.windows.win_reboot:
+      when: res.reboot_required
+
+    - name: Delete packer_user
+      win_user:
+        name: packer_user
+        state: absent
