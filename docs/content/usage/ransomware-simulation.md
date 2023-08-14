@@ -43,7 +43,9 @@ Monkey to use instead. You can even provide no file extension, but take
 caution: you'll no longer be able to tell if the file has been encrypted based
 on the filename alone!
 
-![Ransomware configuration](/images/island/configuration_page/ransomware_configuration.png "Ransomware configuration")
+![Ransomware
+configuration](/images/island/configuration_page/ransomware_configuration.png
+"Ransomware configuration")
 
 ### How are the files encrypted?
 
