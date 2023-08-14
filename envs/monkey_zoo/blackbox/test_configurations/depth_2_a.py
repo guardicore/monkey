@@ -45,7 +45,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
 
 
 def _add_credentials_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    credentials_collectors: Dict[str, Mapping] = {"Mimikatz": {}}
+    credentials_collectors: Dict[str, Mapping] = {"Mimikatz": {}, "SSH": {}}
     return add_credentials_collectors(
         agent_configuration, credentials_collectors=credentials_collectors
     )
