@@ -20,7 +20,7 @@ GET_AGENT_EVENTS_ENDPOINT = "api/agent-events"
 LOGOUT_ENDPOINT = "api/logout"
 GET_AGENT_OTP_ENDPOINT = "/api/agent-otp"
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def avoid_race_condition(func):
@@ -41,9 +41,9 @@ class MonkeyIslandClient(object):
         for operating_system in [operating_system.name for operating_system in OperatingSystem]:
             if self.requests.put(f"api/agent-binaries/{operating_system}/masque", data=masque).ok:
                 formatted_masque = masque if len(masque) <= 64 else (masque[:64] + b"...")
-                LOGGER.info(f'Setting {operating_system} masque to "{formatted_masque}"')
+                logger.info(f'Setting {operating_system} masque to "{formatted_masque}"')
             else:
-                LOGGER.error(f"Failed to set {operating_system} masque")
+                logger.error(f"Failed to set {operating_system} masque")
                 assert False
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
@@ -70,9 +70,9 @@ class MonkeyIslandClient(object):
             json=test_configuration.agent_configuration.dict(simplify=True),
         )
         if response.ok:
-            LOGGER.info("Configuration is imported.")
+            logger.info("Configuration is imported.")
         else:
-            LOGGER.error(f"Failed to import config: {response}")
+            logger.error(f"Failed to import config: {response}")
             assert False
 
     @avoid_race_condition
@@ -85,18 +85,18 @@ class MonkeyIslandClient(object):
             json=serialized_propagation_credentials,
         )
         if response.ok:
-            LOGGER.info("Credentials are imported.")
+            logger.info("Credentials are imported.")
         else:
-            LOGGER.error(f"Failed to import credentials: {response}")
+            logger.error(f"Failed to import credentials: {response}")
             assert False
 
     @avoid_race_condition
     def run_monkey_local(self):
         response = self.requests.post_json("api/local-monkey", json={"action": "run"})
         if MonkeyIslandClient.monkey_ran_successfully(response):
-            LOGGER.info("Running the monkey.")
+            logger.info("Running the monkey.")
         else:
-            LOGGER.error("Failed to run the monkey.")
+            logger.error("Failed to run the monkey.")
             assert False
 
     @staticmethod
@@ -111,11 +111,11 @@ class MonkeyIslandClient(object):
             json=TerminateAllAgents(timestamp=time.time()).dict(simplify=True),
         )
         if response.ok:
-            LOGGER.info("Killing all monkeys after the test.")
+            logger.info("Killing all monkeys after the test.")
         else:
-            LOGGER.error("Failed to kill all monkeys.")
-            LOGGER.error(response.status_code)
-            LOGGER.error(response.content)
+            logger.error("Failed to kill all monkeys.")
+            logger.error(response.status_code)
+            logger.error(response.content)
             assert False
 
     @avoid_race_condition
@@ -127,23 +127,23 @@ class MonkeyIslandClient(object):
 
     def _reset_agent_configuration(self):
         if self.requests.post("api/reset-agent-configuration", data=None).ok:
-            LOGGER.info("Resetting agent-configuration after the test.")
+            logger.info("Resetting agent-configuration after the test.")
         else:
-            LOGGER.error("Failed to reset agent configuration.")
+            logger.error("Failed to reset agent configuration.")
             assert False
 
     def _reset_simulation_data(self):
         if self.requests.post("api/clear-simulation-data", data=None).ok:
-            LOGGER.info("Clearing simulation data.")
+            logger.info("Clearing simulation data.")
         else:
-            LOGGER.error("Failed to clear simulation data")
+            logger.error("Failed to clear simulation data")
             assert False
 
     def _reset_credentials(self):
         if self.requests.put_json("api/propagation-credentials/configured-credentials", json=[]).ok:
-            LOGGER.info("Resseting configured credentials after the test.")
+            logger.info("Resseting configured credentials after the test.")
         else:
-            LOGGER.error("Failed to reset configured credentials")
+            logger.error("Failed to reset configured credentials")
             assert False
 
     def get_agents(self) -> Sequence[Agent]:
@@ -161,7 +161,7 @@ class MonkeyIslandClient(object):
         response = self.requests.get(f"{GET_LOG_ENDPOINT}/{agent_id}")
 
         if response.status_code == HTTPStatus.NOT_FOUND:
-            LOGGER.error(f"No log found for agent: {agent_id}")
+            logger.error(f"No log found for agent: {agent_id}")
             return None
         else:
             response.raise_for_status()
@@ -187,23 +187,23 @@ class MonkeyIslandClient(object):
     def register(self):
         try:
             self.requests.register()
-            LOGGER.info("Successfully registered a user with the Island.")
+            logger.info("Successfully registered a user with the Island.")
         except Exception:
-            LOGGER.error("Failed to register a user with the Island.")
+            logger.error("Failed to register a user with the Island.")
 
     def login(self):
         try:
             self.requests.login()
-            LOGGER.info("Logged into the Island.")
+            logger.info("Logged into the Island.")
         except Exception:
-            LOGGER.error("Failed to log into the Island.")
+            logger.error("Failed to log into the Island.")
             assert False
 
     def logout(self):
         if self.requests.post(LOGOUT_ENDPOINT, data=None).ok:
-            LOGGER.info("Logged out of the Island.")
+            logger.info("Logged out of the Island.")
         else:
-            LOGGER.error("Failed to log out of the Island.")
+            logger.error("Failed to log out of the Island.")
             assert False
 
     def get_agent_otp(self):

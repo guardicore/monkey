@@ -10,7 +10,7 @@ from envs.monkey_zoo.blackbox.log_handlers.island_log_parser import IslandLogPar
 from envs.monkey_zoo.blackbox.utils import bb_singleton
 from monkey_island.cc.models import Agent, Machine
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MonkeyLogsDownloader(object):
@@ -21,7 +21,7 @@ class MonkeyLogsDownloader(object):
 
     def download_monkey_logs(self):
         try:
-            LOGGER.info("Downloading each monkey log.")
+            logger.info("Downloading each monkey log.")
 
             agents = self.island_client.get_agents()
             machines = self.island_client.get_machines()
@@ -41,7 +41,7 @@ class MonkeyLogsDownloader(object):
             self._download_island_log()
 
         except Exception as err:
-            LOGGER.exception(err)
+            logger.exception(err)
 
     def _download_agent_log(self, agent: Agent, machines: Mapping[MachineID, Machine]):
         log_file_path = self._get_log_file_path(agent, machines)
@@ -66,7 +66,7 @@ class MonkeyLogsDownloader(object):
         try:
             machine_ip = str(machines[agent.machine_id].network_interfaces[0].ip)
         except IndexError:
-            LOGGER.error(f"Machine with ID {agent.machine_id} has no network interfaces")
+            logger.error(f"Machine with ID {agent.machine_id} has no network interfaces")
             machine_ip = "UNKNOWN"
 
         start_time = agent.start_time.strftime("%Y-%m-%d_%H-%M-%S")
@@ -75,7 +75,7 @@ class MonkeyLogsDownloader(object):
 
     @staticmethod
     def _write_log_to_file(log_file_path: Path, log_contents: str):
-        LOGGER.debug(f"Writing {len(log_contents)} bytes to {log_file_path}")
+        logger.debug(f"Writing {len(log_contents)} bytes to {log_file_path}")
 
         with open(log_file_path, "w") as f:
             f.write(log_contents)

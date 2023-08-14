@@ -60,7 +60,7 @@ DEFAULT_TIMEOUT_SECONDS = 2 * 60 + 30
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 LOG_DIR_PATH = "./logs"
 logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -68,15 +68,15 @@ def GCPHandler(request, no_gcp, gcp_machines_to_start):
     if no_gcp:
         return
     if len(gcp_machines_to_start) == 0:
-        LOGGER.info("No GCP machines to start.")
+        logger.info("No GCP machines to start.")
     else:
-        LOGGER.info(f"MACHINES TO START: {gcp_machines_to_start}")
+        logger.info(f"MACHINES TO START: {gcp_machines_to_start}")
 
         try:
             initialize_gcp_client()
             start_machines(gcp_machines_to_start)
         except Exception as e:
-            LOGGER.error("GCP Handler failed to initialize: %s." % e)
+            logger.error("GCP Handler failed to initialize: %s." % e)
             pytest.exit("Encountered an error while starting GCP machines. Stopping the tests.")
         wait_machine_bootup()
 
@@ -88,7 +88,7 @@ def GCPHandler(request, no_gcp, gcp_machines_to_start):
 
 @pytest.fixture(autouse=True, scope="session")
 def delete_logs():
-    LOGGER.info("Deleting monkey logs before new tests.")
+    logger.info("Deleting monkey logs before new tests.")
     TestLogsHandler.delete_log_folder_contents(TestMonkeyBlackbox.get_log_dir_path())
 
 

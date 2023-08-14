@@ -6,7 +6,7 @@ from envs.monkey_zoo.blackbox.log_handlers.monkey_log_parser import MonkeyLogPar
 from envs.monkey_zoo.blackbox.log_handlers.monkey_logs_downloader import MonkeyLogsDownloader
 
 LOG_DIR_NAME = "logs"
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class TestLogsHandler(object):
@@ -20,7 +20,7 @@ class TestLogsHandler(object):
     def parse_test_logs(self):
         log_paths = self.download_logs()
         if not log_paths:
-            LOGGER.error(
+            logger.error(
                 "No logs were downloaded. Maybe no monkeys were ran "
                 "or early exception prevented log download?"
             )
@@ -37,7 +37,7 @@ class TestLogsHandler(object):
         try:
             os.mkdir(self.log_dir_path)
         except Exception as e:
-            LOGGER.error("Can't create a dir for test logs: {}".format(e))
+            logger.error("Can't create a dir for test logs: {}".format(e))
 
     @staticmethod
     def delete_log_folder_contents(log_dir_path):
@@ -47,7 +47,7 @@ class TestLogsHandler(object):
     @staticmethod
     def parse_logs(log_paths):
         for log_path in log_paths:
-            LOGGER.info("Info from log at {}".format(log_path))
+            logger.info("Info from log at {}".format(log_path))
             log_parser = MonkeyLogParser(log_path)
             log_parser.print_errors()
             log_parser.print_warnings()
