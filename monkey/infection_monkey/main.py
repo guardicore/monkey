@@ -18,6 +18,8 @@ from multiprocessing import Queue, freeze_support, get_context
 from pathlib import Path
 from typing import Sequence, Tuple, Union
 
+import psutil
+
 # dummy import for pyinstaller
 # noinspection PyUnresolvedReferences
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
@@ -179,6 +181,22 @@ def _run_agent(
         logger.exception(
             "Exception thrown from monkey's cleanup function: More info: {}".format(err)
         )
+    finally:
+        _kill_hung_child_processes(logger)
+
+
+def _kill_hung_child_processes(logger: logging.Logger):
+    for p in psutil.Process().children(recursive=True):
+        if "multiprocessing.resource_tracker" in p.cmdline()[2]:
+            # This process will clean itself up, but no other processes should be running at
+            # this time.
+            continue
+
+        logger.warning(
+            "Killing hung child process: "
+            f"pid={p.pid}, name={p.name()}, status={p.status()}, cmdline={p.cmdline()}"
+        )
+        p.kill()
 
 
 if "__main__" == __name__:
