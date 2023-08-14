@@ -28,6 +28,7 @@ repos:
       - id: check-json
       - id: check-merge-conflict
       - id: detect-private-key
+        exclude: "envs/monkey_zoo/blackbox/expected_credentials.py"
       - id: end-of-file-fixer
       - id: trailing-whitespace
   - repo: https://github.com/eslint/eslint

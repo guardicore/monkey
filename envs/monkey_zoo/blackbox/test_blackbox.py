@@ -13,11 +13,11 @@ import requests
 from treelib import Tree
 
 from common import OperatingSystem
-from common.credentials import Credentials, NTHash, Password, Username
 from common.types import OTP, SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.stolen_credentials_analyzer import StolenCredentialsAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
+from envs.monkey_zoo.blackbox.expected_credentials import expected_credentials_depth_2_a
 from envs.monkey_zoo.blackbox.island_client.agent_requests import AgentRequests
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import (
@@ -60,7 +60,7 @@ DEFAULT_TIMEOUT_SECONDS = 2 * 60 + 30
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 LOG_DIR_PATH = "./logs"
 logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -68,15 +68,15 @@ def GCPHandler(request, no_gcp, gcp_machines_to_start):
     if no_gcp:
         return
     if len(gcp_machines_to_start) == 0:
-        LOGGER.info("No GCP machines to start.")
+        logger.info("No GCP machines to start.")
     else:
-        LOGGER.info(f"MACHINES TO START: {gcp_machines_to_start}")
+        logger.info(f"MACHINES TO START: {gcp_machines_to_start}")
 
         try:
             initialize_gcp_client()
             start_machines(gcp_machines_to_start)
         except Exception as e:
-            LOGGER.error("GCP Handler failed to initialize: %s." % e)
+            logger.error("GCP Handler failed to initialize: %s." % e)
             pytest.exit("Encountered an error while starting GCP machines. Stopping the tests.")
         wait_machine_bootup()
 
@@ -88,7 +88,7 @@ def GCPHandler(request, no_gcp, gcp_machines_to_start):
 
 @pytest.fixture(autouse=True, scope="session")
 def delete_logs():
-    LOGGER.info("Deleting monkey logs before new tests.")
+    logger.info("Deleting monkey logs before new tests.")
     TestLogsHandler.delete_log_folder_contents(TestMonkeyBlackbox.get_log_dir_path())
 
 
@@ -579,12 +579,16 @@ class TestMonkeyBlackbox:
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
+
+        stolen_credentials_analyzer = StolenCredentialsAnalyzer(
+            island_client, expected_credentials_depth_2_a
+        )
         exploitation_test = ExploitationTest(
             name=test_name,
             island_client=island_client,
             test_configuration=depth_2_a_test_configuration,
             masque=None,
-            analyzers=[communication_analyzer],
+            analyzers=[communication_analyzer, stolen_credentials_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         )
@@ -602,32 +606,6 @@ class TestMonkeyBlackbox:
         test_name = "Depth1A test suite"
         masque = b"m0nk3y"
 
-        expected_credentials = {
-            Credentials(
-                identity=Username(username="m0nk3y"),
-                secret=NTHash(nt_hash="5da0889ea2081aa79f6852294cba4a5e"),
-            ),
-            Credentials(
-                identity=Username(username="m0nk3y"), secret=Password(password="pAJfG56JX><")
-            ),
-            Credentials(
-                identity=Username(username="m0nk3y"), secret=Password(password="Ivrrw5zEzs")
-            ),
-            Credentials(
-                identity=Username(username="vakaris_zilius"),
-                secret=NTHash(nt_hash="e1c0dc690821c13b10a41dccfc72e43a"),
-            ),
-            Credentials(
-                identity=Username(username="m0nk3y"),
-                secret=NTHash(nt_hash="fc525c9683e8fe067095ba2ddc971889"),
-            ),
-            Credentials(
-                identity=Username(username="m0nk3y"),
-                secret=NTHash(nt_hash="201fe0a0db9733e419875201c6bd36f2"),
-            ),
-        }
-
-        stolen_credentials_analyzer = StolenCredentialsAnalyzer(island_client, expected_credentials)
         communication_analyzer = CommunicationAnalyzer(
             island_client,
             get_target_ips(depth_1_a_test_configuration),
@@ -640,7 +618,7 @@ class TestMonkeyBlackbox:
             island_client=island_client,
             test_configuration=depth_1_a_test_configuration,
             masque=masque,
-            analyzers=[stolen_credentials_analyzer, communication_analyzer],
+            analyzers=[communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         )

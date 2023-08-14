@@ -9,7 +9,7 @@ from .i_monkey_island_requests import IMonkeyIslandRequests
 
 ISLAND_USERNAME = "test"
 ISLAND_PASSWORD = "testtest"
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class InvalidRequestError(Exception):

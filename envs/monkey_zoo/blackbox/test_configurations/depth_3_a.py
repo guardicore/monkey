@@ -19,14 +19,12 @@ from .utils import (
 # Tests:
 #     Powershell (10.2.3.45, 10.2.3.46, 10.2.3.47, 10.2.3.48)
 #     Tunneling through grandparent agent (SSH brute force) (10.2.2.9, 10.2.1.10, 10.2.0.11)
-#     WMI pass the hash (10.2.2.15)
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
         "PowerShell": {},
         "SSH": {},
-        "WMI": {"agent_binary_upload_timeout": 30},
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
@@ -40,7 +38,6 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
         "10.2.3.48",
         "10.2.1.10",
         "10.2.0.11",
-        "10.2.2.15",
     ]
     return add_subnets(agent_configuration, subnets)
 

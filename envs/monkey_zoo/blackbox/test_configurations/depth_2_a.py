@@ -2,10 +2,11 @@ import dataclasses
 from typing import Dict, Mapping
 
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
-from common.credentials import Credentials, Password, Username, NTHash
+from common.credentials import Credentials, NTHash, Password, Username
 
 from .noop import noop_test_configuration
 from .utils import (
+    add_credentials_collectors,
     add_exploiters,
     add_fingerprinters,
     add_http_ports,
@@ -20,6 +21,7 @@ from .utils import (
 #     SSH password and key brute-force, key stealing (10.2.2.11, 10.2.2.12)
 #     Powershell credential reuse (logging in without credentials
 #       to an identical user on another machine)(10.2.3.44, 10.2.3.46)
+#     SMB mimikatz password stealing and brute force (10.2.2.14 and 10.2.2.15)
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
@@ -36,15 +38,25 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
         "SSH": {},
         "PowerShell": {},
         "RDP": {},
+        "SMB": {"agent_binary_upload_timeout": 30, "smb_connect_timeout": 15},
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
+
+
+def _add_credentials_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
+    credentials_collectors: Dict[str, Mapping] = {"Mimikatz": {}, "SSH": {}}
+    return add_credentials_collectors(
+        agent_configuration, credentials_collectors=credentials_collectors
+    )
 
 
 def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     subnets = [
         "10.2.2.11",
         "10.2.2.12",
+        "10.2.2.14",
+        "10.2.2.15",
         "10.2.3.44",
         "10.2.3.46",
         "10.2.3.64",
@@ -74,11 +86,13 @@ test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_fingerprinters(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 test_agent_configuration = _add_http_ports(test_agent_configuration)
+test_agent_configuration = _add_credentials_collectors(test_agent_configuration)
 
 CREDENTIALS = (
     Credentials(identity=Username(username="m0nk3y"), secret=None),
     Credentials(identity=None, secret=Password(password="^NgDvY59~8")),
     Credentials(identity=None, secret=Password(password="P@ssw0rd!")),
+    Credentials(identity=None, secret=Password(password="Ivrrw5zEzs")),
     Credentials(identity=None, secret=NTHash(nt_hash="68965ABB32F8CE46F7E40075FA5B623E")),
 )
 
