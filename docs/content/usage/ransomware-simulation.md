@@ -8,30 +8,28 @@ pre: "<i class='fa fa-lock'></i> "
 ---
 
 The Infection Monkey is capable of simulating a ransomware attack on your
-network using a set of configurable behaviors.
+network using a set of configurable behaviors. In order to simulate the
+behavior of ransomware as accurately as possible, the Infection Monkey can
+[encrypt user-specified files](#configuring-encryption) using a [fully
+reversible algorithm](#how-are-the-files-encrypted). A number of mechanisms are
+in place to ensure that all actions performed by the encryption routine are
+safe for production environments.
 
-
-## Encryption
-
-In order to simulate the behavior of ransomware as accurately as possible, the
-Infection Monkey can [encrypt user-specified files](#configuring-encryption)
-using a [fully reversible algorithm](#how-are-the-files-encrypted). A number of
-mechanisms are in place to ensure that all actions performed by the encryption
-routine are safe for production environments.
-
-### Preparing your environment for a ransomware simulation
+## Workflow
+### 1. Prepare your environment for a ransomware simulation
 
 The Infection Monkey will only encrypt files that you allow it to. In order to
 take full advantage of the Infection Monkey's ransomware simulation, you'll
 need to provide the Infection Monkey with a directory that contains files that
-are safe for it to encrypt. The recommended approach is to use a remote
-administration tool, such as
+are safe for it to encrypt. The recommended approach is to use a configuration
+management tool, such as
 [Ansible](https://docs.ansible.com/ansible/latest/user_guide/) or
-[PsExec](https://theitbros.com/using-psexec-to-run-commands-remotely/) to add a
-"ransomware target" directory to each machine in your environment. The
-Infection Monkey can then be configured to encrypt files in this directory.
+[PsExec](https://theitbros.com/using-psexec-to-run-commands-remotely/), or even
+a Windows GPO, to add a "ransomware target" directory to each machine in your
+environment. The Infection Monkey can then be configured to encrypt files in
+this directory.
 
-### Configuring encryption
+### 2. Configure encryption
 
 To ensure minimum interference and easy recoverability, the ransomware
 simulation will only encrypt files contained in a user-specified directory. If
@@ -47,6 +45,29 @@ on the filename alone!
 configuration](/images/island/configuration_page/ransomware_configuration.png
 "Ransomware configuration")
 
+### 3. Configure propagation
+
+If you would like the Infection Monkey to propagate through the network,
+[Configure](/usage/configuration/) the network settings and one or more
+exploiters.
+
+### 4. Run the Agent
+
+Once everything is configured to your liking, simply [run the
+agent](/usage/getting-started#running-the-infection-monkey) to begin the
+ransomware simulation.
+
+### 5. Clean up
+
+After the simulation is complete, you can use the same mechanism you used in
+[step
+1](/usage/ransomware-simulation#1-prepare-your-environment-for-a-ransomware-simulation)
+to either remove the target directory or replace the encrypted files with
+unencrypted files. In most cases, there's no need to attempt to decrypt the
+files, as you should still have the originals.
+
+
+## Technical details
 ### How are the files encrypted?
 
 Files are "encrypted" in place with a simple bit flip. Encrypted files are
@@ -155,7 +176,7 @@ BitDefender](https://labs.bitdefender.com/2017/07/a-technical-look-into-the-gold
 - .zip
 
 
-## Leaving a README.txt file
+### Leaving a README.txt file
 
 Many ransomware packages leave a README.txt file on the victim machine with an
 explanation of what has occurred and instructions for paying the attacker. The
