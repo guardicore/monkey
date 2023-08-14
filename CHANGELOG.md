@@ -26,6 +26,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   UI. #3393
 - Hard-coded ransomware payload to a plugin. #3391
 
+### Fixed
+- Agent hanging if plugins do not shut down. #3557
+
 ### Removed
 - Island mode configuration. #3400
 
