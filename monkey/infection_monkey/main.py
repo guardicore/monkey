@@ -18,7 +18,7 @@ from multiprocessing import Queue, freeze_support, get_context
 from pathlib import Path
 from typing import Sequence, Tuple, Union
 
-import psutil
+from psutil import Process
 
 # dummy import for pyinstaller
 # noinspection PyUnresolvedReferences
@@ -186,7 +186,7 @@ def _run_agent(
 
 
 def _kill_hung_child_processes(logger: logging.Logger):
-    for p in psutil.Process().children(recursive=True):
+    for p in Process().children(recursive=True):
         logger.debug(
             "Found child process: "
             f"pid={p.pid}, name={p.name()}, status={p.status()}, cmdline={p.cmdline()}"
@@ -209,14 +209,14 @@ def _kill_hung_child_processes(logger: logging.Logger):
         p.kill()
 
 
-def _process_is_resource_tracker(process: psutil.Process) -> bool:
+def _process_is_resource_tracker(process: Process) -> bool:
     try:
         return "multiprocessing.resource_tracker" in process.cmdline()[2]
     except IndexError:
         return False
 
 
-def _process_is_windows_self_removal(process: psutil.Process) -> bool:
+def _process_is_windows_self_removal(process: Process) -> bool:
     if process.name() in ["cmd.exe", "timeout.exe"]:
         return True
 
