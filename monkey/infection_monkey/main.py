@@ -202,10 +202,7 @@ def _kill_hung_child_processes(logger: logging.Logger):
             logger.debug(f"Ignoring self removal process: {p.pid}")
             continue
 
-        logger.warning(
-            "Killing hung child process: "
-            f"pid={p.pid}, name={p.name()}, status={p.status()}, cmdline={p.cmdline()}"
-        )
+        logger.warning(f"Killing hung child process: {p.pid}")
         p.kill()
 
 
