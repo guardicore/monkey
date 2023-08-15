@@ -187,7 +187,12 @@ def _run_agent(
 
 def _kill_hung_child_processes(logger: logging.Logger):
     for p in psutil.Process().children(recursive=True):
+        logger.debug(
+            "Found child process: "
+            f"pid={p.pid}, name={p.name()}, status={p.status()}, cmdline={p.cmdline()}"
+        )
         if "multiprocessing.resource_tracker" in p.cmdline()[2]:
+            logger.debug("Ignoring resource_tracker process")
             # This process will clean itself up, but no other processes should be running at
             # this time.
             continue
