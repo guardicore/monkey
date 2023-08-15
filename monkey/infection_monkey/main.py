@@ -198,6 +198,10 @@ def _kill_hung_child_processes(logger: logging.Logger):
             logger.debug(f"Ignoring resource_tracker process: {p.pid}")
             continue
 
+        if _process_is_windows_self_removal(p):
+            logger.debug(f"Ignoring self removal process: {p.pid}")
+            continue
+
         logger.warning(
             "Killing hung child process: "
             f"pid={p.pid}, name={p.name()}, status={p.status()}, cmdline={p.cmdline()}"
@@ -210,6 +214,13 @@ def _process_is_resource_tracker(process: psutil.Process) -> bool:
         return "multiprocessing.resource_tracker" in process.cmdline()[2]
     except IndexError:
         return False
+
+
+def _process_is_windows_self_removal(process: psutil.Process) -> bool:
+    if process.name() in ["cmd.exe", "timeout.exe"]:
+        return True
+
+    return False
 
 
 if "__main__" == __name__:
