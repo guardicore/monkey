@@ -191,20 +191,25 @@ def _kill_hung_child_processes(logger: logging.Logger):
             "Found child process: "
             f"pid={p.pid}, name={p.name()}, status={p.status()}, cmdline={p.cmdline()}"
         )
-        try:
-            if "multiprocessing.resource_tracker" in p.cmdline()[2]:
-                logger.debug("Ignoring resource_tracker process")
-                # This process will clean itself up, but no other processes should be running at
-                # this time.
-                continue
-        except IndexError:
-            pass
+
+        if _process_is_resource_tracker(p):
+            # This process will clean itself up, but no other processes should be running at
+            # this time.
+            logger.debug("Ignoring resource_tracker process")
+            continue
 
         logger.warning(
             "Killing hung child process: "
             f"pid={p.pid}, name={p.name()}, status={p.status()}, cmdline={p.cmdline()}"
         )
         p.kill()
+
+
+def _process_is_resource_tracker(process: psutil.Process) -> bool:
+    try:
+        return "multiprocessing.resource_tracker" in process.cmdline()[2]
+    except IndexError:
+        return False
 
 
 if "__main__" == __name__:
