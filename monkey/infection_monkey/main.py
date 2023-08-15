@@ -210,10 +210,11 @@ def _kill_hung_child_processes(logger: logging.Logger):
 
 
 def _process_is_resource_tracker(process: Process) -> bool:
-    try:
-        return "multiprocessing.resource_tracker" in process.cmdline()[2]
-    except IndexError:
-        return False
+    for arg in process.cmdline():
+        if "multiprocessing.resource_tracker" in arg:
+            return True
+
+    return False
 
 
 def _process_is_windows_self_removal(process: Process) -> bool:
