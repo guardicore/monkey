@@ -195,7 +195,7 @@ def _kill_hung_child_processes(logger: logging.Logger):
         if _process_is_resource_tracker(p):
             # This process will clean itself up, but no other processes should be running at
             # this time.
-            logger.debug("Ignoring resource_tracker process")
+            logger.debug(f"Ignoring resource_tracker process: {p.pid}")
             continue
 
         logger.warning(
