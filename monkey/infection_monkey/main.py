@@ -182,7 +182,8 @@ def _run_agent(
             "Exception thrown from monkey's cleanup function: More info: {}".format(err)
         )
     finally:
-        _kill_hung_child_processes(logger)
+        if MONKEY_ARG == mode:
+            _kill_hung_child_processes(logger)
 
 
 def _kill_hung_child_processes(logger: logging.Logger):
