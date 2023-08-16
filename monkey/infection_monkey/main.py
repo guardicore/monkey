@@ -162,11 +162,11 @@ def _run_agent(
     logger.info(f"version: {get_version()}")
 
     monkey: Union[InfectionMonkey, MonkeyDrops]
-    if MONKEY_ARG == mode:
+    if mode == MONKEY_ARG:
         monkey = InfectionMonkey(
             mode_specific_args, ipc_logger_queue=ipc_logger_queue, log_path=log_path
         )
-    elif DROPPER_ARG == mode:
+    elif mode == DROPPER_ARG:
         monkey = MonkeyDrops(mode_specific_args)
 
     try:
@@ -182,7 +182,8 @@ def _run_agent(
             "Exception thrown from monkey's cleanup function: More info: {}".format(err)
         )
     finally:
-        _kill_hung_child_processes(logger)
+        if mode == MONKEY_ARG:
+            _kill_hung_child_processes(logger)
 
 
 def _kill_hung_child_processes(logger: logging.Logger):
