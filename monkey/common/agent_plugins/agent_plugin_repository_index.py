@@ -4,14 +4,14 @@ from typing import Any, Dict, List, Literal, Union
 from pydantic import Field, validator
 from semver import VersionInfo
 
-from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
+from common.base_models import MutableInfectionMonkeyBaseModel, MutableInfectionMonkeyModelConfig
 
 from . import AgentPluginMetadata, AgentPluginType, PluginName
 
 DEVELOPMENT = "development"
 
 
-class AgentPluginRepositoryIndex(InfectionMonkeyBaseModel):
+class AgentPluginRepositoryIndex(MutableInfectionMonkeyBaseModel):
     """
     Class for an Agent plugin repository's index
 
@@ -31,7 +31,7 @@ class AgentPluginRepositoryIndex(InfectionMonkeyBaseModel):
     ]
     plugins: Dict[AgentPluginType, Dict[PluginName, List[AgentPluginMetadata]]]
 
-    class Config(InfectionMonkeyModelConfig):
+    class Config(MutableInfectionMonkeyModelConfig):
         arbitrary_types_allowed = True
         use_enum_values = True
         json_encoders = {
