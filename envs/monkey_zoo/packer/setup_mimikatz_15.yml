@@ -33,6 +33,20 @@
       win_command:
         cmd: netsh advfirewall firewall add rule name="Allow Port 445" dir=in action=allow protocol=TCP localport=445
 
+    - name: Allow port 135 DCOM
+      win_command:
+        cmd: netsh advfirewall firewall add rule name="Allow Port 135" dir=in action=allow protocol=TCP localport=135
+
+    - name: Allow DCOM Connection
+      win_firewall_rule:
+        name: Allow DCOM Connection
+        localport: any
+        direction: in
+        program: C:\Windows\System32\svchost.exe
+        action: allow
+        state: present
+        enabled: yes
+
     - name: Change the hostname to mimikatz-15
       ansible.windows.win_hostname:
         name: mimikatz-15
