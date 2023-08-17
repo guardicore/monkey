@@ -30,3 +30,6 @@ class AgentPluginRepositoryCachingDecorator(IAgentPluginRepository):
     @lru_cache()
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
         return self._agent_plugin_repository.get_all_plugin_manifests()
+
+    def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
+        return self._agent_plugin_repository.store_agent_plugin(operating_system, agent_plugin)
