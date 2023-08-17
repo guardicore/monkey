@@ -9,7 +9,7 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
-from monkey_island.cc.services.agent_plugin_service.agent_plugin_repository_caching_decorator import (
+from monkey_island.cc.services.agent_plugin_service.agent_plugin_repository_caching_decorator import (  # noqa: E501
     AgentPluginRepositoryCachingDecorator,
 )
 from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_repository import (
@@ -39,12 +39,14 @@ def test_get_cached_plugin(agent_plugin_repository, in_memory_agent_plugin_repos
         supported_operating_systems=(OperatingSystem.LINUX,),
     )
 
-    in_memory_agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
+    in_memory_agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)
     retrieved_plugin_1 = agent_plugin_repository.get_plugin(
         OperatingSystem.LINUX, AgentPluginType.EXPLOITER, common_name
     )
 
-    in_memory_agent_plugin_repository.save_plugin(agent_plugin_with_same_name)
+    in_memory_agent_plugin_repository.store_agent_plugin(
+        OperatingSystem.LINUX, agent_plugin_with_same_name
+    )
     retrieved_plugin_2 = agent_plugin_repository.get_plugin(
         OperatingSystem.LINUX, AgentPluginType.EXPLOITER, common_name
     )
@@ -54,10 +56,10 @@ def test_get_cached_plugin(agent_plugin_repository, in_memory_agent_plugin_repos
 
 
 def test_get_cached_plugin_manifests(agent_plugin_repository, in_memory_agent_plugin_repository):
-    in_memory_agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
+    in_memory_agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)
     request_1_plugin_manifests = agent_plugin_repository.get_all_plugin_manifests()
 
-    in_memory_agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_2)
+    in_memory_agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_2)
     request_2_plugin_manifests = agent_plugin_repository.get_all_plugin_manifests()
 
     assert request_2_plugin_manifests == request_1_plugin_manifests

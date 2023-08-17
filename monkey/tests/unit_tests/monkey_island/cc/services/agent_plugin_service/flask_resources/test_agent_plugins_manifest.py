@@ -7,6 +7,7 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAK
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
+from common import OperatingSystem
 from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
 from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import AgentPluginService
@@ -33,7 +34,7 @@ def flask_client(build_flask_client, agent_plugin_service):
 
 
 def test_get_plugin_manifest(flask_client, agent_plugin_repository):
-    agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
+    agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)
 
     expected_response = {
         "description": None,

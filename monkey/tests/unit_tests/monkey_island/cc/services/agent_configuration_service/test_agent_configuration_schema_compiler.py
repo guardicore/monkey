@@ -8,6 +8,7 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
     FAKE_AGENT_PLUGIN_2,
 )
 
+from common import OperatingSystem
 from monkey_island.cc.services.agent_configuration_service.agent_configuration_schema_compiler import (  # noqa: E501
     AgentConfigurationSchemaCompiler,
 )
@@ -37,8 +38,8 @@ def config_schema_compiler(
 def test_get_schema__adds_exploiter_plugins_to_schema(
     config_schema_compiler: AgentConfigurationSchemaCompiler, agent_plugin_repository
 ):
-    agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
-    agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_2)
+    agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)
+    agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_2)
     expected_fake_schema1 = copy.deepcopy(FAKE_AGENT_PLUGIN_1.config_schema)
     expected_fake_schema1.update(FAKE_AGENT_PLUGIN_1.plugin_manifest.dict(simplify=True))
 
