@@ -44,5 +44,6 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
 
         return manifests
 
-    def save_plugin(self, plugin: AgentPlugin):
-        self._plugins[plugin.plugin_manifest.name] = plugin
+    def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
+        # TODO: Store it by OperatingSystem
+        self._plugins[agent_plugin.plugin_manifest.name] = agent_plugin

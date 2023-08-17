@@ -33,3 +33,10 @@ class AgentPluginRepositoryLoggingDecorator(IAgentPluginRepository):
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
         logger.debug("Retrieving plugin manifests")
         return self._agent_plugin_repository.get_all_plugin_manifests()
+
+    def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
+        logger.debug(
+            f"Storing {agent_plugin.plugin_manifest.name} "
+            f"for operating system: {operating_system}"
+        )
+        return self._agent_plugin_repository.store_agent_plugin(operating_system, agent_plugin)

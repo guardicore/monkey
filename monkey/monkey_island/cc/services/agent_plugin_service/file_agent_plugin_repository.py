@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Dict, Generator, List, Mapping
 
 from common import OperatingSystem
@@ -6,6 +7,8 @@ from monkey_island.cc.repositories import IFileRepository, RetrievalError
 
 from .i_agent_plugin_repository import IAgentPluginRepository
 from .plugin_archive_parser import parse_plugin
+
+logger = logging.getLogger(__name__)
 
 
 def _deduplicate_os_specific_plugins(
@@ -99,3 +102,10 @@ class FileAgentPluginRepository(IAgentPluginRepository):
             manifests[plugin_type][plugin.plugin_manifest.name] = plugin.plugin_manifest
 
         return manifests
+
+    def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
+        # TODO: Actually implement it
+        logger.debug(
+            f"The {agent_plugin.plugin_manifest.name} has been stored for "
+            f"operaint system: {operating_system}"
+        )
