@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
@@ -47,3 +47,12 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
     def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
         # TODO: Store it by OperatingSystem
         self._plugins[agent_plugin.plugin_manifest.name] = agent_plugin
+
+    def remove_agent_plugin(
+        self,
+        operating_system: Optional[OperatingSystem],
+        agent_plugin_name: str,
+        agent_plugin_type: AgentPluginType,
+    ):
+        # TODO: Remove it with Operating System
+        self._plugins.pop(agent_plugin_name, None)

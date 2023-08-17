@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, Generator, List, Mapping
+from typing import Any, Dict, Generator, List, Mapping, Optional
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
@@ -107,5 +107,17 @@ class FileAgentPluginRepository(IAgentPluginRepository):
         # TODO: Actually implement it
         logger.debug(
             f"The {agent_plugin.plugin_manifest.name} has been stored for "
-            f"operaint system: {operating_system}"
+            f"operating system: {operating_system}"
+        )
+
+    def remove_agent_plugin(
+        self,
+        operating_system: Optional[OperatingSystem],
+        agent_plugin_name: str,
+        agent_plugin_type: AgentPluginType,
+    ):
+        # TODO: Actually implement it
+        logger.debug(
+            f"The {agent_plugin_name} of type {agent_plugin_type} has been "
+            f"removed for operating system: {operating_system}"
         )

@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
@@ -40,3 +40,17 @@ class AgentPluginRepositoryLoggingDecorator(IAgentPluginRepository):
             f"for operating system: {operating_system}"
         )
         return self._agent_plugin_repository.store_agent_plugin(operating_system, agent_plugin)
+
+    def remove_agent_plugin(
+        self,
+        operating_system: Optional[OperatingSystem],
+        agent_plugin_name: str,
+        agent_plugin_type: AgentPluginType,
+    ):
+        logger.debug(
+            f"Removing {agent_plugin_name} of type {agent_plugin_type} "
+            f"for operating system: {operating_system}"
+        )
+        return self._agent_plugin_repository.remove_agent_plugin(
+            operating_system, agent_plugin_name, agent_plugin_type
+        )
