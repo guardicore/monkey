@@ -42,3 +42,13 @@ class IAgentPluginRepository(ABC):
         :raises RetrievalError: If an error occurs while trying to retrieve the manifests
         """
         pass
+
+    @abstractmethod
+    def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
+        """
+        Store AgentPlugin in the repository
+
+        :param operating_system: For which operating system we store the plugin
+        :param agent_plugin: A AgentPlugin object which we store
+        :raises StorageError: If the AgentPlugin could not be stored
+        """
