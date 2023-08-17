@@ -45,8 +45,15 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
         return manifests
 
     def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
-        # TODO: Store it by OperatingSystem
-        self._plugins[agent_plugin.plugin_manifest.name] = agent_plugin
+        if operating_system not in self._plugins:
+            self._plugins[operating_system] = {}
+
+        if agent_plugin.plugin_manifest.plugin_type not in self._plugins[operating_system]:
+            self._plugins[operating_system][agent_plugin.plugin_manifest.plugin_type] = {}
+
+        self._plugins[operating_system][agent_plugin.plugin_manifest.plugin_type][
+            agent_plugin.plugin_manifest.name
+        ] = agent_plugin
 
     def remove_agent_plugin(
         self,
@@ -54,5 +61,8 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
         agent_plugin_name: str,
         agent_plugin_type: AgentPluginType,
     ):
-        # TODO: Remove it with Operating System
-        self._plugins.pop(agent_plugin_name, None)
+        os_specific_plugins = self._plugins.get(operating_system, None)
+        if os_specific_plugins:
+            type_specific_plugins = os_specific_plugins.get(agent_plugin_type, None)
+            if type_specific_plugins:
+                type_specific_plugins.pop(agent_plugin_name, None)
