@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
@@ -51,4 +51,20 @@ class IAgentPluginRepository(ABC):
         :param operating_system: For which operating system we store the plugin
         :param agent_plugin: A AgentPlugin object which we store
         :raises StorageError: If the AgentPlugin could not be stored
+        """
+
+    @abstractmethod
+    def remove_agent_plugin(
+        self,
+        operating_system: Optional[OperatingSystem],
+        agent_plugin_name: str,
+        agent_plugin_type: AgentPluginType,
+    ):
+        """
+        Remove AgentPlugin from repository
+
+        :param operating_system: For which operating system we want to remove the plugin
+        :param agent_plugin_name: Name of the plugin we want to remove
+        :param agent_plugin_type: Type of the plugin we want to remove
+        :raises RemovalError: If an error occurs while removing the plugin
         """
