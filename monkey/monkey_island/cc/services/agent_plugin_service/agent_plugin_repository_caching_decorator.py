@@ -37,9 +37,9 @@ class AgentPluginRepositoryCachingDecorator(IAgentPluginRepository):
     def remove_agent_plugin(
         self,
         operating_system: Optional[OperatingSystem],
-        agent_plugin_name: str,
         agent_plugin_type: AgentPluginType,
+        agent_plugin_name: str,
     ):
         return self._agent_plugin_repository.remove_agent_plugin(
-            operating_system, agent_plugin_name, agent_plugin_type
+            operating_system, agent_plugin_type, agent_plugin_name
         )

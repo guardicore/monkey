@@ -42,8 +42,8 @@ class AgentPluginService(IAgentPluginService):
             plugin = next(iter(os_agent_plugins.values()))
             self._agent_plugin_repository.remove_agent_plugin(
                 operating_system=None,
-                agent_plugin_name=plugin.plugin_manifest.name,
                 agent_plugin_type=plugin.plugin_manifest.plugin_type,
+                agent_plugin_name=plugin.plugin_manifest.name,
             )
 
             for operating_system, agent_plugin in os_agent_plugins.items():

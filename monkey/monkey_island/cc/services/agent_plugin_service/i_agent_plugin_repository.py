@@ -57,14 +57,14 @@ class IAgentPluginRepository(ABC):
     def remove_agent_plugin(
         self,
         operating_system: Optional[OperatingSystem],
-        agent_plugin_name: str,
         agent_plugin_type: AgentPluginType,
+        agent_plugin_name: str,
     ):
         """
         Remove AgentPlugin from repository
 
         :param operating_system: The operating system the plugin runs on
-        :param agent_plugin_name: Name of the plugin we want to remove
         :param agent_plugin_type: Type of the plugin we want to remove
+        :param agent_plugin_name: Name of the plugin we want to remove
         :raises RemovalError: If an error occurs while removing the plugin
         """
