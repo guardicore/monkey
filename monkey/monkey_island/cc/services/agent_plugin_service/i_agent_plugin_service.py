@@ -44,3 +44,15 @@ class IAgentPluginService(ABC):
         :raises RetrievalError: If an error occurs while trying to retrieve the manifests
         """
         pass
+
+    @abstractmethod
+    def install_agent_plugin_archive(self, agent_plugin_archive: bytes):
+        """
+        Install plugin archive
+
+        :param agent_plugin_archive: The archive of the plugin
+        :raises RemovalError: If an error occus while attempting to uninstall a previous
+        version of the plugin
+        :raises StorageError: If an error occurs while attempting to install the plugin
+        """
+        pass
