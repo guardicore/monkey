@@ -68,9 +68,9 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
 
     def remove_agent_plugin(
         self,
-        operating_system: Optional[OperatingSystem],
         agent_plugin_type: AgentPluginType,
         agent_plugin_name: str,
+        operating_system: Optional[OperatingSystem] = None,
     ):
         os_specific_plugins = self._plugins.get(operating_system, None)
         if os_specific_plugins:

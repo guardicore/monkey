@@ -43,7 +43,6 @@ def test_agent_plugin_service__install_agent_plugin_archive(
     agent_plugin_service.install_agent_plugin_archive(agent_plugin_tar.getvalue())
 
     assert agent_plugin_repository.remove_agent_plugin.call_count == 1
-    assert agent_plugin_repository.remove_agent_plugin.call_args[1]["operating_system"] is None
 
     assert agent_plugin_repository.store_agent_plugin.call_count == 1
     assert agent_plugin_repository.store_agent_plugin.call_args[1]["operating_system"] is plugin_os
@@ -64,5 +63,4 @@ def test_agent_plugin_service__install_agent_plugin_archive_multi(
     agent_plugin_service.install_agent_plugin_archive(agent_plugin_tar.getvalue())
 
     assert agent_plugin_repository.remove_agent_plugin.call_count == 1
-    assert agent_plugin_repository.remove_agent_plugin.call_args[1]["operating_system"] is None
     assert agent_plugin_repository.store_agent_plugin.call_count == 2
