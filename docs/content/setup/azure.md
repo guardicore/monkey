@@ -7,7 +7,7 @@ weight: 6
 tags: ["setup", "azure"]
 ---
 
-## Deployment
+# Deployment
 
 Select the [Infection Monkey from the Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/guardicore.infection_monkey) and click **GET IT NOW**.
 
@@ -28,7 +28,7 @@ you can browse to the Infection Monkey running on your fresh deployment at:
 
 `https://{public-ip-address}:5000`
 
-## Upgrading
+# Upgrading
 
 Currently, there's no "upgrade-in-place" option when a new version is released.
 To get the updated version, you can deploy a new machine from the marketplace.
@@ -36,4 +36,4 @@ To get the updated version, you can deploy a new machine from the marketplace.
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
 
-![Import/export configuration](../../images/island/configuration_page/import_export_configuration.png "Import/export configuration")
+![Import/export configuration](https://raw.githubusercontent.com/guardicore/monkey/develop/docs/static/images/island/configuration_page/import_export_configuration.png)

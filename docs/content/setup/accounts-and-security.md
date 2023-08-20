@@ -13,4 +13,4 @@ The first time you launch Monkey Island (the Infection Monkey C&C server), you'l
 
 ## Resetting your account credentials
 
-This procedure is documented in [the FAQ]({{< ref "/faq/#how-do-i-reset-the-monkey-island-password" >}}).
+This procedure is documented in [the FAQ](doc:frequently-asked-questions).

@@ -7,7 +7,7 @@ weight: 4
 tags: ["setup", "AppImage", "linux"]
 ---
 
-## Supported operating systems
+# Supported Operating Systems
 
 An [AppImage](https://appimage.org/) is a distribution-agnostic, self-running
 package that contains an application and everything that it may need to run.
@@ -25,7 +25,7 @@ installed, but the ones that we've tested are:
 On Windows, AppImage can be run in WSL 2.
 
 
-## Deployment
+# Deployment
 
 1. Make the AppImage package executable:
     ```bash
@@ -45,14 +45,12 @@ On Windows, AppImage can be run in WSL 2.
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
 
-{{% notice info %}}
-If you're prompted to delete your data directory and you're not sure what to
-do, see the [FAQ]({{< ref
-"/faq/#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why"
->}}) for more information.
-{{% /notice %}}
+> 📘 Delete data directory prompt
+>
+>If you're prompted to delete your data directory and you're not sure what to do, see the [FAQ](doc:frequently-asked-questions#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why) for more information.
 
-## Running the Infection Monkey as a service on boot
+
+# Running the Infection Monkey as a service on boot
 
 The Infection Monkey can be installed as a service and run on boot by running the AppImage package
 with the following parameters. This requires root permissions, so run `sudo -v` and enter your
@@ -71,7 +69,7 @@ Service installation has been tested on Ubuntu. This feature may not work
 properly on other Linux distributions.
 {{% /notice %}}
 
-## Configuring the server
+# Configuring the server
 
 You can configure the server by creating
 a [server configuration file](../../reference/server_configuration) and
@@ -79,7 +77,7 @@ providing a path to it via command line parameters:
 
 `./InfectionMonkey-v2.2.0.AppImage --server-config="/path/to/server_config.json"`
 
-### Start Monkey Island with user-provided certificate
+## Start Monkey Island with user-provided certificate
 
 By default, Infection Monkey comes with a [self-signed SSL
 certificate](https://aboutssl.org/what-is-self-sign-certificate/). In
@@ -123,7 +121,7 @@ The server configuration file should look something like:
 
 1. Terminate the Island process if it's already running.
 
-1. Create a [server configuration file](../../reference/server_configuration).
+1. Create a [server configuration file](doc:server-configuration).
 The server configuration file should look something like:
 
     ```json
@@ -140,7 +138,7 @@ The server configuration file should look something like:
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
 
-## Upgrading
+# Upgrading
 
 Currently, there's no "upgrade-in-place" option when a new version is released.
 To get an updated version, download the updated AppImage package and follow the deployment
@@ -149,4 +147,4 @@ instructions again.
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
 
-![Import/export configuration](../../images/island/configuration_page/import_export_configuration.png "Import/export configuration")
+![Import/export configuration](https://raw.githubusercontent.com/guardicore/monkey/develop/docs/static/images/island/configuration_page/import_export_configuration.png)

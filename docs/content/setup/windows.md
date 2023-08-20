@@ -7,35 +7,37 @@ weight: 2
 tags: ["setup", "windows"]
 ---
 
-## Deployment
+# Deployment
 
-{{% notice tip %}}
-Don't get scared if the Infection Monkey gets [flagged as malware during the installation](/faq/#is-the-infection-monkey-a-malwarevirus).
-{{% /notice %}}
+> 📘 Infection Monkey flagged as malware
+>
+> Don't worry if the Infection Monkey gets [flagged as malware during the installation](doc:frequently-asked-questions#is-infection-monkey-a-malwarevirus).
 
 After running the installer, the following prompt should appear on the screen:
 
-![Windows installer screenshot](../../images/island/others/windows_installer.png "Windows installer screenshot")
+![Windows installer screenshot](https://github.com/guardicore/monkey/blob/develop/docs/static/images/island/others/windows_installer.png)
 
 1. Follow the steps to complete the installation.
 1. Run the Infection Monkey by clicking on the desktop shortcut. **Note**: If you want Agents to
 collect more data on the current machine, consider running as Administrator.
 
-{{% notice info %}}
-If you're prompted to delete your data directory and you're not sure what to
-do, see the [FAQ]({{< ref
-"/faq/#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why"
->}}) for more information.
-{{% /notice %}}
+> 📘 Infection Monkey flagged as malware
 >
-## Configuring the server
+> Don't worry if the Infection Monkey gets [flagged as malware during the installation](doc:frequently-asked-questions#is-infection-monkey-a-malwarevirus).
+
+*Notes*:
+
+- If you want Agents to collect more data on the current machine, consider running as Administrator.
+- If you're prompted to delete your data directory and are unsure what to do, see the [FAQ](doc:frequently-asked-questions#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why) for more information
+
+# Configuring the server
 
 You can configure the server by editing [the configuration
 file](../../reference/server_configuration) located in installation directory.
 The default path is
 `C:\Program Files\Infection Monkey\monkey_island\cc\server_config.json`.
 
-### Start Monkey Island with user-provided certificate
+## Start Monkey Island with user-provided certificate
 
 By default, Infection Monkey comes with a [self-signed SSL certificate](https://aboutssl.org/what-is-self-sign-certificate/). In
 enterprise or other security-sensitive environments, it is recommended that the
@@ -59,7 +61,7 @@ private certificate authority.
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
 
-### Change logging level
+## Change logging level
 
 1. Stop the Island Server.
 1. Modify the `server_config.json` (by default located in `C:\Program Files\Infection Monkey\monkey_island\cc\server_config.json`) by adding the following lines:
@@ -74,9 +76,9 @@ private certificate authority.
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
 
-## Troubleshooting
+# Troubleshooting
 
-### Support
+## Support
 
 Only **English** system locale is supported. If your command prompt gives output in a different
 language, the Infection Monkey is not guaranteed to work.
@@ -96,7 +98,7 @@ server only has Internet Explorer installed, please install Chrome or a similar
 modern browser. [You can download Google Chrome
 here](https://www.google.com/chrome/).
 
-## Upgrading
+# Upgrading
 
 To upgrade the Infection Monkey on Windows, download the new installer and run
 it. The new Monkey version will be installed over the old version.
@@ -104,4 +106,4 @@ it. The new Monkey version will be installed over the old version.
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
 
-![Import/export configuration](../../images/island/configuration_page/import_export_configuration.png "Import/export configuration")
+![Import/export configuration](https://raw.githubusercontent.com/guardicore/monkey/develop/docs/static/images/island/configuration_page/import_export_configuration.png)

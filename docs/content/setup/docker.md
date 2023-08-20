@@ -7,13 +7,13 @@ weight: 4
 tags: ["setup", "docker", "linux"]
 ---
 
-## Supported operating systems
+# Supported operating systems
 
 The Infection Monkey Docker container works on Linux only. It is not compatible with Docker for Windows or Docker for Mac.
 
-## Deployment
+# Deployment
 
-### 1. Load the docker images
+## Step 1: load the docker images
 1. Pull the MongoDB v6.0 Docker image:
 
     ```bash
@@ -26,11 +26,8 @@ The Infection Monkey Docker container works on Linux only. It is not compatible 
     sudo docker pull infectionmonkey/monkey_island:latest
     ```
 
-### 2. Start MongoDB
-{{% notice info %}}
-If you are upgrading the Infection Monkey to a new version, be sure to remove
-any MongoDB containers or volumes associated with the previous version.
-{{% /notice %}}
+## Step 2: start MongoDB
+If you are upgrading the Infection Monkey to a new version, be sure to remove any MongoDB containers or volumes associated with the previous version.
 
 1. Start a MongoDB Docker container:
 
@@ -43,7 +40,7 @@ any MongoDB containers or volumes associated with the previous version.
         mongo:6.0
     ```
 
-### 3. Start Monkey Island with default certificate
+## Step 3: start Monkey Island with default certificate
 
 By default, Infection Monkey comes with a [self-signed SSL certificate](https://aboutssl.org/what-is-self-sign-certificate/). In
 enterprise or other security-sensitive environments, it is recommended that the
@@ -61,11 +58,11 @@ been signed by a private certificate authority.
         infectionmonkey/monkey-island:latest
     ```
 
-### 4. Accessing Monkey Island
+## Step 4: accessing Monkey Island
 
 After the Monkey Island docker container starts, you can access Monkey Island by pointing your browser at `https://localhost:5000`.
 
-## Configuring the server
+# Configuring the server
 
 You can configure the server by mounting a volume and specifying a
  [server configuration file](../../reference/server_configuration):
@@ -180,11 +177,11 @@ again with the new file.
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
 
-![Import/export configuration](../../images/island/configuration_page/import_export_configuration.png "Import/export configuration")
+![Import/export configuration](https://raw.githubusercontent.com/guardicore/monkey/develop/docs/static/images/island/configuration_page/import_export_configuration.png)
 
-## Troubleshooting
+# Troubleshooting
 
-### The Monkey Island container crashes due to a 'UnicodeDecodeError'
+## The Monkey Island container crashes due to a 'UnicodeDecodeError'
 
 You will encounter a `UnicodeDecodeError` if the `monkey-island` container is
 using a different secret key to encrypt sensitive data than was initially used

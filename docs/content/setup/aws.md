@@ -7,7 +7,7 @@ weight: 5
 tags: ["setup", "aws"]
 ---
 
-## Deployment
+# Deployment
 
 On the [Infection Monkey's AWS Marketplace page](https://aws.amazon.com/marketplace/pp/GuardiCore-Infection-Monkey/B07B3J7K6D), click **Continue to Subscribe**.
 
@@ -24,7 +24,7 @@ When ready, you can browse to the Infection Monkey running on the fresh deployme
 
 `https://{public-ip}:5000`
 
-To login to the machine, use *ubuntu* username.
+To log in to the machine, use *ubuntu* username.
 
 ## Integration with AWS services
 
@@ -39,4 +39,4 @@ To get an updated version, you can deploy a new machine from the marketplace.
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
 
-![Import/export configuration](../../images/island/configuration_page/import_export_configuration.png "Import/export configuration")
+![Import/export configuration](https://raw.githubusercontent.com/guardicore/monkey/develop/docs/static/images/island/configuration_page/import_export_configuration.png)
