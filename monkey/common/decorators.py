@@ -1,5 +1,6 @@
 import threading
 from functools import wraps
+from typing import Any, Callable
 
 from egg_timer import EggTimer
 
@@ -27,13 +28,13 @@ def request_cache(ttl: float):
              not elapsed.
     """
 
-    def decorator(fn):
+    def decorator(fn: Callable) -> Callable:
         cached_value = None
         timer = EggTimer()
         lock = threading.Lock()
 
         @wraps(fn)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs) -> Any:
             nonlocal cached_value, timer, lock
 
             with lock:
@@ -49,7 +50,7 @@ def request_cache(ttl: float):
             with lock:
                 timer.set(0)
 
-        wrapper.clear_cache = clear_cache
+        wrapper.clear_cache = clear_cache  # type: ignore [attr-defined]
 
         return wrapper
 
