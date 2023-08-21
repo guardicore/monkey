@@ -3,9 +3,13 @@ from typing import BinaryIO, Callable
 from unittest.mock import MagicMock
 
 import pytest
+from tests.unit_tests.monkey_island.cc.services.agent_plugin_service.conftest import (
+    build_agent_plugin_tar,
+)
 
 from common import OperatingSystem
 from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import AgentPluginService
+from monkey_island.cc.services.agent_plugin_service.errors import PluginInstallationError
 from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_repository import (
     IAgentPluginRepository,
 )
@@ -64,3 +68,16 @@ def test_agent_plugin_service__install_agent_plugin_archive_multi(
 
     assert agent_plugin_repository.remove_agent_plugin.call_count == 1
     assert agent_plugin_repository.store_agent_plugin.call_count == 2
+
+
+def test_agent_plugin_service__plugin_install_error(
+    simple_agent_plugin,
+    plugin_data_dir: Path,
+    agent_plugin_service: IAgentPluginService,
+    build_agent_plugin_tar_with_source_tar: Callable[[Path], BinaryIO],
+):
+    agent_plugin_tar = build_agent_plugin_tar(
+        simple_agent_plugin, manifest_file_name="manifest.idk"
+    )
+    with pytest.raises(PluginInstallationError):
+        agent_plugin_service.install_agent_plugin_archive(agent_plugin_tar.getvalue())

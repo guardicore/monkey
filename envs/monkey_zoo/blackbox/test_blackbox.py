@@ -337,6 +337,7 @@ RESET_AGENT_CONFIG_ENDPOINT = "/api/reset-agent-configuration"
 GET_SECURITY_REPORT_ENDPOINT = "/api/report/security"
 GET_ISLAND_VERSION_ENDPOINT = "/api/island/version"
 PUT_AGENT_CONFIG_ENDPOINT = "/api/agent-configuration"
+INSTALL_AGENT_PLUGIN_ENDPOINT = "/api/install-agent-plugin"
 
 
 def test_agent__cannot_access_nonagent_endpoints(island):
@@ -380,6 +381,10 @@ def test_agent__cannot_access_nonagent_endpoints(island):
     assert agent_requests.get(GET_ISLAND_VERSION_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
     assert (
         agent_requests.put(PUT_AGENT_CONFIG_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
+    )
+    assert (
+        agent_requests.put(INSTALL_AGENT_PLUGIN_ENDPOINT, data=None).status_code
+        == HTTPStatus.FORBIDDEN
     )
 
 
@@ -445,6 +450,10 @@ def test_unauthenticated_user_cannot_access_API(island):
     assert island_requests.get(GET_ISLAND_VERSION_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
     assert (
         island_requests.put(PUT_AGENT_CONFIG_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert (
+        island_requests.put(INSTALL_AGENT_PLUGIN_ENDPOINT, data=None).status_code
         == HTTPStatus.UNAUTHORIZED
     )
 
