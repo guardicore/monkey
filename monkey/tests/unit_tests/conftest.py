@@ -34,8 +34,8 @@ def agent_plugin_repository_index_file(data_for_tests_dir) -> Path:
 
 
 @pytest.fixture(scope="session")
-def agent_plugin_repository_index_no_cache_file(data_for_tests_dir) -> Path:
-    return data_for_tests_dir / "agent_plugin" / "agent_plugin_repository_index_no_cache.yml"
+def agent_plugin_repository_index_simple_file(data_for_tests_dir) -> Path:
+    return data_for_tests_dir / "agent_plugin" / "agent_plugin_repository_index_simple.yml"
 
 
 @pytest.fixture

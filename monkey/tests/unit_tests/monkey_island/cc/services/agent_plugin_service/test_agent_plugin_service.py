@@ -108,8 +108,8 @@ def agent_plugin_repository_index(agent_plugin_repository_index_file):
 
 
 @pytest.fixture
-def agent_plugin_repository_index_no_cache(agent_plugin_repository_index_no_cache_file):
-    with open(agent_plugin_repository_index_no_cache_file, "r") as f:
+def agent_plugin_repository_index_simple(agent_plugin_repository_index_simple_file):
+    with open(agent_plugin_repository_index_simple_file, "r") as f:
         return f.read()
 
 
@@ -177,9 +177,9 @@ def test_agent_plugin_service__get_available_plugins(
     request_mock_instance,
     agent_plugin_service: IAgentPluginService,
     agent_plugin_repository_index,
-    agent_plugin_repository_index_no_cache,
+    agent_plugin_repository_index_simple,
 ):
-    dynamic_responses = [agent_plugin_repository_index, agent_plugin_repository_index_no_cache]
+    dynamic_responses = [agent_plugin_repository_index, agent_plugin_repository_index_simple]
 
     def dynamic_callback(request, context):
         return dynamic_responses.pop(0)
@@ -209,9 +209,9 @@ def test_agent_plugin_service__get_available_plugins_refresh(
     request_mock_instance,
     agent_plugin_service: IAgentPluginService,
     agent_plugin_repository_index,
-    agent_plugin_repository_index_no_cache,
+    agent_plugin_repository_index_simple,
 ):
-    dynamic_responses = [agent_plugin_repository_index, agent_plugin_repository_index_no_cache]
+    dynamic_responses = [agent_plugin_repository_index, agent_plugin_repository_index_simple]
 
     def dynamic_callback(request, context):
         return dynamic_responses.pop(0)
