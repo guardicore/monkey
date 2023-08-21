@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from egg_timer import EggTimer
 
-from infection_monkey.utils.decorators import request_cache
+from common.decorators import request_cache
 
 
 class MockTimer(EggTimer):
@@ -52,7 +52,7 @@ mock_timer_factory = MockTimerFactory()
 def mock_timer(monkeypatch):
     mock_timer_factory.reset
 
-    monkeypatch.setattr("infection_monkey.utils.decorators.EggTimer", mock_timer_factory)
+    monkeypatch.setattr("common.decorators.EggTimer", mock_timer_factory)
 
     return mock_timer_factory()
 
