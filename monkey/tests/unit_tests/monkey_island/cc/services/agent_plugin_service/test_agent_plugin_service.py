@@ -177,8 +177,17 @@ def test_agent_plugin_service__get_available_plugins(
     request_mock_instance,
     agent_plugin_service: IAgentPluginService,
     agent_plugin_repository_index,
+    agent_plugin_repository_index_no_cache,
 ):
-    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_URL, text=agent_plugin_repository_index)
+    dynamic_responses = [agent_plugin_repository_index, agent_plugin_repository_index_no_cache]
+
+    def dynamic_callback(request, context):
+        return dynamic_responses.pop(0)
+
+    request_mock_instance.get(
+        AGENT_PLUGIN_REPOSITORY_URL,
+        text=dynamic_callback,
+    )
     actual_agent_plugin_repository_index_first = agent_plugin_service.get_available_plugins(
         force_refresh=False
     )
@@ -202,14 +211,17 @@ def test_agent_plugin_service__get_available_plugins_refresh(
     agent_plugin_repository_index,
     agent_plugin_repository_index_no_cache,
 ):
-    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_URL, text=agent_plugin_repository_index)
+    dynamic_responses = [agent_plugin_repository_index, agent_plugin_repository_index_no_cache]
+
+    def dynamic_callback(request, context):
+        return dynamic_responses.pop(0)
+
+    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_URL, text=dynamic_callback)
     actual_agent_plugin_repository_index_first = agent_plugin_service.get_available_plugins(
-        force_refresh=False
+        force_refresh=True
     )
 
-    request_mock_instance.get(
-        AGENT_PLUGIN_REPOSITORY_URL, text=agent_plugin_repository_index_no_cache
-    )
+    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_URL, text=dynamic_callback)
     actual_agent_plugin_repository_index_second = agent_plugin_service.get_available_plugins(
         force_refresh=True
     )
