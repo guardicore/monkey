@@ -1,9 +1,11 @@
 import logging
 from http import HTTPStatus
+from typing import Any, Dict
 
 from flask import make_response
 from flask_security import auth_token_required, roles_accepted
 
+from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.services.authentication_service import AccountRole
@@ -25,14 +27,32 @@ class InstalledAgentPluginsManifests(AbstractResource):
         """
         Get manifests of all installed plugins
         """
+
         try:
             installed_agent_plugins_manifests = (
                 self._agent_plugin_service.get_all_plugin_manifests()
             )
-            return make_response(
-                installed_agent_plugins_manifests.dict(simplify=True), HTTPStatus.OK
+            installed_agent_plugins_manifests_simplified = (
+                self._get_simplified_installed_agent_plugins_manifests(
+                    installed_agent_plugins_manifests
+                )
             )
+
+            return make_response(installed_agent_plugins_manifests_simplified, HTTPStatus.OK)
         except UnknownRecordError:
             message = "Could not retrieve manifests for installed plugins"
             logger.warning(message)
             return make_response({"message": message}, HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    def _get_simplified_installed_agent_plugins_manifests(
+        self, manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]]
+    ) -> Dict[str, Dict[str, Dict[str, Any]]]:
+        simplified = {}
+        for plugin_type in manifests:
+            simplified[plugin_type.value] = {}
+            for plugin_name in manifests[plugin_type]:
+                simplified[plugin_type.value][plugin_name] = manifests[plugin_type][
+                    plugin_name
+                ].dict(simplify=True)
+
+        return simplified
