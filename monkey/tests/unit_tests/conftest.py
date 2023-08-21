@@ -28,6 +28,16 @@ def stable_file_sha256_hash() -> str:
     return "d9dcaadc91261692dafa86e7275b1bf39bb7e19d2efcfacd6fe2bfc9a1ae1062"
 
 
+@pytest.fixture(scope="session")
+def agent_plugin_repository_index_file(data_for_tests_dir) -> Path:
+    return data_for_tests_dir / "agent_plugin" / "agent_plugin_repository_index.yml"
+
+
+@pytest.fixture(scope="session")
+def agent_plugin_repository_index_no_cache_file(data_for_tests_dir) -> Path:
+    return data_for_tests_dir / "agent_plugin" / "agent_plugin_repository_index_no_cache.yml"
+
+
 @pytest.fixture
 def home_env_variable():
     if is_windows_os():

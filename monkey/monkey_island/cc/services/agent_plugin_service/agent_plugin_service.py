@@ -2,13 +2,26 @@ import io
 from threading import Lock
 from typing import Any, Dict
 
+import requests
+import yaml
+
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.agent_plugins import (
+    AgentPlugin,
+    AgentPluginManifest,
+    AgentPluginRepositoryIndex,
+    AgentPluginType,
+)
+from common.decorators import request_cache
+from monkey_island.cc.repositories import RetrievalError
 
 from . import IAgentPluginService
 from .errors import PluginInstallationError
 from .i_agent_plugin_repository import IAgentPluginRepository
 from .plugin_archive_parser import parse_plugin
+
+AGENT_PLUGIN_REPOSITORY_URL = "https://monkey-plugins-develop.s3.amazonaws.com/index.yml"
+PLUGIN_TTL = 60 * 60  # if the index is older then hour we refresh the index
 
 
 class AgentPluginService(IAgentPluginService):
@@ -22,6 +35,7 @@ class AgentPluginService(IAgentPluginService):
     ):
         self._agent_plugin_repository = agent_plugin_repository
         self._lock = Lock()
+        self._cached_agent_plugin_repository_index = None
 
     def get_plugin(
         self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
@@ -53,3 +67,20 @@ class AgentPluginService(IAgentPluginService):
                 self._agent_plugin_repository.store_agent_plugin(
                     operating_system=operating_system, agent_plugin=agent_plugin
                 )
+
+    def get_available_plugins(self, force_refresh: bool) -> AgentPluginRepositoryIndex:
+        if force_refresh:
+            self._get_cached_available_plugins.clear_cache()
+
+        return self._get_cached_available_plugins()
+
+    @request_cache(PLUGIN_TTL)
+    def _get_cached_available_plugins(self) -> AgentPluginRepositoryIndex:
+        try:
+            response = requests.get(AGENT_PLUGIN_REPOSITORY_URL)
+
+            repository_index_yml = yaml.safe_load(response.text)
+
+            return AgentPluginRepositoryIndex(**repository_index_yml)
+        except Exception as err:
+            raise RetrievalError("Failed to get agent plugin repository index") from err
