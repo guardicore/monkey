@@ -35,7 +35,6 @@ class AgentPluginService(IAgentPluginService):
     ):
         self._agent_plugin_repository = agent_plugin_repository
         self._lock = Lock()
-        self._cached_agent_plugin_repository_index = None
 
     def get_plugin(
         self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
