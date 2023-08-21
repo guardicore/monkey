@@ -13,7 +13,7 @@ from ..errors import PluginInstallationError
 logger = logging.getLogger(__name__)
 
 
-class AgentPluginInstallation(AbstractResource):
+class InstallAgentPlugin(AbstractResource):
     urls = ["/api/agent-plugins"]
 
     def __init__(self, agent_plugin_service: IAgentPluginService):
