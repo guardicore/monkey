@@ -1,5 +1,6 @@
 import threading
 from functools import wraps
+from typing import Any, Callable
 
 from egg_timer import EggTimer
 
@@ -22,24 +23,43 @@ def request_cache(ttl: float):
         def raining_outside():
             return requests.get(f"https://weather.service.api/check_for_rain/{MY_ZIP_CODE}")
 
+    The request cache can be manually cleared if desired:
+        status_1 = raining_outside()
+        status_2 = raining_outside()
+        raining_outside.clear_cache()
+        status_3 = raining_outside()
+
+        assert status_1 == status_2
+        assert status_1 != status_3
+
     :param ttl: The time-to-live in seconds for the cached return value
     :return: The return value of the decorated function, or the cached return value if the TTL has
              not elapsed.
     """
 
-    def decorator(fn):
+    def decorator(fn: Callable) -> Callable:
+        cached_value = None
+        timer = EggTimer()
+        lock = threading.Lock()
+
         @wraps(fn)
-        def wrapper(*args, **kwargs):
-            with wrapper.lock:
-                if wrapper.timer.is_expired():
-                    wrapper.cached_value = fn(*args, **kwargs)
-                    wrapper.timer.set(ttl)
+        def wrapper(*args, **kwargs) -> Any:
+            nonlocal cached_value, timer, lock
 
-            return wrapper.cached_value
+            with lock:
+                if timer.is_expired():
+                    cached_value = fn(*args, **kwargs)
+                    timer.set(ttl)
 
-        wrapper.cached_value = None
-        wrapper.timer = EggTimer()
-        wrapper.lock = threading.Lock()
+            return cached_value
+
+        def clear_cache():
+            nonlocal timer, lock
+
+            with lock:
+                timer.set(0)
+
+        wrapper.clear_cache = clear_cache  # type: ignore [attr-defined]
 
         return wrapper
 

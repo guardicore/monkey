@@ -27,6 +27,7 @@ from common.agent_plugins import (
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.concurrency import BasicLock
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
+from common.decorators import request_cache
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
@@ -34,7 +35,6 @@ from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServer
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFirewall
 from infection_monkey.utils import commands
-from infection_monkey.utils.decorators import request_cache
 from monkey.common.types import Percent
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Machine
