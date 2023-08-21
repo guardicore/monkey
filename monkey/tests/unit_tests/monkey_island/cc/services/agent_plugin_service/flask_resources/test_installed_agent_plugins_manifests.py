@@ -3,8 +3,15 @@ from http import HTTPStatus
 import pytest
 from tests.common import StubDIContainer
 from tests.monkey_island import InMemoryAgentPluginRepository
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_NAME, FAKE_TYPE
-from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
+from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
+    FAKE_NAME,
+    FAKE_NAME2,
+    FAKE_TYPE,
+)
+from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
+    FAKE_AGENT_PLUGIN_1,
+    FAKE_AGENT_PLUGIN_2,
+)
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from common import OperatingSystem
@@ -39,6 +46,7 @@ def flask_client(build_flask_client, agent_plugin_service):
 
 def test_get_installed_plugins_manifests(flask_client, agent_plugin_repository):
     agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)
+    agent_plugin_repository.store_agent_plugin(OperatingSystem.WINDOWS, FAKE_AGENT_PLUGIN_2)
 
     expected_response = {
         "Exploiter": {
@@ -53,7 +61,19 @@ def test_get_installed_plugins_manifests(flask_client, agent_plugin_repository):
                 "supported_operating_systems": ["linux", "windows"],
                 "target_operating_systems": ["linux"],
                 "title": "Remote Desktop Protocol exploiter",
-            }
+            },
+            FAKE_NAME2: {
+                "description": None,
+                "link_to_documentation": "http://www.beefface.com",
+                "name": FAKE_NAME2,
+                "plugin_type": FAKE_TYPE,
+                "version": "1.0.0",
+                "safe": False,
+                "remediation_suggestion": None,
+                "supported_operating_systems": ["linux", "windows"],
+                "target_operating_systems": ["linux"],
+                "title": "Remote Desktop Protocol exploiter",
+            },
         }
     }
 
