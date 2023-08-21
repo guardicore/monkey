@@ -16,6 +16,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - HTTPRequestEvent. #3411
 - RDP exploiter plugin. #3425
 - A cryptojacker payload to simulate cryptojacker attacks. #3411
+- `PUT /api/install-agent-plugin`. #3417
 - `GET /api/agent-plugins/installed/manifests`. #3424
 
 ### Changed
