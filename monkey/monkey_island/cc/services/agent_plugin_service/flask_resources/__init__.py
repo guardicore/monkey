@@ -1,4 +1,5 @@
 from .agent_plugins import AgentPlugins
 from .agent_plugins_manifest import AgentPluginsManifest
+from .available_agent_plugins_index import AvailableAgentPluginsIndex
 from .installed_agent_plugins_manifests import InstalledAgentPluginsManifests
 from .register import register_resources

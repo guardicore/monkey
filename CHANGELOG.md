@@ -18,6 +18,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - A cryptojacker payload to simulate cryptojacker attacks. #3411
 - `PUT /api/install-agent-plugin`. #3417
 - `GET /api/agent-plugins/installed/manifests`. #3424
+- `GET /api/agent-plugins/available/index`. #3420
 
 ### Changed
 - Plugin source is now gzipped. #3392
