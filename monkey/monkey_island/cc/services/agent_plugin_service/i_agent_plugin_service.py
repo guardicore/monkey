@@ -2,7 +2,12 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.agent_plugins import (
+    AgentPlugin,
+    AgentPluginManifest,
+    AgentPluginRepositoryIndex,
+    AgentPluginType,
+)
 
 
 class IAgentPluginService(ABC):
@@ -51,9 +56,23 @@ class IAgentPluginService(ABC):
         Install plugin archive
 
         :param agent_plugin_archive: The archive of the plugin
-        :raises RemovalError: If an error occus while attempting to uninstall a previous
+        :raises RemovalError: If an error occurs while attempting to uninstall a previous
         version of the plugin
         :raises StorageError: If an error occurs while attempting to store the plugin
         :raises PluginInstallationError: If an error occurs while attempting to install the plugin
+        """
+        pass
+
+    @abstractmethod
+    def get_available_plugins(self, force_refresh: bool) -> AgentPluginRepositoryIndex:
+        """
+        Retrieve plugin repository index for all available plugins in a repository
+
+        Returns a cached result unless it has expired or force_refresh is `True`
+
+        :param force_refresh: If true, ignores the cached result and requests the index from
+                              the repository again
+        :raises RetrievalError: If an error occurs while attempting to get the index of all
+                                available plugins from the repository
         """
         pass
