@@ -81,7 +81,6 @@ class AgentPluginService(IAgentPluginService):
     def _download_index(self) -> AgentPluginRepositoryIndex:
         try:
             response = requests.get(AGENT_PLUGIN_REPOSITORY_URL)
-
             repository_index_yml = yaml.safe_load(response.text)
 
             return AgentPluginRepositoryIndex(**repository_index_yml)
