@@ -23,6 +23,15 @@ def request_cache(ttl: float):
         def raining_outside():
             return requests.get(f"https://weather.service.api/check_for_rain/{MY_ZIP_CODE}")
 
+    The request cache can be manually cleared if desired:
+        status_1 = raining_outside()
+        status_2 = raining_outside()
+        raining_outside.clear_cache()
+        status_3 = raining_outside()
+
+        assert status_1 == status_2
+        assert status_1 != status_3
+
     :param ttl: The time-to-live in seconds for the cached return value
     :return: The return value of the decorated function, or the cached return value if the TTL has
              not elapsed.
