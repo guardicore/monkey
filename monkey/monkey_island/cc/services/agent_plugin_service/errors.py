@@ -1,4 +1,4 @@
 class PluginInstallError(ValueError):
     """
-    Raised when a service ecounters an error while attempting to parse the plugin archive.
+    Raised when a service encounters an error while attempting to install the plugin archive.
     """
