@@ -33,9 +33,7 @@ class InstalledAgentPluginsManifests(AbstractResource):
                 self._agent_plugin_service.get_all_plugin_manifests()
             )
             installed_agent_plugins_manifests_simplified = (
-                self._get_simplified_installed_agent_plugins_manifests(
-                    installed_agent_plugins_manifests
-                )
+                self._simplify_installed_agent_plugins_manifests(installed_agent_plugins_manifests)
             )
 
             return make_response(installed_agent_plugins_manifests_simplified, HTTPStatus.OK)
@@ -44,7 +42,7 @@ class InstalledAgentPluginsManifests(AbstractResource):
             logger.warning(message)
             return make_response({"message": message}, HTTPStatus.INTERNAL_SERVER_ERROR)
 
-    def _get_simplified_installed_agent_plugins_manifests(
+    def _simplify_installed_agent_plugins_manifests(
         self, manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]]
     ) -> Dict[str, Dict[str, Dict[str, Any]]]:
         simplified = {}
