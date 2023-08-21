@@ -28,18 +28,28 @@ def request_cache(ttl: float):
     """
 
     def decorator(fn):
+        cached_value = None
+        timer = EggTimer()
+        lock = threading.Lock()
+
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            with wrapper.lock:
-                if wrapper.timer.is_expired():
-                    wrapper.cached_value = fn(*args, **kwargs)
-                    wrapper.timer.set(ttl)
+            nonlocal cached_value, timer, lock
 
-            return wrapper.cached_value
+            with lock:
+                if timer.is_expired():
+                    cached_value = fn(*args, **kwargs)
+                    timer.set(ttl)
 
-        wrapper.cached_value = None
-        wrapper.timer = EggTimer()
-        wrapper.lock = threading.Lock()
+            return cached_value
+
+        def clear_cache():
+            nonlocal timer, lock
+
+            with lock:
+                timer.set(0)
+
+        wrapper.clear_cache = clear_cache
 
         return wrapper
 

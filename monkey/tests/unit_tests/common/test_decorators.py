@@ -76,3 +76,16 @@ def test_request_cache(mock_timer):
 
     assert t3 != t1
     assert t3 == t4
+
+
+def test_request_cache__clear_cache(mock_timer):
+    mock_request = MagicMock(side_effect=lambda: time.perf_counter_ns())
+
+    @request_cache(10)
+    def make_request():
+        return mock_request()
+
+    t1 = make_request()
+    make_request.clear_cache()
+    t2 = make_request()
+    assert t1 != t2
