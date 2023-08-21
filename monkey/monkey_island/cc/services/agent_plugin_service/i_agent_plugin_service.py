@@ -54,6 +54,6 @@ class IAgentPluginService(ABC):
         :raises RemovalError: If an error occus while attempting to uninstall a previous
         version of the plugin
         :raises StorageError: If an error occurs while attempting to store the plugin
-        :raises PluginInstallError: If an error occurs while attempting to install the plugin
+        :raises PluginInstallationError: If an error occurs while attempting to install the plugin
         """
         pass

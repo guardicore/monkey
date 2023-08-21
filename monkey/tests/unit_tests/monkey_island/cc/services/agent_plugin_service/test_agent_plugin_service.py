@@ -9,7 +9,7 @@ from tests.unit_tests.monkey_island.cc.services.agent_plugin_service.conftest im
 
 from common import OperatingSystem
 from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import AgentPluginService
-from monkey_island.cc.services.agent_plugin_service.errors import PluginInstallError
+from monkey_island.cc.services.agent_plugin_service.errors import PluginInstallationError
 from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_repository import (
     IAgentPluginRepository,
 )
@@ -79,5 +79,5 @@ def test_agent_plugin_service__plugin_install_error(
     agent_plugin_tar = build_agent_plugin_tar(
         simple_agent_plugin, manifest_file_name="manifest.idk"
     )
-    with pytest.raises(PluginInstallError):
+    with pytest.raises(PluginInstallationError):
         agent_plugin_service.install_agent_plugin_archive(agent_plugin_tar.getvalue())

@@ -8,7 +8,7 @@ from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 
 from .. import IAgentPluginService
-from ..errors import PluginInstallError
+from ..errors import PluginInstallationError
 
 logger = logging.getLogger(__name__)
 
@@ -28,5 +28,5 @@ class AgentPluginInstallation(AbstractResource):
         try:
             self._agent_plugin_service.install_agent_plugin_archive(request.data)
             return make_response({}, HTTPStatus.OK)
-        except PluginInstallError as err:
+        except PluginInstallationError as err:
             return make_response(str(err), HTTPStatus.UNPROCESSABLE_ENTITY)

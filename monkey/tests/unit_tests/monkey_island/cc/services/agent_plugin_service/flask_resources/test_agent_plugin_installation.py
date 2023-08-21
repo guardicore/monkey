@@ -7,7 +7,7 @@ from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from monkey_island.cc.repositories import RetrievalError, StorageError
 from monkey_island.cc.services import IAgentPluginService
-from monkey_island.cc.services.agent_plugin_service.errors import PluginInstallError
+from monkey_island.cc.services.agent_plugin_service.errors import PluginInstallationError
 from monkey_island.cc.services.agent_plugin_service.flask_resources.agent_plugin_installation import (  # noqa: E501
     AgentPluginInstallation,
 )
@@ -42,7 +42,9 @@ def test_install_plugin(agent_plugin_service, flask_client):
 
 
 def test_install_plugin__install_error(agent_plugin_service, flask_client):
-    agent_plugin_service.install_agent_plugin_archive = MagicMock(side_effect=PluginInstallError)
+    agent_plugin_service.install_agent_plugin_archive = MagicMock(
+        side_effect=PluginInstallationError
+    )
     resp = flask_client.put(
         get_url_for_resource(AgentPluginInstallation),
         data=AGENT_PLUGIN,

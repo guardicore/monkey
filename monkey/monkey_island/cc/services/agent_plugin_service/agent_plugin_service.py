@@ -6,7 +6,7 @@ from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 
 from . import IAgentPluginService
-from .errors import PluginInstallError
+from .errors import PluginInstallationError
 from .i_agent_plugin_repository import IAgentPluginRepository
 from .plugin_archive_parser import parse_plugin
 
@@ -41,7 +41,7 @@ class AgentPluginService(IAgentPluginService):
             try:
                 os_agent_plugins = parse_plugin(io.BytesIO(agent_plugin_archive))
             except ValueError as err:
-                raise PluginInstallError("Failed to install the plugin") from err
+                raise PluginInstallationError("Failed to install the plugin") from err
 
             plugin = next(iter(os_agent_plugins.values()))
             self._agent_plugin_repository.remove_agent_plugin(
