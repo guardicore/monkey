@@ -15,6 +15,7 @@ class IAgentPluginRepository(ABC):
         """
         Retrieve AgentPlugin based on its name and type
 
+        :param host_operating_system: The operating system the plugin runs on
         :param plugin_type: The type of the plugin
         :param name: The name of the plugin
         :raises RetrievalError: If an error occurs while attempting to retrieve the plugin
