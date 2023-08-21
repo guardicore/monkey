@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class InstallAgentPlugin(AbstractResource):
-    urls = ["/api/agent-plugins"]
+    urls = ["/api/install-agent-plugin"]
 
     def __init__(self, agent_plugin_service: IAgentPluginService):
         self._agent_plugin_service = agent_plugin_service
