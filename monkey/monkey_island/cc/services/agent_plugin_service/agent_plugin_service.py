@@ -36,6 +36,10 @@ class AgentPluginService(IAgentPluginService):
         self._agent_plugin_repository = agent_plugin_repository
         self._lock = Lock()
 
+        # Since the request_cache decorator maintains state, we must decorate the method in the
+        # constructor, otherwise all instances of this class will share the same cache.
+        self._download_index = request_cache(PLUGIN_TTL)(self._download_index)  # type: ignore [assignment]  # noqa: E501
+
     def get_plugin(
         self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
     ) -> AgentPlugin:
@@ -69,12 +73,12 @@ class AgentPluginService(IAgentPluginService):
 
     def get_available_plugins(self, force_refresh: bool) -> AgentPluginRepositoryIndex:
         if force_refresh:
-            self._get_cached_available_plugins.clear_cache()
+            self._download_index.clear_cache()  # type: ignore [attr-defined]
 
-        return self._get_cached_available_plugins()
+        return self._download_index()
 
-    @request_cache(PLUGIN_TTL)
-    def _get_cached_available_plugins(self) -> AgentPluginRepositoryIndex:
+    # This method is decorated in __init__() to cache responses
+    def _download_index(self) -> AgentPluginRepositoryIndex:
         try:
             response = requests.get(AGENT_PLUGIN_REPOSITORY_URL)
 

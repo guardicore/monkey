@@ -3,6 +3,7 @@ from typing import BinaryIO, Callable
 from unittest.mock import MagicMock
 
 import pytest
+import requests
 import requests_mock
 from tests.unit_tests.monkey_island.cc.services.agent_plugin_service.conftest import (
     build_agent_plugin_tar,
@@ -173,36 +174,33 @@ def test_agent_plugin_service__plugin_install_error(
         agent_plugin_service.install_agent_plugin_archive(agent_plugin_tar.getvalue())
 
 
+@pytest.fixture
+def dynamic_callback(agent_plugin_repository_index, agent_plugin_repository_index_simple):
+    dynamic_responses = [agent_plugin_repository_index, agent_plugin_repository_index_simple]
+
+    def inner(request, context) -> requests.Response:
+        nonlocal dynamic_responses
+        return dynamic_responses.pop(0)
+
+    return inner
+
+
 def test_agent_plugin_service__get_available_plugins(
     request_mock_instance,
     agent_plugin_service: IAgentPluginService,
     agent_plugin_repository_index,
     agent_plugin_repository_index_simple,
+    dynamic_callback: Callable,
 ):
-    dynamic_responses = [agent_plugin_repository_index, agent_plugin_repository_index_simple]
-
-    def dynamic_callback(request, context):
-        return dynamic_responses.pop(0)
-
     request_mock_instance.get(
         AGENT_PLUGIN_REPOSITORY_URL,
         text=dynamic_callback,
     )
-    actual_agent_plugin_repository_index_first = agent_plugin_service.get_available_plugins(
-        force_refresh=False
-    )
+    actual_index_1 = agent_plugin_service.get_available_plugins(force_refresh=False)
+    actual_index_2 = agent_plugin_service.get_available_plugins(force_refresh=False)
 
-    actual_agent_plugin_repository_index_second = agent_plugin_service.get_available_plugins(
-        force_refresh=False
-    )
-    assert actual_agent_plugin_repository_index_first.dict(
-        simplify=True
-    ) == actual_agent_plugin_repository_index_second.dict(simplify=True)
-
-    assert (
-        actual_agent_plugin_repository_index_first.dict(simplify=True)
-        == EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX
-    )
+    assert actual_index_1.dict(simplify=True) == actual_index_2.dict(simplify=True)
+    assert actual_index_1.dict(simplify=True) == EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX
 
 
 def test_agent_plugin_service__get_available_plugins_refresh(
@@ -210,35 +208,17 @@ def test_agent_plugin_service__get_available_plugins_refresh(
     agent_plugin_service: IAgentPluginService,
     agent_plugin_repository_index,
     agent_plugin_repository_index_simple,
+    dynamic_callback: Callable,
 ):
-    dynamic_responses = [agent_plugin_repository_index, agent_plugin_repository_index_simple]
-
-    def dynamic_callback(request, context):
-        return dynamic_responses.pop(0)
-
     request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_URL, text=dynamic_callback)
-    actual_agent_plugin_repository_index_first = agent_plugin_service.get_available_plugins(
-        force_refresh=True
-    )
 
-    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_URL, text=dynamic_callback)
-    actual_agent_plugin_repository_index_second = agent_plugin_service.get_available_plugins(
-        force_refresh=True
-    )
+    actual_index_1 = agent_plugin_service.get_available_plugins(force_refresh=False)
+    actual_index_2 = agent_plugin_service.get_available_plugins(force_refresh=False)
+    actual_index_3 = agent_plugin_service.get_available_plugins(force_refresh=True)
 
-    assert (
-        actual_agent_plugin_repository_index_first.dict(simplify=True)
-        == EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX
-    )
-
-    assert actual_agent_plugin_repository_index_first.dict(
-        simplify=True
-    ) != actual_agent_plugin_repository_index_second.dict(simplify=True)
-
-    assert (
-        actual_agent_plugin_repository_index_second.dict(simplify=True)
-        == EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_NO_CACHE_INDEX
-    )
+    assert actual_index_1.dict(simplify=True) == EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX
+    assert actual_index_1.dict(simplify=True) == actual_index_2.dict(simplify=True)
+    assert actual_index_3.dict(simplify=True) != actual_index_2.dict(simplify=True)
 
 
 def test_agent_plugin_service__get_available_plugins_exception(
