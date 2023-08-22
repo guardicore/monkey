@@ -8,8 +8,8 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from common.agent_plugins import AgentPluginType
-from monkey_island.cc.repositories import RemovalError
 from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
+from monkey_island.cc.services.agent_plugin_service.errors import UninstallPluginError
 from monkey_island.cc.services.agent_plugin_service.flask_resources import UninstallAgentPlugin
 
 REQUEST_DATA = (
@@ -43,16 +43,6 @@ def test_uninstall_agent_plugin(flask_client, agent_plugin_service):
     )
 
 
-# TODO: Ask do we need some kind of UninstallAgentPluginError which will be handled
-# if we can't uninstall a AgentPlugin
-# def test_uninstall_agent_plugin_not_found_if_name_does_not_exist(flask_client):
-#    resp = flask_client.post(
-#        get_url_for_resource(UninstallAgentPlugin, plugin_type="Payload", name="name")
-#    )
-#
-#    assert resp.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
-
-
 @pytest.mark.parametrize(
     "type_",
     ["DummyType", "ExploiteR"],
@@ -69,18 +59,27 @@ def test_uninstall_agent_plugin__not_found_if_type_is_invalid(
     agent_plugin_service.uninstall_agent_plugin.assert_not_called()
 
 
-def test_uninstall_agent_plugin__server_error(flask_client, agent_plugin_service):
-    def raise_removal_error(plugin_type, name):
-        raise RemovalError
+@pytest.mark.parametrize(
+    "error, expected_status_code",
+    [
+        (Exception, HTTPStatus.INTERNAL_SERVER_ERROR),
+        (UninstallPluginError, HTTPStatus.UNPROCESSABLE_ENTITY),
+    ],
+)
+def test_uninstall_agent_plugin__error(
+    flask_client, agent_plugin_service, error, expected_status_code
+):
+    def raise_error(plugin_type, name):
+        raise error
 
-    agent_plugin_service.uninstall_agent_plugin = raise_removal_error
+    agent_plugin_service.uninstall_agent_plugin = raise_error
 
     resp = flask_client.post(
         get_url_for_resource(UninstallAgentPlugin),
         data=b'{"plugin_type": "Payload", "name": "name"}',
     )
 
-    assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+    assert resp.status_code == expected_status_code
 
 
 @pytest.mark.parametrize(
