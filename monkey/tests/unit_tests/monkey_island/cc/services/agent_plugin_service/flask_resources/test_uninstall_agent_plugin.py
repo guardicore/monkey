@@ -59,16 +59,8 @@ def test_uninstall_agent_plugin__not_found_if_type_is_invalid(
     agent_plugin_service.uninstall_agent_plugin.assert_not_called()
 
 
-@pytest.mark.parametrize(
-    "error, expected_status_code",
-    [
-        (Exception, HTTPStatus.INTERNAL_SERVER_ERROR),
-        (UninstallPluginError, HTTPStatus.UNPROCESSABLE_ENTITY),
-    ],
-)
-def test_uninstall_agent_plugin__error(
-    flask_client, agent_plugin_service, error, expected_status_code
-):
+@pytest.mark.parametrize("error", [Exception, UninstallPluginError])
+def test_uninstall_agent_plugin__error(flask_client, agent_plugin_service, error):
     def raise_error(plugin_type, name):
         raise error
 
@@ -79,7 +71,7 @@ def test_uninstall_agent_plugin__error(
         data=b'{"plugin_type": "Payload", "name": "name"}',
     )
 
-    assert resp.status_code == expected_status_code
+    assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 @pytest.mark.parametrize(

@@ -10,7 +10,6 @@ from monkey_island.cc.flask_utils import AbstractResource, responses
 from monkey_island.cc.services.authentication_service import AccountRole
 
 from .. import IAgentPluginService
-from ..errors import UninstallPluginError
 
 logger = logging.getLogger(__name__)
 
@@ -41,8 +40,5 @@ class UninstallAgentPlugin(AbstractResource):
             logger.warning(message)
             return make_response({"message": message}, HTTPStatus.NOT_FOUND)
 
-        try:
-            self._agent_plugin_service.uninstall_agent_plugin(plugin_type_, name)
-        except UninstallPluginError as err:
-            return make_response(str(err), HTTPStatus.UNPROCESSABLE_ENTITY)
+        self._agent_plugin_service.uninstall_agent_plugin(plugin_type_, name)
         return make_response({}, HTTPStatus.OK)
