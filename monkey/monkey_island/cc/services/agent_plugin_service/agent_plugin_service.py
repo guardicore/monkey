@@ -94,5 +94,5 @@ class AgentPluginService(IAgentPluginService):
             )
         except Exception as err:
             raise PluginUninstallationError(
-                f"Failed to uninstall the plugin {name} of " f"type {plugin_type}: {err}"
+                f"Failed to uninstall the plugin {name} of type {plugin_type}: {err}"
             )
