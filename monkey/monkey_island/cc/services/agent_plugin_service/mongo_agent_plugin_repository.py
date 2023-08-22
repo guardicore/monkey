@@ -12,6 +12,8 @@ from .i_agent_plugin_repository import IAgentPluginRepository
 
 BINARY_OS_MAPPING_KEY = "binaries"
 
+logger = logging.getLogger(__name__)
+
 
 class MongoAgentPluginRepository(IAgentPluginRepository):
     def __init__(self, mongo_client: MongoClient) -> None:
@@ -58,10 +60,8 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
             )
 
         try:
-            print(f"Getting plugin source bytes for {host_operating_system.value}")
             os_binaries = plugin_dict[BINARY_OS_MAPPING_KEY]
             id = os_binaries[host_operating_system.value]
-            print(f"Getting id: {id}")
             plugin_source_bytes = (
                 self._agent_plugins_binaries_collections[host_operating_system].get(id).read()
             )
