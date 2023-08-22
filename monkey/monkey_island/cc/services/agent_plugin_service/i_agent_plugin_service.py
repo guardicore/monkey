@@ -84,6 +84,6 @@ class IAgentPluginService(ABC):
 
         :param plugin_type: The type of the plugin
         :param name: The name of the plugin
-        :raises RemovalError: If an error occurs while uninstalling the plugin
+        :raises UninstallPluginError: If an error occurs while uninstalling the plugin
         """
         pass
