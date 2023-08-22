@@ -4,7 +4,7 @@ class PluginInstallationError(ValueError):
     """
 
 
-class UninstallPluginError(Exception):
+class PluginUninstallationError(Exception):
     """
     Raised when a service encounters an error while attempting to uninstall a plugin
     """

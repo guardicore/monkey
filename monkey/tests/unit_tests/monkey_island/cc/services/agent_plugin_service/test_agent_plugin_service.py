@@ -18,7 +18,7 @@ from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import 
 )
 from monkey_island.cc.services.agent_plugin_service.errors import (
     PluginInstallationError,
-    UninstallPluginError,
+    PluginUninstallationError,
 )
 from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_repository import (
     IAgentPluginRepository,
@@ -242,7 +242,7 @@ def test_agent_plugin_service__unistall_agent_plugin_exception(
         raise Exception
 
     agent_plugin_repository.remove_agent_plugin = raise_exception
-    with pytest.raises(UninstallPluginError):
+    with pytest.raises(PluginUninstallationError):
         agent_plugin_service.uninstall_agent_plugin(
             plugin_type=AgentPluginType("Exploiter"), name="SSH"
         )

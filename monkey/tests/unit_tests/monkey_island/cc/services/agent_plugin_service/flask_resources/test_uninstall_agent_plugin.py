@@ -9,7 +9,7 @@ from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from common.agent_plugins import AgentPluginType
 from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
-from monkey_island.cc.services.agent_plugin_service.errors import UninstallPluginError
+from monkey_island.cc.services.agent_plugin_service.errors import PluginUninstallationError
 from monkey_island.cc.services.agent_plugin_service.flask_resources import UninstallAgentPlugin
 
 REQUEST_DATA = (
@@ -59,7 +59,7 @@ def test_uninstall_agent_plugin__not_found_if_type_is_invalid(
     agent_plugin_service.uninstall_agent_plugin.assert_not_called()
 
 
-@pytest.mark.parametrize("error", [Exception, UninstallPluginError])
+@pytest.mark.parametrize("error", [Exception, PluginUninstallationError])
 def test_uninstall_agent_plugin__error(flask_client, agent_plugin_service, error):
     def raise_error(plugin_type, name):
         raise error

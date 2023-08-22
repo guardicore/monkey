@@ -16,7 +16,7 @@ from common.decorators import request_cache
 from monkey_island.cc.repositories import RetrievalError
 
 from . import IAgentPluginService
-from .errors import PluginInstallationError, UninstallPluginError
+from .errors import PluginInstallationError, PluginUninstallationError
 from .i_agent_plugin_repository import IAgentPluginRepository
 from .plugin_archive_parser import parse_plugin
 
@@ -93,6 +93,6 @@ class AgentPluginService(IAgentPluginService):
                 agent_plugin_type=plugin_type, agent_plugin_name=name
             )
         except Exception as err:
-            raise UninstallPluginError(
+            raise PluginUninstallationError(
                 f"Failed to uninstall the plugin {name} of " f"type {plugin_type}: {err}"
             )
