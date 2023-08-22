@@ -50,11 +50,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         # - Add the binary to the serialized plugin
         # - Deserialize the plugin
         try:
-            plugin_dict = self._agent_plugins_collection.find_one(
-                {"plugin_manifest.name": name, "plugin_manifest.plugin_type": plugin_type.value}
-            )
-            if plugin_dict is None:
-                raise RuntimeError("Not found")
+            plugin_dict = self._get_agent_plugin(plugin_type, name)
         except Exception:
             raise UnknownRecordError(
                 f"Error retrieving the agent plugin {name} of type {plugin_type}"
@@ -76,6 +72,14 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 f"Error retrieving the agent plugin {name} of type {plugin_type} for operating "
                 f"system {host_operating_system}: {err}"
             )
+
+    def _get_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> Dict[str, Any]:
+        plugin_dict = self._agent_plugins_collection.find_one(
+            {"plugin_manifest.name": plugin_name, "plugin_manifest.plugin_type": plugin_type.value}
+        )
+        if plugin_dict is None:
+            raise RuntimeError("Not found")
+        return plugin_dict
 
     def get_all_plugin_configuration_schemas(
         self,
@@ -108,14 +112,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         plugin_name = agent_plugin.plugin_manifest.name
         plugin_type = agent_plugin.plugin_manifest.plugin_type
         try:
-            plugin_dict = self._agent_plugins_collection.find_one(
-                {
-                    "plugin_manifest.name": plugin_name,
-                    "plugin_manifest.plugin_type": plugin_type.value,
-                }
-            )
-            if plugin_dict is None:
-                raise RuntimeError("Not found")
+            plugin_dict = self._get_agent_plugin(plugin_type, plugin_name)
         except Exception:
             plugin_dict = self._encode_agent_plugin(agent_plugin)
             plugin_dict[BINARY_OS_MAPPING_KEY] = {}
