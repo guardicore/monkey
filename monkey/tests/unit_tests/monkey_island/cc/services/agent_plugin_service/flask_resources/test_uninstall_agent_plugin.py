@@ -47,7 +47,7 @@ def test_uninstall_agent_plugin(flask_client, agent_plugin_service):
     "type_",
     ["DummyType", "ExploiteR"],
 )
-def test_uninstall_agent_plugin__not_found_if_type_is_invalid(
+def test_uninstall_agent_plugin__bad_request_if_type_is_invalid(
     flask_client, type_, agent_plugin_service
 ):
     resp = flask_client.post(
@@ -55,7 +55,7 @@ def test_uninstall_agent_plugin__not_found_if_type_is_invalid(
         data=f'{{"plugin_type": "{type_}", "name": "name"}}',
     )
 
-    assert resp.status_code == HTTPStatus.NOT_FOUND
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
     agent_plugin_service.uninstall_agent_plugin.assert_not_called()
 
 

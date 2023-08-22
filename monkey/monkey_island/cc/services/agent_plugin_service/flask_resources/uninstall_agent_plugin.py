@@ -38,7 +38,7 @@ class UninstallAgentPlugin(AbstractResource):
         except ValueError:
             message = f"Invalid type '{plugin_type}'."
             logger.warning(message)
-            return make_response({"message": message}, HTTPStatus.NOT_FOUND)
+            return responses.make_response_to_invalid_request(message)
 
         self._agent_plugin_service.uninstall_agent_plugin(plugin_type_, name)
         return make_response({}, HTTPStatus.OK)
