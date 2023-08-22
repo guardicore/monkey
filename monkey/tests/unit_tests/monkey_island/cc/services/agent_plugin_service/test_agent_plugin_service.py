@@ -5,16 +5,13 @@ from unittest.mock import MagicMock
 import pytest
 import requests
 import requests_mock
-from tests.monkey_island import InMemoryAgentPluginRepository
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_NAME, FAKE_TYPE
-from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 from tests.unit_tests.monkey_island.cc.services.agent_plugin_service.conftest import (
     build_agent_plugin_tar,
 )
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
-from monkey_island.cc.repositories import RetrievalError, UnknownRecordError
+from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import (
     AGENT_PLUGIN_REPOSITORY_URL,
     AgentPluginService,
@@ -251,14 +248,13 @@ def test_agent_plugin_service__unistall_agent_plugin_exception(
         )
 
 
-def test_agent_plugin_service__unistall_agent_plugin():
-    in_memory_agent_plugin_repository = InMemoryAgentPluginRepository()
-    in_memory_agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)
-    real_agent_plugin_service = AgentPluginService(in_memory_agent_plugin_repository)
+def test_agent_plugin_service__unistall_agent_plugin(
+    agent_plugin_repository: IAgentPluginRepository, agent_plugin_service: IAgentPluginService
+):
+    plugin_name = "SSH"
+    plugin_type = AgentPluginType("Exploiter")
+    agent_plugin_service.uninstall_agent_plugin(plugin_type, plugin_name)
 
-    real_agent_plugin_service.uninstall_agent_plugin(AgentPluginType(FAKE_TYPE), FAKE_NAME)
-
-    with pytest.raises(UnknownRecordError):
-        in_memory_agent_plugin_repository.get_plugin(
-            OperatingSystem.LINUX, AgentPluginType(FAKE_TYPE), FAKE_NAME
-        )
+    agent_plugin_repository.remove_agent_plugin.assert_called_with(
+        agent_plugin_type=plugin_type, agent_plugin_name=plugin_name
+    )
