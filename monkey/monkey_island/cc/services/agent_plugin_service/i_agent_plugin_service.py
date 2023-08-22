@@ -76,3 +76,14 @@ class IAgentPluginService(ABC):
                                 available plugins from the repository
         """
         pass
+
+    @abstractmethod
+    def uninstall_agent_plugin(self, plugin_type: AgentPluginType, name: str):
+        """
+        Uninstall agent plugin
+
+        :param plugin_type: The type of the plugin
+        :param name: The name of the plugin
+        :raises PluginUninstallationError: If an error occurs while uninstalling the plugin
+        """
+        pass

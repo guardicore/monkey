@@ -10,12 +10,16 @@ from tests.unit_tests.monkey_island.cc.services.agent_plugin_service.conftest im
 )
 
 from common import OperatingSystem
+from common.agent_plugins import AgentPluginType
 from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import (
     AGENT_PLUGIN_REPOSITORY_URL,
     AgentPluginService,
 )
-from monkey_island.cc.services.agent_plugin_service.errors import PluginInstallationError
+from monkey_island.cc.services.agent_plugin_service.errors import (
+    PluginInstallationError,
+    PluginUninstallationError,
+)
 from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_repository import (
     IAgentPluginRepository,
 )
@@ -228,3 +232,29 @@ def test_agent_plugin_service__get_available_plugins_exception(
     request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_URL, exc=Exception)
     with pytest.raises(RetrievalError):
         agent_plugin_service.get_available_plugins(force_refresh=True)
+
+
+def test_agent_plugin_service__unistall_agent_plugin_exception(
+    agent_plugin_repository: IAgentPluginRepository,
+    agent_plugin_service: IAgentPluginService,
+):
+    def raise_exception(plugin_type, name):
+        raise Exception
+
+    agent_plugin_repository.remove_agent_plugin = raise_exception
+    with pytest.raises(PluginUninstallationError):
+        agent_plugin_service.uninstall_agent_plugin(
+            plugin_type=AgentPluginType("Exploiter"), name="SSH"
+        )
+
+
+def test_agent_plugin_service__unistall_agent_plugin(
+    agent_plugin_repository: IAgentPluginRepository, agent_plugin_service: IAgentPluginService
+):
+    plugin_name = "SSH"
+    plugin_type = AgentPluginType("Exploiter")
+    agent_plugin_service.uninstall_agent_plugin(plugin_type, plugin_name)
+
+    agent_plugin_repository.remove_agent_plugin.assert_called_with(
+        agent_plugin_type=plugin_type, agent_plugin_name=plugin_name
+    )

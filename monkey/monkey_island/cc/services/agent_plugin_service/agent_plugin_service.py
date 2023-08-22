@@ -16,7 +16,7 @@ from common.decorators import request_cache
 from monkey_island.cc.repositories import RetrievalError
 
 from . import IAgentPluginService
-from .errors import PluginInstallationError
+from .errors import PluginInstallationError, PluginUninstallationError
 from .i_agent_plugin_repository import IAgentPluginRepository
 from .plugin_archive_parser import parse_plugin
 
@@ -86,3 +86,13 @@ class AgentPluginService(IAgentPluginService):
             return AgentPluginRepositoryIndex(**repository_index_yml)
         except Exception as err:
             raise RetrievalError("Failed to get agent plugin repository index") from err
+
+    def uninstall_agent_plugin(self, plugin_type: AgentPluginType, name: str):
+        try:
+            self._agent_plugin_repository.remove_agent_plugin(
+                agent_plugin_type=plugin_type, agent_plugin_name=name
+            )
+        except Exception as err:
+            raise PluginUninstallationError(
+                f"Failed to uninstall the plugin {name} of type {plugin_type}: {err}"
+            )

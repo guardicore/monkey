@@ -17,7 +17,12 @@ from flask_security import Security
 
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
-from common.agent_events import AbstractAgentEvent, CPUConsumptionEvent, FileEncryptionEvent
+from common.agent_events import (
+    AbstractAgentEvent,
+    CPUConsumptionEvent,
+    FileEncryptionEvent,
+    RAMConsumptionEvent,
+)
 from common.agent_plugins import (
     AgentPlugin,
     AgentPluginManifest,
@@ -195,6 +200,8 @@ AgentPluginRepositoryIndex._sort_plugins_by_version
 AgentPluginRepositoryIndex.use_enum_values
 
 CPUConsumptionEvent.cpu_number
+CPUConsumptionEvent.utilization
+RAMConsumptionEvent.utilization
 
 # RDP
 InMemoryFileProvider.get_file_data
