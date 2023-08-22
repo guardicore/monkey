@@ -1,3 +1,4 @@
+import logging
 from enum import Enum
 from typing import Any, Dict, Optional
 
@@ -82,7 +83,17 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         raise NotImplementedError()
 
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
-        raise NotImplementedError()
+        manifest_dicts = self._agent_plugins_collection.only("manifest").all()
+        manifests = {}
+
+        for key in manifest_dicts:
+            plugin_type = AgentPluginType(key)
+            manifests_of_type = {}
+            for manifest in manifest_dicts[key]:
+                manifests_of_type[manifest["name"]] = AgentPluginManifest(**manifest)
+            manifests[plugin_type] = manifests_of_type
+
+        return manifests
 
     def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
         # TODO:
