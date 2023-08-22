@@ -38,7 +38,7 @@ class IAgentPluginRepository(ABC):
     @abstractmethod
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
         """
-        Retrieve a sequence of plugin manifests for all plugins.
+        Retrieve a collection of plugin manifests for all plugins.
 
         :raises RetrievalError: If an error occurs while trying to retrieve the manifests
         """
