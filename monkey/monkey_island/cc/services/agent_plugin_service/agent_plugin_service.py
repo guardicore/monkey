@@ -94,14 +94,13 @@ class AgentPluginService(IAgentPluginService):
         plugin_repository_index = self.get_available_plugins()
         available_versions_of_plugin: Union[
             List[AgentPluginMetadata], Dict
-        ] = plugin_repository_index.plugins.get(plugin_type, {}).get(plugin_name, {})
-
+        ] = plugin_repository_index.plugins.get(plugin_type.value, {}).get(plugin_name, {})
         for plugin_metadata in available_versions_of_plugin:
             if plugin_metadata.version == plugin_version:
                 return plugin_metadata
 
         raise RetrievalError(
-            f'Could not find plugin with type "{plugin_type}", name "{plugin_name}", and'
+            f'Could not find plugin with type "{plugin_type}", name "{plugin_name}", and '
             f'version "{plugin_version}" in plugin repository'
         )
 
