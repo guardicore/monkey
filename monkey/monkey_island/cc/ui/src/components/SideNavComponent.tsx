@@ -101,6 +101,10 @@ const SideNavComponent = ({
                      className={getNavLinkClass()}>
           Configuration
         </NavLink></li>
+        <li><NavLink to='/plugins'
+                     className={getNavLinkClass()}>
+          Plugins
+        </NavLink></li>
         <li><NavLink to='/infection/events'
                      className={getNavLinkClass()}>
           Events

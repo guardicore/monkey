@@ -6,6 +6,7 @@ import RunMonkeyPage from './pages/RunMonkeyPage/RunMonkeyPage';
 import MapPageWrapper from './map/MapPageWrapper';
 import EventPage from './pages/EventPage';
 import ReportPage from './pages/ReportPage';
+import PluginsPage from './pages/PluginsPage';
 import LicensePage from './pages/LicensePage';
 import AuthComponent from './AuthComponent';
 import LoginPageComponent from './pages/LoginPage';
@@ -32,6 +33,10 @@ export const IslandRoutes = {
   Report: '/report',
   SecurityReport: '/report/security',
   RansomwareReport: '/report/ransomware',
+  Plugins: '/plugins',
+  InstalledPlugins: '/plugins/installed',
+  AvailablePlugins: '/plugins/available',
+  UploadPlugin: '/plugins/upload',
   LoginPage: '/login',
   RegisterPage: '/register',
   Logout: '/logout',
@@ -190,6 +195,10 @@ class AppComponent extends AuthComponent {
             {this.renderRoute(IslandRoutes.EventPage,
               <SidebarLayoutComponent component={EventPage} {...defaultSideNavProps}/>)}
             {this.redirectToReport()}
+            {this.renderRoute(IslandRoutes.Plugins, <SidebarLayoutComponent component={PluginsPage} {...defaultSideNavProps}/>)}
+            {this.renderRoute(IslandRoutes.InstalledPlugins, <SidebarLayoutComponent component={PluginsPage} {...defaultSideNavProps}/>)}
+            {this.renderRoute(IslandRoutes.AvailablePlugins, <SidebarLayoutComponent component={PluginsPage} {...defaultSideNavProps}/>)}
+            {this.renderRoute(IslandRoutes.UploadPlugin, <SidebarLayoutComponent component={PluginsPage} {...defaultSideNavProps}/>)}
             {this.renderRoute(IslandRoutes.SecurityReport,
               <SidebarLayoutComponent component={ReportPage}
                                       {...defaultSideNavProps}/>)}
