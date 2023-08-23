@@ -32,6 +32,8 @@ from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_service impor
     IAgentPluginService,
 )
 
+PLUGIN_ARCHIVE = b"Hello, world!"
+
 SSH_EXPLOITER = [
     {
         "name": "SSH",
@@ -66,7 +68,8 @@ CREDENTIALS_COLLECTORS = {
             "name": "Mimikatz",
             "type_": "Credentials_Collector",
             "resource_path": "Mimikatz-credentials_collector-v1.0.2.tar",
-            "sha256": "2999adb179558cff18f6fd4da0b1bdc63093200018a71cb2e1560d197a6314bb",
+            # SHA of PLUGIN_ARCHIVE
+            "sha256": "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3",
             "description": "Collects credentials from Windows Credential Manager using Mimikatz.",
             "version": "1.0.2",
             "safe": True,
@@ -187,6 +190,7 @@ def test_agent_plugin_service__plugin_install_error(
 
 def test_agent_plugin_service__install_plugin_from_repository(monkeypatch, agent_plugin_service):
     mock_requests_get = MagicMock()
+    mock_requests_get.return_value.content = PLUGIN_ARCHIVE
     monkeypatch.setattr("requests.get", mock_requests_get)
     monkeypatch.setattr(
         agent_plugin_service,
@@ -206,6 +210,25 @@ def test_agent_plugin_service__install_plugin_from_repository(monkeypatch, agent
         == f"{AGENT_PLUGIN_REPOSITORY_URL}/Mimikatz-credentials_collector-v1.0.2.tar"
     )
     assert agent_plugin_service.install_plugin_archive.call_count == 1
+
+
+def test_agent_plugin_service__invalid_hashes(monkeypatch, agent_plugin_service):
+    mock_requests_get = MagicMock()
+    mock_requests_get.return_value.content = b"Malicious binary!WoWo"
+    monkeypatch.setattr("requests.get", mock_requests_get)
+    monkeypatch.setattr(
+        agent_plugin_service,
+        "get_available_plugins",
+        lambda: AgentPluginRepositoryIndex(**EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX),
+    )
+    monkeypatch.setattr(agent_plugin_service, "install_plugin_archive", MagicMock())
+
+    with pytest.raises(PluginInstallationError):
+        agent_plugin_service.install_plugin_from_repository(
+            plugin_type=AgentPluginType.CREDENTIALS_COLLECTOR,
+            plugin_name=PluginName("Mimikatz"),
+            plugin_version=PluginVersion("1", "0", "2"),
+        )
 
 
 def test_agent_plugin_service__install_plugin_from_repository__plugin_not_in_repository(

@@ -16,6 +16,7 @@ from common.agent_plugins import (
     PluginVersion,
 )
 from common.decorators import request_cache
+from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repositories import RetrievalError
 
 from . import IAgentPluginService
@@ -83,12 +84,13 @@ class AgentPluginService(IAgentPluginService):
         plugin_download_url = self._get_file_download_url(plugin_metadata=plugin_metadata)
         response = requests.get(plugin_download_url)
         plugin_archive = response.content
+        if not self._validate_plugin_hash(plugin_metadata, plugin_archive):
+            raise PluginInstallationError(
+                f'Error occured installing plugin with type "{plugin_type}", name "{plugin_name}",'
+                f' and version "{plugin_version}" from plugin repository: Invalid hashes.'
+            )
 
         self.install_plugin_archive(plugin_archive)
-
-    def _get_file_download_url(self, plugin_metadata: AgentPluginMetadata) -> str:
-        plugin_file_path = plugin_metadata.resource_path
-        return f"{AGENT_PLUGIN_REPOSITORY_URL}/{plugin_file_path}"
 
     def _find_plugin_in_repository(
         self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
@@ -105,6 +107,18 @@ class AgentPluginService(IAgentPluginService):
             f'Could not find plugin with type "{plugin_type}", name "{plugin_name}", and '
             f'version "{plugin_version}" in plugin repository'
         )
+
+    def _get_file_download_url(self, plugin_metadata: AgentPluginMetadata) -> str:
+        plugin_file_path = plugin_metadata.resource_path
+        return f"{AGENT_PLUGIN_REPOSITORY_URL}/{plugin_file_path}"
+
+    def _validate_plugin_hash(
+        self, plugin_metadata: AgentPluginMetadata, plugin_archive: bytes
+    ) -> bool:
+        plugin_hash = plugin_metadata.sha256
+        plugin_archive_hash = get_binary_io_sha256_hash(io.BytesIO(plugin_archive))
+
+        return plugin_hash == plugin_archive_hash
 
     def get_available_plugins(self, force_refresh: bool = False) -> AgentPluginRepositoryIndex:
         if force_refresh:
