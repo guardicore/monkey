@@ -12,9 +12,13 @@ from tests.data_for_tests.agent_plugin.manifests import (
     EXPLOITER_MANIFEST_1,
     EXPLOITER_MANIFEST_2,
     EXPLOITER_NAME_1,
+    EXPLOITER_NAME_2,
 )
 from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_NAME
-from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
+from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
+    FAKE_AGENT_PLUGIN_1,
+    FAKE_PLUGIN_CONFIG_SCHEMA_1,
+)
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
@@ -51,10 +55,11 @@ def binary_collections(mongo_client) -> Dict[OperatingSystem, gridfs.GridFS]:
 
 
 plugin_manifest_dict = EXPLOITER_MANIFEST_1.dict(simplify=True)
+plugin_schema_dict = FAKE_PLUGIN_CONFIG_SCHEMA_1
 
 basic_plugin_dict = {
     "plugin_manifest": plugin_manifest_dict,
-    "config_schema": {},
+    "config_schema": plugin_schema_dict,
     "supported_operating_systems": ("windows",),
 }
 
@@ -177,6 +182,42 @@ def test_get_all_plugin_manifests__RetrievalError_if_bad_plugin_type(
 
     with pytest.raises(RetrievalError):
         agent_plugin_repository.get_all_plugin_manifests()
+
+
+def test_get_all_plugin_configuration_schemas(plugin_file, insert_plugin, agent_plugin_repository):
+    dict1 = copy.deepcopy(basic_plugin_dict)
+    dict2 = copy.deepcopy(basic_plugin_dict)
+    dict2["plugin_manifest"] = EXPLOITER_MANIFEST_2.dict(simplify=True)
+
+    with open(plugin_file, "rb") as file:
+        insert_plugin(file, OperatingSystem.WINDOWS, dict1)
+        insert_plugin(file, OperatingSystem.WINDOWS, dict2)
+
+    retrieved_plugin_configuration_schemas = (
+        agent_plugin_repository.get_all_plugin_configuration_schemas()
+    )
+
+    assert (
+        retrieved_plugin_configuration_schemas[AgentPluginType.EXPLOITER][EXPLOITER_NAME_1]
+        == FAKE_PLUGIN_CONFIG_SCHEMA_1
+    )
+
+    assert (
+        retrieved_plugin_configuration_schemas[AgentPluginType.EXPLOITER][EXPLOITER_NAME_2]
+        == FAKE_PLUGIN_CONFIG_SCHEMA_1
+    )
+
+
+def test_get_all_plugin_configuration_schemas__RetrievalError_if_bad_plugin_type(
+    plugin_file, insert_plugin, agent_plugin_repository
+):
+    dict1 = copy.deepcopy(typo_in_type_plugin_dict)
+
+    with open(plugin_file, "rb") as file:
+        insert_plugin(file, OperatingSystem.WINDOWS, dict1)
+
+    with pytest.raises(RetrievalError):
+        agent_plugin_repository.get_all_plugin_configuration_schemas()
 
 
 def test_store_agent_plugin(agent_plugin_repository: MongoAgentPluginRepository):

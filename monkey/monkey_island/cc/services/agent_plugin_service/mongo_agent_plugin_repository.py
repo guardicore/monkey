@@ -90,16 +90,19 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         self,
     ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
         configuration_schema_dicts = self._agent_plugins_collection.find(
-            {}, {"plugin_manifest.type": 1, "plugin_manifest.name": 1, "config_schema": 1}
+            {}, {"plugin_manifest.plugin_type": 1, "plugin_manifest.name": 1, "config_schema": 1}
         )
         configuration_schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
 
         for item in configuration_schema_dicts:
             try:
-                plugin_type = AgentPluginType(item["type"])
+                plugin_type = AgentPluginType(item["plugin_manifest"]["plugin_type"])
             except ValueError:
-                raise RetrievalError(f"Invalid plugin type stored in the database: {item['type']}")
-            plugin_name = item["name"]
+                raise RetrievalError(
+                    f"Invalid plugin type stored in the database:"
+                    f" {item['plugin_manifest']['plugin_type']}"
+                )
+            plugin_name = item["plugin_manifest"]["name"]
             config_schema_dict = item["config_schema"]
             if plugin_type not in configuration_schemas:
                 configuration_schemas[plugin_type] = {}
