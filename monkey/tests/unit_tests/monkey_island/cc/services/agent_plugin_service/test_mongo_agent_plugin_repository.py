@@ -89,73 +89,9 @@ def insert_plugin(mongo_client):
     return impl
 
 
-def _insert_plugin(mongo_client, file, operating_system: OperatingSystem, plugin_dict=None):
-    if plugin_dict is None:
-        plugin_dict = copy.deepcopy(basic_plugin_dict)
-    binaries_collection = gridfs.GridFS(
-        mongo_client.monkey_island, f"agent_plugins_binaries_{operating_system.value}"
-    )
-    id = binaries_collection.put(file)
-    if "binaries" not in plugin_dict:
-        plugin_dict["binaries"] = {}
-    plugin_dict["binaries"][f"{operating_system.value}"] = id
-    plugin_manifest_dict = plugin_dict["plugin_manifest"]
-    plugin_name = plugin_manifest_dict["name"]
-    plugin_type = plugin_manifest_dict["plugin_type"]
-    print(f"Updating: {plugin_name} of type {plugin_type}")
-    result = mongo_client.monkey_island.agent_plugins.update_one(
-        {
-            "plugin_manifest.plugin_type": plugin_type,
-            "plugin_manifest.name": plugin_name,
-        },
-        update={"$set": plugin_dict},
-        upsert=True,
-    )
-    print(f"Result is: {result.raw_result}")
-    print(f"Plugin is: {plugin_dict}")
-    count = mongo_client.monkey_island.agent_plugins.count_documents({})
-    print(f"Count is: {count}")
-
-    return plugin_dict
-
-
 @pytest.fixture
 def agent_plugin_repository(mongo_client) -> MongoAgentPluginRepository:
     return MongoAgentPluginRepository(mongo_client)
-
-
-@pytest.fixture
-def error_raising_mongo_client(mongo_client) -> mongomock.MongoClient:
-    mongo_client = MagicMock(spec=mongomock.MongoClient)
-    mongo_client.monkey_island = MagicMock(spec=mongomock.Database)
-    mongo_client.monkey_island.agent_plugins = MagicMock(spec=mongomock.Collection)
-
-    mongo_client.monkey_island.agent_plugins.find = MagicMock(
-        side_effect=Exception("some exception")
-    )
-    mongo_client.monkey_island.agent_plugins.find_one = MagicMock(
-        side_effect=Exception("some exception")
-    )
-
-    for os in OperatingSystem:
-        agent_binaries = MagicMock()
-        agent_binaries.files = MagicMock(spec=mongomock.Collection)
-        agent_binaries.files.find = MagicMock(side_effect=Exception("some exception"))
-        agent_binaries.files.delete_one = MagicMock(side_effect=Exception("some exception"))
-        agent_binaries.files.delete_many = MagicMock(side_effect=Exception("some exception"))
-        agent_binaries.files.update_one = MagicMock(side_effect=Exception("some exception"))
-        setattr(mongo_client.monkey_island, f"agent_plugins_binaries_{os.value}", agent_binaries)
-        agent_binaries_grid = gridfs.GridFS(
-            mongo_client.monkey_island, f"agent_plugins_binaries_{os.value}"
-        )
-        agent_binaries_grid.delete = MagicMock(side_effect=Exception("some exception"))
-
-    return mongo_client
-
-
-@pytest.fixture
-def error_raising_agent_plugin_repository(error_raising_mongo_client) -> MongoAgentPluginRepository:
-    return MongoAgentPluginRepository(error_raising_mongo_client)
 
 
 @pytest.mark.slow
@@ -311,9 +247,9 @@ def test_remove_agent_plugin__removes_one_if_os_specified(
 
 
 def test_remove_agent_plugin__no_error_if_plugin_does_not_exist(
-    error_raising_agent_plugin_repository,
+    agent_plugin_repository,
 ):
-    error_raising_agent_plugin_repository.remove_agent_plugin(
+    agent_plugin_repository.remove_agent_plugin(
         AgentPluginType.EXPLOITER, EXPLOITER_NAME_1, OperatingSystem.WINDOWS
     )
 
