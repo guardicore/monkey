@@ -5,7 +5,7 @@ from http import HTTPStatus
 from flask import make_response, request
 from flask_security import auth_token_required, roles_accepted
 
-from common.agent_plugins import AgentPluginType
+from common.agent_plugins import AgentPluginType, PluginName
 from monkey_island.cc.flask_utils import AbstractResource, responses
 from monkey_island.cc.services.authentication_service import AccountRole
 
@@ -28,17 +28,17 @@ class UninstallAgentPlugin(AbstractResource):
         """
         try:
             response_json = json.loads(request.data)
-            plugin_type = response_json["plugin_type"]
-            name = response_json["name"]
+            plugin_type_arg = response_json["plugin_type"]
+            plugin_name_arg = response_json["name"]
         except Exception:
             return responses.make_response_to_invalid_request()
 
         try:
-            plugin_type_ = AgentPluginType(plugin_type)
+            plugin_type = AgentPluginType(plugin_type_arg)
         except ValueError:
-            message = f"Invalid type '{plugin_type}'."
+            message = f"Invalid type '{plugin_type_arg}'."
             logger.warning(message)
             return responses.make_response_to_invalid_request(message)
 
-        self._agent_plugin_service.uninstall_agent_plugin(plugin_type_, name)
+        self._agent_plugin_service.uninstall_agent_plugin(plugin_type, PluginName(plugin_name_arg))
         return make_response({}, HTTPStatus.OK)

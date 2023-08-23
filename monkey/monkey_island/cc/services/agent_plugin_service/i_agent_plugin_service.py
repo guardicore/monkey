@@ -98,12 +98,12 @@ class IAgentPluginService(ABC):
         pass
 
     @abstractmethod
-    def uninstall_agent_plugin(self, plugin_type: AgentPluginType, name: str):
+    def uninstall_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: PluginName):
         """
         Uninstall agent plugin
 
         :param plugin_type: The type of the plugin
-        :param name: The name of the plugin
+        :param plugin_name: The name of the plugin
         :raises PluginUninstallationError: If an error occurs while uninstalling the plugin
         """
         pass

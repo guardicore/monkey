@@ -127,14 +127,14 @@ class AgentPluginService(IAgentPluginService):
     def _get_file_download_url(self, file_path_in_repository: str) -> str:
         return f"{AGENT_PLUGIN_REPOSITORY_URL}/{file_path_in_repository}"
 
-    def uninstall_agent_plugin(self, plugin_type: AgentPluginType, name: str):
+    def uninstall_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: PluginName):
         try:
             self._agent_plugin_repository.remove_agent_plugin(
-                agent_plugin_type=plugin_type, agent_plugin_name=name
+                agent_plugin_type=plugin_type, agent_plugin_name=plugin_name
             )
         except Exception as err:
             raise PluginUninstallationError(
-                f"Failed to uninstall the plugin {name} of type {plugin_type}: {err}"
+                f"Failed to uninstall the plugin {plugin_name} of type {plugin_type}: {err}"
             )
 
     def install_agent_plugin_from_repository(

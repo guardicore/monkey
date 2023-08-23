@@ -304,13 +304,13 @@ def test_agent_plugin_service__unistall_agent_plugin_exception(
     agent_plugin_repository: IAgentPluginRepository,
     agent_plugin_service: IAgentPluginService,
 ):
-    def raise_exception(plugin_type, name):
+    def raise_exception(plugin_type, plugin_name):
         raise Exception
 
     agent_plugin_repository.remove_agent_plugin = raise_exception
     with pytest.raises(PluginUninstallationError):
         agent_plugin_service.uninstall_agent_plugin(
-            plugin_type=AgentPluginType("Exploiter"), name="SSH"
+            plugin_type=AgentPluginType("Exploiter"), plugin_name="SSH"
         )
 
 
