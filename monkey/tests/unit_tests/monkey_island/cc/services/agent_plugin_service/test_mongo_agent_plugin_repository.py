@@ -81,8 +81,7 @@ def insert_plugin(mongo_client):
             mongo_client.monkey_island, f"agent_plugins_binaries_{operating_system.value}"
         )
         id = binaries_collection.put(file)
-        if "binaries" not in plugin_dict:
-            plugin_dict["binaries"] = {}
+        plugin_dict.setdefault("binaries", {})
         plugin_dict["binaries"][f"{operating_system.value}"] = id
         plugin_manifest_dict = plugin_dict["plugin_manifest"]
         mongo_client.monkey_island.agent_plugins.update_one(
