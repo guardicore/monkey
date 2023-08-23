@@ -1,6 +1,6 @@
 import io
 from threading import Lock
-from typing import Any, Dict
+from typing import Any, Dict, List, Union
 
 import requests
 import yaml
@@ -9,6 +9,7 @@ from common import OperatingSystem
 from common.agent_plugins import (
     AgentPlugin,
     AgentPluginManifest,
+    AgentPluginMetadata,
     AgentPluginRepositoryIndex,
     AgentPluginType,
     PluginName,
@@ -72,6 +73,37 @@ class AgentPluginService(IAgentPluginService):
                 self._agent_plugin_repository.store_agent_plugin(
                     operating_system=operating_system, agent_plugin=agent_plugin
                 )
+
+    def install_agent_plugin_from_repository(
+        self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
+    ):
+        plugin_metadata = self._find_plugin_in_repository(plugin_type, plugin_name, plugin_version)
+
+        plugin_file_path = plugin_metadata.resource_path
+        plugin_download_url = self._get_file_download_url(
+            file_path_in_repository=str(plugin_file_path)
+        )
+        response = requests.get(plugin_download_url)
+        plugin_archive = response.content
+
+        self.install_agent_plugin_archive(plugin_archive)
+
+    def _find_plugin_in_repository(
+        self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
+    ) -> AgentPluginMetadata:
+        plugin_repository_index = self.get_available_plugins()
+        available_versions_of_plugin: Union[
+            List[AgentPluginMetadata], Dict
+        ] = plugin_repository_index.plugins.get(plugin_type, {}).get(plugin_name, {})
+
+        for plugin_metadata in available_versions_of_plugin:
+            if plugin_metadata.version == plugin_version:
+                return plugin_metadata
+
+        raise RetrievalError(
+            f'Could not find plugin with type "{plugin_type}", name "{plugin_name}", and'
+            f'version "{plugin_version}" in plugin repository'
+        )
 
     def get_available_plugins(self, force_refresh: bool = False) -> AgentPluginRepositoryIndex:
         if force_refresh:
