@@ -84,7 +84,21 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     def get_all_plugin_configuration_schemas(
         self,
     ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
-        raise NotImplementedError()
+        # TODO: Potentially use aggregation to get the config schemas
+        configuration_schema_dicts = self._agent_plugins_collection.find(
+            {}, {"plugin_manifest.type": 1, "plugin_manifest.name": 1, "config_schema": 1}
+        )
+        configuration_schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
+
+        for item in configuration_schema_dicts:
+            plugin_type = AgentPluginType(item["type"])
+            plugin_name = item["name"]
+            config_schema_dict = item["config_schema"]
+            if plugin_type not in configuration_schemas:
+                configuration_schemas[plugin_type] = {}
+            configuration_schemas[plugin_type][plugin_name] = config_schema_dict
+
+        return configuration_schemas
 
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
         # TODO: Potentially use aggregation to get the manifests:
