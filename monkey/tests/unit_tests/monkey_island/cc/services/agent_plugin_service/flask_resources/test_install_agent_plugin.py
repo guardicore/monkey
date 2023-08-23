@@ -5,7 +5,7 @@ import pytest
 from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from common.agent_plugins import AgentPluginType
+from common.agent_plugins import AgentPluginType, PluginVersion
 from monkey_island.cc.repositories import RetrievalError, StorageError
 from monkey_island.cc.services import IAgentPluginService
 from monkey_island.cc.services.agent_plugin_service.errors import PluginInstallationError
@@ -16,6 +16,7 @@ from monkey_island.cc.services.agent_plugin_service.flask_resources.install_agen
 AGENT_PLUGIN = b"SomePlugin"
 PLUGIN_TYPE = "Exploiter"
 PLUGIN_NAME = "RDP"
+VERSION_DICT = {"major": "1", "minor": "0", "patch": "1"}
 VERSION = '{"major": "1", "minor": "0", "patch": "1"}'
 REQUEST_JSON_DATA = (
     f'{{"plugin_type": "{PLUGIN_TYPE}", "name": "{PLUGIN_NAME}", "version": {VERSION}}}'
@@ -61,14 +62,14 @@ def test_install_plugin__json(agent_plugin_service, flask_client):
     assert agent_plugin_service.install_plugin_archive.call_count == 0
     assert agent_plugin_service.install_plugin_from_repository.call_count == 1
     agent_plugin_service.install_plugin_from_repository.assert_called_with(
-        plugin_type=AgentPluginType(PLUGIN_TYPE), plugin_name=PLUGIN_NAME, plugin_version=VERSION
+        plugin_type=AgentPluginType(PLUGIN_TYPE),
+        plugin_name=PLUGIN_NAME,
+        plugin_version=PluginVersion(**VERSION_DICT),
     )
 
 
 def test_install_plugin__binary_install_error(agent_plugin_service, flask_client):
-    agent_plugin_service.install_plugin_archive = MagicMock(
-        side_effect=PluginInstallationError
-    )
+    agent_plugin_service.install_plugin_archive = MagicMock(side_effect=PluginInstallationError)
     resp = flask_client.put(
         get_url_for_resource(InstallAgentPlugin),
         data=AGENT_PLUGIN,
