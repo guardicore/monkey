@@ -1,5 +1,4 @@
 import logging
-from enum import Enum
 from typing import Any, Dict, Optional
 
 import gridfs
@@ -125,7 +124,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         try:
             plugin_dict = self._get_agent_plugin(plugin_type, plugin_name)
         except Exception:
-            plugin_dict = self._encode_agent_plugin(agent_plugin)
+            plugin_dict = agent_plugin.dict(simplify=True, exclude={"source_archive"})
             plugin_dict[BINARY_OS_MAPPING_KEY] = {}
 
         if operating_system.value in plugin_dict[BINARY_OS_MAPPING_KEY]:
@@ -151,21 +150,6 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
             {"$set": plugin_dict},
             upsert=True,
         )
-
-    def _encode_agent_plugin(self, agent_plugin: AgentPlugin) -> Dict[str, Any]:
-        dict = agent_plugin.dict(simplify=True, exclude={"source_archive"})
-
-        return self._encode_dict(dict)
-
-    def _encode_dict(self, d: dict):
-        new_dict = {}
-        for k, v in d.items():
-            if isinstance(v, dict):
-                v = self._encode_dict(v)
-
-            new_dict[k] = v
-
-        return new_dict
 
     def remove_agent_plugin(
         self,
