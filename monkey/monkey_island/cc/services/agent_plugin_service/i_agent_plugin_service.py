@@ -7,6 +7,8 @@ from common.agent_plugins import (
     AgentPluginManifest,
     AgentPluginRepositoryIndex,
     AgentPluginType,
+    PluginName,
+    PluginVersion,
 )
 
 
@@ -57,11 +59,29 @@ class IAgentPluginService(ABC):
 
         :param agent_plugin_archive: The archive of the plugin
         :raises RemovalError: If an error occurs while attempting to uninstall a previous
-        version of the plugin
+                              version of the plugin
         :raises StorageError: If an error occurs while attempting to store the plugin
         :raises PluginInstallationError: If an error occurs while attempting to install the plugin
         """
         pass
+
+    @abstractmethod
+    def install_agent_plugin_from_respository(
+        self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
+    ):
+        """
+        Install plugin from repository
+
+        :param plugin_type: The type of the plugin
+        :param plugin_name: The name of the plugin
+        :param plugin_version: The version of the plugin
+        :raises RetrievalError: If an error occurs while attempting to get the plugin
+                                from the repository
+        :raises RemovalError: If an error occurs while attempting to uninstall a previous
+                              version of the plugin
+        :raises StorageError: If an error occurs while attempting to store the plugin
+        :raises PluginInstallationError: If an error occurs while attempting to install the plugin
+        """
 
     @abstractmethod
     def get_available_plugins(self, force_refresh: bool) -> AgentPluginRepositoryIndex:
