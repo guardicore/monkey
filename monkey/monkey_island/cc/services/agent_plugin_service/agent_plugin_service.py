@@ -145,8 +145,3 @@ class AgentPluginService(IAgentPluginService):
             raise PluginUninstallationError(
                 f"Failed to uninstall the plugin {plugin_name} of type {plugin_type}: {err}"
             )
-
-    def install_agent_plugin_from_repository(
-        self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
-    ):
-        raise NotImplementedError()
