@@ -24,6 +24,7 @@ from .i_agent_plugin_repository import IAgentPluginRepository
 from .plugin_archive_parser import parse_plugin
 
 AGENT_PLUGIN_REPOSITORY_URL = "https://monkey-plugins-develop.s3.amazonaws.com"
+REPOSITORY_INDEX_DOWNLOAD_URL = f"{AGENT_PLUGIN_REPOSITORY_URL}/index.yml"
 PLUGIN_TTL = 60 * 60  # if the index is older then hour we refresh the index
 
 
@@ -112,12 +113,8 @@ class AgentPluginService(IAgentPluginService):
 
     # This method is decorated in __init__() to cache responses
     def _download_index(self) -> AgentPluginRepositoryIndex:
-        index_file_path = "index.yml"
-
         try:
-            response = requests.get(
-                self._get_file_download_url(file_path_in_repository=index_file_path)
-            )
+            response = requests.get(REPOSITORY_INDEX_DOWNLOAD_URL)
             repository_index_yml = yaml.safe_load(response.text)
 
             return AgentPluginRepositoryIndex(**repository_index_yml)
