@@ -44,6 +44,7 @@ from monkey.common.types import Percent
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
+from monkey_island.cc.services.agent_plugin_service import AgentPluginService
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
@@ -212,3 +213,5 @@ RDPIOSettings.video_height
 RDPIOSettings.video_bpp_max
 RDPIOSettings.video_out_format
 RDPIOSettings.clipboard_use_pyperclip
+
+AgentPluginService.install_agent_plugin_from_repository
