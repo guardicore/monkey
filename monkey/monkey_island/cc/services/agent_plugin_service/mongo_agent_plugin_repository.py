@@ -63,9 +63,9 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
 
         try:
             os_binaries = plugin_dict[BINARY_OS_MAPPING_KEY]
-            id = os_binaries[host_operating_system.value]
+            _id = os_binaries[host_operating_system.value]
             plugin_source_bytes = (
-                self._agent_plugins_binaries_collections[host_operating_system].get(id).read()
+                self._agent_plugins_binaries_collections[host_operating_system].get(_id).read()
             )
 
             plugin_dict.pop(BINARY_OS_MAPPING_KEY)
@@ -89,14 +89,16 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     def get_all_plugin_configuration_schemas(
         self,
     ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
-        # TODO: Potentially use aggregation to get the config schemas
         configuration_schema_dicts = self._agent_plugins_collection.find(
             {}, {"plugin_manifest.type": 1, "plugin_manifest.name": 1, "config_schema": 1}
         )
         configuration_schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
 
         for item in configuration_schema_dicts:
-            plugin_type = AgentPluginType(item["type"])
+            try:
+                plugin_type = AgentPluginType(item["type"])
+            except ValueError:
+                raise RetrievalError(f"Invalid plugin type stored in the database: {item['type']}")
             plugin_name = item["name"]
             config_schema_dict = item["config_schema"]
             if plugin_type not in configuration_schemas:
@@ -114,7 +116,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 manifest = AgentPluginManifest(**manifest_dict["plugin_manifest"])
             except Exception as err:
                 raise RetrievalError(
-                    f"Error creating plugin manifest from the data in the database: {err}"
+                    f"Can't create plugin manifest from the data in the database: {err}"
                 ) from err
             plugin_type = manifest.plugin_type
             plugin_name = manifest.name
