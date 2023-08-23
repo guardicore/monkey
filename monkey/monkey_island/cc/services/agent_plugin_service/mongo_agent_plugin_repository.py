@@ -47,12 +47,6 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     ) -> AgentPlugin:
         try:
             plugin_dict = self._get_agent_plugin(plugin_type, name)
-        except Exception:
-            raise UnknownRecordError(
-                f"Error retrieving the agent plugin {name} of type {plugin_type}"
-            )
-
-        try:
             os_binaries = plugin_dict[BINARY_OS_MAPPING_KEY]
             gridfs_file_id = os_binaries[host_operating_system.value]
             plugin_source_bytes = (
@@ -64,6 +58,8 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
             plugin_dict.pop(BINARY_OS_MAPPING_KEY)
             plugin_dict["source_archive"] = plugin_source_bytes
             return AgentPlugin(**plugin_dict)
+        except UnknownRecordError:
+            raise
         except Exception as err:
             raise RetrievalError(
                 f"Error retrieving the agent plugin {name} of type {plugin_type} for operating "
@@ -74,11 +70,18 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         self, plugin_type: AgentPluginType, plugin_name: PluginName
     ) -> Dict[str, Any]:
         plugin_dict = self._agent_plugins_collection.find_one(
-            {"plugin_manifest.name": plugin_name, "plugin_manifest.plugin_type": plugin_type.value},
+            {
+                "plugin_manifest.name": plugin_name,
+                "plugin_manifest.plugin_type": plugin_type.value,
+            },
             {MONGO_OBJECT_ID_KEY: False},
         )
+
         if plugin_dict is None:
-            raise RuntimeError("Not found")
+            raise UnknownRecordError(
+                f"Error retrieving the agent plugin {plugin_name} of type {plugin_type}"
+            )
+
         return plugin_dict
 
     def get_all_plugin_configuration_schemas(
@@ -129,9 +132,13 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         plugin_type = agent_plugin.plugin_manifest.plugin_type
         try:
             plugin_dict = self._get_agent_plugin(plugin_type, plugin_name)
-        except Exception:
+        except UnknownRecordError:
             plugin_dict = agent_plugin.dict(simplify=True, exclude={"source_archive"})
             plugin_dict[BINARY_OS_MAPPING_KEY] = {}
+        except Exception as err:
+            raise StorageError(
+                f"Error retrieving the agent plugin {plugin_name} of type {plugin_type}: {err}"
+            )
 
         if operating_system.value in plugin_dict[BINARY_OS_MAPPING_KEY]:
             raise StorageError(
