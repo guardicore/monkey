@@ -133,8 +133,8 @@ def test_get_all_plugin_manifests(plugin_file, insert_plugin, agent_plugin_repos
     with open(plugin_file, "rb") as file:
         insert_plugin(file, OperatingSystem.WINDOWS, dict1)
         insert_plugin(file, OperatingSystem.WINDOWS, dict2)
-        dict3 = insert_plugin(file, OperatingSystem.WINDOWS, dict3)
-        dict3 = insert_plugin(file, OperatingSystem.LINUX, dict3)
+        insert_plugin(file, OperatingSystem.WINDOWS, dict3)
+        insert_plugin(file, OperatingSystem.LINUX, dict3)
 
     retrieved_plugin_manifests = agent_plugin_repository.get_all_plugin_manifests()
 

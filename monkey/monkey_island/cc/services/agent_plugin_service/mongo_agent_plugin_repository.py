@@ -106,18 +106,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         return configuration_schemas
 
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
-        # TODO: Potentially use aggregation to get the manifests:
-        # manifest_dicts = self._agent_plugins_collection.aggregate(
-        #     [
-        #         {
-        #             "$group": {
-        #                 "_id": "$plugin_manifest.plugin_type",
-        #                 "items": {"$addToSet": "$plugin_manifest"},
-        #             }
-        #         }
-        #     ]
-        # )
-        manifest_dicts = self._agent_plugins_collection.find({}, {"plugin_manifest": 1})
+        manifest_dicts = self._agent_plugins_collection.find(projection=["plugin_manifest"])
         manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
 
         for manifest_dict in manifest_dicts:
