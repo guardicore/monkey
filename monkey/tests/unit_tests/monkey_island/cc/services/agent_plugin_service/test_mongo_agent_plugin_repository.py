@@ -165,5 +165,87 @@ def test_store_agent_plugin(agent_plugin_repository: MongoAgentPluginRepository)
     assert plugin == FAKE_AGENT_PLUGIN_1
 
 
-# def test_remove_agent_plugin():
-#     pass
+def test_remove_agent_plugin(
+    plugin_file,
+    insert_plugin,
+    mongo_client,
+    agent_plugin_repository: MongoAgentPluginRepository,
+):
+    with open(plugin_file, "rb") as file:
+        insert_plugin(file, OperatingSystem.WINDOWS)
+
+    agent_plugin_repository.remove_agent_plugin(
+        AgentPluginType.EXPLOITER, EXPLOITER_NAME_1, OperatingSystem.WINDOWS
+    )
+
+    # Assert
+    agent_plugin = mongo_client.monkey_island.agent_plugins.find_one(
+        {"plugin_manifest.name": EXPLOITER_NAME_1, "plugin_manifest.plugin_type": "Exploiter"}
+    )
+    assert agent_plugin is None
+    assert mongo_client.monkey_island.agent_plugins_binaries_windows.files.count_documents({}) == 0
+
+
+def test_remove_agent_plugin__removes_all_if_no_os_specified(
+    plugin_file,
+    insert_plugin,
+    mongo_client,
+    agent_plugin_repository: MongoAgentPluginRepository,
+):
+    with open(plugin_file, "rb") as file:
+        plugin_dict = insert_plugin(file, OperatingSystem.WINDOWS)
+        plugin_dict = insert_plugin(file, OperatingSystem.LINUX, plugin_dict)
+
+    agent_plugin_repository.remove_agent_plugin(AgentPluginType.EXPLOITER, EXPLOITER_NAME_1)
+
+    # Assert
+    agent_plugin = mongo_client.monkey_island.agent_plugins.find_one(
+        {"plugin_manifest.name": EXPLOITER_NAME_1, "plugin_manifest.plugin_type": "Exploiter"}
+    )
+    assert agent_plugin is None
+    assert mongo_client.monkey_island.agent_plugins_binaries_linux.files.count_documents({}) == 0
+    assert mongo_client.monkey_island.agent_plugins_binaries_windows.files.count_documents({}) == 0
+
+
+def test_remove_agent_plugin__removes_one_if_os_specified(
+    plugin_file, insert_plugin, mongo_client, agent_plugin_repository
+):
+    with open(plugin_file, "rb") as file:
+        plugin_dict = insert_plugin(file, OperatingSystem.WINDOWS)
+        plugin_dict = insert_plugin(file, OperatingSystem.LINUX, plugin_dict)
+
+    agent_plugin_repository.remove_agent_plugin(
+        AgentPluginType.EXPLOITER, EXPLOITER_NAME_1, OperatingSystem.WINDOWS
+    )
+
+    # Assert
+    agent_plugin = mongo_client.monkey_island.agent_plugins.find_one(
+        {"plugin_manifest.name": EXPLOITER_NAME_1, "plugin_manifest.plugin_type": "Exploiter"}
+    )
+    assert agent_plugin is not None
+    assert agent_plugin["binaries"] == {"linux": plugin_dict["binaries"]["linux"]}
+    assert mongo_client.monkey_island.agent_plugins_binaries_linux.files.count_documents({}) == 1
+    assert mongo_client.monkey_island.agent_plugins_binaries_windows.files.count_documents({}) == 0
+
+
+def test_remove_agent_plugin__no_error_if_plugin_does_not_exist(
+    error_raising_agent_plugin_repository,
+):
+    error_raising_agent_plugin_repository.remove_agent_plugin(
+        AgentPluginType.EXPLOITER, EXPLOITER_NAME_1, OperatingSystem.WINDOWS
+    )
+
+
+# TODO: Figure this out
+# def test_remove_agent_plugin__removalerror_if_problem_removing_plugin(
+#     plugin_file, error_raising_mongo_client, error_raising_agent_plugin_repository
+# ):
+#     with open(plugin_file, "rb") as file:
+#         plugin_dict = _insert_plugin(error_raising_mongo_client, file, OperatingSystem.WINDOWS)
+#     error_raising_mongo_client.monkey_island.agent_plugins.find_one.side_effect = None
+#     error_raising_mongo_client.monkey_island.agent_plugins.find_one.return_value = plugin_dict
+
+#     with pytest.raises(RemovalError):
+#         error_raising_agent_plugin_repository.remove_agent_plugin(
+#             AgentPluginType.EXPLOITER, EXPLOITER_NAME_1, OperatingSystem.WINDOWS
+#         )

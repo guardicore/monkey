@@ -7,7 +7,12 @@ from pymongo import MongoClient
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
-from monkey_island.cc.repositories import RetrievalError, StorageError, UnknownRecordError
+from monkey_island.cc.repositories import (
+    RemovalError,
+    RetrievalError,
+    StorageError,
+    UnknownRecordError,
+)
 
 from .i_agent_plugin_repository import IAgentPluginRepository
 
@@ -192,4 +197,50 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         agent_plugin_name: str,
         operating_system: Optional[OperatingSystem] = None,
     ):
-        raise NotImplementedError()
+        try:
+            plugin_dict = self._get_agent_plugin(agent_plugin_type, agent_plugin_name)
+        except Exception:
+            print(f"Plugin {agent_plugin_name} of type {agent_plugin_type} not found")
+            return
+
+        try:
+            self._remove_agent_plugin(plugin_dict, operating_system)
+        except Exception as err:
+            raise RemovalError(
+                f"Error removing the agent plugin {agent_plugin_name} of type {agent_plugin_type} "
+                f"for operating system {operating_system}: {err}"
+            )
+
+    def _remove_agent_plugin(
+        self, plugin_dict: Dict[str, Any], operating_system: Optional[OperatingSystem]
+    ):
+        os_binaries = plugin_dict[BINARY_OS_MAPPING_KEY]
+
+        if operating_system is None:
+            temp_os_binaries = os_binaries.copy()
+            for os, id in temp_os_binaries.items():
+                self._agent_plugins_binaries_collections[OperatingSystem(os)].delete(id)
+                os_binaries.pop(os)
+        else:
+            id = os_binaries[operating_system.value]
+            self._agent_plugins_binaries_collections[OperatingSystem(operating_system)].delete(id)
+            os_binaries.pop(operating_system.value)
+
+        # Update or delete the plugin record
+        plugin_name = plugin_dict["plugin_manifest"]["name"]
+        plugin_type = plugin_dict["plugin_manifest"]["plugin_type"]
+        if len(os_binaries) == 0:
+            self._agent_plugins_collection.delete_one(
+                {
+                    "plugin_manifest.name": plugin_name,
+                    "plugin_manifest.plugin_type": plugin_type,
+                }
+            )
+        else:
+            self._agent_plugins_collection.update_one(
+                {
+                    "plugin_manifest.name": plugin_name,
+                    "plugin_manifest.plugin_type": plugin_type,
+                },
+                {"$set": plugin_dict},
+            )
