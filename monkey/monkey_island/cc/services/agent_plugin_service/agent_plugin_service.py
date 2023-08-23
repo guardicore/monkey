@@ -80,14 +80,15 @@ class AgentPluginService(IAgentPluginService):
     ):
         plugin_metadata = self._find_plugin_in_repository(plugin_type, plugin_name, plugin_version)
 
-        plugin_file_path = plugin_metadata.resource_path
-        plugin_download_url = self._get_file_download_url(
-            file_path_in_repository=str(plugin_file_path)
-        )
+        plugin_download_url = self._get_file_download_url(plugin_metadata=plugin_metadata)
         response = requests.get(plugin_download_url)
         plugin_archive = response.content
 
         self.install_plugin_archive(plugin_archive)
+
+    def _get_file_download_url(self, plugin_metadata: AgentPluginMetadata) -> str:
+        plugin_file_path = plugin_metadata.resource_path
+        return f"{AGENT_PLUGIN_REPOSITORY_URL}/{plugin_file_path}"
 
     def _find_plugin_in_repository(
         self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
@@ -120,9 +121,6 @@ class AgentPluginService(IAgentPluginService):
             return AgentPluginRepositoryIndex(**repository_index_yml)
         except Exception as err:
             raise RetrievalError("Failed to get agent plugin repository index") from err
-
-    def _get_file_download_url(self, file_path_in_repository: str) -> str:
-        return f"{AGENT_PLUGIN_REPOSITORY_URL}/{file_path_in_repository}"
 
     def uninstall_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: PluginName):
         try:
