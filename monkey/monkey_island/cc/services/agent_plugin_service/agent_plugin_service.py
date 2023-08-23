@@ -22,7 +22,7 @@ from .errors import PluginInstallationError, PluginUninstallationError
 from .i_agent_plugin_repository import IAgentPluginRepository
 from .plugin_archive_parser import parse_plugin
 
-AGENT_PLUGIN_REPOSITORY_URL = "https://monkey-plugins-develop.s3.amazonaws.com/index.yml"
+AGENT_PLUGIN_REPOSITORY_URL = "https://monkey-plugins-develop.s3.amazonaws.com"
 PLUGIN_TTL = 60 * 60  # if the index is older then hour we refresh the index
 
 
@@ -81,13 +81,20 @@ class AgentPluginService(IAgentPluginService):
 
     # This method is decorated in __init__() to cache responses
     def _download_index(self) -> AgentPluginRepositoryIndex:
+        index_file_path = "index.yml"
+
         try:
-            response = requests.get(AGENT_PLUGIN_REPOSITORY_URL)
+            response = requests.get(
+                self._get_file_download_url(file_path_in_repository=index_file_path)
+            )
             repository_index_yml = yaml.safe_load(response.text)
 
             return AgentPluginRepositoryIndex(**repository_index_yml)
         except Exception as err:
             raise RetrievalError("Failed to get agent plugin repository index") from err
+
+    def _get_file_download_url(self, file_path_in_repository: str) -> str:
+        return f"{AGENT_PLUGIN_REPOSITORY_URL}/{file_path_in_repository}"
 
     def uninstall_agent_plugin(self, plugin_type: AgentPluginType, name: str):
         try:
