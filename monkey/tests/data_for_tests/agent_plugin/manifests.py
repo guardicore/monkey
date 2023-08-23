@@ -35,13 +35,11 @@ EXPLOITER_MANIFEST_2 = AgentPluginManifest(
     safe=True,
 )
 
-EXPLOITER_MANIFEST_INCOMPLETE = (
-    AgentPluginManifest(
-        name=EXPLOITER_INCOMPLETE_MANIFEST,
-        plugin_type=AgentPluginType.EXPLOITER,
-        target_operating_systems=tuple(),
-        version="1.0.0",
-    ),
+EXPLOITER_MANIFEST_INCOMPLETE = AgentPluginManifest(
+    name=EXPLOITER_INCOMPLETE_MANIFEST,
+    plugin_type=AgentPluginType.EXPLOITER,
+    target_operating_systems=tuple(),
+    version="1.0.0",
 )
 
 CREDENTIALS_COLLECTOR_MANIFEST_1 = AgentPluginManifest(
