@@ -56,7 +56,7 @@ class AgentPluginService(IAgentPluginService):
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
         return self._agent_plugin_repository.get_all_plugin_manifests()
 
-    def install_agent_plugin_archive(self, agent_plugin_archive: bytes):
+    def install_plugin_archive(self, agent_plugin_archive: bytes):
         with self._lock:
             try:
                 os_agent_plugins = parse_plugin(io.BytesIO(agent_plugin_archive))
@@ -74,7 +74,7 @@ class AgentPluginService(IAgentPluginService):
                     operating_system=operating_system, agent_plugin=agent_plugin
                 )
 
-    def install_agent_plugin_from_repository(
+    def install_plugin_from_repository(
         self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
     ):
         plugin_metadata = self._find_plugin_in_repository(plugin_type, plugin_name, plugin_version)
@@ -86,7 +86,7 @@ class AgentPluginService(IAgentPluginService):
         response = requests.get(plugin_download_url)
         plugin_archive = response.content
 
-        self.install_agent_plugin_archive(plugin_archive)
+        self.install_plugin_archive(plugin_archive)
 
     def _find_plugin_in_repository(
         self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion

@@ -53,7 +53,7 @@ class IAgentPluginService(ABC):
         pass
 
     @abstractmethod
-    def install_agent_plugin_archive(self, agent_plugin_archive: bytes):
+    def install_plugin_archive(self, agent_plugin_archive: bytes):
         """
         Install plugin archive
 
@@ -66,7 +66,7 @@ class IAgentPluginService(ABC):
         pass
 
     @abstractmethod
-    def install_agent_plugin_from_repository(
+    def install_plugin_from_repository(
         self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
     ):
         """

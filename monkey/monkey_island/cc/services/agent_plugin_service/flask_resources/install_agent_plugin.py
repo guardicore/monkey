@@ -26,7 +26,7 @@ class InstallAgentPlugin(AbstractResource):
         Install the plugin archive.
         """
         try:
-            self._agent_plugin_service.install_agent_plugin_archive(request.data)
+            self._agent_plugin_service.install_plugin_archive(request.data)
             return make_response({}, HTTPStatus.OK)
         except PluginInstallationError as err:
             return make_response(str(err), HTTPStatus.UNPROCESSABLE_ENTITY)
