@@ -343,13 +343,29 @@ def test_remove_agent_plugin__no_error_if_plugin_does_not_exist(
     )
 
 
+def test_remove_agent_plugin__removalerror_if_problem_retrieving_plugin(
+    plugin_file,
+    insert_plugin,
+    mongo_client,
+    agent_plugin_repository,
+):
+    with open(plugin_file, "rb") as file:
+        insert_plugin(file, OperatingSystem.WINDOWS)
+    mongo_client.monkey_island.agent_plugins.find_one = MagicMock(side_effect=Exception)
+
+    with pytest.raises(RemovalError):
+        agent_plugin_repository.remove_agent_plugin(
+            AgentPluginType.EXPLOITER, EXPLOITER_NAME_1, OperatingSystem.WINDOWS
+        )
+
+
 def test_remove_agent_plugin__removalerror_if_problem_deleting_plugin(
     plugin_file, insert_plugin, mongo_client, agent_plugin_repository
 ):
     with open(plugin_file, "rb") as file:
         plugin_dict = insert_plugin(file, OperatingSystem.WINDOWS)
     mongo_client.monkey_island.agent_plugins.find_one = MagicMock(return_value=plugin_dict)
-    mongo_client.monkey_island.agent_plugins.delete_one = MagicMock(side_effect=Exception("foo"))
+    mongo_client.monkey_island.agent_plugins.delete_one = MagicMock(side_effect=Exception)
 
     with pytest.raises(RemovalError):
         agent_plugin_repository.remove_agent_plugin(
@@ -364,7 +380,7 @@ def test_remove_agent_plugin__removalerror_if_problem_updating_plugin(
         plugin_dict = insert_plugin(file, OperatingSystem.WINDOWS)
         plugin_dict = insert_plugin(file, OperatingSystem.LINUX, plugin_dict)
     mongo_client.monkey_island.agent_plugins.find_one = MagicMock(return_value=plugin_dict)
-    mongo_client.monkey_island.agent_plugins.update_one = MagicMock(side_effect=Exception("foo"))
+    mongo_client.monkey_island.agent_plugins.update_one = MagicMock(side_effect=Exception)
 
     with pytest.raises(RemovalError):
         agent_plugin_repository.remove_agent_plugin(
@@ -380,7 +396,7 @@ def test_remove_agent_plugin__removalerror_if_problem_deleting_binary(
         plugin_dict = insert_plugin(file, OperatingSystem.LINUX, plugin_dict)
     mongo_client.monkey_island.agent_plugins.find_one = MagicMock(return_value=plugin_dict)
     mongo_client.monkey_island.agent_plugins_binaries_windows.files.delete_one = MagicMock(
-        side_effect=Exception("foo")
+        side_effect=Exception
     )
 
     with pytest.raises(RemovalError):

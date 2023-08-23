@@ -169,12 +169,10 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     ):
         try:
             plugin_dict = self._get_agent_plugin(agent_plugin_type, agent_plugin_name)
-        except Exception:
+            self._remove_agent_plugin(plugin_dict, operating_system)
+        except UnknownRecordError:
             logger.debug(f"Plugin {agent_plugin_name} of type {agent_plugin_type} not found")
             return
-
-        try:
-            self._remove_agent_plugin(plugin_dict, operating_system)
         except Exception as err:
             raise RemovalError(
                 f"Error removing the agent plugin {agent_plugin_name} of type {agent_plugin_type} "
