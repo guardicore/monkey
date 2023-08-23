@@ -73,7 +73,7 @@ class AgentPluginService(IAgentPluginService):
                     operating_system=operating_system, agent_plugin=agent_plugin
                 )
 
-    def get_available_plugins(self, force_refresh: bool) -> AgentPluginRepositoryIndex:
+    def get_available_plugins(self, force_refresh: bool = False) -> AgentPluginRepositoryIndex:
         if force_refresh:
             self._download_index.clear_cache()  # type: ignore [attr-defined]
 
