@@ -103,7 +103,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
 
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
         manifest_dicts = self._agent_plugins_collection.find(projection=["plugin_manifest"])
-        manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
+        manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = defaultdict(dict)
 
         for manifest_dict in manifest_dicts:
             try:
@@ -114,8 +114,6 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 )
             plugin_type = manifest.plugin_type
             plugin_name = manifest.name
-            if plugin_type not in manifests:
-                manifests[plugin_type] = {}
             manifests[plugin_type][plugin_name] = manifest
 
         return manifests
