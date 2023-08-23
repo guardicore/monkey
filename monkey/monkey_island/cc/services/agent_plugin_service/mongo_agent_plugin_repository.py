@@ -109,7 +109,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
             except Exception as err:
                 raise RetrievalError(
                     f"Can't create plugin manifest from the data in the database: {err}"
-                ) from err
+                )
             plugin_type = manifest.plugin_type
             plugin_name = manifest.name
             if plugin_type not in manifests:
