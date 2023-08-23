@@ -176,14 +176,13 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         os_binaries = plugin_dict[BINARY_OS_MAPPING_KEY]
 
         if operating_system is None:
-            temp_os_binaries = os_binaries.copy()
-            for os, id in temp_os_binaries.items():
-                self._agent_plugins_binaries_collections[OperatingSystem(os)].delete(id)
-                os_binaries.pop(os)
+            os_binaries_to_remove = os_binaries.copy()
         else:
-            id = os_binaries[operating_system.value]
-            self._agent_plugins_binaries_collections[OperatingSystem(operating_system)].delete(id)
-            os_binaries.pop(operating_system.value)
+            os_binaries_to_remove = {operating_system.value: os_binaries[operating_system.value]}
+
+        for os, id in os_binaries_to_remove.items():
+            self._agent_plugins_binaries_collections[OperatingSystem(os)].delete(id)
+            os_binaries.pop(os)
 
         # Update or delete the plugin record
         plugin_name = plugin_dict["plugin_manifest"]["name"]
