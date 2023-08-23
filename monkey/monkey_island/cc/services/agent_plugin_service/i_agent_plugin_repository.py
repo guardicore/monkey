@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType, PluginName
 
 
 class IAgentPluginRepository(ABC):
@@ -10,7 +10,7 @@ class IAgentPluginRepository(ABC):
 
     @abstractmethod
     def get_plugin(
-        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
+        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: PluginName
     ) -> AgentPlugin:
         """
         Retrieve AgentPlugin based on its name and type
@@ -26,7 +26,7 @@ class IAgentPluginRepository(ABC):
     @abstractmethod
     def get_all_plugin_configuration_schemas(
         self,
-    ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
+    ) -> Dict[AgentPluginType, Dict[PluginName, Dict[str, Any]]]:
         """
         Retrieve the configuration schemas for all plugins.
 
@@ -36,7 +36,9 @@ class IAgentPluginRepository(ABC):
         pass
 
     @abstractmethod
-    def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
+    def get_all_plugin_manifests(
+        self,
+    ) -> Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]]:
         """
         Retrieve a collection of plugin manifests for all plugins.
 
@@ -58,7 +60,7 @@ class IAgentPluginRepository(ABC):
     def remove_agent_plugin(
         self,
         agent_plugin_type: AgentPluginType,
-        agent_plugin_name: str,
+        agent_plugin_name: PluginName,
         operating_system: Optional[OperatingSystem] = None,
     ):
         """

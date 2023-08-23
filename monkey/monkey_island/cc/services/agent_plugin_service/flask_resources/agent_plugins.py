@@ -5,7 +5,7 @@ from flask import make_response
 from flask_security import auth_token_required, roles_accepted
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPluginType
+from common.agent_plugins import AgentPluginType, PluginName
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.services.authentication_service import AccountRole
@@ -49,7 +49,7 @@ class AgentPlugins(AbstractResource):
             agent_plugin = self._agent_plugin_service.get_plugin(
                 host_operating_system=host_operating_system,
                 plugin_type=agent_plugin_type,
-                plugin_name=name,
+                plugin_name=PluginName(name),
             )
             return make_response(agent_plugin.dict(simplify=True), HTTPStatus.OK)
         except UnknownRecordError:

@@ -21,7 +21,7 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
 )
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginType, PluginName
 from monkey_island.cc.repositories import (
     RemovalError,
     RetrievalError,
@@ -224,7 +224,7 @@ def test_store_agent_plugin(agent_plugin_repository: MongoAgentPluginRepository)
     agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)
 
     plugin = agent_plugin_repository.get_plugin(
-        OperatingSystem.LINUX, AgentPluginType.EXPLOITER, FAKE_NAME
+        OperatingSystem.LINUX, AgentPluginType.EXPLOITER, PluginName(FAKE_NAME)
     )
     assert plugin == FAKE_AGENT_PLUGIN_1
 

@@ -6,7 +6,7 @@ import gridfs
 from pymongo import MongoClient
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType, PluginName
 from monkey_island.cc.repositories import (
     RemovalError,
     RetrievalError,
@@ -43,7 +43,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         return f"agent_plugins_binaries_{operating_system.value}"
 
     def get_plugin(
-        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
+        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: PluginName
     ) -> AgentPlugin:
         try:
             plugin_dict = self._get_agent_plugin(plugin_type, name)
@@ -70,7 +70,9 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 f"system {host_operating_system}: {err}"
             )
 
-    def _get_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> Dict[str, Any]:
+    def _get_agent_plugin(
+        self, plugin_type: AgentPluginType, plugin_name: PluginName
+    ) -> Dict[str, Any]:
         plugin_dict = self._agent_plugins_collection.find_one(
             {"plugin_manifest.name": plugin_name, "plugin_manifest.plugin_type": plugin_type.value},
             {MONGO_OBJECT_ID_KEY: False},
@@ -81,11 +83,13 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
 
     def get_all_plugin_configuration_schemas(
         self,
-    ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
+    ) -> Dict[AgentPluginType, Dict[PluginName, Dict[str, Any]]]:
         configuration_schema_dicts = self._agent_plugins_collection.find(
             {}, {"plugin_manifest.plugin_type": 1, "plugin_manifest.name": 1, "config_schema": 1}
         )
-        configuration_schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = defaultdict(dict)
+        configuration_schemas: Dict[
+            AgentPluginType, Dict[PluginName, Dict[str, Any]]
+        ] = defaultdict(dict)
 
         for item in configuration_schema_dicts:
             try:
@@ -101,9 +105,11 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
 
         return configuration_schemas
 
-    def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
+    def get_all_plugin_manifests(
+        self,
+    ) -> Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]]:
         manifest_dicts = self._agent_plugins_collection.find(projection=["plugin_manifest"])
-        manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = defaultdict(dict)
+        manifests: Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]] = defaultdict(dict)
 
         for manifest_dict in manifest_dicts:
             try:
@@ -153,7 +159,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     def remove_agent_plugin(
         self,
         agent_plugin_type: AgentPluginType,
-        agent_plugin_name: str,
+        agent_plugin_name: PluginName,
         operating_system: Optional[OperatingSystem] = None,
     ):
         try:

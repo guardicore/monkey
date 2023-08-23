@@ -1,12 +1,12 @@
 from common import OperatingSystem
-from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPluginManifest, AgentPluginType, PluginName
 
-EXPLOITER_NAME_1 = "MockExploiter"
-EXPLOITER_NAME_2 = "MockExploiter2"
-EXPLOITER_INCOMPLETE_MANIFEST = "MockExploiter3"
+EXPLOITER_NAME_1 = PluginName("MockExploiter")
+EXPLOITER_NAME_2 = PluginName("MockExploiter2")
+EXPLOITER_INCOMPLETE_MANIFEST = PluginName("MockExploiter3")
 EXPLOITER_TITLE_1 = "Mock Exploiter"
 
-CREDENTIALS_COLLECTOR_NAME_1 = "MockCredentialCollector"
+CREDENTIALS_COLLECTOR_NAME_1 = PluginName("MockCredentialCollector")
 
 REMEDIATION_SUGGESTION_1 = "Fix it!"
 REMEDIATION_SUGGESTION_2 = "Patch it!"

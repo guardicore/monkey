@@ -2,7 +2,7 @@ import logging
 from typing import Any, Dict, Generator, List, Mapping, Optional
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType, PluginName
 from monkey_island.cc.repositories import IFileRepository, RetrievalError
 
 from .i_agent_plugin_repository import IAgentPluginRepository
@@ -37,7 +37,7 @@ class FileAgentPluginRepository(IAgentPluginRepository):
         self._plugin_file_repository = plugin_file_repository
 
     def get_plugin(
-        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
+        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: PluginName
     ) -> AgentPlugin:
         parsed_plugin = self._load_plugin_from_file(plugin_type, name)
 
@@ -62,8 +62,8 @@ class FileAgentPluginRepository(IAgentPluginRepository):
 
     def get_all_plugin_configuration_schemas(
         self,
-    ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
-        schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
+    ) -> Dict[AgentPluginType, Dict[PluginName, Dict[str, Any]]]:
+        schemas: Dict[AgentPluginType, Dict[PluginName, Dict[str, Any]]] = {}
         for plugin in _deduplicate_os_specific_plugins(self._get_all_plugins()):
             plugin_type = plugin.plugin_manifest.plugin_type
             schemas.setdefault(plugin_type, {})
@@ -94,8 +94,10 @@ class FileAgentPluginRepository(IAgentPluginRepository):
 
         return self._load_plugin_from_file(agent_plugin_type, plugin_name)
 
-    def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
-        manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
+    def get_all_plugin_manifests(
+        self,
+    ) -> Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]]:
+        manifests: Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]] = {}
         for plugin in _deduplicate_os_specific_plugins(self._get_all_plugins()):
             plugin_type = plugin.plugin_manifest.plugin_type
             manifests.setdefault(plugin_type, {})
@@ -113,7 +115,7 @@ class FileAgentPluginRepository(IAgentPluginRepository):
     def remove_agent_plugin(
         self,
         operating_system: Optional[OperatingSystem],
-        agent_plugin_name: str,
+        agent_plugin_name: PluginName,
         agent_plugin_type: AgentPluginType,
     ):
         # TODO: Actually implement it

@@ -57,10 +57,12 @@ class AgentPluginService(IAgentPluginService):
 
     def get_all_plugin_configuration_schemas(
         self,
-    ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
+    ) -> Dict[AgentPluginType, Dict[PluginName, Dict[str, Any]]]:
         return self._agent_plugin_repository.get_all_plugin_configuration_schemas()
 
-    def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
+    def get_all_plugin_manifests(
+        self,
+    ) -> Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]]:
         return self._agent_plugin_repository.get_all_plugin_manifests()
 
     def install_plugin_archive(self, agent_plugin_archive: bytes):
