@@ -1,6 +1,7 @@
 import json
 import logging
 from http import HTTPStatus
+from typing import Tuple
 
 from flask import make_response, request
 from flask_security import auth_token_required, roles_accepted
@@ -31,29 +32,48 @@ class InstallAgentPlugin(AbstractResource):
             content_type = request.headers.get("Content-Type", "").lower()
             if content_type == "application/json":
                 try:
-                    self._handle_json_request()
-                except ValueError:
-                    message = "Invalid plugin type."
-                    logger.warning(message)
-                    return responses.make_response_to_invalid_request(message)
-                except Exception:
-                    return responses.make_response_to_invalid_request()
+                    (
+                        plugin_type,
+                        plugin_name,
+                        plugin_version,
+                    ) = self._get_plugin_information_from_request()
+                except Exception as err:
+                    logger.warning(err)
+                    return responses.make_response_to_invalid_request(str(err))
+
+                self._agent_plugin_service.install_plugin_from_repository(
+                    plugin_type=plugin_type, plugin_name=plugin_name, plugin_version=plugin_version
+                )
             else:
                 self._agent_plugin_service.install_plugin_archive(request.data)
             return make_response({}, HTTPStatus.OK)
         except PluginInstallationError as err:
             return make_response(str(err), HTTPStatus.UNPROCESSABLE_ENTITY)
 
-    def _handle_json_request(self):
+    def _get_plugin_information_from_request(
+        self,
+    ) -> Tuple[AgentPluginType, PluginName, PluginVersion]:
         response_json = json.loads(request.data)
-        plugin_type = response_json["plugin_type"]
-        name = response_json["name"]
-        version = response_json["version"]
+        plugin_type_arg = response_json["plugin_type"]
+        plugin_name_arg = response_json["name"]
+        plugin_version_arg = response_json["version"]
 
-        plugin_type_ = AgentPluginType(plugin_type)
-        plugin_name = PluginName(name)
-        plugin_version = PluginVersion(version)
+        try:
+            plugin_type = AgentPluginType(plugin_type_arg)
+        except ValueError:
+            message = f"Invalid plugin type argument: {plugin_type_arg}."
+            raise ValueError(message)
 
-        self._agent_plugin_service.install_plugin_from_repository(
-            plugin_type=plugin_type_, plugin_name=plugin_name, plugin_version=plugin_version
-        )
+        try:
+            plugin_name = PluginName(plugin_name_arg)
+        except ValueError:
+            message = f"Invalid plugin name argument: {plugin_name_arg}."
+            raise ValueError(message)
+
+        try:
+            plugin_version = PluginVersion(**plugin_version_arg)
+        except ValueError as err:
+            message = f"Invalid plugin version argument: {plugin_version_arg}: {err}."
+            raise ValueError(message)
+
+        return plugin_type, plugin_name, plugin_version
