@@ -75,8 +75,6 @@ class IAgentPluginService(ABC):
         :param plugin_type: The type of the plugin
         :param plugin_name: The name of the plugin
         :param plugin_version: The version of the plugin
-        :raises RetrievalError: If an error occurs while attempting to get the plugin
-                                from the repository
         :raises RemovalError: If an error occurs while attempting to uninstall a previous
                               version of the plugin
         :raises StorageError: If an error occurs while attempting to store the plugin

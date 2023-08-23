@@ -217,7 +217,7 @@ def test_agent_plugin_service__install_plugin_from_repository__plugin_not_in_rep
         lambda: AgentPluginRepositoryIndex(**EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX),
     )
 
-    with pytest.raises(RetrievalError):
+    with pytest.raises(PluginInstallationError):
         agent_plugin_service.install_plugin_from_repository(
             plugin_type=AgentPluginType.FINGERPRINTER,
             plugin_name=PluginName("FindMeIfYouCan"),
@@ -236,7 +236,7 @@ def test_agent_plugin_service__install_plugin_from_repository__empty_index(
         ),
     )
 
-    with pytest.raises(RetrievalError):
+    with pytest.raises(PluginInstallationError):
         agent_plugin_service.install_plugin_from_repository(
             plugin_type=AgentPluginType.CREDENTIALS_COLLECTOR,
             plugin_name=PluginName("Mimikatz"),

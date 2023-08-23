@@ -99,7 +99,7 @@ class AgentPluginService(IAgentPluginService):
             if plugin_metadata.version == plugin_version:
                 return plugin_metadata
 
-        raise RetrievalError(
+        raise PluginInstallationError(
             f'Could not find plugin with type "{plugin_type}", name "{plugin_name}", and '
             f'version "{plugin_version}" in plugin repository'
         )
