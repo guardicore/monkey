@@ -58,16 +58,11 @@ class InstallAgentPlugin(AbstractResource):
         plugin_name_arg = response_json["name"]
         plugin_version_arg = response_json["version"]
 
+        plugin_name = PluginName(plugin_name_arg)
         try:
             plugin_type = AgentPluginType(plugin_type_arg)
         except ValueError:
             message = f"Invalid plugin type argument: {plugin_type_arg}."
-            raise ValueError(message)
-
-        try:
-            plugin_name = PluginName(plugin_name_arg)
-        except ValueError:
-            message = f"Invalid plugin name argument: {plugin_name_arg}."
             raise ValueError(message)
 
         try:
