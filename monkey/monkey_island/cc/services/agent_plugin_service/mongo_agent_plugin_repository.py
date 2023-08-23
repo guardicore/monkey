@@ -160,10 +160,6 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     def _encode_dict(self, d: dict):
         new_dict = {}
         for k, v in d.items():
-            if isinstance(k, Enum):
-                k = k.value
-            if isinstance(v, Enum):
-                v = v.value
             if isinstance(v, dict):
                 v = self._encode_dict(v)
 
