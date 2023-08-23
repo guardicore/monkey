@@ -1,4 +1,5 @@
 import logging
+from collections import defaultdict
 from typing import Any, Dict, Optional
 
 import gridfs
@@ -81,7 +82,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         configuration_schema_dicts = self._agent_plugins_collection.find(
             {}, {"plugin_manifest.plugin_type": 1, "plugin_manifest.name": 1, "config_schema": 1}
         )
-        configuration_schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
+        configuration_schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = defaultdict(dict)
 
         for item in configuration_schema_dicts:
             try:
@@ -93,8 +94,6 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 )
             plugin_name = item["plugin_manifest"]["name"]
             config_schema_dict = item["config_schema"]
-            if plugin_type not in configuration_schemas:
-                configuration_schemas[plugin_type] = {}
             configuration_schemas[plugin_type][plugin_name] = config_schema_dict
 
         return configuration_schemas
