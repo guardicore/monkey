@@ -1,6 +1,6 @@
 import io
 from threading import Lock
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 import requests
 import yaml
@@ -92,9 +92,9 @@ class AgentPluginService(IAgentPluginService):
         self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
     ) -> AgentPluginMetadata:
         plugin_repository_index = self.get_available_plugins()
-        available_versions_of_plugin: Union[
-            List[AgentPluginMetadata], Dict
-        ] = plugin_repository_index.plugins.get(plugin_type.value, {}).get(plugin_name, {})
+        available_versions_of_plugin: List[
+            AgentPluginMetadata
+        ] = plugin_repository_index.plugins.get(plugin_type.value, {}).get(plugin_name, [])
         for plugin_metadata in available_versions_of_plugin:
             if plugin_metadata.version == plugin_version:
                 return plugin_metadata
