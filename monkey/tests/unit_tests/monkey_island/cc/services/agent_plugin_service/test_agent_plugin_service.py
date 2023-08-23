@@ -10,7 +10,12 @@ from tests.unit_tests.monkey_island.cc.services.agent_plugin_service.conftest im
 )
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPluginType
+from common.agent_plugins import (
+    AgentPluginRepositoryIndex,
+    AgentPluginType,
+    PluginName,
+    PluginVersion,
+)
 from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import (
     AGENT_PLUGIN_REPOSITORY_URL,
@@ -176,6 +181,67 @@ def test_agent_plugin_service__plugin_install_error(
     )
     with pytest.raises(PluginInstallationError):
         agent_plugin_service.install_agent_plugin_archive(agent_plugin_tar.getvalue())
+
+
+def test_agent_plugin_service__install_agent_plugin_from_repository(
+    monkeypatch, agent_plugin_service
+):
+    mock_requests_get = MagicMock()
+    monkeypatch.setattr("requests.get", mock_requests_get)
+    monkeypatch.setattr(
+        agent_plugin_service,
+        "get_available_plugins",
+        lambda: AgentPluginRepositoryIndex(**EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX),
+    )
+    monkeypatch.setattr(agent_plugin_service, "install_agent_plugin_archive", MagicMock())
+
+    agent_plugin_service.install_agent_plugin_from_repository(
+        plugin_type=AgentPluginType.CREDENTIALS_COLLECTOR,
+        plugin_name=PluginName("Mimikatz"),
+        plugin_version=PluginVersion("1", "0", "2"),
+    )
+
+    assert (
+        mock_requests_get.call_args[0][0]
+        == f"{AGENT_PLUGIN_REPOSITORY_URL}/Mimikatz-credentials_collector-v1.0.2.tar"
+    )
+    assert agent_plugin_service.install_agent_plugin_archive.call_count == 1
+
+
+def test_agent_plugin_service__install_agent_plugin_from_repository__plugin_not_in_repository(
+    monkeypatch, agent_plugin_service
+):
+    monkeypatch.setattr(
+        agent_plugin_service,
+        "get_available_plugins",
+        lambda: AgentPluginRepositoryIndex(**EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX),
+    )
+
+    with pytest.raises(RetrievalError):
+        agent_plugin_service.install_agent_plugin_from_repository(
+            plugin_type=AgentPluginType.FINGERPRINTER,
+            plugin_name=PluginName("FindMeIfYouCan"),
+            plugin_version=PluginVersion("999", "99", "9"),
+        )
+
+
+def test_agent_plugin_service__install_agent_plugin_from_repository__empty_index(
+    monkeypatch, agent_plugin_service
+):
+    monkeypatch.setattr(
+        agent_plugin_service,
+        "get_available_plugins",
+        lambda: AgentPluginRepositoryIndex(
+            compatible_infection_monkey_version="development", plugins={}
+        ),
+    )
+
+    with pytest.raises(RetrievalError):
+        agent_plugin_service.install_agent_plugin_from_repository(
+            plugin_type=AgentPluginType.CREDENTIALS_COLLECTOR,
+            plugin_name=PluginName("Mimikatz"),
+            plugin_version=PluginVersion("1", "0", "2"),
+        )
 
 
 @pytest.fixture
