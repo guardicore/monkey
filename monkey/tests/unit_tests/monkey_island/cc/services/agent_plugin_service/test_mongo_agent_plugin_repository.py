@@ -17,8 +17,13 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAK
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPluginType
-from monkey_island.cc.repositories import RemovalError, RetrievalError, UnknownRecordError
+from common.agent_plugins import AgentPlugin, AgentPluginType
+from monkey_island.cc.repositories import (
+    RemovalError,
+    RetrievalError,
+    StorageError,
+    UnknownRecordError,
+)
 from monkey_island.cc.services.agent_plugin_service.mongo_agent_plugin_repository import (
     MongoAgentPluginRepository,
 )
@@ -181,6 +186,30 @@ def test_store_agent_plugin(agent_plugin_repository: MongoAgentPluginRepository)
         OperatingSystem.LINUX, AgentPluginType.EXPLOITER, FAKE_NAME
     )
     assert plugin == FAKE_AGENT_PLUGIN_1
+
+
+def test_store_agent_plugin__storeageerror_if_binary_already_exists(
+    plugin_file, insert_plugin, agent_plugin_repository: MongoAgentPluginRepository
+):
+    with open(plugin_file, "rb") as file:
+        insert_plugin(file, OperatingSystem.WINDOWS)
+
+    plugin_dict = copy.deepcopy(basic_plugin_dict)
+    plugin_dict["source_archive"] = b"dummy"
+    with pytest.raises(StorageError):
+        agent_plugin_repository.store_agent_plugin(
+            OperatingSystem.WINDOWS, AgentPlugin(**plugin_dict)
+        )
+
+
+def test_store_agent_plugin__storeageerror_if_binary_cannot_be_stored(
+    mongo_client, agent_plugin_repository
+):
+    mongo_client.monkey_island.agent_plugins_binaries_linux.files.insert_one = MagicMock(
+        side_effect=Exception("foo")
+    )
+    with pytest.raises(StorageError):
+        agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)
 
 
 def test_remove_agent_plugin(
