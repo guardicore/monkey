@@ -10,7 +10,12 @@ from tests.unit_tests.monkey_island.cc.services.agent_plugin_service.conftest im
 )
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPluginType
+from common.agent_plugins import (
+    AgentPluginRepositoryIndex,
+    AgentPluginType,
+    PluginName,
+    PluginVersion,
+)
 from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import (
     AGENT_PLUGIN_REPOSITORY_URL,
@@ -26,6 +31,8 @@ from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_repository im
 from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_service import (
     IAgentPluginService,
 )
+
+PLUGIN_ARCHIVE = b"Hello, world!"
 
 SSH_EXPLOITER = [
     {
@@ -61,7 +68,8 @@ CREDENTIALS_COLLECTORS = {
             "name": "Mimikatz",
             "type_": "Credentials_Collector",
             "resource_path": "Mimikatz-credentials_collector-v1.0.2.tar",
-            "sha256": "2999adb179558cff18f6fd4da0b1bdc63093200018a71cb2e1560d197a6314bb",
+            # SHA of PLUGIN_ARCHIVE
+            "sha256": "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3",
             "description": "Collects credentials from Windows Credential Manager using Mimikatz.",
             "version": "1.0.2",
             "safe": True,
@@ -93,6 +101,8 @@ EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_SIMPLE_INDEX = {
         "Payload": {},
     },
 }
+
+AGENT_PLUGIN_REPOSITORY_INDEX_FILE_URL = f"{AGENT_PLUGIN_REPOSITORY_URL}/index.yml"
 
 
 @pytest.fixture
@@ -130,7 +140,7 @@ def agent_plugin_service(agent_plugin_repository) -> IAgentPluginService:
         (OperatingSystem.LINUX, "only-linux-vendor-plugin-source-input.tar"),
     ],
 )
-def test_agent_plugin_service__install_agent_plugin_archive(
+def test_agent_plugin_service__install_plugin_archive(
     plugin_data_dir: Path,
     plugin_os: OperatingSystem,
     plugin_path: str,
@@ -139,7 +149,7 @@ def test_agent_plugin_service__install_agent_plugin_archive(
     build_agent_plugin_tar_with_source_tar: Callable[[Path], BinaryIO],
 ):
     agent_plugin_tar = build_agent_plugin_tar_with_source_tar(plugin_data_dir / plugin_path)
-    agent_plugin_service.install_agent_plugin_archive(agent_plugin_tar.getvalue())
+    agent_plugin_service.install_plugin_archive(agent_plugin_tar.getvalue())
 
     assert agent_plugin_repository.remove_agent_plugin.call_count == 1
 
@@ -151,7 +161,7 @@ def test_agent_plugin_service__install_agent_plugin_archive(
     "plugin_path_actual",
     ["multi-vendor-plugin-source-input.tar", "cross-platform-plugin-source.tar"],
 )
-def test_agent_plugin_service__install_agent_plugin_archive_multi(
+def test_agent_plugin_service__install_plugin_archive_multi(
     plugin_data_dir: Path,
     plugin_path_actual: str,
     agent_plugin_repository: IAgentPluginRepository,
@@ -159,7 +169,7 @@ def test_agent_plugin_service__install_agent_plugin_archive_multi(
     build_agent_plugin_tar_with_source_tar: Callable[[Path], BinaryIO],
 ):
     agent_plugin_tar = build_agent_plugin_tar_with_source_tar(plugin_data_dir / plugin_path_actual)
-    agent_plugin_service.install_agent_plugin_archive(agent_plugin_tar.getvalue())
+    agent_plugin_service.install_plugin_archive(agent_plugin_tar.getvalue())
 
     assert agent_plugin_repository.remove_agent_plugin.call_count == 1
     assert agent_plugin_repository.store_agent_plugin.call_count == 2
@@ -175,7 +185,86 @@ def test_agent_plugin_service__plugin_install_error(
         simple_agent_plugin, manifest_file_name="manifest.idk"
     )
     with pytest.raises(PluginInstallationError):
-        agent_plugin_service.install_agent_plugin_archive(agent_plugin_tar.getvalue())
+        agent_plugin_service.install_plugin_archive(agent_plugin_tar.getvalue())
+
+
+def test_agent_plugin_service__install_plugin_from_repository(monkeypatch, agent_plugin_service):
+    mock_requests_get = MagicMock()
+    mock_requests_get.return_value.content = PLUGIN_ARCHIVE
+    monkeypatch.setattr("requests.get", mock_requests_get)
+    monkeypatch.setattr(
+        agent_plugin_service,
+        "get_available_plugins",
+        lambda: AgentPluginRepositoryIndex(**EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX),
+    )
+    monkeypatch.setattr(agent_plugin_service, "install_plugin_archive", MagicMock())
+
+    agent_plugin_service.install_plugin_from_repository(
+        plugin_type=AgentPluginType.CREDENTIALS_COLLECTOR,
+        plugin_name=PluginName("Mimikatz"),
+        plugin_version=PluginVersion("1", "0", "2"),
+    )
+
+    assert (
+        mock_requests_get.call_args[0][0]
+        == f"{AGENT_PLUGIN_REPOSITORY_URL}/Mimikatz-credentials_collector-v1.0.2.tar"
+    )
+    assert agent_plugin_service.install_plugin_archive.call_count == 1
+
+
+def test_agent_plugin_service__invalid_hashes(monkeypatch, agent_plugin_service):
+    mock_requests_get = MagicMock()
+    mock_requests_get.return_value.content = b"Malicious binary!WoWo"
+    monkeypatch.setattr("requests.get", mock_requests_get)
+    monkeypatch.setattr(
+        agent_plugin_service,
+        "get_available_plugins",
+        lambda: AgentPluginRepositoryIndex(**EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX),
+    )
+    monkeypatch.setattr(agent_plugin_service, "install_plugin_archive", MagicMock())
+
+    with pytest.raises(PluginInstallationError):
+        agent_plugin_service.install_plugin_from_repository(
+            plugin_type=AgentPluginType.CREDENTIALS_COLLECTOR,
+            plugin_name=PluginName("Mimikatz"),
+            plugin_version=PluginVersion("1", "0", "2"),
+        )
+
+
+def test_agent_plugin_service__install_plugin_from_repository__plugin_not_in_repository(
+    monkeypatch, agent_plugin_service
+):
+    monkeypatch.setattr(
+        agent_plugin_service,
+        "get_available_plugins",
+        lambda: AgentPluginRepositoryIndex(**EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX),
+    )
+
+    with pytest.raises(PluginInstallationError):
+        agent_plugin_service.install_plugin_from_repository(
+            plugin_type=AgentPluginType.FINGERPRINTER,
+            plugin_name=PluginName("FindMeIfYouCan"),
+            plugin_version=PluginVersion("999", "99", "9"),
+        )
+
+
+def test_agent_plugin_service__install_plugin_from_repository__empty_index(
+    monkeypatch, agent_plugin_service
+):
+    monkeypatch.setattr(
+        agent_plugin_service,
+        "get_available_plugins",
+        lambda: AgentPluginRepositoryIndex(
+            compatible_infection_monkey_version="development", plugins={}
+        ),
+    )
+
+    with pytest.raises(PluginInstallationError):
+        agent_plugin_service.install_plugin_from_repository(
+            plugin_type=AgentPluginType.CREDENTIALS_COLLECTOR,
+            plugin_name=PluginName("Mimikatz"),
+            plugin_version=PluginVersion("1", "0", "2"),
+        )
 
 
 @pytest.fixture
@@ -197,7 +286,7 @@ def test_agent_plugin_service__get_available_plugins(
     dynamic_callback: Callable,
 ):
     request_mock_instance.get(
-        AGENT_PLUGIN_REPOSITORY_URL,
+        AGENT_PLUGIN_REPOSITORY_INDEX_FILE_URL,
         text=dynamic_callback,
     )
     actual_index_1 = agent_plugin_service.get_available_plugins(force_refresh=False)
@@ -214,7 +303,7 @@ def test_agent_plugin_service__get_available_plugins_refresh(
     agent_plugin_repository_index_simple,
     dynamic_callback: Callable,
 ):
-    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_URL, text=dynamic_callback)
+    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_INDEX_FILE_URL, text=dynamic_callback)
 
     actual_index_1 = agent_plugin_service.get_available_plugins(force_refresh=False)
     actual_index_2 = agent_plugin_service.get_available_plugins(force_refresh=False)
@@ -229,7 +318,7 @@ def test_agent_plugin_service__get_available_plugins_exception(
     request_mock_instance,
     agent_plugin_service: IAgentPluginService,
 ):
-    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_URL, exc=Exception)
+    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_INDEX_FILE_URL, exc=Exception)
     with pytest.raises(RetrievalError):
         agent_plugin_service.get_available_plugins(force_refresh=True)
 
@@ -238,13 +327,13 @@ def test_agent_plugin_service__unistall_agent_plugin_exception(
     agent_plugin_repository: IAgentPluginRepository,
     agent_plugin_service: IAgentPluginService,
 ):
-    def raise_exception(plugin_type, name):
+    def raise_exception(plugin_type, plugin_name):
         raise Exception
 
     agent_plugin_repository.remove_agent_plugin = raise_exception
     with pytest.raises(PluginUninstallationError):
-        agent_plugin_service.uninstall_agent_plugin(
-            plugin_type=AgentPluginType("Exploiter"), name="SSH"
+        agent_plugin_service.uninstall_plugin(
+            plugin_type=AgentPluginType("Exploiter"), plugin_name="SSH"
         )
 
 
@@ -253,7 +342,7 @@ def test_agent_plugin_service__unistall_agent_plugin(
 ):
     plugin_name = "SSH"
     plugin_type = AgentPluginType("Exploiter")
-    agent_plugin_service.uninstall_agent_plugin(plugin_type, plugin_name)
+    agent_plugin_service.uninstall_plugin(plugin_type, plugin_name)
 
     agent_plugin_repository.remove_agent_plugin.assert_called_with(
         agent_plugin_type=plugin_type, agent_plugin_name=plugin_name

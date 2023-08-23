@@ -19,13 +19,16 @@ class IAgentPluginService(ABC):
 
     @abstractmethod
     def get_plugin(
-        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
+        self,
+        host_operating_system: OperatingSystem,
+        plugin_type: AgentPluginType,
+        plugin_name: PluginName,
     ) -> AgentPlugin:
         """
         Retrieve AgentPlugin based on its name and type
 
         :param plugin_type: The type of the plugin
-        :param name: The name of the plugin
+        :param plugin_name: The name of the plugin
         :raises RetrievalError: If an error occurs while attempting to retrieve the plugin
         :raises UnknownRecordError: If a plugin with specified name and type doesn't exist
         """
@@ -53,7 +56,7 @@ class IAgentPluginService(ABC):
         pass
 
     @abstractmethod
-    def install_agent_plugin_archive(self, agent_plugin_archive: bytes):
+    def install_plugin_archive(self, agent_plugin_archive: bytes):
         """
         Install plugin archive
 
@@ -66,7 +69,7 @@ class IAgentPluginService(ABC):
         pass
 
     @abstractmethod
-    def install_agent_plugin_from_repository(
+    def install_plugin_from_repository(
         self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
     ):
         """
@@ -75,8 +78,6 @@ class IAgentPluginService(ABC):
         :param plugin_type: The type of the plugin
         :param plugin_name: The name of the plugin
         :param plugin_version: The version of the plugin
-        :raises RetrievalError: If an error occurs while attempting to get the plugin
-                                from the repository
         :raises RemovalError: If an error occurs while attempting to uninstall a previous
                               version of the plugin
         :raises StorageError: If an error occurs while attempting to store the plugin
@@ -98,12 +99,12 @@ class IAgentPluginService(ABC):
         pass
 
     @abstractmethod
-    def uninstall_agent_plugin(self, plugin_type: AgentPluginType, name: str):
+    def uninstall_plugin(self, plugin_type: AgentPluginType, plugin_name: PluginName):
         """
         Uninstall agent plugin
 
         :param plugin_type: The type of the plugin
-        :param name: The name of the plugin
+        :param plugin_name: The name of the plugin
         :raises PluginUninstallationError: If an error occurs while uninstalling the plugin
         """
         pass

@@ -37,14 +37,12 @@ def test_install_plugin(agent_plugin_service, flask_client):
     )
 
     assert resp.status_code == HTTPStatus.OK
-    assert agent_plugin_service.install_agent_plugin_archive.call_count == 1
-    assert agent_plugin_service.install_agent_plugin_archive.call_args[0][0] == AGENT_PLUGIN
+    assert agent_plugin_service.install_plugin_archive.call_count == 1
+    assert agent_plugin_service.install_plugin_archive.call_args[0][0] == AGENT_PLUGIN
 
 
 def test_install_plugin__install_error(agent_plugin_service, flask_client):
-    agent_plugin_service.install_agent_plugin_archive = MagicMock(
-        side_effect=PluginInstallationError
-    )
+    agent_plugin_service.install_plugin_archive = MagicMock(side_effect=PluginInstallationError)
     resp = flask_client.put(
         get_url_for_resource(InstallAgentPlugin),
         data=AGENT_PLUGIN,
@@ -56,7 +54,7 @@ def test_install_plugin__install_error(agent_plugin_service, flask_client):
 
 @pytest.mark.parametrize("error", [RetrievalError, StorageError, Exception])
 def test_install_plugin__internal_server_error(agent_plugin_service, flask_client, error):
-    agent_plugin_service.install_agent_plugin_archive = MagicMock(side_effect=error)
+    agent_plugin_service.install_plugin_archive = MagicMock(side_effect=error)
     resp = flask_client.put(
         get_url_for_resource(InstallAgentPlugin),
         data=AGENT_PLUGIN,

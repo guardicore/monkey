@@ -90,7 +90,7 @@ def test_get_plugins__not_found_if_type_is_invalid(flask_client, type_):
 
 
 def test_get_plugins__server_error(flask_client, agent_plugin_repository):
-    def raise_retrieval_error(host_os, plugin_type, name):
+    def raise_retrieval_error(host_os, plugin_type, plugin_name):
         raise RetrievalError
 
     agent_plugin_repository.get_plugin = raise_retrieval_error

@@ -49,7 +49,7 @@ class AgentPlugins(AbstractResource):
             agent_plugin = self._agent_plugin_service.get_plugin(
                 host_operating_system=host_operating_system,
                 plugin_type=agent_plugin_type,
-                name=name,
+                plugin_name=name,
             )
             return make_response(agent_plugin.dict(simplify=True), HTTPStatus.OK)
         except UnknownRecordError:
