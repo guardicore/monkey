@@ -13,6 +13,7 @@ from monkey_island.cc.repositories import (
     StorageError,
     UnknownRecordError,
 )
+from monkey_island.cc.repositories.consts import MONGO_OBJECT_ID_KEY
 
 from .i_agent_plugin_repository import IAgentPluginRepository
 
@@ -59,7 +60,6 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
             )
 
             plugin_dict.pop(BINARY_OS_MAPPING_KEY)
-            plugin_dict.pop("_id")
             plugin_dict["source_archive"] = plugin_source_bytes
             return AgentPlugin(**plugin_dict)
         except Exception as err:
@@ -70,7 +70,8 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
 
     def _get_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> Dict[str, Any]:
         plugin_dict = self._agent_plugins_collection.find_one(
-            {"plugin_manifest.name": plugin_name, "plugin_manifest.plugin_type": plugin_type.value}
+            {"plugin_manifest.name": plugin_name, "plugin_manifest.plugin_type": plugin_type.value},
+            {MONGO_OBJECT_ID_KEY: False},
         )
         if plugin_dict is None:
             raise RuntimeError("Not found")
