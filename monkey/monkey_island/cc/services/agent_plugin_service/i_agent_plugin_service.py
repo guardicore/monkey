@@ -19,13 +19,16 @@ class IAgentPluginService(ABC):
 
     @abstractmethod
     def get_plugin(
-        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
+        self,
+        host_operating_system: OperatingSystem,
+        plugin_type: AgentPluginType,
+        plugin_name: PluginName,
     ) -> AgentPlugin:
         """
         Retrieve AgentPlugin based on its name and type
 
         :param plugin_type: The type of the plugin
-        :param name: The name of the plugin
+        :param plugin_name: The name of the plugin
         :raises RetrievalError: If an error occurs while attempting to retrieve the plugin
         :raises UnknownRecordError: If a plugin with specified name and type doesn't exist
         """

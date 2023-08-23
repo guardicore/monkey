@@ -46,9 +46,14 @@ class AgentPluginService(IAgentPluginService):
         self._download_index = request_cache(PLUGIN_TTL)(self._download_index)  # type: ignore [assignment]  # noqa: E501
 
     def get_plugin(
-        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
+        self,
+        host_operating_system: OperatingSystem,
+        plugin_type: AgentPluginType,
+        plugin_name: PluginName,
     ) -> AgentPlugin:
-        return self._agent_plugin_repository.get_plugin(host_operating_system, plugin_type, name)
+        return self._agent_plugin_repository.get_plugin(
+            host_operating_system, plugin_type, plugin_name
+        )
 
     def get_all_plugin_configuration_schemas(
         self,
