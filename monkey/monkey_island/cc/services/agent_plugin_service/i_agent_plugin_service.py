@@ -66,7 +66,7 @@ class IAgentPluginService(ABC):
         pass
 
     @abstractmethod
-    def install_agent_plugin_from_respository(
+    def install_agent_plugin_from_repository(
         self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
     ):
         """

@@ -11,6 +11,8 @@ from common.agent_plugins import (
     AgentPluginManifest,
     AgentPluginRepositoryIndex,
     AgentPluginType,
+    PluginName,
+    PluginVersion,
 )
 from common.decorators import request_cache
 from monkey_island.cc.repositories import RetrievalError
@@ -96,3 +98,8 @@ class AgentPluginService(IAgentPluginService):
             raise PluginUninstallationError(
                 f"Failed to uninstall the plugin {name} of type {plugin_type}: {err}"
             )
+
+    def install_agent_plugin_from_respository(
+        self, plugin_type: AgentPluginType, plugin_name: PluginName, plugin_version: PluginVersion
+    ):
+        raise NotImplementedError()
