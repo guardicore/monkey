@@ -332,7 +332,7 @@ def test_agent_plugin_service__unistall_agent_plugin_exception(
 
     agent_plugin_repository.remove_agent_plugin = raise_exception
     with pytest.raises(PluginUninstallationError):
-        agent_plugin_service.uninstall_agent_plugin(
+        agent_plugin_service.uninstall_plugin(
             plugin_type=AgentPluginType("Exploiter"), plugin_name="SSH"
         )
 
@@ -342,7 +342,7 @@ def test_agent_plugin_service__unistall_agent_plugin(
 ):
     plugin_name = "SSH"
     plugin_type = AgentPluginType("Exploiter")
-    agent_plugin_service.uninstall_agent_plugin(plugin_type, plugin_name)
+    agent_plugin_service.uninstall_plugin(plugin_type, plugin_name)
 
     agent_plugin_repository.remove_agent_plugin.assert_called_with(
         agent_plugin_type=plugin_type, agent_plugin_name=plugin_name

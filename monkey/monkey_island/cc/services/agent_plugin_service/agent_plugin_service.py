@@ -136,7 +136,7 @@ class AgentPluginService(IAgentPluginService):
         except Exception as err:
             raise RetrievalError("Failed to get agent plugin repository index") from err
 
-    def uninstall_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: PluginName):
+    def uninstall_plugin(self, plugin_type: AgentPluginType, plugin_name: PluginName):
         try:
             self._agent_plugin_repository.remove_agent_plugin(
                 agent_plugin_type=plugin_type, agent_plugin_name=plugin_name

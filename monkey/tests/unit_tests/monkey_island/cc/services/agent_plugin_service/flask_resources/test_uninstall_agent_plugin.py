@@ -31,14 +31,14 @@ def flask_client(build_flask_client, agent_plugin_service):
         yield flask_client
 
 
-def test_uninstall_agent_plugin(flask_client, agent_plugin_service):
+def test_uninstall_plugin(flask_client, agent_plugin_service):
     resp = flask_client.post(
         get_url_for_resource(UninstallAgentPlugin),
         data=REQUEST_DATA,
     )
 
     assert resp.status_code == HTTPStatus.OK
-    agent_plugin_service.uninstall_agent_plugin.assert_called_with(
+    agent_plugin_service.uninstall_plugin.assert_called_with(
         AgentPluginType(FAKE_TYPE), FAKE_AGENT_PLUGIN_1.plugin_manifest.name
     )
 
@@ -47,7 +47,7 @@ def test_uninstall_agent_plugin(flask_client, agent_plugin_service):
     "type_",
     ["DummyType", "ExploiteR"],
 )
-def test_uninstall_agent_plugin__bad_request_if_type_is_invalid(
+def test_uninstall_plugin__bad_request_if_type_is_invalid(
     flask_client, type_, agent_plugin_service
 ):
     resp = flask_client.post(
@@ -56,15 +56,15 @@ def test_uninstall_agent_plugin__bad_request_if_type_is_invalid(
     )
 
     assert resp.status_code == HTTPStatus.BAD_REQUEST
-    agent_plugin_service.uninstall_agent_plugin.assert_not_called()
+    agent_plugin_service.uninstall_plugin.assert_not_called()
 
 
 @pytest.mark.parametrize("error", [Exception, PluginUninstallationError])
-def test_uninstall_agent_plugin__error(flask_client, agent_plugin_service, error):
+def test_uninstall_plugin__error(flask_client, agent_plugin_service, error):
     def raise_error(plugin_type, name):
         raise error
 
-    agent_plugin_service.uninstall_agent_plugin = raise_error
+    agent_plugin_service.uninstall_plugin = raise_error
 
     resp = flask_client.post(
         get_url_for_resource(UninstallAgentPlugin),
@@ -77,8 +77,8 @@ def test_uninstall_agent_plugin__error(flask_client, agent_plugin_service, error
 @pytest.mark.parametrize(
     "request_data", [b"{}", None, "string", b'{"bogus":"vogus"', b'{"bogus": "bogus"}']
 )
-def test_uninstall_agent_plugin__bad_request_data(request_data, flask_client, agent_plugin_service):
+def test_uninstall_plugin__bad_request_data(request_data, flask_client, agent_plugin_service):
     resp = flask_client.post(get_url_for_resource(UninstallAgentPlugin), data=request_data)
 
     assert resp.status_code == HTTPStatus.BAD_REQUEST
-    agent_plugin_service.uninstall_agent_plugin.assert_not_called()
+    agent_plugin_service.uninstall_plugin.assert_not_called()

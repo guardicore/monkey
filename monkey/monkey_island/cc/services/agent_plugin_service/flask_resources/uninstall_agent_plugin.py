@@ -40,5 +40,5 @@ class UninstallAgentPlugin(AbstractResource):
             logger.warning(message)
             return responses.make_response_to_invalid_request(message)
 
-        self._agent_plugin_service.uninstall_agent_plugin(plugin_type, PluginName(plugin_name_arg))
+        self._agent_plugin_service.uninstall_plugin(plugin_type, PluginName(plugin_name_arg))
         return make_response({}, HTTPStatus.OK)

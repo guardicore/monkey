@@ -96,7 +96,7 @@ class IAgentPluginService(ABC):
         pass
 
     @abstractmethod
-    def uninstall_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: PluginName):
+    def uninstall_plugin(self, plugin_type: AgentPluginType, plugin_name: PluginName):
         """
         Uninstall agent plugin
 
