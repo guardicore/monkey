@@ -15,7 +15,7 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAK
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPluginType
 from monkey_island.cc.repositories import RetrievalError, UnknownRecordError
 from monkey_island.cc.services.agent_plugin_service.mongo_agent_plugin_repository import (
     MongoAgentPluginRepository,
@@ -55,8 +55,20 @@ def insert_plugin(mongo_client):
             mongo_client.monkey_island, f"agent_plugins_binaries_{operating_system.value}"
         )
         id = binaries_collection.put(file)
-        plugin_dict["binaries"] = {f"{operating_system.value}": id}
-        mongo_client.monkey_island.agent_plugins.insert_one(plugin_dict)
+        if "binaries" not in plugin_dict:
+            plugin_dict["binaries"] = {}
+        plugin_dict["binaries"][f"{operating_system.value}"] = id
+        plugin_manifest_dict = plugin_dict["plugin_manifest"]
+        mongo_client.monkey_island.agent_plugins.update_one(
+            {
+                "plugin_manifest.plugin_type": plugin_manifest_dict["plugin_type"],
+                "plugin_manifest.name": plugin_manifest_dict["name"],
+            },
+            update={"$set": plugin_dict},
+            upsert=True,
+        )
+
+        return plugin_dict
 
     return impl
 
@@ -111,23 +123,24 @@ def test_get_plugin__RetrievalError_if_unsupported_os(
         )
 
 
-def test_get_all_plugin_manifests(
-    plugin_file, insert_plugin, agent_plugin_repository):
+def test_get_all_plugin_manifests(plugin_file, insert_plugin, agent_plugin_repository):
     dict1 = copy.deepcopy(basic_plugin_dict)
     dict2 = copy.deepcopy(basic_plugin_dict)
-    dict2['manifest'] = EXPLOITER_MANIFEST_2.dict(simplify=True)
+    dict2["plugin_manifest"] = EXPLOITER_MANIFEST_2.dict(simplify=True)
     dict3 = copy.deepcopy(basic_plugin_dict)
-    dict3['manifest'] = CREDENTIALS_COLLECTOR_MANIFEST_1.dict(simplify=True)
+    dict3["plugin_manifest"] = CREDENTIALS_COLLECTOR_MANIFEST_1.dict(simplify=True)
 
     with open(plugin_file, "rb") as file:
         insert_plugin(file, OperatingSystem.WINDOWS, dict1)
         insert_plugin(file, OperatingSystem.WINDOWS, dict2)
-        insert_plugin(file, OperatingSystem.WINDOWS, dict3)
-        insert_plugin(file, OperatingSystem.LINUX, dict3)
+        dict3 = insert_plugin(file, OperatingSystem.WINDOWS, dict3)
+        dict3 = insert_plugin(file, OperatingSystem.LINUX, dict3)
 
     retrieved_plugin_manifests = agent_plugin_repository.get_all_plugin_manifests()
 
-    assert retrieved_plugin_manifests[AgentPluginType.EXPLOITER][EXPLOITER_NAME_1] == EXPECTED_MANIFEST
+    assert (
+        retrieved_plugin_manifests[AgentPluginType.EXPLOITER][EXPLOITER_NAME_1] == EXPECTED_MANIFEST
+    )
     assert retrieved_plugin_manifests[AgentPluginType.CREDENTIALS_COLLECTOR] == {
         CREDENTIALS_COLLECTOR_NAME_1: CREDENTIALS_COLLECTOR_MANIFEST_1
     }

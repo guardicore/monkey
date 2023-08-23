@@ -87,15 +87,27 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         raise NotImplementedError()
 
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
-        manifest_dicts = self._agent_plugins_collection.only("manifest").all()
-        manifests = {}
+        # TODO: Potentially use aggregation to get the manifests:
+        # manifest_dicts = self._agent_plugins_collection.aggregate(
+        #     [
+        #         {
+        #             "$group": {
+        #                 "_id": "$plugin_manifest.plugin_type",
+        #                 "items": {"$addToSet": "$plugin_manifest"},
+        #             }
+        #         }
+        #     ]
+        # )
+        manifest_dicts = self._agent_plugins_collection.find({}, {"plugin_manifest": 1})
+        manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
 
-        for key in manifest_dicts:
-            plugin_type = AgentPluginType(key)
-            manifests_of_type = {}
-            for manifest in manifest_dicts[key]:
-                manifests_of_type[manifest["name"]] = AgentPluginManifest(**manifest)
-            manifests[plugin_type] = manifests_of_type
+        for manifest_dict in manifest_dicts:
+            manifest = AgentPluginManifest(**manifest_dict["plugin_manifest"])
+            plugin_type = manifest.plugin_type
+            plugin_name = manifest.name
+            if plugin_type not in manifests:
+                manifests[plugin_type] = {}
+            manifests[plugin_type][plugin_name] = manifest
 
         return manifests
 
