@@ -144,7 +144,6 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 f"operating system {operating_system}"
             )
 
-        print(f"Writing plugin {plugin_dict}")
         self._agent_plugins_collection.update_one(
             {"plugin_manifest.name": plugin_name, "plugin_manifest.plugin_type": plugin_type.value},
             {"$set": plugin_dict},
@@ -160,7 +159,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         try:
             plugin_dict = self._get_agent_plugin(agent_plugin_type, agent_plugin_name)
         except Exception:
-            print(f"Plugin {agent_plugin_name} of type {agent_plugin_type} not found")
+            logger.debug(f"Plugin {agent_plugin_name} of type {agent_plugin_type} not found")
             return
 
         try:
