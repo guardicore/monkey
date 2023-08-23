@@ -99,6 +99,8 @@ EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_SIMPLE_INDEX = {
     },
 }
 
+AGENT_PLUGIN_REPOSITORY_INDEX_FILE_URL = f"{AGENT_PLUGIN_REPOSITORY_URL}/index.yml"
+
 
 @pytest.fixture
 def request_mock_instance():
@@ -263,7 +265,7 @@ def test_agent_plugin_service__get_available_plugins(
     dynamic_callback: Callable,
 ):
     request_mock_instance.get(
-        AGENT_PLUGIN_REPOSITORY_URL,
+        AGENT_PLUGIN_REPOSITORY_INDEX_FILE_URL,
         text=dynamic_callback,
     )
     actual_index_1 = agent_plugin_service.get_available_plugins(force_refresh=False)
@@ -280,7 +282,7 @@ def test_agent_plugin_service__get_available_plugins_refresh(
     agent_plugin_repository_index_simple,
     dynamic_callback: Callable,
 ):
-    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_URL, text=dynamic_callback)
+    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_INDEX_FILE_URL, text=dynamic_callback)
 
     actual_index_1 = agent_plugin_service.get_available_plugins(force_refresh=False)
     actual_index_2 = agent_plugin_service.get_available_plugins(force_refresh=False)
@@ -295,7 +297,7 @@ def test_agent_plugin_service__get_available_plugins_exception(
     request_mock_instance,
     agent_plugin_service: IAgentPluginService,
 ):
-    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_URL, exc=Exception)
+    request_mock_instance.get(AGENT_PLUGIN_REPOSITORY_INDEX_FILE_URL, exc=Exception)
     with pytest.raises(RetrievalError):
         agent_plugin_service.get_available_plugins(force_refresh=True)
 
