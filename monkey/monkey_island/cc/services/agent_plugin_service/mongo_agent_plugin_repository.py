@@ -140,17 +140,15 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 f"Error retrieving the agent plugin {plugin_name} of type {plugin_type}: {err}"
             )
 
-        if operating_system.value in plugin_dict[BINARY_OS_MAPPING_KEY]:
-            raise StorageError(
-                f"Plugin {plugin_name} of type {plugin_type} already has a binary for "
-                f"operating system {operating_system}"
-            )
-
         try:
+            plugin_binary_ids = plugin_dict[BINARY_OS_MAPPING_KEY]
+            if operating_system.value in plugin_binary_ids:
+                old_id = plugin_binary_ids[operating_system.value]
+                self._agent_plugins_binaries_collections[operating_system].delete(old_id)
             id = self._agent_plugins_binaries_collections[operating_system].put(
                 agent_plugin.source_archive
             )
-            plugin_dict[BINARY_OS_MAPPING_KEY][operating_system.value] = id
+            plugin_binary_ids[operating_system.value] = id
         except Exception:
             raise StorageError(
                 f"Failed to store binary for plugin {plugin_name} of type {plugin_type} for "

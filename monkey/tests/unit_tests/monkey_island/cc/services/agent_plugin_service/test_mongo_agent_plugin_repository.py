@@ -228,11 +228,31 @@ def test_store_agent_plugin(agent_plugin_repository: MongoAgentPluginRepository)
     assert plugin == FAKE_AGENT_PLUGIN_1
 
 
-def test_store_agent_plugin__storeageerror_if_binary_already_exists(
+def test_store_agent_plugin__overwrites_existing_binary(
     plugin_file, insert_plugin, agent_plugin_repository: MongoAgentPluginRepository
 ):
     with open(plugin_file, "rb") as file:
         insert_plugin(file, OperatingSystem.WINDOWS)
+
+    expected_source_archive = b"dummy"
+    plugin_dict = copy.deepcopy(basic_plugin_dict)
+    plugin_dict["source_archive"] = expected_source_archive
+    agent_plugin_repository.store_agent_plugin(OperatingSystem.WINDOWS, AgentPlugin(**plugin_dict))
+
+    plugin = agent_plugin_repository.get_plugin(
+        OperatingSystem.WINDOWS, AgentPluginType.EXPLOITER, EXPLOITER_NAME_1
+    )
+    assert plugin.source_archive == expected_source_archive
+
+
+def test_store_agent_plugin__storageerror_if_existing_binary_delete_fails(
+    plugin_file, insert_plugin, mongo_client, agent_plugin_repository: MongoAgentPluginRepository
+):
+    with open(plugin_file, "rb") as file:
+        insert_plugin(file, OperatingSystem.WINDOWS)
+    mongo_client.monkey_island.agent_plugins_binaries_windows.files.delete_one = MagicMock(
+        side_effect=Exception
+    )
 
     plugin_dict = copy.deepcopy(basic_plugin_dict)
     plugin_dict["source_archive"] = b"dummy"
@@ -242,11 +262,11 @@ def test_store_agent_plugin__storeageerror_if_binary_already_exists(
         )
 
 
-def test_store_agent_plugin__storeageerror_if_binary_cannot_be_stored(
+def test_store_agent_plugin__storageerror_if_binary_cannot_be_stored(
     mongo_client, agent_plugin_repository
 ):
     mongo_client.monkey_island.agent_plugins_binaries_linux.files.insert_one = MagicMock(
-        side_effect=Exception("foo")
+        side_effect=Exception
     )
     with pytest.raises(StorageError):
         agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)

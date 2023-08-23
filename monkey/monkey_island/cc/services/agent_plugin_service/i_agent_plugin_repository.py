@@ -51,6 +51,9 @@ class IAgentPluginRepository(ABC):
         """
         Store AgentPlugin in the repository
 
+        If the the repository already contains the plugin for the given operating system, it will
+        be overwritten.
+
         :param operating_system: The operating system the plugin runs on
         :param agent_plugin: The AgentPlugin object to be stored
         :raises StorageError: If the AgentPlugin could not be stored
