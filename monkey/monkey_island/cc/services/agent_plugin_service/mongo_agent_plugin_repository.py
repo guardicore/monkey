@@ -110,7 +110,12 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
 
         for manifest_dict in manifest_dicts:
-            manifest = AgentPluginManifest(**manifest_dict["plugin_manifest"])
+            try:
+                manifest = AgentPluginManifest(**manifest_dict["plugin_manifest"])
+            except Exception as err:
+                raise RetrievalError(
+                    f"Error creating plugin manifest from the data in the database: {err}"
+                ) from err
             plugin_type = manifest.plugin_type
             plugin_name = manifest.name
             if plugin_type not in manifests:

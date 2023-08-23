@@ -45,6 +45,10 @@ malformed_plugin_dict = copy.deepcopy(basic_plugin_dict)
 del malformed_plugin_dict["plugin_manifest"]["title"]
 malformed_plugin_dict["plugin_manifest"]["tile"] = "dummy-exploiter"
 
+typo_in_type_plugin_dict = copy.deepcopy(basic_plugin_dict)
+del typo_in_type_plugin_dict["plugin_manifest"]["plugin_type"]
+typo_in_type_plugin_dict["plugin_manifest"]["plugin_type"] = "credential_collector"
+
 
 @pytest.fixture
 def insert_plugin(mongo_client):
@@ -146,14 +150,16 @@ def test_get_all_plugin_manifests(plugin_file, insert_plugin, agent_plugin_repos
     }
 
 
-# def test_get_all_plugin_manifests__RetrievalError_if_bad_plugin_type(
-#     plugin_file, file_repository: InMemoryFileRepository, agent_plugin_repository
-# ):
-#     with open(plugin_file, "rb") as file:
-#         file_repository.save_file("ssh-bogus.tar", file)
+def test_get_all_plugin_manifests__RetrievalError_if_bad_plugin_type(
+    plugin_file, insert_plugin, agent_plugin_repository
+):
+    dict1 = copy.deepcopy(typo_in_type_plugin_dict)
 
-#     with pytest.raises(RetrievalError):
-#         agent_plugin_repository.get_all_plugin_manifests()
+    with open(plugin_file, "rb") as file:
+        insert_plugin(file, OperatingSystem.WINDOWS, dict1)
+
+    with pytest.raises(RetrievalError):
+        agent_plugin_repository.get_all_plugin_manifests()
 
 
 def test_store_agent_plugin(agent_plugin_repository: MongoAgentPluginRepository):
