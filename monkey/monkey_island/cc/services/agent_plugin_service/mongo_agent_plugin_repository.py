@@ -54,9 +54,11 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
 
         try:
             os_binaries = plugin_dict[BINARY_OS_MAPPING_KEY]
-            _id = os_binaries[host_operating_system.value]
+            gridfs_file_id = os_binaries[host_operating_system.value]
             plugin_source_bytes = (
-                self._agent_plugins_binaries_collections[host_operating_system].get(_id).read()
+                self._agent_plugins_binaries_collections[host_operating_system]
+                .get(gridfs_file_id)
+                .read()
             )
 
             plugin_dict.pop(BINARY_OS_MAPPING_KEY)
