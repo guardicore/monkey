@@ -95,9 +95,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 {"plugin_manifest.plugin_type": 1, "plugin_manifest.name": 1, "config_schema": 1},
             )
         except PyMongoError as err:
-            raise RetrievalError(
-                f"Error retrieving the agent plugin configuration schemas"
-            ) from err
+            raise RetrievalError("Error retrieving the agent plugin configuration schemas") from err
         configuration_schemas: Dict[
             AgentPluginType, Dict[PluginName, Dict[str, Any]]
         ] = defaultdict(dict)
@@ -122,7 +120,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
         try:
             manifest_dicts = self._agent_plugins_collection.find(projection=["plugin_manifest"])
         except PyMongoError as err:
-            raise RetrievalError(f"Error retrieving the agent plugin manifests") from err
+            raise RetrievalError("Error retrieving the agent plugin manifests") from err
         manifests: Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]] = defaultdict(dict)
 
         for manifest_dict in manifest_dicts:
@@ -176,7 +174,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 upsert=True,
             )
         except PyMongoError as err:
-            raise StorageError(f"Failed to store a plugin in the database") from err
+            raise StorageError("Failed to store a plugin in the database") from err
 
     def remove_agent_plugin(
         self,
@@ -227,6 +225,8 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
 
         if operating_system is None:
             os_binaries_to_remove = os_binaries.copy()
+        elif operating_system.value not in os_binaries:
+            return
         else:
             os_binaries_to_remove = {operating_system.value: os_binaries[operating_system.value]}
 
