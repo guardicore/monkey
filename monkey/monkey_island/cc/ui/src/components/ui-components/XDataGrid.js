@@ -36,12 +36,12 @@ const setColumnClass = (column, classToAppend) => {
 const prepareColsClasses = (columns, setFlex) => {
   let updatedColumns = _.cloneDeep(columns) || [];
   updatedColumns?.forEach((col) => {
-    if(col[MAX_WIDTH] === Infinity) {
+    if (col[MAX_WIDTH] === Infinity) {
       setColumnClass(col, X_DATA_GRID_CLASSES.MAX_WIDTH_NONE);
     }
 
-    if(setFlex) {
-      if(col?.flexValue >= 0) {
+    if (setFlex) {
+      if (col?.flexValue >= 0) {
         setColumnClass(col, FLEX_VALUES[col.flexValue] || FLEX_VALUES[1]);
       } else {
         setColumnClass(col, FLEX_VALUES[1]);
@@ -55,7 +55,7 @@ const prepareColsClasses = (columns, setFlex) => {
 const prepareColsWidth = (columns, columnWidth, setColWidth) => {
   const colWidth = getColumnWidth(columnWidth);
   let updatedColumns = _.cloneDeep(columns) || [];
-  if(setColWidth) {
+  if (setColWidth) {
     updatedColumns?.forEach((col) => {
       if (!(WIDTH in col)) {
         if (!(MIN_WIDTH in col)) {
@@ -87,9 +87,9 @@ const prepareSlots = (toolbar, showToolbar) => {
 
 const getColumnWidth = (columnWidth) => {
   const colWidth = {...COLUMN_WIDTH, ...columnWidth};
-  if(colWidth?.max < colWidth?.min && colWidth?.max >= 0) {
+  if (colWidth?.max < colWidth?.min && colWidth?.max >= 0) {
     colWidth.max = colWidth.min;
-  } else if(colWidth?.min > colWidth?.max && colWidth?.max >= 0) {
+  } else if (colWidth?.min > colWidth?.max && colWidth?.max >= 0) {
     colWidth.min = colWidth.max;
   }
 
@@ -115,6 +115,7 @@ const XDataGrid = (props) => {
     rowHeight,
     columnWidth,
     className,
+    needCustomWorkaround = true,
     ...rest
   } = {...props}
 
@@ -128,7 +129,7 @@ const XDataGrid = (props) => {
   const sx = {maxHeight: maxHeight || height || 'auto'};
 
   const updatedColumns = useMemo(() => {
-      return prepareColsClasses(prepareColsWidth(columns, columnWidth, setColWidth), setFlex);
+    return needCustomWorkaround ? prepareColsClasses(prepareColsWidth(columns, columnWidth, setColWidth), setFlex) : columns;
   }, [columns]);
 
   useEffect(() => {
@@ -168,7 +169,10 @@ const XDataGrid = (props) => {
         disableColumnMenu={disableColumnMenu}
         hideFooter={hidePagination}
         hideFooterPagination={hidePagination}
-        classes={{columnHeaders: isDataEmpty || hideHeaders ? HIDDEN : '', toolbarContainer: isDataEmpty ? HIDE_TOOLBAR_ACTIONS : ''}}
+        classes={{
+          columnHeaders: isDataEmpty || hideHeaders ? HIDDEN : '',
+          toolbarContainer: isDataEmpty ? HIDE_TOOLBAR_ACTIONS : ''
+        }}
         slotProps={{toolbar: {printOptions: {disableToolbarButton: true}}}}
         sx={sx}
         {...rest}

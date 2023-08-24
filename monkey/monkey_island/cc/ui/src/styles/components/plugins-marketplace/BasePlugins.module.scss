@@ -1,0 +1,35 @@
+.plugins-wrapper {
+  :global {
+    .x-data-grid.marketplace-plugins-list {
+
+    }
+
+    .MuiDataGrid-columnHeader, .MuiDataGrid-cell {
+      width: 20% !important;
+    }
+
+    .s-col--header, .s-col {
+      width: 10% !important;
+    }
+
+    .m-col--header, .m-col {
+      width: 15% !important;
+    }
+
+    .xl-col--header, .xl-col {
+      width: 40% !important;
+    }
+
+    .row-actions--header, .row-actions {
+      width: 10% !important;
+    }
+
+    //.MuiDataGrid-columnHeader, .MuiDataGrid-cell {
+    //  width: 20% !important;
+    //}
+    //
+    //.row-actions--header, .row-actions {
+    //  width: 10% !important;
+    //}
+  }
+}
