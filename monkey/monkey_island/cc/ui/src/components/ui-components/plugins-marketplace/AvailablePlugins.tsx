@@ -21,7 +21,10 @@ import TypeFilter from './TypeFilter';
 import SearchFilter, {defaultSearchableColumns} from './SearchFilter';
 import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
 
+
 type AvailablePluginRowArray = PluginRow[];
+
+const CONNECTION_ERROR_MESSAGE = 'An error occurred while retrieving the available plugins';
 
 const AvailablePlugins = (props) => {
   const {
@@ -32,7 +35,7 @@ const AvailablePlugins = (props) => {
     pluginsInInstallationProcess,
     setPluginsInInstallationProcess
   } = {...props};
-  const {availablePlugins, installedPlugins, refreshAvailablePlugins} = useContext(PluginsContext);
+  const {availablePlugins, installedPlugins, refreshAvailablePlugins, refreshAvailablePluginsFailure} = useContext(PluginsContext);
   const [displayedRows, setDisplayedRows] = useState<AvailablePluginRowArray>([]);
   const [filters, setFilters] = useState({});
   const [isSpinning, setIsSpinning] = useState(false);
@@ -112,9 +115,9 @@ const AvailablePlugins = (props) => {
     }).catch(() => {
       console.log('error installing plugin');
     }).finally(() => {
-      setPluginsInInstallationProcess((prevState => {
+      setPluginsInInstallationProcess((prevState) => {
         return shallowRemovalOfUniqueValueFromArray(prevState, pluginId);
-      }));
+      });
     });
   };
 
@@ -172,31 +175,34 @@ const AvailablePlugins = (props) => {
 
   return (
     <Stack spacing={2} height='100%' id={styles['available-plugins']}>
-      <Grid container spacing={2}>
-        <Grid xs={4} item
-              sx={{alignItems: 'flex-end', display: 'flex'}}>
-          <SearchFilter setFilters={setFilters}
-                        searchableColumns={defaultSearchableColumns}/>
+      {availablePlugins?.length > 0 && (
+        <Grid container spacing={2}>
+          <Grid xs={4} item
+                sx={{alignItems: 'flex-end', display: 'flex'}}>
+            <SearchFilter setFilters={setFilters}
+                          searchableColumns={defaultSearchableColumns}/>
+          </Grid>
+          <Grid xs={3} item>
+            <TypeFilter setFilters={setFilters}
+                        allRows={availablePluginRows}/>
+          </Grid>
+          <Grid xs={1} item/>
+          <Grid xs={3} item>
+            <Box display="flex" justifyContent="flex-end">
+              <Button onClick={installAllSafePlugins} disabled={installingAllSafePlugins}>
+                <FileDownloadIcon/> All Safe Plugins
+              </Button>
+            </Box>
+          </Grid>
+          <Grid xs={1} item>
+            <Button onClick={refreshPlugins}><RefreshIcon className={`${isSpinning && 'spinning-icon'}`}/></Button>
+          </Grid>
         </Grid>
-        <Grid xs={3} item >
-          <TypeFilter setFilters={setFilters}
-                      allRows={availablePluginRows} />
-        </Grid>
-        <Grid xs={1} item/>
-        <Grid xs={3} item>
-          <Box display="flex" justifyContent="flex-end" >
-            <Button onClick={installAllSafePlugins} disabled={installingAllSafePlugins}>
-              <FileDownloadIcon/> All Safe Plugins
-            </Button>
-          </Box>
-        </Grid>
-        <Grid xs={1} item >
-          <Button onClick={refreshPlugins}><RefreshIcon className={`${isSpinning && 'spinning-icon'}`}/></Button>
-        </Grid>
-      </Grid>
+      )}
       <PluginTable rows={displayedRows}
                    columns={generatePluginsTableColumns(getRowActions)}
-                   loadingMessage="Loading all available plugins..." />
+                   loadingMessage="Loading all available plugins..."
+                   noRowsOverlayMessage={refreshAvailablePluginsFailure && CONNECTION_ERROR_MESSAGE} />
     </Stack>
   )
 };

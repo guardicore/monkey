@@ -2,6 +2,8 @@ import React from 'react';
 import {styled} from '@mui/material/styles';
 import {Box} from '@mui/material';
 
+const DEFAULT_MESSAGE = 'No Rows';
+
 const StyledGridOverlay = styled('div')(({theme}) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -26,7 +28,7 @@ const StyledGridOverlay = styled('div')(({theme}) => ({
   }
 }));
 
-const CustomNoRowsOverlay = () => {
+const CustomNoRowsOverlay = ({message}) => {
   return (
     <StyledGridOverlay>
       <svg
@@ -68,7 +70,7 @@ const CustomNoRowsOverlay = () => {
           </g>
         </g>
       </svg>
-      <Box sx={{mt: 1}}>No Rows</Box>
+      <Box sx={{mt: 1}}>{message || DEFAULT_MESSAGE}</Box>
     </StyledGridOverlay>
   );
 }

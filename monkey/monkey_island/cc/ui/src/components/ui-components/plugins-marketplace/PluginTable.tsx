@@ -9,13 +9,14 @@ import _ from 'lodash';
 import MonkeyTooltip from '../MonkeyTooltip';
 
 const DEFAULT_LOADING_MESSAGE = 'Loading plugins...';
+const HEADER_SUFFIX = '--header';
+
 const initialState = {
   sorting: {
     sortModel: [{field: 'name', sort: 'asc'}]
   }
 };
 
-const HEADER_SUFFIX = '--header';
 
 type getRowActionsType = (plugin: PluginRow) => any[];
 
@@ -133,10 +134,9 @@ export const generatePluginsTableRows = (pluginsList: AgentPlugin[]) :PluginRow[
 
 
 const PluginTable = (props) => {
-  const {rows, columns, loadingMessage = DEFAULT_LOADING_MESSAGE} = {...props};
+  const {rows, columns, loadingMessage = DEFAULT_LOADING_MESSAGE, ...rest} = {...props};
 
   const [isLoadingPlugins] = useState(false);
-
 
   return (
     <Box className={styles['plugins-wrapper']} minHeight={0}>
@@ -151,7 +151,8 @@ const PluginTable = (props) => {
                      className="marketplace-plugins-list"
                      initialState={initialState}
                      needCustomWorkaround={false}
-                     setFlex={false}/>
+                     setFlex={false}
+                     {...rest}/>
       }
     </Box>
   )
