@@ -153,11 +153,11 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 agent_plugin.source_archive
             )
             plugin_binary_ids[operating_system.value] = _id
-        except Exception:
+        except Exception as err:
             raise StorageError(
                 f"Failed to store binary for plugin {plugin_name} of type {plugin_type} for "
                 f"operating system {operating_system}"
-            )
+            ) from err
 
         self._agent_plugins_collection.update_one(
             {"plugin_manifest.name": plugin_name, "plugin_manifest.plugin_type": plugin_type.value},
