@@ -61,13 +61,6 @@ const BasePlugins = (props) => {
     return getPluginsGridRows(plugins);
   }, [plugins]);
 
-  // // eslint-disable-next-line no-unused-vars
-  // const onRefreshClick = () => {
-  //   setPluginsList();
-  //   if(onRefreshCallback) {
-  //     onRefreshCallback();
-  //   }
-  // }
 
   return (
     <Box className={styles['plugins-wrapper']}>
