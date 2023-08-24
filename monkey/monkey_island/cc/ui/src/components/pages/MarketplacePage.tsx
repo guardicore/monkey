@@ -49,7 +49,7 @@ const MarketplacePage = () => {
                 textColor="inherit"
                 variant="fullWidth"
                 aria-label="full width tabs">
-            <Tab label="All Plugins" {...a11yProps(0)}/>
+            <Tab label="Available Plugins" {...a11yProps(0)}/>
             <Tab label="Installed Plugins" {...a11yProps(1)}/>
           </Tabs>
         </Box>
