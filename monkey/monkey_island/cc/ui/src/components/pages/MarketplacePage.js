@@ -50,12 +50,14 @@ const MarketplacePage = () => {
                 textColor="inherit"
                 variant="fullWidth"
                 aria-label="full width tabs">
-            <Tab label="Available Plugins" {...a11yProps(0)}/>
+            <Tab label="All Plugins" {...a11yProps(0)}/>
             <Tab label="Installed Plugins" {...a11yProps(1)}/>
+            <Tab label="Upload New Plugin" {...a11yProps(2)}/>
           </Tabs>
         </Box>
         <TabPanel value={tabValue} index={0}><AvailablePlugins /></TabPanel>
-        <TabPanel value={tabValue} index={1}>Installed Plugins</TabPanel>
+        <TabPanel value={tabValue} index={1}>Item Two</TabPanel>
+        <TabPanel value={tabValue} index={2}>Item Three</TabPanel>
       </Box>
     </PluginsContext.Provider>
   )
