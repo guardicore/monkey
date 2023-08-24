@@ -6,6 +6,7 @@ import gridfs
 import mongomock
 import pytest
 from mongomock.gridfs import enable_gridfs_integration
+from pymongo.errors import ConnectionFailure
 from tests.data_for_tests.agent_plugin.manifests import (
     CREDENTIALS_COLLECTOR_MANIFEST_1,
     CREDENTIALS_COLLECTOR_NAME_1,
@@ -183,6 +184,17 @@ def test_get_all_plugin_manifests__RetrievalError_if_bad_plugin_type(
         agent_plugin_repository.get_all_plugin_manifests()
 
 
+def test_get_all_plugin_manifests__retrieval_error_if_no_connection(
+    mongo_client, agent_plugin_repository: MongoAgentPluginRepository
+):
+    agent_plugin_repository._agent_plugins_collection.find = MagicMock(
+        side_effect=ConnectionFailure
+    )
+
+    with pytest.raises(RetrievalError):
+        agent_plugin_repository.get_all_plugin_manifests()
+
+
 def test_get_all_plugin_configuration_schemas(plugin_file, insert_plugin, agent_plugin_repository):
     dict1 = copy.deepcopy(basic_plugin_dict)
     dict2 = copy.deepcopy(basic_plugin_dict)
@@ -290,14 +302,36 @@ def test_store_agent_plugin__storageerror_if_existing_binary_delete_fails(
         )
 
 
+def test_store_agent_plugin__storage_error_if_no_connection(
+    mongo_client, agent_plugin_repository: MongoAgentPluginRepository
+):
+    agent_plugin_repository._agent_plugins_collection.update_one = MagicMock(
+        side_effect=ConnectionFailure
+    )
+
+    with pytest.raises(StorageError):
+        agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)
+
+
 def test_store_agent_plugin__storageerror_if_binary_cannot_be_stored(
-    mongo_client, agent_plugin_repository
+    mongo_client, agent_plugin_repository: MongoAgentPluginRepository
 ):
     mongo_client.monkey_island.agent_plugins_binaries_linux.files.insert_one = MagicMock(
         side_effect=Exception
     )
     with pytest.raises(StorageError):
         agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)
+
+
+def test_get_all_plugin_configuration_schemas__retrieval_error_if_no_connection(
+    mongo_client, agent_plugin_repository: MongoAgentPluginRepository
+):
+    agent_plugin_repository._agent_plugins_collection.find = MagicMock(
+        side_effect=ConnectionFailure
+    )
+
+    with pytest.raises(RetrievalError):
+        agent_plugin_repository.get_all_plugin_configuration_schemas()
 
 
 def test_remove_agent_plugin(

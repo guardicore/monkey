@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional
 
 import gridfs
 from pymongo import MongoClient
+from pymongo.errors import PyMongoError
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType, PluginName
@@ -88,9 +89,15 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     def get_all_plugin_configuration_schemas(
         self,
     ) -> Dict[AgentPluginType, Dict[PluginName, Dict[str, Any]]]:
-        configuration_schema_dicts = self._agent_plugins_collection.find(
-            {}, {"plugin_manifest.plugin_type": 1, "plugin_manifest.name": 1, "config_schema": 1}
-        )
+        try:
+            configuration_schema_dicts = self._agent_plugins_collection.find(
+                {},
+                {"plugin_manifest.plugin_type": 1, "plugin_manifest.name": 1, "config_schema": 1},
+            )
+        except PyMongoError as err:
+            raise RetrievalError(
+                f"Error retrieving the agent plugin configuration schemas"
+            ) from err
         configuration_schemas: Dict[
             AgentPluginType, Dict[PluginName, Dict[str, Any]]
         ] = defaultdict(dict)
@@ -112,7 +119,10 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     def get_all_plugin_manifests(
         self,
     ) -> Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]]:
-        manifest_dicts = self._agent_plugins_collection.find(projection=["plugin_manifest"])
+        try:
+            manifest_dicts = self._agent_plugins_collection.find(projection=["plugin_manifest"])
+        except PyMongoError as err:
+            raise RetrievalError(f"Error retrieving the agent plugin manifests") from err
         manifests: Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]] = defaultdict(dict)
 
         for manifest_dict in manifest_dicts:
@@ -159,11 +169,17 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 f"operating system {operating_system}"
             ) from err
 
-        self._agent_plugins_collection.update_one(
-            {"plugin_manifest.name": plugin_name, "plugin_manifest.plugin_type": plugin_type.value},
-            {"$set": plugin_dict},
-            upsert=True,
-        )
+        try:
+            self._agent_plugins_collection.update_one(
+                {
+                    "plugin_manifest.name": plugin_name,
+                    "plugin_manifest.plugin_type": plugin_type.value,
+                },
+                {"$set": plugin_dict},
+                upsert=True,
+            )
+        except PyMongoError as err:
+            raise StorageError(f"Failed to store a plugin in the database") from err
 
     def remove_agent_plugin(
         self,
