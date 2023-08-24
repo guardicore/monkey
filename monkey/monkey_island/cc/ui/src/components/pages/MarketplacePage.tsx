@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Tabs from '@mui/material/Tabs';
 import {Tab, Box} from '@mui/material';
 import {PluginsContext} from '../ui-components/plugins-marketplace/PluginsContext';
+import AvailablePlugins from '../ui-components/plugins-marketplace/AvailablePlugins';
 
 const TabPanel = (props) => {
   const {children, value, index, ...other} = props;
@@ -53,7 +54,7 @@ const MarketplacePage = () => {
             <Tab label="Installed Plugins" {...a11yProps(1)}/>
           </Tabs>
         </Box>
-        <TabPanel value={tabValue} index={0}>AvailablePlugins</TabPanel>
+        <TabPanel value={tabValue} index={0}><AvailablePlugins /></TabPanel>
         <TabPanel value={tabValue} index={1}>Installed Plugins</TabPanel>
       </Box>
     </PluginsContext.Provider>
