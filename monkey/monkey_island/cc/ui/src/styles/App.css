@@ -1,15 +1,28 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans|Alegreya&display=swap');
 
 /* Base Application Styles */
+/*html {*/
+/*  height: 100%; TODO: add?
+/*}*/
 
 body {
   color: #fff;
   background: #222;
+  /*height: inherit; TODO: add? */
 }
 
 #app {
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  height: inherit;
 }
+
+#main-row > div:not(.sidebar) {
+  /*flex: 1; TODO: add? */
+}
+
+/*#main-container, #main-row {*/
+/*  height: inherit; TODO: add? */
+/*}*/
 
 .center-block {
   display: block;
@@ -23,7 +36,7 @@ body {
 
 @media (min-width: 575px) {
   .sidebar {
-    position: fixed !important;
+    position: fixed !important; /* TODO: remove? */
     top: 0;
     bottom: 0;
     left: 0;
@@ -157,6 +170,7 @@ body {
 
 .main {
   padding: 0.7em 1.5em 1.5em 1.5em !important;
+  /*margin-left: 0 !important;   TODO: test*/
 }
 
 .page-title {
