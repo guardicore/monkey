@@ -67,6 +67,7 @@ export type PluginsContextType = {
   refreshNumberOfUpgradablePlugins: () => Promise<void>,
   setInstalledPlugins: (installedPlugins: InstalledPlugin[]) => void,
   setAvailablePlugins: (availablePlugins: AvailablePlugin[]) => void,
+  refreshAvailablePluginsFailure: boolean
 }
 
 export const PluginsContext = createContext<null | PluginsContextType>(null);
@@ -78,6 +79,7 @@ export const generatePluginId = (name, type, version) => {
 const authComponent = new AuthComponent({});
 
 export const PluginState = () :PluginsContextType => {
+  const [refreshAvailablePluginsFailure, setRefreshAvailablePluginsFailure] = useState(false);
   const [availablePlugins, setAvailablePlugins] = useState([]);
   const [installedPlugins, setInstalledPlugins] = useState([]);
   const [numberOfPluginsThatRequiresUpdate, setNumberOfPluginsThatRequiresUpdate] = useState(0);
@@ -145,8 +147,11 @@ export const PluginState = () :PluginsContextType => {
     return authComponent.authFetch(url, {}, true)
       .then(res => res.json())
       .then((res) => {
-        let parsedPlugins = parsePluginMetadataResponse(res.plugins);
+        const parsedPlugins = parsePluginMetadataResponse(res.plugins);
         setAvailablePlugins(parsedPlugins);
+        setRefreshAvailablePluginsFailure(false);
+      }).catch(() => {
+        setRefreshAvailablePluginsFailure(true);
       });
   };
 
@@ -160,7 +165,7 @@ export const PluginState = () :PluginsContextType => {
 
   const refreshNumberOfUpgradablePlugins = () => {
     let upgradablePlugins = installedPlugins.filter((installedPlugin) => {
-      let availablePlugin = availablePlugins.find((availablePlugin) => {
+      let availablePlugin = availablePlugins?.find((availablePlugin) => {
         return availablePlugin.name === installedPlugin.name
           && availablePlugin.pluginType === installedPlugin.pluginType;
       })
@@ -180,6 +185,7 @@ export const PluginState = () :PluginsContextType => {
     setAvailablePlugins,
     setInstalledPlugins,
     refreshAvailablePlugins,
-    refreshInstalledPlugins
+    refreshInstalledPlugins,
+    refreshAvailablePluginsFailure
   }
 }

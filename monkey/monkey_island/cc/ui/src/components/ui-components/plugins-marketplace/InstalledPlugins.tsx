@@ -25,6 +25,7 @@ import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
 
 
 const UPGRADEABLE_VALUE = 'upgradeable';
+const NO_INSTALLED_PLUGINS_MESSAGE = 'There are no plugins installed';
 
 const InstalledPlugins = (props) => {
   const {
@@ -249,26 +250,32 @@ const InstalledPlugins = (props) => {
 
   return (
     <Stack spacing={2} height='100%'>
-      <Grid container spacing={2}>
-        <Grid xs={4} item
-              sx={{alignItems: 'flex-end', display: 'flex'}}>
-          <SearchFilter setFilters={setFilters}
-                        searchableColumns={defaultSearchableColumns}/>
-        </Grid>
-        <Grid xs={3} item>
-          <TypeFilter allRows={installedPluginRows}
-                      setFilters={setFilters} />
-        </Grid>
-        <Grid xs={2} item />
-        <Grid xs={3} item >
-          <MonkeyToggle options={[{value: 'all', label: 'All'},
-                                  {value: UPGRADEABLE_VALUE, label: 'Upgradable'}]}
-                        setSelectedValues={onToggleChanged}/>
-        </Grid>
-      </Grid>
+      {installedPlugins?.length > 0 && (
+        <>
+          <Grid container spacing={2}>
+            <Grid xs={4} item
+                  sx={{alignItems: 'flex-end', display: 'flex'}}>
+              <SearchFilter setFilters={setFilters}
+                            searchableColumns={defaultSearchableColumns}/>
+            </Grid>
+            <Grid xs={3} item>
+              <TypeFilter allRows={installedPluginRows}
+                          setFilters={setFilters}/>
+            </Grid>
+            <Grid xs={2} item/>
+            <Grid xs={3} item>
+              <MonkeyToggle options={[{value: 'all', label: 'All'},
+                {value: UPGRADEABLE_VALUE, label: 'Upgradable'}]}
+                            setSelectedValues={onToggleChanged}/>
+            </Grid>
+          </Grid>
+        </>
+      )
+      }
       <PluginTable rows={displayedRows}
                    columns={generatePluginsTableColumns(getRowActions)}
                    loadingMessage="Loading all installed plugins..."
+                   noRowsOverlayMessage={installedPlugins?.length === 0 && NO_INSTALLED_PLUGINS_MESSAGE}
                    getRowActions={getRowActions}
       />
     </Stack>

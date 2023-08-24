@@ -138,6 +138,7 @@ const XDataGrid = (props) => {
     columnWidth,
     className,
     needCustomWorkaround = true,
+    noRowsOverlayMessage,
     ...rest
   } = {...props}
 
@@ -196,7 +197,7 @@ const XDataGrid = (props) => {
           columnHeaders: isDataEmpty || hideHeaders ? HIDDEN : '',
           toolbarContainer: isDataEmpty ? HIDE_TOOLBAR_ACTIONS : ''
         }}
-        slotProps={{toolbar: {printOptions: {disableToolbarButton: true}}}}
+        slotProps={{toolbar: {printOptions: {disableToolbarButton: true}}, noRowsOverlay: {message: noRowsOverlayMessage}}}
         sx={sx}
         {...rest}
       />
