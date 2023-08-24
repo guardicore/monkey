@@ -26,7 +26,7 @@ function ReportPage() {
         return reports[report_name];
       }
     }
-  };
+  }
 
   function getReportFromServer() {
     doesAnyAgentExist(true).then(anyAgentExists => {
@@ -43,7 +43,7 @@ function ReportPage() {
           });
       }
     });
-  };
+  }
 
   function updateMonkeysRunning() {
     doesAnyAgentExist(true).then(anyAgentExists => {
@@ -52,7 +52,7 @@ function ReportPage() {
     didAllAgentsShutdown(true).then(allAgentsShutdown => {
       setAllMonkeysAreDead(!runStarted || allAgentsShutdown);
     });
-  };
+  }
 
   useEffect(() => {
     updateMonkeysRunning();
@@ -67,12 +67,12 @@ function ReportPage() {
              activeKey={selectedSection}
              onSelect={(key) => {
                setSelectedSection(key);
-               navigate("/report/" + key);
+               navigate('/report/' + key);
              }}
              className={'report-nav'}>
           {orderedSections.map(section => renderNavButton(section))}
         </Nav>)
-  };
+  }
 
   function renderNavButton(section) {
     return (
@@ -84,7 +84,7 @@ function ReportPage() {
           {section.title}
         </Nav.Link>
       </Nav.Item>)
-  };
+  }
 
   function getReportContent() {
     switch (selectedSection) {
@@ -93,7 +93,7 @@ function ReportPage() {
       case 'ransomware':
         return (<RansomwareReport report={ransomwareReport}/>);
     }
-  };
+  }
 
   function renderContent() {
     let content = <MustRunMonkeyWarning/>;
@@ -107,7 +107,7 @@ function ReportPage() {
   return (
     <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
           lg={{offset: 3, span: 9}} xl={{offset: 2, span: 10}}
-          className={'report-wrapper'}>
+          className={'main report-wrapper'}>
       <h1 className='page-title no-print'>3. Security Reports</h1>
       {renderNav()}
       <MonkeysStillAliveWarning allMonkeysAreDead={allMonkeysAreDead}/>

@@ -105,6 +105,10 @@ const SideNavComponent = ({
                      className={getNavLinkClass()}>
           Events
         </NavLink></li>
+        <li><NavLink to={IslandRoutes.Marketplace}
+                     className={getNavLinkClass()}>
+          Plugins
+        </NavLink></li>
         <li><Button variant={null} className={`${getNavLinkClass()} logout-button`}
                     onClick={onLogout} >
           <span className='number' style={{'marginRight': '6px'}}>
