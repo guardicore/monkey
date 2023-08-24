@@ -5,7 +5,7 @@ from typing import Any, Dict
 from flask import make_response
 from flask_security import auth_token_required, roles_accepted
 
-from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPluginManifest, AgentPluginType, PluginName
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 
@@ -35,7 +35,7 @@ class InstalledAgentPluginsManifests(AbstractResource):
         return make_response(installed_agent_plugins_manifests_simplified, HTTPStatus.OK)
 
     def _simplify_installed_agent_plugins_manifests(
-        self, manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]]
+        self, manifests: Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]]
     ) -> Dict[str, Dict[str, Dict[str, Any]]]:
         simplified: Dict[str, Dict[str, Dict[str, Any]]] = {}
         for plugin_type in manifests:

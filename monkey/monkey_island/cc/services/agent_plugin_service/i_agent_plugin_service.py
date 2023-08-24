@@ -37,7 +37,7 @@ class IAgentPluginService(ABC):
     @abstractmethod
     def get_all_plugin_configuration_schemas(
         self,
-    ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
+    ) -> Dict[AgentPluginType, Dict[PluginName, Dict[str, Any]]]:
         """
         Retrieve the configuration schemas for all plugins
 
@@ -47,7 +47,9 @@ class IAgentPluginService(ABC):
         pass
 
     @abstractmethod
-    def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
+    def get_all_plugin_manifests(
+        self,
+    ) -> Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]]:
         """
         Retrieve a sequence of plugin manifests for all plugins
 
