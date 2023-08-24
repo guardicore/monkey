@@ -231,11 +231,11 @@ def test_store_agent_plugin(agent_plugin_repository: MongoAgentPluginRepository)
 def test_store_agent_plugin__overwrites_existing_binary(
     plugin_file, insert_plugin, agent_plugin_repository: MongoAgentPluginRepository
 ):
-    with open(plugin_file, "rb") as file:
-        insert_plugin(file, OperatingSystem.WINDOWS)
-
-    expected_source_archive = b"dummy"
+    source_archive = b"should be overwritten"
     plugin_dict = copy.deepcopy(basic_plugin_dict)
+    plugin_dict["source_archive"] = source_archive
+    agent_plugin_repository.store_agent_plugin(OperatingSystem.WINDOWS, AgentPlugin(**plugin_dict))
+    expected_source_archive = b"dummy"
     plugin_dict["source_archive"] = expected_source_archive
     agent_plugin_repository.store_agent_plugin(OperatingSystem.WINDOWS, AgentPlugin(**plugin_dict))
 
@@ -243,19 +243,47 @@ def test_store_agent_plugin__overwrites_existing_binary(
         OperatingSystem.WINDOWS, AgentPluginType.EXPLOITER, EXPLOITER_NAME_1
     )
     assert plugin.source_archive == expected_source_archive
+    all_win_binaries = list(
+        agent_plugin_repository._agent_plugins_binaries_collections[OperatingSystem.WINDOWS].find(
+            {}
+        )
+    )
+    assert len(all_win_binaries) == 1
+
+
+def test_store_agent_plugin__overwrites_existing_manifest(
+    plugin_file, insert_plugin, agent_plugin_repository: MongoAgentPluginRepository
+):
+    plugin_dict = copy.deepcopy(basic_plugin_dict)
+    plugin_dict["source_archive"] = b"dummy"
+    plugin_dict["plugin_manifest"]["title"] = "fun plugin"
+    agent_plugin_repository.store_agent_plugin(OperatingSystem.WINDOWS, AgentPlugin(**plugin_dict))
+    plugin = agent_plugin_repository.get_plugin(
+        OperatingSystem.WINDOWS, AgentPluginType.EXPLOITER, EXPLOITER_NAME_1
+    )
+    assert plugin.plugin_manifest.title == "fun plugin"
+
+    plugin_dict["plugin_manifest"]["title"] = "sad plugin"
+    agent_plugin_repository.store_agent_plugin(OperatingSystem.WINDOWS, AgentPlugin(**plugin_dict))
+    plugin = agent_plugin_repository.get_plugin(
+        OperatingSystem.WINDOWS, AgentPluginType.EXPLOITER, EXPLOITER_NAME_1
+    )
+
+    assert plugin.plugin_manifest.title == "sad plugin"
 
 
 def test_store_agent_plugin__storageerror_if_existing_binary_delete_fails(
     plugin_file, insert_plugin, mongo_client, agent_plugin_repository: MongoAgentPluginRepository
 ):
-    with open(plugin_file, "rb") as file:
-        insert_plugin(file, OperatingSystem.WINDOWS)
     mongo_client.monkey_island.agent_plugins_binaries_windows.files.delete_one = MagicMock(
         side_effect=Exception
     )
 
     plugin_dict = copy.deepcopy(basic_plugin_dict)
     plugin_dict["source_archive"] = b"dummy"
+    agent_plugin_repository.store_agent_plugin(OperatingSystem.WINDOWS, AgentPlugin(**plugin_dict))
+
+    plugin_dict["source_archive"] = b"dummy2"
     with pytest.raises(StorageError):
         agent_plugin_repository.store_agent_plugin(
             OperatingSystem.WINDOWS, AgentPlugin(**plugin_dict)

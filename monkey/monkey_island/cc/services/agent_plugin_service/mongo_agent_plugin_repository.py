@@ -1,5 +1,6 @@
 import logging
 from collections import defaultdict
+from contextlib import suppress
 from typing import Any, Dict, Optional
 
 import gridfs
@@ -130,25 +131,28 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
         plugin_name = agent_plugin.plugin_manifest.name
         plugin_type = agent_plugin.plugin_manifest.plugin_type
-        try:
-            plugin_dict = self._get_agent_plugin(plugin_type, plugin_name)
-        except UnknownRecordError:
-            plugin_dict = agent_plugin.dict(simplify=True, exclude={"source_archive"})
-            plugin_dict[BINARY_OS_MAPPING_KEY] = {}
-        except Exception as err:
-            raise StorageError(
-                f"Error retrieving the agent plugin {plugin_name} of type {plugin_type}: {err}"
-            )
+        plugin_dict = agent_plugin.dict(simplify=True, exclude={"source_archive"})
+        plugin_dict[BINARY_OS_MAPPING_KEY] = {}
+
+        with suppress(UnknownRecordError):
+            old_plugin = self._get_agent_plugin(plugin_type, plugin_name)
+            try:
+                self._remove_plugin_binary(old_plugin, operating_system)
+            except Exception as err:
+                raise StorageError(
+                    f"Failed to remove old binary for plugin {plugin_name} of type {plugin_type} "
+                    f"for operating system {operating_system}: {err}"
+                )
 
         try:
             plugin_binary_ids = plugin_dict[BINARY_OS_MAPPING_KEY]
             if operating_system.value in plugin_binary_ids:
                 old_id = plugin_binary_ids[operating_system.value]
                 self._agent_plugins_binaries_collections[operating_system].delete(old_id)
-            id = self._agent_plugins_binaries_collections[operating_system].put(
+            _id = self._agent_plugins_binaries_collections[operating_system].put(
                 agent_plugin.source_archive
             )
-            plugin_binary_ids[operating_system.value] = id
+            plugin_binary_ids[operating_system.value] = _id
         except Exception:
             raise StorageError(
                 f"Failed to store binary for plugin {plugin_name} of type {plugin_type} for "
@@ -182,20 +186,11 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     def _remove_agent_plugin(
         self, plugin_dict: Dict[str, Any], operating_system: Optional[OperatingSystem]
     ):
-        os_binaries = plugin_dict[BINARY_OS_MAPPING_KEY]
-
-        if operating_system is None:
-            os_binaries_to_remove = os_binaries.copy()
-        else:
-            os_binaries_to_remove = {operating_system.value: os_binaries[operating_system.value]}
-
-        for os, id in os_binaries_to_remove.items():
-            self._agent_plugins_binaries_collections[OperatingSystem(os)].delete(id)
-            os_binaries.pop(os)
-
+        self._remove_plugin_binary(plugin_dict, operating_system)
         # Update or delete the plugin record
         plugin_name = plugin_dict["plugin_manifest"]["name"]
         plugin_type = plugin_dict["plugin_manifest"]["plugin_type"]
+        os_binaries = plugin_dict[BINARY_OS_MAPPING_KEY]
         if len(os_binaries) == 0:
             self._agent_plugins_collection.delete_one(
                 {
@@ -211,3 +206,17 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 },
                 {"$set": plugin_dict},
             )
+
+    def _remove_plugin_binary(
+        self, plugin_dict: Dict[str, Any], operating_system: Optional[OperatingSystem]
+    ):
+        os_binaries = plugin_dict[BINARY_OS_MAPPING_KEY]
+
+        if operating_system is None:
+            os_binaries_to_remove = os_binaries.copy()
+        else:
+            os_binaries_to_remove = {operating_system.value: os_binaries[operating_system.value]}
+
+        for os, _id in os_binaries_to_remove.items():
+            self._agent_plugins_binaries_collections[OperatingSystem(os)].delete(_id)
+            os_binaries.pop(os)
