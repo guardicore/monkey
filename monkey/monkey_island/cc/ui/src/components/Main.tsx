@@ -19,11 +19,9 @@ import LoadingScreen from './ui-components/LoadingScreen';
 import SidebarLayoutComponent from "./layouts/SidebarLayoutComponent";
 import {CompletedSteps} from "./side-menu/CompletedSteps";
 import Timeout = NodeJS.Timeout;
-import IslandHttpClient, { APIEndpoint } from "./IslandHttpClient";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
 import { doesAnyAgentExist, didAllAgentsShutdown } from './utils/ServerUtils';
 import LogoutPage from './pages/LogoutPage';
+import MarketplacePage from './pages/MarketplacePage';
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -36,6 +34,7 @@ export const IslandRoutes = {
   RegisterPage: '/register',
   Logout: '/logout',
   ConfigurePage: '/configure',
+  Marketplace: '/marketplace',
   RunMonkeyPage: '/run-monkey',
   MapPage: '/infection/map',
   EventPage: '/infection/events',
@@ -174,7 +173,7 @@ class AppComponent extends AuthComponent {
 
     return (
       <Router>
-        <Container fluid>
+        <Container fluid id="main-container">
           <Routes>
             <Route path={IslandRoutes.LoginPage} element={<LoginPageComponent onStatusChange={this.updateStatus}/>}/>
             <Route path={IslandRoutes.Logout} element={<LogoutPage onStatusChange={this.updateStatus}/>}/>
@@ -189,6 +188,8 @@ class AppComponent extends AuthComponent {
               <SidebarLayoutComponent component={MapPageWrapper} {...defaultSideNavProps}/>)}
             {this.renderRoute(IslandRoutes.EventPage,
               <SidebarLayoutComponent component={EventPage} {...defaultSideNavProps}/>)}
+            {this.renderRoute(IslandRoutes.Marketplace,
+              <SidebarLayoutComponent component={MarketplacePage} {...defaultSideNavProps}/>)}
             {this.redirectToReport()}
             {this.renderRoute(IslandRoutes.SecurityReport,
               <SidebarLayoutComponent component={ReportPage}

@@ -13,7 +13,7 @@ const SidebarLayoutComponent = ({component: Component,
                                   ...other
                                 }) => {
     return (
-      <Row>
+      <Row id="main-row">
         {sideNavShow &&<Col sm={3} md={3} lg={3} xl={2} className='sidebar'>
           <SideNavComponent disabled={sideNavDisabled}
                             completedSteps={completedSteps}
