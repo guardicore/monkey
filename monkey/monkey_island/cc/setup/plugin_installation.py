@@ -14,9 +14,15 @@ def install_plugins(container: DIContainer, data_dir: Path):
     agent_plugin_service = container.resolve(IAgentPluginService)
 
     plugins_dir = data_dir / PLUGIN_DIR_NAME
-    plugin_tar_file_paths = list(plugins_dir.glob("*.tar"))
 
-    for path in plugin_tar_file_paths:
+    for path in plugins_dir.iterdir():
+        if path.is_symlink():
+            logger.warning(f"Skipping symlink at {path}")
+            continue
+        if not path.is_file():
+            logger.warning(f"Skipping non-file at {path}")
+            continue
+
         with open(path, "rb") as f:
             plugin_archive = f.read()
             try:
