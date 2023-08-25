@@ -48,6 +48,15 @@
   margin-left: 10px;
 }
 
+.advanced-multi-select .form-control .no-options {
+  padding: 3px 0 3px 0;
+}
+
+.advanced-multi-select .no-options-text {
+  margin-left: 10px;
+  font-weight: bold;
+}
+
 .advanced-multi-select .form-control[readonly]{
   background-color: $light-gray;
   opacity: 1;
