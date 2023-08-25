@@ -2,7 +2,7 @@ import React, {useEffect, useState, useCallback} from 'react';
 import {nanoid} from 'nanoid';
 import XDataGrid, {X_DATA_GRID_CLASSES} from '../XDataGrid';
 import {GridRowEditStopReasons, GridRowModes} from '@mui/x-data-grid';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import SaveIcon from '@mui/icons-material/Save';
 import { Button } from '@mui/material';
 import {
   getDataColumns, isAllValuesInRowAreEmpty,
@@ -80,7 +80,7 @@ const NewCredentialPair = (props) => {
         rowHeight={'25px'}
         showToolbar={false}
         maxHeight={'400px'}
-        columnWidth={{min: 198, max: -1}}
+        columnWidth={{min: 160, max: -1}}
         hideHeaders={false}
         processRowUpdate={processRowUpdate}
         onRowModesModelChange={handleRowModesModelChange}
@@ -92,10 +92,11 @@ const NewCredentialPair = (props) => {
         className={'add-new-credentials-row'}
         setFlex={false}
       />
+      <hr/>
       <Button
         variant="contained"
         key={nanoid()}
-        startIcon={<AddCircleIcon />}
+        startIcon={<SaveIcon />}
         disabled={errors.includes(rows?.[0]?.id)}
         onClick={handleAddRowClick(rows?.[0]?.id)}>
         Save
