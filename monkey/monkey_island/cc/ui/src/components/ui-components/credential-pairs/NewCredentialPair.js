@@ -1,8 +1,9 @@
 import React, {useEffect, useState, useCallback} from 'react';
 import {nanoid} from 'nanoid';
 import XDataGrid, {X_DATA_GRID_CLASSES} from '../XDataGrid';
-import {GridActionsCellItem, GridRowEditStopReasons, GridRowModes} from '@mui/x-data-grid';
+import {GridRowEditStopReasons, GridRowModes} from '@mui/x-data-grid';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { Button } from '@mui/material';
 import {
   getDataColumns, isAllValuesInRowAreEmpty,
   setErrorsForRow, trimRowValues
@@ -45,21 +46,6 @@ const NewCredentialPair = (props) => {
     setRowModesModel({...rowModesModel, [id]: {mode: GridRowModes.View}});
   };
 
-  const getRowActions = (rowId) => {
-      return [
-        <GridActionsCellItem
-          key={nanoid()}
-          icon={<AddCircleIcon/>}
-          label="Add New"
-          sx={{
-            color: 'primary.main'
-          }}
-          disabled={errors.includes(rowId)}
-          onClick={handleAddRowClick(rowId)}
-        />
-      ];
-  }
-
   const processRowUpdate = useCallback(
     (newRow, oldRow) =>
       new Promise((resolve, reject) => {
@@ -87,24 +73,34 @@ const NewCredentialPair = (props) => {
   };
 
   return (
-    <XDataGrid
-      columns={getDataColumns(getRowActions, true, setErrorForRow)}
-      rows={rows}
-      rowHeight={'25px'}
-      showToolbar={false}
-      maxHeight={'400px'}
-      columnWidth={{min: 160, max: -1}}
-      hideHeaders={false}
-      processRowUpdate={processRowUpdate}
-      onRowModesModelChange={handleRowModesModelChange}
-      onRowEditStop={handleRowEditStop}
-      editMode="row"
-      rowModesModel={rowModesModel}
-      onProcessRowUpdateError={()=>{void 0;}}
-      getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
-      className={'add-new-credentials-row'}
-      setFlex={false}
-    />
+    <div>
+      <XDataGrid
+        columns={getDataColumns(null, true, setErrorForRow)}
+        rows={rows}
+        rowHeight={'25px'}
+        showToolbar={false}
+        maxHeight={'400px'}
+        columnWidth={{min: 198, max: -1}}
+        hideHeaders={false}
+        processRowUpdate={processRowUpdate}
+        onRowModesModelChange={handleRowModesModelChange}
+        onRowEditStop={handleRowEditStop}
+        editMode="row"
+        rowModesModel={rowModesModel}
+        onProcessRowUpdateError={()=>{void 0;}}
+        getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
+        className={'add-new-credentials-row'}
+        setFlex={false}
+      />
+      <Button
+        variant="contained"
+        key={nanoid()}
+        startIcon={<AddCircleIcon />}
+        disabled={errors.includes(rows?.[0]?.id)}
+        onClick={handleAddRowClick(rows?.[0]?.id)}>
+        Save
+      </Button>
+   </div>
   );
 }
 

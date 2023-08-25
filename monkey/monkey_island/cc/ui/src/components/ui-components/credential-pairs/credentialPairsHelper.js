@@ -98,19 +98,21 @@ export const updateFilterAndSortPropertiesToColumn = (col, filterable = true, so
 export const getDataColumns = (getRowActions, disableAllColumnsFilterAndSort, setErrorForRow, rowActionsHeaderComponent, showSecrets = false) => {
   let mainColumns = getMainColumns(setErrorForRow, showSecrets);
 
-  mainColumns.push({
-    headerName: '',
-    field: 'row_actions',
-    type: 'actions',
-    minWidth: 100,
-    flexValue: 0.5,
-    headerClassName: `row-actions--header`,
-    cellClassName: `row-actions`,
-    renderHeader: () => rowActionsHeaderComponent,
-    getActions: ({id}) => {
-      return getRowActions(id);
-    }
-  })
+  if(typeof getRowActions === 'function'){
+    mainColumns.push({
+      headerName: '',
+      field: 'row_actions',
+      type: 'actions',
+      minWidth: 100,
+      flexValue: 0.5,
+      headerClassName: `row-actions--header`,
+      cellClassName: `row-actions`,
+      renderHeader: () => rowActionsHeaderComponent,
+      getActions: ({id}) => {
+        return getRowActions(id);
+      }
+    })
+  }
 
   return mainColumns.map((col) => {
     if (disableAllColumnsFilterAndSort) {
