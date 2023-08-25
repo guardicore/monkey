@@ -54,17 +54,16 @@ const EditTextarea = (props) => {
   }
 
   return (
-    <div style={{position: 'relative', alignSelf: 'flex-start'}} className={error ? 'Mui-error' : 'valid'}>
       <InputBase
         onKeyDown={keyPress}
         multiline
         rows={1}
         value={valueState}
+        className={error ? 'Mui-error' : 'valid'}
         sx={{textarea: {resize: 'none'}, width: '100%', height: '100%'}}
         onChange={handleChange}
         inputRef={(ref) => setInputRef(ref)}
       />
-    </div>
   );
 }
 
