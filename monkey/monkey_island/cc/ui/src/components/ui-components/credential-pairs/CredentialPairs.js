@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import {Accordion, AccordionDetails, AccordionSummary, Typography} from '@mui/material';
+import {Accordion, AccordionDetails,  Typography, Divider} from '@mui/material';
 import {GridActionsCellItem, GridRowEditStopReasons, GridRowModes} from '@mui/x-data-grid';
 import {
   COLUMN_WIDTH, CREDENTIALS_ROW_KEYS,
@@ -205,13 +205,9 @@ const CredentialPairs = (props) => {
 
   return (
     <div id="configure-propagation-credentials">
+      <Typography variant="h5" component="h5">Credentials</Typography>
+      <Divider component="div" role="presentation"/>
       <Accordion expanded={true}>
-        <AccordionSummary
-          aria-controls="new-credential-pairs-content"
-          id="new-credential-pairs-panel"
-        >
-          <Typography>ADD NEW CREDENTIALS</Typography>
-        </AccordionSummary>
         <AccordionDetails>
           <Typography>
             <NewCredentialPair upsertRow={upsertRow}/>
