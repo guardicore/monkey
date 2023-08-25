@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Tabs from '@mui/material/Tabs';
 import {Tab, Box} from '@mui/material';
 import {PluginsContext} from '../ui-components/plugins-marketplace/PluginsContext';
 import AvailablePlugins from '../ui-components/plugins-marketplace/AvailablePlugins';
+import AuthComponent from '../AuthComponent';
 
 const TabPanel = (props) => {
   const {children, value, index, ...other} = props;
@@ -34,6 +35,20 @@ const MarketplacePage = () => {
   const [availablePlugins, setAvailablePlugins] = useState([]);
   const [installedPlugins, setInstalledPlugins] = useState([]);
   const [tabValue, setTabValue] = useState(0);
+  const authComponent = new AuthComponent({});
+
+  useEffect(() => {
+    authComponent.authFetch('/api/agent-plugins/available/index', {}, true).then(res => res.json()).then(plugins => {
+      console.log("Available plugins: ", plugins);
+      setAvailablePlugins(plugins.plugins);
+    });
+  }, []);
+
+  useEffect(() => {
+    authComponent.authFetch('/api/agent-plugins/installed/manifests', {}, true).then(res => res.json()).then(plugins => {
+      setInstalledPlugins(plugins);
+    });
+  }, []);
 
   const handleChange = (_event, newValue) => {
     setTabValue(newValue);

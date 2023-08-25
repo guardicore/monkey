@@ -97,15 +97,18 @@ export const getPluginsGridHeaders = (getRowActions) => [
 ]
 
 export const getPluginsGridRows = (pluginsList) => {
-  return pluginsList?.map(plugin => {
-    const {id, name, version, type, author, description} = {...plugin};
-     return {
+  let plugins = [];
+  for (const plugin of pluginsList) {
+    const {id, name, version, type_, author, description} = {...plugin};
+    plugins.push({
         id: id || nanoid(),
         name: name,
         version: version,
-        type: type,
+        type: type_,
         author: author,
         description: description
-      }
-  });
+      });
+  }
+
+  return plugins;
 }
