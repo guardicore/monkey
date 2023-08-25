@@ -10,6 +10,7 @@ import DownloadingIcon from '@mui/icons-material/Downloading';
 import BasePlugins from './BasePlugins';
 import SearchBar from '../SearchBar';
 import {Box} from '@mui/material';
+import AuthComponent from '../../AuthComponent';
 
 // Provides the plugins, filtering out the installed plugins
 class AvailablePluginsView {
@@ -44,24 +45,29 @@ class AvailablePluginsView {
 const AvailablePlugins = () => {
   const {availablePlugins} = useContext(PluginsContext);
   const {installedPlugins} = useContext(PluginsContext);
+  const {refreshInstalledPlugins} = useContext(PluginsContext);
   const availablePluginsView = new AvailablePluginsView(availablePlugins, installedPlugins);
 
   const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
   const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
+  const authComponent = new AuthComponent({});
 
   const onRefreshCallback = () => {
     setSuccessfullyInstalledPluginsIds([]);
   }
 
-  const onInstallClick = (pluginId) => {
+  const onInstallClick = (pluginId, pluginName, pluginType, pluginVersion) => {
+    console.log('installing plugin: ', pluginName)
+
     setPluginsInInstallationProcess((prevState) => {
       return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
     });
 
-    installPlugin(pluginId).then(() => {
+    authComponent.authFetch('/api/install-agent-plugin', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({plugin_type: pluginType, name: pluginName, version: pluginVersion})}, true).then(() => {
       setSuccessfullyInstalledPluginsIds((prevState) => {
         return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
       });
+      refreshInstalledPlugins();
     }).catch(() => {
       console.log('error installing plugin');
     }).finally(() => {
@@ -71,7 +77,8 @@ const AvailablePlugins = () => {
     });
   };
 
-  const getRowActions = (pluginId) => {
+  const getRowActions = (row) => {
+    const pluginId = row.id;
     if (pluginsInInstallationProcess.includes(pluginId)) {
       return [
         <GridActionsCellItem
@@ -96,13 +103,16 @@ const AvailablePlugins = () => {
       ]
     }
 
+    const pluginName = row.name;
+    const pluginType = row.type;
+    const pluginVersion = row.version;
     return [
       <GridActionsCellItem
         key={nanoid()}
         icon={<FileDownloadIcon/>}
         label="Download"
         className="textPrimary"
-        onClick={() => onInstallClick(pluginId)}
+        onClick={() => onInstallClick(pluginId, pluginName, pluginType, pluginVersion)}
         color="inherit"
       />
     ];
