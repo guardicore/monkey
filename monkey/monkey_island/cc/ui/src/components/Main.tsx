@@ -39,7 +39,8 @@ export const IslandRoutes = {
   RunMonkeyPage: '/run-monkey',
   MapPage: '/infection/map',
   EventPage: '/infection/events',
-  LicensePage: '/license'
+  LicensePage: '/license',
+  PluginsPage: '/marketplace',
 }
 
 export function isReportRoute(route){
