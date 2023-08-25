@@ -10,7 +10,7 @@ type Option = {
 type SelectProps = {
   placeholder: string,
   options: Option[],
-  value: string,
+  selectedOption: Option,
   onChange: (event: SelectChangeEvent) => void
 }
 
@@ -23,10 +23,7 @@ const SelectComponent = (props: SelectProps) => {
     <FormControl fullWidth>
       <InputLabel id="demo-simple-select-label">{props.placeholder}</InputLabel>
       <Select
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
-        value={props.value}
-        label="Age"
+        defaultValue={props.selectedOption.value}
         onChange={props.onChange}
       >
         {selectOptions}
