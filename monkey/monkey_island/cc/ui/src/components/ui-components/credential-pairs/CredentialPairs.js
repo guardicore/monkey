@@ -214,7 +214,7 @@ const CredentialPairs = (props) => {
           </Typography>
         </AccordionDetails>
       </Accordion>
-
+      <Typography variant="h5" component="h5">Configured Credentials</Typography>
       <XDataGrid columns={getDataColumns(getRowActions, false, setErrorForRow, rowActionsHeaderComponent, showSecrets)}
                  rows={[...rows]}
                  rowHeight={'25px'}
