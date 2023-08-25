@@ -72,5 +72,3 @@ export const upgradePlugin = (id, success = true) => {
     }, 5000);
   })
 }
-
-

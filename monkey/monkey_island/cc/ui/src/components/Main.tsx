@@ -183,8 +183,6 @@ class AppComponent extends AuthComponent {
   }
 
   render() {
-    const {availablePlugins, installedPlugins, numberOfPluginsThatRequiresUpdate} = this.state;
-
     let defaultSideNavProps = {
       completedSteps: this.state.completedSteps,
       onStatusChange: this.updateStatus,
