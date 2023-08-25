@@ -6,14 +6,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import {Accordion, AccordionDetails,  Typography, Divider} from '@mui/material';
+import {Accordion, AccordionDetails, Typography} from '@mui/material';
 import {GridActionsCellItem, GridRowEditStopReasons, GridRowModes} from '@mui/x-data-grid';
 import {
-  COLUMN_WIDTH, CREDENTIALS_ROW_KEYS,
-  getDataColumns, IDENTITY_KEY,
+  COLUMN_WIDTH,
+  CREDENTIALS_ROW_KEYS,
+  getDataColumns,
+  IDENTITY_KEY,
   isAllValuesInRowAreEmpty,
   isRowDuplicated,
-  setErrorsForRow, trimRowValues
+  setErrorsForRow,
+  trimRowValues
 } from './credentialPairsHelper';
 import NewCredentialPair from './NewCredentialPair';
 import {useStateCallback} from '../utils/useStateCallback';
@@ -205,8 +208,7 @@ const CredentialPairs = (props) => {
 
   return (
     <div id="configure-propagation-credentials">
-      <Typography variant="h5" component="h5">Credentials</Typography>
-      <Divider component="div" role="presentation"/>
+      <Typography variant="h5" component="h5">Credentials input</Typography>
       <Accordion expanded={true}>
         <AccordionDetails>
           <Typography>
@@ -214,7 +216,7 @@ const CredentialPairs = (props) => {
           </Typography>
         </AccordionDetails>
       </Accordion>
-      <Typography variant="h5" component="h5">Configured Credentials</Typography>
+      <Typography variant="h5" component="h5">Saved Credentials</Typography>
       <XDataGrid columns={getDataColumns(getRowActions, false, setErrorForRow, rowActionsHeaderComponent, showSecrets)}
                  rows={[...rows]}
                  rowHeight={'25px'}
