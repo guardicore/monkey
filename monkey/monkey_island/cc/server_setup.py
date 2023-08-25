@@ -37,6 +37,7 @@ from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logg
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.setup import (  # noqa: E402
     PyWSGILoggingFilter,
+    install_plugins,
     island_config_options_validator,
     setup_agent_event_handlers,
     setup_island_event_handlers,
@@ -67,6 +68,7 @@ def run_monkey_island():
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
     setup_island_event_handlers(container)
     setup_agent_event_handlers(container)
+    install_plugins(container, config_options.data_dir)
 
     _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
 
