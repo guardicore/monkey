@@ -1,4 +1,5 @@
 import {nanoid} from 'nanoid';
+import MurmurHash3 from 'imurmurhash';
 
 const HEADER_SUFFIX = '--header';
 
@@ -75,12 +76,14 @@ export const upgradePlugin = (id, success = true) => {
   })
 }
 
+// Returns GridColDef[]
 export const getPluginsGridHeaders = (getRowActions) => [
   {headerName: 'Name', field: 'name', sortable: true, filterable: false, flex: 0.4, minWidth: 150, flexValue: 0.5},
   {headerName: 'Version', field: 'version', sortable: false, filterable: false, flex: 0.1, minWidth: 100, flexValue: 0.5},
   {headerName: 'Type', field: 'type', sortable: true, filterable: false, flex: 0.2, minWidth: 150, flexValue: 0.5},
   {headerName: 'Author', field: 'author', sortable: true, filterable: false, minWidth: 150, flex: 0.25, flexValue: 0.5},
   {headerName: 'Description', field: 'description', sortable: false, filterable: false, minWidth: 150, flex: 1},
+  // This column is a GridActionsColDef
   {
     headerName: '',
     field: 'row_actions',
@@ -90,18 +93,25 @@ export const getPluginsGridHeaders = (getRowActions) => [
     flexValue: 0.5,
     headerClassName: `row-actions${HEADER_SUFFIX}`,
     cellClassName: `row-actions`,
-    getActions: ({id}) => {
-      return getRowActions(id);
+    // params is a GridRowParams
+    getActions: (params) => {
+      return getRowActions(params.row);
     }
   }
 ]
 
+const generatePluginHash = (pluginType, pluginName, pluginVersion, pluginSha256) => {
+  let hash = MurmurHash3(pluginType)
+  hash.hash(pluginName).hash(pluginVersion).hash(pluginSha256);
+  return hash.result().toString(16);
+}
+
 export const getPluginsGridRows = (pluginsList) => {
   let plugins = [];
   for (const plugin of pluginsList) {
-    const {id, name, version, type_, author, description} = {...plugin};
+    const {id, name, version, type_, author, description, sha256} = {...plugin};
     plugins.push({
-        id: id || nanoid(),
+        id: id || generatePluginHash(type_, name, version, sha256),
         name: name,
         version: version,
         type: type_,
