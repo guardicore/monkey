@@ -3,6 +3,7 @@ import Tabs from '@mui/material/Tabs';
 import {Tab, Box, Badge} from '@mui/material';
 import {PluginsContext} from '../contexts/plugins/PluginsContext';
 import AvailablePlugins from '../ui-components/plugins-marketplace/AvailablePlugins';
+import InstalledPlugins from '../ui-components/plugins-marketplace/InstalledPlugins';
 import classes from '../../styles/pages/Marketplace.module.scss';
 import UploadNewPlugin from '../ui-components/plugins-marketplace/UploadNewPlugin';
 
@@ -64,7 +65,7 @@ const MarketplacePage = () => {
           </Tabs>
         </Box>
         <TabPanel value={tabValue} index={0}><AvailablePlugins /></TabPanel>
-        <TabPanel value={tabValue} index={1}>Installed Plugins</TabPanel>
+        <TabPanel value={tabValue} index={1}><InstalledPlugins /></TabPanel>
         <TabPanel value={tabValue} index={2}><UploadNewPlugin/></TabPanel>
       </Box>
   )
