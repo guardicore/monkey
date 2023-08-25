@@ -6,6 +6,7 @@ import {MasterCheckboxState} from '../ui-components/MasterCheckbox';
 import {InfoPane, WarningType} from '../ui-components/InfoPane';
 import {EXPLOITERS_PATH_PROPAGATION} from './PropagationConfig';
 import {CONFIGURATION_TABS} from './ConfigurationTabs.js'
+import {Link} from 'react-router-dom';
 
 export const CREDENTIALS_COLLECTORS_CONFIG_PATH = 'credentials_collectors';
 export const PAYLOADS_CONFIG_PATH = 'payloads';
@@ -125,13 +126,23 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
                                        [...props.formContext.selectedPlugins])}
                                  onResetClick={onResetClick}
                                  resetButtonTitle={'Disable unsafe'}/>
-      <ChildCheckboxContainer multiple={true} required={false}
-                              autoFocus={true}
-                              selectedValues={[...props.formContext.selectedPlugins]}
-                              onCheckboxClick={togglePlugin}
-                              isSafe={isPluginSafe}
-                              onPaneClick={setActivePlugin}
-                              enumOptions={getOptions()}/>
+
+      {getOptions().length > 0 ?
+        <ChildCheckboxContainer multiple={true} required={false}
+                                autoFocus={true}
+                                selectedValues={[...props.formContext.selectedPlugins]}
+                                onCheckboxClick={togglePlugin}
+                                isSafe={isPluginSafe}
+                                onPaneClick={setActivePlugin}
+                                enumOptions={getOptions()}/>
+        : <div className='form-control no-options'>
+            <span className='no-options-text'>
+              No plugins found! To install plugins, go to the <Link to="/plugins">
+              Plugins</Link> page.
+            </span>
+          </div>
+      }
+
       {getPluginDisplay(activePlugin, props.properties)}
     </div>
   );
