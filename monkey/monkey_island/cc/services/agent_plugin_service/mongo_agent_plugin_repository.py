@@ -4,6 +4,7 @@ from contextlib import suppress
 from typing import Any, Dict, Optional
 
 import gridfs
+from bson.errors import BSONError
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
@@ -94,7 +95,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 {},
                 {"plugin_manifest.plugin_type": 1, "plugin_manifest.name": 1, "config_schema": 1},
             )
-        except PyMongoError as err:
+        except (PyMongoError, BSONError) as err:
             raise RetrievalError("Error retrieving the agent plugin configuration schemas") from err
         configuration_schemas: Dict[
             AgentPluginType, Dict[PluginName, Dict[str, Any]]
@@ -119,7 +120,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     ) -> Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]]:
         try:
             manifest_dicts = self._agent_plugins_collection.find(projection=["plugin_manifest"])
-        except PyMongoError as err:
+        except (PyMongoError, BSONError) as err:
             raise RetrievalError("Error retrieving the agent plugin manifests") from err
         manifests: Dict[AgentPluginType, Dict[PluginName, AgentPluginManifest]] = defaultdict(dict)
 
@@ -173,7 +174,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
                 {"$set": plugin_dict},
                 upsert=True,
             )
-        except PyMongoError as err:
+        except (PyMongoError, BSONError) as err:
             raise StorageError("Failed to store a plugin in the database") from err
 
     def remove_agent_plugin(

@@ -49,7 +49,10 @@ class InfectionMonkeyBaseModel(BaseModel):
     # continue to serve as a wrapper until we can update all references to it.
     def dict(self, simplify=False, **kwargs):
         if simplify:
-            return json.loads(self.json())
+            # Allow keyword arguments to be passed to `json()`
+            # We can pass kwargs to `json()` because the parameters of BaseModel.json() are a
+            # superset of those of BaseModel.dict().
+            return json.loads(self.json(**kwargs))
         return BaseModel.dict(self, **kwargs)
 
 
