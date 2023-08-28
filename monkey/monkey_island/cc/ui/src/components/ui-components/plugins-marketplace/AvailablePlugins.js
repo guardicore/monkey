@@ -15,38 +15,25 @@ import AuthComponent from '../../AuthComponent';
 import {Button} from 'react-bootstrap';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import _ from 'lodash';
-import {generatePluginId, installedPluginsToArray, pluginIndexToArray} from './utils';
 import '../../../styles/components/plugins-marketplace/AvailablePlugins.scss'
 import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
 
 
 const AvailablePlugins = () => {
-  const {availablePlugins, installedPlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
+  const {availablePlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
 
-  const [availablePluginsArray, setAvailablePluginsArray] = useState([]);
-  const [installedPluginsArray, setInstalledPluginsArray] = useState([]);
   const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
   const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
-    setAvailablePluginsArray(pluginIndexToArray(availablePlugins))
+    setDisplayedPlugins(availablePlugins)
   }, [availablePlugins]);
 
   useEffect(() => {
-    setInstalledPluginsArray(installedPluginsToArray(installedPlugins));
-  }, [installedPlugins]);
-
-  useEffect(() => {
-    setDisplayedPlugins(availablePluginsArray)
-  }, [installedPluginsArray, availablePluginsArray]);
-
-  useEffect(() => {
-    let installedPluginsIds = installedPluginsArray.map(generatePluginId);
-    const installedFilter = (plugin) => !installedPluginsIds.includes(generatePluginId(plugin));
-    let shownPlugins = displayedPlugins.filter(installedFilter)
+    let shownPlugins = availablePlugins;
     if(!_.isEqual(displayedPlugins, shownPlugins)){
       setDisplayedPlugins(shownPlugins);
     }
@@ -124,7 +111,7 @@ const AvailablePlugins = () => {
         </Grid>
         <Grid xs={4} item />
         <Grid xs={3} item >
-          <TypeFilter allPlugins={availablePluginsArray}
+          <TypeFilter allPlugins={availablePlugins}
                       displayedPlugins={displayedPlugins}
                       setDisplayedPlugins={setDisplayedPlugins}
                       className={'type-filter-box'}/>

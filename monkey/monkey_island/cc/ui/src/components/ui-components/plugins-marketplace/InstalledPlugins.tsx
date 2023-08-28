@@ -9,38 +9,10 @@ import UpgradeIcon from '@mui/icons-material/Upgrade';
 import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 import BasePlugins from './BasePlugins';
 import AuthComponent from '../../AuthComponent';
-import semver from 'semver';
 
-class InstalledPluginsView {
-  availablePlugins = []; // all plugins, grouped by type then name
-  installedPlugins = []; // all installed plugins, grouped by type then name
-
-  constructor(availablePlugins, installedPlugins) {
-    this.availablePlugins = availablePlugins;
-    this.installedPlugins = installedPlugins;
-  }
-
-  // TODO: Add a field for update available
-  * makeInstalledPluginsIterator() {
-    for (const plugin_type in this.installedPlugins) {
-      for (const plugin_name in this.installedPlugins[plugin_type]) {
-        const installed_version = this.installedPlugins[plugin_type][plugin_name]['version'];
-        const latest_version = this.availablePlugins[plugin_type][plugin_name].slice(-1)[0]['version'];
-        const update_available = semver.gt(latest_version, installed_version)
-        yield {...this.installedPlugins[plugin_type][plugin_name], update_available};
-      }
-    }
-  }
-
-  [Symbol.iterator]() {
-    return this.makeInstalledPluginsIterator();
-  }
-};
 
 const InstalledPlugins = () => {
   const {availablePlugins, installedPlugins, refreshInstalledPlugins} = useContext(PluginsContext);
-  const installedPluginsView = new InstalledPluginsView(availablePlugins, installedPlugins);
-
   const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
   const [pluginsInInstallProcess, setPluginsInInstallProcess] = useState([]);
   const [successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds] = useState([]);
@@ -204,7 +176,7 @@ const InstalledPlugins = () => {
   }
 
   return (
-    <BasePlugins plugins={[...installedPluginsView]}
+    <BasePlugins plugins={installedPlugins}
                  loadingMessage="Loading all available plugins..."
                  onRefreshCallback={onRefreshCallback}
                  getRowActions={getRowActions}
