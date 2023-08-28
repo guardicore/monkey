@@ -19,7 +19,6 @@ from common.event_queue import (
     PyPubSubAgentEventQueue,
 )
 from common.types.concurrency import BasicLock, RLock
-from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.event_queue import (
     IIslandEventQueue,
     LockingIslandEventQueueDecorator,
@@ -70,7 +69,7 @@ AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
 REPOSITORY_KEY_FILE_NAME = "repository_key.bin"
 
 
-def initialize_services(container: DIContainer, data_dir: Path, deployment: Deployment):
+def initialize_services(container: DIContainer, data_dir: Path):
     _register_conventions(container)
 
     container.register_instance(AWSInstance, AWSInstance())
@@ -84,7 +83,7 @@ def initialize_services(container: DIContainer, data_dir: Path, deployment: Depl
     _setup_agent_event_registry(container)
     _setup_agent_event_serializers(container)
     _register_repositories(container, data_dir)
-    _register_services(container, deployment)
+    _register_services(container)
 
     # This is temporary until we get DI all worked out.
     ReportService.initialize(
@@ -184,13 +183,11 @@ def _setup_agent_event_serializers(container: DIContainer):
     container.register_instance(AgentEventSerializerRegistry, agent_event_serializer_registry)
 
 
-def _register_services(container: DIContainer, deployment: Deployment):
+def _register_services(container: DIContainer):
     container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
     container.register_instance(IAgentBinaryService, build_agent_binary_service(container))
-    container.register_instance(
-        IAgentPluginService, build_agent_plugin_service(container, deployment)
-    )
+    container.register_instance(IAgentPluginService, build_agent_plugin_service(container))
     container.register_instance(
         IAgentConfigurationService, build_agent_configuration_service(container)
     )

@@ -18,6 +18,7 @@ from common.agent_plugins import (
 )
 from common.decorators import request_cache
 from common.utils.file_utils import get_binary_io_sha256_hash
+from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.repositories import RetrievalError
 
@@ -43,13 +44,13 @@ class AgentPluginService(IAgentPluginService):
     def __init__(
         self,
         agent_plugin_repository: IAgentPluginRepository,
-        deployment: Deployment,
+        version: Version,
     ):
         self._agent_plugin_repository = agent_plugin_repository
         self._lock = Lock()
 
         self._plugin_repository_url = AGENT_PLUGIN_REPOSITORY_RELEASE_2_3_0_URL
-        if deployment == Deployment.DEVELOP:
+        if version.deployment == Deployment.DEVELOP:
             self._plugin_repository_url = AGENT_PLUGIN_REPOSITORY_DEVELOP_URL
 
         logger.info(f"Agent plugins will be downloaded from {self._plugin_repository_url}")
