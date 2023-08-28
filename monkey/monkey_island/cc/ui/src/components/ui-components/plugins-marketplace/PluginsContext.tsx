@@ -3,7 +3,7 @@ import React, {createContext} from 'react';
 type PluginsContextType = {
     availablePlugins: any;
     installedPlugins: any;
-    refreshAvailablePlugins: () => void;
+    refreshAvailablePlugins: (force: boolean) => void;
     refreshInstalledPlugins: () => void;
 }
 
