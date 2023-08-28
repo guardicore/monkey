@@ -7,20 +7,20 @@ const versions = ['1.0.0', '1.1.1', '2.1.3'];
 const types = ['exploiter', 'credentials'];
 const upgradeableOptions = [true, false];
 
-const generateData = (num, isInstalled= false) => {
+const generateData = (num, isInstalled = false) => {
   let arr = [];
-  for(let i=0;i<num;i++){
+  for (let i = 0; i < num; i++) {
     const type = types[Math.floor(Math.random() * types.length)];
     const description = `${type} ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum`;
     const obj = {
       id: nanoid(),
       name: `plugin_${i}`,
       version: versions[Math.floor(Math.random() * versions.length)],
-      type: type,
+      type_: type,
       author: `Monkey Team - ${nanoid()}`,
       description: description
     }
-    if(isInstalled) {
+    if (isInstalled) {
       obj['upgradeable'] = upgradeableOptions[Math.floor(Math.random() * upgradeableOptions.length)]
     }
     arr.push(obj);
@@ -30,8 +30,8 @@ const generateData = (num, isInstalled= false) => {
 
 export const getPlugins = (installed = false, shouldResolveEmpty = false, shouldResolve = true) => {
   return new Promise((resolve, reject) => {
-    setTimeout(()=>{
-      if(shouldResolve) {
+    setTimeout(() => {
+      if (shouldResolve) {
         shouldResolveEmpty ? resolve([]) : (installed ? resolve(generateData(20, true)) : resolve(generateData(15)));
       } else {
         reject('Errorrr')
@@ -42,8 +42,8 @@ export const getPlugins = (installed = false, shouldResolveEmpty = false, should
 
 export const installPlugin = (id, success = true) => {
   return new Promise((resolve, reject) => {
-    setTimeout(()=>{
-      if(success) {
+    setTimeout(() => {
+      if (success) {
         resolve(id);
       } else {
         reject('Errorrr install')
@@ -54,8 +54,8 @@ export const installPlugin = (id, success = true) => {
 
 export const uninstallPlugin = (id, success = true) => {
   return new Promise((resolve, reject) => {
-    setTimeout(()=>{
-      if(success) {
+    setTimeout(() => {
+      if (success) {
         resolve(id);
       } else {
         reject('Errorrr uninstall')
@@ -66,8 +66,8 @@ export const uninstallPlugin = (id, success = true) => {
 
 export const upgradePlugin = (id, success = true) => {
   return new Promise((resolve, reject) => {
-    setTimeout(()=>{
-      if(success) {
+    setTimeout(() => {
+      if (success) {
         resolve(id);
       } else {
         reject('Errorrr upgrade')
@@ -76,14 +76,12 @@ export const upgradePlugin = (id, success = true) => {
   })
 }
 
-// Returns GridColDef[]
 export const getPluginsGridHeaders = (getRowActions) => [
-  {headerName: 'Name', field: 'name', sortable: true, filterable: false, flex: 0.4, minWidth: 150, flexValue: 0.5},
-  {headerName: 'Version', field: 'version', sortable: false, filterable: false, flex: 0.1, minWidth: 100, flexValue: 0.5},
-  {headerName: 'Type', field: 'type', sortable: true, filterable: false, flex: 0.2, minWidth: 150, flexValue: 0.5},
-  {headerName: 'Author', field: 'author', sortable: true, filterable: false, minWidth: 150, flex: 0.25, flexValue: 0.5},
-  {headerName: 'Description', field: 'description', sortable: false, filterable: false, minWidth: 150, flex: 1},
-  // This column is a GridActionsColDef
+  {headerName: 'Name', field: 'name', sortable: true, filterable: false, flex: 0.4, minWidth: 150, isTextual: true},
+  {headerName: 'Version', field: 'version', sortable: false, filterable: false, flex: 0.1, minWidth: 100, isTextual: true},
+  {headerName: 'Type', field: 'type', sortable: true, filterable: false, flex: 0.2, minWidth: 150, isTextual: true},
+  {headerName: 'Author', field: 'author', sortable: true, filterable: false, minWidth: 150, flex: 0.25, isTextual: true},
+  {headerName: 'Description', field: 'description', sortable: false, filterable: false, minWidth: 150, flex: 1, isTextual: true},
   {
     headerName: '',
     field: 'row_actions',
@@ -93,7 +91,6 @@ export const getPluginsGridHeaders = (getRowActions) => [
     flexValue: 0.5,
     headerClassName: `row-actions${HEADER_SUFFIX}`,
     cellClassName: `row-actions`,
-    // params is a GridRowParams
     getActions: (params) => {
       return getRowActions(params.row);
     }
@@ -115,4 +112,14 @@ export const getPluginsGridRows = (pluginsList) => {
   }
 
   return plugins;
+}
+
+export const extractPluginsField = (plugins, fieldToExtract) => {
+  const values = [];
+  plugins?.forEach((plugin) => {
+    if (!values.includes(plugin?.[fieldToExtract]?.trim())) {
+      values.push(plugin[fieldToExtract].trim());
+    }
+  })
+  return values.sort();
 }
