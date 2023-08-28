@@ -1,5 +1,5 @@
 import {nanoid} from 'nanoid';
-import MurmurHash3 from 'imurmurhash';
+import {generatePluginId} from './utils';
 
 const HEADER_SUFFIX = '--header';
 
@@ -100,18 +100,12 @@ export const getPluginsGridHeaders = (getRowActions) => [
   }
 ]
 
-const generatePluginHash = (pluginType, pluginName, pluginVersion, pluginSha256) => {
-  let hash = MurmurHash3(pluginType)
-  hash.hash(pluginName).hash(pluginVersion).hash(pluginSha256);
-  return hash.result().toString(16);
-}
-
 export const getPluginsGridRows = (pluginsList) => {
   let plugins = [];
   for (const plugin of pluginsList) {
-    const {id, name, version, type_, author, description, sha256} = {...plugin};
+    const {name, version, type_, author, description} = {...plugin};
     plugins.push({
-        id: id || generatePluginHash(type_, name, version, sha256),
+        id: generatePluginId(plugin),
         name: name,
         version: version,
         type: type_,
