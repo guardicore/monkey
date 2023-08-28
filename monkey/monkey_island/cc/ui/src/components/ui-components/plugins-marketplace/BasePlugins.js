@@ -12,9 +12,9 @@ const initialState = {
 };
 
 const BasePlugins = (props) => {
-  const {plugins, getRowActions, onRefreshCallback, loadingMessage = DEFAULT_LOADING_MESSAGE} = {...props};
+  const {plugins, getRowActions, loadingMessage = DEFAULT_LOADING_MESSAGE} = {...props};
 
-  const [isLoadingPlugins, setIsLoadingPlugins] = useState(false);
+  const [isLoadingPlugins] = useState(false);
 
   const rows = useMemo(() => {
     return getPluginsGridRows(plugins);
