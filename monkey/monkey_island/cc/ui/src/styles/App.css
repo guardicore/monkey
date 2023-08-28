@@ -221,11 +221,11 @@ body {
   display: none;
 }
 
-.nav-tabs>li>a {
+.nav-tabs > li > a {
   height: 63px
 }
 
-.nav>li>a:focus {
+.nav > li > a:focus {
   background-color: transparent !important;
 }
 
@@ -352,21 +352,21 @@ body {
  * Full Logs Page
  */
 
-.data-table-container>.container {
+.data-table-container > .container {
   width: inherit;
   padding: 0;
 }
 
-.data-table-container>.container th,
-.data-table-container>.container td {
+.data-table-container > .container th,
+.data-table-container > .container td {
   padding: 15px 8px;
 }
 
-.data-table-container>.container>.row:first-child>div:first-child>div {
+.data-table-container > .container > .row:first-child > div:first-child > div {
   display: inline-block;
 }
 
-.data-table-container>.container>.row:first-child>div:first-child>div:last-child {
+.data-table-container > .container > .row:first-child > div:first-child > div:last-child {
   margin-left: 1em;
 }
 
@@ -541,4 +541,16 @@ body {
   right: 0;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Tooltip */
+.MuiTooltip-tooltip {
+  padding: 8px 10px;
+  font-size: 1rem;
+}
+
+.text-truncate {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
