@@ -12,11 +12,16 @@ export const pluginIndexToArray = (index) => {
 export const installedPluginsToArray = (plugins) => {
   let pluginsArray = [];
   for (const plugin_type in plugins) {
-      pluginsArray.push(...plugins[plugin_type])
+    for (const plugin_name in plugins[plugin_type]) {
+      pluginsArray.push(plugins[plugin_type][plugin_name])
+    }
   }
   return pluginsArray;
 }
 
 export const generatePluginId = (plugin) => {
-  return `${plugin.name}${plugin.type_}${plugin.version}`;
+  // Available plugins uses type_, and installed plugins uses plugin_type for
+  // the plugin type
+  const type = plugin.type_ || plugin.plugin_type;
+  return `${plugin.name}${type}${plugin.version}`;
 }
