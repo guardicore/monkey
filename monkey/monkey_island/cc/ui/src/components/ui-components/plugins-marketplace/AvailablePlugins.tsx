@@ -13,12 +13,16 @@ import BasePlugins from './BasePlugins';
 import SearchBar from '../SearchBar';
 import {Box} from '@mui/material';
 import AuthComponent from '../../AuthComponent';
+import { Button, Col, Row } from 'react-bootstrap';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import {generatePluginId, installedPluginsToArray, pluginIndexToArray} from './utils';
+import '../../../styles/components/plugins-marketplace/AvailablePlugins.scss'
 
 
 const AvailablePlugins = () => {
   const {availablePlugins} = useContext(PluginsContext);
   const {installedPlugins} = useContext(PluginsContext);
+  const {refreshAvailablePlugins} = useContext(PluginsContext);
   const {refreshInstalledPlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
 
@@ -101,7 +105,14 @@ const AvailablePlugins = () => {
 
   return (
     <Box>
-      <SearchBar />
+      <Row className='grid-tools'>
+        <Col>
+          <SearchBar />
+        </Col>
+        <Col className='actions'>
+          <Button onClick={() => refreshAvailablePlugins()}><RefreshIcon/></Button>
+        </Col>
+      </Row>
       <BasePlugins plugins={displayedPlugins}
                    loadingMessage="Loading all available plugins..."
                    onRefreshCallback={onRefreshCallback}

@@ -38,14 +38,18 @@ const MarketplacePage = () => {
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
-    authComponent.authFetch('/api/agent-plugins/available/index', {}, true).then(res => res.json()).then(plugins => {
-      setAvailablePlugins(plugins.plugins);
-    });
+    refreshAvailablePlugins();
   }, []);
 
   useEffect(() => {
     refreshInstalledPlugins();
   }, []);
+
+  const refreshAvailablePlugins = () => {
+    authComponent.authFetch('/api/agent-plugins/available/index', {}, true).then(res => res.json()).then(plugins => {
+      setAvailablePlugins(plugins.plugins);
+    });
+  };
 
   const refreshInstalledPlugins = () => {
     authComponent.authFetch('/api/agent-plugins/installed/manifests', {}, true).then(res => res.json()).then(plugins => {
@@ -58,7 +62,7 @@ const MarketplacePage = () => {
   };
 
   return (
-    <PluginsContext.Provider value={{availablePlugins, installedPlugins, setAvailablePlugins, setInstalledPlugins, refreshInstalledPlugins}}>
+    <PluginsContext.Provider value={{availablePlugins, installedPlugins, refreshAvailablePlugins, refreshInstalledPlugins}}>
       <Box className="main col-xl-8 col-lg-8 col-md-9 col-sm-9 offset-xl-2 offset-lg-3 offset-md-3 offset-sm-3">
         <h1 className='page-title'>Plugins</h1>
         <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
