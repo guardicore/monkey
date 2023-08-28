@@ -54,17 +54,16 @@ const EditTextarea = (props) => {
   }
 
   return (
-    <div style={{position: 'relative', alignSelf: 'flex-start'}} className={error ? 'Mui-error' : 'valid'}>
       <InputBase
         onKeyDown={keyPress}
         multiline
         rows={1}
         value={valueState}
+        className={error ? 'Mui-error' : 'valid'}
         sx={{textarea: {resize: 'none'}, width: '100%', height: '100%'}}
         onChange={handleChange}
         inputRef={(ref) => setInputRef(ref)}
       />
-    </div>
   );
 }
 
@@ -98,19 +97,21 @@ export const updateFilterAndSortPropertiesToColumn = (col, filterable = true, so
 export const getDataColumns = (getRowActions, disableAllColumnsFilterAndSort, setErrorForRow, rowActionsHeaderComponent, showSecrets = false) => {
   let mainColumns = getMainColumns(setErrorForRow, showSecrets);
 
-  mainColumns.push({
-    headerName: '',
-    field: 'row_actions',
-    type: 'actions',
-    minWidth: 100,
-    flexValue: 0.5,
-    headerClassName: `row-actions--header`,
-    cellClassName: `row-actions`,
-    renderHeader: () => rowActionsHeaderComponent,
-    getActions: ({id}) => {
-      return getRowActions(id);
-    }
-  })
+  if(typeof getRowActions === 'function'){
+    mainColumns.push({
+      headerName: '',
+      field: 'row_actions',
+      type: 'actions',
+      minWidth: 100,
+      flexValue: 0.5,
+      headerClassName: `row-actions--header`,
+      cellClassName: `row-actions`,
+      renderHeader: () => rowActionsHeaderComponent,
+      getActions: ({id}) => {
+        return getRowActions(id);
+      }
+    })
+  }
 
   return mainColumns.map((col) => {
     if (disableAllColumnsFilterAndSort) {
