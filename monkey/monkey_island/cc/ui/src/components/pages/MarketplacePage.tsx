@@ -45,8 +45,12 @@ const MarketplacePage = () => {
     refreshInstalledPlugins();
   }, []);
 
-  const refreshAvailablePlugins = () => {
-    authComponent.authFetch('/api/agent-plugins/available/index', {}, true).then(res => res.json()).then(plugins => {
+  const refreshAvailablePlugins = (forceRefresh: boolean = false) => {
+    let url = '/api/agent-plugins/available/index';
+    if (forceRefresh) {
+      url += '?force_refresh=true';
+    }
+    authComponent.authFetch(url, {}, true).then(res => res.json()).then(plugins => {
       setAvailablePlugins(plugins.plugins);
     });
   };

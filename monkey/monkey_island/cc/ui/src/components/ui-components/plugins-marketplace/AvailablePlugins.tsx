@@ -110,7 +110,7 @@ const AvailablePlugins = () => {
           <SearchBar />
         </Col>
         <Col className='actions'>
-          <Button onClick={() => refreshAvailablePlugins()}><RefreshIcon/></Button>
+          <Button onClick={() => refreshAvailablePlugins(true)}><RefreshIcon/></Button>
         </Col>
       </Row>
       <BasePlugins plugins={displayedPlugins}
