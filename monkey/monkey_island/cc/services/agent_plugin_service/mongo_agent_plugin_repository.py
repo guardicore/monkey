@@ -1,6 +1,5 @@
 import logging
 from collections import defaultdict
-from contextlib import suppress
 from typing import Any, Dict, Optional
 
 import gridfs
@@ -140,20 +139,24 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
         plugin_name = agent_plugin.plugin_manifest.name
         plugin_type = agent_plugin.plugin_manifest.plugin_type
-        plugin_dict = agent_plugin.dict(simplify=True, exclude={"source_archive"})
-        plugin_dict[BINARY_OS_MAPPING_KEY] = {}
+        new_plugin_dict = agent_plugin.dict(simplify=True, exclude={"source_archive"})
 
-        with suppress(UnknownRecordError):
-            old_plugin = self._get_agent_plugin(plugin_type, plugin_name)
-            try:
-                self._remove_plugin_binary(old_plugin, operating_system)
-            except Exception as err:
-                raise StorageError(
-                    f"Failed to remove old binary for plugin {plugin_name} of type {plugin_type} "
-                    f"for operating system {operating_system}: {err}"
-                )
+        try:
+            plugin_dict = self._get_agent_plugin(plugin_type, plugin_name)
+            plugin_dict.update(new_plugin_dict)
+        except UnknownRecordError:
+            plugin_dict = new_plugin_dict
 
-        plugin_binary_ids = plugin_dict[BINARY_OS_MAPPING_KEY]
+        plugin_binary_ids = plugin_dict.setdefault(BINARY_OS_MAPPING_KEY, {})
+
+        try:
+            self._remove_plugin_binary(plugin_dict, operating_system)
+        except Exception as err:
+            raise StorageError(
+                f"Failed to remove old binary for plugin {plugin_name} of type {plugin_type} "
+                f"for operating system {operating_system}: {err}"
+            )
+
         try:
             _id = self._agent_plugins_binaries_collections[operating_system].put(
                 agent_plugin.source_archive
