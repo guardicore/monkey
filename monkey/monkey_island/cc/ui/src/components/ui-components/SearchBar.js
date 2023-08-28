@@ -5,8 +5,12 @@ import ClearIcon from '@mui/icons-material/Clear';
 import {nanoid} from 'nanoid';
 
 const EMPTY_STRING = '';
+const DEFAULT_VARIANT = 'standard';
+const DEFAULT_PLACEHOLDER = 'Search';
+const DEFAULT_LABEL = 'Search';
+
 const SearchBar = (props) => {
-  const {variant = 'standard', label, placeholder = 'Search', setQuery} = {...props};
+  const {variant = DEFAULT_VARIANT, label = DEFAULT_LABEL, placeholder = DEFAULT_PLACEHOLDER, setQuery} = {...props};
   const [currentValue, setCurrentValue] = useState(EMPTY_STRING);
 
   useEffect(() => {
@@ -23,8 +27,9 @@ const SearchBar = (props) => {
   }
 
   return (
-    <Box>
+    <Box className="search-bar-wrapper">
       <TextField id={`search-bar-${nanoid()}`}
+                 fullWidth
                  variant={variant}
                  label={label}
                  value={currentValue}
