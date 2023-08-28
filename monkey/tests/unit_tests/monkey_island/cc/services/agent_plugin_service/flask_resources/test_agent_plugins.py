@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from unittest.mock import MagicMock
 
 import pytest
 from tests.common import StubDIContainer
@@ -23,7 +24,7 @@ def agent_plugin_repository():
 
 @pytest.fixture
 def agent_plugin_service(agent_plugin_repository):
-    return AgentPluginService(agent_plugin_repository)
+    return AgentPluginService(agent_plugin_repository, MagicMock())
 
 
 @pytest.fixture
