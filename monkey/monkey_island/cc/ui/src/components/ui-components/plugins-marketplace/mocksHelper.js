@@ -14,7 +14,7 @@ const generateData = (num, isInstalled= false) => {
     const description = `${type} ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum`;
     const obj = {
       id: nanoid(),
-      name: `all plugin ${i}`,
+      name: `plugin_${i}`,
       version: versions[Math.floor(Math.random() * versions.length)],
       type: type,
       author: `Monkey Team - ${nanoid()}`,
