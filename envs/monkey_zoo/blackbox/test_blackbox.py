@@ -114,6 +114,8 @@ def island_client(monkey_island_requests):
         if not client_established:
             pytest.exit("BB tests couldn't establish communication to the island.")
 
+    island_client_object.install_agent_plugins()
+
     yield island_client_object
 
 

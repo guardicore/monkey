@@ -35,6 +35,37 @@ class MonkeyIslandClient(object):
     def get_api_status(self):
         return self.requests.get("api")
 
+    def install_agent_plugins(self):
+        available_plugins_index_url = "api/agent-plugins/available/index"
+        install_plugin_url = "api/install-agent-plugin"
+
+        plugin_repository_index = self.requests.get(available_plugins_index_url)
+        available_plugins = plugin_repository_index.plugins
+
+        for plugin_type in available_plugins:
+            for plugin_name in available_plugins[plugin_type]:
+                for plugin_versions in available_plugins[plugin_type][plugin_name]:
+                    latest_version_plugin_metadata = plugin_versions[-1]
+                    latest_version = latest_version_plugin_metadata.version
+
+                    install_plugin_request = {
+                        "plugin_type": plugin_type,
+                        "name": plugin_name,
+                        "version": latest_version,
+                    }
+
+                    if self.requests.put_json(
+                        url=install_plugin_url, json=install_plugin_request
+                    ).ok:
+                        logger.info(
+                            f"Installed {plugin_name} {plugin_type} v{latest_version} to Island"
+                        )
+                    else:
+                        logger.error(
+                            f"Could not install {plugin_name} {plugin_type} "
+                            f"v{latest_version} to Island"
+                        )
+
     @avoid_race_condition
     def set_masque(self, masque):
         masque = b"" if masque is None else masque
