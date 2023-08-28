@@ -16,9 +16,11 @@ from common.agent_plugins import (
     PluginName,
     PluginVersion,
 )
+from monkey_island.cc import Version
+from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import (
-    AGENT_PLUGIN_REPOSITORY_URL,
+    AGENT_PLUGIN_REPOSITORY_DEVELOP_URL,
     AgentPluginService,
 )
 from monkey_island.cc.services.agent_plugin_service.errors import (
@@ -102,7 +104,7 @@ EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_SIMPLE_INDEX = {
     },
 }
 
-AGENT_PLUGIN_REPOSITORY_INDEX_FILE_URL = f"{AGENT_PLUGIN_REPOSITORY_URL}/index.yml"
+AGENT_PLUGIN_REPOSITORY_INDEX_FILE_URL = f"{AGENT_PLUGIN_REPOSITORY_DEVELOP_URL}/index.yml"
 
 
 @pytest.fixture
@@ -130,7 +132,9 @@ def agent_plugin_repository_index_simple(agent_plugin_repository_index_simple_fi
 
 @pytest.fixture
 def agent_plugin_service(agent_plugin_repository) -> IAgentPluginService:
-    return AgentPluginService(agent_plugin_repository)
+    version = MagicMock(ispec=Version)
+    version.deployment = Deployment.DEVELOP
+    return AgentPluginService(agent_plugin_repository, version)
 
 
 @pytest.mark.parametrize(
@@ -207,7 +211,7 @@ def test_agent_plugin_service__install_plugin_from_repository(monkeypatch, agent
 
     assert (
         mock_requests_get.call_args[0][0]
-        == f"{AGENT_PLUGIN_REPOSITORY_URL}/Mimikatz-credentials_collector-v1.0.2.tar"
+        == f"{AGENT_PLUGIN_REPOSITORY_DEVELOP_URL}/Mimikatz-credentials_collector-v1.0.2.tar"
     )
     assert agent_plugin_service.install_plugin_archive.call_count == 1
 

@@ -1,4 +1,5 @@
 import copy
+from unittest.mock import MagicMock
 
 import pytest
 from tests.monkey_island import InMemoryAgentPluginRepository
@@ -25,7 +26,7 @@ def agent_plugin_repository() -> InMemoryAgentPluginRepository:
 def agent_plugin_service(
     agent_plugin_repository: InMemoryAgentPluginRepository,
 ) -> IAgentPluginService:
-    return AgentPluginService(agent_plugin_repository)
+    return AgentPluginService(agent_plugin_repository, MagicMock())
 
 
 @pytest.fixture
