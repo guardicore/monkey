@@ -3,12 +3,15 @@ import {DataGrid, gridFilteredTopLevelRowCountSelector, GridToolbar, GridToolbar
 import CustomNoRowsOverlay from './utils/GridNoRowsOverlay';
 import _ from 'lodash';
 import '../../styles/components/XDataGrid.scss';
+import MonkeyTooltip from './MonkeyTooltip';
 
 const X_DATA_GRID_CLASS = 'x-data-grid';
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 const DEFAULT_MIN_WIDTH = 150;
 const DEFAULT_MAX_WIDTH = DEFAULT_MIN_WIDTH;
+const IS_TEXTUAL = 'isTextual';
+const RENDER_CELL = 'renderCell';
 const WIDTH = 'width';
 const MIN_WIDTH = 'minWidth';
 const MAX_WIDTH = 'maxWidth';
@@ -72,10 +75,27 @@ const prepareColsWidth = (columns, columnWidth, setColWidth) => {
   return updatedColumns;
 }
 
+const prepareColsCustomTooltip = (columns) => {
+   let updatedColumns = _.cloneDeep(columns) || [];
+   updatedColumns?.forEach((col)=>{
+     if(col[IS_TEXTUAL]) {
+       // eslint-disable-next-line react/display-name
+       col[RENDER_CELL] = (params) => (
+       <MonkeyTooltip isOverflow={true}
+                      title={params.value.toString()}>
+          {params.value.toString()}
+        </MonkeyTooltip>
+      )
+     }
+   });
+   return updatedColumns;
+}
+
 const prepareSlots = (toolbar, showToolbar) => {
   let slotsObj = {
     noRowsOverlay: CustomNoRowsOverlay,
-    noResultsOverlay: CustomNoRowsOverlay
+    noResultsOverlay: CustomNoRowsOverlay,
+    baseTooltip: MonkeyTooltip
   };
 
   if (showToolbar) {
@@ -129,7 +149,8 @@ const XDataGrid = (props) => {
   const sx = {maxHeight: maxHeight || height || 'auto'};
 
   const updatedColumns = useMemo(() => {
-    return needCustomWorkaround ? prepareColsClasses(prepareColsWidth(columns, columnWidth, setColWidth), setFlex) : columns;
+    const mutatedColumns = prepareColsCustomTooltip(columns);
+    return needCustomWorkaround ? prepareColsClasses(prepareColsWidth(mutatedColumns, columnWidth, setColWidth), setFlex) : mutatedColumns;
   }, [columns]);
 
   useEffect(() => {
