@@ -41,7 +41,7 @@ const MarketplacePage = () => {
 
   const handleChange = (_event, newValue) => {
     setTabValue(newValue);
-  };
+  }
 
   const installedPluginsLabel = <div>
     <Badge badgeContent={numberOfPluginsThatRequiresUpdate} color="error">
