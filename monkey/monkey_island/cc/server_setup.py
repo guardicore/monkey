@@ -134,7 +134,7 @@ def _initialize_di_container(
     container.register_instance(Version, version)
     container.register_convention(Path, "data_dir", data_dir)
 
-    initialize_services(container, data_dir)
+    initialize_services(container, data_dir, version.deployment)
 
     return container
 

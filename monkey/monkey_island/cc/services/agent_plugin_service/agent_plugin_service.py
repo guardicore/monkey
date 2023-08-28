@@ -1,4 +1,5 @@
 import io
+import logging
 from threading import Lock
 from typing import Any, Dict, List
 
@@ -17,6 +18,7 @@ from common.agent_plugins import (
 )
 from common.decorators import request_cache
 from common.utils.file_utils import get_binary_io_sha256_hash
+from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.repositories import RetrievalError
 
 from . import IAgentPluginService
@@ -24,9 +26,13 @@ from .errors import PluginInstallationError, PluginUninstallationError
 from .i_agent_plugin_repository import IAgentPluginRepository
 from .plugin_archive_parser import parse_plugin
 
-AGENT_PLUGIN_REPOSITORY_URL = "https://monkey-plugins-develop.s3.amazonaws.com"
-REPOSITORY_INDEX_DOWNLOAD_URL = f"{AGENT_PLUGIN_REPOSITORY_URL}/index.yml"
+AGENT_PLUGIN_REPOSITORY_DEVELOP_URL = "https://monkey-plugins-develop.s3.amazonaws.com"
+AGENT_PLUGIN_REPOSITORY_RELEASE_2_3_0_URL = "https://monkey-plugins-release-2.3.0.s3.amazonaws.com"
+INDEX_FILE_NAME = "index.yml"
+
 PLUGIN_TTL = 60 * 60  # if the index is older then hour we refresh the index
+
+logger = logging.getLogger(__name__)
 
 
 class AgentPluginService(IAgentPluginService):
@@ -37,9 +43,16 @@ class AgentPluginService(IAgentPluginService):
     def __init__(
         self,
         agent_plugin_repository: IAgentPluginRepository,
+        deployment: Deployment,
     ):
         self._agent_plugin_repository = agent_plugin_repository
         self._lock = Lock()
+
+        self._plugin_repository_url = AGENT_PLUGIN_REPOSITORY_RELEASE_2_3_0_URL
+        if deployment == Deployment.DEVELOP:
+            self._plugin_repository_url = AGENT_PLUGIN_REPOSITORY_DEVELOP_URL
+
+        logger.info(f"Agent plugins will be downloaded from {self._plugin_repository_url}")
 
         # Since the request_cache decorator maintains state, we must decorate the method in the
         # constructor, otherwise all instances of this class will share the same cache.
@@ -117,7 +130,7 @@ class AgentPluginService(IAgentPluginService):
 
     def _get_file_download_url(self, plugin_metadata: AgentPluginMetadata) -> str:
         plugin_file_path = plugin_metadata.resource_path
-        return f"{AGENT_PLUGIN_REPOSITORY_URL}/{plugin_file_path}"
+        return f"{self._plugin_repository_url}/{plugin_file_path}"
 
     def _validate_plugin_hash(
         self, plugin_metadata: AgentPluginMetadata, plugin_archive: bytes
@@ -136,7 +149,7 @@ class AgentPluginService(IAgentPluginService):
     # This method is decorated in __init__() to cache responses
     def _download_index(self) -> AgentPluginRepositoryIndex:
         try:
-            response = requests.get(REPOSITORY_INDEX_DOWNLOAD_URL)
+            response = requests.get(f"{self._plugin_repository_url}/{INDEX_FILE_NAME}")
             repository_index_yml = yaml.safe_load(response.text)
 
             return AgentPluginRepositoryIndex(**repository_index_yml)
