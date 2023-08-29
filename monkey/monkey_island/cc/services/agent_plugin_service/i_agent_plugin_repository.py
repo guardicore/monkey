@@ -46,6 +46,22 @@ class IAgentPluginRepository(ABC):
         """
         pass
 
+    # NOTE: There's a theoretical architectural flaw in this interface. The issue stems from the
+    #       fact that there are effectively two types of plugin objects and we're using one class to
+    #       represent both. A plugin packaged for distribution (hereafter called a "distribution
+    #       plugin") contains the Windows and Linux files needed for the plugin to run whichever OS
+    #       is desired. These distribution plugins get parsed into OS-specific plugins (hereafter
+    #       referred to as "runnables").
+    #
+    #       This interface is confusing because it provides config schemas and manifests for
+    #       distributions, but plugins are stored as runnables, not distributions. In practice, this
+    #       isn't an issue at the present time. However, as a matter of cleanliness, it would be
+    #       nice to refactor this to provide a better interface.
+    #
+    #       The proposed solution is to split this into two Repository interfaces: one for storing
+    #       distribution plugins and one for storing runnables. The distribution plugin repository
+    #       can provide get_all_plugin_{config_schemas,manifests} methods, while the runnable plugin
+    #       repository can provide {get,store}_plugin methods.
     @abstractmethod
     def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
         """
