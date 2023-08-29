@@ -37,16 +37,31 @@ class MonkeyIslandClient(object):
 
     def install_agent_plugins(self):
         available_plugins_index_url = "api/agent-plugins/available/index"
+        installed_plugins_manifests_url = "api/agent-plugins/installed/manifests"
         install_plugin_url = "api/install-agent-plugin"
 
         plugin_repository_index = self.requests.get(available_plugins_index_url)
-        available_plugins = plugin_repository_index.plugins
+        available_plugins_index = plugin_repository_index.plugins
 
-        for plugin_type in available_plugins:
-            for plugin_name in available_plugins[plugin_type]:
-                for plugin_versions in available_plugins[plugin_type][plugin_name]:
-                    latest_version_plugin_metadata = plugin_versions[-1]
-                    latest_version = latest_version_plugin_metadata.version
+        installed_plugins_manifests = self.requests.get(installed_plugins_manifests_url)
+
+        # all of the responses from the API endpoints are serialized
+        # so we don't need to worry about type conversion
+        for plugin_type in available_plugins_index:
+            for plugin_name in available_plugins_index[plugin_type]:
+                for plugin_versions in available_plugins_index[plugin_type][plugin_name]:
+                    latest_version = plugin_versions[-1].version
+
+                    # if a plugin of the latest version is already installed, skip
+                    installed_plugin = installed_plugins_manifests.get(plugin_type, {}).get(
+                        plugin_name, {}
+                    )
+                    if installed_plugin and installed_plugin.get("version", "") == latest_version:
+                        logger.info(
+                            f"{plugin_name} {plugin_type} v{latest_version} "
+                            "already installed to Island"
+                        )
+                        continue
 
                     install_plugin_request = {
                         "plugin_type": plugin_type,
