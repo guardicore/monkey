@@ -3,7 +3,6 @@ import logging
 from http import HTTPStatus
 from typing import Tuple
 
-import semver
 from flask import make_response, request
 from flask_security import auth_token_required, roles_accepted
 
@@ -67,11 +66,7 @@ class InstallAgentPlugin(AbstractResource):
             raise ValueError(message)
 
         try:
-            # TODO: (1) semver.parse is deprecated
-            #       (2) knowledge of semver usage shouldn't be leaked here anyway,
-            #           handling a string argument (like "1.0.2") should be done in
-            #           PluginVersion itself
-            plugin_version = PluginVersion(**semver.parse(plugin_version_arg))
+            plugin_version = PluginVersion.from_str(plugin_version_arg)
         except ValueError as err:
             message = f"Invalid plugin version argument: {plugin_version_arg}: {err}."
             raise ValueError(message)
