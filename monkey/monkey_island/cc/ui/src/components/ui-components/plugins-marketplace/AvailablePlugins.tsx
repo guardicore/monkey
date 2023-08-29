@@ -8,20 +8,24 @@ import {GridActionsCellItem} from '@mui/x-data-grid';
 import {nanoid} from 'nanoid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
+import {Box, Grid} from '@mui/material';
 import BasePlugins from './BasePlugins';
 import SearchBar from '../SearchBar';
-import {Box} from '@mui/material';
 import AuthComponent from '../../AuthComponent';
-import { Button, Col, Row } from 'react-bootstrap';
+import {Button} from 'react-bootstrap';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import _ from 'lodash';
 import {generatePluginId, installedPluginsToArray, pluginIndexToArray} from './utils';
 import '../../../styles/components/plugins-marketplace/AvailablePlugins.scss'
 import LoadingIcon from '../LoadingIconMUI';
+import TypeFilter from './TypeFilter';
 
 
 const AvailablePlugins = () => {
   const {availablePlugins} = useContext(PluginsContext);
   const {installedPlugins} = useContext(PluginsContext);
+  const [availablePluginsArray, setAvailablePluginsArray] = useState([]);
+  const [installedPluginsArray, setInstalledPluginsArray] = useState([]);
   const {refreshAvailablePlugins} = useContext(PluginsContext);
   const {refreshInstalledPlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
@@ -31,19 +35,31 @@ const AvailablePlugins = () => {
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
-    let installedPluginsIds = installedPluginsToArray(installedPlugins).map(generatePluginId);
+    setAvailablePluginsArray(pluginIndexToArray(availablePlugins))
+  }, [availablePlugins]);
+
+  useEffect(() => {
+    setInstalledPluginsArray(installedPluginsToArray(installedPlugins));
+  }, [installedPlugins]);
+
+  useEffect(() => {
+    setDisplayedPlugins(availablePluginsArray)
+  }, [installedPluginsArray, availablePluginsArray]);
+
+  useEffect(() => {
+    let installedPluginsIds = installedPluginsArray.map(generatePluginId);
     const installedFilter = (plugin) => !installedPluginsIds.includes(generatePluginId(plugin));
-    let shownPlugins = pluginIndexToArray(availablePlugins).filter(installedFilter)
-    setDisplayedPlugins(shownPlugins);
-  }, [installedPlugins, availablePlugins]);
+    let shownPlugins = displayedPlugins.filter(installedFilter)
+    if(!_.isEqual(displayedPlugins, shownPlugins)){
+      setDisplayedPlugins(shownPlugins);
+    }
+  }, [displayedPlugins]);
 
   const onRefreshCallback = () => {
     setSuccessfullyInstalledPluginsIds([]);
   }
 
   const onInstallClick = (pluginId, pluginName, pluginType, pluginVersion) => {
-    console.log('installing plugin: ', pluginName)
-
     setPluginsInInstallationProcess((prevState) => {
       return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
     });
@@ -105,19 +121,27 @@ const AvailablePlugins = () => {
 
   return (
     <Box>
-      <Row className='grid-tools'>
-        <Col>
+      <Grid container spacing={2} rowSpacing={1} columnSpacing={2}>
+        <Grid xs={4} item>
           <SearchBar />
-        </Col>
-        <Col className='actions'>
-          <Button onClick={() => refreshAvailablePlugins(true)}><RefreshIcon/></Button>
-        </Col>
-      </Row>
-      <BasePlugins plugins={displayedPlugins}
-                   loadingMessage="Loading all available plugins..."
-                   onRefreshCallback={onRefreshCallback}
-                   getRowActions={getRowActions}
-      />
+        </Grid>
+        <Grid xs={4} item />
+        <Grid xs={3} item >
+          <TypeFilter allPlugins={availablePluginsArray}
+                      displayedPlugins={displayedPlugins}
+                      setDisplayedPlugins={setDisplayedPlugins}
+                      className={'type-filter-box'}/>
+        </Grid>
+        <Grid xs={1} item >
+            <Button onClick={() => refreshAvailablePlugins(true)}><RefreshIcon/></Button>
+        </Grid>
+        <Grid xs={12} item>
+          <BasePlugins plugins={displayedPlugins}
+                       loadingMessage="Loading all available plugins..."
+                       onRefreshCallback={onRefreshCallback}
+                       getRowActions={getRowActions} />
+        </Grid>
+      </Grid>
     </Box>
   )
 };
