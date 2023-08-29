@@ -8,7 +8,6 @@ import {GridActionsCellItem} from '@mui/x-data-grid';
 import {nanoid} from 'nanoid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
-import DownloadingIcon from '@mui/icons-material/Downloading';
 import BasePlugins from './BasePlugins';
 import SearchBar from '../SearchBar';
 import {Box} from '@mui/material';
@@ -17,6 +16,7 @@ import { Button, Col, Row } from 'react-bootstrap';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {generatePluginId, installedPluginsToArray, pluginIndexToArray} from './utils';
 import '../../../styles/components/plugins-marketplace/AvailablePlugins.scss'
+import LoadingIcon from '../LoadingIconMUI';
 
 
 const AvailablePlugins = () => {
@@ -68,7 +68,7 @@ const AvailablePlugins = () => {
       return [
         <GridActionsCellItem
           key={nanoid()}
-          icon={<DownloadingIcon/>}
+          icon={<LoadingIcon/>}
           label="Downloading"
           className="textPrimary"
           color="inherit"
