@@ -1,4 +1,5 @@
 import {nanoid} from 'nanoid';
+import {generatePluginId} from './utils';
 
 const HEADER_SUFFIX = '--header';
 
@@ -13,7 +14,7 @@ const generateData = (num, isInstalled= false) => {
     const description = `${type} ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum`;
     const obj = {
       id: nanoid(),
-      name: `all plugin ${i}`,
+      name: `plugin_${i}`,
       version: versions[Math.floor(Math.random() * versions.length)],
       type: type,
       author: `Monkey Team - ${nanoid()}`,
@@ -75,12 +76,14 @@ export const upgradePlugin = (id, success = true) => {
   })
 }
 
+// Returns GridColDef[]
 export const getPluginsGridHeaders = (getRowActions) => [
   {headerName: 'Name', field: 'name', sortable: true, filterable: false, flex: 0.4, minWidth: 150, flexValue: 0.5},
   {headerName: 'Version', field: 'version', sortable: false, filterable: false, flex: 0.1, minWidth: 100, flexValue: 0.5},
   {headerName: 'Type', field: 'type', sortable: true, filterable: false, flex: 0.2, minWidth: 150, flexValue: 0.5},
   {headerName: 'Author', field: 'author', sortable: true, filterable: false, minWidth: 150, flex: 0.25, flexValue: 0.5},
   {headerName: 'Description', field: 'description', sortable: false, filterable: false, minWidth: 150, flex: 1},
+  // This column is a GridActionsColDef
   {
     headerName: '',
     field: 'row_actions',
@@ -90,22 +93,26 @@ export const getPluginsGridHeaders = (getRowActions) => [
     flexValue: 0.5,
     headerClassName: `row-actions${HEADER_SUFFIX}`,
     cellClassName: `row-actions`,
-    getActions: ({id}) => {
-      return getRowActions(id);
+    // params is a GridRowParams
+    getActions: (params) => {
+      return getRowActions(params.row);
     }
   }
 ]
 
 export const getPluginsGridRows = (pluginsList) => {
-  return pluginsList?.map(plugin => {
-    const {id, name, version, type, author, description} = {...plugin};
-     return {
-        id: id || nanoid(),
+  let plugins = [];
+  for (const plugin of pluginsList) {
+    const {name, version, type_, author, description} = {...plugin};
+    plugins.push({
+        id: generatePluginId(plugin),
         name: name,
         version: version,
-        type: type,
+        type: type_,
         author: author,
         description: description
-      }
-  });
+      });
+  }
+
+  return plugins;
 }

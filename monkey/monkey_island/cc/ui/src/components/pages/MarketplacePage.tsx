@@ -1,7 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Tabs from '@mui/material/Tabs';
 import {Tab, Box} from '@mui/material';
 import {PluginsContext} from '../ui-components/plugins-marketplace/PluginsContext';
+import AvailablePlugins from '../ui-components/plugins-marketplace/AvailablePlugins';
+import AuthComponent from '../AuthComponent';
 
 const TabPanel = (props) => {
   const {children, value, index, ...other} = props;
@@ -33,13 +35,38 @@ const MarketplacePage = () => {
   const [availablePlugins, setAvailablePlugins] = useState([]);
   const [installedPlugins, setInstalledPlugins] = useState([]);
   const [tabValue, setTabValue] = useState(0);
+  const authComponent = new AuthComponent({});
+
+  useEffect(() => {
+    refreshAvailablePlugins();
+  }, []);
+
+  useEffect(() => {
+    refreshInstalledPlugins();
+  }, []);
+
+  const refreshAvailablePlugins = (forceRefresh: boolean = false) => {
+    let url = '/api/agent-plugins/available/index';
+    if (forceRefresh) {
+      url += '?force_refresh=true';
+    }
+    authComponent.authFetch(url, {}, true).then(res => res.json()).then(plugins => {
+      setAvailablePlugins(plugins.plugins);
+    });
+  };
+
+  const refreshInstalledPlugins = () => {
+    authComponent.authFetch('/api/agent-plugins/installed/manifests', {}, true).then(res => res.json()).then(plugins => {
+      setInstalledPlugins(plugins);
+    });
+  };
 
   const handleChange = (_event, newValue) => {
     setTabValue(newValue);
   };
 
   return (
-    <PluginsContext.Provider value={{availablePlugins, installedPlugins, setAvailablePlugins, setInstalledPlugins}}>
+    <PluginsContext.Provider value={{availablePlugins, installedPlugins, refreshAvailablePlugins, refreshInstalledPlugins}}>
       <Box className="main col-xl-8 col-lg-8 col-md-9 col-sm-9 offset-xl-2 offset-lg-3 offset-md-3 offset-sm-3">
         <h1 className='page-title'>Plugins</h1>
         <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
@@ -53,7 +80,7 @@ const MarketplacePage = () => {
             <Tab label="Installed Plugins" {...a11yProps(1)}/>
           </Tabs>
         </Box>
-        <TabPanel value={tabValue} index={0}>AvailablePlugins</TabPanel>
+        <TabPanel value={tabValue} index={0}><AvailablePlugins /></TabPanel>
         <TabPanel value={tabValue} index={1}>Installed Plugins</TabPanel>
       </Box>
     </PluginsContext.Provider>
