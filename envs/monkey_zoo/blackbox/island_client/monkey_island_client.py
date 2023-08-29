@@ -40,46 +40,46 @@ class MonkeyIslandClient(object):
         installed_plugins_manifests_url = "api/agent-plugins/installed/manifests"
         install_plugin_url = "api/install-agent-plugin"
 
-        plugin_repository_index = self.requests.get(available_plugins_index_url)
-        available_plugins_index = plugin_repository_index.plugins
+        response = self.requests.get(available_plugins_index_url)
+        plugin_repository_index = response.json()
+        available_plugins_index = plugin_repository_index["plugins"]
 
-        installed_plugins_manifests = self.requests.get(installed_plugins_manifests_url)
+        response = self.requests.get(installed_plugins_manifests_url)
+        installed_plugins_manifests = response.json()
 
         # all of the responses from the API endpoints are serialized
         # so we don't need to worry about type conversion
         for plugin_type in available_plugins_index:
             for plugin_name in available_plugins_index[plugin_type]:
-                for plugin_versions in available_plugins_index[plugin_type][plugin_name]:
-                    latest_version = plugin_versions[-1].version
+                plugin_versions = available_plugins_index[plugin_type][plugin_name]
+                latest_version = plugin_versions[-1]["version"]
 
-                    # if a plugin of the latest version is already installed, skip
-                    installed_plugin = installed_plugins_manifests.get(plugin_type, {}).get(
-                        plugin_name, {}
+                # if a plugin of the latest version is already installed, skip
+                installed_plugin = installed_plugins_manifests.get(plugin_type, {}).get(
+                    plugin_name, {}
+                )
+                if installed_plugin and installed_plugin.get("version", "") == latest_version:
+                    logger.info(
+                        f"{plugin_name} {plugin_type} v{latest_version} "
+                        "already installed to Island"
                     )
-                    if installed_plugin and installed_plugin.get("version", "") == latest_version:
-                        logger.info(
-                            f"{plugin_name} {plugin_type} v{latest_version} "
-                            "already installed to Island"
-                        )
-                        continue
+                    continue
 
-                    install_plugin_request = {
-                        "plugin_type": plugin_type,
-                        "name": plugin_name,
-                        "version": latest_version,
-                    }
+                install_plugin_request = {
+                    "plugin_type": plugin_type,
+                    "name": plugin_name,
+                    "version": latest_version,
+                }
 
-                    if self.requests.put_json(
-                        url=install_plugin_url, json=install_plugin_request
-                    ).ok:
-                        logger.info(
-                            f"Installed {plugin_name} {plugin_type} v{latest_version} to Island"
-                        )
-                    else:
-                        logger.error(
-                            f"Could not install {plugin_name} {plugin_type} "
-                            f"v{latest_version} to Island"
-                        )
+                if self.requests.put_json(url=install_plugin_url, json=install_plugin_request).ok:
+                    logger.info(
+                        f"Installed {plugin_name} {plugin_type} v{latest_version} to Island"
+                    )
+                else:
+                    logger.error(
+                        f"Could not install {plugin_name} {plugin_type} "
+                        f"v{latest_version} to Island"
+                    )
 
     @avoid_race_condition
     def set_masque(self, masque):
