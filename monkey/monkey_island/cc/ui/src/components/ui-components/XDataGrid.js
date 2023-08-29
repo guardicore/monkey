@@ -81,10 +81,12 @@ const prepareColsCustomTooltip = (columns) => {
      if(col[IS_TEXTUAL]) {
        // eslint-disable-next-line react/display-name
        col[RENDER_CELL] = (params) => (
-       <MonkeyTooltip isOverflow={true}
-                      title={params.value.toString()}>
-          {params.value.toString()}
+       params?.value ? (
+         <MonkeyTooltip isOverflow={true}
+                      title={params?.value?.toString()}>
+          {params?.value?.toString()}
         </MonkeyTooltip>
+       ) : undefined
       )
      }
    });
