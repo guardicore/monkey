@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {Box} from '@mui/material';
 import XDataGrid from '../XDataGrid';
-import {getPluginsGridHeaders, getPluginsGridRows} from './mocksHelper';
+import {getPluginsGridHeaders, getPluginsGridRows} from './utils';
 import styles from '../../../styles/components/plugins-marketplace/BasePlugins.module.scss';
 
 const DEFAULT_LOADING_MESSAGE = 'Loading plugins...';

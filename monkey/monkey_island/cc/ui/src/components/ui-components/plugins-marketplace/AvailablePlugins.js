@@ -3,7 +3,7 @@ import {
   shallowAdditionOfUniqueValueToArray,
   shallowRemovalOfUniqueValueFromArray
 } from '../../../utils/objectUtils';
-import {PluginsContext} from './PluginsContext';
+import {PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {GridActionsCellItem} from '@mui/x-data-grid';
 import {nanoid} from 'nanoid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -22,14 +22,11 @@ import TypeFilter from './TypeFilter';
 
 
 const AvailablePlugins = () => {
-  const {availablePlugins} = useContext(PluginsContext);
-  const {installedPlugins} = useContext(PluginsContext);
-  const [availablePluginsArray, setAvailablePluginsArray] = useState([]);
-  const [installedPluginsArray, setInstalledPluginsArray] = useState([]);
-  const {refreshAvailablePlugins} = useContext(PluginsContext);
-  const {refreshInstalledPlugins} = useContext(PluginsContext);
+  const {availablePlugins, installedPlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
 
+  const [availablePluginsArray, setAvailablePluginsArray] = useState([]);
+  const [installedPluginsArray, setInstalledPluginsArray] = useState([]);
   const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
   const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
   const authComponent = new AuthComponent({});

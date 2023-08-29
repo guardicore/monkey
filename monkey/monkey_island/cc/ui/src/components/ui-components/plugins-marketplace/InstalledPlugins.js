@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {PluginsContext} from './PluginsContext';
+import {PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {shallowAdditionOfUniqueValueToArray, shallowRemovalOfUniqueValueFromArray} from '../../../utils/objectUtils';
 import {installPlugin, uninstallPlugin} from './mocksHelper';
 import {GridActionsCellItem} from '@mui/x-data-grid';

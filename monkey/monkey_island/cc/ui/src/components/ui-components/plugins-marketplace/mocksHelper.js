@@ -1,7 +1,4 @@
 import {nanoid} from 'nanoid';
-import {generatePluginId} from './utils';
-
-const HEADER_SUFFIX = '--header';
 
 const versions = ['1.0.0', '1.1.1', '2.1.3'];
 const types = ['exploiter', 'credentials'];
@@ -76,50 +73,4 @@ export const upgradePlugin = (id, success = true) => {
   })
 }
 
-export const getPluginsGridHeaders = (getRowActions) => [
-  {headerName: 'Name', field: 'name', sortable: true, filterable: false, flex: 0.4, minWidth: 150, isTextual: true},
-  {headerName: 'Version', field: 'version', sortable: false, filterable: false, flex: 0.1, minWidth: 100, isTextual: true},
-  {headerName: 'Type', field: 'type', sortable: true, filterable: false, flex: 0.2, minWidth: 150, isTextual: true},
-  {headerName: 'Author', field: 'author', sortable: true, filterable: false, minWidth: 150, flex: 0.25, isTextual: true},
-  {headerName: 'Description', field: 'description', sortable: false, filterable: false, minWidth: 150, flex: 1, isTextual: true},
-  {
-    headerName: '',
-    field: 'row_actions',
-    type: 'actions',
-    minWidth: 100,
-    flex: 0.1,
-    flexValue: 0.5,
-    headerClassName: `row-actions${HEADER_SUFFIX}`,
-    cellClassName: `row-actions`,
-    getActions: (params) => {
-      return getRowActions(params.row);
-    }
-  }
-]
 
-export const getPluginsGridRows = (pluginsList) => {
-  let plugins = [];
-  for (const plugin of pluginsList) {
-    const {name, version, type_, author, description} = {...plugin};
-    plugins.push({
-        id: generatePluginId(plugin),
-        name: name,
-        version: version,
-        type: type_,
-        author: author,
-        description: description
-      });
-  }
-
-  return plugins;
-}
-
-export const extractPluginsField = (plugins, fieldToExtract) => {
-  const values = [];
-  plugins?.forEach((plugin) => {
-    if (!values.includes(plugin?.[fieldToExtract]?.trim())) {
-      values.push(plugin[fieldToExtract].trim());
-    }
-  })
-  return values.sort();
-}
