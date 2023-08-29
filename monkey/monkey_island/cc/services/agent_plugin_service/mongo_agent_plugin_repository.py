@@ -143,6 +143,9 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
 
         try:
             plugin_dict = self._get_agent_plugin(plugin_type, plugin_name)
+            # The behavior of this may not be predictable based on the interface definition. See the
+            # note in IAgentPluginRepository.store_agent_plugin for more details and the proposed
+            # solution.
             plugin_dict.update(new_plugin_dict)
         except UnknownRecordError:
             plugin_dict = new_plugin_dict
