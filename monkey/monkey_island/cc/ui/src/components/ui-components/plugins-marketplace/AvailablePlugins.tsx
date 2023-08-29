@@ -23,7 +23,6 @@ const AvailablePlugins = () => {
   const {availablePlugins} = useContext(PluginsContext);
   const {installedPlugins} = useContext(PluginsContext);
   const {refreshAvailablePlugins} = useContext(PluginsContext);
-  const {refreshInstalledPlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
 
   const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
@@ -42,8 +41,6 @@ const AvailablePlugins = () => {
   }
 
   const onInstallClick = (pluginId, pluginName, pluginType, pluginVersion) => {
-    console.log('installing plugin: ', pluginName)
-
     setPluginsInInstallationProcess((prevState) => {
       return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
     });
@@ -52,7 +49,6 @@ const AvailablePlugins = () => {
       setSuccessfullyInstalledPluginsIds((prevState) => {
         return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
       });
-      refreshInstalledPlugins();
     }).catch(() => {
       console.log('error installing plugin');
     }).finally(() => {
