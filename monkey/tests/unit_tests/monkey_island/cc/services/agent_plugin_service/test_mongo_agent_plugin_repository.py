@@ -245,10 +245,9 @@ def test_store_agent_plugin__updates_plugin(
 ):
     agent_plugin_repository.store_agent_plugin(OperatingSystem.LINUX, FAKE_AGENT_PLUGIN_1)
     agent_plugin_repository.store_agent_plugin(OperatingSystem.WINDOWS, FAKE_AGENT_PLUGIN_1)
+    plugin_dict = mongo_client.monkey_island.agent_plugins.find_one({})
 
     assert mongo_client.monkey_island.agent_plugins.count_documents({}) == 1
-    plugin_dict = mongo_client.monkey_island.agent_plugins.find_one({})
-    print(plugin_dict)
     assert "linux" in plugin_dict["binaries"].keys()
     assert "windows" in plugin_dict["binaries"].keys()
 
