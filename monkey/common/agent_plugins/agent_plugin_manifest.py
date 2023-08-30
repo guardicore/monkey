@@ -1,5 +1,5 @@
 import re
-from typing import Callable, Mapping, Optional, Tuple, Type
+from typing import Callable, Mapping, Optional, Self, Tuple, Type
 
 from pydantic import ConstrainedStr, HttpUrl
 from semver import VersionInfo
@@ -24,7 +24,7 @@ class PluginVersion(VersionInfo):
     @classmethod
     def __get_validators__(cls):
         """Return a list of validator methods for pydantic models."""
-        yield cls.parse
+        yield cls.from_str
 
     @classmethod
     def __modify_schema__(cls, field_schema):
@@ -36,6 +36,11 @@ class PluginVersion(VersionInfo):
                 "21.3.15-beta+12345",
             ]
         )
+
+    @classmethod
+    def from_str(cls, version: str) -> Self:
+        """Convert a string to a PluginVersion."""
+        return cls.parse(version)
 
 
 class AgentPluginManifest(InfectionMonkeyBaseModel):

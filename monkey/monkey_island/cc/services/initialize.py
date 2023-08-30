@@ -46,7 +46,7 @@ from monkey_island.cc.repositories import (
     NetworkModelUpdateFacade,
     initialize_machine_repository,
 )
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, PLUGIN_DIR_NAME
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import (
     AgentSignalsService,
@@ -132,13 +132,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(
         IFileRepository,
         _decorate_file_repository(LocalStorageFileRepository(data_dir / "runtime_data")),
-    )
-    container.register_convention(
-        IFileRepository,
-        "plugin_file_repository",
-        FileRepositoryLockingDecorator(
-            FileRepositoryLoggingDecorator(LocalStorageFileRepository(data_dir / PLUGIN_DIR_NAME))
-        ),
     )
 
     container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))

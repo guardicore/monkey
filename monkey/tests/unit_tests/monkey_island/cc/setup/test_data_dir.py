@@ -1,10 +1,7 @@
 from pathlib import Path
 
 import pytest
-from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
 
-from common.utils.environment import is_windows_os
-from monkey_island.cc.server_utils.consts import PLUGIN_DIR_NAME
 from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory, setup_data_dir
 from monkey_island.cc.setup.env_utils import DOCKER_ENV_VAR
 from monkey_island.cc.setup.version_file_setup import _version_filename
@@ -132,70 +129,3 @@ def test_old_data_dir_docker_no_version(monkeypatch, temp_data_dir_path):
 
     with pytest.raises(IncompatibleDataDirectory):
         setup_data_dir(temp_data_dir_path)
-
-
-def test_plugin_dir_created(temp_data_dir_path):
-    setup_data_dir(temp_data_dir_path)
-    assert (temp_data_dir_path / PLUGIN_DIR_NAME).is_dir()
-
-
-def test_plugin_dir_permissions(temp_data_dir_path):
-    setup_data_dir(temp_data_dir_path)
-    if is_windows_os():
-        assert_windows_permissions(temp_data_dir_path / PLUGIN_DIR_NAME)
-    else:
-        assert_linux_permissions(temp_data_dir_path / PLUGIN_DIR_NAME)
-
-
-def test_plugins_copied_to_plugin_dir(monkeypatch, tmp_path, temp_data_dir_path):
-    plugin_contents = "test plugin"
-    plugin_src_dir = tmp_path / PLUGIN_DIR_NAME
-    plugin_src_dir.mkdir()
-    test_plugin = plugin_src_dir / "test_plugin.tar"
-    test_plugin.write_text(plugin_contents)
-    monkeypatch.setattr("monkey_island.cc.setup.data_dir.MONKEY_ISLAND_ABS_PATH", tmp_path)
-
-    setup_data_dir(temp_data_dir_path)
-    assert (temp_data_dir_path / PLUGIN_DIR_NAME / test_plugin.name).read_text() == plugin_contents
-
-
-def test_plugins_in_plugin_dir_not_overwitten(
-    monkeypatch, tmp_path, temp_data_dir_path, temp_version_file_path
-):
-    temp_data_dir_path.mkdir()
-    temp_version_file_path.write_text(current_version)
-
-    test_plugin_name = "test_plugin.tar"
-    original_plugin_contents = "original plugin"
-    plugin_dir = temp_data_dir_path / PLUGIN_DIR_NAME
-    plugin_dir.mkdir()
-    plugin_dir_plugin = plugin_dir / test_plugin_name
-    plugin_dir_plugin.write_text(original_plugin_contents)
-
-    plugin_src_dir = tmp_path / PLUGIN_DIR_NAME
-    plugin_src_dir.mkdir()
-    new_plugin = plugin_src_dir / test_plugin_name
-    new_plugin.write_text("new plugin")
-    monkeypatch.setattr("monkey_island.cc.setup.data_dir.MONKEY_ISLAND_ABS_PATH", tmp_path)
-
-    setup_data_dir(temp_data_dir_path)
-
-    assert plugin_dir_plugin.read_text() == original_plugin_contents
-
-
-def test_setup_plugin_dir_existing_dir_permissions(temp_data_dir_path):
-    if is_windows_os():
-        assert_permissions = assert_windows_permissions
-    else:
-        assert_permissions = assert_linux_permissions
-
-    plugin_dir_path = temp_data_dir_path / PLUGIN_DIR_NAME
-    temp_data_dir_path.mkdir()
-    plugin_dir_path.mkdir()
-
-    assert plugin_dir_path.is_dir()
-    with pytest.raises(AssertionError):
-        assert_permissions(plugin_dir_path)
-
-    setup_data_dir(plugin_dir_path)
-    assert_permissions(plugin_dir_path)

@@ -41,13 +41,12 @@ class AgentConfigurationSchemaCompiler:
         schema = self._add_hard_coded_plugins(schema)
 
         config_schemas = deepcopy(self._agent_plugin_service.get_all_plugin_configuration_schemas())
+        all_plugin_manifests = self._agent_plugin_service.get_all_plugin_manifests()
 
         for plugin_type in config_schemas.keys():
             for plugin_name in config_schemas[plugin_type].keys():
                 config_schema = config_schemas[plugin_type][plugin_name]
-                plugin_manifest = self._agent_plugin_service.get_all_plugin_manifests()[
-                    plugin_type
-                ][plugin_name]
+                plugin_manifest = all_plugin_manifests[plugin_type][plugin_name]
                 config_schema.update(plugin_manifest.dict(simplify=True))
                 schema = self._add_plugin_to_schema(schema, plugin_type, plugin_name, config_schema)
         return schema

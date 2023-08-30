@@ -66,7 +66,7 @@ class InstallAgentPlugin(AbstractResource):
             raise ValueError(message)
 
         try:
-            plugin_version = PluginVersion(**plugin_version_arg)
+            plugin_version = PluginVersion.from_str(plugin_version_arg)
         except ValueError as err:
             message = f"Invalid plugin version argument: {plugin_version_arg}: {err}."
             raise ValueError(message)

@@ -17,9 +17,9 @@ AGENT_PLUGIN = b"SomePlugin"
 PLUGIN_TYPE = "Exploiter"
 PLUGIN_NAME = "RDP"
 VERSION_DICT = {"major": "1", "minor": "0", "patch": "1"}
-VERSION = '{"major": "1", "minor": "0", "patch": "1"}'
+VERSION = "1.0.1"
 REQUEST_JSON_DATA = (
-    f'{{"plugin_type": "{PLUGIN_TYPE}", "name": "{PLUGIN_NAME}", "version": {VERSION}}}'
+    f'{{"plugin_type": "{PLUGIN_TYPE}", "name": "{PLUGIN_NAME}", "version": "{VERSION}"}}'
 )
 
 
@@ -64,7 +64,7 @@ def test_install_plugin__json(agent_plugin_service, flask_client):
     agent_plugin_service.install_plugin_from_repository.assert_called_with(
         plugin_type=AgentPluginType(PLUGIN_TYPE),
         plugin_name=PLUGIN_NAME,
-        plugin_version=PluginVersion(**VERSION_DICT),
+        plugin_version=PluginVersion.from_str(VERSION),
     )
 
 
