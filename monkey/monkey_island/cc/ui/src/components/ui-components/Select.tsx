@@ -15,12 +15,13 @@ type SelectProps = {
 }
 
 const SelectComponent = (props: SelectProps) => {
+  const {placeholder, options, selectedOption, onChange} = {...props};
   let selectOptions = [];
-  for (let i = 0; i < props.options.length; i++) {
+  for (let i = 0; i < options.length; i++) {
     let menuItem = (
-      <MenuItem value={props.options[i].value}
-                key={props.options[i].value}>
-        {props.options[i].label}
+      <MenuItem value={options[i].value}
+                key={options[i].value}>
+        {options[i].label}
       </MenuItem>
     )
     selectOptions.push(menuItem)
@@ -28,10 +29,10 @@ const SelectComponent = (props: SelectProps) => {
 
   return (
     <FormControl fullWidth>
-      <InputLabel id="demo-simple-select-label">{props.placeholder}</InputLabel>
+      <InputLabel id="demo-simple-select-label">{placeholder}</InputLabel>
       <Select
-        defaultValue={props.selectedOption.value}
-        onChange={props.onChange}
+        defaultValue={selectedOption.value}
+        onChange={onChange}
       >
         {selectOptions}
       </Select>
