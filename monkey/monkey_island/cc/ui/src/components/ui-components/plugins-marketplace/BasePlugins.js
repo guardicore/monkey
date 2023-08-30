@@ -37,14 +37,15 @@ const getPluginsGridHeaders = (getRowActions) => [
 
 export const getPluginsGridRows = (pluginsList) => {
   const plugins = pluginsList?.map((pluginObject) => {
-    const {name, version, type_, plugin_type, author, description} = {...pluginObject};
+    const {name, version, type_, plugin_type, author, description, update_version} = {...pluginObject};
     return {
       id: generatePluginId(pluginObject),
       name: name,
       version: version,
       type: type_ || plugin_type,
       author: author,
-      description: description
+      description: description,
+      update_version: update_version || ''
     }
   })
 

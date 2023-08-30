@@ -61,7 +61,7 @@ export const PluginState = () => {
   };
 
   const refreshNuberOfUpgradablePlugins = () => {
-    const numUpgradablePlugins = _.sumBy(installedPlugins, (plugin) => plugin.update_available);
+    const numUpgradablePlugins = _.sumBy(installedPlugins, (plugin) => plugin.update_version !== '' ? 1 : 0);
     setNumberOfPluginsThatRequiresUpdate(numUpgradablePlugins);
   }
 
@@ -86,11 +86,18 @@ export const PluginState = () => {
     for (const plugin_type in allInstalledPlugins) {
       for (const plugin_name in allInstalledPlugins[plugin_type]) {
         const installed_version = allInstalledPlugins[plugin_type][plugin_name]['version'];
-        const update_available = pluginIsUpgradable(plugin_type, plugin_name, installed_version);
-        plugins.push({...allInstalledPlugins[plugin_type][plugin_name], update_available});
+        const update_version = getUpdatedVersion(plugin_type, plugin_name, installed_version);
+        plugins.push({...allInstalledPlugins[plugin_type][plugin_name], update_version});
       }
     }
     return plugins;
+  }
+
+  const getUpdatedVersion = (pluginType, name, version) => {
+    if (pluginIsUpgradable(pluginType, name, version)) {
+      return allPlugins[pluginType][name].slice(-1)[0]['version'];
+    }
+    return '';
   }
 
   const pluginIsUpgradable = (pluginType, name, version) => {
