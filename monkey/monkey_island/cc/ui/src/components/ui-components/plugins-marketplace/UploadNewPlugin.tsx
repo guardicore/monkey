@@ -53,11 +53,7 @@ const UploadNewPlugin = () => {
         });
       });
       setErrors(Array.from(uniqueErrors));
-      setShowErrorAlert(true);
-      setTimeout(() => {
-        setShowErrorAlert(false);
-        setErrors([]);
-      }, 10000);
+      showErrorAlertDialog();
     }
   }, []);
 
@@ -75,11 +71,19 @@ const UploadNewPlugin = () => {
     onDrop
   });
 
+  const showErrorAlertDialog = () => {
+    setShowErrorAlert(true);
+    setTimeout(() => {
+      setShowErrorAlert(false);
+      setErrors([]);
+    }, 10000);
+  }
+
   const uploadPlugin = () => {
     setLoading(true);
     IslandHttpClient.put(APIEndpoint.installAgentPlugin, plugin, false).then(res => {
+      setLoading(false);
       if (res.status === 200) {
-        setLoading(false);
         setShowSuccessAlert(true);
         setTimeout(() => {
           setShowSuccessAlert(false);
@@ -91,12 +95,7 @@ const UploadNewPlugin = () => {
         setErrors(prevErrs => [...prevErrs, error]);
         setPlugin(null);
         setPluginName('');
-        setLoading(false);
-        setShowErrorAlert(true);
-        setTimeout(() => {
-          setShowErrorAlert(false);
-          setErrors([]);
-        }, 10000);
+        showErrorAlertDialog();
       }
     });
   };
@@ -121,12 +120,12 @@ const UploadNewPlugin = () => {
         <input {...getInputProps()} />
         {plugin === null && !loading && (
           <div>
-            <Typography>Drag 'n' drop Plugin Tar archive here</Typography>
+            <Typography>Drag 'n' drop Plugin Tar here</Typography>
             <Typography textAlign="center">or click to select a file</Typography>
           </div>
         )}
         {plugin !== null && !loading && (
-          <Typography>'{pluginName}' archive is ready to be uploaded.</Typography>
+          <Typography>'{pluginName}' is ready to be uploaded.</Typography>
         )}
         {loading && (
           <div>
@@ -142,7 +141,7 @@ const UploadNewPlugin = () => {
       )}
       {showErrorAlert && (
         <Alert severity="error" onClose={() => setShowErrorAlert(false)}>
-          <AlertTitle>Error uploading plugin archive</AlertTitle>
+          <AlertTitle>Error uploading Plugin Tar</AlertTitle>
           <ul className="circle-list">
             {errors.map((error, index) => (
               <Typography key={index} component="li">
