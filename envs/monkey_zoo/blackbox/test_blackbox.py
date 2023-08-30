@@ -118,9 +118,12 @@ def island_client(monkey_island_requests):
 
 
 @pytest.fixture(autouse=True, scope="session")
-def register(island_client):
+def setup_island(island_client):
     logging.info("Registering a new user")
     island_client.register()
+
+    logging.info("Installing all available plugins")
+    island_client.install_agent_plugins()
 
 
 @pytest.mark.parametrize(
@@ -565,8 +568,6 @@ class TestMonkeyBlackbox:
         timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS,
         masque: Optional[bytes] = None,
     ):
-        island_client.install_agent_plugins()
-
         analyzer = CommunicationAnalyzer(
             island_client,
             get_target_ips(test_configuration),
@@ -602,8 +603,6 @@ class TestMonkeyBlackbox:
     def test_depth_2_a(self, island_client):
         test_name = "Depth2A test suite"
 
-        island_client.install_agent_plugins()
-
         communication_analyzer = CommunicationAnalyzer(
             island_client,
             get_target_ips(depth_2_a_test_configuration),
@@ -638,8 +637,6 @@ class TestMonkeyBlackbox:
         test_name = "Depth1A test suite"
         masque = b"m0nk3y"
 
-        island_client.install_agent_plugins()
-
         communication_analyzer = CommunicationAnalyzer(
             island_client,
             get_target_ips(depth_1_a_test_configuration),
@@ -666,8 +663,6 @@ class TestMonkeyBlackbox:
 
     def test_depth_3_a(self, island_client):
         test_name = "Depth3A test suite"
-
-        island_client.install_agent_plugins()
 
         communication_analyzer = CommunicationAnalyzer(
             island_client,
@@ -707,8 +702,6 @@ class TestMonkeyBlackbox:
             "aad3b435b51404eeaad3b435b51404ee",
             "2864b62ea4496934a5d6e86f50b834a5",
         ]
-
-        island_client.install_agent_plugins()
 
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
