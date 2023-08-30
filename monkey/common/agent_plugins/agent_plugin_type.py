@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class AgentPluginType(Enum):
+class AgentPluginType(StrEnum):
     CREDENTIALS_COLLECTOR = "Credentials_Collector"
     EXPLOITER = "Exploiter"
     FINGERPRINTER = "Fingerprinter"
