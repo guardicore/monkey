@@ -63,3 +63,7 @@ class AgentPluginRepositoryIndex(MutableInfectionMonkeyBaseModel):
             return VersionInfo.parse(value)
 
         raise TypeError(f'Expected "{DEVELOPMENT}" or a valid semantic version, got {type(value)}')
+
+    @validator("plugins")
+    def _convert_str_type_to_enum(cls, plugins):
+        return {AgentPluginType(t): plugins for t, plugins in plugins.items()}
