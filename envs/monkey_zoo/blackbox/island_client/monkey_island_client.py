@@ -6,6 +6,7 @@ from threading import Thread
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 from common import OperatingSystem
+from common.agent_plugins import AgentPluginRepositoryIndex, AgentPluginType
 from common.credentials import Credentials
 from common.types import AgentID, MachineID
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
@@ -20,6 +21,7 @@ GET_MACHINES_ENDPOINT = "api/machines"
 GET_AGENT_EVENTS_ENDPOINT = "api/agent-events"
 LOGOUT_ENDPOINT = "api/logout"
 GET_AGENT_OTP_ENDPOINT = "/api/agent-otp"
+INSTALL_PLUGIN_URL = "api/install-agent-plugin"
 
 logger = logging.getLogger(__name__)
 
@@ -39,66 +41,77 @@ class MonkeyIslandClient(object):
     def install_agent_plugins(self):
         available_plugins_index_url = "api/agent-plugins/available/index"
         installed_plugins_manifests_url = "api/agent-plugins/installed/manifests"
-        install_plugin_url = "api/install-agent-plugin"
 
         response = self.requests.get(available_plugins_index_url)
-        plugin_repository_index = response.json()
-        available_plugins_index = plugin_repository_index["plugins"]
+        plugin_repository_index = AgentPluginRepositoryIndex(**response.json())
 
         response = self.requests.get(installed_plugins_manifests_url)
-        installed_plugins_manifests = response.json()
+        installed_plugins = response.json()
 
         install_threads: List[Thread] = []
 
         # all of the responses from the API endpoints are serialized
         # so we don't need to worry about type conversion
-        for plugin_type in available_plugins_index:
-            for plugin_name in available_plugins_index[plugin_type]:
-                plugin_versions = available_plugins_index[plugin_type][plugin_name]
-                latest_version = plugin_versions[-1]["version"]
-
-                # if a plugin of the latest version is already installed, skip
-                installed_plugin = installed_plugins_manifests.get(plugin_type, {}).get(
-                    plugin_name, {}
+        for plugin_type in plugin_repository_index.plugins:
+            install_threads.extend(
+                self._install_all_agent_plugins_of_type(
+                    plugin_type, plugin_repository_index, installed_plugins
                 )
-                if installed_plugin and installed_plugin.get("version", "") == latest_version:
-                    logger.info(
-                        f"{plugin_name} {plugin_type} v{latest_version} "
-                        "already installed to Island"
-                    )
-                    continue
-
-                install_plugin_request = {
-                    "plugin_type": plugin_type,
-                    "name": plugin_name,
-                    "version": latest_version,
-                }
-                t = Thread(
-                    target=self._install_single_agent_plugin,
-                    args=(
-                        plugin_name,
-                        plugin_type,
-                        latest_version,
-                        install_plugin_url,
-                        install_plugin_request,
-                    ),
-                    daemon=True,
-                )
-                t.start()
-                install_threads.append(t)
+            )
 
         for t in install_threads:
             t.join()
 
+    def _install_all_agent_plugins_of_type(
+        self,
+        plugin_type: AgentPluginType,
+        plugin_repository_index: AgentPluginRepositoryIndex,
+        installed_plugins: Dict[str, Any],
+    ) -> Sequence[Thread]:
+        logger.info(f"Installing {plugin_type} plugins")
+        install_threads: List[Thread] = []
+        for plugin_name in plugin_repository_index.plugins[plugin_type]:
+            plugin_versions = plugin_repository_index.plugins[plugin_type][plugin_name]
+            latest_version = str(plugin_versions[-1].version)
+
+            if self._latest_version_already_installed(
+                installed_plugins, plugin_type, plugin_name, latest_version
+            ):
+                logger.info(f"{plugin_type}-{plugin_name}-v{latest_version} is already installed")
+                continue
+
+            t = Thread(
+                target=self._install_single_agent_plugin,
+                args=(plugin_name, plugin_type, latest_version),
+                daemon=True,
+            )
+            t.start()
+            install_threads.append(t)
+
+        return install_threads
+
+    def _latest_version_already_installed(
+        self,
+        installed_plugins: Dict[str, Any],
+        plugin_type: AgentPluginType,
+        plugin_name: str,
+        latest_version: str,
+    ) -> bool:
+        installed_plugin = installed_plugins.get(plugin_type, {}).get(plugin_name, {})
+        return installed_plugin and installed_plugin.get("version", "") == latest_version
+
     def _install_single_agent_plugin(
         self,
         plugin_name: str,
-        plugin_type: str,
+        plugin_type: AgentPluginType,
         latest_version: str,
-        url: str,
-        request: Dict[str, Any],
     ):
-        if self.requests.put_json(url=url, json=request).ok:
+        install_plugin_request = {
+            "plugin_type": plugin_type,
+            "name": plugin_name,
+            "version": latest_version,
+        }
+        if self.requests.put_json(url=INSTALL_PLUGIN_URL, json=install_plugin_request).ok:
             logger.info(f"Installed {plugin_name} {plugin_type} v{latest_version} to Island")
         else:
             logger.error(
