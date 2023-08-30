@@ -7,6 +7,7 @@ import {
   SelectChangeEvent,
   SelectProps as MUISelectProps
 } from '@mui/material';
+import MonkeyTooltip from './MonkeyTooltip';
 
 export enum SelectVariant {
   Standard = 'standard',
@@ -48,9 +49,11 @@ const SelectComponent = ({
         {
           options.map((option) => {
             return (
-              <MenuItem value={option.value} key={option.value}>
-                {option.label}
-              </MenuItem>
+                <MenuItem value={option.value} key={option.value}>
+                  <MonkeyTooltip isOverflow={true} title={option.label}>
+                      {option.label}
+                  </MonkeyTooltip>
+                </MenuItem>
             )
           })
         }
