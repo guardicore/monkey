@@ -99,6 +99,7 @@
     "react-copy-to-clipboard": "^5.1.0",
     "react-desktop-notification": "^1.0.9",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-json-tree": "^0.18.0",
     "react-markdown": "^8.0.7",
     "react-router-dom": "^6.15.0",

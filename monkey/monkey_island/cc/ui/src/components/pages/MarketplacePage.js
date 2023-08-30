@@ -4,6 +4,7 @@ import {Tab, Box, Badge} from '@mui/material';
 import {PluginsContext} from '../contexts/plugins/PluginsContext';
 import AvailablePlugins from '../ui-components/plugins-marketplace/AvailablePlugins';
 import classes from '../../styles/pages/Marketplace.module.scss';
+import UploadNewPlugin from '../ui-components/plugins-marketplace/UploadNewPlugin';
 
 const TabPanel = (props) => {
   const {children, value, index, ...other} = props;
@@ -59,10 +60,12 @@ const MarketplacePage = () => {
                 aria-label="full width tabs">
             <Tab label="Available Plugins" {...a11yProps(0)}/>
             <Tab label={installedPluginsLabel} {...a11yProps(1)}/>
+            <Tab label="Upload New Plugin" {...a11yProps(2)}/>
           </Tabs>
         </Box>
         <TabPanel value={tabValue} index={0}><AvailablePlugins /></TabPanel>
         <TabPanel value={tabValue} index={1}>Installed Plugins</TabPanel>
+        <TabPanel value={tabValue} index={2}><UploadNewPlugin/></TabPanel>
       </Box>
   )
 };
