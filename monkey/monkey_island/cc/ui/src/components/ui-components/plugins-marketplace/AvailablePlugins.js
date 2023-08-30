@@ -14,15 +14,14 @@ import SearchBar from '../SearchBar';
 import AuthComponent from '../../AuthComponent';
 import {Button} from 'react-bootstrap';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import _ from 'lodash';
 import '../../../styles/components/plugins-marketplace/AvailablePlugins.scss'
 import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
 
-
 const AvailablePlugins = () => {
   const {availablePlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
+  const [filters, setFilters] = useState({});
 
   const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
   const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
@@ -30,14 +29,15 @@ const AvailablePlugins = () => {
 
   useEffect(() => {
     setDisplayedPlugins(availablePlugins)
-  }, [availablePlugins]);
+  }, []);
 
   useEffect(() => {
     let shownPlugins = availablePlugins;
-    if(!_.isEqual(displayedPlugins, shownPlugins)){
-      setDisplayedPlugins(shownPlugins);
+    for (const filter of Object.values(filters)) {
+      shownPlugins = shownPlugins.filter(filter);
     }
-  }, [displayedPlugins]);
+    setDisplayedPlugins(shownPlugins);
+  }, [availablePlugins, filters]);
 
   const onRefreshCallback = () => {
     setSuccessfullyInstalledPluginsIds([]);
@@ -112,8 +112,8 @@ const AvailablePlugins = () => {
         <Grid xs={4} item />
         <Grid xs={3} item >
           <TypeFilter allPlugins={availablePlugins}
-                      displayedPlugins={displayedPlugins}
-                      setDisplayedPlugins={setDisplayedPlugins}
+                      filters={filters}
+                      setFilters={setFilters}
                       className={'type-filter-box'}/>
         </Grid>
         <Grid xs={1} item >
