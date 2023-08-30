@@ -2,7 +2,8 @@ import json
 import logging
 import time
 from http import HTTPStatus
-from typing import List, Mapping, Optional, Sequence
+from threading import Thread
+from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 from common import OperatingSystem
 from common.credentials import Credentials
@@ -47,6 +48,8 @@ class MonkeyIslandClient(object):
         response = self.requests.get(installed_plugins_manifests_url)
         installed_plugins_manifests = response.json()
 
+        install_threads: List[Thread] = []
+
         # all of the responses from the API endpoints are serialized
         # so we don't need to worry about type conversion
         for plugin_type in available_plugins_index:
@@ -70,16 +73,37 @@ class MonkeyIslandClient(object):
                     "name": plugin_name,
                     "version": latest_version,
                 }
+                t = Thread(
+                    target=self._install_single_agent_plugin,
+                    args=(
+                        plugin_name,
+                        plugin_type,
+                        latest_version,
+                        install_plugin_url,
+                        install_plugin_request,
+                    ),
+                    daemon=True,
+                )
+                t.start()
+                install_threads.append(t)
 
-                if self.requests.put_json(url=install_plugin_url, json=install_plugin_request).ok:
-                    logger.info(
-                        f"Installed {plugin_name} {plugin_type} v{latest_version} to Island"
-                    )
-                else:
-                    logger.error(
-                        f"Could not install {plugin_name} {plugin_type} "
-                        f"v{latest_version} to Island"
-                    )
+        for t in install_threads:
+            t.join()
+
+    def _install_single_agent_plugin(
+        self,
+        plugin_name: str,
+        plugin_type: str,
+        latest_version: str,
+        url: str,
+        request: Dict[str, Any],
+    ):
+        if self.requests.put_json(url=url, json=request).ok:
+            logger.info(f"Installed {plugin_name} {plugin_type} v{latest_version} to Island")
+        else:
+            logger.error(
+                f"Could not install {plugin_name} {plugin_type} " f"v{latest_version} to Island"
+            )
 
     @avoid_race_condition
     def set_masque(self, masque):
