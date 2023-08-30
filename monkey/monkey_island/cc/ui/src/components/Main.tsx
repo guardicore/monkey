@@ -23,6 +23,7 @@ import {doesAnyAgentExist, didAllAgentsShutdown} from './utils/ServerUtils';
 import LogoutPage from './pages/LogoutPage';
 import MarketplacePage from './pages/MarketplacePage';
 import PluginsProvider from './contexts/plugins/PluginsProvider';
+import {PluginState} from './contexts/plugins/PluginsContext';
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -47,6 +48,15 @@ export function isReportRoute(route) {
   return route.startsWith(IslandRoutes.Report);
 }
 
+function withPluginState(Component) {
+  return function PluginStateComponent(props) {
+    const pluginState = PluginState();
+    return (
+      <Component {...props} pluginState={pluginState}/>
+    );
+  };
+}
+
 class AppComponent extends AuthComponent {
   private interval: Timeout;
   private pluginsFetched: boolean;
@@ -55,43 +65,10 @@ class AppComponent extends AuthComponent {
     super(props);
     this.state = {
       completedSteps: new CompletedSteps(false),
-      availablePlugins: [],
-      installedPlugins: [],
-      numberOfPluginsThatRequiresUpdate: 0
     };
     this.interval = undefined;
     this.pluginsFetched = false;
   }
-
-  setAvailablePlugins = (plugins) => {
-    this.setState({
-        availablePlugins: plugins
-    });
-  }
-
-  setInstalledPlugins = (plugins) => {
-    this.setState({
-        installedPlugins: plugins
-    });
-  }
-
-  // TODO: move to plugins utils?
-  refreshAvailablePlugins = (forceRefresh: boolean = false) => {
-    let url = '/api/agent-plugins/available/index';
-    if (forceRefresh) {
-      url += '?force_refresh=true';
-    }
-    this.authFetch(url, {}, true).then(res => res.json()).then(plugins => {
-      this.setAvailablePlugins(plugins?.plugins || []);
-    });
-  };
-
-  // TODO: move to plugins utils?
-  refreshInstalledPlugins = () => {
-    this.authFetch('/api/agent-plugins/installed/manifests', {}, true).then(res => res.json()).then(plugins => {
-      this.setInstalledPlugins(plugins);
-    });
-  };
 
   updateStatus = () => {
     if (this.state.isLoggedIn === false) {
@@ -116,11 +93,9 @@ class AppComponent extends AuthComponent {
     }
 
     if (res) {
-      // TODO: get plugins only one time
-      // TODO: Use real endpoint
       if(!this.pluginsFetched) {
-        this.refreshAvailablePlugins();
-        this.refreshInstalledPlugins();
+        this.props.pluginState.refreshAvailablePlugins();
+        this.props.pluginState.refreshInstalledPlugins();
           this.pluginsFetched = true;
       }
 
@@ -209,15 +184,6 @@ class AppComponent extends AuthComponent {
 
   render() {
     const {availablePlugins, installedPlugins, numberOfPluginsThatRequiresUpdate} = this.state;
-    const pluginsContextValue = {
-      availablePlugins,
-      installedPlugins,
-      numberOfPluginsThatRequiresUpdate,
-      setAvailablePlugins: this.setAvailablePlugins,
-      setInstalledPlugins: this.setInstalledPlugins,
-      refreshAvailablePlugins: this.refreshAvailablePlugins,
-      refreshInstalledPlugins: this.refreshInstalledPlugins
-    }
 
     let defaultSideNavProps = {
       completedSteps: this.state.completedSteps,
@@ -237,7 +203,7 @@ class AppComponent extends AuthComponent {
             <Route path={IslandRoutes.Logout} element={<LogoutPage onStatusChange={this.updateStatus}/>}/>
             <Route path={IslandRoutes.RegisterPage}
                    element={<RegisterPageComponent onStatusChange={this.updateStatus}/>}/>
-            <Route element={<PluginsProvider value={pluginsContextValue}/>}>
+            <Route element={<PluginsProvider value={this.props.pluginState}/>}>
               {this.renderRoute(IslandRoutes.GettingStartedPage,
                 <SidebarLayoutComponent component={GettingStartedPage} {...defaultSideNavProps}/>)}
               {this.renderRoute(IslandRoutes.ConfigurePage,
@@ -288,4 +254,4 @@ class AppComponent extends AuthComponent {
   }
 }
 
-export default AppComponent;
+export default withPluginState(AppComponent);
