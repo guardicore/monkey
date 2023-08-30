@@ -12,7 +12,7 @@ import AuthComponent from '../../AuthComponent';
 
 
 const InstalledPlugins = () => {
-  const {availablePlugins, installedPlugins, refreshInstalledPlugins} = useContext(PluginsContext);
+  const {installedPlugins, refreshInstalledPlugins} = useContext(PluginsContext);
   const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
   const [pluginsInInstallProcess, setPluginsInInstallProcess] = useState([]);
   const [successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds] = useState([]);
