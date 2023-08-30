@@ -25,14 +25,3 @@ export const generatePluginId = (plugin) => {
   const type = plugin.type_ || plugin.plugin_type;
   return `${plugin.name}${type}${plugin.version}`;
 }
-
-
-export const extractPluginsPropertyValues = (plugins, fieldToExtract) => {
-  const values = [];
-  plugins?.forEach((plugin) => {
-    if (!values.includes(plugin?.[fieldToExtract]?.trim())) {
-      values.push(plugin[fieldToExtract].trim());
-    }
-  })
-  return values.sort();
-}
