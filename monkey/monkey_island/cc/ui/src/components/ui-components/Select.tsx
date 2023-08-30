@@ -1,6 +1,12 @@
 import React from 'react';
-import {FormControl, InputLabel, MenuItem, Select, SelectChangeEvent,
-  SelectProps as MUISelectProps} from '@mui/material';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  SelectProps as MUISelectProps
+} from '@mui/material';
 
 export enum SelectVariant {
   Standard = 'standard',
@@ -21,15 +27,20 @@ type SelectProps = MUISelectProps & {
   variant?: SelectVariant
 }
 
-const SelectComponent = (props: SelectProps) => {
-  const {placeholder, options, selectedOption, onChange, ...rest} = {...props};
-  rest['variant'] = rest['variant'] || SelectVariant.Outlined;
+const SelectComponent = ({
+                           placeholder,
+                           options,
+                           selectedOption,
+                           onChange,
+                           variant=SelectVariant.Outlined,
+                           ...rest
+                         }: SelectProps) => {
 
   return (
     <FormControl fullWidth>
       <InputLabel id="demo-simple-select-label">{placeholder}</InputLabel>
       <Select
-        variant={'standard'}
+        variant={variant}
         defaultValue={selectedOption.value}
         onChange={onChange}
         {...rest}
