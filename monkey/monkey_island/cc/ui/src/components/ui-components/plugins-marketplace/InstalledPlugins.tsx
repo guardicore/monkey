@@ -105,15 +105,14 @@ const InstalledPlugins = () => {
       ]
     }
 
-    if (row.update_available) {
-      const latest_plugin = availablePlugins[row.type][row.name].slice(-1)[0]
+    if (row.update_version) {
       return [
         <GridActionsCellItem
         key={pluginId + 'upgrade'}
         icon={<UpgradeIcon/>}
         label="Upgrade"
         className="textPrimary"
-        onClick={() => onUpgradeClick(pluginId, row.type, row.name, latest_plugin.version)}
+        onClick={() => onUpgradeClick(pluginId, row.type, row.name, row.update_version)}
         color="inherit"
       />
       ]
