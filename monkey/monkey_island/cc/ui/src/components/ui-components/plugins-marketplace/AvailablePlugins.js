@@ -103,11 +103,24 @@ const AvailablePlugins = () => {
     ];
   }
 
+  const onSearchChanged = (query) => {
+    const filterOnText = (plugin) => {
+      for (const property in plugin) {
+        if (typeof plugin[property] === 'string' && plugin[property].toLowerCase().includes(query.toLowerCase())) {
+          return true;
+        }
+      }
+    }
+    setFilters((prevState) => {
+      return {...prevState, text: filterOnText};
+    });
+  }
+
   return (
     <Box>
       <Grid container spacing={2} rowSpacing={1} columnSpacing={2}>
         <Grid xs={4} item>
-          <SearchBar />
+          <SearchBar setQuery={onSearchChanged} />
         </Grid>
         <Grid xs={4} item />
         <Grid xs={3} item >
