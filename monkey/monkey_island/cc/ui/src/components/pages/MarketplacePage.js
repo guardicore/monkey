@@ -50,7 +50,7 @@ const MarketplacePage = () => {
   </div>
 
   return (
-    <PluginsContext.Provider value={{availablePlugins, installedPlugins, UploadNewPlugin, refreshAvailablePlugins, refreshInstalledPlugins}}>
+    <PluginsContext.Provider value={{availablePlugins, installedPlugins, refreshAvailablePlugins, refreshInstalledPlugins}}>
       <Box className="main col-xl-8 col-lg-8 col-md-9 col-sm-9 offset-xl-2 offset-lg-3 offset-md-3 offset-sm-3">
         <h1 className='page-title'>Plugins</h1>
         <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
