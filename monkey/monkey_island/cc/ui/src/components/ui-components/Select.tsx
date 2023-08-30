@@ -1,21 +1,30 @@
 import React from 'react';
-import {FormControl, InputLabel, MenuItem, Select, SelectChangeEvent} from '@mui/material';
+import {FormControl, InputLabel, MenuItem, Select, SelectChangeEvent,
+  SelectProps as MUISelectProps} from '@mui/material';
 
+export enum SelectVariant {
+  Standard = 'standard',
+  Outlined = 'outlined',
+  Filled = 'filled'
+}
 
 type Option = {
   label: string,
   value: string,
 }
 
-type SelectProps = {
+type SelectProps = MUISelectProps & {
   placeholder: string,
   options: Option[],
   selectedOption: Option,
-  onChange: (event: SelectChangeEvent) => void
+  onChange: (event: SelectChangeEvent) => void,
+  variant?: SelectVariant
 }
 
 const SelectComponent = (props: SelectProps) => {
-  const {placeholder, options, selectedOption, onChange} = {...props};
+  const {placeholder, options, selectedOption, onChange, ...rest} = {...props};
+  rest['variant'] = rest['variant'] || SelectVariant.Outlined;
+
   let selectOptions = [];
   for (let i = 0; i < options.length; i++) {
     let menuItem = (
@@ -31,8 +40,10 @@ const SelectComponent = (props: SelectProps) => {
     <FormControl fullWidth>
       <InputLabel id="demo-simple-select-label">{placeholder}</InputLabel>
       <Select
+        variant={'standard'}
         defaultValue={selectedOption.value}
         onChange={onChange}
+        {...rest}
       >
         {selectOptions}
       </Select>
