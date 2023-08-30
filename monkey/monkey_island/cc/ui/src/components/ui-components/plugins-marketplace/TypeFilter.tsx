@@ -2,10 +2,12 @@ import React, {useEffect, useState} from 'react';
 import SelectComponent, {SelectVariant} from '../Select';
 import _ from 'lodash';
 
+type SetFiltersFunc = (filters: { [name: string]: number } ) => void;
+
 type TypeFilterProps = {
   allPlugins: any[],
-  displayedPlugins: any[],
-  setDisplayedPlugins: (plugins: any[]) => void
+  filters: { [name: string]: SetFiltersFunc } ,
+  setFilters: (filters: { [name: string]: SetFiltersFunc } ) => void
 }
 
 type SelectOption = {
@@ -15,7 +17,7 @@ type SelectOption = {
 
 const anyTypeOption :SelectOption = {value: "", label: "All"}
 
-const TypeFilter = ({allPlugins, displayedPlugins, setDisplayedPlugins} :TypeFilterProps) => {
+const TypeFilter = ({allPlugins, filters, setFilters} :TypeFilterProps) => {
   const [selectedType, setSelectedType] = useState(anyTypeOption)
   const [typeFilters, setTypeFilters] = useState([])
 
@@ -29,8 +31,10 @@ const TypeFilter = ({allPlugins, displayedPlugins, setDisplayedPlugins} :TypeFil
   }, [allPlugins])
 
   useEffect(() => {
-    filterPlugins(selectedType)
-  }, [displayedPlugins])
+    let newFilters = {...filters};
+    newFilters['type'] = getFilterForType(selectedType);
+    setFilters(newFilters);
+  }, [selectedType])
 
   const selectOptionFromValue = (value) :SelectOption => {
     return {value: value, label: _.startCase(value)}
@@ -38,21 +42,18 @@ const TypeFilter = ({allPlugins, displayedPlugins, setDisplayedPlugins} :TypeFil
 
   const handleTypeChange = (event) => {
     setSelectedType(selectOptionFromValue(event.target.value))
-    setDisplayedPlugins(allPlugins)
   }
 
-  const filterPlugins = (typeOption :SelectOption) => {
+  const getFilterForType = (typeOption :SelectOption) => {
+    if (typeOption.value === "") {
+      return () => true;
+    }
+
     const typeFilter = (plugin) => {
       let pluginType = plugin.type_ || plugin.plugin_type
       return pluginType === typeOption.value
     }
-
-    if (typeOption.value) {
-      let filteredPlugins = displayedPlugins.filter(typeFilter)
-      if(!_.isEqual(filteredPlugins, displayedPlugins)) {
-        setDisplayedPlugins(filteredPlugins)
-      }
-    }
+    return typeFilter;
   }
 
   return (
