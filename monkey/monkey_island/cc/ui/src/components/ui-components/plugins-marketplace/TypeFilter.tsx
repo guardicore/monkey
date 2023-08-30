@@ -25,7 +25,7 @@ const TypeFilter = (props: TypeFilterProps) => {
     allTypes = props.allPlugins.map(plugin => plugin.type_ || plugin.plugin_type)
     allTypes = [...new Set(allTypes)]
     allTypes = allTypes.map(selectOptionFromValue)
-    allTypes.push(anyTypeOption)
+    allTypes.unshift(anyTypeOption)
     setTypeFilters(allTypes)
   }, [props.allPlugins])
 
