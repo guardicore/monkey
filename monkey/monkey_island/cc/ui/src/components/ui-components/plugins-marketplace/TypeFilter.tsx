@@ -5,8 +5,7 @@ import _ from 'lodash';
 type TypeFilterProps = {
   allPlugins: any[],
   displayedPlugins: any[],
-  setDisplayedPlugins: (plugins: any[]) => void,
-  className?: string
+  setDisplayedPlugins: (plugins: any[]) => void
 }
 
 type SelectOption = {
@@ -16,22 +15,22 @@ type SelectOption = {
 
 const anyTypeOption :SelectOption = {value: "", label: "All"}
 
-const TypeFilter = (props: TypeFilterProps) => {
+const TypeFilter = ({allPlugins, displayedPlugins, setDisplayedPlugins} :TypeFilterProps) => {
   const [selectedType, setSelectedType] = useState(anyTypeOption)
   const [typeFilters, setTypeFilters] = useState([])
 
   useEffect(() => {
     let allTypes = [];
-    allTypes = props.allPlugins.map(plugin => plugin.type_ || plugin.plugin_type)
+    allTypes = allPlugins.map(plugin => plugin.type_ || plugin.plugin_type)
     allTypes = [...new Set(allTypes)]
     allTypes = allTypes.map(selectOptionFromValue)
     allTypes.unshift(anyTypeOption)
     setTypeFilters(allTypes)
-  }, [props.allPlugins])
+  }, [allPlugins])
 
   useEffect(() => {
     filterPlugins(selectedType)
-  }, [props.displayedPlugins])
+  }, [displayedPlugins])
 
   const selectOptionFromValue = (value) :SelectOption => {
     return {value: value, label: _.startCase(value)}
@@ -39,7 +38,7 @@ const TypeFilter = (props: TypeFilterProps) => {
 
   const handleTypeChange = (event) => {
     setSelectedType(selectOptionFromValue(event.target.value))
-    props.setDisplayedPlugins(props.allPlugins)
+    setDisplayedPlugins(allPlugins)
   }
 
   const filterPlugins = (typeOption :SelectOption) => {
@@ -49,9 +48,9 @@ const TypeFilter = (props: TypeFilterProps) => {
     }
 
     if (typeOption.value) {
-      let filteredPlugins = props.displayedPlugins.filter(typeFilter)
-      if(!_.isEqual(filteredPlugins, props.displayedPlugins)) {
-        props.setDisplayedPlugins(filteredPlugins)
+      let filteredPlugins = displayedPlugins.filter(typeFilter)
+      if(!_.isEqual(filteredPlugins, displayedPlugins)) {
+        setDisplayedPlugins(filteredPlugins)
       }
     }
   }
