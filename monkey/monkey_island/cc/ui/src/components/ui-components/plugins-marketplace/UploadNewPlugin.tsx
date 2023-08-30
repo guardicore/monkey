@@ -9,7 +9,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
 import LoadingIcon from '../LoadingIcon';
-import '../../../styles/components/plugins-marketplace/UploadNewPlugin.scss';
+import styles from '../../../styles/components/plugins-marketplace/UploadNewPlugin.module.scss';
 
 const getColor = (props) => {
   if (props.isDragAccept) {
@@ -91,7 +91,7 @@ const UploadNewPlugin = () => {
         }, 10000);
         setPlugin(null);
       } else {
-        let error = `Error occurred installing the plugin archive '${pluginName}'`;
+        let error = `Error occurred installing the plugin '${pluginName}'`;
         setErrors(prevErrs => [...prevErrs, error]);
         setPlugin(null);
         setPluginName('');
@@ -111,9 +111,9 @@ const UploadNewPlugin = () => {
   };
 
   return (
-    <div className="container">
+    <div id={styles['upload-new-plugin']}>
       <div
-        className="drop-zone"
+        id='drop-zone'
         style={containerStyle}
         {...getRootProps({ isDragAccept, isFocused, isDragReject })}
       >
@@ -142,7 +142,7 @@ const UploadNewPlugin = () => {
       {showErrorAlert && (
         <Alert severity="error" onClose={() => setShowErrorAlert(false)}>
           <AlertTitle>Error uploading Plugin Tar</AlertTitle>
-          <ul className="circle-list">
+          <ul id="circle-list">
             {errors.map((error, index) => (
               <Typography key={index} component="li">
                 {error}
