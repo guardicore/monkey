@@ -25,17 +25,6 @@ const SelectComponent = (props: SelectProps) => {
   const {placeholder, options, selectedOption, onChange, ...rest} = {...props};
   rest['variant'] = rest['variant'] || SelectVariant.Outlined;
 
-  let selectOptions = [];
-  for (let i = 0; i < options.length; i++) {
-    let menuItem = (
-      <MenuItem value={options[i].value}
-                key={options[i].value}>
-        {options[i].label}
-      </MenuItem>
-    )
-    selectOptions.push(menuItem)
-  }
-
   return (
     <FormControl fullWidth>
       <InputLabel id="demo-simple-select-label">{placeholder}</InputLabel>
@@ -45,7 +34,15 @@ const SelectComponent = (props: SelectProps) => {
         onChange={onChange}
         {...rest}
       >
-        {selectOptions}
+        {
+          options.map((option) => {
+            return (
+              <MenuItem value={option.value} key={option.value}>
+                {option.label}
+              </MenuItem>
+            )
+          })
+        }
       </Select>
     </FormControl>
   )
