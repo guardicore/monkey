@@ -1,5 +1,3 @@
-const HEADER_SUFFIX = '--header';
-
 export const pluginIndexToArray = (index) => {
   let pluginsArray = [];
   for (const plugin_type in index) {
@@ -28,42 +26,6 @@ export const generatePluginId = (plugin) => {
   return `${plugin.name}${type}${plugin.version}`;
 }
 
-export const getPluginsGridHeaders = (getRowActions) => [
-  {headerName: 'Name', field: 'name', sortable: true, filterable: false, flex: 0.4, minWidth: 150, isTextual: true},
-  {headerName: 'Version', field: 'version', sortable: false, filterable: false, flex: 0.1, minWidth: 100, isTextual: true},
-  {headerName: 'Type', field: 'type', sortable: true, filterable: false, flex: 0.2, minWidth: 150, isTextual: true},
-  {headerName: 'Author', field: 'author', sortable: true, filterable: false, minWidth: 150, flex: 0.25, isTextual: true},
-  {headerName: 'Description', field: 'description', sortable: false, filterable: false, minWidth: 150, flex: 1, isTextual: true},
-  {
-    headerName: '',
-    field: 'row_actions',
-    type: 'actions',
-    minWidth: 100,
-    flex: 0.1,
-    flexValue: 0.5,
-    headerClassName: `row-actions${HEADER_SUFFIX}`,
-    cellClassName: `row-actions`,
-    getActions: (params) => {
-      return getRowActions(params.row);
-    }
-  }
-]
-
-export const getPluginsGridRows = (pluginsList) => {
-  const plugins = pluginsList?.map((pluginObject) => {
-    const {name, version, type_, author, description} = {...pluginObject};
-    return {
-      id: generatePluginId(pluginObject),
-      name: name,
-      version: version,
-      type: type_,
-      author: author,
-      description: description
-    }
-  })
-
-  return plugins || [];
-}
 
 export const extractPluginsPropertyValues = (plugins, fieldToExtract) => {
   const values = [];
