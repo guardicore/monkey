@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import SelectComponent from '../Select';
+import SelectComponent, {SelectVariant} from '../Select';
 import _ from 'lodash';
 
 type TypeFilterProps = {
@@ -58,7 +58,8 @@ const TypeFilter = (props: TypeFilterProps) => {
 
   return (
     <SelectComponent placeholder={"Type"} options={typeFilters}
-                     selectedOption={selectedType} onChange={handleTypeChange} />
+                     selectedOption={selectedType} onChange={handleTypeChange}
+                     variant={SelectVariant.Standard}/>
   )
 }
 
