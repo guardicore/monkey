@@ -1,7 +1,8 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {shallowAdditionOfUniqueValueToArray, shallowRemovalOfUniqueValueFromArray} from '../../../utils/objectUtils';
 import {GridActionsCellItem} from '@mui/x-data-grid';
+import {Box, Grid} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AutoDeleteIcon from '@mui/icons-material/AutoDelete';
 import DownloadingIcon from '@mui/icons-material/Downloading';
@@ -10,15 +11,32 @@ import UpgradeIcon from '@mui/icons-material/Upgrade';
 import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 import BasePlugins from './BasePlugins';
 import AuthComponent from '../../AuthComponent';
+import MonkeyToggle from '../MonkeyToggle';
+import SearchBar from '../SearchBar';
+import TypeFilter from './TypeFilter';
 
 
 const InstalledPlugins = () => {
   const {installedPlugins, refreshInstalledPlugins} = useContext(PluginsContext);
+  const [displayedPlugins, setDisplayedPlugins] = useState([]);
   const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
   const [pluginsInInstallProcess, setPluginsInInstallProcess] = useState([]);
   const [successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds] = useState([]);
   const [pluginsInUninstallProcess, setPluginsInUninstallProcess] = useState([]);
+  const [filters, setFilters] = useState({});
   const authComponent = new AuthComponent({});
+
+  useEffect(() => {
+    setDisplayedPlugins(installedPlugins)
+  }, []);
+
+  useEffect(() => {
+    let shownPlugins = installedPlugins;
+    for (const filter of Object.values(filters)) {
+      shownPlugins = shownPlugins.filter(filter);
+    }
+    setDisplayedPlugins(shownPlugins);
+  }, [installedPlugins, filters]);
 
   const onRefreshCallback = () => {
     setSuccessfullyUninstalledPluginsIds([]);
@@ -188,12 +206,59 @@ const InstalledPlugins = () => {
     return [...getUpgradeAction(row), ...getUninstallAction(row)]
   }
 
+  const onSearchChanged = (query) => {
+    const filterOnText = (plugin) => {
+      for (const property in plugin) {
+        if (typeof plugin[property] === 'string' && plugin[property].toLowerCase().includes(query.toLowerCase())) {
+          return true;
+        }
+      }
+    }
+    setFilters((prevState) => {
+      return {...prevState, text: filterOnText};
+    });
+  }
+
+  const onToggleChanged = (selectedValue) => {
+    console.log("selection: " + selectedValue);
+    if (selectedValue === 'upgradable') {
+      setFilters((prevState) => {
+        return {...prevState, upgradable: (plugin) => plugin.update_version !== ''};
+      });
+    }
+    else {
+      setFilters((prevState) => {
+        return {...prevState, upgradable: () => true};
+      });
+    }
+  }
+
   return (
-    <BasePlugins plugins={installedPlugins}
-                 loadingMessage="Loading all available plugins..."
-                 onRefreshCallback={onRefreshCallback}
-                 getRowActions={getRowActions}
-    />
+    <Box>
+      <Grid container spacing={2} rowSpacing={1} columnSpacing={2}>
+        <Grid xs={4} item>
+          <SearchBar setQuery={onSearchChanged} />
+        </Grid>
+        <Grid xs={2} item />
+        <Grid xs={3} item>
+          <TypeFilter allPlugins={installedPlugins}
+                        filters={filters}
+                        setFilters={setFilters}
+                        className={'type-filter-box'}/>
+        </Grid>
+        <Grid xs={3} item >
+          <MonkeyToggle options={[{value: 'all', label: 'All'},{value: 'upgradable', label: 'Upgradable'}]}
+                      setSelectedValues={onToggleChanged}/>
+        </Grid>
+        <Grid xs={12} item>
+          <BasePlugins plugins={displayedPlugins}
+                      loadingMessage="Loading all available plugins..."
+                      onRefreshCallback={onRefreshCallback}
+                      getRowActions={getRowActions}
+          />
+        </Grid>
+      </Grid>
+    </Box>
   )
 };
 
