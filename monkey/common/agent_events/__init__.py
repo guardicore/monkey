@@ -3,6 +3,7 @@ from .agent_event_registry import AgentEventRegistry
 from .credentials_stolen_events import CredentialsStolenEvent
 from .ping_scan_event import PingScanEvent
 from .tcp_scan_event import TCPScanEvent
+from .fingerprinting_event import FingerprintingEvent
 from .exploitation_event import ExploitationEvent
 from .propagation_event import PropagationEvent
 from .password_restoration_event import PasswordRestorationEvent
