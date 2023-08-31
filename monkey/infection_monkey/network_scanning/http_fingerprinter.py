@@ -1,11 +1,14 @@
 import logging
+import time
 from contextlib import closing
-from typing import Dict, Iterable, Optional, Set
+from ipaddress import IPv4Address
+from typing import Dict, Optional, Sequence, Set
 
 from requests import head
 from requests.exceptions import ConnectionError, Timeout
 from requests.structures import CaseInsensitiveDict
 
+from common.agent_events import FingerprintingEvent
 from common.event_queue import IAgentEventPublisher
 from common.types import (
     AgentID,
@@ -41,6 +44,7 @@ class HTTPFingerprinter(IFingerprinter):
         http_ports = set(options.get("http_ports", []))
         ports_to_fingerprint = _get_open_http_ports(http_ports, port_scan_data)
 
+        timestamp = time.time()
         for port in ports_to_fingerprint:
             service = _query_potential_http_server(host, port)
 
@@ -51,7 +55,27 @@ class HTTPFingerprinter(IFingerprinter):
                     )
                 )
 
+        # If there were no ports worth fingerprinting (i.e. no actual fingerprinting action took
+        # place), then we don't want to publish an event.
+        if len(ports_to_fingerprint) > 0:
+            self._publish_fingerprinting_event(host, timestamp, services)
+
         return FingerprintData(os_type=None, os_version=None, services=services)
+
+    def _publish_fingerprinting_event(
+        self, host: str, timestamp: float, discovered_services: Sequence[DiscoveredService]
+    ):
+        self._agent_event_publisher.publish(
+            FingerprintingEvent(
+                source=self._agent_id,
+                target=IPv4Address(host),
+                timestamp=timestamp,
+                tags=frozenset(),
+                os=None,
+                os_version=None,
+                discovered_services=tuple(discovered_services),
+            )
+        )
 
 
 def _query_potential_http_server(host: str, port: int) -> Optional[NetworkService]:
@@ -91,6 +115,6 @@ def _get_http_headers(url: str) -> Optional[CaseInsensitiveDict]:
 
 def _get_open_http_ports(
     allowed_http_ports: Set, port_scan_data: Dict[int, PortScanData]
-) -> Iterable[int]:
+) -> Sequence[int]:
     open_ports = (psd.port for psd in port_scan_data.values() if psd.status == PortStatus.OPEN)
-    return (port for port in open_ports if port in allowed_http_ports)
+    return [port for port in open_ports if port in allowed_http_ports]
