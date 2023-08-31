@@ -2,14 +2,8 @@ import re
 from typing import Dict, Optional, Tuple
 
 from common import OperatingSystem
-from common.types import NetworkProtocol, NetworkService
-from infection_monkey.i_puppet import (
-    DiscoveredService,
-    FingerprintData,
-    IFingerprinter,
-    PingScanData,
-    PortScanData,
-)
+from common.types import DiscoveredService, NetworkProtocol, NetworkService
+from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 SSH_REGEX = r"SSH-\d\.\d-OpenSSH"
 LINUX_DIST_SSH = ["ubuntu", "debian"]
