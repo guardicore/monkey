@@ -3,7 +3,7 @@ from typing import Dict, Optional, Tuple
 
 from common import OperatingSystem
 from common.event_queue import IAgentEventPublisher
-from common.types import DiscoveredService, NetworkProtocol, NetworkService
+from common.types import AgentID, DiscoveredService, NetworkProtocol, NetworkService
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 SSH_REGEX = r"SSH-\d\.\d-OpenSSH"
@@ -11,7 +11,8 @@ LINUX_DIST_SSH = ["ubuntu", "debian"]
 
 
 class SSHFingerprinter(IFingerprinter):
-    def __init__(self, agent_event_publisher: IAgentEventPublisher):
+    def __init__(self, agent_id: AgentID, agent_event_publisher: IAgentEventPublisher):
+        self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
         self._banner_regex = re.compile(SSH_REGEX, re.IGNORECASE)
 

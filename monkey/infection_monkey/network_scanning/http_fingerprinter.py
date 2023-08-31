@@ -7,7 +7,14 @@ from requests.exceptions import ConnectionError, Timeout
 from requests.structures import CaseInsensitiveDict
 
 from common.event_queue import IAgentEventPublisher
-from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
+from common.types import (
+    AgentID,
+    DiscoveredService,
+    NetworkPort,
+    NetworkProtocol,
+    NetworkService,
+    PortStatus,
+)
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 logger = logging.getLogger(__name__)
@@ -19,7 +26,8 @@ class HTTPFingerprinter(IFingerprinter):
     HTTP requests.
     """
 
-    def __init__(self, agent_event_publisher: IAgentEventPublisher):
+    def __init__(self, agent_id: AgentID, agent_event_publisher: IAgentEventPublisher):
+        self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
 
     def get_host_fingerprint(

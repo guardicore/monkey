@@ -4,7 +4,7 @@ import socket
 from typing import Dict, Optional, Set
 
 from common.event_queue import IAgentEventPublisher
-from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService
+from common.types import AgentID, DiscoveredService, NetworkPort, NetworkProtocol, NetworkService
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 SQL_BROWSER_DEFAULT_PORT = NetworkPort(1434)
@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 class MSSQLFingerprinter(IFingerprinter):
-    def __init__(self, agent_event_publisher: IAgentEventPublisher):
+    def __init__(self, agent_id: AgentID, agent_event_publisher: IAgentEventPublisher):
+        self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
 
     def get_host_fingerprint(

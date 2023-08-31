@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
+from tests.unit_tests.monkey_island.cc.models.test_agent import AGENT_ID
 
 from common import OperatingSystem
 from common.event_queue import IAgentEventPublisher
@@ -24,7 +25,7 @@ def mock_agent_event_publisher() -> IAgentEventPublisher:
 
 @pytest.fixture
 def ssh_fingerprinter(mock_agent_event_publisher):
-    return SSHFingerprinter(mock_agent_event_publisher)
+    return SSHFingerprinter(AGENT_ID, mock_agent_event_publisher)
 
 
 def test_no_ssh_ports_open(ssh_fingerprinter):

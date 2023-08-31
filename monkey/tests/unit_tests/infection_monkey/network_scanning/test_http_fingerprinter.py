@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
+from tests.unit_tests.monkey_island.cc.models.test_agent import AGENT_ID
 
 from common.event_queue import IAgentEventPublisher
 from common.types import NetworkProtocol, NetworkService, PortStatus
@@ -40,7 +41,7 @@ def mock_agent_event_publisher() -> IAgentEventPublisher:
 
 @pytest.fixture
 def http_fingerprinter(mock_agent_event_publisher):
-    return HTTPFingerprinter(mock_agent_event_publisher)
+    return HTTPFingerprinter(AGENT_ID, mock_agent_event_publisher)
 
 
 def test_no_http_ports_open(mock_get_http_headers, http_fingerprinter):
