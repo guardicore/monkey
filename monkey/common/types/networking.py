@@ -87,3 +87,12 @@ class SocketAddress(InfectionMonkeyBaseModel):
 
     def __str__(self):
         return f"{self.ip}:{self.port}"
+
+
+class DiscoveredService(InfectionMonkeyBaseModel):
+    protocol: NetworkProtocol
+    port: NetworkPort
+    service: NetworkService
+
+    def __hash__(self) -> int:
+        return hash((self.protocol, self.port))
