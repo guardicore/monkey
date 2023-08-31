@@ -59,6 +59,7 @@ def _generate_tcp_scan_event(
 ):
     port_statuses = {port: psd.status for port, psd in port_scan_data_dict.items()}
 
+    # TODO: Tag with the appropriate MITRE ATT&CK tags
     return TCPScanEvent(
         source=agent_id,
         target=IPv4Address(host),

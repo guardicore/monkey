@@ -109,6 +109,7 @@ def _build_ping_command(host: str, timeout: float):
 def _generate_ping_scan_event(
     host: str, ping_scan_data: PingScanData, event_timestamp: float, agent_id: AgentID
 ) -> PingScanEvent:
+    # TODO: Tag with the appropriate MITRE ATT&CK tags
     return PingScanEvent(
         source=agent_id,
         target=IPv4Address(host),
