@@ -67,100 +67,106 @@ export const generatePluginId = (name, type, version) => {
 const authComponent = new AuthComponent({});
 
 export const PluginState = () => {
-  const [allPlugins, setAllPlugins] = useState([]);
-  const [allInstalledPlugins, setAllInstalledPlugins] = useState([]);
   const [availablePlugins, setAvailablePlugins] = useState([]);
   const [installedPlugins, setInstalledPlugins] = useState([]);
   const [numberOfPluginsThatRequiresUpdate, setNumberOfPluginsThatRequiresUpdate] = useState(0);
 
+
   useEffect(() => {
-    refreshAllAvailablePlugins();
-    refreshInstalledPlugins();
+    refreshInstalledPlugins()
   }, []);
 
   useEffect(() => {
-    refreshAvailablePlugins();
-  }, [allPlugins, allInstalledPlugins]);
-
-  useEffect(() => {
-    setInstalledPlugins(getInstalledPlugins());
-  }, [allPlugins, allInstalledPlugins]);
-
-  useEffect(() => {
-    refreshNumberOfUpgradablePlugins();
+    refreshAvailablePlugins().then(() => refreshNumberOfUpgradablePlugins())
   }, [installedPlugins]);
 
-  const refreshAllAvailablePlugins = (forceRefresh = false) => {
+  const parsePluginMetadataResponse = (response: PluginMetadataResponse) :AvailablePlugin[] => {
+   let plugins :AvailablePlugin[] = [];
+    for (const pluginType in response) {
+      for (const pluginName in response[pluginType]) {
+        let unparsedPlugin = response[pluginType][pluginName].slice(-1)[0];
+        let availablePlugin :AvailablePlugin = {
+          id: generatePluginId(unparsedPlugin.name, unparsedPlugin.type_, unparsedPlugin.version),
+          name: unparsedPlugin.name,
+          pluginType: unparsedPlugin.type_,
+          description: unparsedPlugin.description,
+          safe: unparsedPlugin.safe,
+          version: unparsedPlugin.version,
+          resourcePath: unparsedPlugin.resource_path,
+          sha256: unparsedPlugin.sha256,
+        };
+        plugins.push(availablePlugin);
+      }
+    }
+    return plugins;
+  }
+
+  const parsePluginManifestResponse = (response: PluginManifestResponse) :InstalledPlugin[] => {
+    let plugins :InstalledPlugin[] = [];
+      for (const pluginType in response) {
+        for (const pluginName in response[pluginType]) {
+          const installedVersion = response[pluginType][pluginName]['version'];
+          const unparsedPlugin = response[pluginType][pluginName];
+          let installedPlugin :InstalledPlugin = {
+            id: generatePluginId(pluginName, pluginType, installedVersion),
+            name: pluginName,
+            pluginType: pluginType,
+            description: unparsedPlugin['description'],
+            safe: unparsedPlugin['safe'],
+            version: installedVersion,
+            title: unparsedPlugin['title'],
+            supportedOperatingSystems: unparsedPlugin['supported_operating_systems'],
+            targetOperatingSystems: unparsedPlugin['target_operating_systems'],
+            linkToDocumentation: unparsedPlugin['link_to_documentation'],
+            remediationSuggestion: unparsedPlugin['remediation_suggestion'],
+          }
+          plugins.push(installedPlugin);
+        }
+      }
+    return plugins;
+  }
+
+  const refreshAvailablePlugins = (forceRefresh = false) => {
+    const filterInstalledPlugins = (plugins :AvailablePlugin[]) :AvailablePlugin[] => {
+      return plugins.filter(
+        (availablePlugin) => {
+          return installedPlugins.find((installedPlugin) =>
+            installedPlugin.id === availablePlugin.id
+          ) === undefined
+        })
+    }
+
     let url = '/api/agent-plugins/available/index';
     if (forceRefresh) {
       url += '?force_refresh=true';
     }
-    authComponent.authFetch(url, {}, true)
+    return authComponent.authFetch(url, {}, true)
       .then(res => res.json())
-      .then(plugins => {
-        setAllPlugins(plugins?.plugins || []);
+      .then((res) => {
+        let parsedPlugins = parsePluginMetadataResponse(res.plugins);
+        parsedPlugins = filterInstalledPlugins(parsedPlugins);
+        setAvailablePlugins(parsedPlugins);
       });
   };
-
-  const refreshAvailablePlugins = (forceRefresh = false) => {
-    if (forceRefresh) {
-      refreshAllAvailablePlugins(true);
-    }
-    else {
-      setAvailablePlugins(getAvailablePlugins());
-    }
-  }
 
   const refreshInstalledPlugins = () => {
     authComponent.authFetch('/api/agent-plugins/installed/manifests', {}, true)
       .then(res => res.json())
-      .then(plugins => {
-        setAllInstalledPlugins(plugins);
+      .then((plugins :PluginManifestResponse) => {
+        setInstalledPlugins(parsePluginManifestResponse(plugins));
       });
   };
 
   const refreshNumberOfUpgradablePlugins = () => {
-    const numUpgradablePlugins = installedPlugins?.filter(plugin => plugin.update_version !== '')?.length;
-    setNumberOfPluginsThatRequiresUpdate(numUpgradablePlugins);
-  }
-
-  const getAvailablePlugins = () => {
-    let plugins = [];
-    for (const plugin_type in allPlugins) {
-      for (const plugin_name in allPlugins[plugin_type]) {
-        if (!pluginIsInstalled(plugin_type, plugin_name)) {
-          plugins.push(allPlugins[plugin_type][plugin_name].slice(-1)[0]);
-        }
+    let upgradablePlugins = installedPlugins.filter((installedPlugin) => {
+      let availablePlugin = availablePlugins.find((availablePlugin) => availablePlugin.id === installedPlugin.id)
+      if(availablePlugin){
+        return semver.gt(availablePlugin.version, installedPlugin.version);
+      } else {
+        return false
       }
-    }
-    return plugins;
-  }
-
-  const pluginIsInstalled = (pluginType, name) => {
-    return pluginType in allInstalledPlugins && name in allInstalledPlugins[pluginType];
-  }
-
-  const getInstalledPlugins = () => {
-    let plugins = [];
-    for (const plugin_type in allInstalledPlugins) {
-      for (const plugin_name in allInstalledPlugins[plugin_type]) {
-        const installed_version = allInstalledPlugins[plugin_type][plugin_name]['version'];
-        const update_version = getUpdatedVersion(plugin_type, plugin_name, installed_version);
-        plugins.push({...allInstalledPlugins[plugin_type][plugin_name], update_version});
-      }
-    }
-    return plugins;
-  }
-
-  const getUpdatedVersion = (pluginType, name, version) => {
-    if (pluginIsUpgradable(pluginType, name, version)) {
-      return allPlugins[pluginType][name].slice(-1)[0]['version'];
-    }
-    return '';
-  }
-
-  const pluginIsUpgradable = (pluginType, name, version) => {
-    return pluginType in allPlugins && name in allPlugins[pluginType] && semver.gt(allPlugins[pluginType][name].slice(-1)[0]['version'], version);
+    })
+    setNumberOfPluginsThatRequiresUpdate(upgradablePlugins.length);
   }
 
   return {
