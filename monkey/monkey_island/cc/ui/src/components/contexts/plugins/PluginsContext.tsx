@@ -5,6 +5,65 @@ import _ from 'lodash';
 
 export const PluginsContext = createContext({});
 
+// Types returned from the API
+type PluginMetadata = {
+  name: string,
+  type_: string,
+  resource_path: string,
+  sha256: string,
+  description: string,
+  version: string,
+  safe: boolean
+}
+
+type PluginMetadataResponse = {
+  [key: string]: {[key: string]: PluginMetadata[]}
+}
+
+type PluginFromManifest = {
+  name: string,
+  plugin_type: string,
+  supported_operating_systems: string[],
+  target_operating_systems: string[],
+  title: string,
+  version: string,
+  description: string,
+  remediation_suggestion?: string,
+  link_to_documentation?: string,
+  safe: boolean
+}
+
+type PluginManifestResponse = {
+  [key: string]: {[key: string]: PluginFromManifest[]}
+}
+
+// Types used in the UI
+type AgentPlugin = {
+  id: string,
+  name: string,
+  pluginType: string,
+  description: string,
+  safe: boolean,
+  version: string,
+}
+
+type InstalledPlugin = AgentPlugin & {
+  title: string,
+  supportedOperatingSystems: string[],
+  targetOperatingSystems: string[],
+  linkToDocumentation?: string,
+  remediationSuggestion?: string,
+}
+
+type AvailablePlugin = AgentPlugin & {
+  resourcePath: string,
+  sha256: string,
+}
+
+export const generatePluginId = (name, type, version) => {
+  return `${name}${type}${version}`;
+}
+
 const authComponent = new AuthComponent({});
 
 export const PluginState = () => {
