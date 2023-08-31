@@ -1,7 +1,6 @@
 import React, {createContext, useEffect, useState} from 'react';
 import AuthComponent from '../../AuthComponent';
 import semver from 'semver';
-import _ from 'lodash';
 
 export const PluginsContext = createContext({});
 
