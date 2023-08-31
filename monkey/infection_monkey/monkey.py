@@ -447,10 +447,18 @@ class InfectionMonkey:
             self._agent_event_queue, plugin_registry, plugin_compatibility_verifier, self._agent_id
         )
 
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "http", HTTPFingerprinter())
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "mssql", MSSQLFingerprinter())
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "smb", SMBFingerprinter())
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "ssh", SSHFingerprinter())
+        puppet.load_plugin(
+            AgentPluginType.FINGERPRINTER, "http", HTTPFingerprinter(self._agent_event_publisher)
+        )
+        puppet.load_plugin(
+            AgentPluginType.FINGERPRINTER, "mssql", MSSQLFingerprinter(self._agent_event_publisher)
+        )
+        puppet.load_plugin(
+            AgentPluginType.FINGERPRINTER, "smb", SMBFingerprinter(self._agent_event_publisher)
+        )
+        puppet.load_plugin(
+            AgentPluginType.FINGERPRINTER, "ssh", SSHFingerprinter(self._agent_event_publisher)
+        )
 
         return puppet
 

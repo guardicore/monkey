@@ -6,6 +6,7 @@ from requests import head
 from requests.exceptions import ConnectionError, Timeout
 from requests.structures import CaseInsensitiveDict
 
+from common.event_queue import IAgentEventPublisher
 from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
@@ -17,6 +18,9 @@ class HTTPFingerprinter(IFingerprinter):
     Queries potential HTTP(S) ports and attempt to determine the server software that handles the
     HTTP requests.
     """
+
+    def __init__(self, agent_event_publisher: IAgentEventPublisher):
+        self._agent_event_publisher = agent_event_publisher
 
     def get_host_fingerprint(
         self,

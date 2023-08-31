@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from common.event_queue import IAgentEventPublisher
 from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning.mssql_fingerprinter import (
@@ -27,8 +28,13 @@ SQL_BROWSER_DISCOVERED_SERVICE = DiscoveredService(
 
 
 @pytest.fixture
-def fingerprinter():
-    return MSSQLFingerprinter()
+def mock_agent_event_publisher() -> IAgentEventPublisher:
+    return MagicMock(spec=IAgentEventPublisher)
+
+
+@pytest.fixture
+def fingerprinter(mock_agent_event_publisher):
+    return MSSQLFingerprinter(mock_agent_event_publisher)
 
 
 def test_mssql_fingerprint_successful(monkeypatch, fingerprinter):

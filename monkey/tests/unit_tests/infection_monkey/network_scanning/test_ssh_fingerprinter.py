@@ -1,6 +1,9 @@
+from unittest.mock import MagicMock
+
 import pytest
 
 from common import OperatingSystem
+from common.event_queue import IAgentEventPublisher
 from common.types import DiscoveredService, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import FingerprintData, PortScanData
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
@@ -15,8 +18,13 @@ SSH_SERVICE_2222 = DiscoveredService(
 
 
 @pytest.fixture
-def ssh_fingerprinter():
-    return SSHFingerprinter()
+def mock_agent_event_publisher() -> IAgentEventPublisher:
+    return MagicMock(spec=IAgentEventPublisher)
+
+
+@pytest.fixture
+def ssh_fingerprinter(mock_agent_event_publisher):
+    return SSHFingerprinter(mock_agent_event_publisher)
 
 
 def test_no_ssh_ports_open(ssh_fingerprinter):

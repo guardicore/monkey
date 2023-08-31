@@ -3,6 +3,7 @@ import logging
 import socket
 from typing import Dict, Optional, Set
 
+from common.event_queue import IAgentEventPublisher
 from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
@@ -14,6 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class MSSQLFingerprinter(IFingerprinter):
+    def __init__(self, agent_event_publisher: IAgentEventPublisher):
+        self._agent_event_publisher = agent_event_publisher
+
     def get_host_fingerprint(
         self,
         host: str,

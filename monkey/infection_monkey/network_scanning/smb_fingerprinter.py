@@ -6,6 +6,7 @@ from typing import Dict, List
 from odict import odict
 
 from common import OperatingSystem
+from common.event_queue import IAgentEventPublisher
 from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
@@ -130,6 +131,9 @@ class SMBSessionFingerprintData(Packet):
 
 
 class SMBFingerprinter(IFingerprinter):
+    def __init__(self, agent_event_publisher: IAgentEventPublisher):
+        self._agent_event_publisher = agent_event_publisher
+
     def get_host_fingerprint(
         self,
         host: str,

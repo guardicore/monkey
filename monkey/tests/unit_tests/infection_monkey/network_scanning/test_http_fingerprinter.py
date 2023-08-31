@@ -2,6 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from common.event_queue import IAgentEventPublisher
 from common.types import NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
@@ -33,8 +34,13 @@ def patch_get_http_headers(monkeypatch, mock_get_http_headers):
 
 
 @pytest.fixture
-def http_fingerprinter():
-    return HTTPFingerprinter()
+def mock_agent_event_publisher() -> IAgentEventPublisher:
+    return MagicMock(spec=IAgentEventPublisher)
+
+
+@pytest.fixture
+def http_fingerprinter(mock_agent_event_publisher):
+    return HTTPFingerprinter(mock_agent_event_publisher)
 
 
 def test_no_http_ports_open(mock_get_http_headers, http_fingerprinter):
