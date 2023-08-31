@@ -28,7 +28,7 @@ export const PluginState = () => {
   }, [allPlugins, allInstalledPlugins]);
 
   useEffect(() => {
-    refreshNuberOfUpgradablePlugins();
+    refreshNumberOfUpgradablePlugins();
   }, [installedPlugins]);
 
   const refreshAllAvailablePlugins = (forceRefresh = false) => {
@@ -60,7 +60,7 @@ export const PluginState = () => {
       });
   };
 
-  const refreshNuberOfUpgradablePlugins = () => {
+  const refreshNumberOfUpgradablePlugins = () => {
     const numUpgradablePlugins = _.sumBy(installedPlugins, (plugin) => plugin.update_version !== '' ? 1 : 0);
     setNumberOfPluginsThatRequiresUpdate(numUpgradablePlugins);
   }
