@@ -1,6 +1,7 @@
 import logging
 import time
 from contextlib import closing
+from http import HTTPMethod
 from ipaddress import IPv4Address
 from typing import Dict, Optional, Sequence, Set
 
@@ -8,7 +9,7 @@ from requests import head
 from requests.exceptions import ConnectionError, Timeout
 from requests.structures import CaseInsensitiveDict
 
-from common.agent_events import FingerprintingEvent
+from common.agent_events import FingerprintingEvent, HTTPRequestEvent
 from common.event_queue import IAgentEventPublisher
 from common.types import (
     AgentID,
@@ -46,7 +47,7 @@ class HTTPFingerprinter(IFingerprinter):
 
         timestamp = time.time()
         for port in ports_to_fingerprint:
-            service = _query_potential_http_server(host, port)
+            service = self._query_potential_http_server(host, port)
 
             if service:
                 services.append(
@@ -61,6 +62,41 @@ class HTTPFingerprinter(IFingerprinter):
             self._publish_fingerprinting_event(host, timestamp, services)
 
         return FingerprintData(os_type=None, os_version=None, services=services)
+
+    def _query_potential_http_server(self, host: str, port: int) -> Optional[NetworkService]:
+        # check both http and https
+        http = f"http://{host}:{port}"
+        https = f"https://{host}:{port}"
+
+        for url, ssl in ((https, True), (http, False)):  # start with https and downgrade
+            server_header = self._get_server_from_headers(host, url)
+
+            if server_header is not None:
+                return NetworkService.HTTPS if ssl else NetworkService.HTTP
+
+        return None
+
+    def _get_server_from_headers(self, host: str, url: str) -> Optional[str]:
+        timestamp = time.time()
+        headers = _get_http_headers(url)
+        self._publish_http_request_event(host, timestamp, url)
+
+        if headers:
+            return headers.get("Server", "")
+
+        return None
+
+    def _publish_http_request_event(self, host: str, timestamp: float, url: str):
+        self._agent_event_publisher.publish(
+            HTTPRequestEvent(
+                source=self._agent_id,
+                target=IPv4Address(host),
+                timestamp=timestamp,
+                tags=frozenset(),
+                method=HTTPMethod.HEAD,
+                url=url,  # type: ignore [arg-type]
+            )
+        )
 
     def _publish_fingerprinting_event(
         self, host: str, timestamp: float, discovered_services: Sequence[DiscoveredService]
@@ -78,26 +114,11 @@ class HTTPFingerprinter(IFingerprinter):
         )
 
 
-def _query_potential_http_server(host: str, port: int) -> Optional[NetworkService]:
-    # check both http and https
-    http = f"http://{host}:{port}"
-    https = f"https://{host}:{port}"
-
-    for url, ssl in ((https, True), (http, False)):  # start with https and downgrade
-        server_header = _get_server_from_headers(url)
-
-        if server_header is not None:
-            return NetworkService.HTTPS if ssl else NetworkService.HTTP
-
-    return None
-
-
-def _get_server_from_headers(url: str) -> Optional[str]:
-    headers = _get_http_headers(url)
-    if headers:
-        return headers.get("Server", "")
-
-    return None
+def _get_open_http_ports(
+    allowed_http_ports: Set, port_scan_data: Dict[int, PortScanData]
+) -> Sequence[int]:
+    open_ports = (psd.port for psd in port_scan_data.values() if psd.status == PortStatus.OPEN)
+    return [port for port in open_ports if port in allowed_http_ports]
 
 
 def _get_http_headers(url: str) -> Optional[CaseInsensitiveDict]:
@@ -111,10 +132,3 @@ def _get_http_headers(url: str) -> Optional[CaseInsensitiveDict]:
         logger.debug(f"Connection error while requesting headers from {url}")
 
     return None
-
-
-def _get_open_http_ports(
-    allowed_http_ports: Set, port_scan_data: Dict[int, PortScanData]
-) -> Sequence[int]:
-    open_ports = (psd.port for psd in port_scan_data.values() if psd.status == PortStatus.OPEN)
-    return [port for port in open_ports if port in allowed_http_ports]

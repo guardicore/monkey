@@ -1,3 +1,4 @@
+from http import HTTPMethod
 from unittest.mock import MagicMock
 
 import pytest
@@ -93,13 +94,16 @@ def test_fingerprint_only_port_443(
     assert fingerprint_data.services[0].port == 443
     assert fingerprint_data.services[0].service == NetworkService.HTTPS
 
-    assert mock_agent_event_publisher.publish.call_count == 1
-    assert len(mock_agent_event_publisher.publish.call_args[0][0].discovered_services) == 1
+    assert mock_agent_event_publisher.publish.call_count == 1 + 1
+    assert mock_agent_event_publisher.publish.call_args_list[0][0][0].method == HTTPMethod.HEAD
+    assert "443" in mock_agent_event_publisher.publish.call_args_list[0][0][0].url
+
+    assert len(mock_agent_event_publisher.publish.call_args_list[1][0][0].discovered_services) == 1
     assert (
         DiscoveredService(
             protocol=NetworkProtocol.TCP, port=NetworkPort(443), service=NetworkService.HTTPS
         )
-        in mock_agent_event_publisher.publish.call_args[0][0].discovered_services
+        in mock_agent_event_publisher.publish.call_args_list[1][0][0].discovered_services
     )
 
 
@@ -130,8 +134,14 @@ def test_open_port_no_http_server(
     assert fingerprint_data.os_version is None
     assert len(fingerprint_data.services) == 0
 
-    assert mock_agent_event_publisher.publish.call_count == 1
-    assert len(mock_agent_event_publisher.publish.call_args[0][0].discovered_services) == 0
+    assert mock_agent_event_publisher.publish.call_count == 2 + 1
+
+    assert mock_agent_event_publisher.publish.call_args_list[0][0][0].method == HTTPMethod.HEAD
+    assert "9200" in mock_agent_event_publisher.publish.call_args_list[0][0][0].url
+    assert mock_agent_event_publisher.publish.call_args_list[1][0][0].method == HTTPMethod.HEAD
+    assert "9200" in mock_agent_event_publisher.publish.call_args_list[1][0][0].url
+
+    assert len(mock_agent_event_publisher.publish.call_args_list[2][0][0].discovered_services) == 0
 
 
 def test_multiple_open_ports(mock_get_http_headers, mock_agent_event_publisher, http_fingerprinter):
@@ -165,19 +175,27 @@ def test_multiple_open_ports(mock_get_http_headers, mock_agent_event_publisher, 
     assert fingerprint_data.services[1].port == 8080
     assert fingerprint_data.services[1].service == NetworkService.HTTP
 
-    assert mock_agent_event_publisher.publish.call_count == 1
-    assert len(mock_agent_event_publisher.publish.call_args[0][0].discovered_services) == 2
+    assert mock_agent_event_publisher.publish.call_count == 3 + 1
+
+    assert mock_agent_event_publisher.publish.call_args_list[0][0][0].method == HTTPMethod.HEAD
+    assert "443" in mock_agent_event_publisher.publish.call_args_list[0][0][0].url
+    assert mock_agent_event_publisher.publish.call_args_list[1][0][0].method == HTTPMethod.HEAD
+    assert "8080" in mock_agent_event_publisher.publish.call_args_list[1][0][0].url
+    assert mock_agent_event_publisher.publish.call_args_list[2][0][0].method == HTTPMethod.HEAD
+    assert "8080" in mock_agent_event_publisher.publish.call_args_list[2][0][0].url
+
+    assert len(mock_agent_event_publisher.publish.call_args_list[3][0][0].discovered_services) == 2
     assert (
         DiscoveredService(
             protocol=NetworkProtocol.TCP, port=NetworkPort(443), service=NetworkService.HTTPS
         )
-        in mock_agent_event_publisher.publish.call_args[0][0].discovered_services
+        in mock_agent_event_publisher.publish.call_args_list[3][0][0].discovered_services
     )
     assert (
         DiscoveredService(
             protocol=NetworkProtocol.TCP, port=NetworkPort(8080), service=NetworkService.HTTP
         )
-        in mock_agent_event_publisher.publish.call_args[0][0].discovered_services
+        in mock_agent_event_publisher.publish.call_args_list[3][0][0].discovered_services
     )
 
 
@@ -203,11 +221,17 @@ def test_server_missing_from_http_headers(
     assert fingerprint_data.services[0].port == 1080
     assert fingerprint_data.services[0].service == NetworkService.HTTP
 
-    assert mock_agent_event_publisher.publish.call_count == 1
-    assert len(mock_agent_event_publisher.publish.call_args[0][0].discovered_services) == 1
+    assert mock_agent_event_publisher.publish.call_count == 2 + 1
+
+    assert mock_agent_event_publisher.publish.call_args_list[0][0][0].method == HTTPMethod.HEAD
+    assert "1080" in mock_agent_event_publisher.publish.call_args_list[0][0][0].url
+    assert mock_agent_event_publisher.publish.call_args_list[1][0][0].method == HTTPMethod.HEAD
+    assert "1080" in mock_agent_event_publisher.publish.call_args_list[1][0][0].url
+
+    assert len(mock_agent_event_publisher.publish.call_args_list[2][0][0].discovered_services) == 1
     assert (
         DiscoveredService(
             protocol=NetworkProtocol.TCP, port=NetworkPort(1080), service=NetworkService.HTTP
         )
-        in mock_agent_event_publisher.publish.call_args[0][0].discovered_services
+        in mock_agent_event_publisher.publish.call_args_list[2][0][0].discovered_services
     )
