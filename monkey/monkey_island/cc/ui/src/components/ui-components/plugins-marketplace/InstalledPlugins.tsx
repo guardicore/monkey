@@ -106,7 +106,7 @@ const InstalledPlugins = () => {
       ]
     }
 
-    if (row.update_version) {
+    if ((row.update_version) && (!pluginsInUninstallProcess.includes(pluginId))) {
       return [
         <GridActionsCellItem
         key={pluginId + 'upgrade'}
@@ -152,6 +152,19 @@ const InstalledPlugins = () => {
           icon={<RemoveDoneIcon/>}
           label="Uninstall Complete"
           className="textPrimary"
+          color="inherit"
+        />
+      ]
+    }
+
+    if (pluginsInInstallProcess.includes(pluginId)) {
+      return [
+        <GridActionsCellItem
+          key={pluginId + 'uninstall'}
+          icon={<DeleteIcon/>}
+          label="Uninstalling"
+          className="textPrimary"
+          disabled={true}
           color="inherit"
         />
       ]
