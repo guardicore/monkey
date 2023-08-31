@@ -3,6 +3,7 @@ import {PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {shallowAdditionOfUniqueValueToArray, shallowRemovalOfUniqueValueFromArray} from '../../../utils/objectUtils';
 import {GridActionsCellItem} from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AutoDeleteIcon from '@mui/icons-material/AutoDelete';
 import DownloadingIcon from '@mui/icons-material/Downloading';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
@@ -136,7 +137,7 @@ const InstalledPlugins = () => {
       return [
         <GridActionsCellItem
           key={pluginId + 'uninstall'}
-          icon={<DownloadingIcon/>}
+          icon={<AutoDeleteIcon/>}
           label="Uninstalling"
           className="textPrimary"
           color="inherit"
