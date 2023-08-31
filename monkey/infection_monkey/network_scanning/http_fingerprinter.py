@@ -11,6 +11,7 @@ from requests.structures import CaseInsensitiveDict
 
 from common.agent_events import FingerprintingEvent, HTTPRequestEvent
 from common.event_queue import IAgentEventPublisher
+from common.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
 from common.types import (
     AgentID,
     DiscoveredService,
@@ -22,6 +23,11 @@ from common.types import (
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 logger = logging.getLogger(__name__)
+
+HTTP_FINGERPRINTER_TAG = "http-fingerprinter"
+EVENT_TAGS = frozenset(
+    {HTTP_FINGERPRINTER_TAG, ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG}
+)
 
 
 class HTTPFingerprinter(IFingerprinter):
@@ -92,7 +98,7 @@ class HTTPFingerprinter(IFingerprinter):
                 source=self._agent_id,
                 target=IPv4Address(host),
                 timestamp=timestamp,
-                tags=frozenset(),
+                tags=EVENT_TAGS,  # type: ignore [arg-type]
                 method=HTTPMethod.HEAD,
                 url=url,  # type: ignore [arg-type]
             )
@@ -106,7 +112,7 @@ class HTTPFingerprinter(IFingerprinter):
                 source=self._agent_id,
                 target=IPv4Address(host),
                 timestamp=timestamp,
-                tags=frozenset(),
+                tags=EVENT_TAGS,  # type: ignore [arg-type]
                 os=None,
                 os_version=None,
                 discovered_services=tuple(discovered_services),
