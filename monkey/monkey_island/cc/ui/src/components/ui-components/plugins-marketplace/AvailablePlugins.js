@@ -19,14 +19,19 @@ import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
 import { generatePluginId } from './utils';
 
-const AvailablePlugins = () => {
+const AvailablePlugins = (props) => {
+  const {
+    installingAllSafePlugins,
+    setInstallingAllSafePlugins,
+    successfullyInstalledPluginsIds,
+    setSuccessfullyInstalledPluginsIds,
+    pluginsInInstallationProcess,
+    setPluginsInInstallationProcess
+  } = {...props};
   const {availablePlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
   const [filters, setFilters] = useState({});
 
-  const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
-  const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
-  const [installingAllSafePlugins, setInstallingAllSafePlugins] = useState(false);
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
