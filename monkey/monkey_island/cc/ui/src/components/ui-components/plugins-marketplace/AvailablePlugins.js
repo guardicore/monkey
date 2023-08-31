@@ -17,6 +17,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import '../../../styles/components/plugins-marketplace/AvailablePlugins.scss'
 import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
+import { generatePluginId } from './utils';
 
 const AvailablePlugins = () => {
   const {availablePlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
@@ -25,6 +26,7 @@ const AvailablePlugins = () => {
 
   const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
   const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
+  const [installingAllSafePlugins, setInstallingAllSafePlugins] = useState(false);
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
@@ -43,12 +45,12 @@ const AvailablePlugins = () => {
     setSuccessfullyInstalledPluginsIds([]);
   }
 
-  const onInstallClick = (pluginId, pluginName, pluginType, pluginVersion) => {
+  const onInstallClick = async (pluginId, pluginName, pluginType, pluginVersion) => {
     setPluginsInInstallationProcess((prevState) => {
       return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
     });
 
-    authComponent.authFetch('/api/install-agent-plugin', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({plugin_type: pluginType, name: pluginName, version: pluginVersion})}, true).then(() => {
+    return authComponent.authFetch('/api/install-agent-plugin', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({plugin_type: pluginType, name: pluginName, version: pluginVersion})}, true).then(() => {
       setSuccessfullyInstalledPluginsIds((prevState) => {
         return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
       });
@@ -116,6 +118,20 @@ const AvailablePlugins = () => {
     });
   }
 
+  const installAllSafePlugins = () => {
+    let pluginTasks = [];
+    setInstallingAllSafePlugins(true);
+    for (const plugin of displayedPlugins) {
+      if (plugin.safe) {
+        const id = generatePluginId(plugin);
+        pluginTasks.push(onInstallClick(id, plugin.name, plugin.type_, plugin.version));
+      }
+    }
+    Promise.all(pluginTasks).then(() => {
+      setInstallingAllSafePlugins(false);
+    });
+  }
+
   return (
     <Box>
       <Grid container spacing={2} rowSpacing={1} columnSpacing={2}>
@@ -137,6 +153,10 @@ const AvailablePlugins = () => {
                        loadingMessage="Loading all available plugins..."
                        onRefreshCallback={onRefreshCallback}
                        getRowActions={getRowActions} />
+        </Grid>
+        <Grid xs={10} item />
+        <Grid xs={2} item>
+          <Button onClick={installAllSafePlugins} disabled={installingAllSafePlugins}>Install All Safe</Button>
         </Grid>
       </Grid>
     </Box>
