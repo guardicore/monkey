@@ -61,7 +61,7 @@ export const PluginState = () => {
   };
 
   const refreshNumberOfUpgradablePlugins = () => {
-    const numUpgradablePlugins = _.sumBy(installedPlugins, (plugin) => plugin.update_version !== '' ? 1 : 0);
+    const numUpgradablePlugins = installedPlugins?.filter(plugin => plugin.update_version !== '')?.length;
     setNumberOfPluginsThatRequiresUpdate(numUpgradablePlugins);
   }
 
