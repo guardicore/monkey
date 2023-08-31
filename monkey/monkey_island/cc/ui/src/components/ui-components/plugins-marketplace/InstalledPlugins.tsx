@@ -16,13 +16,15 @@ import SearchBar from '../SearchBar';
 import TypeFilter from './TypeFilter';
 
 
-const InstalledPlugins = () => {
+const InstalledPlugins = (props) => {
+  const {
+    successfullyUpdatedPluginsIds, setSuccessfullyUpdatedPluginsIds,
+    pluginsInUpdateProcess, setPluginsInUpdateProcess,
+    successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds,
+    pluginsInUninstallProcess, setPluginsInUninstallProcess
+  } = {...props};
   const {installedPlugins, refreshInstalledPlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
-  const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
-  const [pluginsInInstallProcess, setPluginsInInstallProcess] = useState([]);
-  const [successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds] = useState([]);
-  const [pluginsInUninstallProcess, setPluginsInUninstallProcess] = useState([]);
   const [filters, setFilters] = useState({});
   const authComponent = new AuthComponent({});
 
@@ -80,19 +82,19 @@ const InstalledPlugins = () => {
   }
 
   const onUpgradeClick = (pluginId, pluginType, name, version) => {
-    setPluginsInInstallProcess((prevState) => {
+    setPluginsInUpdateProcess((prevState) => {
       return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
     });
 
     upgradePlugin(pluginType, name, version).then(() => {
-      setSuccessfullyInstalledPluginsIds((prevState) => {
+      setSuccessfullyUpdatedPluginsIds((prevState) => {
         return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
       });
       refreshInstalledPlugins();
     }).catch(() => {
       console.log('error upgrading plugin');
     }).finally(() => {
-      setPluginsInInstallProcess((prevState => {
+      setPluginsInUpdateProcess((prevState => {
         return shallowRemovalOfUniqueValueFromArray(prevState, pluginId);
       }));
     });
@@ -100,7 +102,7 @@ const InstalledPlugins = () => {
 
   const getUpgradeAction = (row) => {
     const pluginId = row.id;
-    if (pluginsInInstallProcess.includes(pluginId)) {
+    if (pluginsInUpdateProcess.includes(pluginId)) {
       return [
         <GridActionsCellItem
           key={pluginId + 'upgrade'}
@@ -112,7 +114,7 @@ const InstalledPlugins = () => {
       ]
     }
 
-    if (successfullyInstalledPluginsIds.includes(pluginId)) {
+    if (successfullyUpdatedPluginsIds.includes(pluginId)) {
       return [
         <GridActionsCellItem
           key={pluginId + 'upgrade'}
@@ -175,7 +177,7 @@ const InstalledPlugins = () => {
       ]
     }
 
-    if (pluginsInInstallProcess.includes(pluginId)) {
+    if (pluginsInUpdateProcess.includes(pluginId)) {
       return [
         <GridActionsCellItem
           key={pluginId + 'uninstall'}
@@ -220,7 +222,6 @@ const InstalledPlugins = () => {
   }
 
   const onToggleChanged = (selectedValue) => {
-    console.log("selection: " + selectedValue);
     if (selectedValue === 'upgradable') {
       setFilters((prevState) => {
         return {...prevState, upgradable: (plugin) => plugin.update_version !== ''};
