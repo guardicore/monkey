@@ -106,7 +106,7 @@ const InstalledPlugins = () => {
       ]
     }
 
-    if ((row.update_version) && (!pluginsInUninstallProcess.includes(pluginId))) {
+    if ((row.update_version) && (!pluginsInUninstallProcess.includes(pluginId)) && (!successfullyUninstalledPluginsIds.includes(pluginId))) {
       return [
         <GridActionsCellItem
         key={pluginId + 'upgrade'}
