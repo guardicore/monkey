@@ -10,9 +10,15 @@ from common.agent_configuration import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import Event, NetworkPort, NetworkProtocol, NetworkService, PortStatus
-from infection_monkey.i_puppet import (
+from common.types import (
     DiscoveredService,
+    Event,
+    NetworkPort,
+    NetworkProtocol,
+    NetworkService,
+    PortStatus,
+)
+from infection_monkey.i_puppet import (
     ExploiterResult,
     FingerprintData,
     PingScanData,

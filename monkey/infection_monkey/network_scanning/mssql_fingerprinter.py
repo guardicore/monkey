@@ -3,14 +3,8 @@ import logging
 import socket
 from typing import Dict, Optional, Set
 
-from common.types import NetworkPort, NetworkProtocol, NetworkService
-from infection_monkey.i_puppet import (
-    DiscoveredService,
-    FingerprintData,
-    IFingerprinter,
-    PingScanData,
-    PortScanData,
-)
+from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService
+from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 SQL_BROWSER_DEFAULT_PORT = NetworkPort(1434)
 _BUFFER_SIZE = 4096

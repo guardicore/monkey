@@ -6,14 +6,8 @@ from typing import Dict, List
 from odict import odict
 
 from common import OperatingSystem
-from common.types import NetworkPort, NetworkProtocol, NetworkService, PortStatus
-from infection_monkey.i_puppet import (
-    DiscoveredService,
-    FingerprintData,
-    IFingerprinter,
-    PingScanData,
-    PortScanData,
-)
+from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
+from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 SMB_PORT = NetworkPort(445)
 

@@ -1,8 +1,8 @@
 import pytest
 
 from common import OperatingSystem
-from common.types import NetworkProtocol, NetworkService, PortStatus
-from infection_monkey.i_puppet import DiscoveredService, FingerprintData, PortScanData
+from common.types import DiscoveredService, NetworkProtocol, NetworkService, PortStatus
+from infection_monkey.i_puppet import FingerprintData, PortScanData
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 
 SSH_SERVICE_22 = DiscoveredService(

@@ -4,9 +4,8 @@ from typing import Any, Dict, Mapping, Sequence
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
-from common.types import Event, NetworkProtocol, NetworkService, PortStatus
+from common.types import DiscoveredService, Event, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import (
-    DiscoveredService,
     ExploiterResult,
     FingerprintData,
     IncompatibleTargetOperatingSystemError,

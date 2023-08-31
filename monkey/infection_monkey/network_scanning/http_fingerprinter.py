@@ -6,14 +6,8 @@ from requests import head
 from requests.exceptions import ConnectionError, Timeout
 from requests.structures import CaseInsensitiveDict
 
-from common.types import NetworkPort, NetworkProtocol, NetworkService, PortStatus
-from infection_monkey.i_puppet import (
-    DiscoveredService,
-    FingerprintData,
-    IFingerprinter,
-    PingScanData,
-    PortScanData,
-)
+from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
+from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 logger = logging.getLogger(__name__)
 
