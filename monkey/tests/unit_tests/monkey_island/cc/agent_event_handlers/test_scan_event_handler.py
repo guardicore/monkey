@@ -217,7 +217,6 @@ def test_handle_tcp_scan_event__no_open_ports(
     scan_event_handler, machine_repository, node_repository
 ):
     event = TCP_SCAN_EVENT_CLOSED
-    scan_event_handler._update_nodes = MagicMock()
     scan_event_handler.handle_tcp_scan_event(event)
 
     assert not node_repository.upsert_tcp_connections.called
@@ -227,7 +226,6 @@ def test_handle_tcp_scan_event__ports_found(
     scan_event_handler, machine_repository, node_repository
 ):
     event = TCP_SCAN_EVENT
-    scan_event_handler._update_nodes = MagicMock()
     node_repository.get_node_by_machine_id.return_value = SOURCE_NODE
     scan_event_handler.handle_tcp_scan_event(event)
 
