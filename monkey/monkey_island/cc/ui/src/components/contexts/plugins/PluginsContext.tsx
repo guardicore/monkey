@@ -160,7 +160,10 @@ export const PluginState = () :PluginsContextType => {
 
   const refreshNumberOfUpgradablePlugins = () => {
     let upgradablePlugins = installedPlugins.filter((installedPlugin) => {
-      let availablePlugin = availablePlugins.find((availablePlugin) => availablePlugin.id === installedPlugin.id)
+      let availablePlugin = availablePlugins.find((availablePlugin) => {
+        return availablePlugin.name === installedPlugin.name
+          && availablePlugin.pluginType === installedPlugin.pluginType;
+      })
       if(availablePlugin){
         return semver.gt(availablePlugin.version, installedPlugin.version);
       } else {
