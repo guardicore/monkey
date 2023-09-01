@@ -23,7 +23,7 @@ const InstalledPlugins = (props) => {
     successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds,
     pluginsInUninstallProcess, setPluginsInUninstallProcess
   } = {...props};
-  const {installedPlugins, availablePlugins} = useContext(PluginsContext);
+  const {installedPlugins, refreshInstalledPlugins, availablePlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
   const [filters, setFilters] = useState({});
   const authComponent = new AuthComponent({});
@@ -89,6 +89,7 @@ const InstalledPlugins = (props) => {
       setSuccessfullyUpdatedPluginsIds((prevState) => {
         return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
       });
+      refreshInstalledPlugins();
     }).catch(() => {
       console.log('error upgrading plugin');
     }).finally(() => {
