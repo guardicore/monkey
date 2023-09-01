@@ -233,10 +233,14 @@ const InstalledPlugins = (props) => {
     return [...getUpgradeAction(plugin), ...getUninstallAction(plugin)]
   }
 
-  const onSearchChanged = (query) => {
-    const filterOnText = (plugin) => {
-      for (const property in plugin) {
-        if (typeof plugin[property] === 'string' && plugin[property].toLowerCase().includes(query.toLowerCase())) {
+  const getSearchableFields = (plugin: InstalledPlugin): string[] => {
+    return [plugin.name, plugin.pluginType, plugin.description, plugin.version];
+  }
+
+  const onSearchChanged = (query: string) => {
+    const filterOnText = (plugin: InstalledPlugin): boolean => {
+      for (const field of getSearchableFields(plugin)) {
+        if (field.toLowerCase().includes(query.toLowerCase())) {
           return true;
         }
       }

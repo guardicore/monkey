@@ -81,14 +81,14 @@ const AvailablePlugins = (props) => {
     setSuccessfullyInstalledPluginsIds([]);
   }
 
-  const filterInstalledPlugins = (plugin) => {
+  const filterInstalledPlugins = (plugin: AvailablePlugin) => {
     return installedPlugins.find(installedPlugin => {
       return installedPlugin.name === plugin.name
         && installedPlugin.pluginType === plugin.pluginType;
     }) === undefined;
   }
 
-  const installPlugin = (pluginType ,pluginName, pluginVersion) => {
+  const installPlugin = (pluginType: string, pluginName: string, pluginVersion: string) => {
     const options = {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
@@ -97,7 +97,7 @@ const AvailablePlugins = (props) => {
     return authComponent.authFetch('/api/install-agent-plugin', options , true)
   }
 
-  const onInstallClick = (pluginId, pluginName, pluginType, pluginVersion) => {
+  const onInstallClick = (pluginId: string, pluginName: string, pluginType: string, pluginVersion: string) => {
     setPluginsInInstallationProcess((prevState) => {
       return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
     });
@@ -153,10 +153,14 @@ const AvailablePlugins = (props) => {
     ];
   }
 
-  const onSearchChanged = (query) => {
-    const filterOnText = (plugin) => {
-      for (const property in plugin) {
-        if (typeof plugin[property] === 'string' && plugin[property].toLowerCase().includes(query.toLowerCase())) {
+  const getSearchableFields = (plugin: AvailablePlugin): string[] => {
+    return [plugin.name, plugin.pluginType, plugin.description, plugin.version];
+  }
+
+  const onSearchChanged = (query: string) => {
+    const filterOnText = (plugin: AvailablePlugin): boolean => {
+      for (const field of getSearchableFields(plugin)) {
+        if (field.toLowerCase().includes(query.toLowerCase())) {
           return true;
         }
       }
