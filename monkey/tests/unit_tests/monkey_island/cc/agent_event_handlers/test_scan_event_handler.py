@@ -415,3 +415,20 @@ def test_network_services_handling(scan_event_handler, machine_repository):
     machine_repository.upsert_network_services.assert_called_with(
         TARGET_MACHINE_ID, EXPECTED_NETWORK_SERVICES
     )
+
+
+def test_known_network_services_not_overwritten(
+    scan_event_handler, machine_repository, target_machine
+):
+    target_machine.network_services = {
+        SocketAddress(ip=TARGET_MACHINE_IP, port=22): NetworkService.SSH
+    }
+    expected_upserted_services = {
+        SocketAddress(ip=TARGET_MACHINE_IP, port=80): NetworkService.UNKNOWN
+    }
+
+    scan_event_handler.handle_tcp_scan_event(TCP_SCAN_EVENT)
+
+    machine_repository.upsert_network_services.assert_called_with(
+        TARGET_MACHINE_ID, expected_upserted_services
+    )
