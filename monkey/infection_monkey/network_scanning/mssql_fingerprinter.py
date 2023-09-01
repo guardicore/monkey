@@ -1,15 +1,24 @@
 import errno
 import logging
 import socket
-from typing import Dict, Optional, Set
+import time
+from ipaddress import IPv4Address
+from typing import Dict, Optional, Sequence, Set
 
+from common.agent_events import FingerprintingEvent
 from common.event_queue import IAgentEventPublisher
+from common.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
 from common.types import AgentID, DiscoveredService, NetworkPort, NetworkProtocol, NetworkService
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 SQL_BROWSER_DEFAULT_PORT = NetworkPort(1434)
 _BUFFER_SIZE = 4096
 _MSSQL_SOCKET_TIMEOUT = 5
+
+MSSQL_FINGERPRINTER_TAG = "mssql-fingerprinter"
+EVENT_TAGS = frozenset(
+    {MSSQL_FINGERPRINTER_TAG, ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG}
+)
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +38,7 @@ class MSSQLFingerprinter(IFingerprinter):
         """Gets Microsoft SQL Server instance information by querying the SQL Browser service."""
         services: Set[DiscoveredService] = set()
 
+        timestamp = time.time()
         try:
             data = _query_mssql_for_instance_data(host, services)
             _get_services_from_server_data(data, services)
@@ -36,7 +46,24 @@ class MSSQLFingerprinter(IFingerprinter):
         except Exception as ex:
             logger.debug(f"Did not detect an MSSQL server: {ex}")
 
+        self._publish_fingerprinting_event(host, timestamp, list(services))
+
         return FingerprintData(os_type=None, os_version=None, services=list(services))
+
+    def _publish_fingerprinting_event(
+        self, host: str, timestamp: float, discovered_services: Sequence[DiscoveredService]
+    ):
+        self._agent_event_publisher.publish(
+            FingerprintingEvent(
+                source=self._agent_id,
+                target=IPv4Address(host),
+                timestamp=timestamp,
+                tags=EVENT_TAGS,  # type: ignore [arg-type]
+                os=None,
+                os_version=None,
+                discovered_services=tuple(discovered_services),
+            )
+        )
 
 
 def _query_mssql_for_instance_data(host: str, services: Set[DiscoveredService]) -> bytes:
