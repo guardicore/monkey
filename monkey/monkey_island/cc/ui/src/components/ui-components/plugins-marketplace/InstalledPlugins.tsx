@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {PluginsContext} from '../../contexts/plugins/PluginsContext';
+import {InstalledPlugin, PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {shallowAdditionOfUniqueValueToArray, shallowRemovalOfUniqueValueFromArray} from '../../../utils/objectUtils';
 import {GridActionsCellItem} from '@mui/x-data-grid';
 import {Box, Grid} from '@mui/material';
@@ -14,8 +14,11 @@ import AuthComponent from '../../AuthComponent';
 import MonkeyToggle from '../MonkeyToggle';
 import SearchBar from '../SearchBar';
 import TypeFilter from './TypeFilter';
+import semver from 'semver';
 
 
+const InstalledPlugins = () => {
+  const {installedPlugins, refreshInstalledPlugins, availablePlugins} = useContext(PluginsContext);
 const InstalledPlugins = (props) => {
   const {
     successfullyUpdatedPluginsIds, setSuccessfullyUpdatedPluginsIds,
@@ -100,7 +103,29 @@ const InstalledPlugins = (props) => {
     });
   }
 
+  const isPluginUpgradable = (plugin :InstalledPlugin) => {
+    const latestVersion = getLatestVersion(plugin);
+    if (latestVersion) {
+      return semver.gt(latestVersion, plugin.version);
+    } else {
+      return false;
+    }
+  }
+
+  const getLatestVersion = (plugin :InstalledPlugin) :string => {
+    const latestPlugin = availablePlugins.find(availablePlugin => {
+      return availablePlugin.name === plugin.name && availablePlugin.pluginType === plugin.pluginType
+    });
+    if (!latestPlugin) {
+      // Custom plugin might not be available in the marketplace
+      return undefined;
+    } else {
+      return latestPlugin.version;
+    }
+  }
+
   const getUpgradeAction = (row) => {
+    const plugin = installedPlugins.find(installedPlugin => installedPlugin.id === row.id);
     const pluginId = row.id;
     if (pluginsInUpdateProcess.includes(pluginId)) {
       return [
@@ -126,14 +151,16 @@ const InstalledPlugins = (props) => {
       ]
     }
 
-    if ((row.update_version) && (!pluginsInUninstallProcess.includes(pluginId)) && (!successfullyUninstalledPluginsIds.includes(pluginId))) {
+    if ((!pluginsInUninstallProcess.includes(pluginId))
+        && (!successfullyUninstalledPluginsIds.includes(pluginId))
+        && isPluginUpgradable(plugin)) {
       return [
         <GridActionsCellItem
         key={pluginId + 'upgrade'}
         icon={<UpgradeIcon/>}
         label="Upgrade"
         className="textPrimary"
-        onClick={() => onUpgradeClick(pluginId, row.type, row.name, row.update_version)}
+        onClick={() => onUpgradeClick(pluginId, row.type, row.name, getLatestVersion(plugin))}
         color="inherit"
       />
       ]
@@ -224,7 +251,7 @@ const InstalledPlugins = (props) => {
   const onToggleChanged = (selectedValue) => {
     if (selectedValue === 'upgradable') {
       setFilters((prevState) => {
-        return {...prevState, upgradable: (plugin) => plugin.update_version !== ''};
+        return {...prevState, upgradable: (plugin) => isPluginUpgradable(plugin.id)};
       });
     }
     else {

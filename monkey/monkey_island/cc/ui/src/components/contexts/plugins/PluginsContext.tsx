@@ -138,15 +138,6 @@ export const PluginState = () :PluginsContextType => {
   }
 
   const refreshAvailablePlugins = (forceRefresh = false) => {
-    const filterInstalledPlugins = (plugins :AvailablePlugin[]) :AvailablePlugin[] => {
-      return plugins.filter(
-        (availablePlugin) => {
-          return installedPlugins.find((installedPlugin) =>
-            installedPlugin.id === availablePlugin.id
-          ) === undefined
-        })
-    }
-
     let url = '/api/agent-plugins/available/index';
     if (forceRefresh) {
       url += '?force_refresh=true';
@@ -155,7 +146,6 @@ export const PluginState = () :PluginsContextType => {
       .then(res => res.json())
       .then((res) => {
         let parsedPlugins = parsePluginMetadataResponse(res.plugins);
-        parsedPlugins = filterInstalledPlugins(parsedPlugins);
         setAvailablePlugins(parsedPlugins);
       });
   };

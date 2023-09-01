@@ -16,7 +16,6 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import '../../../styles/components/plugins-marketplace/AvailablePlugins.scss'
 import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
-import { generatePluginId } from './utils';
 
 const AvailablePlugins = (props) => {
   const {
@@ -27,14 +26,17 @@ const AvailablePlugins = (props) => {
     pluginsInInstallationProcess,
     setPluginsInInstallationProcess
   } = {...props};
-  const {availablePlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
+  const {availablePlugins, installedPlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
   const [filters, setFilters] = useState({});
 
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
-    setDisplayedPlugins(availablePlugins)
+    setDisplayedPlugins(availablePlugins);
+    setFilters((prevState) => {
+      return {...prevState, installed: filterInstalledPlugins};
+    });
   }, []);
 
   useEffect(() =>{
@@ -47,7 +49,7 @@ const AvailablePlugins = (props) => {
       shownPlugins = shownPlugins.filter(filter);
     }
     setDisplayedPlugins(shownPlugins);
-  }, [availablePlugins, filters]);
+  }, [availablePlugins, installedPlugins, filters]);
 
   const disableInstallAllSafePlugins = () => {
     let unSafeDispalyedPlugins = [];
@@ -64,6 +66,13 @@ const AvailablePlugins = (props) => {
 
   const onRefreshCallback = () => {
     setSuccessfullyInstalledPluginsIds([]);
+  }
+
+  const filterInstalledPlugins = (plugin) => {
+    return installedPlugins.find(installedPlugin => {
+      return installedPlugin.name === plugin.name
+        && installedPlugin.pluginType === plugin.pluginType;
+    }) === undefined;
   }
 
   const installPlugin = (pluginType ,pluginName, pluginVersion) => {
@@ -152,8 +161,7 @@ const AvailablePlugins = (props) => {
     setInstallingAllSafePlugins(true);
     for (const plugin of displayedPlugins) {
       if (plugin.safe) {
-        const id = generatePluginId(plugin);
-        onInstallClick(id, plugin.name, plugin.type_, plugin.version);
+        onInstallClick(plugin.id, plugin.name, plugin.pluginType, plugin.version);
       }
     }
   }
