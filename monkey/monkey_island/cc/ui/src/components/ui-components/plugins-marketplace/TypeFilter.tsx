@@ -32,10 +32,9 @@ const TypeFilter = ({allPlugins, filters, setFilters} :TypeFilterProps) => {
   }, [allPlugins])
 
   useEffect(() => {
-    let newFilters = {...filters};
-    newFilters['type'] = getFilterForType(selectedType);
-    setFilters(newFilters);
-  }, [selectedType])
+    setFilters((prevState) => {
+      return {...prevState, pluginType: getFilterForType(selectedType)}
+    })}, [selectedType])
 
   const selectOptionFromValue = (value) :SelectOption => {
     return {value: value, label: _.startCase(value)}
@@ -50,11 +49,10 @@ const TypeFilter = ({allPlugins, filters, setFilters} :TypeFilterProps) => {
       return () => true;
     }
 
-    const typeFilter = (plugin :AvailablePlugin) :boolean => {
+    return (plugin: AvailablePlugin): boolean => {
       let pluginType = plugin.pluginType
       return pluginType === typeOption.value
-    }
-    return typeFilter;
+    };
   }
 
   return (
