@@ -151,7 +151,7 @@ export const PluginState = () :PluginsContextType => {
   };
 
   const refreshInstalledPlugins = () => {
-    authComponent.authFetch('/api/agent-plugins/installed/manifests', {}, true)
+    return authComponent.authFetch('/api/agent-plugins/installed/manifests', {}, true)
       .then(res => res.json())
       .then((plugins :PluginManifestResponse) => {
         setInstalledPlugins(parsePluginManifestResponse(plugins));
