@@ -5,7 +5,6 @@ import {
 } from '../../../utils/objectUtils';
 import {PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {GridActionsCellItem} from '@mui/x-data-grid';
-import {nanoid} from 'nanoid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import {Box, Grid} from '@mui/material';
@@ -17,19 +16,30 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import '../../../styles/components/plugins-marketplace/AvailablePlugins.scss'
 import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
+import { generatePluginId } from './utils';
 
-const AvailablePlugins = () => {
+const AvailablePlugins = (props) => {
+  const {
+    installingAllSafePlugins,
+    setInstallingAllSafePlugins,
+    successfullyInstalledPluginsIds,
+    setSuccessfullyInstalledPluginsIds,
+    pluginsInInstallationProcess,
+    setPluginsInInstallationProcess
+  } = {...props};
   const {availablePlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
   const [filters, setFilters] = useState({});
 
-  const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
-  const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
     setDisplayedPlugins(availablePlugins)
   }, []);
+
+  useEffect(() =>{
+    disableInstallAllSafePlugins()
+  }, [displayedPlugins]);
 
   useEffect(() => {
     let shownPlugins = availablePlugins;
@@ -39,8 +49,30 @@ const AvailablePlugins = () => {
     setDisplayedPlugins(shownPlugins);
   }, [availablePlugins, filters]);
 
+  const disableInstallAllSafePlugins = () => {
+    let unSafeDispalyedPlugins = [];
+    let safeDispalyedPlugins = [];
+    for (const plugin of displayedPlugins) {
+      if (!plugin.safe) {
+        unSafeDispalyedPlugins.push(plugin.name);
+      } else {
+        safeDispalyedPlugins.push(plugin.name);
+      }
+    }
+    setInstallingAllSafePlugins(unSafeDispalyedPlugins.length > 0 && safeDispalyedPlugins.length === 0 || displayedPlugins.length === 0)
+  }
+
   const onRefreshCallback = () => {
     setSuccessfullyInstalledPluginsIds([]);
+  }
+
+  const installPlugin = (pluginType ,pluginName, pluginVersion) => {
+    const options = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({plugin_type: pluginType, name: pluginName, version: pluginVersion})
+    };
+    return authComponent.authFetch('/api/install-agent-plugin', options , true)
   }
 
   const onInstallClick = (pluginId, pluginName, pluginType, pluginVersion) => {
@@ -48,7 +80,7 @@ const AvailablePlugins = () => {
       return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
     });
 
-    authComponent.authFetch('/api/install-agent-plugin', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({plugin_type: pluginType, name: pluginName, version: pluginVersion})}, true).then(() => {
+    installPlugin(pluginType, pluginName, pluginVersion).then(() => {
       setSuccessfullyInstalledPluginsIds((prevState) => {
         return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
       });
@@ -67,7 +99,7 @@ const AvailablePlugins = () => {
     if (pluginsInInstallationProcess.includes(pluginId)) {
       return [
         <GridActionsCellItem
-          key={nanoid()}
+          key={pluginId}
           icon={<LoadingIcon/>}
           label="Downloading"
           className="textPrimary"
@@ -79,7 +111,7 @@ const AvailablePlugins = () => {
     if (successfullyInstalledPluginsIds.includes(pluginId)) {
       return [
         <GridActionsCellItem
-          key={nanoid()}
+          key={pluginId}
           icon={<DownloadDoneIcon/>}
           label="Download Done"
           className="textPrimary"
@@ -93,7 +125,7 @@ const AvailablePlugins = () => {
     const pluginVersion = row.version;
     return [
       <GridActionsCellItem
-        key={nanoid()}
+        key={pluginId}
         icon={<FileDownloadIcon/>}
         label="Download"
         className="textPrimary"
@@ -116,21 +148,38 @@ const AvailablePlugins = () => {
     });
   }
 
+  const installAllSafePlugins = () => {
+    setInstallingAllSafePlugins(true);
+    for (const plugin of displayedPlugins) {
+      if (plugin.safe) {
+        const id = generatePluginId(plugin);
+        onInstallClick(id, plugin.name, plugin.type_, plugin.version);
+      }
+    }
+  }
+
   return (
     <Box>
       <Grid container spacing={2} rowSpacing={1} columnSpacing={2}>
         <Grid xs={4} item>
           <SearchBar setQuery={onSearchChanged} />
         </Grid>
-        <Grid xs={4} item />
         <Grid xs={3} item >
           <TypeFilter allPlugins={availablePlugins}
                       filters={filters}
                       setFilters={setFilters}
                       className={'type-filter-box'}/>
         </Grid>
+        <Grid xs={1} item/>
+        <Grid xs={3} item>
+          <Box display="flex" justifyContent="flex-end" >
+            <Button onClick={installAllSafePlugins} disabled={installingAllSafePlugins}>
+              <FileDownloadIcon/> All Safe Plugins
+            </Button>
+          </Box>
+        </Grid>
         <Grid xs={1} item >
-            <Button onClick={() => refreshAvailablePlugins(true)}><RefreshIcon/></Button>
+          <Button onClick={() => refreshAvailablePlugins(true)}><RefreshIcon/></Button>
         </Grid>
         <Grid xs={12} item>
           <BasePlugins plugins={displayedPlugins}

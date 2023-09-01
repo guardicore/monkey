@@ -36,11 +36,23 @@ const a11yProps = (index) => {
 
 const MarketplacePage = () => {
   const {numberOfPluginsThatRequiresUpdate} = useContext(PluginsContext);
+  const [installingAllSafePlugins, setInstallingAllSafePlugins] = useState(false);
+  const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
+  const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
+  const [successfullyUpdatedPluginsIds, setSuccessfullyUpdatedPluginsIds] = useState([]);
+  const [pluginsInUpdateProcess, setPluginsInUpdateProcess] = useState([]);
+  const [successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds] = useState([]);
+  const [pluginsInUninstallProcess, setPluginsInUninstallProcess] = useState([]);
 
   const [tabValue, setTabValue] = useState(0);
 
   const handleChange = (_event, newValue) => {
     setTabValue(newValue);
+    if(pluginsInInstallationProcess.length === 0){
+      setSuccessfullyInstalledPluginsIds([]);
+    }
+    setSuccessfullyUpdatedPluginsIds([]);
+    setSuccessfullyUninstalledPluginsIds([]);
   }
 
   const installedPluginsLabel = <div>
@@ -64,8 +76,26 @@ const MarketplacePage = () => {
             <Tab label="Upload New Plugin" {...a11yProps(2)}/>
           </Tabs>
         </Box>
-        <TabPanel value={tabValue} index={0}><AvailablePlugins /></TabPanel>
-        <TabPanel value={tabValue} index={1}><InstalledPlugins /></TabPanel>
+        <TabPanel value={tabValue} index={0}>
+          <AvailablePlugins
+            installingAllSafePlugins={installingAllSafePlugins}
+            setInstallingAllSafePlugins={setInstallingAllSafePlugins}
+            successfullyInstalledPluginsIds={successfullyInstalledPluginsIds}
+            setSuccessfullyInstalledPluginsIds={setSuccessfullyInstalledPluginsIds}
+            pluginsInInstallationProcess={pluginsInInstallationProcess}
+            setPluginsInInstallationProcess={setPluginsInInstallationProcess} />
+        </TabPanel>
+        <TabPanel value={tabValue} index={1}>
+          <InstalledPlugins
+              successfullyUpdatedPluginsIds={successfullyUpdatedPluginsIds}
+              setSuccessfullyUpdatedPluginsIds={setSuccessfullyUpdatedPluginsIds}
+              pluginsInUpdateProcess={pluginsInUpdateProcess}
+              setPluginsInUpdateProcess={setPluginsInUpdateProcess}
+              successfullyUninstalledPluginsIds={successfullyUninstalledPluginsIds}
+              setSuccessfullyUninstalledPluginsIds={setSuccessfullyUninstalledPluginsIds}
+              pluginsInUninstallProcess={pluginsInUninstallProcess}
+              setPluginsInUninstallProcess={setPluginsInUninstallProcess} />
+        </TabPanel>
         <TabPanel value={tabValue} index={2}><UploadNewPlugin/></TabPanel>
       </Box>
   )
