@@ -86,13 +86,10 @@ class ScanEventHandler:
 
     @classmethod
     def _get_tcp_connections_from_event(cls, event: TCPScanEvent) -> Sequence[SocketAddress]:
-        tcp_connections = set()
-        open_ports = cls._get_open_ports(event)
-        for open_port in open_ports:
-            socket_address = SocketAddress(ip=event.target, port=open_port)
-            tcp_connections.add(socket_address)
-
-        return tuple(tcp_connections)
+        unique_connections = {
+            SocketAddress(ip=event.target, port=port) for port in cls._get_open_ports(event)
+        }
+        return tuple(unique_connections)
 
     @classmethod
     def _get_new_network_services_from_event(
