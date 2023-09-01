@@ -1,11 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import SelectComponent, {SelectVariant} from '../Select';
 import _ from 'lodash';
+import {AvailablePlugin} from '../../contexts/plugins/PluginsContext';
+
+type SetFiltersFunc = (filters: { [name: string]: number } ) => void;
 
 type TypeFilterProps = {
-  allPlugins: any[],
-  displayedPlugins: any[],
-  setDisplayedPlugins: (plugins: any[]) => void
+  allPlugins: AvailablePlugin[],
+  filters: { [name: string]: SetFiltersFunc } ,
+  setFilters: (filters: { [name: string]: SetFiltersFunc } ) => void
 }
 
 type SelectOption = {
@@ -15,13 +18,13 @@ type SelectOption = {
 
 const anyTypeOption :SelectOption = {value: "", label: "All"}
 
-const TypeFilter = ({allPlugins, displayedPlugins, setDisplayedPlugins} :TypeFilterProps) => {
+const TypeFilter = ({allPlugins, filters, setFilters} :TypeFilterProps) => {
   const [selectedType, setSelectedType] = useState(anyTypeOption)
   const [typeFilters, setTypeFilters] = useState([])
 
   useEffect(() => {
     let allTypes = [];
-    allTypes = allPlugins.map(plugin => plugin.type_ || plugin.plugin_type)
+    allTypes = allPlugins.map(plugin => plugin.pluginType)
     allTypes = [...new Set(allTypes)]
     allTypes = allTypes.map(selectOptionFromValue)
     allTypes.unshift(anyTypeOption)
@@ -29,8 +32,9 @@ const TypeFilter = ({allPlugins, displayedPlugins, setDisplayedPlugins} :TypeFil
   }, [allPlugins])
 
   useEffect(() => {
-    filterPlugins(selectedType)
-  }, [displayedPlugins])
+    setFilters((prevState) => {
+      return {...prevState, pluginType: getFilterForType(selectedType)}
+    })}, [selectedType])
 
   const selectOptionFromValue = (value) :SelectOption => {
     return {value: value, label: _.startCase(value)}
@@ -38,21 +42,17 @@ const TypeFilter = ({allPlugins, displayedPlugins, setDisplayedPlugins} :TypeFil
 
   const handleTypeChange = (event) => {
     setSelectedType(selectOptionFromValue(event.target.value))
-    setDisplayedPlugins(allPlugins)
   }
 
-  const filterPlugins = (typeOption :SelectOption) => {
-    const typeFilter = (plugin) => {
-      let pluginType = plugin.type_ || plugin.plugin_type
-      return pluginType === typeOption.value
+  const getFilterForType = (typeOption :SelectOption) => {
+    if (typeOption.value === "") {
+      return () => true;
     }
 
-    if (typeOption.value) {
-      let filteredPlugins = displayedPlugins.filter(typeFilter)
-      if(!_.isEqual(filteredPlugins, displayedPlugins)) {
-        setDisplayedPlugins(filteredPlugins)
-      }
-    }
+    return (plugin: AvailablePlugin): boolean => {
+      let pluginType = plugin.pluginType
+      return pluginType === typeOption.value
+    };
   }
 
   return (

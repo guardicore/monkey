@@ -2,7 +2,7 @@ import React, {useMemo, useState} from 'react';
 import {Box} from '@mui/material';
 import XDataGrid from '../XDataGrid';
 import styles from '../../../styles/components/plugins-marketplace/BasePlugins.module.scss';
-import {generatePluginId} from './utils';
+import {AgentPlugin} from '../../contexts/plugins/PluginsContext';
 
 const DEFAULT_LOADING_MESSAGE = 'Loading plugins...';
 const initialState = {
@@ -35,16 +35,16 @@ const getPluginsGridHeaders = (getRowActions) => [
 ]
 
 
-export const getPluginsGridRows = (pluginsList) => {
+export const getPluginsGridRows = (pluginsList :AgentPlugin[]) => {
   const plugins = pluginsList?.map((pluginObject) => {
-    const {name, version, type_, author, description} = {...pluginObject};
+    const {id, name, version, pluginType, description} = {...pluginObject};
     return {
-      id: generatePluginId(pluginObject),
+      id: id,
       name: name,
       version: version,
-      type: type_,
-      author: author,
-      description: description
+      type: pluginType,
+      author: "Akamai",
+      description: description,
     }
   })
 
@@ -61,13 +61,6 @@ const BasePlugins = (props) => {
     return getPluginsGridRows(plugins);
   }, [plugins]);
 
-  // // eslint-disable-next-line no-unused-vars
-  // const onRefreshClick = () => {
-  //   setPluginsList();
-  //   if(onRefreshCallback) {
-  //     onRefreshCallback();
-  //   }
-  // }
 
   return (
     <Box className={styles['plugins-wrapper']}>

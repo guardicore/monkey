@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
@@ -9,6 +9,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
 import LoadingIcon from '../LoadingIcon';
+import {PluginsContext} from '../../contexts/plugins/PluginsContext';
 import styles from '../../../styles/components/plugins-marketplace/UploadNewPlugin.module.scss';
 
 const getColor = (props) => {
@@ -25,6 +26,7 @@ const getColor = (props) => {
 };
 
 const UploadNewPlugin = () => {
+  const { refreshInstalledPlugins } = useContext(PluginsContext);
   const [plugin, setPlugin] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
@@ -84,6 +86,7 @@ const UploadNewPlugin = () => {
     IslandHttpClient.put(APIEndpoint.installAgentPlugin, plugin, false).then(res => {
       setLoading(false);
       if (res.status === 200) {
+        refreshInstalledPlugins();
         setShowSuccessAlert(true);
         setTimeout(() => {
           setShowSuccessAlert(false);
