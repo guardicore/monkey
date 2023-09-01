@@ -44,12 +44,22 @@ const AvailablePlugins = (props) => {
   }, [displayedPlugins]);
 
   useEffect(() => {
+    filterPlugins();
+  }, [availablePlugins, installedPlugins, filters]);
+
+  useEffect(() => {
+    setFilters((prevState) => {
+      return {...prevState, installed: filterInstalledPlugins};
+    });
+  }, [installedPlugins]);
+
+  const filterPlugins = () => {
     let shownPlugins = availablePlugins;
     for (const filter of Object.values(filters)) {
       shownPlugins = shownPlugins.filter(filter);
     }
     setDisplayedPlugins(shownPlugins);
-  }, [availablePlugins, installedPlugins, filters]);
+  }
 
   const disableInstallAllSafePlugins = () => {
     let unSafeDispalyedPlugins = [];
