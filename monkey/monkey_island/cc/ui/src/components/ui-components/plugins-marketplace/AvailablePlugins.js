@@ -143,12 +143,17 @@ const AvailablePlugins = (props) => {
         <Grid xs={4} item>
           <SearchBar setQuery={onSearchChanged} />
         </Grid>
-        <Grid xs={4} item />
+        <Grid xs={2} item />
         <Grid xs={3} item >
           <TypeFilter allPlugins={availablePlugins}
                       filters={filters}
                       setFilters={setFilters}
                       className={'type-filter-box'}/>
+        </Grid>
+        <Grid xs={2} item>
+          <Box display="flex" justifyContent="flex-end" >
+            <Button onClick={installAllSafePlugins} disabled={installingAllSafePlugins}>Install All Safe</Button>
+          </Box>
         </Grid>
         <Grid xs={1} item >
             <Button onClick={() => refreshAvailablePlugins(true)}><RefreshIcon/></Button>
@@ -158,10 +163,6 @@ const AvailablePlugins = (props) => {
                        loadingMessage="Loading all available plugins..."
                        onRefreshCallback={onRefreshCallback}
                        getRowActions={getRowActions} />
-        </Grid>
-        <Grid xs={10} item />
-        <Grid xs={2} item>
-          <Button onClick={installAllSafePlugins} disabled={installingAllSafePlugins}>Install All Safe</Button>
         </Grid>
       </Grid>
     </Box>
