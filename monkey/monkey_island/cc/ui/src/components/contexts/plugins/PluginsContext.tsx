@@ -69,7 +69,7 @@ export type PluginsContextType = {
   setAvailablePlugins: (availablePlugins: AvailablePlugin[]) => void,
 }
 
-export const PluginsContext :null | PluginsContextType  = createContext(null);
+export const PluginsContext = createContext<null | PluginsContextType>(null);
 
 export const generatePluginId = (name, type, version) => {
   return `${name}${type}${version}`;
