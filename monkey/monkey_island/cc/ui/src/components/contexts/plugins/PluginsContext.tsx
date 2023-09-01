@@ -2,7 +2,6 @@ import React, {createContext, useEffect, useState} from 'react';
 import AuthComponent from '../../AuthComponent';
 import semver from 'semver';
 
-export const PluginsContext = createContext({});
 
 // Types returned from the API
 type PluginMetadata = {
@@ -37,7 +36,7 @@ type PluginManifestResponse = {
 }
 
 // Types used in the UI
-type AgentPlugin = {
+export type AgentPlugin = {
   id: string,
   name: string,
   pluginType: string,
@@ -46,7 +45,7 @@ type AgentPlugin = {
   version: string,
 }
 
-type InstalledPlugin = AgentPlugin & {
+export type InstalledPlugin = AgentPlugin & {
   title: string,
   supportedOperatingSystems: string[],
   targetOperatingSystems: string[],
@@ -54,10 +53,23 @@ type InstalledPlugin = AgentPlugin & {
   remediationSuggestion?: string,
 }
 
-type AvailablePlugin = AgentPlugin & {
+export type AvailablePlugin = AgentPlugin & {
   resourcePath: string,
   sha256: string,
 }
+
+export type PluginsContextType = {
+  availablePlugins: AvailablePlugin[],
+  installedPlugins: InstalledPlugin[],
+  numberOfPluginsThatRequiresUpdate: number,
+  refreshAvailablePlugins: () => Promise<void>,
+  refreshInstalledPlugins: () => Promise<void>,
+  refreshNumberOfUpgradablePlugins: () => Promise<void>,
+  setInstalledPlugins: (installedPlugins: InstalledPlugin[]) => void,
+  setAvailablePlugins: (availablePlugins: AvailablePlugin[]) => void,
+}
+
+export const PluginsContext :null | PluginsContextType  = createContext(null);
 
 export const generatePluginId = (name, type, version) => {
   return `${name}${type}${version}`;
@@ -65,7 +77,7 @@ export const generatePluginId = (name, type, version) => {
 
 const authComponent = new AuthComponent({});
 
-export const PluginState = () => {
+export const PluginState = () :PluginsContextType => {
   const [availablePlugins, setAvailablePlugins] = useState([]);
   const [installedPlugins, setInstalledPlugins] = useState([]);
   const [numberOfPluginsThatRequiresUpdate, setNumberOfPluginsThatRequiresUpdate] = useState(0);
