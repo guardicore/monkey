@@ -49,7 +49,7 @@ class SSHFingerprinter(IFingerprinter):
                     )
                 )
 
-        self._publish_fingerprinting_event(host, timestamp, services)
+        self._publish_fingerprinting_event(host, timestamp, os_type, os_version, services)
 
         return FingerprintData(os_type=os_type, os_version=os_version, services=services)
 
@@ -65,7 +65,12 @@ class SSHFingerprinter(IFingerprinter):
         return os, os_version
 
     def _publish_fingerprinting_event(
-        self, host: str, timestamp: float, discovered_services: Sequence[DiscoveredService]
+        self,
+        host: str,
+        timestamp: float,
+        os_type: Optional[OperatingSystem],
+        os_version: Optional[str],
+        discovered_services: Sequence[DiscoveredService],
     ):
         self._agent_event_publisher.publish(
             FingerprintingEvent(
@@ -73,8 +78,8 @@ class SSHFingerprinter(IFingerprinter):
                 target=IPv4Address(host),
                 timestamp=timestamp,
                 tags=EVENT_TAGS,  # type: ignore [arg-type]
-                os=OperatingSystem.LINUX,
-                os_version=None,
+                os=os_type,
+                os_version=os_version,
                 discovered_services=tuple(discovered_services),
             )
         )
