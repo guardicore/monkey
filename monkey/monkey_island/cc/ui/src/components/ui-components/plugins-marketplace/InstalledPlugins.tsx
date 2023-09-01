@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {InstalledPlugin, PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {shallowAdditionOfUniqueValueToArray, shallowRemovalOfUniqueValueFromArray} from '../../../utils/objectUtils';
 import {GridActionsCellItem} from '@mui/x-data-grid';
-import {Box, Grid} from '@mui/material';
+import {Grid, Stack} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AutoDeleteIcon from '@mui/icons-material/AutoDelete';
 import DownloadingIcon from '@mui/icons-material/Downloading';
@@ -260,8 +260,8 @@ const InstalledPlugins = (props) => {
   }
 
   return (
-    <Box>
-      <Grid container spacing={2} rowSpacing={1} columnSpacing={2}>
+    <Stack spacing={2} height='100%'>
+      <Grid container spacing={2}>
         <Grid xs={4} item>
           <SearchBar setQuery={onSearchChanged} />
         </Grid>
@@ -276,15 +276,13 @@ const InstalledPlugins = (props) => {
           <MonkeyToggle options={[{value: 'all', label: 'All'},{value: 'upgradable', label: 'Upgradable'}]}
                       setSelectedValues={onToggleChanged}/>
         </Grid>
-        <Grid xs={12} item>
-          <BasePlugins plugins={displayedPlugins}
-                      loadingMessage="Loading all available plugins..."
-                      onRefreshCallback={onRefreshCallback}
-                      getRowActions={getRowActions}
-          />
-        </Grid>
       </Grid>
-    </Box>
+      <BasePlugins plugins={displayedPlugins}
+                  loadingMessage="Loading all available plugins..."
+                  onRefreshCallback={onRefreshCallback}
+                  getRowActions={getRowActions}
+      />
+    </Stack>
   )
 };
 

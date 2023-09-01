@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react';
 import Tabs from '@mui/material/Tabs';
-import {Tab, Box, Badge} from '@mui/material';
+import {Tab, Box, Badge, Stack} from '@mui/material';
 import {PluginsContext} from '../contexts/plugins/PluginsContext';
 import AvailablePlugins from '../ui-components/plugins-marketplace/AvailablePlugins';
 import InstalledPlugins from '../ui-components/plugins-marketplace/InstalledPlugins';
@@ -16,10 +16,11 @@ const TabPanel = (props) => {
       hidden={value !== index}
       id={`full-width-tabpanel-${index}`}
       aria-labelledby={`full-width-tab-${index}`}
+      style={{minHeight: 0}}
       {...other}
     >
       {value === index && (
-        <Box sx={{px: 1, py: 3}}>
+        <Box sx={{px: 1, py: 3, height: '100%'}}>
           {children}
         </Box>
       )}
@@ -62,7 +63,8 @@ const MarketplacePage = () => {
   </div>
 
   return (
-      <Box id={classes['marketplace-page']} className="main col-xl-8 col-lg-8 col-md-9 col-sm-9 offset-xl-2 offset-lg-3 offset-md-3 offset-sm-3">
+      <Box id={classes['marketplace-page']} className="main col-xl-8 col-lg-8 col-md-9 col-sm-9 offset-xl-2 offset-lg-3 offset-md-3 offset-sm-3" maxHeight={'100vh'}>
+        <Stack height='100%'>
         <h1 className='page-title'>Plugins</h1>
         <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
           <Tabs value={tabValue}
@@ -97,6 +99,7 @@ const MarketplacePage = () => {
               setPluginsInUninstallProcess={setPluginsInUninstallProcess} />
         </TabPanel>
         <TabPanel value={tabValue} index={2}><UploadNewPlugin/></TabPanel>
+        </Stack>
       </Box>
   )
 };
