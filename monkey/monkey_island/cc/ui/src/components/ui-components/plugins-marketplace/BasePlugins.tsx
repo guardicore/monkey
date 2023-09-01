@@ -1,6 +1,7 @@
 import React, {useMemo, useState} from 'react';
 import {Box} from '@mui/material';
 import XDataGrid from '../XDataGrid';
+import { CheckCircleOutlineOutlined, CancelOutlined } from '@mui/icons-material';
 import styles from '../../../styles/components/plugins-marketplace/BasePlugins.module.scss';
 import {AgentPlugin} from '../../contexts/plugins/PluginsContext';
 
@@ -15,6 +16,7 @@ const HEADER_SUFFIX = '--header';
 
 const getPluginsGridHeaders = (getRowActions) => [
   {headerName: 'Name', field: 'name', sortable: true, filterable: false, flex: 0.4, minWidth: 150, isTextual: true},
+  {headerName: 'Safety', field: 'safe', sortable: true, filterable: false, flex: 0.1, minWidth: 100, isTextual: false, renderCell: renderSafetyCell},
   {headerName: 'Version', field: 'version', sortable: false, filterable: false, flex: 0.1, minWidth: 100, isTextual: true},
   {headerName: 'Type', field: 'type', sortable: true, filterable: false, flex: 0.2, minWidth: 150, isTextual: true},
   {headerName: 'Author', field: 'author', sortable: true, filterable: false, minWidth: 150, flex: 0.25, isTextual: true},
@@ -34,13 +36,25 @@ const getPluginsGridHeaders = (getRowActions) => [
   }
 ]
 
+const renderSafetyCell = (params) => {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      {params.value === true ? (
+        <CheckCircleOutlineOutlined style={{ color: 'green' }} />
+      ) : (
+        <CancelOutlined style={{ color: 'red' }} />
+      )}
+    </div>
+  );
+}
 
 export const getPluginsGridRows = (pluginsList :AgentPlugin[]) => {
   const plugins = pluginsList?.map((pluginObject) => {
-    const {id, name, version, pluginType, description} = {...pluginObject};
+    const {id, name, safe, version, pluginType, description} = {...pluginObject};
     return {
       id: id,
       name: name,
+      safe: safe,
       version: version,
       type: pluginType,
       author: "Akamai",
