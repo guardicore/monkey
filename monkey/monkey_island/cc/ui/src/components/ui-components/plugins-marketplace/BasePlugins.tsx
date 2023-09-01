@@ -1,7 +1,8 @@
 import React, {useMemo, useState} from 'react';
 import {Box} from '@mui/material';
 import XDataGrid from '../XDataGrid';
-import { CheckCircleOutlineOutlined, CancelOutlined } from '@mui/icons-material';
+import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOutlined';
+import CancelOutlined from '@mui/icons-material/CancelOutlined';
 import styles from '../../../styles/components/plugins-marketplace/BasePlugins.module.scss';
 import {AgentPlugin} from '../../contexts/plugins/PluginsContext';
 
