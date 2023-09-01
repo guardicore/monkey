@@ -240,13 +240,13 @@ const InstalledPlugins = (props) => {
         <Grid xs={4} item>
           <SearchBar setQuery={onSearchChanged} />
         </Grid>
-        <Grid xs={2} item />
         <Grid xs={3} item>
           <TypeFilter allPlugins={installedPlugins}
                         filters={filters}
                         setFilters={setFilters}
                         className={'type-filter-box'}/>
         </Grid>
+        <Grid xs={2} item />
         <Grid xs={3} item >
           <MonkeyToggle options={[{value: 'all', label: 'All'},{value: 'upgradable', label: 'Upgradable'}]}
                       setSelectedValues={onToggleChanged}/>

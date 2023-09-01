@@ -161,30 +161,25 @@ const AvailablePlugins = (props) => {
   return (
     <Box>
       <Grid container spacing={2} rowSpacing={1} columnSpacing={2}>
-        <Grid container spacing={2} rowSpacing={1} columnSpacing={2}>
-          <Grid xs={8} item />
-          <Grid xs={3} item>
-            <Box display="flex" justifyContent="flex-end" >
-              <Button onClick={installAllSafePlugins} disabled={installingAllSafePlugins}>
-                <FileDownloadIcon/> All Safe Plugins
-              </Button>
-            </Box>
-          </Grid>
-          <Grid xs={1} item >
-            <Button onClick={() => refreshAvailablePlugins(true)}><RefreshIcon/></Button>
-          </Grid>
+        <Grid xs={4} item>
+          <SearchBar setQuery={onSearchChanged} />
         </Grid>
-        <Grid container spacing={2} rowSpacing={1} columnSpacing={2}>
-          <Grid xs={4} item>
-            <SearchBar setQuery={onSearchChanged} />
-          </Grid>
-          <Grid xs={5} item />
-          <Grid xs={3} item >
-            <TypeFilter allPlugins={availablePlugins}
-                        filters={filters}
-                        setFilters={setFilters}
-                        className={'type-filter-box'}/>
-          </Grid>
+        <Grid xs={3} item >
+          <TypeFilter allPlugins={availablePlugins}
+                      filters={filters}
+                      setFilters={setFilters}
+                      className={'type-filter-box'}/>
+        </Grid>
+        <Grid xs={1} item/>
+        <Grid xs={3} item>
+          <Box display="flex" justifyContent="flex-end" >
+            <Button onClick={installAllSafePlugins} disabled={installingAllSafePlugins}>
+              <FileDownloadIcon/> All Safe Plugins
+            </Button>
+          </Box>
+        </Grid>
+        <Grid xs={1} item >
+          <Button onClick={() => refreshAvailablePlugins(true)}><RefreshIcon/></Button>
         </Grid>
         <Grid xs={12} item>
           <BasePlugins plugins={displayedPlugins}
