@@ -3,7 +3,7 @@ import socket
 import struct
 import time
 from ipaddress import IPv4Address
-from typing import Dict, List, Sequence
+from typing import Dict, List, Optional, Sequence
 
 from odict import odict
 
@@ -219,12 +219,17 @@ class SMBFingerprinter(IFingerprinter):
         except Exception as exc:
             logger.debug("Error getting smb fingerprint: %s", exc)
 
-        self._publish_fingerprinting_event(host, timestamp, services)
+        self._publish_fingerprinting_event(host, timestamp, os_type, os_version, services)
 
         return FingerprintData(os_type=os_type, os_version=os_version, services=services)
 
     def _publish_fingerprinting_event(
-        self, host: str, timestamp: float, discovered_services: Sequence[DiscoveredService]
+        self,
+        host: str,
+        timestamp: float,
+        os_type: Optional[OperatingSystem],
+        os_version: Optional[str],
+        discovered_services: Sequence[DiscoveredService],
     ):
         self._agent_event_publisher.publish(
             FingerprintingEvent(
@@ -232,8 +237,8 @@ class SMBFingerprinter(IFingerprinter):
                 target=IPv4Address(host),
                 timestamp=timestamp,
                 tags=EVENT_TAGS,  # type: ignore [arg-type]
-                os=OperatingSystem.WINDOWS,
-                os_version=None,
+                os=os_type,
+                os_version=os_version,
                 discovered_services=tuple(discovered_services),
             )
         )
