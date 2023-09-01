@@ -36,7 +36,7 @@ const a11yProps = (index) => {
 }
 
 const MarketplacePage = () => {
-  const {numberOfPluginsThatRequiresUpdate} = useContext(PluginsContext);
+  const {numberOfPluginsThatRequiresUpdate, refreshInstalledPlugins} = useContext(PluginsContext);
   const [installingAllSafePlugins, setInstallingAllSafePlugins] = useState(false);
   const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
   const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
@@ -54,6 +54,7 @@ const MarketplacePage = () => {
     }
     setSuccessfullyUpdatedPluginsIds([]);
     setSuccessfullyUninstalledPluginsIds([]);
+    refreshInstalledPlugins();
   }
 
   const installedPluginsLabel = <div>
