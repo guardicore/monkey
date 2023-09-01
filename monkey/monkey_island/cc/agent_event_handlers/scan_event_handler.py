@@ -46,6 +46,11 @@ class ScanEventHandler:
             event, CommunicationType.SCANNED
         )
 
+    def _update_target_machine_os(self, machine: Machine, event: PingScanEvent):
+        if event.os is not None and machine.operating_system is None:
+            machine.operating_system = event.os
+            self._machine_repository.upsert_machine(machine)
+
     def handle_tcp_scan_event(self, event: TCPScanEvent):
         num_open_ports = len(self._get_open_ports(event))
 
@@ -60,11 +65,6 @@ class ScanEventHandler:
     @staticmethod
     def _get_open_ports(event: TCPScanEvent) -> List[NetworkPort]:
         return [port for port, status in event.ports.items() if status == PortStatus.OPEN]
-
-    def _update_target_machine_os(self, machine: Machine, event: PingScanEvent):
-        if event.os is not None and machine.operating_system is None:
-            machine.operating_system = event.os
-            self._machine_repository.upsert_machine(machine)
 
     @classmethod
     def _get_tcp_connections_from_event(cls, event: TCPScanEvent) -> Sequence[SocketAddress]:
