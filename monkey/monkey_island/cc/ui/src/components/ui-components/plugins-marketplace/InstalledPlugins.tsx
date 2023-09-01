@@ -262,8 +262,9 @@ const InstalledPlugins = (props) => {
   return (
     <Stack spacing={2} height='100%'>
       <Grid container spacing={2}>
-        <Grid xs={4} item>
-          <SearchBar setQuery={onSearchChanged} label=""/>
+        <Grid xs={4} item
+              sx={{alignItems: 'flex-end', display: 'flex'}}>
+          <SearchBar setQuery={onSearchChanged} />
         </Grid>
         <Grid xs={3} item>
           <TypeFilter allPlugins={installedPlugins}
