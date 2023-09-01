@@ -106,7 +106,6 @@ const AvailablePlugins = (props) => {
       setSuccessfullyInstalledPluginsIds((prevState) => {
         return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
       });
-      refreshInstalledPlugins();
     }).catch(() => {
       console.log('error installing plugin');
     }).finally(() => {
