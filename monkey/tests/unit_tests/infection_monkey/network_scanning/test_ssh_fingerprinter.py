@@ -74,11 +74,13 @@ def test_no_os(ssh_fingerprinter):
 
 
 def test_ssh_os(ssh_fingerprinter):
+    os_version = "Ubuntu-4ubuntu0.2"
+
     port_scan_data = {
         22: PortScanData(
             port=22,
             status=PortStatus.OPEN,
-            banner="SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.2",
+            banner=f"SSH-2.0-OpenSSH_8.2p1 {os_version}",
             service=NetworkService.SSH,
         ),
         443: PortScanData(
@@ -91,26 +93,25 @@ def test_ssh_os(ssh_fingerprinter):
     results = ssh_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, None)
 
     assert results == FingerprintData(
-        os_type=OperatingSystem.LINUX, os_version="Ubuntu-4ubuntu0.2", services=[SSH_SERVICE_22]
+        os_type=OperatingSystem.LINUX, os_version=os_version, services=[SSH_SERVICE_22]
     )
 
 
-def test_multiple_os(ssh_fingerprinter):
+def test_os_info_not_overwritten(ssh_fingerprinter):
+    os_version = "Ubuntu-4ubuntu0.2"
+
     port_scan_data = {
         22: PortScanData(
             port=22,
             status=PortStatus.OPEN,
-            banner="SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.2",
+            banner=f"SSH-2.0-OpenSSH_8.2p1 {os_version}",
             service=NetworkService.SSH,
         ),
         2222: PortScanData(
             port=2222,
             status=PortStatus.OPEN,
-            banner="SSH-2.0-OpenSSH_8.2p1 Debian",
+            banner="SSH-2.0-OpenSSH_8.2p1 OSThatShouldBeIgnored",
             service=NetworkService.SSH,
-        ),
-        443: PortScanData(
-            port=443, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTPS
         ),
         8080: PortScanData(
             port=8080, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTP
@@ -120,6 +121,6 @@ def test_multiple_os(ssh_fingerprinter):
 
     assert results == FingerprintData(
         os_type=OperatingSystem.LINUX,
-        os_version="Debian",
+        os_version=os_version,
         services=[SSH_SERVICE_22, SSH_SERVICE_2222],
     )
