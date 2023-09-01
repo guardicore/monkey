@@ -17,8 +17,6 @@ import TypeFilter from './TypeFilter';
 import semver from 'semver';
 
 
-const InstalledPlugins = () => {
-  const {installedPlugins, refreshInstalledPlugins, availablePlugins} = useContext(PluginsContext);
 const InstalledPlugins = (props) => {
   const {
     successfullyUpdatedPluginsIds, setSuccessfullyUpdatedPluginsIds,
@@ -26,7 +24,7 @@ const InstalledPlugins = (props) => {
     successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds,
     pluginsInUninstallProcess, setPluginsInUninstallProcess
   } = {...props};
-  const {installedPlugins, refreshInstalledPlugins} = useContext(PluginsContext);
+  const {installedPlugins, refreshInstalledPlugins, availablePlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState([]);
   const [filters, setFilters] = useState({});
   const authComponent = new AuthComponent({});
