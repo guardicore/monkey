@@ -5,7 +5,6 @@ import {
 } from '../../../utils/objectUtils';
 import {PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {GridActionsCellItem} from '@mui/x-data-grid';
-import {nanoid} from 'nanoid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import {Box, Grid} from '@mui/material';
@@ -67,12 +66,21 @@ const AvailablePlugins = (props) => {
     setSuccessfullyInstalledPluginsIds([]);
   }
 
-  const onInstallClick = async (pluginId, pluginName, pluginType, pluginVersion) => {
+  const installPlugin = (pluginType ,pluginName, pluginVersion) => {
+    const options = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({plugin_type: pluginType, name: pluginName, version: pluginVersion})
+    };
+    return authComponent.authFetch('/api/install-agent-plugin', options , true)
+  }
+
+  const onInstallClick = (pluginId, pluginName, pluginType, pluginVersion) => {
     setPluginsInInstallationProcess((prevState) => {
       return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
     });
 
-    return authComponent.authFetch('/api/install-agent-plugin', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({plugin_type: pluginType, name: pluginName, version: pluginVersion})}, true).then(() => {
+    installPlugin(pluginType, pluginName, pluginVersion).then(() => {
       setSuccessfullyInstalledPluginsIds((prevState) => {
         return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
       });
@@ -91,7 +99,7 @@ const AvailablePlugins = (props) => {
     if (pluginsInInstallationProcess.includes(pluginId)) {
       return [
         <GridActionsCellItem
-          key={nanoid()}
+          key={pluginId}
           icon={<LoadingIcon/>}
           label="Downloading"
           className="textPrimary"
@@ -103,7 +111,7 @@ const AvailablePlugins = (props) => {
     if (successfullyInstalledPluginsIds.includes(pluginId)) {
       return [
         <GridActionsCellItem
-          key={nanoid()}
+          key={pluginId}
           icon={<DownloadDoneIcon/>}
           label="Download Done"
           className="textPrimary"
@@ -117,7 +125,7 @@ const AvailablePlugins = (props) => {
     const pluginVersion = row.version;
     return [
       <GridActionsCellItem
-        key={nanoid()}
+        key={pluginId}
         icon={<FileDownloadIcon/>}
         label="Download"
         className="textPrimary"

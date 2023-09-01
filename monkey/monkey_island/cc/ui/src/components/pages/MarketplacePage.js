@@ -48,7 +48,9 @@ const MarketplacePage = () => {
 
   const handleChange = (_event, newValue) => {
     setTabValue(newValue);
-    setSuccessfullyInstalledPluginsIds([]);
+    if(pluginsInInstallationProcess.length === 0){
+      setSuccessfullyInstalledPluginsIds([]);
+    }
     setSuccessfullyUpdatedPluginsIds([]);
     setSuccessfullyUninstalledPluginsIds([]);
   }
