@@ -29,10 +29,8 @@ class SSHFingerprinter(IFingerprinter):
 
         for ps_data in port_scan_data.values():
             if ps_data.banner and self._banner_regex.search(ps_data.banner):
-                # TODO: We don't want to overwrite this in case one `ps_data` has
-                #       the OS info and the next doesn't, the event will publish with
-                #       whatever the last one has
-                os_type, os_version = self._get_host_os(ps_data.banner)
+                if os_type is None and os_version is None:
+                    os_type, os_version = self._get_host_os(ps_data.banner)
                 services.append(
                     DiscoveredService(
                         protocol=NetworkProtocol.TCP,
