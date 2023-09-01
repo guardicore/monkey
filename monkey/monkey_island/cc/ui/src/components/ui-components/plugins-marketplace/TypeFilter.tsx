@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import SelectComponent, {SelectVariant} from '../Select';
 import _ from 'lodash';
+import {AvailablePlugin} from '../../contexts/plugins/PluginsContext';
 
 type SetFiltersFunc = (filters: { [name: string]: number } ) => void;
 
 type TypeFilterProps = {
-  allPlugins: any[],
+  allPlugins: AvailablePlugin[],
   filters: { [name: string]: SetFiltersFunc } ,
   setFilters: (filters: { [name: string]: SetFiltersFunc } ) => void
 }
@@ -23,7 +24,7 @@ const TypeFilter = ({allPlugins, filters, setFilters} :TypeFilterProps) => {
 
   useEffect(() => {
     let allTypes = [];
-    allTypes = allPlugins.map(plugin => plugin.type_ || plugin.plugin_type)
+    allTypes = allPlugins.map(plugin => plugin.pluginType)
     allTypes = [...new Set(allTypes)]
     allTypes = allTypes.map(selectOptionFromValue)
     allTypes.unshift(anyTypeOption)
@@ -49,8 +50,8 @@ const TypeFilter = ({allPlugins, filters, setFilters} :TypeFilterProps) => {
       return () => true;
     }
 
-    const typeFilter = (plugin) => {
-      let pluginType = plugin.type_ || plugin.plugin_type
+    const typeFilter = (plugin :AvailablePlugin) :boolean => {
+      let pluginType = plugin.pluginType
       return pluginType === typeOption.value
     }
     return typeFilter;
