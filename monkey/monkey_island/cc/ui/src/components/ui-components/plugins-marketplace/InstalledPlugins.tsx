@@ -251,7 +251,7 @@ const InstalledPlugins = (props) => {
   const onToggleChanged = (selectedValue) => {
     if (selectedValue === 'upgradable') {
       setFilters((prevState) => {
-        return {...prevState, upgradable: (plugin) => isPluginUpgradable(plugin.id)};
+        return {...prevState, upgradable: (plugin) => isPluginUpgradable(plugin)};
       });
     }
     else {
