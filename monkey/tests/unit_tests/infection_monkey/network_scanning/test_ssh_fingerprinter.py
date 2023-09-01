@@ -5,7 +5,7 @@ from tests.unit_tests.monkey_island.cc.models.test_agent import AGENT_ID
 
 from common import OperatingSystem
 from common.event_queue import IAgentEventPublisher
-from common.types import DiscoveredService, NetworkProtocol, NetworkService, PortStatus
+from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import FingerprintData, PortScanData
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 
@@ -28,7 +28,7 @@ def ssh_fingerprinter(mock_agent_event_publisher):
     return SSHFingerprinter(AGENT_ID, mock_agent_event_publisher)
 
 
-def test_no_ssh_ports_open(ssh_fingerprinter):
+def test_no_ssh_ports_open(ssh_fingerprinter, mock_agent_event_publisher):
     port_scan_data = {
         22: PortScanData(port=22, status=PortStatus.CLOSED, banner="", service=NetworkService.SSH),
         123: PortScanData(
@@ -42,8 +42,11 @@ def test_no_ssh_ports_open(ssh_fingerprinter):
 
     assert results == FingerprintData(os_type=None, os_version=None, services=[])
 
+    assert mock_agent_event_publisher.publish.call_count == 1
+    assert len(mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services) == 0
 
-def test_no_os(ssh_fingerprinter):
+
+def test_no_os(ssh_fingerprinter, mock_agent_event_publisher):
     port_scan_data = {
         22: PortScanData(
             port=22,
@@ -72,8 +75,29 @@ def test_no_os(ssh_fingerprinter):
         services=[SSH_SERVICE_22, SSH_SERVICE_2222],
     )
 
+    assert mock_agent_event_publisher.publish.call_count == 1
+    assert len(mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services) == 2
+    assert (
+        DiscoveredService(
+            protocol=NetworkProtocol.TCP,
+            port=NetworkPort(22),
+            service=NetworkService.SSH,
+        )
+        in mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services
+    )
+    assert (
+        DiscoveredService(
+            protocol=NetworkProtocol.TCP,
+            port=NetworkPort(2222),
+            service=NetworkService.SSH,
+        )
+        in mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services
+    )
+    assert mock_agent_event_publisher.publish.call_args_list[0][0][0].os is None
+    assert mock_agent_event_publisher.publish.call_args_list[0][0][0].os_version is None
 
-def test_ssh_os(ssh_fingerprinter):
+
+def test_ssh_os(ssh_fingerprinter, mock_agent_event_publisher):
     os_version = "Ubuntu-4ubuntu0.2"
 
     port_scan_data = {
@@ -96,8 +120,22 @@ def test_ssh_os(ssh_fingerprinter):
         os_type=OperatingSystem.LINUX, os_version=os_version, services=[SSH_SERVICE_22]
     )
 
+    assert mock_agent_event_publisher.publish.call_count == 1
+    assert len(mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services) == 1
+    assert (
+        DiscoveredService(
+            protocol=NetworkProtocol.TCP,
+            port=NetworkPort(22),
+            service=NetworkService.SSH,
+        )
+        in mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services
+    )
 
-def test_os_info_not_overwritten(ssh_fingerprinter):
+    assert mock_agent_event_publisher.publish.call_args_list[0][0][0].os is OperatingSystem.LINUX
+    assert mock_agent_event_publisher.publish.call_args_list[0][0][0].os_version == os_version
+
+
+def test_os_info_not_overwritten(ssh_fingerprinter, mock_agent_event_publisher):
     os_version = "Ubuntu-4ubuntu0.2"
 
     port_scan_data = {
@@ -124,3 +162,25 @@ def test_os_info_not_overwritten(ssh_fingerprinter):
         os_version=os_version,
         services=[SSH_SERVICE_22, SSH_SERVICE_2222],
     )
+
+    assert mock_agent_event_publisher.publish.call_count == 1
+    assert len(mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services) == 2
+    assert (
+        DiscoveredService(
+            protocol=NetworkProtocol.TCP,
+            port=NetworkPort(22),
+            service=NetworkService.SSH,
+        )
+        in mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services
+    )
+    assert (
+        DiscoveredService(
+            protocol=NetworkProtocol.TCP,
+            port=NetworkPort(2222),
+            service=NetworkService.SSH,
+        )
+        in mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services
+    )
+
+    assert mock_agent_event_publisher.publish.call_args_list[0][0][0].os is OperatingSystem.LINUX
+    assert mock_agent_event_publisher.publish.call_args_list[0][0][0].os_version == os_version
