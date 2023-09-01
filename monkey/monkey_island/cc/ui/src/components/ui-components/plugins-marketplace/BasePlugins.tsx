@@ -16,11 +16,11 @@ const HEADER_SUFFIX = '--header';
 
 const getPluginsGridHeaders = (getRowActions) => [
   {headerName: 'Name', field: 'name', sortable: true, filterable: false, flex: 0.4, minWidth: 150, isTextual: true},
-  {headerName: 'Safety', field: 'safe', sortable: true, filterable: false, flex: 0.1, minWidth: 100, isTextual: false, renderCell: renderSafetyCell},
   {headerName: 'Version', field: 'version', sortable: false, filterable: false, flex: 0.1, minWidth: 100, isTextual: true},
   {headerName: 'Type', field: 'type', sortable: true, filterable: false, flex: 0.2, minWidth: 150, isTextual: true},
   {headerName: 'Author', field: 'author', sortable: true, filterable: false, minWidth: 150, flex: 0.25, isTextual: true},
   {headerName: 'Description', field: 'description', sortable: false, filterable: false, minWidth: 150, flex: 1, isTextual: true},
+  {headerName: 'Safety', field: 'safe', sortable: true, filterable: false, flex: 0.1, minWidth: 100, isTextual: false, renderCell: renderSafetyCell},
   {
     headerName: '',
     field: 'row_actions',
