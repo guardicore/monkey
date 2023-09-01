@@ -82,7 +82,7 @@ const BasePlugins = (props) => {
 
 
   return (
-    <Box className={styles['plugins-wrapper']}>
+    <Box className={styles['plugins-wrapper']} minHeight={0}>
       {/*<PluginsActions showUpgradableToggle={showUpgradableToggle}/>*/}
 
        {isLoadingPlugins
@@ -91,7 +91,8 @@ const BasePlugins = (props) => {
                      rows={[...rows]}
                      rowHeight={'25px'}
                      showToolbar={false}
-                     maxHeight={'500px'}
+                     height={'100%'}
+                     minHeight={0}
                      className="marketplace-plugins-list"
                      initialState={initialState}
                      needCustomWorkaround={false}

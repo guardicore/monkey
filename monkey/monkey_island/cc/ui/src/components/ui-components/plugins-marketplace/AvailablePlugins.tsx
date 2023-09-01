@@ -7,7 +7,7 @@ import {PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {GridActionsCellItem} from '@mui/x-data-grid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
-import {Box, Grid} from '@mui/material';
+import {Box, Grid, Stack} from '@mui/material';
 import BasePlugins from './BasePlugins';
 import SearchBar from '../SearchBar';
 import AuthComponent from '../../AuthComponent';
@@ -177,8 +177,8 @@ const AvailablePlugins = (props) => {
   }
 
   return (
-    <Box>
-      <Grid container spacing={2} rowSpacing={1} columnSpacing={2}>
+    <Stack spacing={2} height='100%'>
+      <Grid container spacing={2}>
         <Grid xs={4} item>
           <SearchBar setQuery={onSearchChanged} />
         </Grid>
@@ -199,14 +199,12 @@ const AvailablePlugins = (props) => {
         <Grid xs={1} item >
           <Button onClick={() => refreshAvailablePlugins(true)}><RefreshIcon/></Button>
         </Grid>
-        <Grid xs={12} item>
-          <BasePlugins plugins={displayedPlugins}
-                       loadingMessage="Loading all available plugins..."
-                       onRefreshCallback={onRefreshCallback}
-                       getRowActions={getRowActions} />
-        </Grid>
       </Grid>
-    </Box>
+      <BasePlugins plugins={displayedPlugins}
+                    loadingMessage="Loading all available plugins..."
+                    onRefreshCallback={onRefreshCallback}
+                    getRowActions={getRowActions} />
+    </Stack>
   )
 };
 
