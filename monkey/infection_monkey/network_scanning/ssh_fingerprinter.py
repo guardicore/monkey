@@ -49,11 +49,12 @@ class SSHFingerprinter(IFingerprinter):
                     )
                 )
 
-        # Even though there's no actual "event" taking place, we're still publishing a
-        # FingerprintingEvent, as this is the only way for the Island to receive this module's
-        # analysis. This ultimately a minor design flaw that can be addressed when/if we ever get
-        # around to redesigning the scanning system/workflow.
-        self._publish_fingerprinting_event(host, timestamp, os_type, os_version, services)
+        if len(services) > 0:
+            # Even though there's no actual "event" taking place, we're still publishing a
+            # FingerprintingEvent, as this is the only way for the Island to receive this module's
+            # analysis. This ultimately a minor design flaw that can be addressed when/if we ever
+            # get around to redesigning the scanning system/workflow.
+            self._publish_fingerprinting_event(host, timestamp, os_type, os_version, services)
 
         return FingerprintData(os_type=os_type, os_version=os_version, services=services)
 

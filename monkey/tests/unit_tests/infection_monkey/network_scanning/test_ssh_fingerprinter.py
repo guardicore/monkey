@@ -42,8 +42,7 @@ def test_no_ssh_ports_open(ssh_fingerprinter, mock_agent_event_publisher):
 
     assert results == FingerprintData(os_type=None, os_version=None, services=[])
 
-    assert mock_agent_event_publisher.publish.call_count == 1
-    assert len(mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services) == 0
+    assert mock_agent_event_publisher.publish.call_count == 0
 
 
 def test_no_os(ssh_fingerprinter, mock_agent_event_publisher):
