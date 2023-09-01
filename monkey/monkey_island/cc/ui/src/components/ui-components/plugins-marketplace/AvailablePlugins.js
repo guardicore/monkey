@@ -38,6 +38,10 @@ const AvailablePlugins = (props) => {
     setDisplayedPlugins(availablePlugins)
   }, []);
 
+  useEffect(() =>{
+    disableInstallAllSafePlugins()
+  }, [displayedPlugins]);
+
   useEffect(() => {
     let shownPlugins = availablePlugins;
     for (const filter of Object.values(filters)) {
@@ -45,6 +49,19 @@ const AvailablePlugins = (props) => {
     }
     setDisplayedPlugins(shownPlugins);
   }, [availablePlugins, filters]);
+
+  const disableInstallAllSafePlugins = () => {
+    let unSafeDispalyedPlugins = [];
+    let safeDispalyedPlugins = [];
+    for (const plugin of displayedPlugins) {
+      if (!plugin.safe) {
+        unSafeDispalyedPlugins.push(plugin.name);
+      } else {
+        safeDispalyedPlugins.push(plugin.name);
+      }
+    }
+    setInstallingAllSafePlugins(unSafeDispalyedPlugins.length > 0 && safeDispalyedPlugins.length === 0 || displayedPlugins.length === 0)
+  }
 
   const onRefreshCallback = () => {
     setSuccessfullyInstalledPluginsIds([]);
@@ -124,17 +141,13 @@ const AvailablePlugins = (props) => {
   }
 
   const installAllSafePlugins = () => {
-    let pluginTasks = [];
     setInstallingAllSafePlugins(true);
     for (const plugin of displayedPlugins) {
       if (plugin.safe) {
         const id = generatePluginId(plugin);
-        pluginTasks.push(onInstallClick(id, plugin.name, plugin.type_, plugin.version));
+        onInstallClick(id, plugin.name, plugin.type_, plugin.version);
       }
     }
-    Promise.all(pluginTasks).then(() => {
-      setInstallingAllSafePlugins(false);
-    });
   }
 
   return (
