@@ -153,10 +153,6 @@ const AvailablePlugins = (props) => {
     ];
   }
 
-  const getSearchableFields = (plugin: AvailablePlugin): string[] => {
-    return [plugin.name, plugin.pluginType, plugin.description, plugin.version];
-  }
-
   const onSearchChanged = (query: string) => {
     const filterOnText = (plugin: AvailablePlugin): boolean => {
       for (const field of getSearchableFields(plugin)) {

@@ -11,7 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
-import PluginTable from './PluginTable';
+import PluginTable, {getSearchableFields} from './PluginTable';
 import AuthComponent from '../../AuthComponent';
 import MonkeyToggle from '../MonkeyToggle';
 import SearchBar from '../SearchBar';
@@ -19,6 +19,8 @@ import TypeFilter from './TypeFilter';
 import LoadingIcon from '../LoadingIconMUI';
 import semver from 'semver';
 
+
+const UPGRADEABLE_VALUE = 'upgradeable';
 
 const InstalledPlugins = (props) => {
   const {
@@ -233,10 +235,6 @@ const InstalledPlugins = (props) => {
     return [...getUpgradeAction(plugin), ...getUninstallAction(plugin)]
   }
 
-  const getSearchableFields = (plugin: InstalledPlugin): string[] => {
-    return [plugin.name, plugin.pluginType, plugin.description, plugin.version];
-  }
-
   const onSearchChanged = (query: string) => {
     const filterOnText = (plugin: InstalledPlugin): boolean => {
       for (const field of getSearchableFields(plugin)) {
@@ -251,7 +249,7 @@ const InstalledPlugins = (props) => {
   }
 
   const onToggleChanged = (selectedValue) => {
-    if (selectedValue === 'upgradable') {
+    if (selectedValue === UPGRADEABLE_VALUE) {
       setFilters((prevState) => {
         return {...prevState, upgradable: (plugin) => isPluginUpgradable(plugin)};
       });
@@ -278,12 +276,12 @@ const InstalledPlugins = (props) => {
         </Grid>
         <Grid xs={2} item />
         <Grid xs={3} item >
-          <MonkeyToggle options={[{value: 'all', label: 'All'},{value: 'upgradable', label: 'Upgradable'}]}
+          <MonkeyToggle options={[{value: 'all', label: 'All'},{value: UPGRADEABLE_VALUE, label: 'Upgradable'}]}
                       setSelectedValues={onToggleChanged}/>
         </Grid>
       </Grid>
       <PluginTable plugins={displayedPlugins}
-                   loadingMessage="Loading all available plugins..."
+                   loadingMessage="Loading all installed plugins..."
                    onRefreshCallback={onRefreshCallback}
                    getRowActions={getRowActions}
       />
