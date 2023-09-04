@@ -1,11 +1,7 @@
-from logging import getLogger
-
 from common.agent_events import FingerprintingEvent
 from common.types import SocketAddress
 from monkey_island.cc.models import Machine, NetworkServices
 from monkey_island.cc.repositories import IMachineRepository, NetworkModelUpdateFacade
-
-logger = getLogger(__name__)
 
 
 class FingerprintingEventHandler:
