@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+psutil = "*"
+secretstorage = "*"
+pycryptodome = "*"
+jeepney = {version = "*", sys_platform = "== 'linux'"}
+dbus-python = {version = "*", sys_platform = "== 'linux'"}
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
