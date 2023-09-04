@@ -46,10 +46,6 @@ const InstalledPlugins = (props) => {
     setDisplayedPlugins(shownPlugins);
   }, [installedPlugins, filters]);
 
-  const onRefreshCallback = () => {
-    setSuccessfullyUninstalledPluginsIds([]);
-  }
-
   const uninstallPlugin = (pluginType, pluginName) => {
     const options = {
       method: 'POST',
@@ -282,7 +278,6 @@ const InstalledPlugins = (props) => {
       </Grid>
       <PluginTable plugins={displayedPlugins}
                    loadingMessage="Loading all installed plugins..."
-                   onRefreshCallback={onRefreshCallback}
                    getRowActions={getRowActions}
       />
     </Stack>
