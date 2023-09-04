@@ -7,10 +7,9 @@ import {nanoid} from 'nanoid';
 const EMPTY_STRING = '';
 const DEFAULT_VARIANT = 'standard';
 const DEFAULT_PLACEHOLDER = 'Search';
-const DEFAULT_LABEL = 'Search';
 
 const SearchBar = (props) => {
-  const {variant = DEFAULT_VARIANT, label = DEFAULT_LABEL, placeholder = DEFAULT_PLACEHOLDER, setQuery} = {...props};
+  const {variant = DEFAULT_VARIANT, placeholder = DEFAULT_PLACEHOLDER, label = null, setQuery} = {...props};
   const [currentValue, setCurrentValue] = useState(EMPTY_STRING);
 
   useEffect(() => {
