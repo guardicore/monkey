@@ -17,7 +17,7 @@ const initialState = {
 
 const HEADER_SUFFIX = '--header';
 
-const getPluginsGridHeaders = (getRowActions) => [
+const getPluginsTableHeaders = (getRowActions) => [
   {headerName: 'Name', field: 'name', sortable: true, filterable: false, flex: 0.4, minWidth: 150, isTextual: true},
   {headerName: 'Version', field: 'version', sortable: false, filterable: false, flex: 0.1, minWidth: 100, isTextual: true},
   {headerName: 'Type', field: 'type', sortable: true, filterable: false, flex: 0.2, minWidth: 150, isTextual: true},
@@ -55,7 +55,7 @@ const renderSafetyCell = (params) => {
 }
 
 
-export const getPluginsGridRows = (pluginsList :AgentPlugin[]) => {
+export const getPluginsTableRows = (pluginsList :AgentPlugin[]) => {
   const plugins = pluginsList?.map((pluginObject) => {
     const {id, name, safe, version, pluginType, description} = {...pluginObject};
     return {
@@ -73,13 +73,13 @@ export const getPluginsGridRows = (pluginsList :AgentPlugin[]) => {
 }
 
 
-const BasePlugins = (props) => {
+const PluginTable = (props) => {
   const {plugins, getRowActions, loadingMessage = DEFAULT_LOADING_MESSAGE} = {...props};
 
   const [isLoadingPlugins] = useState(false);
 
   const rows = useMemo(() => {
-    return getPluginsGridRows(plugins);
+    return getPluginsTableRows(plugins);
   }, [plugins]);
 
 
@@ -89,7 +89,7 @@ const BasePlugins = (props) => {
 
        {isLoadingPlugins
         ? loadingMessage
-        : <XDataGrid columns={getPluginsGridHeaders(getRowActions)}
+        : <XDataGrid columns={getPluginsTableHeaders(getRowActions)}
                      rows={[...rows]}
                      rowHeight={'25px'}
                      showToolbar={false}
@@ -104,4 +104,4 @@ const BasePlugins = (props) => {
   )
 }
 
-export default BasePlugins;
+export default PluginTable;
