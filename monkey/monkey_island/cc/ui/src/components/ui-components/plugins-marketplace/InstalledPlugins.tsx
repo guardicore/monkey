@@ -9,7 +9,7 @@ import DownloadingIcon from '@mui/icons-material/Downloading';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
-import BasePlugins from './BasePlugins';
+import PluginTable from './PluginTable';
 import AuthComponent from '../../AuthComponent';
 import MonkeyToggle from '../MonkeyToggle';
 import SearchBar from '../SearchBar';
@@ -274,10 +274,10 @@ const InstalledPlugins = (props) => {
                       setSelectedValues={onToggleChanged}/>
         </Grid>
       </Grid>
-      <BasePlugins plugins={displayedPlugins}
-                  loadingMessage="Loading all available plugins..."
-                  onRefreshCallback={onRefreshCallback}
-                  getRowActions={getRowActions}
+      <PluginTable plugins={displayedPlugins}
+                   loadingMessage="Loading all available plugins..."
+                   onRefreshCallback={onRefreshCallback}
+                   getRowActions={getRowActions}
       />
     </Stack>
   )
