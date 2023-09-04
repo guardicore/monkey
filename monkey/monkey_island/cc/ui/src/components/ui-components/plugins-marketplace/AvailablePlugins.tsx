@@ -8,7 +8,7 @@ import {GridActionsCellItem} from '@mui/x-data-grid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import {Box, Grid, Stack} from '@mui/material';
-import PluginTable from './PluginTable';
+import PluginTable, {getSearchableFields} from './PluginTable';
 import SearchBar from '../SearchBar';
 import AuthComponent from '../../AuthComponent';
 import {Button} from 'react-bootstrap';
@@ -28,7 +28,7 @@ const AvailablePlugins = (props) => {
     pluginsInInstallationProcess,
     setPluginsInInstallationProcess
   } = {...props};
-  const {availablePlugins, installedPlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
+  const {availablePlugins, installedPlugins, refreshAvailablePlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState<AvailablePluginArray>([]);
   const [filters, setFilters] = useState({});
   const [isSpinning, setIsSpinning] = useState(false);
