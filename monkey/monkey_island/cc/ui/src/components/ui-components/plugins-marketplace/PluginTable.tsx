@@ -18,12 +18,60 @@ const initialState = {
 const HEADER_SUFFIX = '--header';
 
 const getPluginsTableHeaders = (getRowActions) => [
-  {headerName: 'Name', field: 'name', sortable: true, filterable: false, flex: 0.4, minWidth: 150, isTextual: true},
-  {headerName: 'Version', field: 'version', sortable: false, filterable: false, flex: 0.1, minWidth: 100, isTextual: true},
-  {headerName: 'Type', field: 'type', sortable: true, filterable: false, flex: 0.2, minWidth: 150, isTextual: true},
-  {headerName: 'Author', field: 'author', sortable: true, filterable: false, minWidth: 150, flex: 0.25, isTextual: true},
-  {headerName: 'Description', field: 'description', sortable: false, filterable: false, minWidth: 150, flex: 1, isTextual: true},
-  {headerName: 'Safety', field: 'safe', sortable: true, filterable: false, flex: 0.1, minWidth: 100, renderCell: renderSafetyCell},
+  {
+    headerName: 'Name',
+    field: 'name',
+    sortable: true,
+    filterable: false,
+    flex: 0.4,
+    minWidth: 150,
+    isTextual: true
+  },
+  {
+    headerName: 'Version',
+    field: 'version',
+    sortable: false,
+    filterable: false,
+    flex: 0.1,
+    minWidth: 100,
+    isTextual: true
+  },
+  {
+    headerName: 'Type',
+    field: 'type',
+    sortable: true,
+    filterable: false,
+    flex: 0.2,
+    minWidth: 150,
+    isTextual: true
+  },
+  {
+    headerName: 'Author',
+    field: 'author',
+    sortable: true,
+    filterable: false,
+    minWidth: 150,
+    flex: 0.25,
+    isTextual: true
+  },
+  {
+    headerName: 'Description',
+    field: 'description',
+    sortable: false,
+    filterable: false,
+    minWidth: 150,
+    flex: 1,
+    isTextual: true
+  },
+  {
+    headerName: 'Safety',
+    field: 'safe',
+    sortable: true,
+    filterable: false,
+    flex: 0.1,
+    minWidth: 100,
+    renderCell: renderSafetyCell
+  },
   {
     headerName: '',
     field: 'row_actions',
@@ -69,7 +117,7 @@ export type PluginRow = {
   safe: boolean
 };
 
-export const getPluginsTableRows = (pluginsList :AgentPlugin[]) => {
+export const getPluginsTableRows = (pluginsList: AgentPlugin[]) => {
   const plugins = pluginsList?.map((pluginObject) => {
     const {id, name, safe, version, pluginType, description} = {...pluginObject};
     return {
@@ -78,7 +126,7 @@ export const getPluginsTableRows = (pluginsList :AgentPlugin[]) => {
       safe: safe,
       version: version,
       type: _.startCase(pluginType),
-      author: "Akamai",
+      author: 'Akamai',
       description: description,
     }
   })
@@ -101,7 +149,7 @@ const PluginTable = (props) => {
     <Box className={styles['plugins-wrapper']} minHeight={0}>
       {/*<PluginsActions showUpgradableToggle={showUpgradableToggle}/>*/}
 
-       {isLoadingPlugins
+      {isLoadingPlugins
         ? loadingMessage
         : <XDataGrid columns={getPluginsTableHeaders(getRowActions)}
                      rows={[...rows]}
