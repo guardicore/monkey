@@ -1,5 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {InstalledPlugin, PluginsContext} from '../../contexts/plugins/PluginsContext';
+import {
+  generatePluginId,
+  InstalledPlugin,
+  PluginsContext
+} from '../../contexts/plugins/PluginsContext';
 import {shallowAdditionOfUniqueValueToArray, shallowRemovalOfUniqueValueFromArray} from '../../../utils/objectUtils';
 import {GridActionsCellItem} from '@mui/x-data-grid';
 import {Grid, Stack} from '@mui/material';
@@ -87,7 +91,8 @@ const InstalledPlugins = (props) => {
 
     upgradePlugin(pluginType, name, version).then(() => {
       setSuccessfullyUpdatedPluginsIds((prevState) => {
-        return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
+        const newPluginId = generatePluginId(name, pluginType, version);
+        return shallowAdditionOfUniqueValueToArray(prevState, newPluginId);
       });
       refreshInstalledPlugins();
     }).catch(() => {
