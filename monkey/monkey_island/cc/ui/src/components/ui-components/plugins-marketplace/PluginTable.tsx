@@ -59,6 +59,16 @@ export const getSearchableFields = (plugin: InstalledPlugin): string[] => {
 }
 
 
+export type PluginRow = {
+  id: string,
+  name: string,
+  version: string,
+  type: string,
+  author: string,
+  description: string,
+  safe: boolean
+};
+
 export const getPluginsTableRows = (pluginsList :AgentPlugin[]) => {
   const plugins = pluginsList?.map((pluginObject) => {
     const {id, name, safe, version, pluginType, description} = {...pluginObject};
