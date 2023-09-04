@@ -8,7 +8,7 @@ import {GridActionsCellItem} from '@mui/x-data-grid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import {Box, Grid, Stack} from '@mui/material';
-import BasePlugins from './BasePlugins';
+import PluginTable from './PluginTable';
 import SearchBar from '../SearchBar';
 import AuthComponent from '../../AuthComponent';
 import {Button} from 'react-bootstrap';
@@ -199,10 +199,10 @@ const AvailablePlugins = (props) => {
           <Button onClick={() => refreshAvailablePlugins(true)}><RefreshIcon/></Button>
         </Grid>
       </Grid>
-      <BasePlugins plugins={displayedPlugins}
-                    loadingMessage="Loading all available plugins..."
-                    onRefreshCallback={onRefreshCallback}
-                    getRowActions={getRowActions} />
+      <PluginTable plugins={displayedPlugins}
+                   loadingMessage="Loading all available plugins..."
+                   onRefreshCallback={onRefreshCallback}
+                   getRowActions={getRowActions} />
     </Stack>
   )
 };
