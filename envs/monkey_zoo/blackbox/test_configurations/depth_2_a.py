@@ -66,7 +66,11 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
 
 
 def _add_fingerprinters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    fingerprinters = [PluginConfiguration(name="http", options={})]
+    fingerprinters = [
+        PluginConfiguration(name="http", options={}),
+        PluginConfiguration(name="smb", options={}),
+        PluginConfiguration(name="ssh", options={}),
+    ]
 
     return add_fingerprinters(agent_configuration, fingerprinters)
 

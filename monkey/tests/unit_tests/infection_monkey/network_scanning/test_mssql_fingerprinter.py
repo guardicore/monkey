@@ -38,7 +38,7 @@ def fingerprinter(mock_agent_event_publisher):
     return MSSQLFingerprinter(AGENT_ID, mock_agent_event_publisher)
 
 
-def test_mssql_fingerprint_successful(monkeypatch, fingerprinter):
+def test_mssql_fingerprint_successful(monkeypatch, mock_agent_event_publisher, fingerprinter):
     successful_server_response = (
         b"\x05y\x00ServerName;BogusVogus;InstanceName;GhostServer;"
         b"IsClustered;No;Version;11.1.1111.111;tcp;1433;np;blah_blah;;"
@@ -59,6 +59,25 @@ def test_mssql_fingerprint_successful(monkeypatch, fingerprinter):
     expected_services = list(set([MSSQL_DISCOVERED_SERVICE, SQL_BROWSER_DISCOVERED_SERVICE]))
     assert fingerprint_data.services == expected_services
 
+    assert mock_agent_event_publisher.publish.call_count == 1
+    assert len(mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services) == 2
+    assert (
+        DiscoveredService(
+            protocol=NetworkProtocol.TCP,
+            port=NetworkPort(1433),  # taken from `successful_server_response`
+            service=NetworkService.MSSQL,
+        )
+        in mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services
+    )
+    assert (
+        DiscoveredService(
+            protocol=NetworkProtocol.UDP,
+            port=SQL_BROWSER_DEFAULT_PORT,
+            service=NetworkService.MSSQL_BROWSER,
+        )
+        in mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services
+    )
+
 
 @pytest.mark.parametrize(
     "mock_query_function",
@@ -68,7 +87,9 @@ def test_mssql_fingerprint_successful(monkeypatch, fingerprinter):
         MagicMock(side_effect=Exception),
     ],
 )
-def test_mssql_no_response_from_server(monkeypatch, fingerprinter, mock_query_function):
+def test_mssql_no_response_from_server(
+    monkeypatch, mock_agent_event_publisher, fingerprinter, mock_query_function
+):
     monkeypatch.setattr(
         "infection_monkey.network_scanning.mssql_fingerprinter._query_mssql_for_instance_data",
         mock_query_function,
@@ -82,8 +103,11 @@ def test_mssql_no_response_from_server(monkeypatch, fingerprinter, mock_query_fu
     assert fingerprint_data.os_version is None
     assert len(fingerprint_data.services) == 0
 
+    assert mock_agent_event_publisher.publish.call_count == 1
+    assert len(mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services) == 0
 
-def test_mssql_wrong_response_from_server(monkeypatch, fingerprinter):
+
+def test_mssql_wrong_response_from_server(monkeypatch, mock_agent_event_publisher, fingerprinter):
     mangled_server_response = (
         b"Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
         b"Pellentesque ultrices ornare libero, ;;"
@@ -104,3 +128,14 @@ def test_mssql_wrong_response_from_server(monkeypatch, fingerprinter):
     assert fingerprint_data.services[0].service == NetworkService.UNKNOWN
     assert fingerprint_data.services[0].port == SQL_BROWSER_DEFAULT_PORT
     assert fingerprint_data.services[0].protocol == NetworkProtocol.UDP
+
+    assert mock_agent_event_publisher.publish.call_count == 1
+    assert len(mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services) == 1
+    assert (
+        DiscoveredService(
+            protocol=NetworkProtocol.UDP,
+            port=SQL_BROWSER_DEFAULT_PORT,
+            service=NetworkService.UNKNOWN,
+        )
+        in mock_agent_event_publisher.publish.call_args_list[0][0][0].discovered_services
+    )

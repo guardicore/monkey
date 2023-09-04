@@ -1,12 +1,16 @@
 import logging
 import socket
 import struct
-from typing import Dict, List
+import time
+from ipaddress import IPv4Address
+from typing import Dict, List, Optional, Sequence
 
 from odict import odict
 
 from common import OperatingSystem
+from common.agent_events import FingerprintingEvent
 from common.event_queue import IAgentEventPublisher
+from common.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
 from common.types import (
     AgentID,
     DiscoveredService,
@@ -18,6 +22,11 @@ from common.types import (
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 SMB_PORT = NetworkPort(445)
+
+SMB_FINGERPRINTER_TAG = "smb-fingerprinter"
+EVENT_TAGS = frozenset(
+    {SMB_FINGERPRINTER_TAG, ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG}
+)
 
 logger = logging.getLogger(__name__)
 
@@ -158,6 +167,7 @@ class SMBFingerprinter(IFingerprinter):
 
         logger.debug(f"Fingerprinting potential SMB port {SMB_PORT} on {host}")
 
+        timestamp = time.time()
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(0.7)
@@ -209,4 +219,26 @@ class SMBFingerprinter(IFingerprinter):
         except Exception as exc:
             logger.debug("Error getting smb fingerprint: %s", exc)
 
+        self._publish_fingerprinting_event(host, timestamp, os_type, os_version, services)
+
         return FingerprintData(os_type=os_type, os_version=os_version, services=services)
+
+    def _publish_fingerprinting_event(
+        self,
+        host: str,
+        timestamp: float,
+        os_type: Optional[OperatingSystem],
+        os_version: Optional[str],
+        discovered_services: Sequence[DiscoveredService],
+    ):
+        self._agent_event_publisher.publish(
+            FingerprintingEvent(
+                source=self._agent_id,
+                target=IPv4Address(host),
+                timestamp=timestamp,
+                tags=EVENT_TAGS,  # type: ignore [arg-type]
+                os=os_type,
+                os_version=os_version,
+                discovered_services=tuple(discovered_services),
+            )
+        )

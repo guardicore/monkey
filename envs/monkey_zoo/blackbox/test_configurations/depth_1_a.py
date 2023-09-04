@@ -51,7 +51,10 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
 
 
 def _add_fingerprinters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    fingerprinters = [PluginConfiguration(name="http", options={})]
+    fingerprinters = [
+        PluginConfiguration(name="http", options={}),
+        PluginConfiguration(name="mssql", options={}),
+    ]
 
     return add_fingerprinters(agent_configuration, fingerprinters)
 
