@@ -4,8 +4,6 @@ import {shallowAdditionOfUniqueValueToArray, shallowRemovalOfUniqueValueFromArra
 import {GridActionsCellItem} from '@mui/x-data-grid';
 import {Grid, Stack} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AutoDeleteIcon from '@mui/icons-material/AutoDelete';
-import DownloadingIcon from '@mui/icons-material/Downloading';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
@@ -14,6 +12,7 @@ import AuthComponent from '../../AuthComponent';
 import MonkeyToggle from '../MonkeyToggle';
 import SearchBar from '../SearchBar';
 import TypeFilter from './TypeFilter';
+import LoadingIcon from '../LoadingIconMUI';
 import semver from 'semver';
 
 
@@ -127,7 +126,7 @@ const InstalledPlugins = (props) => {
       return [
         <GridActionsCellItem
           key={plugin.id + 'upgrade'}
-          icon={<DownloadingIcon/>}
+          icon={<LoadingIcon/>}
           label="Upgrading"
           className="textPrimary"
           color="inherit"
@@ -179,7 +178,7 @@ const InstalledPlugins = (props) => {
       return [
         <GridActionsCellItem
           key={plugin.id + 'uninstall'}
-          icon={<AutoDeleteIcon/>}
+          icon={<LoadingIcon/>}
           label="Uninstalling"
           className="textPrimary"
           color="inherit"
