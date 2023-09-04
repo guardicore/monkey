@@ -122,13 +122,11 @@ const InstalledPlugins = (props) => {
     }
   }
 
-  const getUpgradeAction = (row) => {
-    const plugin = installedPlugins.find(installedPlugin => installedPlugin.id === row.id);
-    const pluginId = row.id;
-    if (pluginsInUpdateProcess.includes(pluginId)) {
+  const getUpgradeAction = (plugin :InstalledPlugin) => {
+    if (pluginsInUpdateProcess.includes(plugin.id)) {
       return [
         <GridActionsCellItem
-          key={pluginId + 'upgrade'}
+          key={plugin.id + 'upgrade'}
           icon={<DownloadingIcon/>}
           label="Upgrading"
           className="textPrimary"
@@ -137,10 +135,10 @@ const InstalledPlugins = (props) => {
       ]
     }
 
-    if (successfullyUpdatedPluginsIds.includes(pluginId)) {
+    if (successfullyUpdatedPluginsIds.includes(plugin.id)) {
       return [
         <GridActionsCellItem
-          key={pluginId + 'upgrade'}
+          key={plugin.id + 'upgrade'}
           icon={<DownloadDoneIcon/>}
           label="Upgrade Complete"
           className="textPrimary"
@@ -149,16 +147,16 @@ const InstalledPlugins = (props) => {
       ]
     }
 
-    if ((!pluginsInUninstallProcess.includes(pluginId))
-        && (!successfullyUninstalledPluginsIds.includes(pluginId))
+    if ((!pluginsInUninstallProcess.includes(plugin.id))
+        && (!successfullyUninstalledPluginsIds.includes(plugin.id))
         && isPluginUpgradable(plugin)) {
       return [
         <GridActionsCellItem
-        key={pluginId + 'upgrade'}
+        key={plugin.id + 'upgrade'}
         icon={<UpgradeIcon/>}
         label="Upgrade"
         className="textPrimary"
-        onClick={() => onUpgradeClick(pluginId, row.type, row.name, getLatestVersion(plugin))}
+        onClick={() => onUpgradeClick(plugin.id, plugin.pluginType, plugin.name, getLatestVersion(plugin))}
         color="inherit"
       />
       ]
@@ -166,7 +164,7 @@ const InstalledPlugins = (props) => {
 
     return [
       <GridActionsCellItem
-      key={pluginId + 'upgrade'}
+      key={plugin.id + 'upgrade'}
       icon={<UpgradeIcon/>}
       label="Upgrade"
       className="textPrimary"
@@ -176,12 +174,11 @@ const InstalledPlugins = (props) => {
     ];
   }
 
-  const getUninstallAction = (row) => {
-    const pluginId = row.id;
-    if (pluginsInUninstallProcess.includes(pluginId)) {
+  const getUninstallAction = (plugin :InstalledPlugin) => {
+    if (pluginsInUninstallProcess.includes(plugin.id)) {
       return [
         <GridActionsCellItem
-          key={pluginId + 'uninstall'}
+          key={plugin.id + 'uninstall'}
           icon={<AutoDeleteIcon/>}
           label="Uninstalling"
           className="textPrimary"
@@ -190,10 +187,10 @@ const InstalledPlugins = (props) => {
       ]
     }
 
-    if (successfullyUninstalledPluginsIds.includes(pluginId)) {
+    if (successfullyUninstalledPluginsIds.includes(plugin.id)) {
       return [
         <GridActionsCellItem
-          key={pluginId + 'uninstall'}
+          key={plugin.id + 'uninstall'}
           icon={<RemoveDoneIcon/>}
           label="Uninstall Complete"
           className="textPrimary"
@@ -202,10 +199,10 @@ const InstalledPlugins = (props) => {
       ]
     }
 
-    if (pluginsInUpdateProcess.includes(pluginId)) {
+    if (pluginsInUpdateProcess.includes(plugin.id)) {
       return [
         <GridActionsCellItem
-          key={pluginId + 'uninstall'}
+          key={plugin.id + 'uninstall'}
           icon={<DeleteIcon/>}
           label="Uninstalling"
           className="textPrimary"
@@ -215,22 +212,22 @@ const InstalledPlugins = (props) => {
       ]
     }
 
-    const pluginName = row.name;
-    const pluginType = row.type;
     return [
       <GridActionsCellItem
-        key={pluginId + 'uninstall'}
+        key={plugin.id + 'uninstall'}
         icon={<DeleteIcon/>}
         label="Uninstall"
         className="textPrimary"
-        onClick={() => onUninstallClick(pluginId, pluginType, pluginName)}
+        onClick={() => onUninstallClick(plugin.id, plugin.pluginType, plugin.name)}
         color="inherit"
       />
     ];
   }
 
   const getRowActions = (row) => {
-    return [...getUpgradeAction(row), ...getUninstallAction(row)]
+    const plugin = installedPlugins.find(installedPlugin => installedPlugin.id === row.id);
+    if(!plugin) return [];
+    return [...getUpgradeAction(plugin), ...getUninstallAction(plugin)]
   }
 
   const onSearchChanged = (query) => {
