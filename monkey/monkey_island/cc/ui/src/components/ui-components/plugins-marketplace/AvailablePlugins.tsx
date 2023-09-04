@@ -3,7 +3,7 @@ import {
   shallowAdditionOfUniqueValueToArray,
   shallowRemovalOfUniqueValueFromArray
 } from '../../../utils/objectUtils';
-import {PluginsContext} from '../../contexts/plugins/PluginsContext';
+import {AvailablePlugin, PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {GridActionsCellItem} from '@mui/x-data-grid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
@@ -17,6 +17,8 @@ import '../../../styles/components/plugins-marketplace/AvailablePlugins.scss'
 import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
 
+type AvailablePluginArray = AvailablePlugin[];
+
 const AvailablePlugins = (props) => {
   const {
     installingAllSafePlugins,
@@ -27,7 +29,7 @@ const AvailablePlugins = (props) => {
     setPluginsInInstallationProcess
   } = {...props};
   const {availablePlugins, installedPlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
-  const [displayedPlugins, setDisplayedPlugins] = useState([]);
+  const [displayedPlugins, setDisplayedPlugins] = useState<AvailablePluginArray>([]);
   const [filters, setFilters] = useState({});
 
   const authComponent = new AuthComponent({});
@@ -114,11 +116,11 @@ const AvailablePlugins = (props) => {
   };
 
   const getRowActions = (row) => {
-    const pluginId = row.id;
-    if (pluginsInInstallationProcess.includes(pluginId)) {
+    const plugin = availablePlugins.find(plugin => plugin.id === row.id);
+    if (pluginsInInstallationProcess.includes(plugin.id)) {
       return [
         <GridActionsCellItem
-          key={pluginId}
+          key={plugin.id}
           icon={<LoadingIcon/>}
           label="Downloading"
           className="textPrimary"
@@ -127,10 +129,10 @@ const AvailablePlugins = (props) => {
       ]
     }
 
-    if (successfullyInstalledPluginsIds.includes(pluginId)) {
+    if (successfullyInstalledPluginsIds.includes(plugin.id)) {
       return [
         <GridActionsCellItem
-          key={pluginId}
+          key={plugin.id}
           icon={<DownloadDoneIcon/>}
           label="Download Done"
           className="textPrimary"
@@ -139,16 +141,13 @@ const AvailablePlugins = (props) => {
       ]
     }
 
-    const pluginName = row.name;
-    const pluginType = row.type;
-    const pluginVersion = row.version;
     return [
       <GridActionsCellItem
-        key={pluginId}
+        key={plugin.id}
         icon={<FileDownloadIcon/>}
         label="Download"
         className="textPrimary"
-        onClick={() => onInstallClick(pluginId, pluginName, pluginType, pluginVersion)}
+        onClick={() => onInstallClick(plugin.id, plugin.name, plugin.pluginType, plugin.version)}
         color="inherit"
       />
     ];
