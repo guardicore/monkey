@@ -13,7 +13,7 @@ import SearchBar from '../SearchBar';
 import AuthComponent from '../../AuthComponent';
 import {Button} from 'react-bootstrap';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import '../../../styles/components/plugins-marketplace/AvailablePlugins.scss'
+import styles from '../../../styles/components/plugins-marketplace/AvailablePlugins.module.scss';
 import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
 
@@ -31,6 +31,7 @@ const AvailablePlugins = (props) => {
   const {availablePlugins, installedPlugins, refreshAvailablePlugins, refreshInstalledPlugins} = useContext(PluginsContext);
   const [displayedPlugins, setDisplayedPlugins] = useState<AvailablePluginArray>([]);
   const [filters, setFilters] = useState({});
+  const [isSpinning, setIsSpinning] = useState(false);
 
   const authComponent = new AuthComponent({});
 
@@ -175,8 +176,15 @@ const AvailablePlugins = (props) => {
     }
   }
 
+  const refreshPlugins = () => {
+    setIsSpinning(true);
+    refreshAvailablePlugins(true).then(() => {
+      setIsSpinning(false);
+    });
+  }
+
   return (
-    <Stack spacing={2} height='100%'>
+    <Stack spacing={2} height='100%' id={styles['available-plugins']}>
       <Grid container spacing={2}>
         <Grid xs={4} item>
           <SearchBar setQuery={onSearchChanged} />
@@ -196,7 +204,7 @@ const AvailablePlugins = (props) => {
           </Box>
         </Grid>
         <Grid xs={1} item >
-          <Button onClick={() => refreshAvailablePlugins(true)}><RefreshIcon/></Button>
+          <Button onClick={refreshPlugins}><RefreshIcon id={`${isSpinning ? 'spin' : ''}`}/></Button>
         </Grid>
       </Grid>
       <PluginTable plugins={displayedPlugins}
