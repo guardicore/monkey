@@ -5,6 +5,7 @@ import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutl
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import styles from '../../../styles/components/plugins-marketplace/BasePlugins.module.scss';
 import {AgentPlugin} from '../../contexts/plugins/PluginsContext';
+import _ from 'lodash';
 import MonkeyTooltip from '../MonkeyTooltip';
 
 const DEFAULT_LOADING_MESSAGE = 'Loading plugins...';
@@ -52,12 +53,6 @@ const renderSafetyCell = (params) => {
     </div>
   );
 }
-enum pluginTypeHumanReadable {
-  Credentials_Collector = 'Credentials Collector',
-  Exploiter = 'Exploiter',
-  Fingerprinter = 'Fingerprinter',
-  Payload = 'Payload'
-}
 
 
 export const getPluginsGridRows = (pluginsList :AgentPlugin[]) => {
@@ -68,7 +63,7 @@ export const getPluginsGridRows = (pluginsList :AgentPlugin[]) => {
       name: name,
       safe: safe,
       version: version,
-      type: pluginTypeHumanReadable[pluginType],
+      type: _.startCase(pluginType),
       author: "Akamai",
       description: description,
     }
