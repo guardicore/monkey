@@ -52,6 +52,13 @@ const renderSafetyCell = (params) => {
     </div>
   );
 }
+enum pluginTypeHumanReadable {
+  Credentials_Collector = 'Credentials Collector',
+  Exploiter = 'Exploiter',
+  Fingerprinter = 'Fingerprinter',
+  Payload = 'Payload'
+}
+
 
 export const getPluginsGridRows = (pluginsList :AgentPlugin[]) => {
   const plugins = pluginsList?.map((pluginObject) => {
@@ -61,7 +68,7 @@ export const getPluginsGridRows = (pluginsList :AgentPlugin[]) => {
       name: name,
       safe: safe,
       version: version,
-      type: pluginType,
+      type: pluginTypeHumanReadable[pluginType],
       author: "Akamai",
       description: description,
     }
