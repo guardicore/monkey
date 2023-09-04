@@ -178,9 +178,7 @@ const AvailablePlugins = (props) => {
 
   const refreshPlugins = () => {
     setIsSpinning(true);
-    refreshAvailablePlugins(true).then(() => {
-      setIsSpinning(false);
-    });
+    refreshAvailablePlugins(true).then(() => setIsSpinning(false));
   }
 
   return (
@@ -204,7 +202,7 @@ const AvailablePlugins = (props) => {
           </Box>
         </Grid>
         <Grid xs={1} item >
-          <Button onClick={refreshPlugins}><RefreshIcon id={`${isSpinning ? 'spin' : ''}`}/></Button>
+          <Button onClick={refreshPlugins}><RefreshIcon className={`${isSpinning && 'spinning-icon'}`}/></Button>
         </Grid>
       </Grid>
       <PluginTable plugins={displayedPlugins}
