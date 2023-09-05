@@ -79,6 +79,12 @@ export const generatePluginId = (name, type, version) => {
 
 const authComponent = new AuthComponent({});
 
+const checkResponseStatus = (res: any, errorMessage: string = 'error'): void => {
+  if (!res || res?.status !== 200) {
+    throw new Error(errorMessage);
+  }
+}
+
 export const PluginState = () :PluginsContextType => {
   const [refreshAvailablePluginsFailure, setRefreshAvailablePluginsFailure] = useState(false);
   const [refreshInstalledPluginsFailure, setRefreshInstalledPluginsFailure] = useState(false);
@@ -147,6 +153,10 @@ export const PluginState = () :PluginsContextType => {
       url += '?force_refresh=true';
     }
     return authComponent.authFetch(url, {}, true)
+      .then(res => {
+        checkResponseStatus(res, 'Something went wrong while fetching the available plugins');
+        return res;
+      })
       .then(res => res.json())
       .then((res) => {
         const parsedPlugins = parsePluginMetadataResponse(res.plugins);
@@ -159,6 +169,10 @@ export const PluginState = () :PluginsContextType => {
 
   const refreshInstalledPlugins = () => {
     return authComponent.authFetch('/api/agent-plugins/installed/manifests', {}, true)
+      .then(res => {
+        checkResponseStatus(res, 'Something went wrong while fetching the installed plugins');
+        return res;
+      })
       .then(res => res.json())
       .then((plugins :PluginManifestResponse) => {
         setInstalledPlugins(parsePluginManifestResponse(plugins));
