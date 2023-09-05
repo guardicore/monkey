@@ -38,12 +38,11 @@ class ChromeCredentialsCollector:
         self._process_credentials_database = process_credentials_database
 
     def run(self, interrupt: Event) -> Sequence[Credentials]:
-        database_paths = self._select_credentials_database()
-
         timestamp = time.time()
+        database_paths = self._select_credentials_database()
         credentials = self._process_credentials_database(database_paths)
 
-        if len(credentials) > 0:
+        if len(database_paths) > 0:
             self._publish_credentials_stolen_event(timestamp, credentials)
 
         return credentials
