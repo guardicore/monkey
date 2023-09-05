@@ -14,7 +14,7 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
 
     Attributes:
         :param name: Plugin name
-        :param type: Plugin type
+        :param plugin_type: Plugin type
         :param resource_path: Path of the plugin package within the repository
         :param sha256: Plugin file checksum
         :param description: Plugin description
@@ -23,7 +23,7 @@ class AgentPluginMetadata(InfectionMonkeyBaseModel):
     """
 
     name: PluginName
-    type_: AgentPluginType
+    plugin_type: AgentPluginType
     resource_path: PurePosixPath
     sha256: str = Field(regex=r"^[0-9a-fA-F]{64}$")
     description: str
