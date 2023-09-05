@@ -64,6 +64,7 @@ const AvailablePlugins = (props) => {
     setDisplayedPlugins(shownPlugins);
   }
 
+  //TODO refactor this method
   const disableInstallAllSafePlugins = () => {
     let unSafeDispalyedPlugins = [];
     let safeDispalyedPlugins = [];
