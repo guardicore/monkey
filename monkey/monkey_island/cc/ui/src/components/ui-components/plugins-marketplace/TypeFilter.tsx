@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import SelectComponent, {SelectVariant} from '../Select';
-import _ from 'lodash';
-import {AvailablePlugin} from '../../contexts/plugins/PluginsContext';
+import {PluginRow} from './PluginTable';
 
 type SetFiltersFunc = (filters: { [name: string]: number } ) => void;
 
 type TypeFilterProps = {
-  allPlugins: AvailablePlugin[],
-  filters: { [name: string]: SetFiltersFunc } ,
+  allRows: PluginRow[],
   setFilters: (filters: { [name: string]: SetFiltersFunc } ) => void
 }
 
@@ -18,18 +16,18 @@ type SelectOption = {
 
 const anyTypeOption :SelectOption = {value: "", label: "All"}
 
-const TypeFilter = ({allPlugins, filters, setFilters} :TypeFilterProps) => {
+const TypeFilter = ({allRows, setFilters} :TypeFilterProps) => {
   const [selectedType, setSelectedType] = useState(anyTypeOption)
   const [typeFilters, setTypeFilters] = useState([])
 
   useEffect(() => {
     let allTypes = [];
-    allTypes = allPlugins.map(plugin => plugin.pluginType)
+    allTypes = allRows.map(row => row.pluginType)
     allTypes = [...new Set(allTypes)]
     allTypes = allTypes.map(selectOptionFromValue)
     allTypes.unshift(anyTypeOption)
     setTypeFilters(allTypes)
-  }, [allPlugins])
+  }, [allRows])
 
   useEffect(() => {
     setFilters((prevState) => {
@@ -37,7 +35,7 @@ const TypeFilter = ({allPlugins, filters, setFilters} :TypeFilterProps) => {
     })}, [selectedType])
 
   const selectOptionFromValue = (value) :SelectOption => {
-    return {value: value, label: _.startCase(value)}
+    return {value: value, label: value}
   }
 
   const handleTypeChange = (event) => {
@@ -49,8 +47,8 @@ const TypeFilter = ({allPlugins, filters, setFilters} :TypeFilterProps) => {
       return () => true;
     }
 
-    return (plugin: AvailablePlugin): boolean => {
-      let pluginType = plugin.pluginType
+    return (row: PluginRow): boolean => {
+      let pluginType = row.pluginType
       return pluginType === typeOption.value
     };
   }

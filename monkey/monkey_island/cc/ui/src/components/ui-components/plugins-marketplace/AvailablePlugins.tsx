@@ -1,23 +1,26 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {
   shallowAdditionOfUniqueValueToArray,
   shallowRemovalOfUniqueValueFromArray
 } from '../../../utils/objectUtils';
-import {AvailablePlugin, PluginsContext} from '../../contexts/plugins/PluginsContext';
+import {PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {GridActionsCellItem} from '@mui/x-data-grid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import {Box, Grid, Stack} from '@mui/material';
-import PluginTable, {getSearchableFields} from './PluginTable';
-import SearchBar from '../SearchBar';
+import PluginTable, {
+  getDefaultPluginsTableColumns,
+  getDefaultPluginsTableRows, PluginRow,
+} from './PluginTable';
 import AuthComponent from '../../AuthComponent';
 import {Button} from 'react-bootstrap';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import styles from '../../../styles/components/plugins-marketplace/AvailablePlugins.module.scss';
 import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
+import SearchFilter, {defaultSearchableColumns} from './SearchFilter';
 
-type AvailablePluginArray = AvailablePlugin[];
+type AvailablePluginRowArray = PluginRow[];
 
 const AvailablePlugins = (props) => {
   const {
@@ -29,14 +32,18 @@ const AvailablePlugins = (props) => {
     setPluginsInInstallationProcess
   } = {...props};
   const {availablePlugins, installedPlugins, refreshAvailablePlugins} = useContext(PluginsContext);
-  const [displayedPlugins, setDisplayedPlugins] = useState<AvailablePluginArray>([]);
+  const [displayedRows, setDisplayedRows] = useState<AvailablePluginRowArray>([]);
   const [filters, setFilters] = useState({});
   const [isSpinning, setIsSpinning] = useState(false);
 
   const authComponent = new AuthComponent({});
 
+  const availablePluginRows :PluginRow[] = useMemo(() => {
+    return getDefaultPluginsTableRows(availablePlugins);
+  }, [availablePlugins]);
+
   useEffect(() => {
-    setDisplayedPlugins(availablePlugins);
+    setDisplayedRows(availablePluginRows);
     setFilters((prevState) => {
       return {...prevState, installed: filterInstalledPlugins};
     });
@@ -44,10 +51,10 @@ const AvailablePlugins = (props) => {
 
   useEffect(() =>{
     disableInstallAllSafePlugins()
-  }, [displayedPlugins]);
+  }, [displayedRows]);
 
   useEffect(() => {
-    filterPlugins();
+    filterRows();
   }, [availablePlugins, installedPlugins, filters]);
 
   useEffect(() => {
@@ -56,36 +63,33 @@ const AvailablePlugins = (props) => {
     });
   }, [installedPlugins]);
 
-  const filterPlugins = () => {
-    let shownPlugins = availablePlugins;
+  const filterRows = () => {
+    let allRows = availablePluginRows;
     for (const filter of Object.values(filters)) {
-      shownPlugins = shownPlugins.filter(filter);
+      allRows = allRows.filter(filter);
     }
-    setDisplayedPlugins(shownPlugins);
+    setDisplayedRows(allRows);
   }
 
   //TODO refactor this method
   const disableInstallAllSafePlugins = () => {
     let unSafeDispalyedPlugins = [];
     let safeDispalyedPlugins = [];
-    for (const plugin of displayedPlugins) {
+    for (const plugin of displayedRows) {
       if (!plugin.safe) {
         unSafeDispalyedPlugins.push(plugin.name);
       } else {
         safeDispalyedPlugins.push(plugin.name);
       }
     }
-    setInstallingAllSafePlugins(unSafeDispalyedPlugins.length > 0 && safeDispalyedPlugins.length === 0 || displayedPlugins.length === 0)
+    setInstallingAllSafePlugins(unSafeDispalyedPlugins.length > 0 && safeDispalyedPlugins.length === 0 || displayedRows.length === 0)
   }
 
-  const onRefreshCallback = () => {
-    setSuccessfullyInstalledPluginsIds([]);
-  }
-
-  const filterInstalledPlugins = (plugin: AvailablePlugin) => {
+  const filterInstalledPlugins = (row: PluginRow) => {
+    let availablePlugin = availablePlugins.find(availablePlugin => row.id === availablePlugin.id);
     return installedPlugins.find(installedPlugin => {
-      return installedPlugin.name === plugin.name
-        && installedPlugin.pluginType === plugin.pluginType;
+      return installedPlugin.name === availablePlugin.name
+        && installedPlugin.pluginType === availablePlugin.pluginType;
     }) === undefined;
   }
 
@@ -98,7 +102,8 @@ const AvailablePlugins = (props) => {
     return authComponent.authFetch('/api/install-agent-plugin', options , true)
   }
 
-  const onInstallClick = (pluginId: string, pluginName: string, pluginType: string, pluginVersion: string) => {
+  const onInstallClick = (pluginId: string, pluginName: string,
+                          pluginType: string, pluginVersion: string) => {
     setPluginsInInstallationProcess((prevState) => {
       return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
     });
@@ -154,24 +159,11 @@ const AvailablePlugins = (props) => {
     ];
   }
 
-  const onSearchChanged = (query: string) => {
-    const filterOnText = (plugin: AvailablePlugin): boolean => {
-      for (const field of getSearchableFields(plugin)) {
-        if (field.toLowerCase().includes(query.toLowerCase())) {
-          return true;
-        }
-      }
-    }
-    setFilters((prevState) => {
-      return {...prevState, text: filterOnText};
-    });
-  }
-
   const installAllSafePlugins = () => {
     setInstallingAllSafePlugins(true);
-    for (const plugin of displayedPlugins) {
-      if (plugin.safe) {
-        onInstallClick(plugin.id, plugin.name, plugin.pluginType, plugin.version);
+    for (const row of availablePluginRows) {
+      if (row.safe) {
+        onInstallClick(row.id, row.name, row.pluginType, row.version);
       }
     }
   }
@@ -186,13 +178,12 @@ const AvailablePlugins = (props) => {
       <Grid container spacing={2}>
         <Grid xs={4} item
               sx={{alignItems: 'flex-end', display: 'flex'}}>
-          <SearchBar setQuery={onSearchChanged} />
+          <SearchFilter setFilters={setFilters}
+                        searchableColumns={defaultSearchableColumns}/>
         </Grid>
         <Grid xs={3} item >
-          <TypeFilter allPlugins={availablePlugins}
-                      filters={filters}
-                      setFilters={setFilters}
-                      className={'type-filter-box'}/>
+          <TypeFilter setFilters={setFilters}
+                      allRows={availablePluginRows} />
         </Grid>
         <Grid xs={1} item/>
         <Grid xs={3} item>
@@ -206,10 +197,9 @@ const AvailablePlugins = (props) => {
           <Button onClick={refreshPlugins}><RefreshIcon className={`${isSpinning && 'spinning-icon'}`}/></Button>
         </Grid>
       </Grid>
-      <PluginTable plugins={displayedPlugins}
-                   loadingMessage="Loading all available plugins..."
-                   onRefreshCallback={onRefreshCallback}
-                   getRowActions={getRowActions} />
+      <PluginTable rows={displayedRows}
+                   columns={getDefaultPluginsTableColumns(getRowActions)}
+                   loadingMessage="Loading all available plugins..." />
     </Stack>
   )
 };
