@@ -9,8 +9,8 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import {Box, Grid, Stack} from '@mui/material';
 import PluginTable, {
-  getDefaultPluginsTableColumns,
-  getDefaultPluginsTableRows, PluginRow,
+  generatePluginsTableColumns,
+  generatePluginsTableRows, PluginRow,
 } from './PluginTable';
 import AuthComponent from '../../AuthComponent';
 import {Button} from 'react-bootstrap';
@@ -39,7 +39,7 @@ const AvailablePlugins = (props) => {
   const authComponent = new AuthComponent({});
 
   const availablePluginRows :PluginRow[] = useMemo(() => {
-    return getDefaultPluginsTableRows(availablePlugins);
+    return generatePluginsTableRows(availablePlugins);
   }, [availablePlugins]);
 
   useEffect(() => {
@@ -198,7 +198,7 @@ const AvailablePlugins = (props) => {
         </Grid>
       </Grid>
       <PluginTable rows={displayedRows}
-                   columns={getDefaultPluginsTableColumns(getRowActions)}
+                   columns={generatePluginsTableColumns(getRowActions)}
                    loadingMessage="Loading all available plugins..." />
     </Stack>
   )

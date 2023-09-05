@@ -12,8 +12,8 @@ import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 import PluginTable, {
-  getDefaultPluginsTableColumns,
-  getDefaultPluginsTableRows,
+  generatePluginsTableColumns,
+  generatePluginsTableRows,
 } from './PluginTable';
 import AuthComponent from '../../AuthComponent';
 import MonkeyToggle from '../MonkeyToggle';
@@ -38,7 +38,7 @@ const InstalledPlugins = (props) => {
   const authComponent = new AuthComponent({});
 
   const installedPluginRows = useMemo(() => {
-    return getDefaultPluginsTableRows(installedPlugins);
+    return generatePluginsTableRows(installedPlugins);
   }, [installedPlugins]);
 
   useEffect(() => {
@@ -274,7 +274,7 @@ const InstalledPlugins = (props) => {
         </Grid>
       </Grid>
       <PluginTable rows={displayedRows}
-                   columns={getDefaultPluginsTableColumns(getRowActions)}
+                   columns={generatePluginsTableColumns(getRowActions)}
                    loadingMessage="Loading all installed plugins..."
                    getRowActions={getRowActions}
       />
