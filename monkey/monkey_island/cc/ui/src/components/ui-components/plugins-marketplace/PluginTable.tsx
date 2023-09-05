@@ -19,7 +19,7 @@ const HEADER_SUFFIX = '--header';
 
 type getRowActionsType = (plugin: PluginRow) => any[];
 
-export const getDefaultPluginsTableColumns = (getRowActions :getRowActionsType) => [
+export const generatePluginsTableColumns = (getRowActions :getRowActionsType) => [
   {
     headerName: 'Name',
     field: 'name',
@@ -114,7 +114,7 @@ export type PluginRow = {
   safe: boolean
 };
 
-export const getDefaultPluginsTableRows = (pluginsList: AgentPlugin[]) :PluginRow[] => {
+export const generatePluginsTableRows = (pluginsList: AgentPlugin[]) :PluginRow[] => {
   const plugins = pluginsList?.map((pluginObject) => {
     const {id, name, safe, version, pluginType, description} = {...pluginObject};
     return {
