@@ -39,7 +39,7 @@ PLUGIN_ARCHIVE = b"Hello, world!"
 SSH_EXPLOITER = [
     {
         "name": "SSH",
-        "type_": "Exploiter",
+        "plugin_type": "Exploiter",
         "resource_path": "SSH-exploiter-v1.0.0.tar",
         "sha256": "862d4fd8c9d6c51926d34ac083f75c99d4fe4c3b3052de9e3d5995382a277a43",
         "description": "Attempts a brute-force attack against SSH using known "
@@ -53,7 +53,7 @@ EXPLOITERS = {
     "RDP": [
         {
             "name": "RDP",
-            "type_": "Exploiter",
+            "plugin_type": "Exploiter",
             "resource_path": "RDP-exploiter-v1.0.0.tar",
             "sha256": "09d6afa5bab988157a9f9ab151b63b068749d1708a1e13a6ab76aaefc2e34ff3",
             "description": "Attempts a brute-force attack over RDP using known credentials.",
@@ -68,7 +68,7 @@ CREDENTIALS_COLLECTORS = {
     "Mimikatz": [
         {
             "name": "Mimikatz",
-            "type_": "Credentials_Collector",
+            "plugin_type": "Credentials_Collector",
             "resource_path": "Mimikatz-credentials_collector-v1.0.2.tar",
             # SHA of PLUGIN_ARCHIVE
             "sha256": "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3",

@@ -15,7 +15,7 @@ from monkey_island.cc.services.agent_plugin_service.flask_resources.available_ag
 SSH_EXPLOITER = [
     {
         "name": "SSH",
-        "type_": "Exploiter",
+        "plugin_type": "Exploiter",
         "resource_path": "SSH-exploiter-v1.0.0.tar",
         "sha256": "862d4fd8c9d6c51926d34ac083f75c99d4fe4c3b3052de9e3d5995382a277a43",
         "description": "Attempts a brute-force attack against SSH using known "

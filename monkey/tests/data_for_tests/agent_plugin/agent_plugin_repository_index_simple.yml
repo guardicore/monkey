@@ -9,7 +9,7 @@ plugins:
       resource_path: SSH-exploiter-v1.0.0.tar
       safe: true
       sha256: 862d4fd8c9d6c51926d34ac083f75c99d4fe4c3b3052de9e3d5995382a277a43
-      type_: Exploiter
+      plugin_type: Exploiter
       version: 1.0.0
   Fingerprinter: {}
   Payload: {}

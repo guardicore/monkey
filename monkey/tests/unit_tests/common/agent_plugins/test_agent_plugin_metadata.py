@@ -4,7 +4,7 @@ from .test_agent_plugin_repository_index import PAYLOAD_PLUGIN_NAME, PLUGIN_VERS
 
 PLUGIN_VERSION_1_2_3_SERIALIZED = {
     "name": PAYLOAD_PLUGIN_NAME,
-    "type_": AgentPluginType.PAYLOAD.value,
+    "plugin_type": AgentPluginType.PAYLOAD.value,
     "resource_path": "/tmp",
     "sha256": "7ac0f5c62a9bcb81af3e9d67a764d7bbd3cce9af7cd26c211f136400ebe703c4",
     "description": "an awesome payload plugin",
