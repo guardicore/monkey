@@ -170,7 +170,7 @@ export const PluginState = () :PluginsContextType => {
 
   const refreshNumberOfUpgradablePlugins = () => {
     let upgradablePlugins = installedPlugins.filter((installedPlugin) => {
-      let availablePlugin = availablePlugins?.find((availablePlugin) => {
+      let availablePlugin = availablePlugins.find((availablePlugin) => {
         return availablePlugin.name === installedPlugin.name
           && availablePlugin.pluginType === installedPlugin.pluginType;
       })
