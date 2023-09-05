@@ -25,7 +25,7 @@ from monkey_island.cc.repositories import (
 )
 
 AGENT_ID = UUID("1d8ce743-a0f4-45c5-96af-91106529d3e2")
-TARGET_MACHINE_IP = "10.10.10.1"
+TARGET_MACHINE_IP = IPv4Address("10.10.10.1")
 TARGET_MACHINE_ID = 33
 SEED_ID = 99
 
@@ -47,23 +47,23 @@ NETWORK_SERVICES = {
 
 FINGERPRINTING_EVENT_NO_OS_INFO_NO_SERVICES = FingerprintingEvent(
     source=AGENT_ID,
-    target=IPv4Address(TARGET_MACHINE_IP),
+    target=TARGET_MACHINE_IP,
 )
 
 FINGERPRINTING_EVENT_NO_SERVICES = FingerprintingEvent(
     source=AGENT_ID,
-    target=IPv4Address(TARGET_MACHINE_IP),
+    target=TARGET_MACHINE_IP,
     os=OperatingSystem.LINUX,
     os_version="Debian",
 )
 
 FINGERPRINTING_EVENT_NO_OS_INFO = FingerprintingEvent(
-    source=AGENT_ID, target=IPv4Address(TARGET_MACHINE_IP), discovered_services=DISCOVERED_SERVICES
+    source=AGENT_ID, target=TARGET_MACHINE_IP, discovered_services=DISCOVERED_SERVICES
 )
 
 FINGERPRINTING_EVENT = FingerprintingEvent(
     source=AGENT_ID,
-    target=IPv4Address(TARGET_MACHINE_IP),
+    target=TARGET_MACHINE_IP,
     os=OperatingSystem.WINDOWS,
     os_version="XP",
     discovered_services=DISCOVERED_SERVICES,
@@ -115,7 +115,7 @@ def machines_by_id(target_machine: Machine) -> Dict[MachineID, Machine]:
 
 @pytest.fixture
 def machines_by_ip(target_machine: Machine) -> Dict[IPv4Address, Sequence[Machine]]:
-    return {IPv4Address(TARGET_MACHINE_IP): [target_machine]}
+    return {TARGET_MACHINE_IP: [target_machine]}
 
 
 @pytest.fixture
