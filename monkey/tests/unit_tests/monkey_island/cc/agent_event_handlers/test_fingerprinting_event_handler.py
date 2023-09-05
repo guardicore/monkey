@@ -22,7 +22,6 @@ from monkey_island.cc.repositories import (
     IAgentRepository,
     IMachineRepository,
     NetworkModelUpdateFacade,
-    UnknownRecordError,
 )
 
 AGENT_ID = UUID("1d8ce743-a0f4-45c5-96af-91106529d3e2")
@@ -98,8 +97,10 @@ def machine_repository(
 
 
 @pytest.fixture
-def network_model_update_facade(machine_repository):
-    return NetworkModelUpdateFacade(MagicMock(), machine_repository, MagicMock())
+def network_model_update_facade(target_machine) -> NetworkModelUpdateFacade:
+    network_model_update_facade = MagicMock(ispec=NetworkModelUpdateFacade)
+    network_model_update_facade.get_or_create_target_machine = lambda target: target_machine
+    return network_model_update_facade
 
 
 @pytest.fixture
@@ -131,19 +132,6 @@ def machines_from_ip(machines_by_ip) -> Callable[[IPv4Address], Sequence[Machine
         return machines_by_ip[ip]
 
     return inner
-
-
-def test_fingerprinting_event_handler__target_machine_does_not_exist(
-    fingerprinting_event_handler, machine_repository: IMachineRepository
-):
-    event = FINGERPRINTING_EVENT_NO_OS_INFO
-    machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
-
-    fingerprinting_event_handler.handle_fingerprinting_event(event)
-
-    expected_machine = Machine(id=SEED_ID, network_interfaces=[IPv4Interface(event.target)])
-
-    machine_repository.upsert_machine.assert_any_call(expected_machine)
 
 
 def test_fingerprinting_event_handler(
