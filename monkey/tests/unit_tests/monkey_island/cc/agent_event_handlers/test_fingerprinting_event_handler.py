@@ -19,10 +19,8 @@ from common.types import (
 from monkey_island.cc.agent_event_handlers import FingerprintingEventHandler
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import (
-    AgentMachineFacade,
     IAgentRepository,
     IMachineRepository,
-    INodeRepository,
     NetworkModelUpdateFacade,
     UnknownRecordError,
 )
@@ -100,18 +98,8 @@ def machine_repository(
 
 
 @pytest.fixture
-def node_repository() -> INodeRepository:
-    return MagicMock(ispec=INodeRepository)
-
-
-@pytest.fixture
-def agent_machine_facade(agent_repository, machine_repository):
-    return AgentMachineFacade(agent_repository, machine_repository)
-
-
-@pytest.fixture
-def network_model_update_facade(agent_machine_facade, machine_repository, node_repository):
-    return NetworkModelUpdateFacade(agent_machine_facade, machine_repository, node_repository)
+def network_model_update_facade(machine_repository):
+    return NetworkModelUpdateFacade(MagicMock(), machine_repository, MagicMock())
 
 
 @pytest.fixture
