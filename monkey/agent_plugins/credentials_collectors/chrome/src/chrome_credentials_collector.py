@@ -27,15 +27,15 @@ CHROME_COLLECTOR_EVENT_TAGS = frozenset(
 class ChromeCredentialsCollector:
     def __init__(
         self,
-        select_credentials_database: CredentialsDatabaseSelectorCallable,
-        process_credentials_database: CredentialsDatabaseProcessorCallable,
         agent_id: AgentID,
         agent_event_publisher: IAgentEventPublisher,
+        select_credentials_database: CredentialsDatabaseSelectorCallable,
+        process_credentials_database: CredentialsDatabaseProcessorCallable,
     ):
-        self._select_credentials_database = select_credentials_database
-        self._process_credentials_database = process_credentials_database
         self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
+        self._select_credentials_database = select_credentials_database
+        self._process_credentials_database = process_credentials_database
 
     def run(self, interrupt: Event) -> Sequence[Credentials]:
         database_paths = self._select_credentials_database()
