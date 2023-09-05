@@ -177,33 +177,35 @@ const AvailablePlugins = (props) => {
   return (
     <Stack spacing={2} height='100%' id={styles['available-plugins']}>
       {availablePlugins?.length > 0 && (
-        <Grid container spacing={2}>
-          <Grid xs={4} item
-                sx={{alignItems: 'flex-end', display: 'flex'}}>
-            <SearchFilter setFilters={setFilters}
-                          searchableColumns={defaultSearchableColumns}/>
+        <>
+          <Grid container spacing={2}>
+            <Grid xs={4} item
+                  sx={{alignItems: 'flex-end', display: 'flex'}}>
+              <SearchFilter setFilters={setFilters}
+                            searchableColumns={defaultSearchableColumns}/>
+            </Grid>
+            <Grid xs={3} item>
+              <TypeFilter setFilters={setFilters}
+                          allRows={availablePluginRows}/>
+            </Grid>
+            <Grid xs={1} item/>
+            <Grid xs={3} item>
+              <Box display="flex" justifyContent="flex-end">
+                <Button onClick={installAllSafePlugins} disabled={installingAllSafePlugins}>
+                  <FileDownloadIcon/> All Safe Plugins
+                </Button>
+              </Box>
+            </Grid>
+            <Grid xs={1} item>
+              <Button onClick={refreshPlugins}><RefreshIcon className={`${isSpinning && 'spinning-icon'}`}/></Button>
+            </Grid>
           </Grid>
-          <Grid xs={3} item>
-            <TypeFilter setFilters={setFilters}
-                        allRows={availablePluginRows}/>
-          </Grid>
-          <Grid xs={1} item/>
-          <Grid xs={3} item>
-            <Box display="flex" justifyContent="flex-end">
-              <Button onClick={installAllSafePlugins} disabled={installingAllSafePlugins}>
-                <FileDownloadIcon/> All Safe Plugins
-              </Button>
-            </Box>
-          </Grid>
-          <Grid xs={1} item>
-            <Button onClick={refreshPlugins}><RefreshIcon className={`${isSpinning && 'spinning-icon'}`}/></Button>
-          </Grid>
-        </Grid>
+        </>
       )}
       <PluginTable rows={displayedRows}
                    columns={generatePluginsTableColumns(getRowActions)}
                    loadingMessage="Loading all available plugins..."
-                   noRowsOverlayMessage={refreshAvailablePluginsFailure && CONNECTION_ERROR_MESSAGE} />
+                   noRowsOverlayMessage={refreshAvailablePluginsFailure ? FETCHING_ERROR_MESSAGE : (availablePlugins?.length === 0 && NO_AVAILABLE_PLUGINS_MESSAGE)} />
     </Stack>
   )
 };
