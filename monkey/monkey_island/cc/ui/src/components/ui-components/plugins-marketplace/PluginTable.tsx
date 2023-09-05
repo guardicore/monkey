@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import {Box} from '@mui/material';
 import XDataGrid from '../XDataGrid';
 import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutlined';
@@ -17,7 +17,9 @@ const initialState = {
 
 const HEADER_SUFFIX = '--header';
 
-const getPluginsTableHeaders = (getRowActions) => [
+type getRowActionsType = (plugin: PluginRow) => any[];
+
+export const getDefaultPluginsTableColumns = (getRowActions :getRowActionsType) => [
   {
     headerName: 'Name',
     field: 'name',
@@ -38,7 +40,7 @@ const getPluginsTableHeaders = (getRowActions) => [
   },
   {
     headerName: 'Type',
-    field: 'type',
+    field: 'pluginType',
     sortable: true,
     filterable: false,
     flex: 0.2,
@@ -102,22 +104,17 @@ const renderSafetyCell = (params) => {
   );
 }
 
-export const getSearchableFields = (plugin: InstalledPlugin): string[] => {
-  return [plugin.name, plugin.pluginType, plugin.description, plugin.version];
-}
-
-
 export type PluginRow = {
   id: string,
   name: string,
   version: string,
-  type: string,
+  pluginType: string,
   author: string,
   description: string,
   safe: boolean
 };
 
-export const getPluginsTableRows = (pluginsList: AgentPlugin[]) => {
+export const getDefaultPluginsTableRows = (pluginsList: AgentPlugin[]) :PluginRow[] => {
   const plugins = pluginsList?.map((pluginObject) => {
     const {id, name, safe, version, pluginType, description} = {...pluginObject};
     return {
@@ -125,7 +122,7 @@ export const getPluginsTableRows = (pluginsList: AgentPlugin[]) => {
       name: name,
       safe: safe,
       version: version,
-      type: _.startCase(pluginType),
+      pluginType: _.startCase(pluginType),
       author: 'Akamai',
       description: description,
     }
@@ -136,22 +133,16 @@ export const getPluginsTableRows = (pluginsList: AgentPlugin[]) => {
 
 
 const PluginTable = (props) => {
-  const {plugins, getRowActions, loadingMessage = DEFAULT_LOADING_MESSAGE} = {...props};
+  const {rows, columns, loadingMessage = DEFAULT_LOADING_MESSAGE} = {...props};
 
   const [isLoadingPlugins] = useState(false);
-
-  const rows = useMemo(() => {
-    return getPluginsTableRows(plugins);
-  }, [plugins]);
 
 
   return (
     <Box className={styles['plugins-wrapper']} minHeight={0}>
-      {/*<PluginsActions showUpgradableToggle={showUpgradableToggle}/>*/}
-
       {isLoadingPlugins
         ? loadingMessage
-        : <XDataGrid columns={getPluginsTableHeaders(getRowActions)}
+        : <XDataGrid columns={columns}
                      rows={[...rows]}
                      rowHeight={'25px'}
                      showToolbar={false}
