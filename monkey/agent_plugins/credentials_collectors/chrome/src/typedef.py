@@ -1,4 +1,9 @@
-from typing import Callable, TypeAlias
+from pathlib import PurePath
+from typing import Callable, Sequence, TypeAlias
 
-CredentialsDatabaseSelectorCallable: TypeAlias = Callable[[None], None]
-CredentialsDatabaseProcessorCallable: TypeAlias = Callable[[None], None]
+from common.credentials import Credentials
+
+CredentialsDatabaseSelectorCallable: TypeAlias = Callable[[None], Sequence[PurePath]]
+CredentialsDatabaseProcessorCallable: TypeAlias = Callable[
+    [Sequence[PurePath]], Sequence[Credentials]
+]
