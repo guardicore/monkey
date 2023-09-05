@@ -18,11 +18,7 @@ from common.types import (
 )
 from monkey_island.cc.agent_event_handlers import FingerprintingEventHandler
 from monkey_island.cc.models import Machine
-from monkey_island.cc.repositories import (
-    IAgentRepository,
-    IMachineRepository,
-    NetworkModelUpdateFacade,
-)
+from monkey_island.cc.repositories import IMachineRepository, NetworkModelUpdateFacade
 
 AGENT_ID = UUID("1d8ce743-a0f4-45c5-96af-91106529d3e2")
 TARGET_MACHINE_IP = IPv4Address("10.10.10.1")
@@ -77,11 +73,6 @@ def target_machine() -> Machine:
         hardware_id=9,
         network_interfaces=[IPv4Interface(f"{TARGET_MACHINE_IP}/24")],
     )
-
-
-@pytest.fixture
-def agent_repository() -> IAgentRepository:
-    return MagicMock(spec=IAgentRepository)
 
 
 @pytest.fixture
