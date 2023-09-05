@@ -3,8 +3,8 @@ import {Box} from '@mui/material';
 import XDataGrid from '../XDataGrid';
 import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
-import styles from '../../../styles/components/plugins-marketplace/BasePlugins.module.scss';
-import {AgentPlugin, InstalledPlugin} from '../../contexts/plugins/PluginsContext';
+import styles from '../../../styles/components/plugins-marketplace/PluginTable.module.scss';
+import {AgentPlugin} from '../../contexts/plugins/PluginsContext';
 import _ from 'lodash';
 import MonkeyTooltip from '../MonkeyTooltip';
 
