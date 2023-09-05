@@ -27,7 +27,7 @@ class NetworkModelUpdateFacade:
         self._machine_repository = machine_repository
         self._node_repository = node_repository
 
-    def get_or_create_target_machine(self, target: IPv4Address):
+    def get_or_create_target_machine(self, target: IPv4Address) -> Machine:
         """
         Gets or creates a target machine from an IP address
 
