@@ -26,6 +26,7 @@ import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
 
 const UPGRADEABLE_VALUE = 'upgradeable';
 const NO_INSTALLED_PLUGINS_MESSAGE = 'There are no plugins installed';
+const FETCHING_ERROR_MESSAGE = 'An error occurred while retrieving the installed plugins';
 
 const InstalledPlugins = (props) => {
   const {
@@ -34,7 +35,7 @@ const InstalledPlugins = (props) => {
     successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds,
     pluginsInUninstallProcess, setPluginsInUninstallProcess
   } = {...props};
-  const {installedPlugins, refreshInstalledPlugins, availablePlugins} = useContext(PluginsContext);
+  const {installedPlugins, refreshInstalledPlugins, availablePlugins, refreshInstalledPluginsFailure} = useContext(PluginsContext);
   const [displayedRows, setDisplayedRows] = useState([]);
   const [filters, setFilters] = useState({});
   const authComponent = new AuthComponent({});
@@ -275,7 +276,7 @@ const InstalledPlugins = (props) => {
       <PluginTable rows={displayedRows}
                    columns={generatePluginsTableColumns(getRowActions)}
                    loadingMessage="Loading all installed plugins..."
-                   noRowsOverlayMessage={installedPlugins?.length === 0 && NO_INSTALLED_PLUGINS_MESSAGE}
+                   noRowsOverlayMessage={refreshInstalledPluginsFailure ? FETCHING_ERROR_MESSAGE : (installedPlugins?.length === 0 && NO_INSTALLED_PLUGINS_MESSAGE)}
                    getRowActions={getRowActions}
       />
     </Stack>

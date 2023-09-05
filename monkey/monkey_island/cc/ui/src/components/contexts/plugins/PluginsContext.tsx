@@ -67,7 +67,8 @@ export type PluginsContextType = {
   refreshNumberOfUpgradablePlugins: () => Promise<void>,
   setInstalledPlugins: (installedPlugins: InstalledPlugin[]) => void,
   setAvailablePlugins: (availablePlugins: AvailablePlugin[]) => void,
-  refreshAvailablePluginsFailure: boolean
+  refreshAvailablePluginsFailure: boolean,
+  refreshInstalledPluginsFailure: boolean
 }
 
 export const PluginsContext = createContext<null | PluginsContextType>(null);
@@ -80,6 +81,7 @@ const authComponent = new AuthComponent({});
 
 export const PluginState = () :PluginsContextType => {
   const [refreshAvailablePluginsFailure, setRefreshAvailablePluginsFailure] = useState(false);
+  const [refreshInstalledPluginsFailure, setRefreshInstalledPluginsFailure] = useState(false);
   const [availablePlugins, setAvailablePlugins] = useState([]);
   const [installedPlugins, setInstalledPlugins] = useState([]);
   const [numberOfPluginsThatRequiresUpdate, setNumberOfPluginsThatRequiresUpdate] = useState(0);
@@ -160,6 +162,9 @@ export const PluginState = () :PluginsContextType => {
       .then(res => res.json())
       .then((plugins :PluginManifestResponse) => {
         setInstalledPlugins(parsePluginManifestResponse(plugins));
+        setRefreshInstalledPluginsFailure(false);
+      }).catch(() => {
+        setRefreshInstalledPluginsFailure(true);
       });
   };
 
@@ -186,6 +191,7 @@ export const PluginState = () :PluginsContextType => {
     setInstalledPlugins,
     refreshAvailablePlugins,
     refreshInstalledPlugins,
-    refreshAvailablePluginsFailure
+    refreshAvailablePluginsFailure,
+    refreshInstalledPluginsFailure
   }
 }

@@ -8,6 +8,7 @@ import {AgentPlugin} from '../../contexts/plugins/PluginsContext';
 import _ from 'lodash';
 import MonkeyTooltip from '../MonkeyTooltip';
 
+
 const DEFAULT_LOADING_MESSAGE = 'Loading plugins...';
 const HEADER_SUFFIX = '--header';
 
@@ -93,7 +94,7 @@ export const generatePluginsTableColumns = (getRowActions :getRowActionsType) =>
 const renderSafetyCell = (params) => {
   const SAFE = 'Safe', UNSAFE = 'Unsafe';
   return (
-    <div style={{display: 'flex', alignItems: 'center'}}>
+    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%'}}>
       <MonkeyTooltip title={params.value ? SAFE : UNSAFE}>
         {params.value ? (
           <HealthAndSafetyOutlinedIcon style={{color: 'green'}}/>
@@ -131,7 +132,6 @@ export const generatePluginsTableRows = (pluginsList: AgentPlugin[]) :PluginRow[
 
   return plugins || [];
 }
-
 
 const PluginTable = (props) => {
   const {rows, columns, loadingMessage = DEFAULT_LOADING_MESSAGE, ...rest} = {...props};
