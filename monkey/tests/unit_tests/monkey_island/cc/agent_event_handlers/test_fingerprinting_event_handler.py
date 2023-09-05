@@ -1,6 +1,4 @@
 from ipaddress import IPv4Address, IPv4Interface
-from itertools import count
-from typing import Callable, Dict, Sequence
 from unittest.mock import MagicMock
 from uuid import UUID
 
@@ -10,7 +8,6 @@ from common import OperatingSystem
 from common.agent_events import FingerprintingEvent
 from common.types import (
     DiscoveredService,
-    MachineID,
     NetworkPort,
     NetworkProtocol,
     NetworkService,
@@ -76,15 +73,8 @@ def target_machine() -> Machine:
 
 
 @pytest.fixture
-def machine_repository(
-    machine_from_id: Callable[[MachineID], Machine],
-    machines_from_ip: Callable[[IPv4Address], Sequence[Machine]],
-) -> IMachineRepository:
-    machine_repository = MagicMock(spec=IMachineRepository)
-    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
-    machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
-    machine_repository.get_new_id = MagicMock(side_effect=count(SEED_ID))
-    return machine_repository
+def machine_repository() -> IMachineRepository:
+    return MagicMock(spec=IMachineRepository)
 
 
 @pytest.fixture
@@ -97,32 +87,6 @@ def network_model_update_facade(target_machine) -> NetworkModelUpdateFacade:
 @pytest.fixture
 def fingerprinting_event_handler(network_model_update_facade, machine_repository):
     return FingerprintingEventHandler(network_model_update_facade, machine_repository)
-
-
-@pytest.fixture
-def machines_by_id(target_machine: Machine) -> Dict[MachineID, Machine]:
-    return {target_machine.id: target_machine}
-
-
-@pytest.fixture
-def machines_by_ip(target_machine: Machine) -> Dict[IPv4Address, Sequence[Machine]]:
-    return {TARGET_MACHINE_IP: [target_machine]}
-
-
-@pytest.fixture
-def machine_from_id(machines_by_id) -> Callable[[MachineID], Machine]:
-    def inner(id: int) -> Machine:
-        return machines_by_id[id]
-
-    return inner
-
-
-@pytest.fixture
-def machines_from_ip(machines_by_ip) -> Callable[[IPv4Address], Sequence[Machine]]:
-    def inner(ip: IPv4Address) -> Sequence[Machine]:
-        return machines_by_ip[ip]
-
-    return inner
 
 
 def test_fingerprinting_event_handler(
