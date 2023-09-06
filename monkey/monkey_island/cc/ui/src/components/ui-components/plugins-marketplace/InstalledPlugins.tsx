@@ -21,6 +21,7 @@ import TypeFilter from './TypeFilter';
 import LoadingIcon from '../LoadingIconMUI';
 import semver from 'semver';
 import SearchFilter, {defaultSearchableColumns} from './SearchFilter';
+import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
 
 
 const UPGRADEABLE_VALUE = 'upgradeable';
@@ -77,12 +78,8 @@ const InstalledPlugins = (props) => {
   }
 
   const upgradePlugin = (pluginType, name, version) => {
-    const options = {
-      method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({plugin_type: pluginType, name: name, version: version})
-    }
-    return authComponent.authFetch('/api/install-agent-plugin', options, true);
+    let contents = JSON.stringify({plugin_type: pluginType, name: name, version: version});
+    return IslandHttpClient.putJSON(APIEndpoint.installAgentPlugin, contents, true)
   }
 
   const onUpgradeClick = (pluginId, pluginType, name, version) => {
