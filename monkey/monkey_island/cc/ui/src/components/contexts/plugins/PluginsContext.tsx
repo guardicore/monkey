@@ -77,11 +77,6 @@ export const generatePluginId = (name, type, version) => {
   return `${name}${type}${version}`;
 }
 
-const checkResponseStatus = (res: any, errorMessage: string = 'error'): void => {
-  if (!res || res?.status !== 200) {
-    throw new Error(errorMessage);
-  }
-}
 
 export const PluginState = () :PluginsContextType => {
   const [refreshAvailablePluginsFailure, setRefreshAvailablePluginsFailure] = useState(false);
@@ -145,23 +140,31 @@ export const PluginState = () :PluginsContextType => {
     return plugins;
   }
 
+  const handleResponseError = (res: any): void => {
+    if (!res || res?.status >= 400) {
+      throw new Error();
+    }
+  }
+
   const refreshAvailablePlugins = (forceRefresh = false) => {
     let url = APIEndpoint.agentPluginIndex;
     if (forceRefresh) {
       url = APIEndpoint.agentPluginIndexForceRefresh;
     }
     return islandHttpClient.getJSON(url, {}, true)
+      .then((res) => { handleResponseError(res); return res; })
       .then((res) => {
         const parsedPlugins = parsePluginMetadataResponse(res.body.plugins);
         setAvailablePlugins(parsedPlugins);
         setRefreshAvailablePluginsFailure(false);
       }).catch(() => {
         setRefreshAvailablePluginsFailure(true);
-      });
+      })
   };
 
   const refreshInstalledPlugins = () => {
     return islandHttpClient.getJSON(APIEndpoint.agentPluginManifests, {}, true)
+      .then((res) => { handleResponseError(res); return res; })
       .then((resp) => {
         setInstalledPlugins(parsePluginManifestResponse(resp.body));
         setRefreshInstalledPluginsFailure(false);
