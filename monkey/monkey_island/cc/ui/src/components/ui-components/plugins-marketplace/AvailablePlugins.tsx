@@ -31,10 +31,10 @@ type AvailablePluginRowArray = PluginRow[];
 
 export const isPluginInstalled = (availablePlugin :AvailablePlugin,
                                   installedPlugins :InstalledPlugin[]) => {
-  return installedPlugins.find(installedPlugin => {
+  return ! (installedPlugins.find(installedPlugin => {
       return installedPlugin.name === availablePlugin.name
         && installedPlugin.pluginType === availablePlugin.pluginType;
-    }) === undefined;
+    }) === undefined);
 }
 
 const NO_AVAILABLE_PLUGINS_MESSAGE = 'There are no available plugins to be installed';
@@ -47,7 +47,8 @@ const AvailablePlugins = (props) => {
     pluginsInInstallationProcess,
     setPluginsInInstallationProcess
   } = {...props};
-  const {availablePlugins, installedPlugins, refreshAvailablePlugins, refreshAvailablePluginsFailure} = useContext(PluginsContext);
+  const {availablePlugins, installedPlugins,
+    refreshAvailablePlugins, refreshInstalledPlugins, refreshAvailablePluginsFailure} = useContext(PluginsContext);
   const [displayedRows, setDisplayedRows] = useState<AvailablePluginRowArray>([]);
   const [filters, setFilters] = useState({});
   const [isSpinning, setIsSpinning] = useState(false);
@@ -85,7 +86,8 @@ const AvailablePlugins = (props) => {
 
   const filterInstalledPlugins = (row: PluginRow) => {
     let availablePlugin = availablePlugins.find(availablePlugin => row.id === availablePlugin.id);
-    return isPluginInstalled(availablePlugin, installedPlugins);
+    return !isPluginInstalled(availablePlugin, installedPlugins) ||
+      successfullyInstalledPluginsIds.includes(row.id);
   }
 
   const installPlugin = (pluginType: string, pluginName: string, pluginVersion: string) => {
@@ -103,6 +105,7 @@ const AvailablePlugins = (props) => {
       setSuccessfullyInstalledPluginsIds((prevState) => {
         return shallowAdditionOfUniqueValueToArray(prevState, pluginId);
       });
+      refreshInstalledPlugins();
     }).catch(() => {
       console.log('error installing plugin');
     }).finally(() => {
