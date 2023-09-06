@@ -78,16 +78,16 @@ const AvailablePlugins = (props) => {
 
   //TODO refactor this method
   const disableInstallAllSafePlugins = () => {
-    let unSafeDispalyedPlugins = [];
-    let safeDispalyedPlugins = [];
+    let unSafeDisplayedPlugins = [];
+    let safeDisplayedPlugins = [];
     for (const plugin of displayedRows) {
       if (!plugin.safe) {
-        unSafeDispalyedPlugins.push(plugin.name);
+        unSafeDisplayedPlugins.push(plugin.name);
       } else {
-        safeDispalyedPlugins.push(plugin.name);
+        safeDisplayedPlugins.push(plugin.name);
       }
     }
-    setInstallingAllSafePlugins(unSafeDispalyedPlugins.length > 0 && safeDispalyedPlugins.length === 0 || displayedRows.length === 0)
+    setInstallingAllSafePlugins(unSafeDisplayedPlugins.length > 0 && safeDisplayedPlugins.length === 0 || displayedRows.length === 0)
   }
 
   const filterInstalledPlugins = (row: PluginRow) => {
@@ -174,9 +174,9 @@ const AvailablePlugins = (props) => {
     refreshAvailablePlugins(true).then(() => setIsSpinning(false));
   }
 
-  return (
-    <Stack spacing={2} height='100%' id={styles['available-plugins']}>
-      {availablePlugins?.length > 0 && (
+  const renderFilters = () => {
+    if (availablePlugins?.length > 0) {
+      return (
         <>
           <Grid container spacing={2}>
             <Grid xs={4} item
@@ -201,11 +201,27 @@ const AvailablePlugins = (props) => {
             </Grid>
           </Grid>
         </>
-      )}
+      )
+    }
+    return null;
+  }
+
+  const getOverlayMessage = () => {
+    if(refreshAvailablePluginsFailure) {
+      return FETCHING_ERROR_MESSAGE;
+    } else if(availablePlugins?.length === 0) {
+      return NO_AVAILABLE_PLUGINS_MESSAGE;
+    }
+    return null;
+  }
+
+  return (
+    <Stack spacing={2} height='100%' id={styles['available-plugins']}>
+      {renderFilters()}
       <PluginTable rows={displayedRows}
                    columns={generatePluginsTableColumns(getRowActions)}
                    loadingMessage="Loading all available plugins..."
-                   noRowsOverlayMessage={refreshAvailablePluginsFailure ? FETCHING_ERROR_MESSAGE : (availablePlugins?.length === 0 && NO_AVAILABLE_PLUGINS_MESSAGE)} />
+                   noRowsOverlayMessage={getOverlayMessage()} />
     </Stack>
   )
 };
