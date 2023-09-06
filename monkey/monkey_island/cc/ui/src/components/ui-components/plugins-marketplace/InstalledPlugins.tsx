@@ -51,12 +51,8 @@ const InstalledPlugins = (props) => {
   }, [installedPlugins, filters]);
 
   const uninstallPlugin = (pluginType, pluginName) => {
-    const options = {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({plugin_type: pluginType, name: pluginName})
-    };
-    return authComponent.authFetch('/api/uninstall-agent-plugin', options, true)
+    let contents = JSON.stringify({plugin_type: pluginType, name: pluginName})
+    return IslandHttpClient.postJSON(APIEndpoint.uninstallAgentPlugin, contents, true)
   }
 
   const onUninstallClick = (pluginId, pluginType, pluginName) => {
