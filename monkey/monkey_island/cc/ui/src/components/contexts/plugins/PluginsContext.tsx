@@ -6,7 +6,7 @@ import semver from 'semver';
 // Types returned from the API
 type PluginMetadata = {
   name: string,
-  type_: string,
+  plugin_type: string,
   resource_path: string,
   sha256: string,
   description: string,
@@ -97,9 +97,9 @@ export const PluginState = () :PluginsContextType => {
       for (const pluginName in response[pluginType]) {
         let unparsedPlugin = response[pluginType][pluginName].slice(-1)[0];
         let availablePlugin :AvailablePlugin = {
-          id: generatePluginId(unparsedPlugin.name, unparsedPlugin.type_, unparsedPlugin.version),
+          id: generatePluginId(unparsedPlugin.name, unparsedPlugin.plugin_type, unparsedPlugin.version),
           name: unparsedPlugin.name,
-          pluginType: unparsedPlugin.type_,
+          pluginType: unparsedPlugin.plugin_type,
           description: unparsedPlugin.description,
           safe: unparsedPlugin.safe,
           version: unparsedPlugin.version,
