@@ -14,16 +14,16 @@ const InstallAllSafePluginsButton = (props: InstallAllSafePluginsButtonProps) =>
   const {availablePlugins, installedPlugins} = useContext(PluginsContext);
   const [installationInProgress, setInstallationInProgress] = useState(false);
 
-  const uninstalledSafePlugins = useMemo(() => {
+  const installableSafePlugins = useMemo(() => {
     let safePlugins = availablePlugins.filter(plugin => plugin.safe);
     return safePlugins.filter(plugin => {
-      return ! isPluginInstalled(plugin, installedPlugins);
+      return !isPluginInstalled(plugin, installedPlugins);
     });
   }, [availablePlugins, installedPlugins]);
 
   const isButtonDisabled = useMemo(() => {
-    return uninstalledSafePlugins.length === 0;
-  }, [uninstalledSafePlugins]);
+    return installableSafePlugins.length === 0;
+  }, [installableSafePlugins]);
 
   useEffect(() => {
     if (props.pluginsInInstallationProcess.length === 0) {
@@ -33,7 +33,7 @@ const InstallAllSafePluginsButton = (props: InstallAllSafePluginsButtonProps) =>
 
   const installAllSafePlugins = () => {
     setInstallationInProgress(true);
-    uninstalledSafePlugins.map(plugin =>
+    installableSafePlugins.map(plugin =>
       props.onInstallClick(plugin.id,
                            plugin.name,
                            plugin.pluginType,
