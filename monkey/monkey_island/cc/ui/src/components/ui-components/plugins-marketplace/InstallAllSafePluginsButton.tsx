@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import {Button} from 'react-bootstrap';
 import LoadingIcon from '../LoadingIconMUI';
 import {PluginsContext} from '../../contexts/plugins/PluginsContext';
 import {isPluginInstalled} from './AvailablePlugins';
+import MonkeyButton, {ButtonVariant} from '../MonkeyButton';
 
 type InstallAllSafePluginsButtonProps = {
   onInstallClick: (id: string, name: string, pluginType: string, version: string) => void;
@@ -42,9 +42,11 @@ const InstallAllSafePluginsButton = (props: InstallAllSafePluginsButtonProps) =>
   }
 
   return (
-    <Button onClick={installAllSafePlugins} disabled={isButtonDisabled}>
+    <MonkeyButton onClick={installAllSafePlugins}
+                  disabled={isButtonDisabled}
+                  variant={ButtonVariant.Contained}>
       {installationInProgress ? <LoadingIcon/> : <FileDownloadIcon/>} All Safe Plugins
-    </Button>
+    </MonkeyButton>
   )
 }
 
