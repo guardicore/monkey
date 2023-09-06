@@ -20,7 +20,11 @@ CREDENTIALS = [
 
 @pytest.fixture
 def target_host():
-    return TargetHost(ip="1.1.1.1")
+    return TargetHost(ip="127.0.0.1")
+
+
+def builder_exception():
+    raise Exception()
 
 
 class ExceptionCallable:
@@ -33,17 +37,26 @@ class MockCallable:
         return CREDENTIALS
 
 
-@pytest.mark.parametrize(
-    "exception_callable",
-    [
-        ExceptionCallable,
-        lambda *_: ExceptionCallable(),
-    ],
-)
-def test_chrome_plugin__builder_exception(monkeypatch, target_host, exception_callable):
+def test_chrome_plugin__build_exception(monkeypatch, target_host):
     monkeypatch.setattr(
         "agent_plugins.credentials_collectors.chrome.src.plugin.build_chrome_credentials_collector",
-        lambda *_: exception_callable(),
+        builder_exception,
+    )
+    chrome_plugin = Plugin(
+        agent_id=AGENT_ID, agent_event_publisher=MagicMock(spec=IAgentEventPublisher)
+    )
+
+    actual_credentials = chrome_plugin.run(
+        host=target_host, options={}, interrupt=threading.Event()
+    )
+
+    assert actual_credentials == []
+
+
+def test_chrome_plugin__run_exception(monkeypatch, target_host):
+    monkeypatch.setattr(
+        "agent_plugins.credentials_collectors.chrome.src.plugin.build_chrome_credentials_collector",
+        lambda *_: ExceptionCallable,
     )
     chrome_plugin = Plugin(
         agent_id=AGENT_ID, agent_event_publisher=MagicMock(spec=IAgentEventPublisher)
