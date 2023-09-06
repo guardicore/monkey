@@ -15,7 +15,6 @@ import PluginTable, {
   generatePluginsTableColumns,
   generatePluginsTableRows,
 } from './PluginTable';
-import AuthComponent from '../../AuthComponent';
 import MonkeyToggle from '../MonkeyToggle';
 import TypeFilter from './TypeFilter';
 import LoadingIcon from '../LoadingIconMUI';
@@ -38,7 +37,6 @@ const InstalledPlugins = (props) => {
   const {installedPlugins, refreshInstalledPlugins, availablePlugins, refreshInstalledPluginsFailure} = useContext(PluginsContext);
   const [displayedRows, setDisplayedRows] = useState([]);
   const [filters, setFilters] = useState({});
-  const authComponent = new AuthComponent({});
 
   const installedPluginRows = useMemo(() => {
     return generatePluginsTableRows(installedPlugins);

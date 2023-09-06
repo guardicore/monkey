@@ -16,7 +16,6 @@ import PluginTable, {
   generatePluginsTableColumns,
   generatePluginsTableRows, PluginRow,
 } from './PluginTable';
-import AuthComponent from '../../AuthComponent';
 import {Button} from 'react-bootstrap';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import styles from '../../../styles/components/plugins-marketplace/AvailablePlugins.module.scss';
@@ -52,8 +51,6 @@ const AvailablePlugins = (props) => {
   const [displayedRows, setDisplayedRows] = useState<AvailablePluginRowArray>([]);
   const [filters, setFilters] = useState({});
   const [isSpinning, setIsSpinning] = useState(false);
-
-  const authComponent = new AuthComponent({});
 
   const availablePluginRows :PluginRow[] = useMemo(() => {
     return generatePluginsTableRows(availablePlugins);
