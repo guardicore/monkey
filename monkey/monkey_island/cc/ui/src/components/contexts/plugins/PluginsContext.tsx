@@ -94,11 +94,11 @@ export const PluginState = () :PluginsContextType => {
 
 
   useEffect(() => {
-    refreshInstalledPlugins()
+    refreshInstalledPlugins();
   }, []);
 
   useEffect(() => {
-    refreshAvailablePlugins().then(() => refreshNumberOfUpgradablePlugins())
+    refreshAvailablePlugins().then(() => refreshNumberOfUpgradablePlugins());
   }, [installedPlugins]);
 
   const parsePluginMetadataResponse = (response: PluginMetadataResponse) :AvailablePlugin[] => {
