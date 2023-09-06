@@ -3,6 +3,7 @@
 import logging
 import os
 from binascii import hexlify
+from contextlib import contextmanager
 from dataclasses import dataclass
 from hashlib import pbkdf2_hmac
 from typing import Iterator, Optional, Set, Tuple
@@ -41,18 +42,19 @@ ENC_CONFIG = EncryptionConfig(
 )
 
 
+# TODO: Determine if we need to get the uid, DBUS_SESSION_BUS_ADDRESS from the environment
 def get_decryption_keys_from_storage() -> Iterator[bytes]:
     used_session_labels: Set[str] = set()
     for uid, session in _get_dbus_sessions():
-        bus = _connect_to_dbus_session(uid, session)
-        if bus is None:
-            continue
-        try:
-            for collection in secretstorage.get_all_collections(bus):
-                yield from _get_secrets_from_collection(collection, used_session_labels)
-        except secretstorage.exceptions.SecretServiceNotAvailableException:
-            logger.warning("Secret service not available")
-            continue
+        with _dbus_session(uid, session) as bus:
+            if bus is None:
+                continue
+            try:
+                for collection in secretstorage.get_all_collections(bus):
+                    yield from _get_secrets_from_collection(collection, used_session_labels)
+            except secretstorage.exceptions.SecretServiceNotAvailableException:
+                logger.warning("Secret service not available")
+                continue
 
 
 def _get_secrets_from_collection(
@@ -83,61 +85,78 @@ def _hash_decryption_key(key: bytes):
     return decryption_key
 
 
-# TODO: Determine if we need to get the uid, DBUS_SESSION_BUS_ADDRESS from the environment
-def _get_dbus_sessions(setenv=True) -> Iterator[Tuple[str, str]]:
-    visited = set()
+def _get_dbus_sessions() -> Iterator[Tuple[int, str]]:
+    processed_addresses = set()
     for process in psutil.process_iter():
         try:
-            environ = process.environ()
+            address = _get_dbus_session_address(process)
         except Exception:
             continue
 
-        if "DBUS_SESSION_BUS_ADDRESS" not in environ:
-            continue
-
-        address = environ["DBUS_SESSION_BUS_ADDRESS"]
-
-        if address not in visited:
+        if address not in processed_addresses:
             uid = process.uids().effective
-            previous = None
-            previous_uid = None
 
-            if setenv:
-                previous_uid = os.geteuid()
+            yield (uid, address)
 
-                if not uid == previous_uid:
-                    try:
-                        os.seteuid(uid)
-                    except Exception:
-                        continue
+            processed_addresses.add(address)
 
-                if "DBUS_SESSION_BUS_ADDRESS" in os.environ:
-                    previous = os.environ["DBUS_SESSION_BUS_ADDRESS"]
 
-                os.environ["DBUS_SESSION_BUS_ADDRESS"] = address
+@contextmanager
+def _dbus_session(uid: int, address: str):
+    previous_uid = None
+    previous_address = None
+    try:
+        previous_uid = _set_uid(uid)
+        previous_address = _set_session_address(address)
+    except Exception:
+        return
 
-            try:
-                yield (uid, address)
-            except Exception:
-                pass
-            finally:
-                if setenv:
-                    if previous:
-                        os.environ["DBUS_SESSION_BUS_ADDRESS"] = previous
-                    else:
-                        del os.environ["DBUS_SESSION_BUS_ADDRESS"]
+    try:
+        yield _connect_to_dbus_session(uid, address)
+    except Exception:
+        pass
+    finally:
+        _revert_session_environment(previous_uid, previous_address)
 
-                    if previous_uid != uid:
-                        try:
-                            os.seteuid(previous_uid)
-                        except Exception:
-                            pass
 
-                visited.add(address)
+def _get_dbus_session_address(process) -> str:
+    environ = process.environ()
+    if "DBUS_SESSION_BUS_ADDRESS" not in environ:
+        raise Exception(f"No sessions found for PID {process.pid}")
+
+    return environ["DBUS_SESSION_BUS_ADDRESS"]
+
+
+def _revert_session_environment(previous_uid: int, previous_address: str):
+    try:
+        _set_uid(previous_uid)
+    except Exception:
+        pass
+    _set_session_address(previous_address)
+
+
+def _set_uid(uid: int):
+    previous_uid = os.geteuid()
+    if uid != previous_uid:
+        os.seteuid(uid)
+    return previous_uid
+
+
+def _set_session_address(session: Optional[str]):
+    previous_address = None
+    if "DBUS_SESSION_BUS_ADDRESS" in os.environ:
+        previous_address = os.environ["DBUS_SESSION_BUS_ADDRESS"]
+
+    if session is None:
+        del os.environ["DBUS_SESSION_BUS_ADDRESS"]
+    else:
+        os.environ["DBUS_SESSION_BUS_ADDRESS"] = session
+
+    return previous_address
 
 
 # TODO: Determine if we need to connect to an existing session by uid, DBUS_SESSION_BUS_ADDRESS
-def _connect_to_dbus_session(uid: str, session: str) -> Optional[secretstorage.DBusConnection]:
+def _connect_to_dbus_session(uid: int, session: str) -> Optional[secretstorage.DBusConnection]:
     try:
         # List bus connection names
         bus = dbus.bus.BusConnection(session)
