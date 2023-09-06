@@ -25,7 +25,7 @@ import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
 type AvailablePluginRowArray = PluginRow[];
 
 const NO_AVAILABLE_PLUGINS_MESSAGE = 'There are no available plugins to be installed';
-const FETCHING_ERROR_MESSAGE = 'An error occurred while retrieving the available plugins';
+const FETCHING_ERROR_MESSAGE = 'Couldn\'t fetch available plugins, check your internet connection and try again';
 
 const AvailablePlugins = (props) => {
   const {
