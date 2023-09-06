@@ -26,6 +26,33 @@ export enum APIEndpoint {
 }
 
 class IslandHttpClient extends AuthComponent {
+  post(endpoint: string, contents: any, refreshToken: boolean = false): Promise<Response> {
+    const headers = {'Content-Type': 'application/octet-stream'};
+    return this._post(endpoint, contents, headers, refreshToken);
+  }
+
+  postJSON(endpoint: string, contents: any, refreshToken: boolean = false): Promise<Response> {
+    const headers = {'Content-Type': 'application/json'};
+    return this._post(endpoint, JSON.stringify(contents), headers, refreshToken);
+  }
+
+  _post(endpoint: string, contents: any, headers: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
+    let status = null;
+    return this.authFetch(endpoint,
+      {
+        method: 'POST',
+        headers: headers,
+        body: contents
+      },
+      refreshToken
+    )
+      .then(res => {
+        status = res.status;
+        return res
+      })
+      .then(res => new Response(res, status));
+  }
+
   put(endpoint: string, contents: any, refreshToken: boolean = false): Promise<Response> {
     const headers = {'Content-Type': 'application/octet-stream'};
     return this._put(endpoint, contents, headers, refreshToken);
