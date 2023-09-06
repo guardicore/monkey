@@ -21,7 +21,8 @@ export enum APIEndpoint {
   stolenCredentials = '/api/propagation-credentials/stolen-credentials',
   linuxMasque = '/api/agent-binaries/linux/masque',
   windowsMasque = '/api/agent-binaries/windows/masque',
-  installAgentPlugin = '/api/install-agent-plugin'
+  installAgentPlugin = '/api/install-agent-plugin',
+  uninstallAgentPlugin = '/api/uninstall-agent-plugin'
 }
 
 class IslandHttpClient extends AuthComponent {
