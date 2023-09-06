@@ -19,6 +19,7 @@ import styles from '../../../styles/components/plugins-marketplace/AvailablePlug
 import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
 import SearchFilter, {defaultSearchableColumns} from './SearchFilter';
+import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
 
 type AvailablePluginRowArray = PluginRow[];
 
@@ -94,12 +95,8 @@ const AvailablePlugins = (props) => {
   }
 
   const installPlugin = (pluginType: string, pluginName: string, pluginVersion: string) => {
-    const options = {
-      method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({plugin_type: pluginType, name: pluginName, version: pluginVersion})
-    };
-    return authComponent.authFetch('/api/install-agent-plugin', options , true)
+    let contents = JSON.stringify({plugin_type: pluginType, name: pluginName, version: pluginVersion});
+    return IslandHttpClient.putJSON(APIEndpoint.installAgentPlugin, contents, true)
   }
 
   const onInstallClick = (pluginId: string, pluginName: string,
