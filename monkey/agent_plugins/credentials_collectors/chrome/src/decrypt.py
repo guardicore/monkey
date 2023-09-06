@@ -5,13 +5,13 @@ import struct
 from Crypto.Cipher import AES
 
 
-def decrypt_v80(buff, master_key):
+def decrypt_v80(buff, master_key) -> str:
     iv = buff[3:15]
     payload = buff[15:]
     cipher = AES.new(master_key, AES.MODE_GCM, iv)
     decrypted_pass = cipher.decrypt(payload)
     decrypted_pass = decrypted_pass[:-16]  # .decode()  # remove suffix bytes
-    return decrypted_pass
+    return decrypted_pass.decode()
 
 
 # Based *largely* on the Rijndael implementation
