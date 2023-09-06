@@ -1,14 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans|Alegreya&display=swap');
 
-/* Base Application Styles */
-/*html {*/
-/*  height: 100%; TODO: add?
-/*}*/
-
 body {
   color: #fff;
   background: #222;
-  /*height: inherit; TODO: add? */
 }
 
 #app {
@@ -17,12 +11,7 @@ body {
 }
 
 #main-row > div:not(.sidebar) {
-  /*flex: 1; TODO: add? */
 }
-
-/*#main-container, #main-row {*/
-/*  height: inherit; TODO: add? */
-/*}*/
 
 .center-block {
   display: block;
