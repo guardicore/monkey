@@ -37,20 +37,7 @@ class IslandHttpClient extends AuthComponent {
   }
 
   _post(endpoint: string, contents: any, headers: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
-    let status = null;
-    return this.authFetch(endpoint,
-      {
-        method: 'POST',
-        headers: headers,
-        body: contents
-      },
-      refreshToken
-    )
-      .then(res => {
-        status = res.status;
-        return res
-      })
-      .then(res => new Response(res, status));
+    return this._makeRequest('POST', endpoint, contents, headers, refreshToken)
   }
 
   put(endpoint: string, contents: any, refreshToken: boolean = false): Promise<Response> {
@@ -64,10 +51,14 @@ class IslandHttpClient extends AuthComponent {
   }
 
   _put(endpoint: string, contents: any, headers: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
+    return this._makeRequest('PUT', endpoint, contents, headers, refreshToken)
+  }
+
+  _makeRequest(method: string, endpoint: string, contents: any, headers: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
     let status = null;
     return this.authFetch(endpoint,
       {
-        method: 'PUT',
+        method: method,
         headers: headers,
         body: contents
       },
