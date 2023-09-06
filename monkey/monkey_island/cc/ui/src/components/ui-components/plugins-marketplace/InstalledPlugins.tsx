@@ -249,9 +249,9 @@ const InstalledPlugins = (props) => {
     });
   }
 
-  return (
-    <Stack spacing={2} height='100%'>
-      {installedPlugins?.length > 0 && (
+  const renderFilters = () => {
+    if(installedPlugins?.length > 0) {
+      return (
         <>
           <Grid container spacing={2}>
             <Grid xs={4} item
@@ -272,11 +272,26 @@ const InstalledPlugins = (props) => {
           </Grid>
         </>
       )
-      }
+    }
+    return null;
+  }
+
+  const getOverlayMessage = () => {
+    if(refreshInstalledPluginsFailure) {
+      return FETCHING_ERROR_MESSAGE;
+    } else if(installedPlugins?.length === 0) {
+      return NO_INSTALLED_PLUGINS_MESSAGE;
+    }
+    return null;
+  }
+
+  return (
+    <Stack spacing={2} height='100%'>
+      {renderFilters()}
       <PluginTable rows={displayedRows}
                    columns={generatePluginsTableColumns(getRowActions)}
                    loadingMessage="Loading all installed plugins..."
-                   noRowsOverlayMessage={refreshInstalledPluginsFailure ? FETCHING_ERROR_MESSAGE : (installedPlugins?.length === 0 && NO_INSTALLED_PLUGINS_MESSAGE)}
+                   noRowsOverlayMessage={getOverlayMessage()}
                    getRowActions={getRowActions}
       />
     </Stack>
