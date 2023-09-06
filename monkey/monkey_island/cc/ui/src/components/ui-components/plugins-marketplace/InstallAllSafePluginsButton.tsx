@@ -17,7 +17,7 @@ const InstallAllSafePluginsButton = (props: InstallAllSafePluginsButtonProps) =>
   const uninstalledSafePlugins = useMemo(() => {
     let safePlugins = availablePlugins.filter(plugin => plugin.safe);
     return safePlugins.filter(plugin => {
-      return isPluginInstalled(plugin, installedPlugins);
+      return ! isPluginInstalled(plugin, installedPlugins);
     });
   }, [availablePlugins, installedPlugins]);
 
