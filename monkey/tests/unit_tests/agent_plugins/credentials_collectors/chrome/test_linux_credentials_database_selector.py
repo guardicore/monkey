@@ -98,6 +98,11 @@ def patch_pwd_getpwall(monkeypatch, place_browser_files, tmp_path: Path):
 
 
 @pytest.fixture
+def patch_env_home(monkeypatch, tmp_path: Path):
+    monkeypatch.setenv("HOME", str(tmp_path / "home" / USERNAME_1))
+
+
+@pytest.fixture
 def expected_login_database_paths(tmp_path: Path):
     return [
         PurePath(f"{tmp_path}/home/{USERNAME_1}/{GOOGLE_CHROME_PATH}/Default/Login Data"),
@@ -107,7 +112,10 @@ def expected_login_database_paths(tmp_path: Path):
 
 
 def test_linux_credentials_database_selector(
-    patch_pwd_getpwall, linux_credentials_database_selector, expected_login_database_paths
+    patch_pwd_getpwall,
+    patch_env_home,
+    linux_credentials_database_selector,
+    expected_login_database_paths,
 ):
     actual_login_database_paths = linux_credentials_database_selector()
 
