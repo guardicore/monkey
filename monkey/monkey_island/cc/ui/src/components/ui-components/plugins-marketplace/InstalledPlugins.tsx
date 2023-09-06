@@ -51,7 +51,7 @@ const InstalledPlugins = (props) => {
   }, [installedPlugins, filters]);
 
   const uninstallPlugin = (pluginType, pluginName) => {
-    let contents = JSON.stringify({plugin_type: pluginType, name: pluginName})
+    let contents = {plugin_type: pluginType, name: pluginName};
     return IslandHttpClient.postJSON(APIEndpoint.uninstallAgentPlugin, contents, true)
   }
 
@@ -74,7 +74,7 @@ const InstalledPlugins = (props) => {
   }
 
   const upgradePlugin = (pluginType, name, version) => {
-    let contents = JSON.stringify({plugin_type: pluginType, name: name, version: version});
+    let contents = {plugin_type: pluginType, name: name, version: version};
     return IslandHttpClient.putJSON(APIEndpoint.installAgentPlugin, contents, true)
   }
 
