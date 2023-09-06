@@ -3,7 +3,11 @@ import {
   shallowAdditionOfUniqueValueToArray,
   shallowRemovalOfUniqueValueFromArray
 } from '../../../utils/objectUtils';
-import {PluginsContext} from '../../contexts/plugins/PluginsContext';
+import {
+  AvailablePlugin,
+  InstalledPlugin,
+  PluginsContext
+} from '../../contexts/plugins/PluginsContext';
 import {GridActionsCellItem} from '@mui/x-data-grid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
@@ -20,17 +24,24 @@ import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
 import SearchFilter, {defaultSearchableColumns} from './SearchFilter';
 import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
+import InstallAllSafePluginsButton from './InstallAllSafePluginsButton';
 
 
 type AvailablePluginRowArray = PluginRow[];
+
+export const isPluginInstalled = (availablePlugin :AvailablePlugin,
+                                  installedPlugins :InstalledPlugin[]) => {
+  return installedPlugins.find(installedPlugin => {
+      return installedPlugin.name === availablePlugin.name
+        && installedPlugin.pluginType === availablePlugin.pluginType;
+    }) === undefined;
+}
 
 const NO_AVAILABLE_PLUGINS_MESSAGE = 'There are no available plugins to be installed';
 const FETCHING_ERROR_MESSAGE = 'Couldn\'t fetch available plugins, check your internet connection and try again';
 
 const AvailablePlugins = (props) => {
   const {
-    installingAllSafePlugins,
-    setInstallingAllSafePlugins,
     successfullyInstalledPluginsIds,
     setSuccessfullyInstalledPluginsIds,
     pluginsInInstallationProcess,
@@ -54,10 +65,6 @@ const AvailablePlugins = (props) => {
     });
   }, []);
 
-  useEffect(() =>{
-    disableInstallAllSafePlugins()
-  }, [displayedRows]);
-
   useEffect(() => {
     filterRows();
   }, [availablePlugins, installedPlugins, filters]);
@@ -76,26 +83,9 @@ const AvailablePlugins = (props) => {
     setDisplayedRows(allRows);
   }
 
-  //TODO refactor this method
-  const disableInstallAllSafePlugins = () => {
-    let unSafeDisplayedPlugins = [];
-    let safeDisplayedPlugins = [];
-    for (const plugin of displayedRows) {
-      if (!plugin.safe) {
-        unSafeDisplayedPlugins.push(plugin.name);
-      } else {
-        safeDisplayedPlugins.push(plugin.name);
-      }
-    }
-    setInstallingAllSafePlugins(unSafeDisplayedPlugins.length > 0 && safeDisplayedPlugins.length === 0 || displayedRows.length === 0)
-  }
-
   const filterInstalledPlugins = (row: PluginRow) => {
     let availablePlugin = availablePlugins.find(availablePlugin => row.id === availablePlugin.id);
-    return installedPlugins.find(installedPlugin => {
-      return installedPlugin.name === availablePlugin.name
-        && installedPlugin.pluginType === availablePlugin.pluginType;
-    }) === undefined;
+    return isPluginInstalled(availablePlugin, installedPlugins);
   }
 
   const installPlugin = (pluginType: string, pluginName: string, pluginVersion: string) => {
@@ -160,15 +150,6 @@ const AvailablePlugins = (props) => {
     ];
   }
 
-  const installAllSafePlugins = () => {
-    setInstallingAllSafePlugins(true);
-    for (const row of availablePluginRows) {
-      if (row.safe) {
-        onInstallClick(row.id, row.name, row.pluginType, row.version);
-      }
-    }
-  }
-
   const refreshPlugins = () => {
     setIsSpinning(true);
     refreshAvailablePlugins(true).then(() => setIsSpinning(false));
@@ -191,9 +172,8 @@ const AvailablePlugins = (props) => {
             <Grid xs={1} item/>
             <Grid xs={3} item>
               <Box display="flex" justifyContent="flex-end">
-                <Button onClick={installAllSafePlugins} disabled={installingAllSafePlugins}>
-                  <FileDownloadIcon/> All Safe Plugins
-                </Button>
+                <InstallAllSafePluginsButton onInstallClick={onInstallClick}
+                                         pluginsInInstallationProcess={pluginsInInstallationProcess} />
               </Box>
             </Grid>
             <Grid xs={1} item>
