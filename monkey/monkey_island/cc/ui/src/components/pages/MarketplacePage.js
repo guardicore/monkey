@@ -37,7 +37,6 @@ const a11yProps = (index) => {
 
 const MarketplacePage = () => {
   const {numberOfPluginsThatRequiresUpdate, refreshInstalledPlugins} = useContext(PluginsContext);
-  const [installingAllSafePlugins, setInstallingAllSafePlugins] = useState(false);
   const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
   const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
   const [successfullyUpdatedPluginsIds, setSuccessfullyUpdatedPluginsIds] = useState([]);
@@ -81,8 +80,6 @@ const MarketplacePage = () => {
         </Box>
         <TabPanel value={tabValue} index={0}>
           <AvailablePlugins
-            installingAllSafePlugins={installingAllSafePlugins}
-            setInstallingAllSafePlugins={setInstallingAllSafePlugins}
             successfullyInstalledPluginsIds={successfullyInstalledPluginsIds}
             setSuccessfullyInstalledPluginsIds={setSuccessfullyInstalledPluginsIds}
             pluginsInInstallationProcess={pluginsInInstallationProcess}
