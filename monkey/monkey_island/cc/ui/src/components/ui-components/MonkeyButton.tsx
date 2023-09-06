@@ -1,6 +1,8 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import ComponentColor from './base-components/colors';
+import {ThemeProvider} from '@mui/material';
+import MUITheme from '../../styles/MUITheme';
 
 export enum ButtonVariant {
   Contained = 'contained',
@@ -26,9 +28,11 @@ type MonkeyButtonProps = {
 const MonkeyButton = (props: MonkeyButtonProps) => {
   let {children, onClick, ...styleProps} = props;
   return (
-    <Button {...styleProps} onClick={onClick}>
-      {children}
-    </Button>
+    <ThemeProvider theme={MUITheme} >
+      <Button {...styleProps} onClick={onClick} >
+        {children}
+      </Button>
+    </ThemeProvider>
   )
 }
 
