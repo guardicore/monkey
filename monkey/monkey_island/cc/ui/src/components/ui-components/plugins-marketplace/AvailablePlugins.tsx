@@ -95,7 +95,7 @@ const AvailablePlugins = (props) => {
   }
 
   const installPlugin = (pluginType: string, pluginName: string, pluginVersion: string) => {
-    let contents = JSON.stringify({plugin_type: pluginType, name: pluginName, version: pluginVersion});
+    let contents = {plugin_type: pluginType, name: pluginName, version: pluginVersion};
     return IslandHttpClient.putJSON(APIEndpoint.installAgentPlugin, contents, true)
   }
 
