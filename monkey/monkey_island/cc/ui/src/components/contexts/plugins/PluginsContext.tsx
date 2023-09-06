@@ -1,6 +1,6 @@
 import React, {createContext, useEffect, useState} from 'react';
-import AuthComponent from '../../AuthComponent';
 import semver from 'semver';
+import islandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
 
 
 // Types returned from the API
@@ -77,8 +77,6 @@ export const generatePluginId = (name, type, version) => {
   return `${name}${type}${version}`;
 }
 
-const authComponent = new AuthComponent({});
-
 const checkResponseStatus = (res: any, errorMessage: string = 'error'): void => {
   if (!res || res?.status !== 200) {
     throw new Error(errorMessage);
@@ -148,18 +146,13 @@ export const PluginState = () :PluginsContextType => {
   }
 
   const refreshAvailablePlugins = (forceRefresh = false) => {
-    let url = '/api/agent-plugins/available/index';
+    let url = APIEndpoint.agentPluginIndex;
     if (forceRefresh) {
-      url += '?force_refresh=true';
+      url = APIEndpoint.agentPluginIndexForceRefresh;
     }
-    return authComponent.authFetch(url, {}, true)
-      .then(res => {
-        checkResponseStatus(res, 'Something went wrong while fetching the available plugins');
-        return res;
-      })
-      .then(res => res.json())
+    return islandHttpClient.getJSON(url, {}, true)
       .then((res) => {
-        const parsedPlugins = parsePluginMetadataResponse(res.plugins);
+        const parsedPlugins = parsePluginMetadataResponse(res.body.plugins);
         setAvailablePlugins(parsedPlugins);
         setRefreshAvailablePluginsFailure(false);
       }).catch(() => {
@@ -168,14 +161,9 @@ export const PluginState = () :PluginsContextType => {
   };
 
   const refreshInstalledPlugins = () => {
-    return authComponent.authFetch('/api/agent-plugins/installed/manifests', {}, true)
-      .then(res => {
-        checkResponseStatus(res, 'Something went wrong while fetching the installed plugins');
-        return res;
-      })
-      .then(res => res.json())
-      .then((plugins :PluginManifestResponse) => {
-        setInstalledPlugins(parsePluginManifestResponse(plugins));
+    return islandHttpClient.getJSON(APIEndpoint.agentPluginManifests, {}, true)
+      .then((resp) => {
+        setInstalledPlugins(parsePluginManifestResponse(resp.body));
         setRefreshInstalledPluginsFailure(false);
       }).catch(() => {
         setRefreshInstalledPluginsFailure(true);

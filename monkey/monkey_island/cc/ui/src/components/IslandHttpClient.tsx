@@ -22,7 +22,10 @@ export enum APIEndpoint {
   linuxMasque = '/api/agent-binaries/linux/masque',
   windowsMasque = '/api/agent-binaries/windows/masque',
   installAgentPlugin = '/api/install-agent-plugin',
-  uninstallAgentPlugin = '/api/uninstall-agent-plugin'
+  uninstallAgentPlugin = '/api/uninstall-agent-plugin',
+  agentPluginIndex = '/api/agent-plugins/available/index',
+  agentPluginIndexForceRefresh = `${APIEndpoint.agentPluginIndex}?force_refresh=true`,
+  agentPluginManifests = '/api/agent-plugins/installed/manifests'
 }
 
 class IslandHttpClient extends AuthComponent {
