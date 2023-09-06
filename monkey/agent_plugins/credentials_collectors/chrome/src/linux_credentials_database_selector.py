@@ -19,6 +19,7 @@ LOGIN_DATABASE_FILENAME = "Login Data"
 CHROMIUM_BASED_DB_PATHS = [
     ("Google Chrome", ".config/google-chrome"),
     ("Chromium", ".config/chromium"),
+    ("Chromium (snap)", "snap/chromium/common/chromium"),
 ]
 
 
