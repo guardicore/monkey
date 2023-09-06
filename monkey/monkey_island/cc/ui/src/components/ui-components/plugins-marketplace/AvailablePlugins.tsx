@@ -14,16 +14,17 @@ import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import {Box, Grid, Stack} from '@mui/material';
 import PluginTable, {
   generatePluginsTableColumns,
-  generatePluginsTableRows, PluginRow,
+  generatePluginsTableRows,
+  PluginRow,
 } from './PluginTable';
-import {Button} from 'react-bootstrap';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import styles from '../../../styles/components/plugins-marketplace/AvailablePlugins.module.scss';
 import LoadingIcon from '../LoadingIconMUI';
 import TypeFilter from './TypeFilter';
 import SearchFilter, {defaultSearchableColumns} from './SearchFilter';
-import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
+import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
 import InstallAllSafePluginsButton from './InstallAllSafePluginsButton';
+import MonkeyButton, {ButtonVariant} from '../MonkeyButton';
 
 
 type AvailablePluginRowArray = PluginRow[];
@@ -177,7 +178,10 @@ const AvailablePlugins = (props) => {
               </Box>
             </Grid>
             <Grid xs={1} item>
-              <Button onClick={refreshPlugins}><RefreshIcon className={`${isSpinning && 'spinning-icon'}`}/></Button>
+              <MonkeyButton onClick={refreshPlugins}
+                        variant={ButtonVariant.Contained}>
+            <RefreshIcon className={`${isSpinning && 'spinning-icon'}`}/>
+          </MonkeyButton>
             </Grid>
           </Grid>
         </>
