@@ -9,19 +9,22 @@ import getpass
 import json
 import logging
 import os
-
-# TODO: fix star imports
-from ctypes import *
-from ctypes.wintypes import *
+from ctypes import (
+    POINTER,
+    Structure,
+    WinDLL,
+    byref,
+    c_buffer,
+    c_char,
+    create_string_buffer,
+    memmove,
+    sizeof,
+)
+from ctypes.wintypes import BOOL, DWORD, HANDLE, HWND, LPBYTE, LPCWSTR, LPSTR, LPVOID, LPWSTR
 from pathlib import PurePath
 from typing import Sequence
 
 logger = logging.getLogger(__name__)
-
-
-PVOID = c_void_p
-LPWSTR = c_wchar_p
-LPBYTE = POINTER(BYTE)
 
 
 class CREDENTIAL_ATTRIBUTE(Structure):
@@ -29,26 +32,6 @@ class CREDENTIAL_ATTRIBUTE(Structure):
 
 
 PCREDENTIAL_ATTRIBUTE = POINTER(CREDENTIAL_ATTRIBUTE)
-
-
-class CREDENTIAL(Structure):
-    _fields_ = [
-        ("Flags", DWORD),
-        ("Type", DWORD),
-        ("TargetName", LPSTR),
-        ("Comment", LPSTR),
-        ("LastWritten", FILETIME),
-        ("CredentialBlobSize", DWORD),
-        ("CredentialBlob", POINTER(c_char)),
-        ("Persist", DWORD),
-        ("AttributeCount", DWORD),
-        ("Attributes", PCREDENTIAL_ATTRIBUTE),
-        ("TargetAlias", LPSTR),
-        ("UserName", LPSTR),
-    ]
-
-
-PCREDENTIAL = POINTER(CREDENTIAL)
 
 
 class DATA_BLOB(Structure):
@@ -79,7 +62,7 @@ CryptUnprotectData.argtypes = [
     POINTER(DATA_BLOB),
     POINTER(LPWSTR),
     POINTER(DATA_BLOB),
-    PVOID,
+    LPVOID,
     PCRYPTPROTECT_PROMPTSTRUCT,
     DWORD,
     POINTER(DATA_BLOB),
