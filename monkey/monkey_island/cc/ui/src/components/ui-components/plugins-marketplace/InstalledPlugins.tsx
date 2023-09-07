@@ -6,7 +6,7 @@ import {
 } from '../../contexts/plugins/PluginsContext';
 import {shallowAdditionOfUniqueValueToArray, shallowRemovalOfUniqueValueFromArray} from '../../../utils/objectUtils';
 import {GridActionsCellItem} from '@mui/x-data-grid';
-import {Grid, Stack} from '@mui/material';
+import {Box, Grid, Stack} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
@@ -264,9 +264,11 @@ const InstalledPlugins = (props) => {
             </Grid>
             <Grid xs={2} item/>
             <Grid xs={3} item>
-              <MonkeyToggle options={[{value: 'all', label: 'All'},
-                {value: UPGRADEABLE_VALUE, label: 'Upgradable'}]}
-                            setSelectedValues={onToggleChanged}/>
+              <Box display="flex" justifyContent="flex-end" sx={{'paddingRight': '15px'}}>
+                <MonkeyToggle options={[{value: 'all', label: 'All'},
+                  {value: UPGRADEABLE_VALUE, label: 'Upgradable'}]}
+                              setSelectedValues={onToggleChanged}/>
+              </Box>
             </Grid>
           </Grid>
         </>
