@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import SelectComponent, {SelectVariant} from '../Select';
+import SelectComponent, {SelectVariant} from '../MonkeySelect';
 import {PluginRow} from './PluginTable';
 
 type SetFiltersFunc = (filters: { [name: string]: number } ) => void;
@@ -56,7 +56,8 @@ const TypeFilter = ({allRows, setFilters} :TypeFilterProps) => {
   return (
     <SelectComponent placeholder={"Type"} options={typeFilters}
                      selectedOption={selectedType} onChange={handleTypeChange}
-                     variant={SelectVariant.Standard}/>
+                     variant={SelectVariant.Standard}
+                     defaultValue={''}/>
   )
 }
 
