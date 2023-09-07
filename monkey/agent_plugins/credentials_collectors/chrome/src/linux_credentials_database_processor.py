@@ -65,7 +65,7 @@ class LinuxCredentialsDatabaseProcessor:
                 continue
 
     def _get_password(self, password: str) -> Optional[Password]:
-        if self._is_password_encrypted(password):
+        if self._password_is_encrypted(password):
             try:
                 return Password(password=self._decrypt_password(password))
             except Exception:
@@ -73,7 +73,7 @@ class LinuxCredentialsDatabaseProcessor:
 
         return Password(password=password)
 
-    def _is_password_encrypted(self, password: str):
+    def _password_is_encrypted(self, password: str):
         return password[:3] == b"v10" or password[:3] == b"v11"
 
     # TODO: Finish implementing this
