@@ -2,7 +2,7 @@ import logging
 import os
 import pwd
 from pathlib import Path, PurePath
-from typing import Dict, Sequence, Collection
+from typing import Collection, Dict, Sequence
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 
@@ -40,18 +40,19 @@ class LinuxCredentialsDatabaseSelector:
             sub_profile_dirs = Path(profile_dir_path).iterdir()
             for subdir in sub_profile_dirs:
                 if subdir == (profile_dir_path / LOGIN_DATABASE_FILENAME):
-                    if self._is_valid_file(subdir):
+                    if self._file_is_accessible(subdir):
                         login_data_paths.append(PurePath(subdir))
 
                 login_database_path = profile_dir_path / subdir / LOGIN_DATABASE_FILENAME
-                if self._is_valid_file(login_database_path):
+                if self._file_is_accessible(login_database_path):
                     login_data_paths.append(login_database_path)
         except Exception as err:
             logger.debug(f"Could not list {profile_dir_path}: {err}")
 
         return login_data_paths
 
-    def _is_valid_file(self, path: PurePath) -> bool:
+    @staticmethod
+    def _file_is_accessible(path: PurePath) -> bool:
         try:
             return Path(path).is_file() and os.access(path, os.R_OK)
         except PermissionError as err:
@@ -65,7 +66,7 @@ class LinuxCredentialsDatabaseSelector:
             for browser_name, browser_path in CHROMIUM_BASED_DB_PATHS:
                 browser_db_path = home_dir_path / browser_path
                 try:
-                    if self._is_valid_dir(browser_db_path):
+                    if self._directory_is_accessible(browser_db_path):
                         database_paths.append(browser_db_path)
                 except Exception as err:
                     logger.exception(
@@ -74,14 +75,16 @@ class LinuxCredentialsDatabaseSelector:
 
         return database_paths
 
-    def _is_valid_dir(self, path: PurePath) -> bool:
+    @staticmethod
+    def _directory_is_accessible(path: PurePath) -> bool:
         try:
             return Path(path).is_dir() and os.access(path, os.R_OK)
         except PermissionError as err:
             logger.debug(f"Failed to validate path {path}: {err}")
             return False
 
-    def _get_home_directories(self) -> UserDirectories:
+    @staticmethod
+    def _get_home_directories() -> UserDirectories:
         """
         Retrieve all users' home directories
         """
@@ -98,4 +101,3 @@ class LinuxCredentialsDatabaseSelector:
         except Exception:
             logger.exception("Failed to get user directories")
             return {}
->>>>>>> a0b744f07 (Chrome: Implement LinuxCredentialsDatabaseSelector)
