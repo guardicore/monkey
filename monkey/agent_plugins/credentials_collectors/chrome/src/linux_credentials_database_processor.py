@@ -12,7 +12,7 @@ from common.types import Event
 from infection_monkey.utils.threading import interruptible_iter
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
-from .decrypt import AESModeOfOperationCBC, decrypt_v80
+from .decrypt import decrypt_AES, decrypt_v80
 from .linux_keystore import get_decryption_keys_from_storage
 
 
@@ -91,15 +91,7 @@ class LinuxCredentialsDatabaseProcessor:
 
     def _chrome_decrypt(self, encrypted_value, key, init_vector):
         try:
-            encrypted_value = encrypted_value[3:]
-            aes = AESModeOfOperationCBC(key, iv=init_vector)
-            cleartxt = b"".join(
-                [
-                    aes.decrypt(encrypted_value[i : i + AES_BLOCK_SIZE])
-                    for i in range(0, len(encrypted_value), AES_BLOCK_SIZE)
-                ]
-            )
-            return self._remove_padding(cleartxt)
+            return decrypt_AES(encrypted_value, key, init_vector, AES_BLOCK_SIZE)
         except UnicodeDecodeError:
             return decrypt_v80(encrypted_value, key)
 
