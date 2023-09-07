@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import SelectComponent, {SelectVariant} from '../Select';
 import {PluginRow} from './PluginTable';
+import MonkeySelect, {MONKEY_SELECT_ALL_VALUE} from '../MonkeySelect';
 
-type SetFiltersFunc = (filters: { [name: string]: number } ) => void;
+type SetFiltersFunc = (filters: { [name: string]: number }) => void;
 
 type TypeFilterProps = {
   allRows: PluginRow[],
-  setFilters: (filters: { [name: string]: SetFiltersFunc } ) => void
+  setFilters: (filters: { [name: string]: SetFiltersFunc }) => void
 }
 
 type SelectOption = {
@@ -14,36 +14,36 @@ type SelectOption = {
   label: string
 }
 
-const anyTypeOption :SelectOption = {value: "", label: "All"}
+const anyTypeOption: SelectOption = {label: 'All', value: ''};
 
-const TypeFilter = ({allRows, setFilters} :TypeFilterProps) => {
-  const [selectedType, setSelectedType] = useState(anyTypeOption)
+const TypeFilter = ({allRows, setFilters}: TypeFilterProps) => {
+  const [selectedType, setSelectedType] = useState(MONKEY_SELECT_ALL_VALUE)
   const [typeFilters, setTypeFilters] = useState([])
 
   useEffect(() => {
     let allTypes = [];
-    allTypes = allRows.map(row => row.pluginType)
+    allTypes = allRows.map(row => row.pluginType);
     allTypes = [...new Set(allTypes)]
     allTypes = allTypes.map(selectOptionFromValue)
-    allTypes.unshift(anyTypeOption)
     setTypeFilters(allTypes)
   }, [allRows])
 
   useEffect(() => {
     setFilters((prevState) => {
       return {...prevState, pluginType: getFilterForType(selectedType)}
-    })}, [selectedType])
+    })
+  }, [selectedType])
 
-  const selectOptionFromValue = (value) :SelectOption => {
-    return {value: value, label: value}
+  const selectOptionFromValue = (value): SelectOption => {
+    return value === '' ? anyTypeOption : {label: value, value: value};
   }
 
-  const handleTypeChange = (event) => {
-    setSelectedType(selectOptionFromValue(event.target.value))
+  const handleTypeChange = (value) => {
+    setSelectedType(selectOptionFromValue(value))
   }
 
-  const getFilterForType = (typeOption :SelectOption) => {
-    if (typeOption.value === "") {
+  const getFilterForType = (typeOption: SelectOption) => {
+    if (typeOption.value === anyTypeOption.value) {
       return () => true;
     }
 
@@ -54,9 +54,11 @@ const TypeFilter = ({allRows, setFilters} :TypeFilterProps) => {
   }
 
   return (
-    <SelectComponent placeholder={"Type"} options={typeFilters}
-                     selectedOption={selectedType} onChange={handleTypeChange}
-                     variant={SelectVariant.Standard}/>
+    <MonkeySelect options={typeFilters}
+                  setAllOption={true}
+                  defaultSelectedOptionValue={MONKEY_SELECT_ALL_VALUE}
+                  onSelectValueChange={handleTypeChange}
+                  label="Type"/>
   )
 }
 
