@@ -50,15 +50,6 @@ export const generatePluginsTableColumns = (getRowActions :getRowActionsType) =>
     isTextual: true
   },
   {
-    headerName: 'Author',
-    field: 'author',
-    sortable: true,
-    filterable: false,
-    minWidth: 150,
-    flex: 0.25,
-    isTextual: true
-  },
-  {
     headerName: 'Description',
     field: 'description',
     sortable: false,
@@ -111,7 +102,6 @@ export type PluginRow = {
   name: string,
   version: string,
   pluginType: string,
-  author: string,
   description: string,
   safe: boolean
 };
@@ -125,7 +115,6 @@ export const generatePluginsTableRows = (pluginsList: AgentPlugin[]) :PluginRow[
       safe: safe,
       version: version,
       pluginType: _.startCase(pluginType),
-      author: 'Akamai',
       description: description,
     }
   })
