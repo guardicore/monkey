@@ -31,6 +31,7 @@ class LinuxCredentialsDatabaseProcessor:
     def __call__(
         self, interrupt: Event, database_paths: Collection[BrowserCredentialsDatabasePath]
     ) -> Collection[Credentials]:
+        self._decryption_keys = [key for key in get_decryption_keys_from_storage()]
         credentials = chain.from_iterable(map(self._process_database_path, database_paths))
         return list(interruptible_iter(credentials, interrupt))
 
@@ -76,11 +77,9 @@ class LinuxCredentialsDatabaseProcessor:
     def _password_is_encrypted(self, password: str):
         return password[:3] == b"v10" or password[:3] == b"v11"
 
-    # TODO: Finish implementing this
     def _decrypt_password(self, password: str) -> str:
-        decryption_keys = [key for key in get_decryption_keys_from_storage()]
         try:
-            for key in decryption_keys:
+            for key in self._decryption_keys:
                 return self._chrome_decrypt(password, key, init_vector=AES_INIT_VECTOR)
 
         except Exception:
