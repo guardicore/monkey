@@ -7,7 +7,7 @@ from itertools import chain
 from pathlib import Path, PurePath
 from typing import Iterator, Optional
 
-from common.credentials import Credentials, Password, Username
+from common.credentials import Credentials, EmailAddress, Password, Username
 from common.types import Event
 from infection_monkey.utils.threading import interruptible_iter
 
@@ -61,10 +61,16 @@ class LinuxCredentialsDatabaseProcessor:
         for user, password in connection.execute(DB_SQL_STATEMENT):
             try:
                 yield Credentials(
-                    identity=Username(username=user), secret=self._get_password(password)
+                    identity=self._get_identity(user), secret=self._get_password(password)
                 )
             except Exception:
                 continue
+
+    def _get_identity(self, user: str):
+        try:
+            return EmailAddress(email_address=user)
+        except ValueError:
+            return Username(username=user)
 
     def _get_password(self, password: str) -> Optional[Password]:
         if self._password_is_encrypted(password):
