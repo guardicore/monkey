@@ -1,4 +1,4 @@
-import React, {ReactFragment, useState} from 'react';
+import React, {ReactFragment, useContext, useState} from 'react';
 import {Button} from 'react-bootstrap';
 import {NavLink} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -10,6 +10,8 @@ import {CompletedSteps} from './side-menu/CompletedSteps';
 import {isReportRoute, IslandRoutes} from './Main';
 import Logo from './logo/LogoComponent';
 import IslandResetModal from './ui-components/IslandResetModal';
+import {Badge} from '@mui/material';
+import {PluginsContext} from './contexts/plugins/PluginsContext';
 
 
 const logoImage = require('../images/monkey-icon.svg');
@@ -33,6 +35,9 @@ const SideNavComponent = ({
                             onStatusChange,
                             onLogout,
                           }: Props) => {
+
+  // @ts-ignore
+  const {numberOfPluginsThatRequiresUpdate} = useContext(PluginsContext);
 
   const [showResetModal, setShowResetModal] = useState(false);
 
@@ -104,6 +109,10 @@ const SideNavComponent = ({
         <li><NavLink to='/infection/events'
                      className={getNavLinkClass()}>
           Events
+        </NavLink></li>
+        <li><NavLink to={IslandRoutes.Marketplace}
+                     className={getNavLinkClass()}>
+          <Badge id="plugins-marketplace-link" badgeContent={numberOfPluginsThatRequiresUpdate} color="error"><span id="plugins-marketplace-label">Plugins</span></Badge>
         </NavLink></li>
         <li><Button variant={null} className={`${getNavLinkClass()} logout-button`}
                     onClick={onLogout} >

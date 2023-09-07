@@ -19,11 +19,11 @@ import LoadingScreen from './ui-components/LoadingScreen';
 import SidebarLayoutComponent from "./layouts/SidebarLayoutComponent";
 import {CompletedSteps} from "./side-menu/CompletedSteps";
 import Timeout = NodeJS.Timeout;
-import IslandHttpClient, { APIEndpoint } from "./IslandHttpClient";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
-import { doesAnyAgentExist, didAllAgentsShutdown } from './utils/ServerUtils';
+import {doesAnyAgentExist, didAllAgentsShutdown} from './utils/ServerUtils';
 import LogoutPage from './pages/LogoutPage';
+import MarketplacePage from './pages/MarketplacePage';
+import PluginsProvider from './contexts/plugins/PluginsProvider';
+import {PluginState} from './contexts/plugins/PluginsContext';
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -36,18 +36,30 @@ export const IslandRoutes = {
   RegisterPage: '/register',
   Logout: '/logout',
   ConfigurePage: '/configure',
+  Marketplace: '/marketplace',
   RunMonkeyPage: '/run-monkey',
   MapPage: '/infection/map',
   EventPage: '/infection/events',
-  LicensePage: '/license'
+  LicensePage: '/license',
+  PluginsPage: '/marketplace',
 }
 
-export function isReportRoute(route){
+export function isReportRoute(route) {
   return route.startsWith(IslandRoutes.Report);
+}
+
+function withPluginState(Component) {
+  return function PluginStateComponent(props) {
+    const pluginState = PluginState();
+    return (
+      <Component {...props} pluginState={pluginState}/>
+    );
+  };
 }
 
 class AppComponent extends AuthComponent {
   private interval: Timeout;
+  private pluginsFetched: boolean;
 
   constructor(props) {
     super(props);
@@ -55,6 +67,7 @@ class AppComponent extends AuthComponent {
       completedSteps: new CompletedSteps(false),
     };
     this.interval = undefined;
+    this.pluginsFetched = false;
   }
 
   updateStatus = () => {
@@ -80,16 +93,22 @@ class AppComponent extends AuthComponent {
     }
 
     if (res) {
+      if(!this.pluginsFetched) {
+        this.props.pluginState.refreshAvailablePlugins();
+        this.props.pluginState.refreshInstalledPlugins();
+          this.pluginsFetched = true;
+      }
+
       // update status: report generation
       this.authFetch('/api/report-generation-status', {}, false)
         .then(res => res.json())
         .then(res => {
           this.setState({
             completedSteps: new CompletedSteps(
-                                  this.state.completedSteps.runMonkey,
-                                  this.state.completedSteps.infectionDone,
-                                  res.report_done
-                                )
+              this.state.completedSteps.runMonkey,
+              this.state.completedSteps.infectionDone,
+              res.report_done
+            )
           });
         })
 
@@ -97,26 +116,25 @@ class AppComponent extends AuthComponent {
       doesAnyAgentExist(false).then(anyAgentExists => {
         this.setState({
           completedSteps: new CompletedSteps(
-                                anyAgentExists,
-                                this.state.completedSteps.infectionDone,
-                                this.state.completedSteps.reportDone
-                              )
+            anyAgentExists,
+            this.state.completedSteps.infectionDone,
+            this.state.completedSteps.reportDone
+          )
         });
       });
 
       // update status: if infection (running and shutting down of all agents) finished
       didAllAgentsShutdown(false).then(allAgentsShutdown => {
         let infectionDone = this.state.completedSteps.runMonkey && allAgentsShutdown;
-        if(this.state.completedSteps.infectionDone === false
-          && infectionDone){
+        if (this.state.completedSteps.infectionDone === false && infectionDone) {
           this.showInfectionDoneNotification();
         }
         this.setState({
           completedSteps: new CompletedSteps(
-                                this.state.completedSteps.runMonkey,
-                                infectionDone,
-                                this.state.completedSteps.reportDone
-                              )
+            this.state.completedSteps.runMonkey,
+            infectionDone,
+            this.state.completedSteps.reportDone
+          )
         });
       });
     }
@@ -165,40 +183,48 @@ class AppComponent extends AuthComponent {
   }
 
   render() {
-
-    let defaultSideNavProps = {completedSteps: this.state.completedSteps,
-                               onStatusChange: this.updateStatus,
-                               defaultReport: this.getDefaultReport(),
-                               onLogout: () => {this.auth.logout()
-                                 .then(() => this.updateStatus())}};
+    let defaultSideNavProps = {
+      completedSteps: this.state.completedSteps,
+      onStatusChange: this.updateStatus,
+      defaultReport: this.getDefaultReport(),
+      onLogout: () => {
+        this.auth.logout()
+          .then(() => this.updateStatus())
+      }
+    };
 
     return (
       <Router>
-        <Container fluid>
+        <Container fluid id="main-container">
           <Routes>
             <Route path={IslandRoutes.LoginPage} element={<LoginPageComponent onStatusChange={this.updateStatus}/>}/>
             <Route path={IslandRoutes.Logout} element={<LogoutPage onStatusChange={this.updateStatus}/>}/>
-            <Route path={IslandRoutes.RegisterPage} element={<RegisterPageComponent onStatusChange={this.updateStatus}/>}/>
-            {this.renderRoute(IslandRoutes.GettingStartedPage,
-              <SidebarLayoutComponent component={GettingStartedPage} {...defaultSideNavProps}/>)}
-            {this.renderRoute(IslandRoutes.ConfigurePage,
-              <SidebarLayoutComponent component={ConfigurePage} {...defaultSideNavProps}/>)}
-            {this.renderRoute(IslandRoutes.RunMonkeyPage,
-              <SidebarLayoutComponent component={RunMonkeyPage} {...defaultSideNavProps}/>)}
-            {this.renderRoute(IslandRoutes.MapPage,
-              <SidebarLayoutComponent component={MapPageWrapper} {...defaultSideNavProps}/>)}
-            {this.renderRoute(IslandRoutes.EventPage,
-              <SidebarLayoutComponent component={EventPage} {...defaultSideNavProps}/>)}
-            {this.redirectToReport()}
-            {this.renderRoute(IslandRoutes.SecurityReport,
-              <SidebarLayoutComponent component={ReportPage}
-                                      {...defaultSideNavProps}/>)}
-            {this.renderRoute(IslandRoutes.RansomwareReport,
-              <SidebarLayoutComponent component={ReportPage}
-                                      {...defaultSideNavProps}/>)}
-            {this.renderRoute(IslandRoutes.LicensePage,
-              <SidebarLayoutComponent component={LicensePage}
-                                      {...defaultSideNavProps}/>)}
+            <Route path={IslandRoutes.RegisterPage}
+                   element={<RegisterPageComponent onStatusChange={this.updateStatus}/>}/>
+            <Route element={<PluginsProvider value={this.props.pluginState}/>}>
+              {this.renderRoute(IslandRoutes.GettingStartedPage,
+                <SidebarLayoutComponent component={GettingStartedPage} {...defaultSideNavProps}/>)}
+              {this.renderRoute(IslandRoutes.ConfigurePage,
+                <SidebarLayoutComponent component={ConfigurePage} {...defaultSideNavProps}/>)}
+              {this.renderRoute(IslandRoutes.RunMonkeyPage,
+                <SidebarLayoutComponent component={RunMonkeyPage} {...defaultSideNavProps}/>)}
+              {this.renderRoute(IslandRoutes.MapPage,
+                <SidebarLayoutComponent component={MapPageWrapper} {...defaultSideNavProps}/>)}
+              {this.renderRoute(IslandRoutes.EventPage,
+                <SidebarLayoutComponent component={EventPage} {...defaultSideNavProps}/>)}
+              {this.renderRoute(IslandRoutes.Marketplace,
+                <SidebarLayoutComponent component={MarketplacePage} {...defaultSideNavProps}/>)}
+              {this.redirectToReport()}
+              {this.renderRoute(IslandRoutes.SecurityReport,
+                <SidebarLayoutComponent component={ReportPage}
+                                        {...defaultSideNavProps}/>)}
+              {this.renderRoute(IslandRoutes.RansomwareReport,
+                <SidebarLayoutComponent component={ReportPage}
+                                        {...defaultSideNavProps}/>)}
+              {this.renderRoute(IslandRoutes.LicensePage,
+                <SidebarLayoutComponent component={LicensePage}
+                                        {...defaultSideNavProps}/>)}
+            </Route>
             <Route path='*' element={<NotFoundPage/>}/>
           </Routes>
         </Container>
@@ -226,4 +252,4 @@ class AppComponent extends AuthComponent {
   }
 }
 
-export default AppComponent;
+export default withPluginState(AppComponent);
