@@ -169,7 +169,8 @@ const AvailablePlugins = (props) => {
               <SearchFilter setFilters={setFilters}
                             searchableColumns={defaultSearchableColumns}/>
             </Grid>
-            <Grid xs={3} item>
+            <Grid xs={3} item
+                  sx={{alignItems: 'flex-end', display: 'flex'}}>
               <TypeFilter setFilters={setFilters}
                           allRows={availablePluginRows}/>
             </Grid>
