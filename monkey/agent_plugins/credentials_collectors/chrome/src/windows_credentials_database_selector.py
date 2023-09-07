@@ -129,6 +129,11 @@ class WindowsCredentialsDatabaseSelector:
                 )
             )
 
+            logger.info(
+                f"Found {len(browser_databases)} credentials databases "
+                f'for browser "{browser_name}"'
+            )
+
             databases = databases.union(browser_databases)
 
         return databases
