@@ -84,6 +84,9 @@ const AvailablePlugins = (props) => {
 
   const filterInstalledPlugins = (row: PluginRow) => {
     let availablePlugin = availablePlugins.find(availablePlugin => row.id === availablePlugin.id);
+    if(availablePlugin === undefined) {
+      return true;
+    }
     return !isPluginInstalled(availablePlugin, installedPlugins) ||
       successfullyInstalledPluginsIds.includes(row.id);
   }
