@@ -27,7 +27,7 @@ export const generatePluginsTableColumns = (getRowActions :getRowActionsType) =>
     field: 'name',
     sortable: true,
     filterable: false,
-    flex: 0.4,
+    flex: 0.2,
     minWidth: 150,
     isTextual: true
   },
@@ -61,6 +61,7 @@ export const generatePluginsTableColumns = (getRowActions :getRowActionsType) =>
   {
     headerName: 'Safety',
     field: 'safe',
+    headerAlign: 'center',
     sortable: true,
     filterable: false,
     flex: 0.1,
