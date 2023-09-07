@@ -146,7 +146,7 @@ class WindowsCredentialsDatabaseSelector:
         master_key = None
 
         local_state_file_path = browser_local_data_directory_path / Path("Local State")
-        if not local_state_file_path.exists():  # type: ignore [attr-defined]
+        if not Path(local_state_file_path).exists():
             return paths
 
         browser_profiles = WindowsCredentialsDatabaseSelector._get_browser_profiles(
@@ -202,8 +202,8 @@ class WindowsCredentialsDatabaseSelector:
         browser_profiles = {"Default", ""}
 
         # get all additional browser profiles
-        for item in browser_local_data_directory_path.iterdir():  # type: ignore [attr-defined]
-            if item.isdir() and item.name.startswith("Profile"):
+        for item in Path(browser_local_data_directory_path).iterdir():
+            if item.is_dir() and item.name.startswith("Profile"):
                 browser_profiles.add(item.name)
 
         return browser_profiles
@@ -219,7 +219,7 @@ class WindowsCredentialsDatabaseSelector:
         for profile in browser_profiles:
             try:
                 profile_directory = browser_local_data_directory_path / Path(profile)
-                db_files = profile_directory.iterdir()  # type: ignore [attr-defined]
+                db_files = Path(profile_directory).iterdir()
             except Exception as err:
                 logger.error(
                     "Exception encountered while trying to get "
@@ -228,6 +228,6 @@ class WindowsCredentialsDatabaseSelector:
 
             for db in db_files:
                 if db.name.lower() == "login data":
-                    paths.add((db, master_key))
+                    paths.add((PureWindowsPath(db), master_key))
 
         return paths
