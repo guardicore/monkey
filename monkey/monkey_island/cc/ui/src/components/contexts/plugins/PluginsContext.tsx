@@ -2,6 +2,7 @@ import React, {createContext, useEffect, useState} from 'react';
 import semver from 'semver';
 import islandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
 import {useInterval} from '../../ui-components/utils/useInterval';
+import {Hour} from '../../../utils/timeConsts';
 
 
 // Types returned from the API
@@ -88,7 +89,7 @@ export const PluginState = () :PluginsContextType => {
 
   useInterval(() => {
     refreshAvailablePluginsAndNumberOfUpgradablePlugins(true);
-  }, 1000 * 60 * 60)
+  }, Hour)
 
   useEffect(() => {
     refreshInstalledPlugins();
