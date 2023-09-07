@@ -1,6 +1,7 @@
 import React, {createContext, useEffect, useState} from 'react';
 import semver from 'semver';
 import islandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
+import {useInterval} from '../../ui-components/utils/useInterval';
 
 
 // Types returned from the API
@@ -85,14 +86,21 @@ export const PluginState = () :PluginsContextType => {
   const [installedPlugins, setInstalledPlugins] = useState([]);
   const [numberOfPluginsThatRequiresUpdate, setNumberOfPluginsThatRequiresUpdate] = useState(0);
 
+  useInterval(() => {
+    refreshAvailablePluginsAndNumberOfUpgradablePlugins(true);
+  }, 1000 * 60)
 
   useEffect(() => {
     refreshInstalledPlugins();
   }, []);
 
   useEffect(() => {
-    refreshAvailablePlugins().then(() => refreshNumberOfUpgradablePlugins());
+    refreshAvailablePluginsAndNumberOfUpgradablePlugins();
   }, [installedPlugins]);
+
+  const refreshAvailablePluginsAndNumberOfUpgradablePlugins = (forceRefresh = false) => {
+     refreshAvailablePlugins(forceRefresh).then(() => refreshNumberOfUpgradablePlugins());
+  }
 
   const parsePluginMetadataResponse = (response: PluginMetadataResponse) :AvailablePlugin[] => {
    let plugins :AvailablePlugin[] = [];
