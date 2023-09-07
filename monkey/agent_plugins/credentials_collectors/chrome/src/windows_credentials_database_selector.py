@@ -4,13 +4,12 @@
 #       (WinAPI is used for current user, DPAPI is used otherwise.)
 
 
-import base64
 import getpass
-import json
 import logging
-from pathlib import Path, PureWindowsPath
-from typing import Dict, Optional, Set, Tuple
+from pathlib import PureWindowsPath
+from typing import Collection, Dict, Optional, Set, Tuple
 
+from .chrome_browser_local_data import ChromeBrowserLocalData
 from .windows_utils import Win32CryptUnprotectData
 
 logger = logging.getLogger(__name__)
@@ -22,6 +21,23 @@ WINDOWS_BROWSERS = {
     "Chromium Edge": "{local_appdata}\\Microsoft\\Edge\\User Data",
     "Google Chrome": "{local_appdata}\\Google\\Chrome\\User Data",
 }
+
+
+class WindowsChromeBrowserLocalData(ChromeBrowserLocalData):
+    def get_master_key(self) -> Optional[bytes]:
+        try:
+            master_key = super().get_master_key()
+            master_key = master_key[5:]  # removing DPAPI
+            master_key = Win32CryptUnprotectData(
+                master_key,
+            )
+            return master_key
+        except Exception as err:
+            logger.error(
+                "Exception encountered while trying to get master key "
+                f"from browser's local state: {err}"
+            )
+            return None
 
 
 class WindowsCredentialsDatabaseSelector:
@@ -63,93 +79,16 @@ class WindowsCredentialsDatabaseSelector:
     @staticmethod
     def _get_credentials_database_paths_for_browser(
         browser_local_data_directory_path: PureWindowsPath,
-    ) -> Set[Tuple[PureWindowsPath, Optional[bytes]]]:
+    ) -> Collection[Tuple[PureWindowsPath, Optional[bytes]]]:
         paths: Set[Tuple[PureWindowsPath, Optional[bytes]]] = set()
-        master_key = None
 
-        local_state_file_path = browser_local_data_directory_path / Path("Local State")
-        if not Path(local_state_file_path).exists():
+        try:
+            local_data = WindowsChromeBrowserLocalData(browser_local_data_directory_path)
+        except Exception:
             return paths
 
-        browser_profiles = WindowsCredentialsDatabaseSelector._get_browser_profiles(
-            browser_local_data_directory_path
-        )
-
-        with open(local_state_file_path) as f:
-            try:
-                local_state_object = json.load(f)
-            except json.decoder.JSONDecodeError as err:
-                logger.error(f'Couldn\'t deserialize JSON file at "{local_state_file_path}": {err}')
-                local_state_object = {}
-
-            try:
-                # add user profiles from "Local State" file
-                browser_profiles = browser_profiles.union(
-                    set(local_state_object["profile"]["info_cache"])
-                )
-            except Exception as err:
-                logger.error(
-                    "Exception encountered while trying to load user profiles "
-                    f"from browser's local state: {err}"
-                )
-
-            try:
-                master_key = base64.b64decode(local_state_object["os_crypt"]["encrypted_key"])
-                master_key = master_key[5:]  # removing DPAPI
-                master_key = Win32CryptUnprotectData(
-                    master_key,
-                )
-            except Exception as err:
-                logger.error(
-                    "Exception encountered while trying to get master key "
-                    f"from browser's local state: {err}"
-                )
-                master_key = None
-
-        paths_for_each_profile = WindowsCredentialsDatabaseSelector._get_credentials_database_paths_for_each_user_profile(  # noqa: E501
-            browser_local_data_directory_path, browser_profiles, master_key
-        )
-
-        paths = paths.union(paths_for_each_profile)
-
-        return paths
-
-    @staticmethod
-    def _get_browser_profiles(browser_local_data_directory_path: PureWindowsPath) -> Set[str]:
-        """
-        Gets all user profiles from the browser
-        """
-
-        # empty string means current dir, without a profile
-        browser_profiles = {"Default", ""}
-
-        # get all additional browser profiles
-        for item in Path(browser_local_data_directory_path).iterdir():
-            if item.is_dir() and item.name.startswith("Profile"):
-                browser_profiles.add(item.name)
-
-        return browser_profiles
-
-    @staticmethod
-    def _get_credentials_database_paths_for_each_user_profile(
-        browser_local_data_directory_path: PureWindowsPath,
-        browser_profiles: Set[str],
-        master_key: Optional[bytes],
-    ) -> Set[Tuple[PureWindowsPath, Optional[bytes]]]:
-        paths: Set[Tuple[PureWindowsPath, Optional[bytes]]] = set()
-
-        for profile in browser_profiles:
-            try:
-                profile_directory = browser_local_data_directory_path / Path(profile)
-                db_files = Path(profile_directory).iterdir()
-            except Exception as err:
-                logger.error(
-                    "Exception encountered while trying to get "
-                    f'password database file for user profile "{profile}": {err}'
-                )
-
-            for db in db_files:
-                if db.name.lower() == "login data":
-                    paths.add((PureWindowsPath(db), master_key))
+        master_key = local_data.get_master_key()
+        paths_for_each_profile = local_data.get_credentials_database_paths()
+        paths = paths.union((path, master_key) for path in paths_for_each_profile)
 
         return paths
