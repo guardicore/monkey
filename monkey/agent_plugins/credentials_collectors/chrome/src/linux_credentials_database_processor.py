@@ -80,7 +80,10 @@ class LinuxCredentialsDatabaseProcessor:
     def _decrypt_password(self, password: str) -> str:
         try:
             for key in self._decryption_keys:
-                return self._chrome_decrypt(password, key, init_vector=AES_INIT_VECTOR)
+                decrypted_password = self._chrome_decrypt(password, key)
+                if decrypted_password == "":
+                    continue
+                return decrypted_password
 
         except Exception:
             logger.exception("Failed to decrypt password")
@@ -89,20 +92,15 @@ class LinuxCredentialsDatabaseProcessor:
         # If we get here, we failed to decrypt the password
         raise Exception("Password could not be decrypted.")
 
-    def _chrome_decrypt(self, encrypted_value, key, init_vector):
+    def _chrome_decrypt(self, encrypted_value, key) -> str:
         try:
-            return decrypt_AES(encrypted_value, key, init_vector, AES_BLOCK_SIZE)
+            return decrypt_AES(encrypted_value, key, AES_INIT_VECTOR, AES_BLOCK_SIZE)
         except UnicodeDecodeError:
-            return decrypt_v80(encrypted_value, key)
-
-    def _remove_padding(self, data):
-        """
-        Remove PKCS#7 padding
-        """
-        nb = data[-1]
+            pass
 
         try:
-            return data[:-nb]
-        except Exception as err:
-            logger.debug(err)
-            return data
+            return decrypt_v80(encrypted_value, key)
+        except UnicodeDecodeError:
+            pass
+
+        return ""
