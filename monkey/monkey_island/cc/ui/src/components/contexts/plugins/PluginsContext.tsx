@@ -88,7 +88,7 @@ export const PluginState = () :PluginsContextType => {
 
   useInterval(() => {
     refreshAvailablePluginsAndNumberOfUpgradablePlugins(true);
-  }, 1000 * 60)
+  }, 1000 * 60 * 60)
 
   useEffect(() => {
     refreshInstalledPlugins();
