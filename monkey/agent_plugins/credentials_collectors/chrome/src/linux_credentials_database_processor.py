@@ -13,7 +13,7 @@ from infection_monkey.utils.threading import interruptible_iter
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .decrypt import decrypt_AES, decrypt_v80
-from .linux_keystore import get_decryption_keys_from_storage
+from .linux_keystore import get_decryption_keys_from_storage, hash_decryption_key
 
 
 logger = logging.getLogger(__name__)
@@ -32,6 +32,7 @@ class LinuxCredentialsDatabaseProcessor:
         self, interrupt: Event, database_paths: Collection[BrowserCredentialsDatabasePath]
     ) -> Collection[Credentials]:
         self._decryption_keys = [key for key in get_decryption_keys_from_storage()]
+        self._decryption_keys.append(hash_decryption_key("peanuts".encode()))
         credentials = chain.from_iterable(map(self._process_database_path, database_paths))
         return list(interruptible_iter(credentials, interrupt))
 

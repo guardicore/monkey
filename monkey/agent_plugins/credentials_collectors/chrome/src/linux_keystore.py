@@ -71,10 +71,10 @@ def _get_secrets_from_collection(
 
     for item in collection.get_all_items():
         if item.get_label().endswith("Safe Storage"):
-            yield _hash_decryption_key(item.get_secret())
+            yield hash_decryption_key(item.get_secret())
 
 
-def _hash_decryption_key(key: bytes):
+def hash_decryption_key(key: bytes):
     decryption_key = pbkdf2_hmac(
         hash_name="sha1",
         password=key,
