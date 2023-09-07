@@ -81,30 +81,34 @@ const MonkeySelect = (props) => {
   }
 
   return (
-    <Box className="select-wrapper">
-      <TextField
-        select
-        fullWidth
-        id={`select-${nanoid()}`}
-        value={currentValue}
-        onChange={handleValueChange}
-        variant={variant}
-        {...rest}>
-        {
-          selectOptions?.map((option) => {
-            return option.value
-              ? (
-                <MenuItem key={option.value} value={option.value}>
-                  <MonkeyTooltip isOverflow={true} title={option?.label}>
-                    {_.capitalize(option.label?.toString())}
-                  </MonkeyTooltip>
-                </MenuItem>
-              )
-              : null;
-          })
-        }
-      </TextField>
-    </Box>
+    selectOptions?.length > 0
+      ? (
+        <Box className="select-wrapper">
+          <TextField
+            select
+            fullWidth
+            id={`select-${nanoid()}`}
+            value={currentValue}
+            onChange={handleValueChange}
+            variant={variant}
+            {...rest}>
+            {
+              selectOptions?.map((option) => {
+                return option.value
+                  ? (
+                    <MenuItem key={option.value} value={option.value}>
+                      <MonkeyTooltip isOverflow={true} title={option?.label}>
+                        {_.capitalize(option.label?.toString())}
+                      </MonkeyTooltip>
+                    </MenuItem>
+                  )
+                  : null;
+              })
+            }
+          </TextField>
+        </Box>
+      )
+      : null
   )
 }
 
