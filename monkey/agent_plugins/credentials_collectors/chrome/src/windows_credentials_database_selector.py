@@ -1,5 +1,6 @@
 import getpass
 import logging
+import os
 from pathlib import PureWindowsPath
 from typing import Collection, Dict, Optional, Set
 
@@ -39,6 +40,7 @@ class WindowsCredentialsDatabaseSelector:
     def __init__(self):
         user = getpass.getuser()
         local_appdata = LOCAL_APPDATA.format(drive=DRIVE, user=user)
+        local_appdata = os.getenv("LOCALAPPDATA", local_appdata)
 
         self._browsers_data_dir: Dict[str, PureWindowsPath] = {}
         for browser_name, browser_directory in WINDOWS_BROWSERS_DATA_DIR.items():
