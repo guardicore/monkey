@@ -1,10 +1,11 @@
-from pathlib import PurePath
-from typing import Sequence
+from typing import Collection
+
+from .utils import BrowserCredentialsDatabasePath
 
 
 class LinuxCredentialsDatabaseSelector:
     def __init__(self):
         pass
 
-    def __call__(self) -> Sequence[PurePath]:
+    def __call__(self) -> Collection[BrowserCredentialsDatabasePath]:
         return []
