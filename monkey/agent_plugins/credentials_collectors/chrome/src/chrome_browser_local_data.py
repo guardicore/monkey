@@ -1,7 +1,7 @@
 from pathlib import Path, PurePath
 from typing import Collection, Iterator, Optional
 
-from .chrome_browser_local_state import ChromeBrowserLocalState
+from .chrome_browser_local_state import parse_local_state_file
 
 
 class ChromeBrowserLocalData:
@@ -13,7 +13,7 @@ class ChromeBrowserLocalData:
 
     def __init__(self, local_data_directory_path: PurePath):
         self._local_data_directory_path = local_data_directory_path
-        self._local_state = ChromeBrowserLocalState(local_data_directory_path / Path("Local State"))
+        self._local_state = parse_local_state_file(local_data_directory_path / Path("Local State"))
 
     def get_profile_names(self) -> Collection[str]:
         """
@@ -28,7 +28,7 @@ class ChromeBrowserLocalData:
             if item.is_dir() and item.name.startswith("Profile"):
                 browser_profiles.add(item.name)
 
-        return browser_profiles.union(self._local_state.get_profile_names())
+        return browser_profiles.union(self._local_state.profile_names)
 
     def get_credentials_database_paths(self) -> Iterator[PurePath]:
         """
@@ -46,4 +46,4 @@ class ChromeBrowserLocalData:
         """
         Get the master key used to encrypt the browser's credentials databases
         """
-        return self._local_state.get_master_key()
+        return self._local_state.master_key
