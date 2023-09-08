@@ -22,7 +22,7 @@ On your first login, you'll be asked to create a username and password for the M
 
 ### Installing plugins
 
-Infection Monkey is composed of plugins and comes empty out of the box. To install plugins, click on **Plugins** in the navigation bar and install the plugins you want to use. Clicking on "Download All Safe Plugins" will download all plugins that are considered safe to use.
+Infection Monkey's various features are provided by plugins. No plugins are installed out of the box. To install plugins, click on **Plugins** in the navigation bar and install the plugins you want to use. Clicking on "Download All Safe Plugins" will download all plugins that are considered safe to use in production environments.
 
 ![Plugin Installation Screen](/images/island/plugins_page/plugin_installation.PNG "Plugin Installation")
 
