@@ -24,10 +24,10 @@ def build_chrome_credentials_collector(
     credentials_database_processor = _build_credentials_database_processor(host)
 
     return ChromeCredentialsCollector(
-        credentials_database_selector,
-        credentials_database_processor,
         agent_id,
         agent_event_publisher,
+        credentials_database_selector,
+        credentials_database_processor,
     )
 
 
