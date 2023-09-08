@@ -1,9 +1,3 @@
-# NOTE: This only tries stealing credentials from the current user,
-#       so no DPAPI logic is implemented yet. That requires more research.
-#       We can decide to do this now or in a new version of the plugin.
-#       (WinAPI is used for current user, DPAPI is used otherwise.)
-
-
 import getpass
 import logging
 from pathlib import PureWindowsPath
