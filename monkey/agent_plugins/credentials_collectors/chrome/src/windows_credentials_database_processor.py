@@ -11,6 +11,7 @@ from Crypto.Cipher import AES
 from common.credentials import Credentials, Password, Username
 from common.types import Event
 from common.utils.code_utils import secure_generate_random_string
+from infection_monkey.utils.threading import interruptible_iter
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .windows_decryption import win32crypt_unprotect_data
@@ -24,8 +25,7 @@ class WindowsCredentialsDatabaseProcessor:
     ) -> Collection[Credentials]:
         credentials = []
 
-        # TODO: make interruptible
-        for item in database_paths:
+        for item in interruptible_iter(database_paths, interrupt):
             database_path = item.database_file_path
             master_key = item.master_key
 
