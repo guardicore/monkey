@@ -1,7 +1,7 @@
 import getpass
 import logging
 import os
-from pathlib import PureWindowsPath
+from pathlib import PurePath
 from typing import Collection, Dict, Optional, Set
 
 from .chrome_browser_local_data import ChromeBrowserLocalData
@@ -14,8 +14,8 @@ DRIVE = "C"
 LOCAL_APPDATA = "{drive}:\\Users\\{user}\\AppData\\Local"
 
 WINDOWS_BROWSERS_DATA_DIR = {
-    "Chromium Edge": "{local_appdata}\\Microsoft\\Edge\\User Data",
-    "Google Chrome": "{local_appdata}\\Google\\Chrome\\User Data",
+    "Chromium Edge": "{local_appdata}/Microsoft/Edge/User Data",
+    "Google Chrome": "{local_appdata}/Google/Chrome/User Data",
 }
 
 
@@ -42,9 +42,9 @@ class WindowsCredentialsDatabaseSelector:
         local_appdata = LOCAL_APPDATA.format(drive=DRIVE, user=user)
         local_appdata = os.getenv("LOCALAPPDATA", local_appdata)
 
-        self._browsers_data_dir: Dict[str, PureWindowsPath] = {}
+        self._browsers_data_dir: Dict[str, PurePath] = {}
         for browser_name, browser_directory in WINDOWS_BROWSERS_DATA_DIR.items():
-            self._browsers_data_dir[browser_name] = PureWindowsPath(
+            self._browsers_data_dir[browser_name] = PurePath(
                 browser_directory.format(local_appdata=local_appdata)
             )
 
@@ -75,7 +75,7 @@ class WindowsCredentialsDatabaseSelector:
 
     @staticmethod
     def _get_credentials_database_paths_for_browser(
-        browser_local_data_directory_path: PureWindowsPath,
+        browser_local_data_directory_path: PurePath,
     ) -> Collection[BrowserCredentialsDatabasePath]:
         paths: Set[BrowserCredentialsDatabasePath] = set()
 
