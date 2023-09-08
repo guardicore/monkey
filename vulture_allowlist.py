@@ -1,4 +1,5 @@
 from aardwolf.commons.iosettings import RDPIOSettings
+from agent_plugins.credentials_collectors.chrome.utils import BrowserCredentialsDatabasePath
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
 from agent_plugins.exploiters.rdp.in_memory_file_provider import InMemoryFileProvider
 from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
@@ -152,6 +153,8 @@ Lock.blocking
 Lock.locked
 
 AgentPlugin.supported_operating_systems
+
+BrowserCredentialsDatabasePath.database_file_path
 
 HadoopPlugin
 SMBPlugin
