@@ -1,9 +1,10 @@
 import getpass
 import logging
 from pathlib import PureWindowsPath
-from typing import Collection, Dict, Optional, Set, Tuple
+from typing import Collection, Dict, Optional, Set
 
 from .chrome_browser_local_data import ChromeBrowserLocalData
+from .utils import BrowserCredentialsDatabasePath
 from .windows_utils import win32crypt_unprotect_data
 
 logger = logging.getLogger(__name__)
@@ -45,12 +46,12 @@ class WindowsCredentialsDatabaseSelector:
                 browser_directory.format(local_appdata=local_appdata)
             )
 
-    def __call__(self) -> Collection[Tuple[PureWindowsPath, Optional[bytes]]]:
+    def __call__(self) -> Collection[BrowserCredentialsDatabasePath]:
         """
         Get browsers' credentials' database directories for current user
         """
 
-        databases: Set[Tuple[PureWindowsPath, Optional[bytes]]] = set()
+        databases: Set[BrowserCredentialsDatabasePath] = set()
 
         for browser_name, browser_local_data_directory_path in self._browsers_data_dir.items():
             logger.info(f'Attempting to locate credentials database for browser "{browser_name}"')
@@ -73,8 +74,8 @@ class WindowsCredentialsDatabaseSelector:
     @staticmethod
     def _get_credentials_database_paths_for_browser(
         browser_local_data_directory_path: PureWindowsPath,
-    ) -> Collection[Tuple[PureWindowsPath, Optional[bytes]]]:
-        paths: Set[Tuple[PureWindowsPath, Optional[bytes]]] = set()
+    ) -> Collection[BrowserCredentialsDatabasePath]:
+        paths: Set[BrowserCredentialsDatabasePath] = set()
 
         try:
             local_data = WindowsChromeBrowserLocalData(browser_local_data_directory_path)
