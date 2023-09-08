@@ -45,7 +45,7 @@ class WindowsCredentialsDatabaseSelector:
                 browser_directory.format(local_appdata=local_appdata)
             )
 
-    def __call__(self) -> Set[Tuple[PureWindowsPath, Optional[bytes]]]:
+    def __call__(self) -> Collection[Tuple[PureWindowsPath, Optional[bytes]]]:
         """
         Get browsers' credentials' database directories for current user
         """
