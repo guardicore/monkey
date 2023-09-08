@@ -20,9 +20,10 @@ WINDOWS_BROWSERS_DATA_DIR = {
 
 
 class WindowsChromeBrowserLocalData(ChromeBrowserLocalData):
-    def get_master_key(self) -> Optional[bytes]:
+    @property
+    def master_key(self) -> Optional[bytes]:
         try:
-            master_key = super().get_master_key()
+            master_key = super().master_key
             master_key = master_key[5:]  # removing DPAPI
             master_key = win32crypt_unprotect_data(
                 master_key,
@@ -69,7 +70,7 @@ class WindowsCredentialsDatabaseSelector:
                 f'for browser "{browser_name}"'
             )
 
-            databases = databases.union(browser_databases)
+            databases.update(browser_databases)
 
         return databases
 
@@ -77,18 +78,14 @@ class WindowsCredentialsDatabaseSelector:
     def _get_credentials_database_paths_for_browser(
         browser_local_data_directory_path: PurePath,
     ) -> Collection[BrowserCredentialsDatabasePath]:
-        paths: Set[BrowserCredentialsDatabasePath] = set()
-
         try:
             local_data = WindowsChromeBrowserLocalData(browser_local_data_directory_path)
         except Exception:
-            return paths
+            return []
 
-        master_key = local_data.get_master_key()
-        paths_for_each_profile = local_data.get_credentials_database_paths()
-        paths = paths.union(
+        master_key = local_data.master_key
+        paths_for_each_profile = local_data.credentials_database_paths
+        return {
             BrowserCredentialsDatabasePath(database_file_path=path, master_key=master_key)
             for path in paths_for_each_profile
-        )
-
-        return paths
+        }
