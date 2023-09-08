@@ -21,15 +21,7 @@ class ChromeBrowserLocalData:
         Get the names of all profiles for this browser
         """
 
-        # empty string means current dir, without a profile
-        browser_profiles = {"Default", ""}
-
-        # get all additional browser profiles
-        for item in Path(self._local_data_directory_path).iterdir():
-            if item.is_dir() and item.name.startswith("Profile"):
-                browser_profiles.add(item.name)
-
-        return browser_profiles.union(self._local_state.profile_names)
+        return self._local_state.profile_names
 
     @property
     def credentials_database_paths(self) -> Iterator[PurePath]:
