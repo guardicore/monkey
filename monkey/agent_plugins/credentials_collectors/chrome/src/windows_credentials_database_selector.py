@@ -84,6 +84,9 @@ class WindowsCredentialsDatabaseSelector:
 
         master_key = local_data.get_master_key()
         paths_for_each_profile = local_data.get_credentials_database_paths()
-        paths = paths.union((path, master_key) for path in paths_for_each_profile)
+        paths = paths.union(
+            BrowserCredentialsDatabasePath(database_file_path=path, master_key=master_key)
+            for path in paths_for_each_profile
+        )
 
         return paths
