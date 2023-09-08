@@ -65,6 +65,8 @@ been signed by a private certificate authority.
 
 After the Monkey Island docker container starts, you can access Monkey Island by pointing your browser at `https://localhost:5000`.
 
+Once you have access to the Monkey Island server, check out the [getting started page]({{< ref "/usage/getting-started" >}}).
+
 ## Configuring the server
 
 You can configure the server by mounting a volume and specifying a
