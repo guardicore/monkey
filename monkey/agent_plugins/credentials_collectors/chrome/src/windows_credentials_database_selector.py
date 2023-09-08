@@ -10,7 +10,7 @@ from pathlib import PureWindowsPath
 from typing import Collection, Dict, Optional, Set, Tuple
 
 from .chrome_browser_local_data import ChromeBrowserLocalData
-from .windows_utils import Win32CryptUnprotectData
+from .windows_utils import win32crypt_unprotect_data
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class WindowsChromeBrowserLocalData(ChromeBrowserLocalData):
         try:
             master_key = super().get_master_key()
             master_key = master_key[5:]  # removing DPAPI
-            master_key = Win32CryptUnprotectData(
+            master_key = win32crypt_unprotect_data(
                 master_key,
             )
             return master_key

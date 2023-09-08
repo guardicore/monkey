@@ -47,7 +47,7 @@ CryptUnprotectData.argtypes = [
 ]
 
 
-def getData(blobOut):
+def _get_data(blobOut):
     cbData = blobOut.cbData
     pbData = blobOut.pbData
     buffer = create_string_buffer(cbData)
@@ -56,7 +56,7 @@ def getData(blobOut):
     return buffer.raw
 
 
-def Win32CryptUnprotectData(cipherText):
+def win32crypt_unprotect_data(cipherText):
     decrypted = None
 
     bufferIn = c_buffer(cipherText, len(cipherText))
@@ -64,6 +64,6 @@ def Win32CryptUnprotectData(cipherText):
     blobOut = DATA_BLOB()
 
     if CryptUnprotectData(byref(blobIn), None, None, None, None, 0, byref(blobOut)):
-        decrypted = getData(blobOut)
+        decrypted = _get_data(blobOut)
 
     return decrypted
