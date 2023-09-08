@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 DRIVE = "C"
 LOCAL_APPDATA = "{drive}:\\Users\\{user}\\AppData\\Local"
 
-WINDOWS_BROWSERS = {
+WINDOWS_BROWSERS_DATA_DIR = {
     "Chromium Edge": "{local_appdata}\\Microsoft\\Edge\\User Data",
     "Google Chrome": "{local_appdata}\\Google\\Chrome\\User Data",
 }
@@ -39,9 +39,9 @@ class WindowsCredentialsDatabaseSelector:
         user = getpass.getuser()
         local_appdata = LOCAL_APPDATA.format(drive=DRIVE, user=user)
 
-        self._browsers: Dict[str, PureWindowsPath] = {}
-        for browser_name, browser_directory in WINDOWS_BROWSERS.items():
-            self._browsers[browser_name] = PureWindowsPath(
+        self._browsers_data_dir: Dict[str, PureWindowsPath] = {}
+        for browser_name, browser_directory in WINDOWS_BROWSERS_DATA_DIR.items():
+            self._browsers_data_dir[browser_name] = PureWindowsPath(
                 browser_directory.format(local_appdata=local_appdata)
             )
 
@@ -52,7 +52,7 @@ class WindowsCredentialsDatabaseSelector:
 
         databases: Set[Tuple[PureWindowsPath, Optional[bytes]]] = set()
 
-        for browser_name, browser_local_data_directory_path in self._browsers.items():
+        for browser_name, browser_local_data_directory_path in self._browsers_data_dir.items():
             logger.info(f'Attempting to locate credentials database for browser "{browser_name}"')
 
             browser_databases = (
