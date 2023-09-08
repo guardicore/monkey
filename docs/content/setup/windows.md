@@ -27,7 +27,9 @@ do, see the [FAQ]({{< ref
 "/faq/#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why"
 >}}) for more information.
 {{% /notice %}}
->
+
+Once you have access to the Monkey Island server, check out the [getting started page]({{< ref "/usage/getting-started" >}}).
+
 ## Configuring the server
 
 You can configure the server by editing [the configuration

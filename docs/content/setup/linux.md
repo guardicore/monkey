@@ -43,7 +43,8 @@ On Windows, AppImage can be run in WSL 2.
    ```
    More information about fixing FUSE-related errors can be found [here](https://docs.appimage.org/user-guide/troubleshooting/fuse.html).
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost:5000`. Once you have access to the Monkey Island server, check out the
+[getting started page]({{< ref "/usage/getting-started" >}}).
 
 {{% notice info %}}
 If you're prompted to delete your data directory and you're not sure what to
