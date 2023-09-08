@@ -8,7 +8,7 @@ from typing import Collection, List, Optional, Tuple
 
 from Crypto.Cipher import AES  # TODO: fix flake8 DUO133 error (insecure use of Crypto)
 
-from common.credentials import Credentials, Password, Username
+from common.credentials import Credentials, EmailAddress, Password, Username
 from common.types import Event
 from common.utils.code_utils import secure_generate_random_string
 from infection_monkey.utils.threading import interruptible_iter
@@ -44,12 +44,19 @@ class WindowsCredentialsDatabaseProcessor:
                 self._remove_temporary_database(temporary_database_path)
 
         return [
-            # TODO: fix assumption that identity is a username, could be an email ID;
-            #       or just let it be, anything that uses a `Username` which is actually
-            #       an email ID will just fail and move on
-            Credentials(identity=Username(username=username), secret=Password(password=password))
-            for username, password in set(credentials)
+            Credentials(
+                identity=self._get_identity(user),
+                secret=Password(password=password),
+            )
+            for user, password in set(credentials)
         ]
+
+    @staticmethod
+    def _get_identity(user: str) -> str:
+        try:
+            return EmailAddress(email_address=user)
+        except ValueError:
+            return Username(username=user)
 
     def _copy_database(self, database_path: Path) -> Optional[Path]:
         root_dir = [
