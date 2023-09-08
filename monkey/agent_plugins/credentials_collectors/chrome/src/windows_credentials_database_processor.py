@@ -25,15 +25,18 @@ class WindowsCredentialsDatabaseProcessor:
         credentials = []
 
         # TODO: make interruptible
-        for database_path in database_paths:
+        for item in database_paths:
+            database_path = item.database_file_path
+            master_key = item.master_key
+
             # copy database before querying it to bypass lock errors
-            temporary_database_path = self._copy_database(database_path.database_file_path)
+            temporary_database_path = self._copy_database(database_path)
             if temporary_database_path:
                 try:
                     credentials.extend(
                         self._export_credentials(
                             temporary_database_path=temporary_database_path,
-                            master_key=database_path.master_key,
+                            master_key=master_key,
                         )
                     )
                 except Exception as err:
