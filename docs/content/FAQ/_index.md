@@ -163,7 +163,7 @@ is sent to the update server to fetch the latest version number and a
 download link for it. This information is used by the Monkey Island to
 suggest an update if one is available.
 
-1. When you install a plugin it's getting downloaded from our official repository.
+1. When you install a plugin it is downloaded from our official repository.
 
 ## Logging and how to find logs
 
