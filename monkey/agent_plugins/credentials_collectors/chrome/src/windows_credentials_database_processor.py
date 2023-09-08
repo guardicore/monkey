@@ -34,9 +34,8 @@ class WindowsCredentialsDatabaseProcessor:
             if temporary_database_path:
                 try:
                     credentials.extend(
-                        self._export_credentials(
-                            temporary_database_path=temporary_database_path,
-                            master_key=master_key,
+                        self._extract_credentials(
+                            temporary_database_path=temporary_database_path, master_key=master_key
                         )
                     )
                 except Exception as err:
@@ -82,11 +81,11 @@ class WindowsCredentialsDatabaseProcessor:
 
         return None
 
-    def _export_credentials(
+    def _extract_credentials(
         self, temporary_database_path: Path, master_key: Optional[bytes] = None
     ) -> List[Tuple[str, str]]:
         """
-        Exports credentials from the given database
+        Extracts credentials from the given database
         """
 
         database_query = "SELECT username_value, password_value FROM logins"
