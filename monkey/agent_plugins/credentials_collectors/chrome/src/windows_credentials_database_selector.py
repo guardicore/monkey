@@ -1,7 +1,7 @@
 import getpass
 import logging
 import os
-from pathlib import PurePath
+from pathlib import Path
 from typing import Collection, Dict, Optional, Set
 
 from .chrome_browser_local_data import ChromeBrowserLocalData
@@ -43,9 +43,9 @@ class WindowsCredentialsDatabaseSelector:
         local_appdata = LOCAL_APPDATA.format(drive=DRIVE, user=user)
         local_appdata = os.getenv("LOCALAPPDATA", local_appdata)
 
-        self._browsers_data_dir: Dict[str, PurePath] = {}
+        self._browsers_data_dir: Dict[str, Path] = {}
         for browser_name, browser_directory in WINDOWS_BROWSERS_DATA_DIR.items():
-            self._browsers_data_dir[browser_name] = PurePath(
+            self._browsers_data_dir[browser_name] = Path(
                 browser_directory.format(local_appdata=local_appdata)
             )
 
@@ -76,7 +76,7 @@ class WindowsCredentialsDatabaseSelector:
 
     @staticmethod
     def _get_credentials_database_paths_for_browser(
-        browser_local_data_directory_path: PurePath,
+        browser_local_data_directory_path: Path,
     ) -> Collection[BrowserCredentialsDatabasePath]:
         try:
             local_data = WindowsChromeBrowserLocalData(browser_local_data_directory_path)

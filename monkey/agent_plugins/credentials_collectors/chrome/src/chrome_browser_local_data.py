@@ -1,4 +1,4 @@
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import Collection, Iterator, Optional
 
 from .chrome_browser_local_state import parse_local_state_file
@@ -11,9 +11,9 @@ class ChromeBrowserLocalData:
     :param local_data_directory_path: Path to the browser's local data directory
     """
 
-    def __init__(self, local_data_directory_path: PurePath):
+    def __init__(self, local_data_directory_path: Path):
         self._local_data_directory_path = local_data_directory_path
-        self._local_state = parse_local_state_file(local_data_directory_path / Path("Local State"))
+        self._local_state = parse_local_state_file(local_data_directory_path / "Local State")
 
     @property
     def profile_names(self) -> Collection[str]:
@@ -24,7 +24,7 @@ class ChromeBrowserLocalData:
         return self._local_state.profile_names
 
     @property
-    def credentials_database_paths(self) -> Iterator[PurePath]:
+    def credentials_database_paths(self) -> Iterator[Path]:
         """
         Get the paths to all of the browser's credentials databases
         """

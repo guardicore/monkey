@@ -2,7 +2,7 @@ import base64
 import json
 import logging
 from dataclasses import dataclass, field
-from pathlib import PurePath
+from pathlib import Path
 from typing import Optional, Set
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ class ChromeBrowserLocalState:
     master_key: Optional[bytes] = None
 
 
-def parse_local_state_file(local_state_file_path: PurePath) -> ChromeBrowserLocalState:
+def parse_local_state_file(local_state_file_path: Path) -> ChromeBrowserLocalState:
     """
     Parse the local state file for a Chrome-based browser
     """
