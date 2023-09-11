@@ -1,11 +1,13 @@
-from pathlib import Path, PurePath
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
+from agent_plugins.credentials_collectors.chrome.src.utils import BrowserCredentialsDatabasePath
 
 pwd = pytest.importorskip("pwd")
 # we need to check if `pwd` can be imported before importing the selector
 from agent_plugins.credentials_collectors.chrome.src.linux_credentials_database_selector import (  # noqa:E402, E501
+    DEFAULT_MASTER_KEY,
     LinuxCredentialsDatabaseSelector,
 )
 
@@ -31,7 +33,7 @@ def test_linux_selector__pwd_exception(monkeypatch, linux_credentials_database_s
     )
 
     actual_login_database_paths = linux_credentials_database_selector()
-    assert actual_login_database_paths == []
+    assert list(actual_login_database_paths) == []
 
 
 @pytest.fixture
@@ -104,11 +106,24 @@ def patch_env_home(monkeypatch, tmp_path: Path):
 
 @pytest.fixture
 def expected_login_database_paths(tmp_path: Path):
-    return [
-        PurePath(f"{tmp_path}/home/{USERNAME_1}/{GOOGLE_CHROME_PATH}/Default/Login Data"),
-        PurePath(f"{tmp_path}/home/{USERNAME_1}/{BRAVE_PATH}/Default/Login Data"),
-        PurePath(f"{tmp_path}/home/{USERNAME_2}/{SLIMJET_PATH}/Login Data"),
-    ]
+    return {
+        BrowserCredentialsDatabasePath(
+            database_file_path=Path(
+                f"{tmp_path}/home/{USERNAME_1}/{GOOGLE_CHROME_PATH}/Default/Login Data"
+            ),
+            master_key=DEFAULT_MASTER_KEY,
+        ),
+        BrowserCredentialsDatabasePath(
+            database_file_path=Path(
+                f"{tmp_path}/home/{USERNAME_1}/{BRAVE_PATH}/Default/Login Data"
+            ),
+            master_key=DEFAULT_MASTER_KEY,
+        ),
+        BrowserCredentialsDatabasePath(
+            database_file_path=Path(f"{tmp_path}/home/{USERNAME_2}/{SLIMJET_PATH}/Login Data"),
+            master_key=DEFAULT_MASTER_KEY,
+        ),
+    }
 
 
 def test_linux_credentials_database_selector(
@@ -144,4 +159,4 @@ def test_linux_credentials_database_selector__exception(
     )
     actual_login_database_paths = linux_credentials_database_selector()
 
-    assert actual_login_database_paths == []
+    assert list(actual_login_database_paths) == []

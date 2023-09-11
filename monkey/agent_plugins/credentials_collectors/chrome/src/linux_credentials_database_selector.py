@@ -1,15 +1,17 @@
 import logging
 import os
 import pwd
-from pathlib import Path, PurePath
-from typing import Collection, Dict, Sequence
+from pathlib import Path
+from typing import Collection, Dict, Sequence, Set
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 
 logger = logging.getLogger(__name__)
 
 LinuxUsername = str
-UserDirectories = Dict[LinuxUsername, PurePath]
+UserDirectories = Dict[LinuxUsername, Path]
+
+DEFAULT_MASTER_KEY = "peanuts".encode()
 
 LOGIN_DATABASE_FILENAME = "Login Data"
 CHROMIUM_BASED_DB_PATHS = [
@@ -27,39 +29,50 @@ CHROMIUM_BASED_DB_PATHS = [
 
 class LinuxCredentialsDatabaseSelector:
     def __call__(self) -> Collection[BrowserCredentialsDatabasePath]:
-        database_paths: Collection[BrowserCredentialsDatabasePath] = []
+        database_paths: Set[BrowserCredentialsDatabasePath] = set()
         for profile_dir in self._get_browser_database_paths():
             login_data_paths = self._get_login_data_paths(profile_dir)
-            database_paths.extend(login_data_paths)
+            database_paths.update(login_data_paths)
 
         return database_paths
 
-    def _get_login_data_paths(self, profile_dir_path: PurePath) -> Sequence[PurePath]:
-        login_data_paths = []
+    def _get_login_data_paths(
+        self, profile_dir_path: Path
+    ) -> Collection[BrowserCredentialsDatabasePath]:
+        login_data_paths: Set[BrowserCredentialsDatabasePath] = set()
         try:
-            sub_profile_dirs = Path(profile_dir_path).iterdir()
+            sub_profile_dirs = profile_dir_path.iterdir()
             for subdir in sub_profile_dirs:
                 if subdir == (profile_dir_path / LOGIN_DATABASE_FILENAME):
                     if self._file_is_accessible(subdir):
-                        login_data_paths.append(PurePath(subdir))
+                        login_data_paths.add(
+                            BrowserCredentialsDatabasePath(
+                                database_file_path=subdir, master_key=DEFAULT_MASTER_KEY
+                            )
+                        )
 
                 login_database_path = profile_dir_path / subdir / LOGIN_DATABASE_FILENAME
                 if self._file_is_accessible(login_database_path):
-                    login_data_paths.append(login_database_path)
+                    login_data_paths.add(
+                        BrowserCredentialsDatabasePath(
+                            database_file_path=login_database_path, master_key=DEFAULT_MASTER_KEY
+                        )
+                    )
         except Exception as err:
             logger.debug(f"Could not list {profile_dir_path}: {err}")
 
         return login_data_paths
 
     @staticmethod
-    def _file_is_accessible(path: PurePath) -> bool:
+    def _file_is_accessible(path: Path) -> bool:
         try:
-            return Path(path).is_file() and os.access(path, os.R_OK)
+            print(path)
+            return path.is_file() and os.access(path, os.R_OK)
         except PermissionError as err:
             logger.debug(f"Failed to validate file {path}: {err}")
             return False
 
-    def _get_browser_database_paths(self) -> Sequence[PurePath]:
+    def _get_browser_database_paths(self) -> Sequence[Path]:
         database_paths = []
 
         for username, home_dir_path in self._get_home_directories().items():
@@ -76,9 +89,9 @@ class LinuxCredentialsDatabaseSelector:
         return database_paths
 
     @staticmethod
-    def _directory_is_accessible(path: PurePath) -> bool:
+    def _directory_is_accessible(path: Path) -> bool:
         try:
-            return Path(path).is_dir() and os.access(path, os.R_OK)
+            return path.is_dir() and os.access(path, os.R_OK)
         except PermissionError as err:
             logger.debug(f"Failed to validate path {path}: {err}")
             return False
@@ -90,10 +103,10 @@ class LinuxCredentialsDatabaseSelector:
         """
         try:
             home_dirs = {
-                p.pw_name: PurePath(p.pw_dir) for p in pwd.getpwall()  # type: ignore[attr-defined]
+                p.pw_name: Path(p.pw_dir) for p in pwd.getpwall()  # type: ignore[attr-defined]
             }
             if "HOME" in os.environ:
-                home_path = PurePath(os.environ["HOME"])
+                home_path = Path(os.environ["HOME"])
                 if home_path not in home_dirs.values():
                     home_dirs[os.getlogin()] = home_path
 
