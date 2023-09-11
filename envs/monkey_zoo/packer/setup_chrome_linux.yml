@@ -1,0 +1,46 @@
+---
+- name: Configure chrome on Linux
+  hosts: all
+  remote_user: root
+
+  tasks:
+  - name: Add user
+    user:
+        name: m0nk3y
+        password: "password | password_hash('sha512') }}"
+        groups:
+        append: yes
+  - name: Install chromium
+    apt:
+        name: chromium-browser
+        state: present
+  - name: Copy profiles
+    copy:
+        src: "data/Local State"
+        dest: /home/m0nk3y/snap/chromium/common/chromium/
+        owner: m0nk3y
+        group: m0nk3y
+        mode: 0600
+    copy:
+        src: "data/Profile 1/Login Data"
+        dest: "/home/m0nk3y/snap/chromium/common/chromium/Profile 1/"
+        owner: m0nk3y
+        group: m0nk3y
+        mode: 0600
+    copy:
+        src: "data/Profile 2/Login Data"
+        dest: "/home/m0nk3y/snap/chromium/common/chromium/Profile 2/"
+        owner: m0nk3y
+        group: m0nk3y
+        mode: 0600
+  - name: Enable Password Authentication
+    lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication.*no'
+        line: "PasswordAuthentication yes"
+        state: present
+        backup: yes
+  - name: Remove sshguard
+    apt:
+        name: sshguard
+        state: absent
