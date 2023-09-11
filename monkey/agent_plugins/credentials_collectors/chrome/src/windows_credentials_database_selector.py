@@ -6,7 +6,7 @@ from typing import Collection, Dict, Optional, Set
 
 from .chrome_browser_local_data import ChromeBrowserLocalData
 from .utils import BrowserCredentialsDatabasePath
-from .windows_utils import win32crypt_unprotect_data
+from .windows_decryption import win32crypt_unprotect_data
 
 logger = logging.getLogger(__name__)
 

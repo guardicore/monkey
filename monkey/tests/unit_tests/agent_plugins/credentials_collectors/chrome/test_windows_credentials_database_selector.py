@@ -138,13 +138,15 @@ def setup_appdata_dir(monkeypatch, tmp_path):
 
 
 @pytest.fixture(scope="module", autouse=True)
-def patch_windows_utils():
+def patch_windows_decryption():
     def mock_win32crypt_unprotect_data(master_key):
         return master_key
 
-    windows_utils = MagicMock()
-    windows_utils.win32crypt_unprotect_data = mock_win32crypt_unprotect_data
-    sys.modules["agent_plugins.credentials_collectors.chrome.src.windows_utils"] = windows_utils
+    windows_decryption = MagicMock()
+    windows_decryption.win32crypt_unprotect_data = mock_win32crypt_unprotect_data
+    sys.modules[
+        "agent_plugins.credentials_collectors.chrome.src.windows_decryption"
+    ] = windows_decryption
 
 
 @pytest.fixture
