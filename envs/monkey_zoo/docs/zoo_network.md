@@ -1154,6 +1154,62 @@ setting:
 </tbody>
 </table>
 
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021490" class="anchor"></span>Nr. <strong>66 Browser Credentials</strong></p>
+<p>(10.2.2.65)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Remote Desktop Protocol</td>
+</tr>
+<tr class="odd">
+<td>Default RDP port:</td>
+<td>3389</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>
+
+**RDP user:**
+
+---
+
+Username: m0nk3y, Password: P@ssw0rd!
+
+---
+
+**Stored Chrome credentials**:
+
+----
+
+Website: forBBtests.com
+
+Username: forBBtests
+
+Password: supersecret
+
+----
+
+Website: https://www.w3schools.com/howto/howto_css_login_form.asp
+
+Username: usernameFromForm
+
+Password: passwordFromForm
+</td>
+</tr>
+</tbody>
+</table>
+
 <table>
 <thead>
 <tr class="header">
