@@ -13,6 +13,11 @@ import psutil
 import secretstorage
 
 # Override jeepney.auth.make_auth_external so that we can connect to a session with uid
+# Each process in Unix has specific UID of the user that owns the process.
+# In order for processes to communicate over D-BUS IPC system there is a D-BUS auth
+# which requires the UID. Jeepney.auth uses os.geteuid but we need to be able to connect
+# to D-BUS using other users ID so we override make_auth_external
+# https://jeepney.readthedocs.io/en/latest/_modules/jeepney/auth.html#make_auth_external
 try:
     import jeepney.auth
 except Exception:
@@ -42,7 +47,6 @@ ENC_CONFIG = EncryptionConfig(
 )
 
 
-# TODO: Determine if we need to get the uid, DBUS_SESSION_BUS_ADDRESS from the environment
 def get_decryption_keys_from_storage() -> Iterator[bytes]:
     used_session_labels: Set[str] = set()
     for uid, session in _get_dbus_sessions():
@@ -155,7 +159,6 @@ def _set_session_address(session: Optional[str]):
     return previous_address
 
 
-# TODO: Determine if we need to connect to an existing session by uid, DBUS_SESSION_BUS_ADDRESS
 def _connect_to_dbus_session(uid: int, session: str) -> Optional[secretstorage.DBusConnection]:
     try:
         # List bus connection names
