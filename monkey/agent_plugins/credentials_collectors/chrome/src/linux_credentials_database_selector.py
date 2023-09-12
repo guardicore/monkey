@@ -1,5 +1,4 @@
 import logging
-import os
 import pwd
 from pathlib import Path
 from typing import Collection, Dict, Sequence, Set
@@ -57,10 +56,6 @@ class LinuxCredentialsDatabaseSelector:
             home_dirs = {
                 p.pw_name: Path(p.pw_dir) for p in pwd.getpwall()  # type: ignore[attr-defined]
             }
-            if "HOME" in os.environ:
-                home_path = Path(os.environ["HOME"])
-                if home_path not in home_dirs.values():
-                    home_dirs[os.getlogin()] = home_path
 
             return home_dirs
         except Exception:
