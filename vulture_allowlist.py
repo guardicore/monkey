@@ -21,6 +21,7 @@ from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import (
     AbstractAgentEvent,
     CPUConsumptionEvent,
+    DefacementEvent,
     FileEncryptionEvent,
     RAMConsumptionEvent,
 )
@@ -219,3 +220,9 @@ RDPIOSettings.video_out_format
 RDPIOSettings.clipboard_use_pyperclip
 
 AgentPluginService.install_agent_plugin_from_repository
+
+# Remove after #1247 is completed
+DefacementEvent
+DefacementEvent.DefacementVisibility.INTERNAL
+DefacementEvent.DefacementVisibility.EXTERNAL
+DefacementEvent.visibility
