@@ -5,10 +5,7 @@ name = "pypi"
 
 [packages]
 psutil = "*"
-secretstorage = "*"
 pycryptodome = "*"
-jeepney = {version = "*", sys_platform = "== 'linux'"}
-dbus-python = {version = "*", sys_platform = "== 'linux'"}
 
 [dev-packages]
 

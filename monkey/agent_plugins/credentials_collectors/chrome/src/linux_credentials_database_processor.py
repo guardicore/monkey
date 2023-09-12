@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import sqlite3
+from hashlib import pbkdf2_hmac
 from itertools import chain
 from typing import Collection, Iterator, Optional
 
@@ -12,7 +13,6 @@ from infection_monkey.utils.threading import interruptible_iter
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .decrypt import decrypt_AES, decrypt_v80
 from .linux_credentials_database_selector import DEFAULT_MASTER_KEY
-from .linux_keystore import get_decryption_keys_from_storage, hash_decryption_key
 
 
 logger = logging.getLogger(__name__)
@@ -31,8 +31,13 @@ class LinuxCredentialsDatabaseProcessor:
     def __call__(
         self, interrupt: Event, database_paths: Collection[BrowserCredentialsDatabasePath]
     ) -> Collection[Credentials]:
-        self._decryption_keys = [key for key in get_decryption_keys_from_storage()]
-        self._decryption_keys.append(hash_decryption_key(DEFAULT_MASTER_KEY))
+        self._decryption_key = pbkdf2_hmac(
+            hash_name="sha1",
+            password=DEFAULT_MASTER_KEY,
+            salt=b"saltysalt",
+            iterations=1,
+            dklen=16,
+        )
         credentials = chain.from_iterable(map(self._process_database_path, database_paths))
         return list(interruptible_iter(credentials, interrupt))
 
@@ -93,10 +98,8 @@ class LinuxCredentialsDatabaseProcessor:
 
     def _decrypt_password(self, password: str) -> str:
         try:
-            for key in self._decryption_keys:
-                decrypted_password = self._chrome_decrypt(password, key)
-                if decrypted_password == "":
-                    continue
+            decrypted_password = self._chrome_decrypt(password, self._decryption_key)
+            if decrypted_password != "":
                 return decrypted_password
 
         except Exception:
