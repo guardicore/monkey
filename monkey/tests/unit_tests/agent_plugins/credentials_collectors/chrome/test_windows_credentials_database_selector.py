@@ -1,6 +1,7 @@
 import base64
 import json
 import sys
+from copy import deepcopy
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -71,9 +72,9 @@ def mock_appdata_dir(setup_appdata_dir):
 
 @pytest.fixture
 def mock_appdata_dir_with_no_master_key(setup_appdata_dir):
-    edge_local_state_no_master_key = EDGE_LOCAL_STATE.copy()
+    edge_local_state_no_master_key = deepcopy(EDGE_LOCAL_STATE)
     edge_local_state_no_master_key["os_crypt"]["encrypted_key"] = None
-    chrome_local_state_no_master_key = CHROME_LOCAL_STATE.copy()
+    chrome_local_state_no_master_key = deepcopy(CHROME_LOCAL_STATE)
     chrome_local_state_no_master_key["os_crypt"]["encrypted_key"] = None
 
     def build_appdata_dir(appdata_dir_builder):
@@ -158,6 +159,10 @@ def database_selector():
     return WindowsCredentialsDatabaseSelector()
 
 
+def raise_exception(*args, **kwargs):
+    raise Exception()
+
+
 def test__finds_databases(mock_appdata_dir, database_selector):
     databases = database_selector()
 
@@ -200,6 +205,30 @@ def test__outputs_none_if_no_master_key(mock_appdata_dir_with_no_master_key, dat
     assert expected_chrome_database in databases
 
 
+def test__outputs_none_if_master_key_decryption_throws_exception(
+    monkeypatch, mock_appdata_dir, database_selector
+):
+    monkeypatch.setattr(
+        "agent_plugins.credentials_collectors.chrome.src."
+        "windows_credentials_database_selector.win32crypt_unprotect_data",
+        raise_exception,
+    )
+
+    databases = database_selector()
+
+    expected_edge_database = BrowserCredentialsDatabasePath(
+        mock_appdata_dir / "Microsoft" / "Edge" / "User Data" / "Default" / "Login Data",
+        None,
+    )
+    expected_chrome_database = BrowserCredentialsDatabasePath(
+        mock_appdata_dir / "Google" / "Chrome" / "User Data" / "Default" / "Login Data",
+        None,
+    )
+    assert len(databases) == 2
+    assert expected_edge_database in databases
+    assert expected_chrome_database in databases
+
+
 @pytest.mark.usefixtures("mock_appdata_dir_with_no_databases")
 def test__outputs_empty_collection_if_no_databases(database_selector):
     databases = database_selector()
@@ -209,6 +238,20 @@ def test__outputs_empty_collection_if_no_databases(database_selector):
 
 @pytest.mark.usefixtures("mock_appdata_dir_with_no_profile_dirs")
 def test__outputs_empty_collection_if_no_profiles(database_selector):
+    databases = database_selector()
+
+    assert len(databases) == 0
+
+
+def test__outputs_empty_if_local_data_object_creation_throws_exception(
+    monkeypatch, database_selector
+):
+    monkeypatch.setattr(
+        "agent_plugins.credentials_collectors.chrome.src."
+        "windows_credentials_database_selector.create_windows_chrome_browser_local_data",
+        raise_exception,
+    )
+
     databases = database_selector()
 
     assert len(databases) == 0
