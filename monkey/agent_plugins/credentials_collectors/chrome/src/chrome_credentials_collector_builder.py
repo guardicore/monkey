@@ -10,7 +10,6 @@ from .linux_credentials_database_processor import LinuxCredentialsDatabaseProces
 from .linux_credentials_database_selector import LinuxCredentialsDatabaseSelector
 from .linux_database_reader import get_credentials_from_database
 from .typedef import CredentialsDatabaseProcessorCallable, CredentialsDatabaseSelectorCallable
-from .windows_credentials_database_processor import WindowsCredentialsDatabaseProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -40,5 +39,10 @@ def _build_credentials_database_selector() -> CredentialsDatabaseSelectorCallabl
 
 def _build_credentials_database_processor() -> CredentialsDatabaseProcessorCallable:
     if get_os() == OperatingSystem.WINDOWS:
-        return WindowsCredentialsDatabaseProcessor()
-    return LinuxCredentialsDatabaseProcessor(get_credentials_from_database)
+        from .windows_credentials_database_processor import (
+            WindowsCredentialsDatabaseProcessor,
+            get_logins_from_database,
+        )
+
+        return WindowsCredentialsDatabaseProcessor(get_logins_from_database)
+    return LinuxCredentialsDatabaseProcessor()
