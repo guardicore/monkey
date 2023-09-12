@@ -700,6 +700,26 @@ resource "google_compute_instance_from_template" "log4j-logstash-56" {
   }
 }
 
+resource "google_compute_instance_from_template" "chrome-70" {
+  name                     = "${local.resource_prefix}chrome-70"
+  source_instance_template = local.default_ubuntu
+  machine_type             = "e2-highcpu-4"
+  zone                     = "europe-west1-b"
+  boot_disk {
+    initialize_params {
+      image = data.google_compute_image.chrome-70.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork = "${local.resource_prefix}monkeyzoo-main-1"
+    network_ip = "10.2.3.70"
+    access_config {
+      // Allows Ephemeral IPs
+    }
+  }
+}
+
 resource "google_compute_instance_from_template" "zerologon-25" {
   name                     = "${local.resource_prefix}zerologon-25"
   source_instance_template = local.windows_2016
