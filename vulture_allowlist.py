@@ -228,9 +228,9 @@ AgentPluginService.install_agent_plugin_from_repository
 
 # Remove after #1247 is completed
 DefacementEvent
-DefacementEvent.DefacementVisibility.INTERNAL
-DefacementEvent.DefacementVisibility.EXTERNAL
-DefacementEvent.visibility
+DefacementEvent.DefacementTarget.INTERNAL
+DefacementEvent.DefacementTarget.EXTERNAL
+DefacementEvent.defacement_target
 DEFACEMENT_T1491_TAG
 INTERNAL_DEFACEMENT_T1491_001_TAG
 EXTERNAL_DEFACEMENT_T1491_002_TAG

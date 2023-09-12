@@ -8,13 +8,13 @@ class DefacementEvent(AbstractAgentEvent):
     An event that occurs when an attacker modifies some visual content or component
 
     Attributes:
-        :param visibility: Whether the defacement is internally or externally visible
+        :param defacement_target: Whether the defacement is internally or externally targeted
         :param description: A description of the defacement
     """
 
-    class DefacementVisibility(Enum):
+    class DefacementTarget(Enum):
         INTERNAL = "internal"
         EXTERNAL = "external"
 
-    visibility: DefacementVisibility
+    defacement_target: DefacementTarget
     description: str

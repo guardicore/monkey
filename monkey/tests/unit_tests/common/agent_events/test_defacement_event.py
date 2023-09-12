@@ -14,11 +14,15 @@ TIMESTAMP = 1664371327.4067292
 TAGS = frozenset(
     {DEFACEMENT_T1491_TAG, INTERNAL_DEFACEMENT_T1491_001_TAG, EXTERNAL_DEFACEMENT_T1491_002_TAG}
 )
-VISIBILITY = DefacementEvent.DefacementVisibility.INTERNAL
+DEFACEMENT_TARGET = DefacementEvent.DefacementTarget.INTERNAL
 DESCRIPTION = "Changed desktop wallpaper"
 
 DEFACEMENT_EVENT = DefacementEvent(
-    source=AGENT_ID, timestamp=TIMESTAMP, tags=TAGS, visibility=VISIBILITY, description=DESCRIPTION
+    source=AGENT_ID,
+    timestamp=TIMESTAMP,
+    tags=TAGS,
+    defacement_target=DEFACEMENT_TARGET,
+    description=DESCRIPTION,
 )
 
 DEFACEMENT_OBJECT_DICT = {
@@ -26,7 +30,7 @@ DEFACEMENT_OBJECT_DICT = {
     "timestamp": TIMESTAMP,
     "target": None,
     "tags": TAGS,
-    "visibility": VISIBILITY,
+    "defacement_target": DEFACEMENT_TARGET,
     "description": DESCRIPTION,
 }
 
@@ -35,7 +39,7 @@ DEFACEMENT_SIMPLE_DICT = {
     "timestamp": TIMESTAMP,
     "target": None,
     "tags": list(TAGS),
-    "visibility": "internal",
+    "defacement_target": "internal",
     "description": DESCRIPTION,
 }
 
@@ -75,9 +79,9 @@ def test_serialization():
 @pytest.mark.parametrize(
     "key, value",
     [
-        ("visibility", None),
-        ("visibility", 1),
-        ("visibility", "invalid"),
+        ("defacement_target", None),
+        ("defacement_target", 1),
+        ("defacement_target", "invalid"),
     ],
 )
 def test_construct_invalid_field__type_error(key, value):
