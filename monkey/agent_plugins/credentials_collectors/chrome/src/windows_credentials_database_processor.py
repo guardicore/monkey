@@ -66,23 +66,32 @@ class WindowsCredentialsDatabaseProcessor:
                         f"Encountered an exception while trying to decrypt the password: {err}"
                     )
                     # even if the password couldn't be decrypted, we don't want to lose the username
-                    credentials.append((user, ""))
+                    credentials.append((user, None))
         return [
             Credentials(
                 identity=self._get_identity(user),
-                secret=Password(password=password),
+                secret=self._get_password(password),
             )
             for user, password in set(credentials)
         ]
 
     @staticmethod
-    def _get_identity(user: str) -> str:
+    def _get_identity(user: str):
         try:
             return EmailAddress(email_address=user)
         except ValueError:
             return Username(username=user)
 
-    def _decrypt_password(self, encrypted_password: bytes, master_key: Optional[bytes]) -> str:
+    @staticmethod
+    def _get_password(password: Optional[str]) -> Optional[Password]:
+        if password is None:
+            return None
+        return Password(password=password)
+
+    def _decrypt_password(
+        self, encrypted_password: bytes, master_key: Optional[bytes]
+    ) -> Optional[str]:
+        decrypted_password = None
         if encrypted_password.startswith(b"v10"):  # chromium > v80
             decrypted_password = self._decrypt_password_v80(encrypted_password, master_key)
         else:
@@ -91,17 +100,19 @@ class WindowsCredentialsDatabaseProcessor:
                 if password_bytes not in [None, False]:
                     decrypted_password = password_bytes.decode("utf-8")
             except Exception:
-                decrypted_password = ""
+                pass
 
         return decrypted_password
 
-    def _decrypt_password_v80(self, encrypted_password: bytes, master_key: Optional[bytes]) -> str:
+    def _decrypt_password_v80(
+        self, encrypted_password: bytes, master_key: Optional[bytes]
+    ) -> Optional[str]:
         """
         Decrypts passwords stolen from browsers with Chromium > v80
         """
 
         if not master_key:
-            return ""
+            return None
 
         iv = encrypted_password[3:15]
         payload = encrypted_password[15:]
@@ -109,5 +120,8 @@ class WindowsCredentialsDatabaseProcessor:
 
         decrypted_password = cipher.decrypt(payload)
         decrypted_password = decrypted_password[:-16].decode()  # remove suffix bytes
+
+        if decrypted_password == "":
+            return None
 
         return decrypted_password
