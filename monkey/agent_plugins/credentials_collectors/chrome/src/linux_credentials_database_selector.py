@@ -26,8 +26,8 @@ CHROMIUM_BASED_DB_PATHS = [
 class LinuxCredentialsDatabaseSelector:
     def __call__(self) -> Collection[BrowserCredentialsDatabasePath]:
         database_paths: Set[BrowserCredentialsDatabasePath] = set()
-        for profile_dir in self._get_browser_database_paths():
-            login_data_paths = self._get_login_data_paths(profile_dir)
+        for browser_database_path in self._get_browser_database_paths():
+            login_data_paths = self._get_login_data_paths(browser_database_path)
             database_paths.update(login_data_paths)
 
         return database_paths
@@ -68,21 +68,21 @@ class LinuxCredentialsDatabaseSelector:
             return {}
 
     def _get_login_data_paths(
-        self, profile_dir_path: Path
+        self, browser_database_path: Path
     ) -> Collection[BrowserCredentialsDatabasePath]:
         login_data_paths: Set[BrowserCredentialsDatabasePath] = set()
         try:
-            if (profile_dir_path / LOGIN_DATABASE_FILENAME).exists():
+            if (browser_database_path / LOGIN_DATABASE_FILENAME).exists():
                 login_data_paths.add(
                     BrowserCredentialsDatabasePath(
-                        database_file_path=(profile_dir_path / LOGIN_DATABASE_FILENAME),
+                        database_file_path=(browser_database_path / LOGIN_DATABASE_FILENAME),
                         master_key=DEFAULT_MASTER_KEY,
                     )
                 )
 
-            sub_profile_dirs = profile_dir_path.iterdir()
-            for subdir in sub_profile_dirs:
-                login_database_path = profile_dir_path / subdir / LOGIN_DATABASE_FILENAME
+            sub_browser_database_paths = browser_database_path.iterdir()
+            for subdir in sub_browser_database_paths:
+                login_database_path = browser_database_path / subdir / LOGIN_DATABASE_FILENAME
                 if login_database_path.exists():
                     login_data_paths.add(
                         BrowserCredentialsDatabasePath(
@@ -90,6 +90,6 @@ class LinuxCredentialsDatabaseSelector:
                         )
                     )
         except Exception as err:
-            logger.debug(f"Could not list {profile_dir_path}: {err}")
+            logger.debug(f"Could not list {browser_database_path}: {err}")
 
         return login_data_paths
