@@ -4,7 +4,6 @@ from common import OperatingSystem
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 from common.utils.environment import get_os
-from infection_monkey.i_puppet import TargetHost
 
 from .chrome_credentials_collector import ChromeCredentialsCollector
 from .linux_credentials_database_processor import LinuxCredentialsDatabaseProcessor
@@ -31,13 +30,13 @@ def build_chrome_credentials_collector(
     )
 
 
-def _build_credentials_database_selector(host: TargetHost) -> CredentialsDatabaseSelectorCallable:
+def _build_credentials_database_selector() -> CredentialsDatabaseSelectorCallable:
     if get_os() == OperatingSystem.WINDOWS:
         return WindowsCredentialsDatabaseSelector()
     return LinuxCredentialsDatabaseSelector()
 
 
-def _build_credentials_database_processor(host: TargetHost) -> CredentialsDatabaseProcessorCallable:
+def _build_credentials_database_processor() -> CredentialsDatabaseProcessorCallable:
     if get_os() == OperatingSystem.WINDOWS:
         return WindowsCredentialsDatabaseProcessor()
     return LinuxCredentialsDatabaseProcessor()
