@@ -32,6 +32,49 @@ class LinuxCredentialsDatabaseSelector:
 
         return database_paths
 
+    def _get_browser_database_paths(self) -> Sequence[Path]:
+        database_paths = []
+
+        for username, home_dir_path in self._get_home_directories().items():
+            for browser_name, browser_path in CHROMIUM_BASED_DB_PATHS:
+                browser_db_path = home_dir_path / browser_path
+                try:
+                    if self._directory_is_accessible(browser_db_path):
+                        database_paths.append(browser_db_path)
+                except Exception as err:
+                    logger.exception(
+                        f"Failed to get {browser_name} database path for {username}: {err}"
+                    )
+
+        return database_paths
+
+    @staticmethod
+    def _get_home_directories() -> UserDirectories:
+        """
+        Retrieve all users' home directories
+        """
+        try:
+            home_dirs = {
+                p.pw_name: Path(p.pw_dir) for p in pwd.getpwall()  # type: ignore[attr-defined]
+            }
+            if "HOME" in os.environ:
+                home_path = Path(os.environ["HOME"])
+                if home_path not in home_dirs.values():
+                    home_dirs[os.getlogin()] = home_path
+
+            return home_dirs
+        except Exception:
+            logger.exception("Failed to get user directories")
+            return {}
+
+    @staticmethod
+    def _directory_is_accessible(path: Path) -> bool:
+        try:
+            return path.is_dir() and os.access(path, os.R_OK)
+        except PermissionError as err:
+            logger.debug(f"Failed to validate path {path}: {err}")
+            return False
+
     def _get_login_data_paths(
         self, profile_dir_path: Path
     ) -> Collection[BrowserCredentialsDatabasePath]:
@@ -67,46 +110,3 @@ class LinuxCredentialsDatabaseSelector:
         except PermissionError as err:
             logger.debug(f"Failed to validate file {path}: {err}")
             return False
-
-    def _get_browser_database_paths(self) -> Sequence[Path]:
-        database_paths = []
-
-        for username, home_dir_path in self._get_home_directories().items():
-            for browser_name, browser_path in CHROMIUM_BASED_DB_PATHS:
-                browser_db_path = home_dir_path / browser_path
-                try:
-                    if self._directory_is_accessible(browser_db_path):
-                        database_paths.append(browser_db_path)
-                except Exception as err:
-                    logger.exception(
-                        f"Failed to get {browser_name} database path for {username}: {err}"
-                    )
-
-        return database_paths
-
-    @staticmethod
-    def _directory_is_accessible(path: Path) -> bool:
-        try:
-            return path.is_dir() and os.access(path, os.R_OK)
-        except PermissionError as err:
-            logger.debug(f"Failed to validate path {path}: {err}")
-            return False
-
-    @staticmethod
-    def _get_home_directories() -> UserDirectories:
-        """
-        Retrieve all users' home directories
-        """
-        try:
-            home_dirs = {
-                p.pw_name: Path(p.pw_dir) for p in pwd.getpwall()  # type: ignore[attr-defined]
-            }
-            if "HOME" in os.environ:
-                home_path = Path(os.environ["HOME"])
-                if home_path not in home_dirs.values():
-                    home_dirs[os.getlogin()] = home_path
-
-            return home_dirs
-        except Exception:
-            logger.exception("Failed to get user directories")
-            return {}
