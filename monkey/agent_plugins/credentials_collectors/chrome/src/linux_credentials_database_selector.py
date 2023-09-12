@@ -39,7 +39,7 @@ class LinuxCredentialsDatabaseSelector:
             for browser_name, browser_path in CHROMIUM_BASED_DB_PATHS:
                 browser_db_path = home_dir_path / browser_path
                 try:
-                    if self._directory_is_accessible(browser_db_path):
+                    if browser_db_path.exists():
                         database_paths.append(browser_db_path)
                 except Exception as err:
                     logger.exception(
@@ -67,31 +67,23 @@ class LinuxCredentialsDatabaseSelector:
             logger.exception("Failed to get user directories")
             return {}
 
-    @staticmethod
-    def _directory_is_accessible(path: Path) -> bool:
-        try:
-            return path.is_dir() and os.access(path, os.R_OK)
-        except PermissionError as err:
-            logger.debug(f"Failed to validate path {path}: {err}")
-            return False
-
     def _get_login_data_paths(
         self, profile_dir_path: Path
     ) -> Collection[BrowserCredentialsDatabasePath]:
         login_data_paths: Set[BrowserCredentialsDatabasePath] = set()
         try:
+            if (profile_dir_path / LOGIN_DATABASE_FILENAME).exists():
+                login_data_paths.add(
+                    BrowserCredentialsDatabasePath(
+                        database_file_path=(profile_dir_path / LOGIN_DATABASE_FILENAME),
+                        master_key=DEFAULT_MASTER_KEY,
+                    )
+                )
+
             sub_profile_dirs = profile_dir_path.iterdir()
             for subdir in sub_profile_dirs:
-                if subdir == (profile_dir_path / LOGIN_DATABASE_FILENAME):
-                    if self._file_is_accessible(subdir):
-                        login_data_paths.add(
-                            BrowserCredentialsDatabasePath(
-                                database_file_path=subdir, master_key=DEFAULT_MASTER_KEY
-                            )
-                        )
-
                 login_database_path = profile_dir_path / subdir / LOGIN_DATABASE_FILENAME
-                if self._file_is_accessible(login_database_path):
+                if login_database_path.exists():
                     login_data_paths.add(
                         BrowserCredentialsDatabasePath(
                             database_file_path=login_database_path, master_key=DEFAULT_MASTER_KEY
@@ -101,12 +93,3 @@ class LinuxCredentialsDatabaseSelector:
             logger.debug(f"Could not list {profile_dir_path}: {err}")
 
         return login_data_paths
-
-    @staticmethod
-    def _file_is_accessible(path: Path) -> bool:
-        try:
-            print(path)
-            return path.is_file() and os.access(path, os.R_OK)
-        except PermissionError as err:
-            logger.debug(f"Failed to validate file {path}: {err}")
-            return False
