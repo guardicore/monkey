@@ -4,7 +4,6 @@ from typing import Any, Mapping, Sequence
 from common.credentials import Credentials
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID, Event
-from infection_monkey.i_puppet import TargetHost
 
 from .chrome_credentials_collector_builder import build_chrome_credentials_collector
 
@@ -17,13 +16,13 @@ class Plugin:
         self._agent_event_publisher = agent_event_publisher
 
     def run(
-        self, *, host: TargetHost, options: Mapping[str, Any], interrupt: Event, **kwargs
+        self, *, options: Mapping[str, Any], interrupt: Event, **kwargs
     ) -> Sequence[Credentials]:
         logger.info("Started scanning for Chrome-based browser credentials")
 
         try:
             chrome_credentials_collector = build_chrome_credentials_collector(
-                host, self._agent_id, self._agent_event_publisher
+                self._agent_id, self._agent_event_publisher
             )
         except Exception as err:
             msg = (

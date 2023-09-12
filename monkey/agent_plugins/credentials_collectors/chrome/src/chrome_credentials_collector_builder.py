@@ -3,7 +3,7 @@ import logging
 from common import OperatingSystem
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
-from infection_monkey.i_puppet import TargetHost
+from common.utils.environment import get_os
 
 from .chrome_credentials_collector import ChromeCredentialsCollector
 from .linux_credentials_database_processor import LinuxCredentialsDatabaseProcessor
@@ -16,12 +16,11 @@ logger = logging.getLogger(__name__)
 
 
 def build_chrome_credentials_collector(
-    host: TargetHost,
     agent_id: AgentID,
     agent_event_publisher: IAgentEventPublisher,
 ):
-    credentials_database_selector = _build_credentials_database_selector(host)
-    credentials_database_processor = _build_credentials_database_processor(host)
+    credentials_database_selector = _build_credentials_database_selector()
+    credentials_database_processor = _build_credentials_database_processor()
 
     return ChromeCredentialsCollector(
         agent_id,
@@ -31,13 +30,13 @@ def build_chrome_credentials_collector(
     )
 
 
-def _build_credentials_database_selector(host: TargetHost) -> CredentialsDatabaseSelectorCallable:
-    if host.operating_system == OperatingSystem.WINDOWS:
+def _build_credentials_database_selector() -> CredentialsDatabaseSelectorCallable:
+    if get_os() == OperatingSystem.WINDOWS:
         return WindowsCredentialsDatabaseSelector()
     return LinuxCredentialsDatabaseSelector()
 
 
-def _build_credentials_database_processor(host: TargetHost) -> CredentialsDatabaseProcessorCallable:
-    if host.operating_system == OperatingSystem.WINDOWS:
+def _build_credentials_database_processor() -> CredentialsDatabaseProcessorCallable:
+    if get_os() == OperatingSystem.WINDOWS:
         return WindowsCredentialsDatabaseProcessor()
     return LinuxCredentialsDatabaseProcessor()
