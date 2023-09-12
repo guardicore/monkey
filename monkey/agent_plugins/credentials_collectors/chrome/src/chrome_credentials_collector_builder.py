@@ -10,7 +10,6 @@ from .linux_credentials_database_processor import LinuxCredentialsDatabaseProces
 from .linux_credentials_database_selector import LinuxCredentialsDatabaseSelector
 from .typedef import CredentialsDatabaseProcessorCallable, CredentialsDatabaseSelectorCallable
 from .windows_credentials_database_processor import WindowsCredentialsDatabaseProcessor
-from .windows_credentials_database_selector import WindowsCredentialsDatabaseSelector
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +31,8 @@ def build_chrome_credentials_collector(
 
 def _build_credentials_database_selector() -> CredentialsDatabaseSelectorCallable:
     if get_os() == OperatingSystem.WINDOWS:
+        from .windows_credentials_database_selector import WindowsCredentialsDatabaseSelector
+
         return WindowsCredentialsDatabaseSelector()
     return LinuxCredentialsDatabaseSelector()
 

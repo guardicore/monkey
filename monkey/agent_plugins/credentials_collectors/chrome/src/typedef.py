@@ -1,10 +1,13 @@
-from pathlib import PurePath
-from typing import Callable, Sequence, TypeAlias
+from typing import Callable, Collection, TypeAlias
 
 from common.credentials import Credentials
 from common.types import Event
 
-CredentialsDatabaseSelectorCallable: TypeAlias = Callable[[], Sequence[PurePath]]
+from .browser_credentials_database_path import BrowserCredentialsDatabasePath
+
+CredentialsDatabaseSelectorCallable: TypeAlias = Callable[
+    [], Collection[BrowserCredentialsDatabasePath]
+]
 CredentialsDatabaseProcessorCallable: TypeAlias = Callable[
-    [Event, Sequence[PurePath]], Sequence[Credentials]
+    [Event, Collection[BrowserCredentialsDatabasePath]], Collection[Credentials]
 ]
