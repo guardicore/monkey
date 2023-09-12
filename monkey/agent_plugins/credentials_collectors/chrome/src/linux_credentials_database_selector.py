@@ -1,6 +1,6 @@
 from typing import Collection
 
-from .utils import BrowserCredentialsDatabasePath
+from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 
 
 class LinuxCredentialsDatabaseSelector:

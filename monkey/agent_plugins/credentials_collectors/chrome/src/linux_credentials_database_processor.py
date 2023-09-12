@@ -3,7 +3,7 @@ from typing import Collection
 from common.credentials import Credentials
 from common.types import Event
 
-from .utils import BrowserCredentialsDatabasePath
+from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 
 
 class LinuxCredentialsDatabaseProcessor:

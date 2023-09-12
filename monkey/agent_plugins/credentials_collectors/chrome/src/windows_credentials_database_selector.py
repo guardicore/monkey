@@ -11,7 +11,7 @@ from .chrome_browser_local_data import (
     ChromeBrowserLocalState,
     read_local_state,
 )
-from .utils import BrowserCredentialsDatabasePath
+from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .windows_decryption import win32crypt_unprotect_data
 
 logger = logging.getLogger(__name__)
