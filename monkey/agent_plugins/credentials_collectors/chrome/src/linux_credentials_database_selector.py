@@ -17,13 +17,6 @@ LOGIN_DATABASE_FILENAME = "Login Data"
 CHROMIUM_BASED_DB_PATHS = [
     ("Google Chrome", ".config/google-chrome"),
     ("Chromium", ".config/chromium"),
-    ("Brave", ".config/BraveSoftware/Brave-Browser"),
-    ("SlimJet", ".config/slimjet"),
-    ("Dissenter Browser", ".config/GabAI/Dissenter-Browser"),
-    ("Vivaldi", ".config/vivaldi"),
-    ("Microsoft Edge (Dev)", ".config/microsoft-edge-dev"),
-    ("Microsoft Edge (Beta)", ".config/microsoft-edge-beta"),
-    ("Microsoft Edge", ".config/microsoft-edge"),
 ]
 
 
