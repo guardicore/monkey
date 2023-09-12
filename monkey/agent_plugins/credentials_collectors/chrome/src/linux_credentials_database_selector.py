@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 LinuxUsername = str
 UserDirectories = Dict[LinuxUsername, Path]
 
+# If we don't use a password manager to store an auto-fill password
+# then Linux uses a default master key to "encrypt" the passwords
+# which funny enough it is 'peanuts'
 DEFAULT_MASTER_KEY = "peanuts".encode()
 
 LOGIN_DATABASE_FILENAME = "Login Data"
