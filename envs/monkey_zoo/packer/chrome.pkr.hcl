@@ -34,6 +34,6 @@ build {
     ]
     provisioner "ansible" {
         only = ["googlecompute.chrome-70"]
-        playbook_file = "./packer/setup_chrome_linux.yml"
+        playbook_file = "./packer/setup_chrome_70.yml"
     }
 }
