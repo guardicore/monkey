@@ -2,7 +2,9 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-from agent_plugins.credentials_collectors.chrome.src.utils import BrowserCredentialsDatabasePath
+from agent_plugins.credentials_collectors.chrome.src.browser_credentials_database_path import (
+    BrowserCredentialsDatabasePath,
+)
 
 pwd = pytest.importorskip("pwd")
 # we need to check if `pwd` can be imported before importing the selector
@@ -25,7 +27,7 @@ def linux_credentials_database_selector() -> LinuxCredentialsDatabaseSelector:
 
 def test_linux_selector__pwd_exception(monkeypatch, linux_credentials_database_selector):
     mock_pwd = MagicMock()
-    mock_pwd.getpwall = MagicMock(side_effect=Exception)
+    mock_pwd.getpwall = MagicMock(side_effect=PermissionError)
     monkeypatch.setattr(
         "agent_plugins.credentials_collectors.chrome.src.linux_credentials_database_selector.pwd",
         mock_pwd,
@@ -122,8 +124,8 @@ def test_linux_credentials_database_selector(
 @pytest.mark.parametrize(
     "method, error",
     [
-        ("exists", Exception),
         ("exists", PermissionError),
+        ("exists", OSError),
     ],
 )
 def test_linux_credentials_database_selector__exception(
@@ -144,8 +146,8 @@ def test_linux_credentials_database_selector__exception(
 @pytest.mark.parametrize(
     "method, error",
     [
-        ("glob", Exception),
         ("glob", PermissionError),
+        ("glob", OSError),
     ],
 )
 def test_linux_credentials_database_selector__glob_exception(
