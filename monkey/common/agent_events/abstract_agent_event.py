@@ -8,7 +8,7 @@ from pydantic import ConstrainedStr, Field
 from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 from common.types import AgentID, MachineID
 
-EVENT_TAG_REGEX = r"^[a-zA-Z0-9_-]+$"
+EVENT_TAG_REGEX = r"^[a-zA-Z0-9._-]+$"
 
 
 class AgentEventTag(ConstrainedStr):
