@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 from typing import Collection, List, Optional, Tuple
 
-from Crypto.Cipher import AES  # TODO: fix flake8 DUO133 error (insecure use of Crypto)
+from Cryptodome.Cipher import AES
 
 from common.credentials import Credentials, EmailAddress, Password, Username
 from common.types import Event
