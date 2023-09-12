@@ -11,7 +11,7 @@ variable "machine_type" {
 }
 variable "source_image" {
     type = string
-    default = "ubuntu-1804-bionic-v20230418"
+    default = "ubuntu-2004-focal-v20230907"
 }
 variable "account_file" {
     type = string
