@@ -6,7 +6,9 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-from agent_plugins.credentials_collectors.chrome.src.utils import BrowserCredentialsDatabasePath
+from agent_plugins.credentials_collectors.chrome.src.browser_credentials_database_path import (
+    BrowserCredentialsDatabasePath,
+)
 
 EDGE_DECRYPTED_MASTER_KEY = b"\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 EDGE_MASTER_KEY = b"DPAPI\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
