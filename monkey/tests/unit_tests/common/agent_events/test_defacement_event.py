@@ -3,21 +3,29 @@ from uuid import UUID
 import pytest
 
 from common.agent_events import DefacementEvent
+from common.tags import (
+    DEFACEMENT_T1491_TAG,
+    EXTERNAL_DEFACEMENT_T1491_002_TAG,
+    INTERNAL_DEFACEMENT_T1491_001_TAG,
+)
 
 AGENT_ID = UUID("012e7238-7b81-4108-8c7f-0787bc3f3c10")
 TIMESTAMP = 1664371327.4067292
+TAGS = frozenset(
+    {DEFACEMENT_T1491_TAG, INTERNAL_DEFACEMENT_T1491_001_TAG, EXTERNAL_DEFACEMENT_T1491_002_TAG}
+)
 VISIBILITY = DefacementEvent.DefacementVisibility.INTERNAL
 DESCRIPTION = "Changed desktop wallpaper"
 
 DEFACEMENT_EVENT = DefacementEvent(
-    source=AGENT_ID, timestamp=TIMESTAMP, visibility=VISIBILITY, description=DESCRIPTION
+    source=AGENT_ID, timestamp=TIMESTAMP, tags=TAGS, visibility=VISIBILITY, description=DESCRIPTION
 )
 
 DEFACEMENT_OBJECT_DICT = {
     "source": AGENT_ID,
     "timestamp": TIMESTAMP,
     "target": None,
-    "tags": [],
+    "tags": TAGS,
     "visibility": VISIBILITY,
     "description": DESCRIPTION,
 }
@@ -26,7 +34,7 @@ DEFACEMENT_SIMPLE_DICT = {
     "source": str(AGENT_ID),
     "timestamp": TIMESTAMP,
     "target": None,
-    "tags": [],
+    "tags": list(TAGS),
     "visibility": "internal",
     "description": DESCRIPTION,
 }

@@ -35,6 +35,11 @@ from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonke
 from common.concurrency import BasicLock
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.decorators import request_cache
+from common.tags import (
+    DEFACEMENT_T1491_TAG,
+    EXTERNAL_DEFACEMENT_T1491_002_TAG,
+    INTERNAL_DEFACEMENT_T1491_001_TAG,
+)
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
@@ -226,3 +231,6 @@ DefacementEvent
 DefacementEvent.DefacementVisibility.INTERNAL
 DefacementEvent.DefacementVisibility.EXTERNAL
 DefacementEvent.visibility
+DEFACEMENT_T1491_TAG
+INTERNAL_DEFACEMENT_T1491_001_TAG
+EXTERNAL_DEFACEMENT_T1491_002_TAG
