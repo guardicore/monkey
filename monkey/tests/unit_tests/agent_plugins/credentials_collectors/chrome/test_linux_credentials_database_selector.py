@@ -126,7 +126,7 @@ def test_linux_credentials_database_selector(
         ("exists", PermissionError),
     ],
 )
-def test_linux_credentials_database_selector__exists_exception(
+def test_linux_credentials_database_selector__exception(
     monkeypatch, patch_pwd_getpwall, linux_credentials_database_selector, error, method
 ):
     def mock_method(path):
@@ -144,14 +144,14 @@ def test_linux_credentials_database_selector__exists_exception(
 @pytest.mark.parametrize(
     "method, error",
     [
-        ("iterdir", Exception),
-        ("iterdir", PermissionError),
+        ("glob", Exception),
+        ("glob", PermissionError),
     ],
 )
-def test_linux_credentials_database_selector__iterdir_exception(
-    monkeypatch, patch_pwd_getpwall, linux_credentials_database_selector, error, method, tmp_path
+def test_linux_credentials_database_selector__glob_exception(
+    monkeypatch, patch_pwd_getpwall, linux_credentials_database_selector, error, method
 ):
-    def mock_method(path):
+    def mock_method(pattern, al):
         raise error()
 
     monkeypatch.setattr(
@@ -160,9 +160,4 @@ def test_linux_credentials_database_selector__iterdir_exception(
     )
     actual_login_database_paths = linux_credentials_database_selector()
 
-    assert list(actual_login_database_paths) == [
-        BrowserCredentialsDatabasePath(
-            database_file_path=Path(f"{tmp_path}/home/{USERNAME_2}/{CHROMIUM_PATH}/Login Data"),
-            master_key=DEFAULT_MASTER_KEY,
-        )
-    ]
+    assert list(actual_login_database_paths) == []
