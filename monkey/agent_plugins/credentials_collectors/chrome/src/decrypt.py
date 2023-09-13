@@ -1,14 +1,14 @@
-# TODO: See if another module can replace this one
-from Crypto.Cipher import AES
-
-from .aes import AESModeOfOperationCBC
+from Cryptodome.Cipher import AES
 
 
 def decrypt_AES(
     encrypted_value: bytes, decryption_key: bytes, init_vector: bytes, block_size: int
 ) -> str:
+    """
+    :raises ValueError: If the password cannot be decrypted
+    """
     encrypted_value = encrypted_value[3:]
-    aes = AESModeOfOperationCBC(decryption_key, iv=init_vector)
+    aes = AES.new(decryption_key, AES.MODE_CBC, iv=init_vector)
     cleartxt = b"".join(
         [
             aes.decrypt(encrypted_value[i : i + block_size])
@@ -31,6 +31,9 @@ def _remove_padding(data: bytes) -> bytes:
 
 
 def decrypt_v80(buff, master_key) -> str:
+    """
+    :raises ValueError: If the password cannot be decrypted
+    """
     iv = buff[3:15]
     payload = buff[15:]
     cipher = AES.new(master_key, AES.MODE_GCM, iv)
