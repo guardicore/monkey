@@ -31,10 +31,7 @@ def get_logins_from_database(database_path: Path) -> Iterator[ExtractedCredentia
         with open(database_path, "rb") as database_file:
             shutil.copyfileobj(database_file, temporary_database_file)
 
-        try:
-            yield from _extract_credentials(temporary_database_path)
-        except Exception as err:
-            logger.debug(f"{err}")
+        yield from _extract_credentials(temporary_database_path)
 
 
 def _extract_credentials(temporary_database_path: Path) -> Iterator[ExtractedCredentialPair]:
