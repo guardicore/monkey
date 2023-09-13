@@ -2,6 +2,7 @@
 title: "Chrome"
 date: 2023-09-13T16:35:11+05:30
 tags: ["credentials collector", "chrome", "linux", "windows"]
+weight: 1
 ---
 
 ## Description
