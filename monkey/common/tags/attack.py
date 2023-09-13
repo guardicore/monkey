@@ -1,3 +1,4 @@
+# TODO: Look through plugins and consider using subtechniques
 OS_CREDENTIAL_DUMPING_T1003_TAG = "attack-t1003"  # credential access
 DATA_FROM_LOCAL_SYSTEM_T1005_TAG = "attack-t1005"  # collection
 REMOTE_SERVICES_T1021_TAG = "attack-t1021"  # lateral movement
@@ -18,3 +19,6 @@ ALTERNATE_AUTHENTICATION_MATERIAL_T1550_TAG = "attack-t1550"  # lateral movement
 CREDENTIALS_FROM_PASSWORD_STORES_T1555_TAG = "attack-t1555"  # credential access
 GATHER_VICTIM_HOST_INFORMATION_T1592_TAG = "attack-t1592"
 ACTIVE_SCANNING_T1595_TAG = "attack-t1595"
+DEFACEMENT_T1491_TAG = "attack-t1491"
+INTERNAL_DEFACEMENT_T1491_001_TAG = "attack-t1491.001"
+EXTERNAL_DEFACEMENT_T1491_002_TAG = "attack-t1491.002"

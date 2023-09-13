@@ -21,6 +21,7 @@ from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import (
     AbstractAgentEvent,
     CPUConsumptionEvent,
+    DefacementEvent,
     FileEncryptionEvent,
     RAMConsumptionEvent,
 )
@@ -34,6 +35,11 @@ from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonke
 from common.concurrency import BasicLock
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.decorators import request_cache
+from common.tags import (
+    DEFACEMENT_T1491_TAG,
+    EXTERNAL_DEFACEMENT_T1491_002_TAG,
+    INTERNAL_DEFACEMENT_T1491_001_TAG,
+)
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
@@ -219,3 +225,12 @@ RDPIOSettings.video_out_format
 RDPIOSettings.clipboard_use_pyperclip
 
 AgentPluginService.install_agent_plugin_from_repository
+
+# Remove after #1247 is completed
+DefacementEvent
+DefacementEvent.DefacementTarget.INTERNAL
+DefacementEvent.DefacementTarget.EXTERNAL
+DefacementEvent.defacement_target
+DEFACEMENT_T1491_TAG
+INTERNAL_DEFACEMENT_T1491_001_TAG
+EXTERNAL_DEFACEMENT_T1491_002_TAG
