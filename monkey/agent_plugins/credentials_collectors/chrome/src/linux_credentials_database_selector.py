@@ -1,14 +1,14 @@
 import logging
 import pwd
+from collections.abc import Collection, Sequence
 from pathlib import Path
-from typing import Collection, Dict, Sequence, Set
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 
 logger = logging.getLogger(__name__)
 
 LinuxUsername = str
-UserDirectories = Dict[LinuxUsername, Path]
+UserDirectories = dict[LinuxUsername, Path]
 
 # If we don't use a password manager to store an auto-fill password
 # then Linux uses a default master key to "encrypt" the passwords
@@ -25,7 +25,7 @@ CHROMIUM_BASED_DB_PATHS = [
 
 class LinuxCredentialsDatabaseSelector:
     def __call__(self) -> Collection[BrowserCredentialsDatabasePath]:
-        database_paths: Set[BrowserCredentialsDatabasePath] = set()
+        database_paths: set[BrowserCredentialsDatabasePath] = set()
         for browser_database_path in self._get_browser_database_paths():
             login_data_paths = self._get_login_data_paths(browser_database_path)
             database_paths.update(login_data_paths)
@@ -60,7 +60,7 @@ class LinuxCredentialsDatabaseSelector:
     def _get_login_data_paths(
         self, browser_database_path: Path
     ) -> Collection[BrowserCredentialsDatabasePath]:
-        login_data_paths: Set[BrowserCredentialsDatabasePath] = set()
+        login_data_paths: set[BrowserCredentialsDatabasePath] = set()
 
         try:
             for login_database_path in browser_database_path.glob(f"**/{LOGIN_DATABASE_FILENAME}"):

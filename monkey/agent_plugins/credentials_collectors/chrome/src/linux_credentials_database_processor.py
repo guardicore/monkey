@@ -1,9 +1,9 @@
 import logging
+from collections.abc import Collection, Iterable, Iterator
 from contextlib import suppress
 from hashlib import pbkdf2_hmac
 from itertools import chain
-from pathlib import Path
-from typing import Callable, Collection, Iterable, Iterator, Optional, Tuple
+from typing import Optional
 
 from common.credentials import Credentials, EmailAddress, Password, Username
 from common.types import Event
@@ -12,13 +12,12 @@ from infection_monkey.utils.threading import interruptible_iter
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .decrypt import decrypt_AES, decrypt_v80
 from .linux_credentials_database_selector import DEFAULT_MASTER_KEY
+from .linux_database_reader import DatabaseReader
 
 logger = logging.getLogger(__name__)
 
 AES_BLOCK_SIZE = 16
 AES_INIT_VECTOR = b" " * 16
-
-DatabaseReader = Callable[[Path], Iterator[Tuple[str, bytes]]]
 
 
 class LinuxCredentialsDatabaseProcessor:
@@ -44,7 +43,7 @@ class LinuxCredentialsDatabaseProcessor:
         login_data = self._read_login_data_from_database(database_path.database_file_path)
         yield from self._process_login_data(login_data)
 
-    def _process_login_data(self, login_data: Iterable[Tuple[str, bytes]]) -> Iterator[Credentials]:
+    def _process_login_data(self, login_data: Iterable[tuple[str, bytes]]) -> Iterator[Credentials]:
         for user, password in login_data:
             yield Credentials(
                 identity=self._get_identity(user), secret=self._get_password(password)
