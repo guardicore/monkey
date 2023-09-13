@@ -1,4 +1,5 @@
 import logging
+from contextlib import suppress
 from hashlib import pbkdf2_hmac
 from itertools import chain
 from pathlib import Path
@@ -11,7 +12,6 @@ from infection_monkey.utils.threading import interruptible_iter
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .decrypt import decrypt_AES, decrypt_v80
 from .linux_credentials_database_selector import DEFAULT_MASTER_KEY
-
 
 logger = logging.getLogger(__name__)
 
@@ -46,13 +46,9 @@ class LinuxCredentialsDatabaseProcessor:
 
     def _process_login_data(self, login_data: Iterable[Tuple[str, bytes]]) -> Iterator[Credentials]:
         for user, password in login_data:
-            try:
-                print(user, password)
-                yield Credentials(
-                    identity=self._get_identity(user), secret=self._get_password(password)
-                )
-            except Exception:
-                continue
+            yield Credentials(
+                identity=self._get_identity(user), secret=self._get_password(password)
+            )
 
     def _get_identity(self, user: str):
         try:
@@ -73,27 +69,10 @@ class LinuxCredentialsDatabaseProcessor:
         return password[:3] == b"v10" or password[:3] == b"v11"
 
     def _decrypt_password(self, password: bytes) -> str:
-        try:
-            decrypted_password = self._chrome_decrypt(password, self._decryption_key)
-            if decrypted_password != "":
-                return decrypted_password
+        with suppress(UnicodeDecodeError, ValueError):
+            return decrypt_AES(password, self._decryption_key, AES_INIT_VECTOR, AES_BLOCK_SIZE)
 
-        except Exception:
-            logger.exception("Failed to decrypt password")
-            raise
+        with suppress(UnicodeDecodeError, ValueError):
+            return decrypt_v80(password, self._decryption_key)
 
-        # If we get here, we failed to decrypt the password
         raise Exception("Password could not be decrypted.")
-
-    def _chrome_decrypt(self, encrypted_value: bytes, key: bytes) -> str:
-        try:
-            return decrypt_AES(encrypted_value, key, AES_INIT_VECTOR, AES_BLOCK_SIZE)
-        except UnicodeDecodeError:
-            pass
-
-        try:
-            return decrypt_v80(encrypted_value, key)
-        except UnicodeDecodeError:
-            pass
-
-        return ""
