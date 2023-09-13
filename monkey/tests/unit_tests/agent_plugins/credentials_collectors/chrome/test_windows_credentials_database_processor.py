@@ -73,6 +73,10 @@ def credentials_database_processor(mock_database_reader):
     return WindowsCredentialsDatabaseProcessor(mock_database_reader)
 
 
+def raise_exception(*args, **kwargs):
+    raise Exception()
+
+
 def test_extracts_credentials(credentials_database_processor):
     credentials = credentials_database_processor(Event(), [PROFILE_A])
 
@@ -100,6 +104,52 @@ def test_decrypts_password_with_master_key(credentials_database_processor):
 
     assert len(credentials) == 1
     assert CREDENTIALS_C[0] in credentials
+
+
+def test_username_credential_saved_if_decrypt_password_fails(credentials_database_processor):
+    credentials_database_processor._decrypt_password = raise_exception
+
+    credentials = credentials_database_processor(Event(), [PROFILE_C])
+    expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity)]
+
+    assert len(credentials) == 1
+    assert expected_credentials == credentials
+
+
+def test_username_credential_saved_if_win32crypt_unprotect_data_fails(
+    monkeypatch, credentials_database_processor
+):
+    monkeypatch.setattr(
+        "agent_plugins.credentials_collectors.chrome.src."
+        "windows_credentials_database_processor.win32crypt_unprotect_data",
+        raise_exception,
+    )
+
+    credentials = credentials_database_processor(Event(), [PROFILE_B])
+    expected_credentials = [Credentials(identity=CREDENTIALS_B[0].identity)]
+
+    assert len(credentials) == 1
+    assert expected_credentials == credentials
+
+
+def test_username_credential_saved_if_decrypt_password_v80_returns_None(
+    monkeypatch, credentials_database_processor
+):
+    mocked_AES = MagicMock()
+    monkeypatch.setattr(
+        "agent_plugins.credentials_collectors.chrome.src."
+        "windows_credentials_database_processor.AES",
+        mocked_AES,
+    )
+    mocked_cipher = MagicMock()
+    mocked_cipher.decrypt = lambda _: b"16characterslong"
+    mocked_AES.new = lambda _, __, ___: mocked_cipher
+
+    credentials = credentials_database_processor(Event(), [PROFILE_C])
+    expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity)]
+
+    assert len(credentials) == 1
+    assert expected_credentials == credentials
 
 
 def test_fails_to_extract_credentials_if_master_key_is_none(credentials_database_processor):
