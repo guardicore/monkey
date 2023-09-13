@@ -35,7 +35,7 @@ This document describes Infection Monkey’s test network.
 [Nr. 3-56 Log4j Logstash](#_Toc536021488)<br>
 [Nr. 3-64 RDP](#_Toc536021489)<br>
 [Nr. 3-65 RDP](#_Toc536021490)<br>
-[Nr. 3-70 Chrome credentials collector](#_Toc536021491)<br>
+[Nr. 3-67 Browser Credentials](#_Toc536021491)<br>
 [Nr. 250 MonkeyIsland](#_Toc536021492)<br>
 [Nr. 251 MonkeyIsland](#_Toc536021493)<br>
 [Network topography](#network-topography)<br>
@@ -1157,7 +1157,7 @@ setting:
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021491" class="anchor"></span>Nr. <strong>3-70 Chrome Credentials Collector</strong></p>
+<th><p><span id="_Toc536021491" class="anchor"></span>Nr. <strong>3-67 Browser Credentials</strong></p>
 <p>(10.2.3.70)</p></th>
 <th>(Vulnerable)</th>
 </tr>
@@ -1169,7 +1169,7 @@ setting:
 </tr>
 <tr class="even">
 <td>Software:</td>
-<td>Chromium (snap)</td>
+<td></td>
 </tr>
 <tr class="odd">
 <td>SSH</td>
@@ -1178,13 +1178,43 @@ setting:
 <tr class="even">
 <td>Notes:</td>
 <td>
-    <p>User: m0nk3y, Password: password</p>
-    <p>Credentials available for stealing:</p>
-    <ul>
-        <li>User: my@email.com, Password: mysecretpass</li>
-        <li>User: m0nk3y, Password: blahblahblah</li>
-        <li>User: test, Password: password123</li>
-    </ul>
+Chromium is not installed on this machine, but it has chromium files with credentials.
+
+**SSH user:**
+
+---
+
+Username: m0nk3y, Password: password
+
+---
+
+**Stored Chromium credentials**:
+
+----
+
+Website: https://akamai.com/
+
+Username: my@email.com
+
+Password: mysecretpass
+
+----
+
+Website: https://test.com/
+
+Username: test
+
+Password: password123
+
+----
+
+Website: https://password.com/
+
+Username: m0nk3y
+
+Password: blahblahblah
+
+----
 </td>
 </tr>
 </tbody>
