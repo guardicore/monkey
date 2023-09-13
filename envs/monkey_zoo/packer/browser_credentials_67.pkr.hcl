@@ -17,8 +17,8 @@ variable "account_file" {
     type = string
 }
 
-source "googlecompute" "chrome-70" {
-    image_name = "chrome-70"
+source "googlecompute" "browser-credentials-67" {
+    image_name = "browser-credentials-67"
     project_id = "${var.project_id}"
     source_image = "${var.source_image}"
     zone = "${var.zone}"
@@ -30,10 +30,10 @@ source "googlecompute" "chrome-70" {
 
 build {
     sources = [
-        "source.googlecompute.chrome-70"
+        "source.googlecompute.browser-credentials-67"
     ]
     provisioner "ansible" {
-        only = ["googlecompute.chrome-70"]
-        playbook_file = "./packer/setup_chrome_70.yml"
+        only = ["googlecompute.browser-credentials-67"]
+        playbook_file = "./packer/setup_browser_credentials_67.yml"
     }
 }
