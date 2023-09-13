@@ -2,8 +2,9 @@ import logging
 import shutil
 import sqlite3
 import tempfile
+from collections.abc import Callable, Collection, Iterator
 from pathlib import Path
-from typing import Callable, Collection, Iterator, Optional, Tuple, TypeAlias
+from typing import Optional, TypeAlias
 
 from Cryptodome.Cipher import AES
 
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 DATABASE_QUERY = "SELECT username_value, password_value FROM logins"
 
-ExtractedCredentialPair: TypeAlias = Tuple[str, bytes]
+ExtractedCredentialPair: TypeAlias = tuple[str, bytes]
 
 
 def get_logins_from_database(database_path: Path) -> Iterator[ExtractedCredentialPair]:
