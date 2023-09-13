@@ -3,6 +3,7 @@ import shutil
 import sqlite3
 import tempfile
 from collections.abc import Callable, Collection, Iterator
+from contextlib import suppress
 from pathlib import Path
 from typing import Optional, TypeAlias
 
@@ -95,12 +96,10 @@ class WindowsCredentialsDatabaseProcessor:
         if encrypted_password.startswith(b"v10"):  # chromium > v80
             decrypted_password = self._decrypt_password_v80(encrypted_password, master_key)
         else:
-            try:
+            with suppress(Exception):
                 password_bytes = win32crypt_unprotect_data(encrypted_password)
-                if password_bytes not in [None, False]:
+                if isinstance(password_bytes, bytes):
                     decrypted_password = password_bytes.decode("utf-8")
-            except Exception:
-                pass
 
         return decrypted_password
 
