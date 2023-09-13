@@ -45,7 +45,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
 
 
 def _add_credentials_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    credentials_collectors: Dict[str, Mapping] = {"Mimikatz": {}, "SSH": {}}
+    credentials_collectors: Dict[str, Mapping] = {"Mimikatz": {}, "SSH": {}, "Chrome": {}}
     return add_credentials_collectors(
         agent_configuration, credentials_collectors=credentials_collectors
     )
@@ -61,6 +61,7 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
         "10.2.3.46",
         "10.2.3.64",
         "10.2.3.65",
+        "10.2.2.65",
     ]
     return add_subnets(agent_configuration, subnets)
 
