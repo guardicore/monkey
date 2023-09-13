@@ -7,6 +7,7 @@ import pytest
 from agent_plugins.credentials_collectors.chrome.src.browser_credentials_database_path import (
     BrowserCredentialsDatabasePath,
 )
+from tests.utils import get_reference_to_exception_raising_function
 
 from common.credentials import Credentials, EmailAddress, Password, Username
 
@@ -73,10 +74,6 @@ def credentials_database_processor(mock_database_reader):
     return WindowsCredentialsDatabaseProcessor(mock_database_reader)
 
 
-def raise_exception(*args, **kwargs):
-    raise Exception()
-
-
 def test_extracts_credentials(credentials_database_processor):
     credentials = credentials_database_processor(Event(), [PROFILE_A])
 
@@ -107,7 +104,9 @@ def test_decrypts_password_with_master_key(credentials_database_processor):
 
 
 def test_username_credential_saved_if_decrypt_password_fails(credentials_database_processor):
-    credentials_database_processor._decrypt_password = raise_exception
+    credentials_database_processor._decrypt_password = get_reference_to_exception_raising_function(
+        Exception
+    )
 
     credentials = credentials_database_processor(Event(), [PROFILE_C])
     expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity)]
@@ -122,7 +121,7 @@ def test_username_credential_saved_if_win32crypt_unprotect_data_fails(
     monkeypatch.setattr(
         "agent_plugins.credentials_collectors.chrome.src."
         "windows_credentials_database_processor.win32crypt_unprotect_data",
-        raise_exception,
+        get_reference_to_exception_raising_function(Exception),
     )
 
     credentials = credentials_database_processor(Event(), [PROFILE_B])

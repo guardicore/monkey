@@ -2,6 +2,7 @@ import threading
 from unittest.mock import MagicMock
 
 from agent_plugins.credentials_collectors.chrome.src.plugin import Plugin
+from tests.utils import get_reference_to_exception_raising_function
 
 from common.credentials import Credentials, Password, Username
 from common.event_queue import IAgentEventPublisher
@@ -16,13 +17,10 @@ CREDENTIALS = [
 ]
 
 
-def builder_exception():
-    raise Exception()
-
-
 class ExceptionCallable:
     def run(self, interrupt):
-        raise Exception()
+        raise_exception = get_reference_to_exception_raising_function(Exception)
+        raise_exception()
 
 
 class MockCallable:
@@ -33,7 +31,7 @@ class MockCallable:
 def test_chrome_plugin__build_exception(monkeypatch):
     monkeypatch.setattr(
         "agent_plugins.credentials_collectors.chrome.src.plugin.build_chrome_credentials_collector",
-        builder_exception,
+        get_reference_to_exception_raising_function(Exception),
     )
     chrome_plugin = Plugin(
         agent_id=AGENT_ID, agent_event_publisher=MagicMock(spec=IAgentEventPublisher)

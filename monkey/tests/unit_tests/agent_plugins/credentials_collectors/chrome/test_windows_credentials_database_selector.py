@@ -9,6 +9,7 @@ import pytest
 from agent_plugins.credentials_collectors.chrome.src.browser_credentials_database_path import (
     BrowserCredentialsDatabasePath,
 )
+from tests.utils import get_reference_to_exception_raising_function
 
 EDGE_DECRYPTED_MASTER_KEY = b"\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 EDGE_MASTER_KEY = b"DPAPI\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
@@ -161,10 +162,6 @@ def database_selector():
     return WindowsCredentialsDatabaseSelector()
 
 
-def raise_exception(*args, **kwargs):
-    raise Exception()
-
-
 def test__finds_databases(mock_appdata_dir, database_selector):
     databases = database_selector()
 
@@ -213,7 +210,7 @@ def test__outputs_none_if_master_key_decryption_throws_exception(
     monkeypatch.setattr(
         "agent_plugins.credentials_collectors.chrome.src."
         "windows_credentials_database_selector.win32crypt_unprotect_data",
-        raise_exception,
+        get_reference_to_exception_raising_function(Exception),
     )
 
     databases = database_selector()
@@ -251,7 +248,7 @@ def test__outputs_empty_if_local_data_object_creation_throws_exception(
     monkeypatch.setattr(
         "agent_plugins.credentials_collectors.chrome.src."
         "windows_credentials_database_selector.create_windows_chrome_browser_local_data",
-        raise_exception,
+        get_reference_to_exception_raising_function(Exception),
     )
 
     databases = database_selector()
