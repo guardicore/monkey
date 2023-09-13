@@ -1,9 +1,10 @@
 import logging
+import os
 import shutil
 import sqlite3
 import tempfile
 from collections.abc import Callable, Collection, Iterator
-from contextlib import suppress
+from contextlib import contextmanager, suppress
 from pathlib import Path
 from typing import Optional, TypeAlias
 
@@ -25,14 +26,21 @@ ExtractedCredentialPair: TypeAlias = tuple[str, bytes]
 
 
 def get_logins_from_database(database_path: Path) -> Iterator[ExtractedCredentialPair]:
-    with tempfile.NamedTemporaryFile() as temporary_database_file:
-        temporary_database_path = Path(tempfile.gettempdir()) / temporary_database_file.name
-
+    with temporary_file() as temporary_database_path:
         # copy database before querying it to bypass lock errors
-        with open(database_path, "rb") as database_file:
-            shutil.copyfileobj(database_file, temporary_database_file)
+        shutil.copy(database_path, temporary_database_path)
 
         yield from _extract_credentials(temporary_database_path)
+
+
+@contextmanager
+def temporary_file() -> Iterator[Path]:
+    file, path = tempfile.mkstemp()
+    os.close(file)
+    try:
+        yield Path(path)
+    finally:
+        os.remove(path)
 
 
 def _extract_credentials(temporary_database_path: Path) -> Iterator[ExtractedCredentialPair]:
