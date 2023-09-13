@@ -96,16 +96,15 @@ class WindowsCredentialsDatabaseProcessor:
         self, encrypted_password: bytes, master_key: Optional[bytes]
     ) -> Optional[str]:
         decrypted_password = None
-        try:
-            if encrypted_password.startswith(b"v10"):  # chromium > v80
+        if encrypted_password.startswith(b"v10"):  # chromium > v80
+            with suppress(UnicodeDecodeError, ValueError):
                 decrypted_password = self._decrypt_password_v80(encrypted_password, master_key)
-            else:
-                with suppress(Exception):
-                    password_bytes = win32crypt_unprotect_data(encrypted_password)
-                    if isinstance(password_bytes, bytes):
-                        decrypted_password = password_bytes.decode("utf-8")
-        except Exception as err:
-            logger.error(f"Encountered an exception while trying to decrypt the password: {err}")
+        else:
+            with suppress(Exception):
+                password_bytes = win32crypt_unprotect_data(encrypted_password)
+                if isinstance(password_bytes, bytes):
+                    decrypted_password = password_bytes.decode("utf-8")
+
         return decrypted_password
 
     def _decrypt_password_v80(
