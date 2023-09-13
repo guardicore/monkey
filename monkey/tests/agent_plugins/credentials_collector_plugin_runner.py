@@ -27,7 +27,7 @@ CREDENTIALS: List[Credentials] = [
 ]
 CREDENTIALS_COLLECTOR_OPTIONS: Dict[str, Any] = {}
 TARGET_HOST = TargetHost(
-    ip=IPv4Address("10.2.2.14"), operating_system=OperatingSystem.WINDOWS, icmp=True
+    ip=IPv4Address("10.2.2.14"), operating_system=OperatingSystem.LINUX, icmp=True
 )
 
 agent_event_publisher = MagicMock(spec=IAgentEventPublisher)

@@ -8,6 +8,7 @@ from common.utils.environment import get_os
 from .chrome_credentials_collector import ChromeCredentialsCollector
 from .linux_credentials_database_processor import LinuxCredentialsDatabaseProcessor
 from .linux_credentials_database_selector import LinuxCredentialsDatabaseSelector
+from .linux_database_reader import get_credentials_from_database
 from .typedef import CredentialsDatabaseProcessorCallable, CredentialsDatabaseSelectorCallable
 from .windows_credentials_database_processor import WindowsCredentialsDatabaseProcessor
 
@@ -40,4 +41,4 @@ def _build_credentials_database_selector() -> CredentialsDatabaseSelectorCallabl
 def _build_credentials_database_processor() -> CredentialsDatabaseProcessorCallable:
     if get_os() == OperatingSystem.WINDOWS:
         return WindowsCredentialsDatabaseProcessor()
-    return LinuxCredentialsDatabaseProcessor()
+    return LinuxCredentialsDatabaseProcessor(get_credentials_from_database)
