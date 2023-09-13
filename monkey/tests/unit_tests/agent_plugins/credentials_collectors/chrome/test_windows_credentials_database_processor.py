@@ -104,9 +104,7 @@ def test_decrypts_password_with_master_key(credentials_database_processor):
 
 
 def test_username_credential_saved_if_decrypt_password_fails(credentials_database_processor):
-    credentials_database_processor._decrypt_password = get_reference_to_exception_raising_function(
-        Exception
-    )
+    credentials_database_processor._decrypt_password = lambda *_: None
 
     credentials = credentials_database_processor(Event(), [PROFILE_C])
     expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity)]
