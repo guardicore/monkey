@@ -16,6 +16,13 @@ def is_user_admin():
     return ctypes.windll.shell32.IsUserAnAdmin()
 
 
+def get_reference_to_exception_raising_function(ex):
+    def inner(ex):
+        raise_(ex)
+
+    return inner
+
+
 def raise_(ex):
     raise ex
 
