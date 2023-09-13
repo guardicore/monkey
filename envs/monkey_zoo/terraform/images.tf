@@ -115,6 +115,10 @@ data "google_compute_image" "log4j-logstash-56" {
   name    = "log4j-logstash-56"
   project = local.monkeyzoo_project
 }
+data "google_compute_image" "browser-credentials-67" {
+  name    = "browser-credentials-67"
+  project = local.monkeyzoo_project
+}
 data "google_compute_image" "zerologon-25" {
   name    = "zerologon-25"
   project = local.monkeyzoo_project
