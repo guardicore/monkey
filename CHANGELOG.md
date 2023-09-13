@@ -20,6 +20,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `GET /api/agent-plugins/installed/manifests`. #3424
 - `GET /api/agent-plugins/available/index`. #3420
 - `POST /api/uninstall-agent-plugin` # 3422
+- Chrome credentials collector plugin. #3426
 
 ### Changed
 - Plugin source is now gzipped. #3392
