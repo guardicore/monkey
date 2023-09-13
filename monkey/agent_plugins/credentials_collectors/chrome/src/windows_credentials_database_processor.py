@@ -50,6 +50,8 @@ def _extract_credentials(temporary_database_path: Path) -> Iterator[ExtractedCre
             yield user, password
     except Exception as err:
         logger.error(f"Encountered an exception while connecting to database: {err}")
+    finally:
+        conn.close()
 
 
 DatabaseReader = Callable[[Path], Iterator[ExtractedCredentialPair]]
