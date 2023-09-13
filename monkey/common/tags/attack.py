@@ -1,3 +1,4 @@
+# TODO: Look through plugins and consider using subtechniques
 OS_CREDENTIAL_DUMPING_T1003_TAG = "attack-t1003"  # credential access
 DATA_FROM_LOCAL_SYSTEM_T1005_TAG = "attack-t1005"  # collection
 REMOTE_SERVICES_T1021_TAG = "attack-t1021"  # lateral movement
