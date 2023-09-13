@@ -3,7 +3,7 @@ import shutil
 import sqlite3
 import tempfile
 from pathlib import Path
-from typing import Callable, Collection, Iterator, Optional, Tuple
+from typing import Callable, Collection, Iterator, Optional, Tuple, TypeAlias
 
 from Cryptodome.Cipher import AES
 
@@ -19,8 +19,10 @@ logger = logging.getLogger(__name__)
 
 DATABASE_QUERY = "SELECT username_value, password_value FROM logins"
 
+ExtractedCredentialPair: TypeAlias = Tuple[str, bytes]
 
-def get_logins_from_database(database_path: Path) -> Iterator[Tuple[str, bytes]]:
+
+def get_logins_from_database(database_path: Path) -> Iterator[ExtractedCredentialPair]:
     with tempfile.NamedTemporaryFile() as temporary_database_file:
         temporary_database_path = Path(tempfile.gettempdir()) / temporary_database_file.name
 
@@ -34,7 +36,7 @@ def get_logins_from_database(database_path: Path) -> Iterator[Tuple[str, bytes]]
             logger.debug(f"{err}")
 
 
-def _extract_credentials(temporary_database_path: Path) -> Iterator[Tuple[str, bytes]]:
+def _extract_credentials(temporary_database_path: Path) -> Iterator[ExtractedCredentialPair]:
     try:
         conn = sqlite3.connect(temporary_database_path)
         for user, password in conn.execute(DATABASE_QUERY):
@@ -43,7 +45,7 @@ def _extract_credentials(temporary_database_path: Path) -> Iterator[Tuple[str, b
         logger.error(f"Encountered an exception while connecting to database: {err}")
 
 
-DatabaseReader = Callable[[Path], Iterator[Tuple[str, bytes]]]
+DatabaseReader = Callable[[Path], Iterator[ExtractedCredentialPair]]
 
 
 class WindowsCredentialsDatabaseProcessor:
