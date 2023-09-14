@@ -18,13 +18,10 @@ class ReadmeDropper:
 
         logger.info(f"Leaving a ransomware README file at {dest}")
 
-        if self._operating_system == OperatingSystem.LINUX:
-            self._leave_linux_readme(src, dest)
-        else:
+        if self._operating_system == OperatingSystem.WINDOWS:
             self._leave_windows_readme(src, dest)
-
-    def _leave_linux_readme(self, src: Path, dest: Path):
-        shutil.copyfile(src, dest)
+        else:
+            self._leave_posix_readme(src, dest)
 
     def _leave_windows_readme(self, src: Path, dest: Path):
         with open(src, "rb") as src_file:
@@ -34,3 +31,6 @@ class ReadmeDropper:
 
         with open(dest, "wb") as dest_file:
             dest_file.write(windows_readme)
+
+    def _leave_posix_readme(self, src: Path, dest: Path):
+        shutil.copyfile(src, dest)
