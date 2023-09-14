@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Box} from '@mui/material';
+import {Box, Typography} from '@mui/material';
 import XDataGrid from '../XDataGrid';
 import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
@@ -7,6 +7,8 @@ import styles from '../../../styles/components/plugins-marketplace/PluginTable.m
 import {AgentPlugin} from '../../contexts/plugins/PluginsContext';
 import _ from 'lodash';
 import MonkeyTooltip from '../MonkeyTooltip';
+import {ExpandLess, ExpandMore} from '@mui/icons-material';
+import MonkeyButton from '../MonkeyButton';
 
 
 const DEFAULT_LOADING_MESSAGE = 'Loading plugins...';
@@ -21,7 +23,7 @@ const initialState = {
 
 type getRowActionsType = (plugin: PluginRow) => any[];
 
-export const generatePluginsTableColumns = (getRowActions :getRowActionsType) => [
+export const generatePluginsTableColumns = (getRowActions: getRowActionsType) => [
   {
     headerName: 'Name',
     field: 'name',
@@ -56,7 +58,7 @@ export const generatePluginsTableColumns = (getRowActions :getRowActionsType) =>
     filterable: false,
     minWidth: 150,
     flex: 1,
-    isTextual: true
+    renderCell: renderDescriptionCell
   },
   {
     headerName: 'Safety',
@@ -98,16 +100,41 @@ const renderSafetyCell = (params) => {
   );
 }
 
+const renderDescriptionCell = (params) => {
+  const ref = React.useRef();
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  React.useEffect(() => {
+    if (ref.current) {
+      setIsOverflowing(ref.current.scrollWidth > params.api.rootElementRef.current.scrollWidth);
+    }
+  }, [ref]);
+
+  return (
+    <>
+      <Typography noWrap={!isExpanded} ref={ref}>
+        {params.value}
+      </Typography>
+      {isOverflowing && (
+        <MonkeyButton onClick={() => setIsExpanded(!isExpanded)}>
+          {isExpanded ? <ExpandLess/> : <ExpandMore/>}
+        </MonkeyButton>
+      )}
+    </>
+  );
+}
+
 export type PluginRow = {
   id: string,
   name: string,
   version: string,
   pluginType: string,
-  description: string,
+  description: any,
   safe: boolean
 };
 
-export const generatePluginsTableRows = (pluginsList: AgentPlugin[]) :PluginRow[] => {
+export const generatePluginsTableRows = (pluginsList: AgentPlugin[]): PluginRow[] => {
   const plugins = pluginsList?.map((pluginObject) => {
     const {id, name, safe, version, pluginType, description} = {...pluginObject};
     return {
@@ -134,7 +161,6 @@ const PluginTable = (props) => {
         ? loadingMessage
         : <XDataGrid columns={columns}
                      rows={[...rows]}
-                     rowHeight={'25px'}
                      showToolbar={false}
                      height={'100%'}
                      minHeight={0}
