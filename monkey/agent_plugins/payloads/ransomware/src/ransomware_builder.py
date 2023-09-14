@@ -3,6 +3,7 @@ from pprint import pformat
 
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
+from common.utils.environment import get_os
 
 from .bit_manipulators import flip_bits
 from .file_selectors import ProductionSafeTargetFileSelector
@@ -55,4 +56,4 @@ def _build_file_selector(file_extension: str):
 
 
 def _build_leave_readme():
-    return ReadmeDropper().leave_readme
+    return ReadmeDropper(get_os()).leave_readme
