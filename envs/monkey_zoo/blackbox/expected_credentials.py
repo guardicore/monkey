@@ -52,6 +52,9 @@ expected_credentials_depth_2_a = {
         identity=Username(username="m0nk3y"),
         secret=SSHKeypair(private_key=ssh_private_key, public_key=ssh_public_key),
     ),
+}
+
+expected_credentials_depth_1_a = {
     # Stolen from Chrome browser on 10.2.2.65
     Credentials(identity=Username(username="forBBtests"), secret=Password(password="supersecret")),
     Credentials(
