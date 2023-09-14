@@ -134,8 +134,8 @@ const IslandResetModal = (props: Props) => {
     return (<Container className={`text-left island-reset-modal`}>
       <Row>
         <Col>
-          <p>Delete data gathered by Monkey agents.</p>
-          <p>This will reset the Map and reports.</p>
+          <p>Delete data gathered by Monkey Agents.</p>
+          <p>This will reset the map and reports.</p>
         </Col>
         <Col sm={4} className={'text-center'}>
           {displayDeleteData()}
@@ -145,8 +145,10 @@ const IslandResetModal = (props: Props) => {
       <Row>
         <Col>
           <p>Reset everything.</p>
-          <p>You might want to <Button variant={'link'} href={IslandRoutes.ConfigurePage}>export
+          <p>This will not uninstall any plugins. You might want
+            to <Button variant={'link'} href={IslandRoutes.ConfigurePage}>export
             configuration</Button> before doing this.</p>
+          <p></p>
         </Col>
         <Col sm={4} className={'text-center'}>
           {displayResetAll()}
