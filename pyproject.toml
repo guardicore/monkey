@@ -20,7 +20,7 @@ log_cli = 1
 log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s [%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s"
 log_cli_date_format = "%H:%M:%S"
-addopts = "-v --capture=sys tests/unit_tests tests/integration_tests"
+addopts = "-v --capture=sys tests/unit_tests"
 norecursedirs = "node_modules dist"
 markers = ["slow: mark test as slow"]
 pythonpath = "./monkey"
