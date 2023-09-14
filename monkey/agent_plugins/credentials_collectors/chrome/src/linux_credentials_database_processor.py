@@ -10,9 +10,9 @@ from common.types import Event
 from infection_monkey.utils.threading import interruptible_iter
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
+from .database_reader import DatabaseReader
 from .decrypt import decrypt_AES, decrypt_v80
 from .linux_credentials_database_selector import DEFAULT_MASTER_KEY
-from .linux_database_reader import DatabaseReader
 
 logger = logging.getLogger(__name__)
 

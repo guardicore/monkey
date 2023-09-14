@@ -6,6 +6,7 @@ from common.types import AgentID
 from common.utils.environment import get_os
 
 from .chrome_credentials_collector import ChromeCredentialsCollector
+from .database_reader import get_credentials_from_database
 from .typedef import CredentialsDatabaseProcessorCallable, CredentialsDatabaseSelectorCallable
 
 logger = logging.getLogger(__name__)
@@ -39,13 +40,10 @@ def _build_credentials_database_selector() -> CredentialsDatabaseSelectorCallabl
 
 def _build_credentials_database_processor() -> CredentialsDatabaseProcessorCallable:
     if get_os() == OperatingSystem.WINDOWS:
-        from .windows_credentials_database_processor import (
-            WindowsCredentialsDatabaseProcessor,
-            get_logins_from_database,
-        )
+        from .windows_credentials_database_processor import WindowsCredentialsDatabaseProcessor
 
-        return WindowsCredentialsDatabaseProcessor(get_logins_from_database)
+        return WindowsCredentialsDatabaseProcessor(get_credentials_from_database)
 
     from .linux_credentials_database_processor import LinuxCredentialsDatabaseProcessor
 
-    return LinuxCredentialsDatabaseProcessor()
+    return LinuxCredentialsDatabaseProcessor(get_credentials_from_database)

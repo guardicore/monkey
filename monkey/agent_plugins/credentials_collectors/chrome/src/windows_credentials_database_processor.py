@@ -1,12 +1,7 @@
 import logging
-import os
-import shutil
-import sqlite3
-import tempfile
-from collections.abc import Callable, Collection, Iterator
-from contextlib import contextmanager, suppress
-from pathlib import Path
-from typing import Optional, TypeAlias
+from collections.abc import Collection
+from contextlib import suppress
+from typing import Optional
 
 from Cryptodome.Cipher import AES
 
@@ -15,50 +10,14 @@ from common.types import Event
 from infection_monkey.utils.threading import interruptible_iter
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
+from .database_reader import DatabaseReader
 from .windows_decryption import win32crypt_unprotect_data
 
 logger = logging.getLogger(__name__)
 
 
-DATABASE_QUERY = "SELECT username_value, password_value FROM logins"
-
-ExtractedCredentialPair: TypeAlias = tuple[str, bytes]
-
-
-def get_logins_from_database(database_path: Path) -> Iterator[ExtractedCredentialPair]:
-    with temporary_file() as temporary_database_path:
-        # copy database before querying it to bypass lock errors
-        shutil.copy(database_path, temporary_database_path)
-
-        yield from _extract_credentials(temporary_database_path)
-
-
-@contextmanager
-def temporary_file() -> Iterator[Path]:
-    file, path = tempfile.mkstemp()
-    os.close(file)
-    try:
-        yield Path(path)
-    finally:
-        os.remove(path)
-
-
-def _extract_credentials(temporary_database_path: Path) -> Iterator[ExtractedCredentialPair]:
-    try:
-        conn = sqlite3.connect(temporary_database_path)
-        for user, password in conn.execute(DATABASE_QUERY):
-            yield user, password
-    except Exception as err:
-        logger.error(f"Encountered an exception while connecting to database: {err}")
-    finally:
-        conn.close()
-
-
-DatabaseReader = Callable[[Path], Iterator[ExtractedCredentialPair]]
-
-
 class WindowsCredentialsDatabaseProcessor:
-    def __init__(self, database_reader: DatabaseReader = get_logins_from_database):
+    def __init__(self, database_reader: DatabaseReader):
         self._read_logins_from_database = database_reader
 
     def __call__(
