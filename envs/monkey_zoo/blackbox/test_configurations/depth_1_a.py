@@ -29,6 +29,8 @@ from .utils import (
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
+        "WMI": {"agent_binary_upload_timeout": 30, "smb_connect_timeout": 5},
+        "RDP": {},
         "Hadoop": {
             "target_ports": [8088],
             "request_timeout": 15,
@@ -47,9 +49,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
             "snmp_request_timeout": 0.5,
             "snmp_retries": 1,
         },
-        "WMI": {"agent_binary_upload_timeout": 30},
         "SSH": {},
-        "RDP": {},
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
@@ -91,7 +91,7 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
 
 
 def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    ports = [22, 445]
+    ports = [22, 445, 3389]
     return add_tcp_ports(agent_configuration, ports)
 
 
