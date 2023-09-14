@@ -161,7 +161,6 @@ const PluginTable = (props) => {
         ? loadingMessage
         : <XDataGrid columns={columns}
                      rows={[...rows]}
-                     getRowHeight={() => 'auto'}
                      showToolbar={false}
                      height={'100%'}
                      minHeight={0}
