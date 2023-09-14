@@ -22,8 +22,8 @@ from .utils import (
 #     Powershell credential reuse (logging in without credentials
 #       to an identical user on another machine) (10.2.3.44, 10.2.3.46)
 #     SMB mimikatz password stealing and brute force (10.2.2.14 and 10.2.2.15)
-#     Chrome credentials stealing (10.2.2.65 - Windows exploited by RDP, Chrome browser
-#                                  10.2.3.70 - Linux exploited by SSH, Chromium browser)
+#     Chrome credentials stealing (10.2.3.66 - Windows exploited by RDP, Chrome browser
+#                                  10.2.3.67 - Linux exploited by SSH, Chromium browser files)
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
@@ -63,8 +63,8 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
         "10.2.3.46",
         "10.2.3.64",
         "10.2.3.65",
-        "10.2.2.65",
-        "10.2.3.70",
+        "10.2.3.66",
+        "10.2.3.67",
     ]
     return add_subnets(agent_configuration, subnets)
 
