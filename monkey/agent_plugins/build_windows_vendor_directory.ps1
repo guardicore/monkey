@@ -35,3 +35,4 @@ Compress-Archive -Path "$plugin_path\src\vendor-windows" -Destination "$workspac
 Set-PSDebug -Trace 1
 
 Remove-Item $plugin_path\venv -Recurse -Force
+Remove-Item "$plugin_path\src\vendor-windows" -Recurse -Force
