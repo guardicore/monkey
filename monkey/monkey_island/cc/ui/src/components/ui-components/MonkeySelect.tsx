@@ -26,7 +26,7 @@ type SelectProps = MUISelectProps & {
   options: Option[],
   selectedOption: Option,
   onChange: (event: SelectChangeEvent) => void,
-  variant?: SelectVariant
+  variant?: string
 }
 
 const MonkeySelectStyled = styled(Input)(({ theme }) => ({

@@ -2,11 +2,9 @@ import React, {useEffect, useState} from 'react';
 import SelectComponent, {SelectVariant} from '../MonkeySelect';
 import {PluginRow} from './PluginTable';
 
-type SetFiltersFunc = (filters: { [name: string]: number } ) => void;
-
 type TypeFilterProps = {
   allRows: PluginRow[],
-  setFilters: (filters: { [name: string]: SetFiltersFunc } ) => void
+  setFilters: (filters: (prevState) => any ) => void
 }
 
 type SelectOption = {
