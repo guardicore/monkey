@@ -10,7 +10,7 @@ from .in_place_file_encryptor import InPlaceFileEncryptor
 from .internal_ransomware_options import InternalRansomwareOptions
 from .ransomware import Ransomware
 from .ransomware_options import RansomwareOptions
-from .readme_dropper import leave_readme
+from .readme_dropper import ReadmeDropper
 from .targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 
 CHUNK_SIZE = 4096 * 24
@@ -55,4 +55,4 @@ def _build_file_selector(file_extension: str):
 
 
 def _build_leave_readme():
-    return leave_readme
+    return ReadmeDropper().leave_readme

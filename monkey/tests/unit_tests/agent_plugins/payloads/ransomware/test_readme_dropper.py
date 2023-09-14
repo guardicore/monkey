@@ -2,7 +2,7 @@ import filecmp
 from pathlib import Path
 
 import pytest
-from agent_plugins.payloads.ransomware.src.readme_dropper import leave_readme
+from agent_plugins.payloads.ransomware.src.readme_dropper import ReadmeDropper
 from tests.utils import get_file_sha256_hash
 
 DEST_FILE = "README.TXT"
@@ -20,12 +20,14 @@ def dest_readme(tmp_path: Path) -> Path:
 
 
 def test_readme_already_exists(src_readme: Path, dest_readme: Path):
+    readme_dropper = ReadmeDropper()
     dest_readme.touch()
 
-    leave_readme(src_readme, dest_readme)
+    readme_dropper.leave_readme(src_readme, dest_readme)
     assert get_file_sha256_hash(dest_readme) == EMPTY_FILE_HASH
 
 
 def test_leave_readme_linux(src_readme: Path, dest_readme: Path):
-    leave_readme(src_readme, dest_readme)
+    readme_dropper = ReadmeDropper()
+    readme_dropper.leave_readme(src_readme, dest_readme)
     assert filecmp.cmp(src_readme, dest_readme)
