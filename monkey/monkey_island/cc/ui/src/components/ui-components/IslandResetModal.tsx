@@ -32,7 +32,7 @@ const IslandResetModal = (props: Props) => {
       props.onClose()
     }} size={'lg'}>
       <Modal.Header closeButton>
-        <Modal.Title>Delete Gathered Data</Modal.Title>
+        <Modal.Title>Reset simulation</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {
