@@ -16,7 +16,7 @@ const SearchFilter = (props :SearchFilterProps) => {
     const filterOnText = (pluginRow :PluginRow): boolean => {
       for (const field of props.searchableColumns) {
         const fieldValue = pluginRow[field];
-        if (fieldValue.toLowerCase().includes(query.toLowerCase())) {
+        if (fieldValue?.toLowerCase()?.includes(query?.toLowerCase())) {
           return true;
         }
       }
