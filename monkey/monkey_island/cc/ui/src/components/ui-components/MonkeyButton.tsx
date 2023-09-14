@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import ComponentColor from './base-components/colors';
+import ComponentColor from './base-components/Color';
 import {ThemeProvider} from '@mui/material';
 import MUITheme from '../../styles/MUITheme';
 

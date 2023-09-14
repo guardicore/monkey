@@ -66,7 +66,6 @@ export type PluginsContextType = {
   numberOfPluginsThatRequiresUpdate: number,
   refreshAvailablePlugins: (force :boolean) => Promise<void>,
   refreshInstalledPlugins: () => Promise<void>,
-  refreshNumberOfUpgradablePlugins: () => Promise<void>,
   setInstalledPlugins: (installedPlugins: InstalledPlugin[]) => void,
   setAvailablePlugins: (availablePlugins: AvailablePlugin[]) => void,
   refreshAvailablePluginsFailure: boolean,

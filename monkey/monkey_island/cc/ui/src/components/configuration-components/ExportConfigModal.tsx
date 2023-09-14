@@ -45,6 +45,7 @@ const ConfigExportModal = (props: Props) => {
     let export_json = JSON.stringify(config_export, null, 2);
     let export_blob = new Blob(
       [export_json],
+      // @ts-ignore
       {pluginType: 'text/plain;charset=utf-8'}
     );
     FileSaver.saveAs(export_blob, 'monkey.conf');

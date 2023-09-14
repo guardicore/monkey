@@ -8,7 +8,7 @@
     "esModuleInterop": true
   },
   "include": [
-    "src"
+    "src", "declarations.d.ts"
   ],
   "compileOnSave": false,
   "exclude": [

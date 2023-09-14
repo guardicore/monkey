@@ -103,7 +103,7 @@ module.exports = smp.wrap({
       path.resolve(__dirname, 'src/')
     ],
     fallback: {
-      "fs": false
+      'fs': false
     }
   },
   output: {

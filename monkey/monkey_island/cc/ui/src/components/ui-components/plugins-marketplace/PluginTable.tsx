@@ -151,7 +151,7 @@ export const generatePluginsTableRows = (pluginsList: AgentPlugin[]): PluginRow[
 }
 
 const PluginTable = (props) => {
-  const {rows, columns, loadingMessage = DEFAULT_LOADING_MESSAGE, ...rest} = {...props};
+  const {rows = [], columns = [], loadingMessage = DEFAULT_LOADING_MESSAGE, ...rest} = {...props};
 
   const [isLoadingPlugins] = useState(false);
 
