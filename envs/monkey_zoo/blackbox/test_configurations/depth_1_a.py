@@ -109,7 +109,7 @@ CREDENTIALS = (
     Credentials(identity=None, secret=Password(password="Xk8VDTsC")),
     # Hash for Mimikatz-15
     Credentials(identity=None, secret=NTHash(nt_hash="F7E457346F7743DAECE17258667C936D")),
-    Credentials(identity=Username(username="m0nk3y"), secret=Password(password="P@ssw0rd")),
+    Credentials(identity=Username(username="m0nk3y"), secret=Password(password="P@ssw0rd!")),
     Credentials(identity=Username(username="m0nk3y"), secret=Password(password="password")),
 )
 
