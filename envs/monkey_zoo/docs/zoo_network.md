@@ -35,6 +35,7 @@ This document describes Infection Monkey’s test network.
 [Nr. 3-56 Log4j Logstash](#_Toc536021488)<br>
 [Nr. 3-64 RDP](#_Toc536021489)<br>
 [Nr. 3-65 RDP](#_Toc536021490)<br>
+[Nr. 3-66 Browser Credentials](#_Toc536021492)<br>
 [Nr. 3-67 Browser Credentials](#_Toc536021491)<br>
 [Nr. 250 MonkeyIsland](#_Toc536021492)<br>
 [Nr. 251 MonkeyIsland](#_Toc536021493)<br>
@@ -1131,7 +1132,7 @@ setting:
 <tr class="header">
 <th><p><span id="_Toc536021490" class="anchor"></span>Nr. <strong>3-65 RDP</strong></p>
 <p>(10.2.3.65)</p></th>
-<th>(Vulnerable)</th>
+<th>(Exploitable)</th>
 </tr>
 </thead>
 <tbody>
@@ -1150,6 +1151,63 @@ setting:
 <tr class="even">
 <td>Notes:</td>
 <td>User: m0nk3y, Password: S3Cr3T1#</td>
+</tr>
+</tbody>
+</table>
+
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021492" class="anchor"></span>Nr. <strong>3-66 Browser Credentials</strong></p>
+<p>(10.2.3.66)</p></th>
+<th>(Exploitable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Remote Desktop Protocol</td>
+<td>Google Chrome</td>
+</tr>
+<tr class="odd">
+<td>Default RDP port:</td>
+<td>3389</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>
+
+**RDP user:**
+
+---
+
+Username: m0nk3y, Password: P@ssw0rd!
+
+---
+
+**Stored Chrome credentials**:
+
+----
+
+Website: forBBtests.com
+
+Username: forBBtests
+
+Password: supersecret
+
+----
+
+Website: https://www.w3schools.com/howto/howto_css_login_form.asp
+
+Username: usernameFromForm
+
+Password: passwordFromForm
+</td>
 </tr>
 </tbody>
 </table>
