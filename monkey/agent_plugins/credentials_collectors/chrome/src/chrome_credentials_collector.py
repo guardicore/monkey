@@ -1,5 +1,5 @@
 import time
-from typing import Sequence
+from collections.abc import Collection, Sequence
 
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials
@@ -50,13 +50,13 @@ class ChromeCredentialsCollector:
     def _publish_credentials_stolen_event(
         self,
         timestamp: float,
-        collected_credentials: Sequence[Credentials],
+        collected_credentials: Collection[Credentials],
     ):
         credentials_stolen_event = CredentialsStolenEvent(
             timestamp=timestamp,
             source=self._agent_id,
             tags=CHROME_COLLECTOR_EVENT_TAGS,
-            stolen_credentials=collected_credentials,
+            stolen_credentials=list(collected_credentials),
         )
 
         self._agent_event_publisher.publish(credentials_stolen_event)

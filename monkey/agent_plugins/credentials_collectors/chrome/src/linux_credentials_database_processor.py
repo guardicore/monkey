@@ -10,13 +10,12 @@ from common.types import Event
 from infection_monkey.utils.threading import interruptible_iter
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
+from .database_reader import DatabaseReader
 from .decrypt import decrypt_AES, decrypt_v80
 from .linux_credentials_database_selector import DEFAULT_MASTER_KEY
-from .linux_database_reader import DatabaseReader
 
 logger = logging.getLogger(__name__)
 
-AES_BLOCK_SIZE = 16
 AES_INIT_VECTOR = b" " * 16
 
 
@@ -69,7 +68,7 @@ class LinuxCredentialsDatabaseProcessor:
 
     def _decrypt_password(self, password: bytes) -> str:
         with suppress(UnicodeDecodeError, ValueError):
-            return decrypt_AES(password, self._decryption_key, AES_INIT_VECTOR, AES_BLOCK_SIZE)
+            return decrypt_AES(password, self._decryption_key, AES_INIT_VECTOR)
 
         with suppress(UnicodeDecodeError, ValueError):
             return decrypt_v80(password, self._decryption_key)

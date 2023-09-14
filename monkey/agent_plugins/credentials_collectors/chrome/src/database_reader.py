@@ -40,6 +40,6 @@ def _extract_login_data(database_path: Path) -> Iterator[ExtractedCredentialPair
         for user, password in conn.execute(DB_SQL_STATEMENT):
             yield user, password
     except Exception:
-        logger.exception("Error encounter while connecting to " f"database: {database_path}")
+        logger.exception(f"Encountered an error while connecting to database: {database_path}")
     finally:
         conn.close()
