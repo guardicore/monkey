@@ -129,18 +129,32 @@ def test_username_credential_saved_if_win32crypt_unprotect_data_fails(
     assert expected_credentials == credentials
 
 
-def test_username_credential_saved_if_decrypt_password_v80_returns_None(
+def test_username_credential_saved_if_decrypted_password_is_empty(
     monkeypatch, credentials_database_processor
 ):
-    mocked_AES = MagicMock()
+    mocked_decrypt_v80 = MagicMock(return_value="")
     monkeypatch.setattr(
         "agent_plugins.credentials_collectors.chrome.src."
-        "windows_credentials_database_processor.AES",
-        mocked_AES,
+        "windows_credentials_database_processor.decrypt_v80",
+        mocked_decrypt_v80,
     )
-    mocked_cipher = MagicMock()
-    mocked_cipher.decrypt = lambda _: b"16characterslong"
-    mocked_AES.new = lambda _, __, ___: mocked_cipher
+
+    credentials = credentials_database_processor(Event(), [PROFILE_C])
+    expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity)]
+
+    assert len(credentials) == 1
+    assert expected_credentials == credentials
+
+
+def test_username_credential_saved_if_error_decrypting_password(
+    monkeypatch, credentials_database_processor
+):
+    mocked_decrypt_v80 = MagicMock(side_effect=ValueError)
+    monkeypatch.setattr(
+        "agent_plugins.credentials_collectors.chrome.src."
+        "windows_credentials_database_processor.decrypt_v80",
+        mocked_decrypt_v80,
+    )
 
     credentials = credentials_database_processor(Event(), [PROFILE_C])
     expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity)]

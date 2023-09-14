@@ -3,14 +3,13 @@ from collections.abc import Collection
 from contextlib import suppress
 from typing import Optional
 
-from Cryptodome.Cipher import AES
-
 from common.credentials import Credentials, EmailAddress, Password, Username
 from common.types import Event
 from infection_monkey.utils.threading import interruptible_iter
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .database_reader import DatabaseReader
+from .decrypt import decrypt_v80
 from .windows_decryption import win32crypt_unprotect_data
 
 logger = logging.getLogger(__name__)
@@ -76,12 +75,7 @@ class WindowsCredentialsDatabaseProcessor:
         if not master_key:
             return None
 
-        iv = encrypted_password[3:15]
-        payload = encrypted_password[15:]
-        cipher = AES.new(master_key, AES.MODE_GCM, iv)
-
-        decrypted_password = cipher.decrypt(payload)
-        decrypted_password = decrypted_password[:-16].decode()  # remove suffix bytes
+        decrypted_password = decrypt_v80(encrypted_password, master_key)
 
         if decrypted_password == "":
             return None
