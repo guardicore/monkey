@@ -91,7 +91,7 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
 
 
 def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    ports = [22, 445, 3389]
+    ports = [22, 135, 445, 3389]
     return add_tcp_ports(agent_configuration, ports)
 
 
