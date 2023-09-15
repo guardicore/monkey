@@ -7,7 +7,8 @@ import styles from '../../../styles/components/plugins-marketplace/PluginTable.m
 import {AgentPlugin} from '../../contexts/plugins/PluginsContext';
 import _ from 'lodash';
 import MonkeyTooltip from '../MonkeyTooltip';
-import {ExpandLess, ExpandMore} from '@mui/icons-material';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import MonkeyButton from '../MonkeyButton';
 
 
