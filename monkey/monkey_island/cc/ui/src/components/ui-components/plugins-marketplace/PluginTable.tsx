@@ -107,7 +107,7 @@ const renderDescriptionCell = (params) => {
 
   React.useEffect(() => {
     if (ref.current) {
-      setIsOverflowing(ref.current.scrollWidth > params.api.rootElementRef.current.scrollWidth);
+      setIsOverflowing(ref.current['scrollWidth'] > params.api.rootElementRef.current.scrollWidth);
     }
   }, [ref]);
 
