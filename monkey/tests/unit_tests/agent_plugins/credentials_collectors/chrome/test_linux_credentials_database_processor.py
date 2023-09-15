@@ -5,11 +5,14 @@ import pytest
 from agent_plugins.credentials_collectors.chrome.src.browser_credentials_database_path import (
     BrowserCredentialsDatabasePath,
 )
-from agent_plugins.credentials_collectors.chrome.src.linux_credentials_database_processor import (
-    LinuxCredentialsDatabaseProcessor,
-)
 
 from common.credentials import Credentials, EmailAddress, Password, Username
+
+pwd = pytest.importorskip("pwd")
+# we need to check if `pwd` can be imported before importing `LinuxCredentialsDatabaseProcessor`
+from agent_plugins.credentials_collectors.chrome.src.linux_credentials_database_processor import (  # noqa: E402, E501
+    LinuxCredentialsDatabaseProcessor,
+)
 
 LOGINS_A = [
     ("user1", b"v1037\xbc\xae\x8c\x1e\x19&+\xf0S\x14\x02E\xf2\xcf"),
