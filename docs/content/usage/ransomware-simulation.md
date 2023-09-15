@@ -186,4 +186,4 @@ the victim machine in order to replicate this behavior.
 The README.txt file informs the user that a ransomware simulation has taken
 place and that they should contact their administrator. The contents of the
 file can be found
-[here](https://github.com/guardicore/monkey/blob/develop/monkey/agent_plugins/payloads/ransomware/src/ransomware_readme.txt).
+[here](https://github.com/guardicore/monkey/blob/master/monkey/agent_plugins/payloads/ransomware/src/ransomware_readme.txt).
