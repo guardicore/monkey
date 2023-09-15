@@ -7,7 +7,8 @@ import styles from '../../../styles/components/plugins-marketplace/PluginTable.m
 import {AgentPlugin} from '../../contexts/plugins/PluginsContext';
 import _ from 'lodash';
 import MonkeyTooltip from '../MonkeyTooltip';
-import {ExpandLess, ExpandMore} from '@mui/icons-material';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import MonkeyButton from '../MonkeyButton';
 
 
@@ -107,7 +108,7 @@ const renderDescriptionCell = (params) => {
 
   React.useEffect(() => {
     if (ref.current) {
-      setIsOverflowing(ref.current.scrollWidth > params.api.rootElementRef.current.scrollWidth);
+      setIsOverflowing(ref.current['scrollWidth'] > params.api.rootElementRef.current.scrollWidth);
     }
   }, [ref]);
 
@@ -151,7 +152,7 @@ export const generatePluginsTableRows = (pluginsList: AgentPlugin[]): PluginRow[
 }
 
 const PluginTable = (props) => {
-  const {rows, columns, loadingMessage = DEFAULT_LOADING_MESSAGE, ...rest} = {...props};
+  const {rows = [], columns = [], loadingMessage = DEFAULT_LOADING_MESSAGE, ...rest} = {...props};
 
   const [isLoadingPlugins] = useState(false);
 

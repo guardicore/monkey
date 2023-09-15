@@ -42,10 +42,10 @@ const FETCHING_ERROR_MESSAGE = 'Couldn\'t fetch available plugins, check your in
 
 const AvailablePlugins = (props) => {
   const {
-    successfullyInstalledPluginsIds,
-    setSuccessfullyInstalledPluginsIds,
-    pluginsInInstallationProcess,
-    setPluginsInInstallationProcess
+    successfullyInstalledPluginsIds = [],
+    setSuccessfullyInstalledPluginsIds = {},
+    pluginsInInstallationProcess = [],
+    setPluginsInInstallationProcess = {}
   } = {...props};
   const {availablePlugins, installedPlugins,
     refreshAvailablePlugins, refreshInstalledPlugins, refreshAvailablePluginsFailure} = useContext(PluginsContext);
@@ -77,6 +77,7 @@ const AvailablePlugins = (props) => {
   const filterRows = () => {
     let allRows = availablePluginRows;
     for (const filter of Object.values(filters)) {
+      // @ts-ignore
       allRows = allRows.filter(filter);
     }
     setDisplayedRows(allRows);

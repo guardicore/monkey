@@ -28,11 +28,12 @@ const NO_INSTALLED_PLUGINS_MESSAGE = 'There are no plugins installed';
 const FETCHING_ERROR_MESSAGE = 'An error occurred while retrieving the installed plugins';
 
 const InstalledPlugins = (props) => {
+  // @ts-ignore
   const {
-    successfullyUpdatedPluginsIds, setSuccessfullyUpdatedPluginsIds,
-    pluginsInUpdateProcess, setPluginsInUpdateProcess,
-    successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds,
-    pluginsInUninstallProcess, setPluginsInUninstallProcess
+    successfullyUpdatedPluginsIds = [], setSuccessfullyUpdatedPluginsIds = {},
+    pluginsInUpdateProcess = [], setPluginsInUpdateProcess = {},
+    successfullyUninstalledPluginsIds = [], setSuccessfullyUninstalledPluginsIds = {},
+    pluginsInUninstallProcess = [], setPluginsInUninstallProcess = {}
   } = {...props};
   const {installedPlugins, refreshInstalledPlugins, availablePlugins, refreshInstalledPluginsFailure} = useContext(PluginsContext);
   const [displayedRows, setDisplayedRows] = useState([]);
@@ -45,6 +46,7 @@ const InstalledPlugins = (props) => {
   useEffect(() => {
     let allRows = installedPluginRows;
     for (const filter of Object.values(filters)) {
+      // @ts-ignore
       allRows = allRows.filter(filter);
     }
     setDisplayedRows(allRows);
