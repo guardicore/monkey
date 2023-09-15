@@ -73,15 +73,15 @@ function ScannedServersComponent(props) {
   }, [allNodes, allMachines])
 
   const scannedMachinesCount = props.data.length;
-  const reducerFromScannedServerToServicesAmount = (accumulated, scannedServer) => accumulated + scannedServer['services'].length;
-  const scannedServicesAmount = props.data.reduce(reducerFromScannedServerToServicesAmount, 0);
+  const reducerFromScannedServerToServicesCount = (accumulated, scannedServer) => accumulated + scannedServer.services.props.children.length;
+  const scannedServicesCount = scannedMachines.reduce(reducerFromScannedServerToServicesCount, 0);
 
   return (
     <>
       <p>
         Infection Monkey discovered&nbsp;
-        <span className="badge text-bg-danger">{scannedServicesAmount}</span> open&nbsp;
-        {Pluralize('service', scannedServicesAmount)} on&nbsp;
+        <span className="badge text-bg-danger">{scannedServicesCount}</span> open&nbsp;
+        {Pluralize('service', scannedServicesCount)} on&nbsp;
         <span className="badge text-bg-warning">{scannedMachinesCount}</span>&nbsp;
         {Pluralize('machine', scannedMachinesCount)}:
       </p>
