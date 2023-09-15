@@ -2,11 +2,14 @@ import {AGENT_OTP_ENVIRONMENT_VARIABLE} from './consts';
 
 function getAgentDownloadCommand(ip, otp) {
   return `$execCmd = @"\r\n`
-    + `[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true};\r\n`
-    + `(New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/agent-binaries/windows',`
-    + `"$env:TEMP\\monkey.exe");\r\n`
-    + `$env:${AGENT_OTP_ENVIRONMENT_VARIABLE}='${otp}';\r\n`
-    + `Start-Process -FilePath '$env:TEMP\\monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';\r\n`
+    + `\`$TempDir=[System.IO.Path]::GetTempPath();\r\n`
+    + `read-host "press something"\r\n`
+    + `[Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12;\r\n`
+    + `[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {\`$true};\r\n`
+    + `(New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/agent-binaries/windows',\r\n`
+    + `"\`$TempDir\\monkey.exe");\`$env:${AGENT_OTP_ENVIRONMENT_VARIABLE}='${otp}';\r\n`
+    + `Start-Process -FilePath '\`$TempDir\\monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';\r\n`
+    + `read-host "Press any key exit..."\r\n`
     + `"@; \r\n`
     + `Start-Process -FilePath powershell.exe -ArgumentList $execCmd`;
 }
