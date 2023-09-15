@@ -73,8 +73,8 @@ function ScannedServersComponent(props) {
   }, [allNodes, allMachines])
 
   const scannedMachinesCount = props.data.length;
-  const reducerFromScannedServerToServicesCount = (accumulated, scannedServer) => accumulated + scannedServer['services'].length;
-  const scannedServicesCount = props.data.reduce(reducerFromScannedServerToServicesCount, 0);
+  const reducerFromScannedServerToServicesCount = (accumulated, scannedServer) => accumulated + scannedServer.services.props.children.length;
+  const scannedServicesCount = scannedMachines.reduce(reducerFromScannedServerToServicesCount, 0);
 
   return (
     <>
