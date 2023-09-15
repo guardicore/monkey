@@ -8,7 +8,7 @@ tags: ["contribute"]
 
 ## Deployment scripts
 
-To set up a development environment using scripts, look at the readme under [`/deployment_scripts`](https://github.com/guardicore/monkey/blob/develop/deployment_scripts). If you want to set it up manually or run into problems, keep reading.
+To set up a development environment using scripts, look at the readme under [`/deployment_scripts`](https://github.com/guardicore/monkey/blob/master/deployment_scripts). If you want to set it up manually or run into problems, keep reading.
 
 ## The Infection Monkey Agent
 
