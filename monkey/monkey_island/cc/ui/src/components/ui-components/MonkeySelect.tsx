@@ -21,12 +21,12 @@ type Option = {
   value: string,
 }
 
-type SelectProps = MUISelectProps & {
+type SelectProps = Omit<MUISelectProps, 'variant'> & {
   placeholder: string,
   options: Option[],
   selectedOption: Option,
   onChange: (event: SelectChangeEvent) => void,
-  variant?: string
+  variant: SelectVariant
 }
 
 const MonkeySelectStyled = styled(Input)(({ theme }) => ({
