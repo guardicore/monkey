@@ -32,6 +32,8 @@ GCP_TEST_MACHINE_LIST = {
         "snmp-20",
         "rdp-64",
         "rdp-65",
+        "browser-credentials-66",
+        "browser-credentials-67",
     ],
 }
 
@@ -55,6 +57,8 @@ DEPTH_1_A = {
         "log4j-tomcat-51",
         "log4j-tomcat-52",
         "snmp-20",
+        "browser-credentials-66",
+        "browser-credentials-67",
     ],
 }
 

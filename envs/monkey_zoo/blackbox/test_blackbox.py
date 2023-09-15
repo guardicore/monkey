@@ -17,7 +17,10 @@ from common.types import OTP, SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.stolen_credentials_analyzer import StolenCredentialsAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
-from envs.monkey_zoo.blackbox.expected_credentials import expected_credentials_depth_2_a
+from envs.monkey_zoo.blackbox.expected_credentials import (
+    expected_credentials_depth_1_a,
+    expected_credentials_depth_2_a,
+)
 from envs.monkey_zoo.blackbox.island_client.agent_requests import AgentRequests
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import (
@@ -644,12 +647,15 @@ class TestMonkeyBlackbox:
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
+        stolen_credentials_analyzer = StolenCredentialsAnalyzer(
+            island_client, expected_credentials_depth_1_a
+        )
         exploitation_test = ExploitationTest(
             name=test_name,
             island_client=island_client,
             test_configuration=depth_1_a_test_configuration,
             masque=masque,
-            analyzers=[communication_analyzer],
+            analyzers=[communication_analyzer, stolen_credentials_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         )
