@@ -132,6 +132,7 @@ const XDataGrid = (props) => {
     hideHeaders = false,
     setColWidth = true,
     setFlex = true,
+    sortingOrder = ['asc', 'desc'],
     height,
     maxHeight,
     rowHeight,
@@ -187,6 +188,7 @@ const XDataGrid = (props) => {
         getRowHeight={() => rowHeight || 'auto'}
         density={density}
         slots={slots}
+        sortingOrder={sortingOrder}
         disableRowSelectionOnClick
         disableColumnFilter={disableColumnFilter}
         disableDensitySelector={disableDensitySelector}
