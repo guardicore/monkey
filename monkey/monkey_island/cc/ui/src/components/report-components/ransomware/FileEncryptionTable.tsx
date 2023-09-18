@@ -13,9 +13,9 @@ const customToolbar = () => {
 }
 
 const columns = [
-  {headerName: 'Host', field: 'hostname'},
-  {headerName: 'File Path', field: 'file_path', flex: 0.8},
-  {headerName: 'Encryption Algorithm', field: 'encryption_algorithm'}
+  {headerName: 'Host', field: 'hostname', flex: 0.2},
+  {headerName: 'File Path', field: 'file_path', flex: 1},
+  {headerName: 'Encryption Algorithm', field: 'encryption_algorithm', flex: 0.2, minWidth: 170}
 ];
 
 const FileEncryptionTable = ({tableData}: {tableData: Array<TableRow>}) => {
@@ -30,6 +30,7 @@ const FileEncryptionTable = ({tableData}: {tableData: Array<TableRow>}) => {
         columns={columns}
         rows={[...tableData]}
         maxHeight={'300px'}
+        needCustomWorkaround={false}
       />
     </>
   );
