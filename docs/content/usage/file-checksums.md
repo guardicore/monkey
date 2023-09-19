@@ -30,11 +30,11 @@ $ sha256sum <FILE_NAME>
 
 | Filename                                             | Type              | Version | SHA256                                                             |
 |------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
-| monkey-linux-64                                      | Linux Agent       | 2.3.0   | `ca72ee64ab6f44bbf885a33a4a7b9848a524d7c46407ec71c8ec7b5c88e49eac` |
-| monkey-windows-64.exe                                | Windows Agent     | 2.3.0   | `c189438c9a07d40dac0bd3ed8f5050ce3f05abe47df425a47c1250be9c8b8479` |
-| InfectionMonkey-docker-v2.3.0.tgz                    | Docker            | 2.3.0   | `53d52879d72a4e2e164e68e5c587345182af6d3f997b30585af5ec85f34421e2` |
-| InfectionMonkey-v2.3.0.AppImage                      | Linux Package     | 2.3.0   | `d4a33ed23a710cadc13d0d5b7c53b4b25e4d7ca32e3d9d051e339990b81eb7be` |
-| InfectionMonkey-v2.3.0.exe                           | Windows Installer | 2.3.0   | `8c66d86af64d0f922bc369a1d4f044c9da31f15553711fe53ff889163f996d3c` |
+| monkey-linux-64                                      | Linux Agent       | 2.3.0   | `0a4d11edbd3b96053d84d9e5190f45c75bffd601a97dadfddefe2a8e1c189c37` |
+| monkey-windows-64.exe                                | Windows Agent     | 2.3.0   | `30ccba0b6066c7a6179b6c00f81af1f8171dab34de27b7f08096c2fe016cd72d` |
+| InfectionMonkey-docker-v2.3.0.tgz                    | Docker            | 2.3.0   | `35d92032582ea1a8bee8cfcc5a686389a6c39e8ab883c2ecd7c89548b5523653` |
+| InfectionMonkey-v2.3.0.AppImage                      | Linux Package     | 2.3.0   | `8fc613a02c18c45d136753224b86a24740e18c0e3226786c92b93ca6be7d345d` |
+| InfectionMonkey-v2.3.0.exe                           | Windows Installer | 2.3.0   | `66f5b06f1c85c26393dd990e0539a22833a4455b0eed3a08f43dcafaaa92fa0c` |
 
 
 ## Older checksums
