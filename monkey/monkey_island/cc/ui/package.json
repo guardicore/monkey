@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "2.2.0",
+  "version": "2.3.0",
   "name": "infection-monkey",
   "description": "Infection Monkey C&C UI",
   "scripts": {

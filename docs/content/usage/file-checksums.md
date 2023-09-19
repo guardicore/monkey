@@ -30,17 +30,22 @@ $ sha256sum <FILE_NAME>
 
 | Filename                                             | Type              | Version | SHA256                                                             |
 |------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
-| monkey-linux-64                                      | Linux Agent       | 2.2.1   | `333a9f5c32780aa32e822f95801a13263015afd3fa11d5e5b1c4fb0af30279fc` |
-| monkey-windows-64.exe                                | Windows Agent     | 2.2.1   | `d49b233a31f808af4786b8cedd3772f8b79f28fe726915387542d5c8bed2fafc` |
-| InfectionMonkey-docker-v2.2.1.tgz                    | Docker            | 2.2.1   | `21f84970ef69d21d779c43046a475cd8acefaaf16836f801d5c4c4ca987f86e8` |
-| InfectionMonkey-v2.2.1.AppImage                      | Linux Package     | 2.2.1   | `cc9af5fe29cd978bbecafe454c9d722921870361fd1351c2447681b4cbe1b4a4` |
-| InfectionMonkey-v2.2.1.exe                           | Windows Installer | 2.2.1   | `74cd99dd087334ab7a87aafc5cc21faca48f32baa5bb38b51223434c548776b3` |
+| monkey-linux-64                                      | Linux Agent       | 2.3.0   | `0a4d11edbd3b96053d84d9e5190f45c75bffd601a97dadfddefe2a8e1c189c37` |
+| monkey-windows-64.exe                                | Windows Agent     | 2.3.0   | `30ccba0b6066c7a6179b6c00f81af1f8171dab34de27b7f08096c2fe016cd72d` |
+| InfectionMonkey-docker-v2.3.0.tgz                    | Docker            | 2.3.0   | `35d92032582ea1a8bee8cfcc5a686389a6c39e8ab883c2ecd7c89548b5523653` |
+| InfectionMonkey-v2.3.0.AppImage                      | Linux Package     | 2.3.0   | `8fc613a02c18c45d136753224b86a24740e18c0e3226786c92b93ca6be7d345d` |
+| InfectionMonkey-v2.3.0.exe                           | Windows Installer | 2.3.0   | `66f5b06f1c85c26393dd990e0539a22833a4455b0eed3a08f43dcafaaa92fa0c` |
 
 
 ## Older checksums
 
 | Filename                                             | Type              | Version | SHA256                                                             |
 |------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
+| monkey-linux-64                                      | Linux Agent       | 2.2.1   | `333a9f5c32780aa32e822f95801a13263015afd3fa11d5e5b1c4fb0af30279fc` |
+| monkey-windows-64.exe                                | Windows Agent     | 2.2.1   | `d49b233a31f808af4786b8cedd3772f8b79f28fe726915387542d5c8bed2fafc` |
+| InfectionMonkey-docker-v2.2.1.tgz                    | Docker            | 2.2.1   | `21f84970ef69d21d779c43046a475cd8acefaaf16836f801d5c4c4ca987f86e8` |
+| InfectionMonkey-v2.2.1.AppImage                      | Linux Package     | 2.2.1   | `cc9af5fe29cd978bbecafe454c9d722921870361fd1351c2447681b4cbe1b4a4` |
+| InfectionMonkey-v2.2.1.exe                           | Windows Installer | 2.2.1   | `74cd99dd087334ab7a87aafc5cc21faca48f32baa5bb38b51223434c548776b3` |
 | monkey-windows-64.exe                                | Windows Agent     | 2.1.0   | `883b16c9f8d9a532da6787a1a088bef6fabba782058bcedbd1e02afc613b88c2` |
 | monkey-linux-64                                      | Linux Agent       | 2.1.0   | `d7217665f714fbde6657f3b4ac60182779dfd2668fc9a308a77fc595be711252` |
 | InfectionMonkey-v2.1.0.AppImage                      | Linux Package     | 2.1.0   | `a788e693d4e785e039aad513ebd626be1d265e961a2f44dc06df3c9eae33cd8e` |

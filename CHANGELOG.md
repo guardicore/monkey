@@ -5,15 +5,16 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [2.3.0 - 2023-09-19]
 ### Added
 - Ability to filter Agent events by timestamp. #3397
 - Ability to filter Agent events by tag. #3396
-- Provide a server to the plugins that can be used to serve agent binaries to
-  the exploited machine over HTTP. #3410
+- Provide a common server object to the plugins that can be used to serve agent
+  binaries to the exploited machine over HTTP. #3410
 - CPUConsumptionEvent. #3411
 - RAMConsumptionEvent. #3411
 - HTTPRequestEvent. #3411
+- DefacementEvent. #1247
 - RDP exploiter plugin. #3425
 - A cryptojacker payload to simulate cryptojacker attacks. #3411
 - `PUT /api/install-agent-plugin`. #3417
@@ -21,6 +22,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `GET /api/agent-plugins/available/index`. #3420
 - `POST /api/uninstall-agent-plugin` # 3422
 - Chrome credentials collector plugin. #3426
+- A plugin interface for payloads. #3390
+- The ability to install plugins from an online repository. #3413, #3418, #3616
+- Support for SMBv2+ in SMB exploiter. #3577
+- A UI for uploading agent plugin archives. #3417, #3611
 
 ### Changed
 - Plugin source is now gzipped. #3392
@@ -30,12 +35,16 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Identities and secrets can be associated when configuring credentials in the
   UI. #3393
 - Hard-coded ransomware payload to a plugin. #3391
+- Text on the registration screen to improve clarity. #1984
 
 ### Fixed
 - Agent hanging if plugins do not shut down. #3557
+- WMI exploiter hanging. #3543
+- Discovered network services are displayed in reports. #3000
 
 ### Removed
 - Island mode configuration. #3400
+- Agent plugins from Island packages. #3616
 
 ### Security
 - Fixed a ReDoS issue when validating ransomware file extensions. #3391

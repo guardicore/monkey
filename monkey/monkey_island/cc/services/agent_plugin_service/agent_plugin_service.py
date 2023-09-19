@@ -28,7 +28,7 @@ from .i_agent_plugin_repository import IAgentPluginRepository
 from .plugin_archive_parser import parse_plugin
 
 AGENT_PLUGIN_REPOSITORY_DEVELOP_URL = "https://monkey-plugins-develop.s3.amazonaws.com"
-AGENT_PLUGIN_REPOSITORY_RELEASE_2_3_0_URL = "https://monkey-plugins-release-2.3.0.s3.amazonaws.com"
+AGENT_PLUGIN_REPOSITORY_RELEASE_2_3_0_URL = "https://s3.amazonaws.com/monkey-plugins-release-2.3.0"
 INDEX_FILE_NAME = "index.yml"
 
 PLUGIN_TTL = 60 * 60  # if the index is older then hour we refresh the index
