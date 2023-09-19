@@ -1,0 +1,121 @@
+.x-data-grid {
+  .x-data-grid-title-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .x-data-grid-title {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem;
+      text-decoration: underline;
+      font-weight: bold;
+      color: #141414bd;
+    }
+  }
+
+  .MuiDataGrid-toolbarContainer {
+    .MuiButtonBase-root.MuiButton-root.MuiButton-text {
+      line-height: 1;
+    }
+  }
+
+  .hidden, .toolbar-actions-hidden .x-data-grid-title-wrapper .x-data-grid-title + .x-grid-actions-toolbar-wrapper {
+    display: none !important;
+  }
+
+  .MuiDataGrid-columnHeadersInner {
+    width: 100%;
+
+    div[role=row] {
+      width: 100%;
+
+      .MuiDataGrid-columnHeader {
+        &.max-width-none {
+            max-width: none !important;
+          }
+      }
+    }
+  }
+
+  .MuiDataGrid-virtualScrollerRenderZone {
+    width: 100%;
+
+    div[role=row] {
+      min-width: 100%;
+
+      &.last-empty-cell-hidden {
+        .MuiDataGrid-cell:not([role=cell]) {
+          display: none;
+        }
+      }
+
+      .MuiDataGrid-cell {
+        &.max-width-none {
+            max-width: none !important;
+        }
+
+        &.MuiDataGrid-cell--editing {
+          > div {
+            height: 100%;
+            border: 1px solid #1976d2;
+
+            &.Mui-error {
+              border-color: red;
+            }
+
+            textarea {
+              padding-left: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .x-data-grid-row {
+    &.run-error, &.run-success {
+      color: white;
+    }
+
+    &.run-error {
+      background-color: rgb(255 34 20 / 70%) !important;
+
+      &:hover {
+        background-color: rgb(255 34 20 / 80%) !important;
+      }
+    }
+
+    &.run-success {
+      background-color: rgb(73 175 79 / 70%) !important;
+
+      &:hover {
+        background-color: rgb(73 175 79 / 80%) !important;
+      }
+    }
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+
+  .flex-0 {
+    flex: 0 !important;
+  }
+  .flex-0\.2 {
+    flex: 0.2 !important;
+  }
+  .flex-0\.25 {
+    flex: 0.25 !important;
+  }
+  .flex-0\.5 {
+    flex: 0.5 !important;
+  }
+  .flex-0\.75 {
+    flex: 0.75 !important;
+  }
+  .flex-1 {
+    flex: 1 !important;
+  }
+}

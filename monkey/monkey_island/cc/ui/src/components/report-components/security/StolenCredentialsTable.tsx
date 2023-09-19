@@ -1,22 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import ReactTable from 'react-table'
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import {reformatSecret} from '../credentialParsing';
 import _ from 'lodash';
-import IslandHttpClient, { APIEndpoint } from '../../IslandHttpClient';
+import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
+import XDataGrid, {X_DATA_GRID_CLASSES, XDataGridTitle} from '../../ui-components/XDataGrid';
+import {nanoid} from 'nanoid';
 
+const customToolbar = () => {
+  return <XDataGridTitle title={'Stolen Credentials'} showDataActionsToolbar={false}/>;
+}
 
 const columns = [
-  {
-    Header: 'Stolen Credentials',
-    columns: [
-      {Header: 'Username', accessor: 'username'},
-      {Header: 'Type', accessor: 'title'}
-    ]
-  }
+  {headerName: 'Username', field: 'username', sortable: false},
+  {headerName: 'Type', field: 'title', sortable: false}
 ];
-
-const pageSize = 10;
 
 const StolenCredentialsTable = () => {
 
@@ -24,32 +21,32 @@ const StolenCredentialsTable = () => {
 
   useEffect(() => {
     IslandHttpClient.getJSON(APIEndpoint.stolenCredentials, {}, true).then(
-      res => setCredentialsTableData(getCredentialsTableData(res.body))
-    );
+      res => {
+        setCredentialsTableData(getCredentialsTableData(res.body));
+      });
   }, [])
 
   if (credentialsTableData === null) {
-    return <LoadingIcon />
+    return <LoadingIcon/>
   }
 
-  let defaultPageSize = credentialsTableData.length > pageSize ? pageSize : credentialsTableData.length;
-  let showPagination = credentialsTableData.length > pageSize;
   return (
-    <div className="data-table-container">
-      <ReactTable
-        columns={columns}
-        data={credentialsTableData}
-        showPagination={showPagination}
-        defaultPageSize={defaultPageSize}
-      />
-    </div>
+    <XDataGrid
+      toolbar={customToolbar}
+      showToolbar={true}
+      columns={columns}
+      rows={credentialsTableData}
+      maxHeight={'250px'}
+      columnWidth={{min: 150, max: -1}}
+      getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
+    />
   );
-}
+};
 
 export default StolenCredentialsTable;
 
 
-function getCredentialsTableData(credentials){
+const getCredentialsTableData = (credentials) => {
   let tableData = [];
 
   for (let credential of credentials) {
@@ -62,10 +59,11 @@ function getCredentialsTableData(credentials){
       }
     }
     rowData['title'] = reformatSecret(credential['secret'])['title'];
-    if (! _.find(tableData, rowData)) {
+    rowData['id'] = nanoid();
+    if (!_.find(tableData, rowData)) {
       tableData.push(rowData);
     }
   }
 
   return tableData;
-}
+};

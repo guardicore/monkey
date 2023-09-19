@@ -19,14 +19,12 @@ from .utils import (
 # Tests:
 #     Powershell (10.2.3.45, 10.2.3.46, 10.2.3.47, 10.2.3.48)
 #     Tunneling through grandparent agent (SSH brute force) (10.2.2.9, 10.2.1.10, 10.2.0.11)
-#     WMI pass the hash (10.2.2.15)
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
         "PowerShell": {},
-        "SSHExploiter": {},
-        "WMI": {"agent_binary_upload_timeout": 30},
+        "SSH": {},
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
@@ -40,7 +38,6 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
         "10.2.3.48",
         "10.2.1.10",
         "10.2.0.11",
-        "10.2.2.15",
     ]
     return add_subnets(agent_configuration, subnets)
 
@@ -58,9 +55,8 @@ test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 test_agent_configuration = set_randomize_agent_hash(test_agent_configuration, True)
 
 CREDENTIALS = (
-    Credentials(identity=Username(username="m0nk3y"), secret=None),
+    Credentials(identity=Username(username="m0nk3y"), secret=Password(password="Passw0rd!")),
     Credentials(identity=Username(username="m0nk3y-user"), secret=None),
-    Credentials(identity=None, secret=Password(password="Passw0rd!")),
     Credentials(identity=None, secret=Password(password="3Q=(Ge(+&w]*")),
     Credentials(identity=None, secret=Password(password="`))jU7L(w}")),
     Credentials(identity=None, secret=NTHash(nt_hash="d0f0132b308a0c4e5d1029cc06f48692")),

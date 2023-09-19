@@ -13,6 +13,7 @@ Set-Location $plugin_path
 
 Remove-Item "$workspace\vendor-windows.zip" -Force
 Remove-Item $plugin_path\venv -Recurse -Force
+Remove-Item "$plugin_path\src\vendor-windows" -Recurse -Force
 & python -m venv "$plugin_path\venv"
 & "$plugin_path\venv\Scripts\Activate.ps1"
 
@@ -35,3 +36,4 @@ Compress-Archive -Path "$plugin_path\src\vendor-windows" -Destination "$workspac
 Set-PSDebug -Trace 1
 
 Remove-Item $plugin_path\venv -Recurse -Force
+Remove-Item "$plugin_path\src\vendor-windows" -Recurse -Force

@@ -43,6 +43,9 @@ class PropagationCredentialsRepository(IPropagationCredentialsRepository):
     def get_credentials(self) -> Iterable[Credentials]:
         # TODO: If we can't use a proxy object, consider contributing a multiprocessing-safe
         #       implementation of EggTimer to clean this up.
+        #
+        #       If we can use a proxy object, we should use
+        #       common.decorators.request_cache to decorate this method.
         try:
             with self._lock:
                 now = time.monotonic()

@@ -4,10 +4,9 @@ from typing import Any, Dict, Mapping, Sequence
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
-from common.types import Event, NetworkProtocol, NetworkService, PortStatus
+from common.types import DiscoveredService, Event, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import (
-    DiscoveredService,
-    ExploiterResultData,
+    ExploiterResult,
     FingerprintData,
     IncompatibleTargetOperatingSystemError,
     IPuppet,
@@ -170,7 +169,7 @@ class MockPuppet(IPuppet):
         servers: Sequence[str],
         options: Dict,
         interrupt: Event,
-    ) -> ExploiterResultData:
+    ) -> ExploiterResult:
         logger.debug(f"exploit_hosts({name}, {host.ip}, {options})")
         info_wmi = {
             "display_name": "WMI",
@@ -196,36 +195,34 @@ class MockPuppet(IPuppet):
 
         successful_exploiters = {
             DOT_1: {
-                "ZerologonExploiter": ExploiterResultData(
+                "ZerologonExploiter": ExploiterResult(
                     False, False, OperatingSystem.WINDOWS.value, {}, "Zerologon failed"
                 ),
-                "SSHExploiter": ExploiterResultData(
+                "SSHExploiter": ExploiterResult(
                     False,
                     False,
                     OperatingSystem.LINUX.value,
                     info_ssh,
                     "Failed exploiting",
                 ),
-                "Exploiter1": ExploiterResultData(
-                    True, True, OperatingSystem.WINDOWS.value, info_wmi
-                ),
+                "Exploiter1": ExploiterResult(True, True, OperatingSystem.WINDOWS.value, info_wmi),
             },
             DOT_3: {
-                "PowerShellExploiter": ExploiterResultData(
+                "PowerShellExploiter": ExploiterResult(
                     False,
                     False,
                     OperatingSystem.WINDOWS.value,
                     info_wmi,
                     "PowerShell Exploiter Failed",
                 ),
-                "SSHExploiter": ExploiterResultData(
+                "SSHExploiter": ExploiterResult(
                     False,
                     False,
                     OperatingSystem.LINUX.value,
                     info_ssh,
                     "Failed exploiting",
                 ),
-                "ZerologonExploiter": ExploiterResultData(
+                "ZerologonExploiter": ExploiterResult(
                     True, False, OperatingSystem.WINDOWS.value, {}
                 ),
             },
@@ -244,7 +241,7 @@ class MockPuppet(IPuppet):
                 return successful_exploiters[host.ip][name]
             raise IncompatibleTargetOperatingSystemError
         except KeyError:
-            return ExploiterResultData(
+            return ExploiterResult(
                 False,
                 False,
                 OperatingSystem.LINUX.value,

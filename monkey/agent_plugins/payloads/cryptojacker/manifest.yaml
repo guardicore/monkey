@@ -1,0 +1,19 @@
+name: Cryptojacker
+plugin_type: Payload
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - linux
+  - windows
+title: Cryptojacker
+version: 1.0.0
+description: >-
+  Simulates a cryptojacker running on your network using a set of configurable behaviors.
+
+  To simulate cryptojacking, you'll need to configure a time limit for the simulation,
+  and how much CPU and memory to utilize on each infected machine. You can also instruct
+  the Agent to send a request over the network with data that is commonly identified by
+  security solutions as cryptomining activity.
+safe: false
+link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/cryptojacker

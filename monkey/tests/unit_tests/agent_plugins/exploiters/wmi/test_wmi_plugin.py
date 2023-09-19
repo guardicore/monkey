@@ -10,7 +10,7 @@ from common import OperatingSystem
 from common.types import PortStatus
 from infection_monkey.exploit.tools import BruteForceExploiter
 from infection_monkey.i_puppet import (
-    ExploiterResultData,
+    ExploiterResult,
     PortScanData,
     PortScanDataDict,
     TargetHost,
@@ -27,7 +27,7 @@ OPEN_WMI_PORTS = TargetHostPorts(
 OTHER_PORT = 9999
 EMPTY_TARGET_HOST_PORTS = TargetHostPorts()
 SERVERS = ["10.10.10.10"]
-EXPLOITER_RESULT_DATA = ExploiterResultData(True, False, error_message="Test error")
+EXPLOITER_RESULT = ExploiterResult(True, False, error_message="Test error")
 
 
 @pytest.fixture
@@ -48,14 +48,14 @@ class ErrorRaisingMockWMIExploiter(BruteForceExploiter):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def exploit_host(self, *args, **kwargs) -> ExploiterResultData:
+    def exploit_host(self, *args, **kwargs) -> ExploiterResult:
         raise Exception("Test error")
 
 
 @pytest.fixture
 def mock_wmi_exploiter():
     exploiter = MagicMock(spec=BruteForceExploiter)
-    exploiter.exploit_host.return_value = EXPLOITER_RESULT_DATA
+    exploiter.exploit_host.return_value = EXPLOITER_RESULT
     return exploiter
 
 
@@ -117,7 +117,7 @@ def test_run__attempts_exploit_if_port_status_unknown(
     )
 
     mock_wmi_exploiter.exploit_host.assert_called_once()
-    assert result == EXPLOITER_RESULT_DATA
+    assert result == EXPLOITER_RESULT
 
 
 def test_run__attempts_exploit_if_port_status_open(
@@ -138,7 +138,7 @@ def test_run__attempts_exploit_if_port_status_open(
     )
 
     mock_wmi_exploiter.exploit_host.assert_called_once()
-    assert result == EXPLOITER_RESULT_DATA
+    assert result == EXPLOITER_RESULT
 
 
 def test_run__skips_exploit_if_port_status_closed(
@@ -166,7 +166,7 @@ def test_run__skips_exploit_if_port_status_closed(
     assert result.propagation_success is False
 
 
-def test_run__returns_exploiter_result_data(plugin: Plugin, target_host: TargetHost):
+def test_run__returns_exploiter_result(plugin: Plugin, target_host: TargetHost):
     result = plugin.run(
         host=target_host,
         servers=SERVERS,
@@ -175,7 +175,7 @@ def test_run__returns_exploiter_result_data(plugin: Plugin, target_host: TargetH
         interrupt=Event(),
     )
 
-    assert result == EXPLOITER_RESULT_DATA
+    assert result == EXPLOITER_RESULT
 
 
 def test_run__exploit_host_raises_exception(

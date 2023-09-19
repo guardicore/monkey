@@ -10,14 +10,8 @@ from common.agent_configuration.agent_sub_configurations import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import NetworkProtocol, NetworkService, PortStatus
-from infection_monkey.i_puppet import (
-    DiscoveredService,
-    FingerprintData,
-    PingScanData,
-    PortScanData,
-    TargetHost,
-)
+from common.types import DiscoveredService, NetworkProtocol, NetworkService, PortStatus
+from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData, TargetHost
 from infection_monkey.master import Exploiter, IPScanResults, Propagator
 
 empty_fingerprint_data = FingerprintData(os_type=None, os_version=None, services=[])

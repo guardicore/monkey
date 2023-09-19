@@ -6,12 +6,9 @@ from typing import Any, Callable, Dict, List, Optional, Sequence
 
 from egg_timer import EggTimer
 
-from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet, RejectedRequestError
-from infection_monkey.propagation_credentials_repository import (
-    ILegacyPropagationCredentialsRepository,
-)
+from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
@@ -19,7 +16,7 @@ from . import Exploiter, IPScanner, Propagator
 
 CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC = 5
 CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 5
-SHUTDOWN_TIMEOUT = 5
+SHUTDOWN_TIMEOUT = 60
 NUM_SCAN_THREADS = 16
 NUM_EXPLOIT_THREADS = 6
 
@@ -32,18 +29,17 @@ class AutomatedMaster(IMaster):
         current_depth: Optional[int],
         servers: Sequence[str],
         puppet: IPuppet,
-        control_channel: IControlChannel,
+        island_api_client: IIslandAPIClient,
         local_network_interfaces: List[IPv4Interface],
-        credentials_store: ILegacyPropagationCredentialsRepository,
     ):
         self._current_depth = current_depth
         self._servers = servers
         self._puppet = puppet
-        self._control_channel = control_channel
+        self._island_api_client = island_api_client
 
         ip_scanner = IPScanner(self._puppet, NUM_SCAN_THREADS)
 
-        exploiter = Exploiter(self._puppet, NUM_EXPLOIT_THREADS, credentials_store.get_credentials)
+        exploiter = Exploiter(self._puppet, NUM_EXPLOIT_THREADS)
         self._propagator = Propagator(
             ip_scanner,
             exploiter,
@@ -107,12 +103,12 @@ class AutomatedMaster(IMaster):
 
     def _check_for_stop(self):
         try:
-            stop = self._control_channel.should_agent_stop()
+            stop = self._island_api_client.terminate_signal_is_set()
             if stop:
-                logger.info('Received the "stop" signal from the Island')
+                logger.info("Received the terminate signal from the Island")
                 self._stop.set()
-        except IslandCommunicationError as e:
-            logger.error(f"An error occurred while trying to check for agent stop: {e}")
+        except IslandAPIError as e:
+            logger.error(f"An error occurred while trying to check for the terminate signal: {e}")
             self._stop.set()
 
     def _master_thread_should_run(self):
@@ -120,8 +116,8 @@ class AutomatedMaster(IMaster):
 
     def _run_simulation(self):
         try:
-            config = self._control_channel.get_config()
-        except IslandCommunicationError as e:
+            config = self._island_api_client.get_config()
+        except IslandAPIError as e:
             logger.error(f"An error occurred while fetching configuration: {e}")
             return
 

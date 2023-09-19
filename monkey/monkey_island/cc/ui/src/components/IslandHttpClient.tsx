@@ -17,14 +17,32 @@ export enum APIEndpoint {
   machines = '/api/machines',
   nodes = '/api/nodes',
   agentEvents = '/api/agent-events',
-  mode = '/api/island/mode',
   monkey_exploitation = '/api/exploitations/monkey',
   stolenCredentials = '/api/propagation-credentials/stolen-credentials',
   linuxMasque = '/api/agent-binaries/linux/masque',
-  windowsMasque = '/api/agent-binaries/windows/masque'
+  windowsMasque = '/api/agent-binaries/windows/masque',
+  installAgentPlugin = '/api/install-agent-plugin',
+  uninstallAgentPlugin = '/api/uninstall-agent-plugin',
+  agentPluginIndex = '/api/agent-plugins/available/index',
+  agentPluginIndexForceRefresh = `${APIEndpoint.agentPluginIndex}?force_refresh=true`,
+  agentPluginManifests = '/api/agent-plugins/installed/manifests'
 }
 
 class IslandHttpClient extends AuthComponent {
+  post(endpoint: string, contents: any, refreshToken: boolean = false): Promise<Response> {
+    const headers = {'Content-Type': 'application/octet-stream'};
+    return this._post(endpoint, contents, headers, refreshToken);
+  }
+
+  postJSON(endpoint: string, contents: any, refreshToken: boolean = false): Promise<Response> {
+    const headers = {'Content-Type': 'application/json'};
+    return this._post(endpoint, JSON.stringify(contents), headers, refreshToken);
+  }
+
+  _post(endpoint: string, contents: any, headers: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
+    return this._makeRequest('POST', endpoint, contents, headers, refreshToken)
+  }
+
   put(endpoint: string, contents: any, refreshToken: boolean = false): Promise<Response> {
     const headers = {'Content-Type': 'application/octet-stream'};
     return this._put(endpoint, contents, headers, refreshToken);
@@ -35,11 +53,15 @@ class IslandHttpClient extends AuthComponent {
     return this._put(endpoint, JSON.stringify(contents), headers, refreshToken);
   }
 
-  _put(endpoint: string, contents: any, headers: Record<string, any>, refreshToken: boolean = false): Promise<Response> {
+  _put(endpoint: string, contents: any, headers: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
+    return this._makeRequest('PUT', endpoint, contents, headers, refreshToken)
+  }
+
+  _makeRequest(method: string, endpoint: string, contents: any, headers: Record<string, any>={}, refreshToken: boolean = false): Promise<Response> {
     let status = null;
     return this.authFetch(endpoint,
       {
-        method: 'PUT',
+        method: method,
         headers: headers,
         body: contents
       },

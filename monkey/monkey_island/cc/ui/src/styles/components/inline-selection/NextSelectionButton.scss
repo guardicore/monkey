@@ -2,12 +2,31 @@
   width: 100%;
   text-align: left;
   margin-bottom: 20px;
-  padding-right: 40px;
-}
+  padding-right: 20px;
 
-.inline-selection-component .selection-button svg,
-.inline-selection-component .selection-button h1 {
-  display: inline-block;
+  .selection-button-content-wrapper {
+    display: flex;
+    justify-content: space-between;
+
+    .selection-button-details-wrapper {
+      display: flex;
+      flex-direction: column;
+
+      .selection-button-title, .selection-button-description {
+        display: flex;
+      }
+
+      .selection-button-title {
+        align-items: center;
+        gap: 0.5rem;
+      }
+    }
+
+    .selection-button-side-icon {
+      display: flex;
+      align-items: center;
+    }
+  }
 }
 
 .inline-selection-component .selection-button h1 {
@@ -20,15 +39,6 @@
   font-size: 0.8em;
 }
 
-.inline-selection-component .selection-button svg {
-  margin-bottom: 1px;
-  margin-right: 7px;
-}
-
 .inline-selection-component .selection-button .angle-right {
-  display: inline-block;
-  position: absolute;
-  right: 23px;
-  top: 22%;
   font-size: 1.7em;
 }

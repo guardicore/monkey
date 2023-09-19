@@ -51,6 +51,14 @@ data "google_compute_image" "snmp-20" {
   name    = "snmp-20"
   project = local.monkeyzoo_project
 }
+data "google_compute_image" "rdp-64" {
+  name    = "rdp-64"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "rdp-65" {
+  name    = "rdp-65"
+  project = local.monkeyzoo_project
+}
 data "google_compute_image" "powershell-3-48" {
   name    = "powershell-3-48"
   project = local.monkeyzoo_project
@@ -105,6 +113,14 @@ data "google_compute_image" "log4j-logstash-55" {
 }
 data "google_compute_image" "log4j-logstash-56" {
   name    = "log4j-logstash-56"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "browser-credentials-66" {
+  name    = "browser-credentials-66"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "browser-credentials-67" {
+  name    = "browser-credentials-67"
   project = local.monkeyzoo_project
 }
 data "google_compute_image" "zerologon-25" {

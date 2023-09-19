@@ -46,55 +46,33 @@ class ScanEventHandler:
             event, CommunicationType.SCANNED
         )
 
+    def _update_target_machine_os(self, machine: Machine, event: PingScanEvent):
+        if event.os is not None and machine.operating_system is None:
+            machine.operating_system = event.os
+            self._machine_repository.upsert_machine(machine)
+
     def handle_tcp_scan_event(self, event: TCPScanEvent):
         num_open_ports = len(self._get_open_ports(event))
 
         if num_open_ports <= 0:
             return
 
-        tcp_connections = self._get_tcp_connections_from_event(event)
-        network_services = self._get_network_services_from_event(event)
-
-        self._upsert_from_tcp_scan_event(event, tcp_connections, network_services)
+        self._upsert_from_tcp_scan_event(event)
 
     @staticmethod
     def _get_open_ports(event: TCPScanEvent) -> List[NetworkPort]:
         return [port for port, status in event.ports.items() if status == PortStatus.OPEN]
 
-    def _update_target_machine_os(self, machine: Machine, event: PingScanEvent):
-        if event.os is not None and machine.operating_system is None:
-            machine.operating_system = event.os
-            self._machine_repository.upsert_machine(machine)
-
-    @classmethod
-    def _get_tcp_connections_from_event(cls, event: TCPScanEvent) -> Sequence[SocketAddress]:
-        tcp_connections = set()
-        open_ports = cls._get_open_ports(event)
-        for open_port in open_ports:
-            socket_address = SocketAddress(ip=event.target, port=open_port)
-            tcp_connections.add(socket_address)
-
-        return tuple(tcp_connections)
-
-    @classmethod
-    def _get_network_services_from_event(cls, event: TCPScanEvent) -> NetworkServices:
-        return {
-            SocketAddress(ip=event.target, port=port): NetworkService.UNKNOWN
-            for port in cls._get_open_ports(event)
-        }
-
-    def _upsert_from_tcp_scan_event(
-        self,
-        event: TCPScanEvent,
-        tcp_connections: Sequence[SocketAddress],
-        network_services: NetworkServices,
-    ):
+    def _upsert_from_tcp_scan_event(self, event: TCPScanEvent):
         source_machine_id = self._network_model_update_facade.get_machine_id_from_agent_id(
             event.source
         )
         target_machine = self._network_model_update_facade.get_or_create_target_machine(
             event.target
         )
+
+        tcp_connections = self._get_tcp_connections_from_event(event)
+        network_services = self._get_new_network_services_from_event(event, target_machine)
 
         self._node_repository.upsert_communication(
             source_machine_id, target_machine.id, CommunicationType.SCANNED
@@ -105,3 +83,28 @@ class ScanEventHandler:
         )
 
         self._machine_repository.upsert_network_services(target_machine.id, network_services)
+
+    @classmethod
+    def _get_tcp_connections_from_event(cls, event: TCPScanEvent) -> Sequence[SocketAddress]:
+        unique_connections = {
+            SocketAddress(ip=event.target, port=port) for port in cls._get_open_ports(event)
+        }
+        return tuple(unique_connections)
+
+    @classmethod
+    def _get_new_network_services_from_event(
+        cls, event: TCPScanEvent, target_machine: Machine
+    ) -> NetworkServices:
+        new_services: NetworkServices = {}
+
+        for port in cls._get_open_ports(event):
+            socket_address = SocketAddress(ip=event.target, port=port)
+            if socket_address in target_machine.network_services:
+                # The TCPScanEvent contains no information about services, so this method always
+                # uses NetworkService.Unknown. If a service has already been discovered for this
+                # socket address, then it should not be overwritten.
+                continue
+
+            new_services[socket_address] = NetworkService.UNKNOWN
+
+        return new_services

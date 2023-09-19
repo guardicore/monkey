@@ -8,6 +8,12 @@ import {Alert, Button} from 'react-bootstrap';
 import LoadingIcon from '../../../ui-components/LoadingIcon';
 
 
+const addInstancesIds = (AWSInstances) => {
+  return AWSInstances.map(instance => {
+    return Object.assign({...instance}, {id: `row-${instance['instance_id']}`});
+  })
+}
+
 function AWSRunButton(props) {
 
   const authComponent = new AuthComponent({});
@@ -38,7 +44,7 @@ function AWSRunButton(props) {
           } else {
             // No error! Finish loading and display machines for user
             setIsOnAWS(true);
-            setAWSInstances(res['instances']);
+            setAWSInstances(addInstancesIds(res['instances']));
           }
         }
       });
@@ -74,6 +80,7 @@ function AWSRunButton(props) {
   } else if (isOnAWS) {
     displayed = getAWSButton();
   }
+
   return displayed;
 }
 

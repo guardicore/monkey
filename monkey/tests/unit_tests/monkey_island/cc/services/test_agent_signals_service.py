@@ -5,7 +5,7 @@ from uuid import UUID
 import pytest
 
 from common.types import AgentID
-from monkey_island.cc.models import Agent, IslandMode, Simulation, TerminateAllAgents
+from monkey_island.cc.models import Agent, Simulation, TerminateAllAgents
 from monkey_island.cc.repositories import (
     IAgentRepository,
     ISimulationRepository,
@@ -180,12 +180,12 @@ def test_on_terminate_agents_signal__updates_timestamp(
 
     terminate_all_agents = TerminateAllAgents(timestamp=timestamp)
     mock_simulation_repository.get_simulation = MagicMock(
-        return_value=Simulation(mode=IslandMode.RANSOMWARE, terminate_signal_time=50)
+        return_value=Simulation(terminate_signal_time=50)
     )
 
     agent_signals_service.on_terminate_agents_signal(terminate_all_agents)
 
-    expected_value = Simulation(mode=IslandMode.RANSOMWARE, terminate_signal_time=timestamp)
+    expected_value = Simulation(terminate_signal_time=timestamp)
     mock_simulation_repository.save_simulation.assert_called_once_with(expected_value)
 
 

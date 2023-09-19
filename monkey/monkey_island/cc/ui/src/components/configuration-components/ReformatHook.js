@@ -1,7 +1,13 @@
-import CREDENTIALS, {defaultCredentials} from '../../services/configuration/propagation/credentials';
+import CREDENTIALS from '../../services/configuration/propagation/credentials';
 import {MASQUERADE} from '../../services/configuration/masquerade';
-import {IdentityType, PlaintextType, SecretType} from '../utils/CredentialTitle.tsx';
+import {
+  IdentityType,
+  SECRET_TYPES
+} from '../utils/CredentialTitle.tsx';
 import _ from 'lodash';
+import {CREDENTIALS_ROW_KEYS, isAllValuesInRowAreEmpty} from '../ui-components/credential-pairs/credentialPairsHelper';
+import {nanoid} from 'nanoid';
+import {reverseObject} from '../../utils/objectUtils';
 
 export function reformatConfig(config, reverse = false) {
   let formattedConfig = _.cloneDeep(config);
@@ -45,95 +51,98 @@ export function reformatSchema(schema) {
   return schema;
 }
 
-export function formatCredentialsForForm(credentials) {
-  let formattedCredentials = _.cloneDeep(defaultCredentials);
+export function formatCredentialsForForm(credentialsData = []) {
+  const rows = [];
+  const REVERSED_SECRET_TYPES = reverseObject(SECRET_TYPES)
 
-  for (let i = 0; i < credentials.length; i++) {
+  for (const item of credentialsData) {
+    const { identity, secret } = item;
+    const identityKey = identity?.[IdentityType.Username] || identity?.[IdentityType.EmailAddress];
+    let existingRows = rows.filter(row => row.identity === identityKey);
 
-    let identity = credentials[i]['identity'];
-    if (identity !== null) {
-      if (Object.prototype.hasOwnProperty.call(identity, IdentityType.Username)) {
-        formattedCredentials['exploit_user_list'].push(identity[IdentityType.Username])
+    let canMutateExistingRow = false;
+
+    for (const existingRow of existingRows) {
+      let canMutate = true;
+
+      if(!secret) break;
+      for (const [key, value] of Object.entries(secret)) {
+        const secretKey = REVERSED_SECRET_TYPES[key];
+
+        if (secretKey && !existingRow[secretKey] && value) {
+          existingRow[secretKey] = value;
+        } else if (existingRow[secretKey] !== value) {
+          canMutate = false;
+          break;
+        }
       }
-      if (Object.prototype.hasOwnProperty.call(identity, IdentityType.EmailAddress)) {
-        formattedCredentials['exploit_email_list'].push(identity[IdentityType.EmailAddress])
+
+      if (canMutate) {
+        canMutateExistingRow = true;
+        break;
       }
     }
 
-    let secret = credentials[i]['secret'];
-    if (secret !== null) {
-      if (Object.prototype.hasOwnProperty.call(secret, SecretType.Password)) {
-        formattedCredentials['exploit_password_list'].push(secret[SecretType.Password])
-      }
-      if (Object.prototype.hasOwnProperty.call(secret, SecretType.NTHash)) {
-        formattedCredentials['exploit_ntlm_hash_list'].push(secret[SecretType.NTHash])
-      }
-      if (Object.prototype.hasOwnProperty.call(secret, SecretType.LMHash)) {
-        formattedCredentials['exploit_lm_hash_list'].push(secret[SecretType.LMHash])
-      }
-      if (Object.prototype.hasOwnProperty.call(secret, SecretType.PrivateKey)) {
-        let keypair = {
-          'private_key': secret[SecretType.PrivateKey]
-        }
-        if(secret[PlaintextType.PublicKey] !== null){
-          keypair['public_key'] = secret[PlaintextType.PublicKey];
-        }
-        formattedCredentials['exploit_ssh_keys'].push(keypair)
-      }
+    if (!canMutateExistingRow) {
+      const newRow = {
+        id: nanoid(),
+        identity: identityKey,
+        password: secret?.password || '',
+        lm: secret?.lm_hash || '',
+        ntlm: secret?.nt_hash || '',
+        ssh_public_key: secret?.public_key || '',
+        ssh_private_key: secret?.private_key || '',
+        isNew: false
+      };
+      rows.push(newRow);
     }
   }
 
-  formattedCredentials['exploit_user_list'] = [...new Set(formattedCredentials['exploit_user_list'])];
-  formattedCredentials['exploit_email_list'] = [...new Set(formattedCredentials['exploit_email_list'])];
-  formattedCredentials['exploit_password_list'] = [...new Set(formattedCredentials['exploit_password_list'])];
-  formattedCredentials['exploit_ntlm_hash_list'] = [...new Set(formattedCredentials['exploit_ntlm_hash_list'])];
-  formattedCredentials['exploit_lm_hash_list'] = [...new Set(formattedCredentials['exploit_lm_hash_list'])];
-
-  return formattedCredentials;
+  return rows;
 }
 
-export function formatCredentialsForIsland(credentials) {
+export function formatCredentialsForIsland(credentialsData) {
   let formattedCredentials = [];
+  let identitiesWithEmptySecret = [];
 
-  formattedCredentials.push(...getFormattedIdentities(credentials['exploit_user_list'], IdentityType.Username))
-  formattedCredentials.push(...getFormattedIdentities(credentials['exploit_email_list'], IdentityType.EmailAddress))
+  credentialsData.forEach(row => {
+    let keysToIgnore = ['identity', 'ssh_private_key', 'ssh_public_key'];
+    const identityValue = row?.identity || null;
+    const identityType = identityValue ? (isEmail(row.identity) ? IdentityType.EmailAddress : IdentityType.Username) : null;
+    const identityObj = identityType ? {[identityType]: identityValue} : null;
+    const secretValue = {
+      [SECRET_TYPES.ssh_private_key]: row?.ssh_private_key || null,
+      [SECRET_TYPES.ssh_public_key]: row?.ssh_public_key || null
+    };
 
-  formattedCredentials.push(...getFormattedSecrets(credentials['exploit_password_list'], SecretType.Password))
-  formattedCredentials.push(...getFormattedSecrets(credentials['exploit_ntlm_hash_list'], SecretType.NTHash))
-  formattedCredentials.push(...getFormattedSecrets(credentials['exploit_lm_hash_list'], SecretType.LMHash))
-
-  let ssh_keys = credentials['exploit_ssh_keys'];
-  for (let i = 0; i < ssh_keys.length; i++) {
-    formattedCredentials.push({
-      'identity': null,
-      'secret': {
-        'private_key': ssh_keys[i]['private_key'],
-        'public_key': ssh_keys[i]['public_key']
+    if(identityObj && !identitiesWithEmptySecret.includes(identityValue) && isAllValuesInRowAreEmpty(row, ['identity'])) {
+      formattedCredentials.push(getCredentialPair(identityObj, null));
+      identitiesWithEmptySecret.push(identityValue);
+    } else {
+      if (secretValue[SECRET_TYPES.ssh_private_key] || secretValue[SECRET_TYPES.ssh_public_key]) {
+        formattedCredentials.push(getCredentialPair(identityObj, secretValue));
       }
-    })
-  }
+
+      CREDENTIALS_ROW_KEYS.filter(key => !keysToIgnore.includes(key)).forEach(key => {
+        const currentSecretObj = row[key] ? {[SECRET_TYPES[key]]: row[key]} : null;
+        if (currentSecretObj) {
+          formattedCredentials.push(getCredentialPair(identityObj, currentSecretObj));
+        }
+      });
+    }
+  });
 
   return formattedCredentials;
 }
 
-function getFormattedIdentities(credentials, keyOfIdentity) {
-  let formattedCredentials = [];
-  for (let i = 0; i < credentials.length; i++) {
-    formattedCredentials.push({
-      'identity': {[keyOfIdentity]: credentials[i]},
-      'secret': null
-    })
+const getCredentialPair = (identity, secret) => {
+  return {
+    'identity': identity,
+    'secret': secret
   }
-  return formattedCredentials;
 }
 
-function getFormattedSecrets(credentials, keyOfSecret) {
-  let formattedCredentials = [];
-  for (let i = 0; i < credentials.length; i++) {
-    formattedCredentials.push({
-      'identity': null,
-      'secret': {[keyOfSecret]: credentials[i]}
-    })
-  }
-  return formattedCredentials;
+function isEmail(str) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(str);
 }

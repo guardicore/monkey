@@ -28,6 +28,8 @@ you can browse to the Infection Monkey running on your fresh deployment at:
 
 `https://{public-ip-address}:5000`
 
+Once you have access to the Monkey Island server, check out the [getting started page]({{< ref "/usage/getting-started" >}}).
+
 ## Upgrading
 
 Currently, there's no "upgrade-in-place" option when a new version is released.

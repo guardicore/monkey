@@ -3,6 +3,7 @@ from pathlib import PurePath
 from typing import Collection, Set
 
 from common import OperatingSystem
+from common.agent_events import AgentEventTag
 from common.credentials import Credentials
 
 
@@ -34,7 +35,7 @@ class IRemoteAccessClient(ABC):
     """An interface for clients that execute remote commands"""
 
     @abstractmethod
-    def login(self, credentials: Credentials, tags: Set[str]):
+    def login(self, credentials: Credentials, tags: Set[AgentEventTag]):
         """
         Establish an authenticated session with the remote host
 
@@ -57,7 +58,7 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def copy_file(self, file: bytes, dest: PurePath, tags: Set[str]):
+    def copy_file(self, file: bytes, dest: PurePath, tags: Set[AgentEventTag]):
         """
         Copy a file to the remote host
 
@@ -80,7 +81,7 @@ class IRemoteAccessClient(ABC):
         pass
 
     @abstractmethod
-    def execute_agent(self, agent_binary_path: PurePath, tags: Set[str]):
+    def execute_agent(self, agent_binary_path: PurePath, tags: Set[AgentEventTag]):
         """
         Execute the agent on the remote host in a detached process
 

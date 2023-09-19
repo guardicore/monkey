@@ -54,3 +54,6 @@ class BaseIslandAPIClient(IIslandAPIClient):
 
     def send_log(self, log_contents: str):
         return
+
+    def terminate_signal_is_set(self) -> bool:
+        return True

@@ -69,7 +69,7 @@ cd /src/monkey/infection_monkey &&
 "
 
 build_commands="
-pipenv sync &&
+SKIP_CYTHON=1 PIP_NO_BINARY=pydantic pipenv sync &&
 pipenv run bash build_linux.sh &&
 echo 'Copying agent binary to \"${DIST_DIR}\"' &&
 cp dist/monkey-linux-64 /dist

@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict, Mapping, Optional
+from typing import Dict, Optional
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
@@ -19,13 +19,10 @@ class PluginCompatibilityVerifier:
         self,
         island_api_client: IIslandAPIClient,
         operating_system: OperatingSystem,
-        exploiter_plugin_manifests: Mapping[str, AgentPluginManifest],
     ):
         self._island_api_client = island_api_client
         self._operating_system = operating_system
-        self._plugin_manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {
-            AgentPluginType.EXPLOITER: dict(exploiter_plugin_manifests),
-        }
+        self._plugin_manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
         self._cache_lock = threading.Lock()
 
     def verify_local_operating_system_compatibility(

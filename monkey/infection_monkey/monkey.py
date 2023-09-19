@@ -17,7 +17,7 @@ from pubsub.core import Publisher
 from serpentarium import PluginLoader, PluginThreadName
 from serpentarium.logging import configure_child_process_logger
 
-from common import HARD_CODED_EXPLOITER_MANIFESTS, OperatingSystem
+from common import OperatingSystem
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
@@ -47,22 +47,25 @@ from infection_monkey.agent_event_handlers import (
 )
 from infection_monkey.exploit import (
     CachingAgentBinaryRepository,
-    ExploiterWrapper,
     IAgentBinaryRepository,
     IslandAPIAgentOTPProvider,
     PolymorphicAgentBinaryRepositoryDecorator,
 )
-from infection_monkey.exploit.log4shell import Log4ShellExploiter
-from infection_monkey.exploit.sshexec import SSHExploiter
+from infection_monkey.exploit.http_agent_binary_request_handler import ThreadingHTTPHandlerFactory
+from infection_monkey.exploit.http_agent_binary_server import HTTPAgentBinaryServer
+from infection_monkey.exploit.http_agent_binary_server_factory import HTTPAgentBinaryServerFactory
+from infection_monkey.exploit.http_agent_binary_server_registrar import (
+    HTTPAgentBinaryServerRegistrar,
+)
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import (
     HTTPIslandAPIClientFactory,
     IIslandAPIClient,
     IslandAPIAuthenticationError,
+    IslandAPIError,
 )
 from infection_monkey.master import AutomatedMaster
-from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.relay import TCPRelay
@@ -76,16 +79,13 @@ from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprint
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
 from infection_monkey.network_scanning.smb_fingerprinter import SMBFingerprinter
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
-from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.plugin.credentials_collector_plugin_factory import (
     CredentialsCollectorPluginFactory,
 )
 from infection_monkey.plugin.exploiter_plugin_factory import ExploiterPluginFactory
 from infection_monkey.plugin.multiprocessing_plugin_wrapper import MultiprocessingPluginWrapper
-from infection_monkey.propagation_credentials_repository import (
-    AggregatingPropagationCredentialsRepository,
-    PropagationCredentialsRepository,
-)
+from infection_monkey.plugin.payload_plugin_factory import PayloadPluginFactory
+from infection_monkey.propagation_credentials_repository import PropagationCredentialsRepository
 from infection_monkey.puppet import (
     PluginCompatibilityVerifier,
     PluginRegistry,
@@ -142,8 +142,11 @@ class InfectionMonkey:
         SyncManager.register(
             "HTTPIslandAPIClient", http_island_api_client_factory.create_island_api_client
         )
+        SyncManager.register(
+            "HTTPAgentBinaryServerFactory", HTTPAgentBinaryServerFactory, exposed=("__call__",)
+        )
+        SyncManager.register("TCPPortSelector", TCPPortSelector)
         self._manager = context.Manager()
-
         self._plugin_dir = (
             Path(gettempdir())
             / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
@@ -153,10 +156,6 @@ class InfectionMonkey:
 
         self._operating_system = get_os()
 
-        self._control_channel = ControlChannel(str(self._island_address), self._island_api_client)
-        self._legacy_propagation_credentials_repository = (
-            AggregatingPropagationCredentialsRepository(self._control_channel)
-        )
         self._propagation_credentials_repository = PropagationCredentialsRepository(
             self._island_api_client, self._manager
         )
@@ -167,7 +166,7 @@ class InfectionMonkey:
         self._current_depth = self._opts.depth
         self._master: Optional[IMaster] = None
         self._relay: Optional[TCPRelay] = None
-        self._tcp_port_selector = TCPPortSelector(context, self._manager)
+        self._tcp_port_selector = self._manager.TCPPortSelector()  # type: ignore[attr-defined]
 
     def _calculate_agent_sha256_hash(self) -> str:
         sha256 = "0" * 64
@@ -284,8 +283,7 @@ class InfectionMonkey:
 
         # This check must be done after the agent event forwarder is started, otherwise the agent
         # will be unable to send a shutdown event to the Island.
-        should_stop = self._control_channel.should_agent_stop()
-        if should_stop:
+        if self._island_api_client.terminate_signal_is_set():
             logger.info("The Monkey Island has instructed this agent to stop")
             return
 
@@ -334,7 +332,7 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        config = self._control_channel.get_config()
+        config = self._island_api_client.get_config()
 
         relay_port = self._tcp_port_selector.get_free_tcp_port()
         if relay_port is None:
@@ -378,9 +376,8 @@ class InfectionMonkey:
             self._current_depth,
             servers,
             puppet,
-            self._control_channel,
+            self._island_api_client,
             local_network_interfaces,
-            self._legacy_propagation_credentials_repository,
         )
 
     def _build_server_list(self, relay_port: Optional[NetworkPort]) -> Sequence[str]:
@@ -412,18 +409,28 @@ class InfectionMonkey:
             reset_modules_cache=False,
             main_thread_name=PluginThreadName.CALLING_THREAD,
         )
+
+        http_agent_binary_server = self._build_http_agent_binary_server(agent_binary_repository)
+        http_agent_binary_server_registrar = HTTPAgentBinaryServerRegistrar(
+            http_agent_binary_server
+        )
+
         plugin_factories = {
             AgentPluginType.CREDENTIALS_COLLECTOR: CredentialsCollectorPluginFactory(
                 self._agent_id, self._agent_event_publisher, create_plugin
             ),
             AgentPluginType.EXPLOITER: ExploiterPluginFactory(
                 self._agent_id,
+                http_agent_binary_server_registrar,
                 agent_binary_repository,
                 self._agent_event_publisher,
                 self._propagation_credentials_repository,
                 self._tcp_port_selector,
                 otp_provider,
                 create_plugin,
+            ),
+            AgentPluginType.PAYLOAD: PayloadPluginFactory(
+                self._agent_id, self._agent_event_publisher, self._island_address, create_plugin
             ),
         }
         plugin_registry = PluginRegistry(
@@ -435,38 +442,30 @@ class InfectionMonkey:
         plugin_compatibility_verifier = PluginCompatibilityVerifier(
             self._island_api_client,
             self._operating_system,
-            HARD_CODED_EXPLOITER_MANIFESTS,
         )
         puppet = Puppet(
             self._agent_event_queue, plugin_registry, plugin_compatibility_verifier, self._agent_id
         )
 
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "http", HTTPFingerprinter())
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "mssql", MSSQLFingerprinter())
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "smb", SMBFingerprinter())
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "ssh", SSHFingerprinter())
-
-        exploit_wrapper = ExploiterWrapper(
-            self._agent_id,
-            self._agent_event_queue,
-            agent_binary_repository,
-            self._tcp_port_selector,
-            otp_provider,
-        )
-
         puppet.load_plugin(
-            AgentPluginType.EXPLOITER,
-            "Log4ShellExploiter",
-            exploit_wrapper.wrap(Log4ShellExploiter),
+            AgentPluginType.FINGERPRINTER,
+            "http",
+            HTTPFingerprinter(self._agent_id, self._agent_event_publisher),
         )
         puppet.load_plugin(
-            AgentPluginType.EXPLOITER, "SSHExploiter", exploit_wrapper.wrap(SSHExploiter)
+            AgentPluginType.FINGERPRINTER,
+            "mssql",
+            MSSQLFingerprinter(self._agent_id, self._agent_event_publisher),
         )
-
         puppet.load_plugin(
-            AgentPluginType.PAYLOAD,
-            "ransomware",
-            RansomwarePayload(self._agent_event_queue, self._agent_id),
+            AgentPluginType.FINGERPRINTER,
+            "smb",
+            SMBFingerprinter(self._agent_id, self._agent_event_publisher),
+        )
+        puppet.load_plugin(
+            AgentPluginType.FINGERPRINTER,
+            "ssh",
+            SSHFingerprinter(self._agent_id, self._agent_event_publisher),
         )
 
         return puppet
@@ -485,12 +484,21 @@ class InfectionMonkey:
 
         return agent_binary_repository
 
+    def _build_http_agent_binary_server(
+        self, agent_binary_repository: IAgentBinaryRepository
+    ) -> HTTPAgentBinaryServer:
+        server_factory = self._manager.HTTPAgentBinaryServerFactory(  # type: ignore[attr-defined]
+            self._tcp_port_selector,
+            agent_binary_repository,
+            ThreadingHTTPHandlerFactory,
+        )
+        return server_factory()
+
     def _subscribe_events(self):
         self._agent_event_queue.subscribe_type(
             CredentialsStolenEvent,
             add_stolen_credentials_to_propagation_credentials_repository(
                 self._propagation_credentials_repository,
-                self._legacy_propagation_credentials_repository,
             ),
         )
 
@@ -544,14 +552,20 @@ class InfectionMonkey:
         logger.info("Agent is shutting down")
 
     def _stop_relay(self):
-        if self._relay and self._relay.is_alive():
-            self._relay.stop()
+        if not self._relay or not self._relay.is_alive():
+            return
 
-            while self._relay.is_alive() and not self._control_channel.should_agent_stop():
+        self._relay.stop()
+
+        try:
+            while self._relay.is_alive() and not self._island_api_client.terminate_signal_is_set():
                 self._relay.join(timeout=5)
 
-            if self._control_channel.should_agent_stop():
+            if self._island_api_client.terminate_signal_is_set():
                 self._relay.join(timeout=60)
+        except IslandAPIError as err:
+            logger.warning(f"Error communicating with the Island: {err}")
+            self._relay.join(timeout=60)
 
     def _publish_agent_shutdown_event(self):
         agent_shutdown_event = AgentShutdownEvent(source=self._agent_id, timestamp=time.time())

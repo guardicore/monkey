@@ -5,6 +5,6 @@ supported_operating_systems:
 target_operating_systems:
   - linux
 title: SSH Credentials Collector
-version: 1.0.0
+version: 1.0.1
 description: Collects SSH keys from Linux users.
 safe: true

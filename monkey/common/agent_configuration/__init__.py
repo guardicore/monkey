@@ -12,5 +12,4 @@ from .agent_sub_configurations import (
 )
 from .default_agent_configuration import (
     DEFAULT_AGENT_CONFIGURATION,
-    DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
 )

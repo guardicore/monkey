@@ -6,11 +6,7 @@ from pubsub.core import Publisher
 from pymongo import MongoClient
 
 from common import DIContainer
-from common.agent_configuration import (
-    DEFAULT_AGENT_CONFIGURATION,
-    DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
-    AgentConfiguration,
-)
+from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
@@ -30,15 +26,11 @@ from monkey_island.cc.event_queue import (
 )
 from monkey_island.cc.repositories import (
     AgentMachineFacade,
-    AgentPluginRepositoryCachingDecorator,
-    AgentPluginRepositoryLoggingDecorator,
-    FileAgentPluginRepository,
     FileRepositoryCachingDecorator,
     FileRepositoryLockingDecorator,
     FileRepositoryLoggingDecorator,
     FileSimulationRepository,
     IAgentEventRepository,
-    IAgentPluginRepository,
     IAgentRepository,
     ICredentialsRepository,
     IFileRepository,
@@ -54,15 +46,17 @@ from monkey_island.cc.repositories import (
     NetworkModelUpdateFacade,
     initialize_machine_repository,
 )
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, PLUGIN_DIR_NAME
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import (
     AgentSignalsService,
     AWSService,
     IAgentBinaryService,
     IAgentConfigurationService,
+    IAgentPluginService,
     build_agent_binary_service,
     build_agent_configuration_service,
+    build_agent_plugin_service,
 )
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
@@ -98,18 +92,13 @@ def initialize_services(container: DIContainer, data_dir: Path):
         container.resolve(IAgentEventRepository),
         container.resolve(IMachineRepository),
         container.resolve(INodeRepository),
-        container.resolve(IAgentPluginRepository),
+        container.resolve(IAgentPluginService),
     )
 
 
 def _register_conventions(container: DIContainer):
     container.register_convention(
         AgentConfiguration, "default_agent_configuration", DEFAULT_AGENT_CONFIGURATION
-    )
-    container.register_convention(
-        AgentConfiguration,
-        "default_ransomware_agent_configuration",
-        DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
 
 
@@ -144,13 +133,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
         IFileRepository,
         _decorate_file_repository(LocalStorageFileRepository(data_dir / "runtime_data")),
     )
-    container.register_convention(
-        IFileRepository,
-        "plugin_file_repository",
-        FileRepositoryLockingDecorator(
-            FileRepositoryLoggingDecorator(LocalStorageFileRepository(data_dir / PLUGIN_DIR_NAME))
-        ),
-    )
 
     container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))
     container.register_instance(
@@ -165,10 +147,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(
         NetworkModelUpdateFacade, container.resolve(NetworkModelUpdateFacade)
     )
-    container.register_instance(
-        IAgentPluginRepository,
-        _decorate_agent_plugin_repository(container.resolve(FileAgentPluginRepository)),
-    )
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
@@ -182,14 +160,6 @@ def _build_machine_repository(container: DIContainer) -> IMachineRepository:
     initialize_machine_repository(machine_repository)
 
     return machine_repository
-
-
-def _decorate_agent_plugin_repository(
-    plugin_repository: IAgentPluginRepository,
-) -> IAgentPluginRepository:
-    return AgentPluginRepositoryLoggingDecorator(
-        AgentPluginRepositoryCachingDecorator(plugin_repository)
-    )
 
 
 def _setup_agent_event_registry(container: DIContainer):
@@ -210,6 +180,7 @@ def _register_services(container: DIContainer):
     container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
     container.register_instance(IAgentBinaryService, build_agent_binary_service(container))
+    container.register_instance(IAgentPluginService, build_agent_plugin_service(container))
     container.register_instance(
         IAgentConfigurationService, build_agent_configuration_service(container)
     )

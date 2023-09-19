@@ -1,5 +1,7 @@
 .config-import-modal .config-import-option .file-input {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .config-import-modal .config-import-option .import-error {

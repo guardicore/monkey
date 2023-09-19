@@ -30,23 +30,25 @@ GCP_TEST_MACHINE_LIST = {
         "log4j-tomcat-51",
         "log4j-tomcat-52",
         "snmp-20",
+        "rdp-64",
+        "rdp-65",
+        "browser-credentials-66",
+        "browser-credentials-67",
     ],
 }
 
 DEPTH_2_A = {
-    "europe-west3-a": [
-        "sshkeys-11",
-        "sshkeys-12",
-    ],
+    "europe-west3-a": ["sshkeys-11", "sshkeys-12", "mimikatz-14", "mimikatz-15"],
     "europe-west1-b": [
         "powershell-3-46",
         "powershell-3-44",
+        "rdp-64",
+        "rdp-65",
     ],
 }
 
-
 DEPTH_1_A = {
-    "europe-west3-a": ["hadoop-2", "hadoop-3", "mssql-16", "mimikatz-14", "mimikatz-15"],
+    "europe-west3-a": ["hadoop-2", "hadoop-3", "mssql-16", "mimikatz-15"],
     "europe-west1-b": [
         "log4j-logstash-55",
         "log4j-logstash-56",
@@ -55,6 +57,8 @@ DEPTH_1_A = {
         "log4j-tomcat-51",
         "log4j-tomcat-52",
         "snmp-20",
+        "browser-credentials-66",
+        "browser-credentials-67",
     ],
 }
 
@@ -63,7 +67,6 @@ DEPTH_3_A = {
         "tunneling-9",
         "tunneling-10",
         "tunneling-11",
-        "mimikatz-15",
     ],
     "europe-west1-b": [
         "powershell-3-45",

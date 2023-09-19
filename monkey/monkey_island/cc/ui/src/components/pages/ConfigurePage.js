@@ -12,7 +12,8 @@ import PropagationConfig, {
   EXPLOITERS_CONFIG_PATH
 } from '../configuration-components/PropagationConfig';
 import MasqueradeConfig from '../configuration-components/MasqueradeConfig';
-import {CREDENTIALS_COLLECTORS_CONFIG_PATH} from '../configuration-components/PluginSelectorTemplate';
+import {CREDENTIALS_COLLECTORS_CONFIG_PATH, PAYLOADS_CONFIG_PATH} from '../configuration-components/PluginSelectorTemplate';
+import {CONFIGURATION_TABS} from '../configuration-components/ConfigurationTabs.js'
 import FormConfig from '../configuration-components/FormConfig';
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
@@ -24,7 +25,7 @@ import {
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
-import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
+import CONFIGURATION_TABS_ORDER from '../configuration-components/ConfigurationTabs.js';
 import {SCHEMA} from '../../services/configuration/configSchema.js';
 import {
   reformatConfig,
@@ -35,10 +36,9 @@ import {customizeValidator} from '@rjsf/validator-ajv8';
 import LoadingIcon from '../ui-components/LoadingIcon';
 import mergeAllOf from 'json-schema-merge-allof';
 import RefParser from '@apidevtools/json-schema-ref-parser';
-import CREDENTIALS from '../../services/configuration/propagation/credentials';
 import {MASQUERADE} from '../../services/configuration/masquerade';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
-
+import {nanoid} from 'nanoid';
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
 const RESET_URL = '/api/reset-agent-configuration';
@@ -49,17 +49,16 @@ const configSaveAction = 'config-saved';
 
 const EMPTY_BYTES_ARRAY = new Uint8Array(new ArrayBuffer(0));
 
-
 class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.currentSection = this.getSectionsOrder()[0];
+    this.currentSection = CONFIGURATION_TABS_ORDER[0];
     this.validator = customizeValidator( {customFormats: formValidationFormats});
 
     this.state = {
       configuration: {},
-      credentials: {},
+      credentials: {credentialsData: [], errors: [], id: null},
       masqueStrings: {},
       currentFormData: {},
       importCandidateConfig: null,
@@ -74,21 +73,16 @@ class ConfigurePageComponent extends AuthComponent {
     };
   }
 
-  componentDidUpdate() {
-    if (!this.getSectionsOrder().includes(this.currentSection)) {
-      this.currentSection = this.getSectionsOrder()[0]
-      this.setState({selectedSection: this.currentSection})
+  setCredentialsState = (rows = [], errors = [], isRequiredToUpdateId) => {
+    let newState = {credentials: {credentialsData: rows, errors: errors, id: this.state.credentials.id}};
+    if(isRequiredToUpdateId) {
+      newState.credentials['id'] = nanoid();
     }
+    this.setState(newState);
   }
 
   resetLastAction = () => {
     this.setState({lastAction: 'none'});
-  }
-
-  getSectionsOrder() {
-    let islandModeSet = (this.props.islandMode !== 'unset' && this.props.islandMode !== undefined)
-    let islandMode = islandModeSet ? this.props.islandMode : 'advanced'
-    return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
   componentDidMount = () => {
@@ -105,7 +99,7 @@ class ConfigurePageComponent extends AuthComponent {
         let sections = [];
         monkeyConfig = reformatConfig(monkeyConfig);
 
-        for (let sectionKey of this.getSectionsOrder()) {
+        for (let sectionKey of CONFIGURATION_TABS_ORDER) {
           sections.push({
             key: sectionKey,
             title: SCHEMA.properties[sectionKey].title
@@ -114,9 +108,10 @@ class ConfigurePageComponent extends AuthComponent {
         this.setState({
           configuration: monkeyConfig,
           selectedPlugins: {
-              'propagation': new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
-              'credentials_collectors': new Set(Object.keys(_.get(monkeyConfig, CREDENTIALS_COLLECTORS_CONFIG_PATH)))
-          },
+              [CONFIGURATION_TABS.PROPAGATION]: this.getSelectedPlugins(monkeyConfig, EXPLOITERS_CONFIG_PATH),
+              [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: this.getSelectedPlugins(monkeyConfig, CREDENTIALS_COLLECTORS_CONFIG_PATH),
+              [CONFIGURATION_TABS.PAYLOADS]: this.getSelectedPlugins(monkeyConfig, PAYLOADS_CONFIG_PATH)
+            },
           sections: sections,
           currentFormData: _.cloneDeep(monkeyConfig[this.state.selectedSection])
         })
@@ -124,6 +119,10 @@ class ConfigurePageComponent extends AuthComponent {
     this.updateCredentials();
     this.updateMasqueStrings();
   };
+
+  getSelectedPlugins = (config, pluginTypeConfigPath) => {
+    return new Set(Object.keys(_.get(config, pluginTypeConfigPath)))
+  }
 
   onUnsafeConfirmationCancelClick = () => {
     this.setState({showUnsafeOptionsConfirmation: false, lastAction: 'none'});
@@ -144,11 +143,9 @@ class ConfigurePageComponent extends AuthComponent {
   updateCredentials = () => {
     this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {}, true)
       .then(res => res.json())
-      .then(credentials => {
-        credentials = formatCredentialsForForm(credentials);
-        this.setState({
-          credentials: credentials
-        });
+      .then(credentialsData => {
+        const formattedCredentialsData = formatCredentialsForForm(credentialsData);
+        this.setCredentialsState(formattedCredentialsData, [], true);
       });
   }
 
@@ -191,8 +188,9 @@ class ConfigurePageComponent extends AuthComponent {
         data = reformatConfig(data);
         this.setState({
           selectedPlugins: {
-              'propagation': new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
-              'credentials_collectors': new Set(Object.keys(_.get(data, CREDENTIALS_COLLECTORS_CONFIG_PATH)))
+              [CONFIGURATION_TABS.PROPAGATION]: this.getSelectedPlugins(data, EXPLOITERS_CONFIG_PATH),
+              [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: this.getSelectedPlugins(data, CREDENTIALS_COLLECTORS_CONFIG_PATH),
+              [CONFIGURATION_TABS.PAYLOADS]: this.getSelectedPlugins(data, PAYLOADS_CONFIG_PATH)
           },
           configuration: data,
           currentFormData: _.cloneDeep(data[this.state.selectedSection])
@@ -229,7 +227,11 @@ class ConfigurePageComponent extends AuthComponent {
   // Until the issue is fixed, we need to manually remove plugins that were not selected before
   // submitting/exporting the configuration
   filterUnselectedPlugins() {
-    let pluginTypes = {'propagation': EXPLOITERS_CONFIG_PATH, 'credentials_collectors': CREDENTIALS_COLLECTORS_CONFIG_PATH};
+    let pluginTypes = {
+      [CONFIGURATION_TABS.PROPAGATION]: EXPLOITERS_CONFIG_PATH,
+      [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: CREDENTIALS_COLLECTORS_CONFIG_PATH,
+      [CONFIGURATION_TABS.PAYLOADS]: PAYLOADS_CONFIG_PATH
+    };
     let config = _.cloneDeep(this.state.configuration)
 
     for (let pluginType in pluginTypes){
@@ -265,7 +267,7 @@ class ConfigurePageComponent extends AuthComponent {
 
     Promise.all([sendCredentialsPromise, sendLinuxMasqueStringsPromise, sendWindowsMasqueStringsPromise])
       .then(responses => {
-        if (responses.every(res => res.status === 204)) {
+        if (responses.every(res => res?.status === 204)) {
           this.sendConfig(config);
         } else {
           console.log('One or more requests failed.');
@@ -283,7 +285,7 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   onCredentialChange = (credentials) => {
-    this.setState({credentials: credentials});
+    this.setCredentialsState(credentials.credentialsData, credentials.errors, false);
   }
 
   onMasqueStringsChange = (masqueStrings) => {
@@ -294,7 +296,7 @@ class ConfigurePageComponent extends AuthComponent {
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
                                configuration={this.filterUnselectedPlugins()}
-                               credentials={this.state.credentials}
+                               credentials={this.state.credentials.credentialsData}
                                masqueStrings={this.state.masqueStrings}
                                onHide={() => {
                                  this.setState({showConfigExportModal: false});
@@ -401,7 +403,7 @@ class ConfigurePageComponent extends AuthComponent {
         {
           method: 'PUT',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(formatCredentialsForIsland(this.state.credentials))
+          body: JSON.stringify(formatCredentialsForIsland(this.state.credentials.credentialsData))
         },
         true
       )
@@ -412,7 +414,7 @@ class ConfigurePageComponent extends AuthComponent {
           return res;
         }).catch((error) => {
         console.log(`bad configuration ${error}`);
-        this.setState({lastAction: 'invalid_configuration'});
+        this.setState({lastAction: 'invalid_credentials_configuration'});
       }));
   }
 
@@ -497,9 +499,9 @@ class ConfigurePageComponent extends AuthComponent {
       return true;
     }
     let errors = this.validator.validateFormData(this.state.configuration, this.state.schema);
-    let credentialErrors = this.validator.validateFormData(this.state.credentials, CREDENTIALS);
+    let credentialErrors = this.state.credentials.errors?.length > 0;
     let masqueradeErrors = this.validator.validateFormData(this.state.masqueStrings, MASQUERADE);
-    return errors.errors.length+credentialErrors.errors.length+masqueradeErrors.errors.length > 0
+    return errors.errors.length+masqueradeErrors.errors.length > 0 || credentialErrors;
   }
 
   render() {
@@ -512,7 +514,7 @@ class ConfigurePageComponent extends AuthComponent {
     let displayedSchema = {};
     if (Object.prototype.hasOwnProperty.call(this.state.schema, 'properties')) {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
-      displayedSchema['definitions'] = this.state.schema['definitions'];
+      displayedSchema['definitions'] = this.state.schema?.['definitions'];
     }
 
     let content = '';
@@ -565,6 +567,12 @@ class ConfigurePageComponent extends AuthComponent {
             <div className='alert alert-success'>
               <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration saved successfully.
+            </div>
+            : ''}
+          {this.state.lastAction === 'invalid_credentials_configuration' ?
+            <div className='alert alert-danger'>
+              <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
+              An invalid configuration file was imported or submitted. One or more of the credentials are invalid.
             </div>
             : ''}
           {this.state.lastAction === 'invalid_configuration' ?

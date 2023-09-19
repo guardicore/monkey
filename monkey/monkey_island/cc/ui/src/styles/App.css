@@ -9,6 +9,7 @@ body {
 
 #app {
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  height: inherit;
 }
 
 .center-block {
@@ -29,7 +30,7 @@ body {
     left: 0;
     z-index: 1000;
     display: block;
-    padding: 0px !important;
+    padding: 0 !important;
     overflow-x: hidden;
     overflow-y: auto;
     /* Scrollable contents if viewport is shorter than content. */
@@ -54,9 +55,15 @@ body {
     padding: 15px;
   }
 
+  .navigation li a.step {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   ul {
     list-style: none;
-    padding-left: 0px;
+    padding-left: 0;
   }
 
   li {
@@ -73,6 +80,7 @@ body {
     display: block;
     padding: 0.5em 1em;
     margin: 0.1em 0;
+    text-decoration: none;
   }
 
   li a:hover {
@@ -105,6 +113,14 @@ body {
     font-size: 1.3em;
     margin-right: -10px;
     color: #ffcc00;
+  }
+
+  i a {
+    text-decoration: none;
+  }
+
+  i a:hover {
+    text-decoration: underline;
   }
 
   hr {
@@ -205,11 +221,11 @@ body {
   display: none;
 }
 
-.nav-tabs>li>a {
+.nav-tabs > li > a {
   height: 63px
 }
 
-.nav>li>a:focus {
+.nav > li > a:focus {
   background-color: transparent !important;
 }
 
@@ -336,21 +352,21 @@ body {
  * Full Logs Page
  */
 
-.data-table-container>.container {
+.data-table-container > .container {
   width: inherit;
   padding: 0;
 }
 
-.data-table-container>.container th,
-.data-table-container>.container td {
+.data-table-container > .container th,
+.data-table-container > .container td {
   padding: 15px 8px;
 }
 
-.data-table-container>.container>.row:first-child>div:first-child>div {
+.data-table-container > .container > .row:first-child > div:first-child > div {
   display: inline-block;
 }
 
-.data-table-container>.container>.row:first-child>div:first-child>div:last-child {
+.data-table-container > .container > .row:first-child > div:first-child > div:last-child {
   margin-left: 1em;
 }
 
@@ -525,4 +541,16 @@ body {
   right: 0;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Tooltip */
+.MuiTooltip-tooltip {
+  padding: 8px 10px;
+  font-size: 1rem;
+}
+
+.text-truncate {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }

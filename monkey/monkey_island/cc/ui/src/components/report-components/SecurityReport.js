@@ -12,18 +12,13 @@ import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
-
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import akamaiLogoImage from '../../images/akamai-logo.svg'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
-import {
-  crossSegmentIssueReport
-} from './security/issues/CrossSegmentIssue';
+import {crossSegmentIssueReport} from './security/issues/CrossSegmentIssue';
 import {getAllTunnels, tunnelIssueReportByMachine} from './security/issues/TunnelIssue';
-import {
-  zerologonOverviewWithFailedPassResetWarning
-} from './security/issues/ZerologonIssue';
+import {zerologonOverviewWithFailedPassResetWarning} from './security/issues/ZerologonIssue';
 import AvailableCredentials from './security/AvailableCredentials';
 import {
   getAllAgents,
@@ -35,7 +30,7 @@ import {
   getManuallyStartedAgents
 } from '../utils/ServerUtils';
 import CollapsibleWellComponent from './security/CollapsibleWell';
-import { parseTimeToDateString } from '../utils/DateUtils';
+import {parseTimeToDateString} from '../utils/DateUtils';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -63,12 +58,12 @@ class ReportPageComponent extends AuthComponent {
     this.authFetch('/api/propagation-credentials/stolen-credentials', {}, true)
       .then(res => res.json())
       .then(creds => {
-        this.setState({ stolenCredentials: creds });
+        this.setState({stolenCredentials: creds});
       })
     this.authFetch('/api/propagation-credentials/configured-credentials', {}, true)
       .then(res => res.json())
       .then(creds => {
-        this.setState({ configuredCredentials: creds });
+        this.setState({configuredCredentials: creds});
       })
   }
 
@@ -78,7 +73,7 @@ class ReportPageComponent extends AuthComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.report !== prevProps.report) {
-      this.setState({ report: this.props.report });
+      this.setState({report: this.props.report});
     }
   }
 
@@ -88,7 +83,7 @@ class ReportPageComponent extends AuthComponent {
     let content;
 
     if (this.stillLoadingDataFromServer()) {
-      content = <ReportLoader loading={true} />;
+      content = <ReportLoader loading={true}/>;
     } else {
       content =
         <div>
@@ -102,20 +97,20 @@ class ReportPageComponent extends AuthComponent {
 
     return (
       <Fragment>
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{marginBottom: '20px'}}>
           <PrintReportButton onClick={() => {
             print();
-          }} />
+          }}/>
         </div>
         <div className='report-page'>
-          <ReportHeader report_type={ReportTypes.security} />
-          <hr />
+          <ReportHeader report_type={ReportTypes.security}/>
+          <hr/>
           {content}
         </div>
-        <div style={{ marginTop: '20px' }}>
+        <div style={{marginTop: '20px'}}>
           <PrintReportButton onClick={() => {
             print();
-          }} />
+          }}/>
         </div>
       </Fragment>
     );
@@ -129,7 +124,7 @@ class ReportPageComponent extends AuthComponent {
     if (this.state.report.overview.monkey_duration) {
       return <>
         After <span
-        className='badge badge-info'>{this.state.report.overview.monkey_duration}</span>, all Agents finished
+        className='badge text-bg-success'>{this.state.report.overview.monkey_duration}</span>, all Agents finished
         propagation attempts.
       </>
     } else {
@@ -145,20 +140,20 @@ class ReportPageComponent extends AuthComponent {
         <h2>
           Overview
         </h2>
-        <SecurityIssuesGlance issuesFound={this.state.report.glance.exploited_cnt > 0} />
+        <SecurityIssuesGlance issuesFound={this.state.report.glance.exploited_cnt > 0}/>
         {
           this.state.report.glance.exploited_cnt > 0 ?
             ''
             :
             <p className='alert alert-info'>
-              <FontAwesomeIcon icon={faExclamationTriangle} style={{ 'marginRight': '5px' }} />
+              <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
               To improve Infection Monkey's detection rates, try adding credentials under <b>Propagation - Credentials
-              </b> and updating network settings under <b>Propagation - Network analysis</b>.
+            </b> and updating network settings under <b>Propagation - Network analysis</b>.
             </p>
         }
         <p>
           The first Infection Monkey Agent ran on <span
-            className='badge badge-info'>{parseTimeToDateString(this.state.report.overview.monkey_start_time)}</span>. {this.getMonkeyDuration()}
+          className='badge text-bg-success'>{parseTimeToDateString(this.state.report.overview.monkey_start_time)}</span>. {this.getMonkeyDuration()}
         </p>
         <p>
           Infection Monkey started propagating from the following machines where it was manually installed:
@@ -166,7 +161,7 @@ class ReportPageComponent extends AuthComponent {
         <ul>
           {[...new Set(manualMonkeyHostnames)].map(x => <li key={x}>{x}</li>)}
         </ul>
-        <AvailableCredentials stolen={this.state.stolenCredentials} configured={this.state.configuredCredentials} />
+        <AvailableCredentials stolen={this.state.stolenCredentials} configured={this.state.configuredCredentials}/>
         {
           this.state.report.overview.config_exploits.length > 0 ?
             (
@@ -220,7 +215,7 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateSegmentationSection() {
-    if(this.state.report.cross_segment_issues.length === 0){
+    if (this.state.report.cross_segment_issues.length === 0) {
       return '';
     } else {
       return (
@@ -244,11 +239,11 @@ class ReportPageComponent extends AuthComponent {
       (100 * this.state.report.glance.exploited_cnt) / this.state.report.glance.scanned.length;
 
     let exploitPercentageSection = '';
-    if (! isNaN(exploitPercentage)) {
+    if (!isNaN(exploitPercentage)) {
       exploitPercentageSection = (
-        <div className='text-center' style={{ margin: '10px' }}>
-          <Line style={{ width: '300px', marginRight: '5px' }} percent={exploitPercentage}
-                strokeWidth='4' trailWidth='4' strokeColor='#d9534f' trailColor='#f0ad4e' />
+        <div className='text-center' style={{margin: '10px'}}>
+          <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage}
+                strokeWidth='4' trailWidth='4' strokeColor='#d9534f' trailColor='#f0ad4e'/>
           <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
         </div>
       )
@@ -262,32 +257,32 @@ class ReportPageComponent extends AuthComponent {
         <div>
           <p>
             Infection Monkey discovered <span
-              className='badge badge-warning'>{this.state.report.glance.scanned.length}</span> machines and
+            className='badge text-bg-warning'>{this.state.report.glance.scanned.length}</span> machines and
             successfully breached <span
-              className='badge badge-danger'>{this.state.report.glance.exploited_cnt}</span> of them.
+            className='badge text-bg-danger'>{this.state.report.glance.exploited_cnt}</span> of them.
           </p>
           {exploitPercentageSection}
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <ScannedServers data={this.state.report.glance.scanned} />
+        <div style={{marginBottom: '20px'}}>
+          <ScannedServers data={this.state.report.glance.scanned}/>
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{marginBottom: '20px'}}>
           <p>
             Infection Monkey successfully breached&nbsp;
-            <span className="badge badge-danger">
+            <span className="badge text-bg-danger">
               {this.state.report.glance.exploited_cnt}
             </span> {Pluralize('machine', this.state.report.glance.exploited_cnt)}:
           </p>
-          <BreachedServers />
+          <BreachedServers/>
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{marginBottom: '20px'}}>
           <p>
             Infection Monkey stole the following credentials:
           </p>
-          <StolenCredentialsTable />
+          <StolenCredentialsTable/>
         </div>
       </div>
     );
@@ -295,11 +290,12 @@ class ReportPageComponent extends AuthComponent {
 
   generateReportFooter() {
     return (
-      <div id='footer' className='text-center' style={{ marginTop: '20px' }}>
+      <div id='footer' className='text-center' style={{marginTop: '20px'}}>
         For questions, suggestions, or any other feedback,
         contact <a href='mailto:support@infectionmonkey.com' className='no-print'>support@infectionmonkey.com</a>
-        <div className='force-print' style={{ display: 'none' }}>support@infectionmonkey.com</div>.
-        <img src={akamaiLogoImage} alt='Akamai' className='center-block' style={{ height: '55px' }} />
+        <div className='force-print' style={{display: 'none'}}>support@infectionmonkey.com</div>
+        .
+        <img src={akamaiLogoImage} alt='Akamai' className='center-block' style={{height: '55px'}}/>
       </div>
     );
   }
@@ -308,22 +304,22 @@ class ReportPageComponent extends AuthComponent {
     let remediation = <ReactMarkdown> 'No remediation available'</ReactMarkdown>;
     let description = '';
 
-    if(_.has(issue, 'remediation_suggestion') && issue.remediation_suggestion !== undefined){
+    if (_.has(issue, 'remediation_suggestion') && issue.remediation_suggestion !== undefined) {
       remediation = <ReactMarkdown plugins={[remarkBreaks]}
-                       linkTarget={'_blank'}
-                       className={'markdown'}>
+                                   linkTarget={'_blank'}
+                                   className={'markdown'}>
         {issue.remediation_suggestion}
       </ReactMarkdown>
     }
-    if(_.has(issue, 'description') && issue.description !== undefined){
-       description = <ReactMarkdown plugins={[remarkBreaks]}
+    if (_.has(issue, 'description') && issue.description !== undefined) {
+      description = <ReactMarkdown plugins={[remarkBreaks]}
                                    linkTarget={'_blank'}
                                    className={'markdown'}>
         {issue.description}
       </ReactMarkdown>
     }
 
-    if(issue.type === 'Zerologon' && issue.password_restored === false){
+    if (issue.type === 'Zerologon' && issue.password_restored === false) {
       remediation = <>
         {zerologonOverviewWithFailedPassResetWarning()}
         <br/>

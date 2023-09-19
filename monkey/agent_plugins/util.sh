@@ -1,8 +1,8 @@
 #!/bin/sh
 
-export MANIFEST_FILENAME=manifest.yaml
 export SCHEMA_FILENAME=config-schema.json
-export SOURCE_FILENAME=source.tar
+export SOURCE_FILENAME=source.tar.gz
+
 
 fail() {
     echo "$1"
@@ -33,15 +33,22 @@ lower() {
 get_plugin_filename() {
     _plugin_path=${1:-"."}
 
-    # if "manifest.yaml" doesn't exist, assume the file is called "manifest.yml"
-    # the script will fail if that doesn't exist either
-    if [ ! -f "${_plugin_path}/$MANIFEST_FILENAME" ]; then
-        MANIFEST_FILENAME=manifest.yml
-    fi
+    manifest_filename=$(get_plugin_manifest_filename "$_plugin_path")
 
-    _name=$(get_value_from_key "${_plugin_path}/$MANIFEST_FILENAME" name) || fail "Failed to get plugin name"
+    _name=$(get_value_from_key "${_plugin_path}/${manifest_filename}" name) || fail "Failed to get plugin name"
     _name=$(ltrim "$_name")
-    _type=$(get_value_from_key "${_plugin_path}/$MANIFEST_FILENAME" plugin_type) || fail "Failed to get plugin type"
+    _type=$(get_value_from_key "${_plugin_path}/${manifest_filename}" plugin_type) || fail "Failed to get plugin type"
     _type=$(ltrim "$(lower "$_type")")
     echo "${_name}-${_type}.tar"
+}
+
+get_plugin_manifest_filename() {
+    manifest_filename=manifest.yaml
+    _plugin_path=${1:-"."}
+
+    if [ ! -f "${_plugin_path}/${manifest_filename}" ]; then
+        manifest_filename=manifest.yml
+    fi
+
+    echo $manifest_filename
 }

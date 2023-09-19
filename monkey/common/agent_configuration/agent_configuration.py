@@ -22,7 +22,10 @@ class AgentConfiguration(MutableInfectionMonkeyBaseModel):
         " result in unexpected behavior on the machine.",
     )
     payloads: Dict[str, Dict] = Field(
-        title="Payloads", description="Configure payloads that Agents will execute"
+        title="Enabled payloads",
+        description="Click on a payload to get more information"
+        " about it. \n \u26A0 Note that using unsafe options may"
+        " result in unexpected behavior on the machine.",
     )
     propagation: PropagationConfiguration = Field(
         title="Propagation",

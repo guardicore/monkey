@@ -18,6 +18,8 @@ from multiprocessing import Queue, freeze_support, get_context
 from pathlib import Path
 from typing import Sequence, Tuple, Union
 
+from psutil import Process
+
 # dummy import for pyinstaller
 # noinspection PyUnresolvedReferences
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
@@ -160,11 +162,11 @@ def _run_agent(
     logger.info(f"version: {get_version()}")
 
     monkey: Union[InfectionMonkey, MonkeyDrops]
-    if MONKEY_ARG == mode:
+    if mode == MONKEY_ARG:
         monkey = InfectionMonkey(
             mode_specific_args, ipc_logger_queue=ipc_logger_queue, log_path=log_path
         )
-    elif DROPPER_ARG == mode:
+    elif mode == DROPPER_ARG:
         monkey = MonkeyDrops(mode_specific_args)
 
     try:
@@ -179,6 +181,45 @@ def _run_agent(
         logger.exception(
             "Exception thrown from monkey's cleanup function: More info: {}".format(err)
         )
+    finally:
+        if mode == MONKEY_ARG:
+            _kill_hung_child_processes(logger)
+
+
+def _kill_hung_child_processes(logger: logging.Logger):
+    for p in Process().children(recursive=True):
+        logger.debug(
+            "Found child process: "
+            f"pid={p.pid}, name={p.name()}, status={p.status()}, cmdline={p.cmdline()}"
+        )
+
+        if _process_is_resource_tracker(p):
+            # This process will clean itself up, but no other processes should be running at
+            # this time.
+            logger.debug(f"Ignoring resource_tracker process: {p.pid}")
+            continue
+
+        if _process_is_windows_self_removal(p):
+            logger.debug(f"Ignoring self removal process: {p.pid}")
+            continue
+
+        logger.warning(f"Killing hung child process: {p.pid}")
+        p.kill()
+
+
+def _process_is_resource_tracker(process: Process) -> bool:
+    for arg in process.cmdline():
+        if "multiprocessing.resource_tracker" in arg:
+            return True
+
+    return False
+
+
+def _process_is_windows_self_removal(process: Process) -> bool:
+    if process.name() in ["cmd.exe", "timeout.exe"]:
+        return True
+
+    return False
 
 
 if "__main__" == __name__:

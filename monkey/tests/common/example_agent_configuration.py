@@ -29,7 +29,7 @@ NETWORK_SCAN_CONFIGURATION = {
     "targets": SCAN_TARGET_CONFIGURATION,
 }
 
-EXPLOITERS: Dict[str, Dict] = {"SSHExploiter": {}, "Log4ShellExploiter": {}}
+EXPLOITERS: Dict[str, Dict] = {}
 
 EXPLOITATION_CONFIGURATION = {
     "options": {"http_ports": PORTS},

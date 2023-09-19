@@ -7,13 +7,12 @@ description: "Provides information about ransomware simulation on your network"
 ---
 
 {{% notice info %}}
-Check out [the Infection Monkey's ransomware simulation documentation]({{< ref
-"/usage/scenarios/ransomware-simulation" >}}) and [the documentation for other
+Check out [the documentation for other
 available reports]({{< ref "/reports" >}}).
 {{% /notice %}}
 
 The Infection Monkey can be configured to [simulate a ransomware
-attack](/usage/scenarios/ransomware-simulation) on your network. After running,
+attack](/usage/ransomware-simulation) on your network. After running,
 it generates a **Ransomware Report** that provides you with insight into how
 ransomware might behave within your environment.
 

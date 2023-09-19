@@ -1,10 +1,10 @@
 import socket
 import struct
+import threading
 from dataclasses import dataclass
-from multiprocessing.context import BaseContext
-from multiprocessing.managers import DictProxy, SyncManager
+from itertools import chain
 from random import shuffle  # noqa: DUO102
-from typing import Iterator, List, Optional, Set, Tuple
+from typing import Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple
 
 import psutil
 from egg_timer import EggTimer
@@ -120,18 +120,23 @@ class TCPPortSelector:
     the requester's server is listening on the port, the OS will report the port as "LISTEN".
     """
 
-    def __init__(self, context: BaseContext, manager: SyncManager):
-        self._leases: DictProxy[NetworkPort, EggTimer] = manager.dict()
-        self._lock = context.Lock()
+    def __init__(self):
+        self._leases: Dict[NetworkPort, EggTimer] = {}
+        self._lock = threading.Lock()
 
     def get_free_tcp_port(
-        self, min_range: int = 1024, max_range: int = 65535, lease_time_sec: float = 30
+        self,
+        min_range: int = 1024,
+        max_range: int = 65535,
+        lease_time_sec: float = 30,
+        preferred_ports: Sequence[NetworkPort] = [],
     ) -> Optional[NetworkPort]:
         """
         Get a free TCP port that a new server can listen on
 
-        This function will attempt to provide a well-known port that the caller can listen on. If no
-        well-known ports are available, a random port will be selected.
+        This function will first check if any of the preferred ports are available. If not, it will
+        attempt to provide a well-known port that the caller can listen on. If no well-known ports
+        are available, a random port will be selected.
 
         :param min_range: The smallest port number a random port can be chosen from, defaults to
                           1024
@@ -139,6 +144,7 @@ class TCPPortSelector:
                           65535
         :param lease_time_sec: The amount of time a port should be reserved for if the OS does not
                                report it as in use, defaults to 30 seconds
+        :param preferred_ports: A sequence of ports that should be tried first
         :return: The selected port, or None if no ports are available
         """
         with self._lock:
@@ -146,16 +152,21 @@ class TCPPortSelector:
                 NetworkPort(conn.laddr[1]) for conn in psutil.net_connections()  # type: ignore
             }
 
-            common_port = self._get_free_common_port(ports_in_use, lease_time_sec)
-            if common_port is not None:
-                return common_port
+            port = self._get_first_free_port(
+                ports_in_use, chain(preferred_ports, COMMON_PORTS), lease_time_sec
+            )
+            if port is not None:
+                return port
 
             return self._get_free_random_port(ports_in_use, min_range, max_range, lease_time_sec)
 
-    def _get_free_common_port(
-        self, ports_in_use: Set[NetworkPort], lease_time_sec: float
+    def _get_first_free_port(
+        self,
+        ports_in_use: Set[NetworkPort],
+        ports_to_check: Iterable[NetworkPort],
+        lease_time_sec: float,
     ) -> Optional[NetworkPort]:
-        for port in COMMON_PORTS:
+        for port in ports_to_check:
             if self._port_is_available(port, ports_in_use):
                 self._reserve_port(port, lease_time_sec)
                 return port

@@ -1,19 +1,35 @@
-.sidebar .version-text {
-  position: relative;
-}
+.sidebar {
+  .version-text {
+    position: relative;
+  }
 
-.sidebar .license-link {
-  position: relative;
-}
+  .license-link {
+    position: relative;
+  }
 
-.navigation .island-reset-button {
-  width: 100%;
-  text-align: left;
-  padding-left: 18px;
-}
+  .navigation {
+    .island-reset-button {
+    width: 100%;
+    text-align: left;
+    padding-left: 18px;
+    }
+  }
 
-.logout-button.btn {
-  width: 100%;
-  text-align: left !important;
-  padding-left: 15px;
+  .logout-button.btn {
+    width: 100%;
+    text-align: left !important;
+    padding-left: 15px;
+  }
+
+  .general-nav-items {
+    padding-left: 0;
+  }
+
+  #plugins-marketplace-link .MuiBadge-badge {
+    top: 5px;
+  }
+
+  #plugins-marketplace-label {
+    margin-right: 16px;
+  }
 }

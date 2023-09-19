@@ -1,43 +1,37 @@
 import React from 'react';
-import ReactTable from 'react-table';
-
+import XDataGrid, {XDataGridTitle} from "../../ui-components/XDataGrid";
 
 type TableRow = {
   hostname: string,
   file_path: number,
+  id: any,
+  encryption_algorithm: string
 }
 
-const PAGE_SIZE = 10;
+const customToolbar = () => {
+  return <XDataGridTitle title={'Encrypted Files'} showDataActionsToolbar={false}/>;
+}
+
 const columns = [
-  {
-    Header: 'Encrypted Files',
-    columns: [
-      {Header: 'Host', id: 'host', accessor: x => x.hostname},
-      {Header: 'File Path', id: 'file_path', accessor: x => x.file_path},
-      {Header: 'Encryption Algorithm',
-        id: 'encryption_algorithm',
-        accessor: () => {return 'Bit Flip'}}
-    ]
-  }
+  {headerName: 'Host', field: 'hostname', flex: 0.2},
+  {headerName: 'File Path', field: 'file_path', flex: 1},
+  {headerName: 'Encryption Algorithm', field: 'encryption_algorithm', flex: 0.2, minWidth: 170}
 ];
 
 const FileEncryptionTable = ({tableData}: {tableData: Array<TableRow>}) => {
-  let defaultPageSize = tableData.length > PAGE_SIZE ? PAGE_SIZE : tableData.length;
-  let showPagination = tableData.length > PAGE_SIZE;
-
   return (
     <>
       <h3 className={'report-section-header'}>
           File encryption
       </h3>
-      <div className="data-table-container">
-        <ReactTable
-          columns={columns}
-          data={tableData}
-          showPagination={showPagination}
-          defaultPageSize={defaultPageSize}
-        />
-      </div>
+
+     <XDataGrid
+        toolbar={customToolbar}
+        columns={columns}
+        rows={[...tableData]}
+        maxHeight={'300px'}
+        needCustomWorkaround={false}
+      />
     </>
   );
 }

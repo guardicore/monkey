@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from typing import Any, Iterable, List, Mapping
 from unittest.mock import MagicMock
@@ -132,6 +133,33 @@ def test_mongo_agent_event_repository__get_events(mongo_repository: IAgentEventR
     events = mongo_repository.get_events()
 
     assert_same_contents(events, EVENTS)
+
+
+def test_mongo_agent_event_repository__query_events_sorted_by_timestamp(
+    mongo_repository: IAgentEventRepository, mongo_client
+):
+    event_1 = FakeAgentEvent(
+        source=uuid.uuid4(), timestamp=datetime.datetime(2000, 1, 1, 12, 0, 0, 0).timestamp()
+    )
+    event_2 = FakeAgentEvent(
+        source=uuid.uuid4(), timestamp=datetime.datetime(2010, 1, 1, 12, 0, 0, 0).timestamp()
+    )
+    event_3 = FakeAgentEvent(
+        source=uuid.uuid4(), timestamp=datetime.datetime(2020, 1, 1, 12, 0, 0, 0).timestamp()
+    )
+    event_4 = FakeAgentEvent(
+        source=uuid.uuid4(), timestamp=datetime.datetime(2030, 1, 1, 12, 0, 0, 0).timestamp()
+    )
+
+    mongo_repository.save_event(event_4)
+    mongo_repository.save_event(event_2)
+    mongo_repository.save_event(event_1)
+    mongo_repository.save_event(event_3)
+
+    events = mongo_repository.get_events()
+    sorted_events = sorted(events, key=lambda event: event.timestamp)
+
+    assert events == sorted_events
 
 
 def test_mongo_agent_event_repository__get_events_raises(

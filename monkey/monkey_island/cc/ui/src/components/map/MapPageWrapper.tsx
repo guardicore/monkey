@@ -37,7 +37,7 @@ const MapPageWrapper = (props) => {
   async function fetchMapNodes(refreshToken: boolean) {
     await getCollectionObject(APIEndpoint.nodes, 'machine_id', refreshToken).then(nodeObj => setNodes(nodeObj));
     await getCollectionObject(APIEndpoint.machines, 'id', refreshToken).then(machineObj => setMachines(machineObj));
-    await getAllAgents(refreshToken).then(agents => setAgents(agents.sort()));
+    await getAllAgents(refreshToken).then(agents => setAgents(agents?.sort()));
     return getPropagationEvents(refreshToken).then(events => setPropagationEvents(events));
   }
 
@@ -60,7 +60,10 @@ const MapPageWrapper = (props) => {
   }, [mapNodes]);
 
   useEffect(() => {
-    setMapNodes(buildMapNodes());
+    let newNodes = buildMapNodes();
+    if (JSON.stringify(newNodes) !== JSON.stringify(mapNodes)) {
+      setMapNodes(newNodes);
+    }
   }, [nodes, machines, propagationEvents]);
 
   function addRelayCommunications(communications: Communications) {
@@ -132,7 +135,7 @@ const MapPageWrapper = (props) => {
     return ip in propagationEvents
   }
 
-  return (<MapPage mapNodes={mapNodes} graph={graph} {...props} />);
+  return (<MapPage mapNodes={mapNodes} graph={graph} />);
 }
 
 

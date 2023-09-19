@@ -1,6 +1,7 @@
 from copy import deepcopy
 from ipaddress import IPv4Address, IPv4Interface
 from itertools import count
+from typing import Callable, Dict, Sequence
 from unittest.mock import MagicMock
 from uuid import UUID
 
@@ -9,7 +10,7 @@ from tests.monkey_island import InMemoryMachineRepository
 
 from common import OperatingSystem
 from common.agent_events import PingScanEvent, TCPScanEvent
-from common.types import NetworkService, PortStatus, SocketAddress
+from common.types import MachineID, NetworkService, PortStatus, SocketAddress
 from monkey_island.cc.agent_event_handlers import ScanEventHandler
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
 from monkey_island.cc.repositories import (
@@ -36,22 +37,32 @@ AGENT = Agent(
     cc_server=CC_SERVER,
     sha256=AGENT_SHA256,
 )
-SOURCE_MACHINE = Machine(
-    id=SOURCE_MACHINE_ID,
-    hardware_id=5,
-    network_interfaces=[IPv4Interface("10.10.10.99/24")],
-)
+
+
+@pytest.fixture
+def source_machine() -> Machine:
+    return Machine(
+        id=SOURCE_MACHINE_ID,
+        hardware_id=5,
+        network_interfaces=[IPv4Interface("10.10.10.99/24")],
+    )
+
 
 TARGET_MACHINE_ID = 33
 TARGET_MACHINE_IP = "10.10.10.1"
-TARGET_MACHINE = Machine(
-    id=TARGET_MACHINE_ID,
-    hardware_id=9,
-    network_interfaces=[IPv4Interface(f"{TARGET_MACHINE_IP}/24")],
-)
+
+
+@pytest.fixture
+def target_machine() -> Machine:
+    return Machine(
+        id=TARGET_MACHINE_ID,
+        hardware_id=9,
+        network_interfaces=[IPv4Interface(f"{TARGET_MACHINE_IP}/24")],
+    )
+
 
 SOURCE_NODE = Node(
-    machine_id=SOURCE_MACHINE.id,
+    machine_id=SOURCE_MACHINE_ID,
     connections=[],
     tcp_connections={
         44: (SocketAddress(ip="1.1.1.1", port=40), SocketAddress(ip="2.2.2.2", port=50))
@@ -113,7 +124,10 @@ def agent_repository() -> IAgentRepository:
 
 
 @pytest.fixture
-def machine_repository() -> IMachineRepository:
+def machine_repository(
+    machine_from_id: Callable[[MachineID], Machine],
+    machines_from_ip: Callable[[IPv4Address], Sequence[Machine]],
+) -> IMachineRepository:
     machine_repository = MagicMock(spec=IMachineRepository)
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
@@ -150,24 +164,40 @@ def scan_event_handler(network_model_update_facade, machine_repository, node_rep
     return ScanEventHandler(network_model_update_facade, machine_repository, node_repository)
 
 
-MACHINES_BY_ID = {SOURCE_MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
-MACHINES_BY_IP = {
-    IPv4Address("10.10.10.99"): [SOURCE_MACHINE],
-    IPv4Address(TARGET_MACHINE_IP): [TARGET_MACHINE],
-}
+@pytest.fixture
+def machines_by_id(source_machine: Machine, target_machine: Machine) -> Dict[MachineID, Machine]:
+    return {source_machine.id: source_machine, target_machine.id: target_machine}
 
 
-@pytest.fixture(params=[SOURCE_MACHINE.id, TARGET_MACHINE.id])
+@pytest.fixture
+def machines_by_ip(
+    source_machine: Machine, target_machine: Machine
+) -> Dict[IPv4Address, Sequence[Machine]]:
+    return {
+        IPv4Address("10.10.10.99"): [source_machine],
+        IPv4Address(TARGET_MACHINE_IP): [target_machine],
+    }
+
+
+@pytest.fixture(params=[SOURCE_MACHINE_ID, TARGET_MACHINE_ID])
 def machine_id(request):
     return request.param
 
 
-def machine_from_id(id: int):
-    return MACHINES_BY_ID[id]
+@pytest.fixture
+def machine_from_id(machines_by_id) -> Callable[[MachineID], Machine]:
+    def inner(id: int) -> Machine:
+        return machines_by_id[id]
+
+    return inner
 
 
-def machines_from_ip(ip: IPv4Address):
-    return MACHINES_BY_IP[ip]
+@pytest.fixture
+def machines_from_ip(machines_by_ip) -> Callable[[IPv4Address], Sequence[Machine]]:
+    def inner(ip: IPv4Address) -> Sequence[Machine]:
+        return machines_by_ip[ip]
+
+    return inner
 
 
 HANDLE_PING_SCAN_METHOD = "handle_ping_scan_event"
@@ -217,7 +247,6 @@ def test_handle_tcp_scan_event__no_open_ports(
     scan_event_handler, machine_repository, node_repository
 ):
     event = TCP_SCAN_EVENT_CLOSED
-    scan_event_handler._update_nodes = MagicMock()
     scan_event_handler.handle_tcp_scan_event(event)
 
     assert not node_repository.upsert_tcp_connections.called
@@ -227,7 +256,6 @@ def test_handle_tcp_scan_event__ports_found(
     scan_event_handler, machine_repository, node_repository
 ):
     event = TCP_SCAN_EVENT
-    scan_event_handler._update_nodes = MagicMock()
     node_repository.get_node_by_machine_id.return_value = SOURCE_NODE
     scan_event_handler.handle_tcp_scan_event(event)
 
@@ -249,13 +277,14 @@ def test_upserts_node(
     handler,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
+    target_machine: Machine,
 ):
-    machine_repository.get_machines_by_ip = MagicMock(return_value=[TARGET_MACHINE])
+    machine_repository.get_machines_by_ip = MagicMock(return_value=[target_machine])
 
     handler(event)
 
     node_repository.upsert_communication.assert_called_with(
-        SOURCE_MACHINE.id, TARGET_MACHINE.id, CommunicationType.SCANNED
+        SOURCE_MACHINE_ID, TARGET_MACHINE_ID, CommunicationType.SCANNED
     )
 
 
@@ -270,9 +299,10 @@ def test_node_not_upserted_if_no_matching_agent(
     agent_repository: IAgentRepository,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
+    target_machine: Machine,
 ):
     agent_repository.get_agent_by_id = MagicMock(side_effect=UnknownRecordError)
-    machine_repository.get_machine_by_id = MagicMock(return_value=TARGET_MACHINE)
+    machine_repository.get_machine_by_id = MagicMock(return_value=target_machine)
 
     with pytest.raises(UnknownRecordError):
         handler(event)
@@ -315,9 +345,9 @@ def test_machine_not_upserted(event, handler, machine_repository: IMachineReposi
 
 
 def test_machine_not_upserted_if_existing_machine_has_os(
-    scan_event_handler, machine_repository: IMachineRepository
+    scan_event_handler, machine_repository: IMachineRepository, target_machine: Machine
 ):
-    machine_with_os = TARGET_MACHINE
+    machine_with_os = target_machine
     machine_with_os.operating_system = OperatingSystem.WINDOWS
     machine_repository.get_machines_by_ip = MagicMock(return_value=[machine_with_os])
 
@@ -330,8 +360,9 @@ def test_node_not_upserted_by_ping_scan_event_if_machine_storageerror(
     scan_event_handler,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
+    machines_from_ip: Callable[[IPv4Address], Sequence[Machine]],
+    target_machine: Machine,
 ):
-    target_machine = TARGET_MACHINE
     target_machine.operating_system = None
     machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
     machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
@@ -383,4 +414,21 @@ def test_network_services_handling(scan_event_handler, machine_repository):
 
     machine_repository.upsert_network_services.assert_called_with(
         TARGET_MACHINE_ID, EXPECTED_NETWORK_SERVICES
+    )
+
+
+def test_known_network_services_not_overwritten(
+    scan_event_handler, machine_repository, target_machine
+):
+    target_machine.network_services = {
+        SocketAddress(ip=TARGET_MACHINE_IP, port=22): NetworkService.SSH
+    }
+    expected_upserted_services = {
+        SocketAddress(ip=TARGET_MACHINE_IP, port=80): NetworkService.UNKNOWN
+    }
+
+    scan_event_handler.handle_tcp_scan_event(TCP_SCAN_EVENT)
+
+    machine_repository.upsert_network_services.assert_called_with(
+        TARGET_MACHINE_ID, expected_upserted_services
     )

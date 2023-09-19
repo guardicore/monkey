@@ -3,25 +3,26 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from infection_monkey.i_puppet import IPuppet
+from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 from infection_monkey.master import AutomatedMaster
-from infection_monkey.master.control_channel import IslandCommunicationError
 
 INTERVAL = 0.001
 
 
 def test_terminate_without_start():
-    m = AutomatedMaster(None, [], None, MagicMock(), [], MagicMock())
+    m = AutomatedMaster(None, [], MagicMock(spec=IPuppet), MagicMock(), [])
 
     # Test that call to terminate does not raise exception
     m.terminate()
 
 
 def test_stop_if_cant_get_config_from_island(monkeypatch):
-    cc = MagicMock()
-    cc.should_agent_stop = MagicMock(return_value=False)
-    cc.get_config = MagicMock(
-        side_effect=IslandCommunicationError("Failed to communicate with island")
+    island_api_client = MagicMock(spec=IIslandAPIClient)
+    island_api_client.get_config = MagicMock(
+        side_effect=IslandAPIError("Failed to communicate with island")
     )
+    island_api_client.terminate_signal_is_set = MagicMock(return_value=False)
 
     monkeypatch.setattr(
         "infection_monkey.master.automated_master.CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC",
@@ -30,7 +31,8 @@ def test_stop_if_cant_get_config_from_island(monkeypatch):
     monkeypatch.setattr(
         "infection_monkey.master.automated_master.CHECK_FOR_TERMINATE_INTERVAL_SEC", INTERVAL
     )
-    m = AutomatedMaster(None, [], None, cc, [], MagicMock())
+
+    m = AutomatedMaster(None, [], MagicMock(spec=IPuppet), island_api_client, [])
     m.start()
 
 
@@ -51,12 +53,12 @@ def sleep_and_return_config(default_agent_configuration):
 #       of AutomatedMaster. For now, it works and it runs quickly. In the future, if we find that
 #       this test isn't valuable or it starts causing issues, we can just remove it.
 def test_stop_if_cant_get_stop_signal_from_island(monkeypatch, sleep_and_return_config):
-    cc = MagicMock()
-    cc.should_agent_stop = MagicMock(
-        side_effect=IslandCommunicationError("Failed to communicate with island")
-    )
-    cc.get_config = MagicMock(
+    island_api_client = MagicMock(spec=IIslandAPIClient)
+    island_api_client.get_config = MagicMock(
         side_effect=sleep_and_return_config,
+    )
+    island_api_client.terminate_signal_is_set.side_effect = IslandAPIError(
+        "Failed to communicate with island"
     )
 
     monkeypatch.setattr(
@@ -67,5 +69,5 @@ def test_stop_if_cant_get_stop_signal_from_island(monkeypatch, sleep_and_return_
         "infection_monkey.master.automated_master.CHECK_FOR_TERMINATE_INTERVAL_SEC", INTERVAL
     )
 
-    m = AutomatedMaster(None, [], None, cc, [], MagicMock())
+    m = AutomatedMaster(None, [], MagicMock(spec=IPuppet), island_api_client, [])
     m.start()

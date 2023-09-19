@@ -1,7 +1,11 @@
-.data-table-container>.container>div.row{
-  margin-left: 10px;
-}
-
-.data-table-container{
+.data-table-container {
   margin-bottom: 20px;
+
+  >.container>div.row {
+    //margin-left: 10px;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
 }

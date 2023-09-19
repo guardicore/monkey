@@ -1,4 +1,3 @@
-from copy import deepcopy
 from typing import Dict
 
 from . import AgentConfiguration
@@ -16,16 +15,7 @@ from .agent_sub_configurations import (
 
 CREDENTIALS_COLLECTORS: Dict[str, Dict] = {}
 
-RANSOMWARE_OPTIONS = {
-    "encryption": {
-        "enabled": True,
-        "file_extension": ".m0nk3y",
-        "directories": {"linux_target_dir": "", "windows_target_dir": ""},
-    },
-    "other_behaviors": {"readme": True},
-}
-
-PAYLOAD_CONFIGURATION = {"ransomware": RANSOMWARE_OPTIONS}
+PAYLOAD_CONFIGURATION: Dict[str, Dict] = {}
 
 TCP_PORTS = (
     22,
@@ -69,15 +59,9 @@ NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
 
 EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports=HTTP_PORTS)
 
-# Order is preserved and agent will run exploiters in this sequence
-EXPLOITERS: Dict[str, Dict] = {
-    "Log4ShellExploiter": {},
-    "SSHExploiter": {},
-}
-
 EXPLOITATION_CONFIGURATION = ExploitationConfiguration(
     options=EXPLOITATION_OPTIONS_CONFIGURATION,
-    exploiters=EXPLOITERS,
+    exploiters={},
 )
 
 PROPAGATION_CONFIGURATION = PropagationConfiguration(
@@ -93,6 +77,3 @@ DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     propagation=PROPAGATION_CONFIGURATION,
     polymorphism=PolymorphismConfiguration(randomize_agent_hash=False),
 )
-
-DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = deepcopy(DEFAULT_AGENT_CONFIGURATION)
-DEFAULT_RANSOMWARE_AGENT_CONFIGURATION.credentials_collectors = {}

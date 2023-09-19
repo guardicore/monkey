@@ -2,18 +2,18 @@
   white-space: pre-wrap;
 }
 
-.config-nav .nav-item>a {
+.config-nav .nav-item > a {
   color: $black;
   padding: 15px 10px 15px 10px;
 }
 
-.config-nav .nav-item>a.active {
+.config-nav .nav-item > a.active {
   font-weight: bold;
   color: $black;
 }
 
-.config-nav .nav-item>a:hover:not(.active),
-.config-nav .nav-item>a:focus:not(.active) {
+.config-nav .nav-item > a:hover:not(.active),
+.config-nav .nav-item > a:focus:not(.active) {
   text-decoration: none;
   background-color: $light-gray;
 }
@@ -28,11 +28,11 @@ form.config-form > div.form-group {
   margin-left: 0;
 }
 
-.config-form div.form-group>div.form-group {
+.config-form div.form-group > div.form-group {
   margin-left: 2em;
 }
 
-.config-form>div.card.border-danger {
+.config-form > div.card.border-danger {
   display: none;
 }
 
@@ -44,25 +44,25 @@ div.form-group.field.field-array .field-object label.form-label {
   display: inline-block;
 }
 
-div.form-group.field.field-array button.btn-sm{
-    height: calc(1.5em + 0.75rem + 5px);
+div.form-group.field.field-array button.btn-sm {
+  height: calc(1.5em + 0.75rem + 5px);
 }
 
-div.form-group.field.field-array .align-items-center div.m-0.p-0{
+div.form-group.field.field-array .align-items-center div.m-0.p-0 {
   width: 100%;
   display: flex;
 }
 
-div.form-group.field.field-array .align-items-center{
+div.form-group.field.field-array .align-items-center {
   align-items: flex-start !important;
 }
 
 
-div.form-group.field.field-array .py-4.col-lg-3.col-3{
+div.form-group.field.field-array .py-4.col-lg-3.col-3 {
   padding: 0 !important;
 }
 
-div.form-group div:not([class]){
+div.form-group div:not([class]) {
   white-space: pre-wrap;
 }
 
@@ -78,4 +78,65 @@ div.form-group div:not([class]){
 
 .form-group label.form-label {
   font-weight: bold;
+}
+
+.config-form #root_exploit_user_password_pairs_list__title ~ .container-fluid [id^=root_exploit_user_password_pairs_list] {
+  &[id$="__title"] {
+    margin-bottom: -2rem !important;
+  }
+
+  &~ .container-fluid .row {
+    margin-bottom: 0 !important;
+
+    &:first-child {
+      .container-fluid {
+        margin-bottom: -1rem;
+      }
+    }
+
+    .container-fluid {
+      display: flex;
+      flex-wrap: wrap;
+
+      .form-group {
+        margin-bottom: 0;
+
+        .form-group {
+          margin-left: 0;
+
+          select {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
+#configure-propagation-credentials {
+  .MuiPaper-root {
+    background-color: #f9f9f9;
+
+    .add-new-credentials-row {
+      background-color: #ffffff;
+    }
+  }
+
+  .x-data-grid.configured-credentials {
+    margin-bottom: 2rem;
+
+    .secrets-visibility-button {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .MuiDataGrid-columnHeader, .MuiDataGrid-cell {
+    width: 15% !important;
+  }
+
+  .row-actions--header, .row-actions {
+    width: 10% !important;
+  }
 }

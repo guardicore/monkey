@@ -16,7 +16,7 @@ export default class ReportLoader extends Component {
       <h1>Generating Report...</h1>
       <GridLoader
         css={loading_css_override}
-        sizeUnit={'px'}
+        sizeunit={'px'}
         size={20}
         color={'#ffcc00'}
         loading={this.props.loading}

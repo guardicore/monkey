@@ -6,13 +6,8 @@ $monkey-info: #17a2b8;
 $monkey-white: #ffffff;
 $light-gray: #ececec;
 
-
 // Define colours before bootstrap import so it generates elements with those colours
-$theme-colors: (
-  "monkey-alt": $monkey-alt,
-  "primary": $monkey-yellow,
-  "monkey-info": $monkey-info,
-);
+$primary: $monkey-yellow;
 
 $nav-pills-link-active-bg: $monkey-alt;
 $nav-pills-link-active-color: $monkey-white;

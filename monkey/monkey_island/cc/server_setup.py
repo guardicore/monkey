@@ -102,7 +102,11 @@ def _configure_logging(config_options):
 
 def _collect_system_info() -> Tuple[Sequence[IPv4Address], Deployment, Version]:
     deployment = _get_deployment()
+    logger.info(f"Monkey Island deployment: {deployment}")
+
     version = Version(get_version(), deployment)
+    logger.info(f"Monkey Island version: {version.version_number}")
+
     return (get_my_ip_addresses(), deployment, version)
 
 

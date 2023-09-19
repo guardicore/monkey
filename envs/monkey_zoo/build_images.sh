@@ -12,6 +12,7 @@ show_usage() {
     printerr "  -p|--project-id <project_id>  GCP project ID (required)"
     printerr "  --account-file <file>         GCP service account file (required)"
     printerr "  -f|--force                    Force build even if image already exists"
+    printerr "  -d|--debug                    Leave the instance running for debugging"
     printerr "  -h|--help                     Show this help message and exit"
 }
 
@@ -19,6 +20,7 @@ show_usage() {
 PROJECT_ID=
 ACCOUNT_FILE=
 FORCE=
+DEBUG=
 
 while :; do
     case $1 in
@@ -48,6 +50,10 @@ while :; do
             FORCE=-force
             shift
             ;;
+        -d|--debug)
+            DEBUG=-debug
+            shift
+            ;;
         *)
             break
     esac
@@ -69,9 +75,9 @@ prevdir=$(pwd)
 cd "$ROOT" || exit 1
 for file in "$@"; do
     if file_path=$(realpath -q "$file") && [ -f "$file_path" ]; then
-        packer build $FORCE -var "project_id=$PROJECT_ID" -var "account_file=$ACCOUNT_FILE" "$file_path"
+        packer build $FORCE $DEBUG -on-error=ask -var "project_id=$PROJECT_ID" -var "account_file=$ACCOUNT_FILE" "$file_path"
     elif file_path=$(realpath -q "$prevdir/$file") && [ -f "$file_path" ]; then
-        packer build $FORCE -var "project_id=$PROJECT_ID" -var "account_file=$ACCOUNT_FILE" "$file_path"
+        packer build $FORCE $DEBUG -on-error=ask -var "project_id=$PROJECT_ID" -var "account_file=$ACCOUNT_FILE" "$file_path"
     else
         printerr "File does not exist: '$file'. Skipping."
     fi

@@ -1,4 +1,3 @@
-from copy import deepcopy
 from ipaddress import IPv4Address
 from unittest.mock import MagicMock
 
@@ -7,7 +6,6 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
     FAKE_MANIFEST_OBJECT,
     FAKE_NAME,
     FAKE_NAME2,
-    FAKE_TYPE,
     URL,
 )
 
@@ -19,21 +17,6 @@ from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 from infection_monkey.puppet import PluginCompatibilityVerifier
 
 FAKE_NAME3 = "http://www.BogusExploiter.com"
-
-FAKE_MANIFEST_OBJECT_2 = AgentPluginManifest(
-    name=FAKE_NAME2,
-    plugin_type=FAKE_TYPE,
-    supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
-    target_operating_systems=(OperatingSystem.WINDOWS,),
-    title="Some exploiter title",
-    version="1.0.0",
-    link_to_documentation=URL,
-)
-
-FAKE_HARD_CODED_PLUGIN_MANIFESTS = {
-    FAKE_NAME: FAKE_MANIFEST_OBJECT,
-    FAKE_NAME2: FAKE_MANIFEST_OBJECT_2,
-}
 
 
 @pytest.fixture
@@ -47,23 +30,7 @@ def raise_island_api_error(plugin_type, name):
 
 @pytest.fixture
 def plugin_compatibility_verifier(island_api_client):
-    return PluginCompatibilityVerifier(
-        island_api_client, OperatingSystem.WINDOWS, deepcopy(FAKE_HARD_CODED_PLUGIN_MANIFESTS)
-    )
-
-
-@pytest.mark.parametrize(
-    "target_host_os, exploiter_name",
-    [(None, FAKE_NAME), (OperatingSystem.WINDOWS, FAKE_NAME2), (OperatingSystem.LINUX, FAKE_NAME)],
-)
-def test_os_compatibility_verifier__hard_coded_exploiters(
-    target_host_os, exploiter_name, island_api_client, plugin_compatibility_verifier
-):
-    target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
-
-    assert plugin_compatibility_verifier.verify_target_operating_system_compatibility(
-        AgentPluginType.EXPLOITER, exploiter_name, target_host
-    )
+    return PluginCompatibilityVerifier(island_api_client, OperatingSystem.WINDOWS)
 
 
 @pytest.mark.parametrize(
@@ -143,9 +110,7 @@ def test_verify_local_os_compatibility(
         link_to_documentation=URL,
     )
     island_api_client.get_agent_plugin_manifest = lambda _, __: manifest
-    plugin_compatibility_verifier = PluginCompatibilityVerifier(
-        island_api_client, operating_system, {}
-    )
+    plugin_compatibility_verifier = PluginCompatibilityVerifier(island_api_client, operating_system)
 
     actual_result = plugin_compatibility_verifier.verify_local_operating_system_compatibility(
         plugin_type, FAKE_NAME2
@@ -178,7 +143,7 @@ def test_manifest_caching(island_api_client, plugin_type):
     )
     island_api_client.get_agent_plugin_manifest.side_effect = lambda _, __: manifest
     plugin_compatibility_verifier = PluginCompatibilityVerifier(
-        island_api_client, OperatingSystem.LINUX, {}
+        island_api_client, OperatingSystem.LINUX
     )
 
     plugin_compatibility_verifier.verify_local_operating_system_compatibility(

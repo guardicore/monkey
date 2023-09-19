@@ -1,26 +1,57 @@
+from aardwolf.commons.iosettings import RDPIOSettings
+from agent_plugins.credentials_collectors.chrome.utils import BrowserCredentialsDatabasePath
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
-from agent_plugins.exploiters.mssql.src.mssql_options import MSSQLOptions
+from agent_plugins.exploiters.rdp.in_memory_file_provider import InMemoryFileProvider
 from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
 from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
+from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
+from agent_plugins.payloads.cryptojacker.src import cpu_utilizer, cryptojacker, memory_utilizer
+from agent_plugins.payloads.ransomware.src.ransomware_options import (
+    EncryptionBehavior,
+    RansomwareOptions,
+    linux_target_dir,
+    windows_target_dir,
+)
+from asyauth.common.credentials import UniCredential
 from flask_security import Security
 
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
-from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
-from common.agent_plugins import AgentPlugin, AgentPluginManifest
+from common.agent_events import (
+    AbstractAgentEvent,
+    CPUConsumptionEvent,
+    DefacementEvent,
+    FileEncryptionEvent,
+    RAMConsumptionEvent,
+)
+from common.agent_plugins import (
+    AgentPlugin,
+    AgentPluginManifest,
+    AgentPluginMetadata,
+    AgentPluginRepositoryIndex,
+)
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
+from common.concurrency import BasicLock
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
+from common.decorators import request_cache
+from common.tags import (
+    DEFACEMENT_T1491_TAG,
+    EXTERNAL_DEFACEMENT_T1491_002_TAG,
+    INTERNAL_DEFACEMENT_T1491_001_TAG,
+)
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
-from infection_monkey.transport.http import FileServHTTPRequestHandler
+from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFirewall
 from infection_monkey.utils import commands
+from monkey.common.types import Percent
 from monkey_island.cc.deployment import Deployment
-from monkey_island.cc.models import IslandMode, Machine
+from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
+from monkey_island.cc.services.agent_plugin_service import AgentPluginService
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
@@ -36,6 +67,9 @@ InfectionMonkeyModelConfig.extra
 
 MutableInfectionMonkeyModelConfig.allow_mutation
 MutableInfectionMonkeyModelConfig.validate_assignment
+
+BasicLock.acquire
+BasicLock.release
 
 PluginName.strip_whitespace
 PluginName.regex
@@ -63,6 +97,7 @@ AgentPluginManifest.supported_operating_systems
 
 # Unused, but kept for future potential
 DIContainer.release_convention
+DIContainer.release
 
 # Used by third party library
 LDAPServerFactory.buildProtocol
@@ -77,18 +112,14 @@ wShowWindow  # \infection_monkey\monkey\infection_monkey\monkey.py:491:
 # Attribute used by pydantic errors
 msg_template
 
-# Presumably overrides http.server.BaseHTTPRequestHandler properties
-FileServHTTPRequestHandler.protocol_version
-FileServHTTPRequestHandler.version_string
-FileServHTTPRequestHandler.close_connection
-FileServHTTPRequestHandler.do_POST
-FileServHTTPRequestHandler.do_GET
-FileServHTTPRequestHandler.do_HEAD
-
 # Zerologon uses this to restore password:
 RemoteShell.do_get
 RemoteShell.do_exit
 prompt
+
+FirewallApp.listen_allowed
+WinAdvFirewall.listen_allowed
+WinFirewall.listen_allowed
 
 # Server configurations
 app.url_map.strict_slashes
@@ -111,8 +142,6 @@ Machine._socketaddress_from_string
 # Unused, but potentially useful
 Machine.island
 
-IslandMode.ADVANCED
-
 # We anticipate using these in the future
 IAgentEventRepository.get_events_by_tag
 IAgentEventRepository.get_events_by_source
@@ -131,9 +160,22 @@ Lock.locked
 
 AgentPlugin.supported_operating_systems
 
+BrowserCredentialsDatabasePath.database_file_path
+
 HadoopPlugin
 SMBPlugin
 WMIPlugin
+
+HostExploiter.add_vuln_url
+
+EncryptionBehavior.validate_file_extension
+EncryptionBehavior.validate_linux_target_dir
+EncryptionBehavior.validate_windows_target_dir
+RansomwareOptions.encryption
+RansomwareOptions.other_behaviors
+linux_target_dir
+windows_target_dir
+
 
 # User model fields
 User.active
@@ -153,5 +195,42 @@ commands.build_agent_download_command
 commands.build_command_windows_powershell
 commands.build_download_command_linux_curl
 commands.build_dropper_script_download_command
-commands.download_command_windows_powershell_webclient
-commands.download_command_windows_powershell_webrequest
+commands.build_download_command_windows_powershell_webclient
+commands.build_download_command_windows_powershell_webrequest
+
+request_cache
+
+# Remove after the plugin interface is in place
+AgentPluginMetadata.resource_path
+AgentPluginMetadata._str_to_pure_posix_path
+AgentPluginRepositoryIndex
+AgentPluginRepositoryIndex.compatible_infection_monkey_version
+AgentPluginRepositoryIndex._infection_monkey_version_parser
+AgentPluginRepositoryIndex._sort_plugins_by_version
+AgentPluginRepositoryIndex.use_enum_values
+AgentPluginRepositoryIndex._convert_str_type_to_enum
+
+CPUConsumptionEvent.cpu_number
+CPUConsumptionEvent.utilization
+RAMConsumptionEvent.utilization
+
+# RDP
+InMemoryFileProvider.get_file_data
+InMemoryFileProvider.get_file_size
+UniCredential.stype
+RDPIOSettings.video_width
+RDPIOSettings.video_height
+RDPIOSettings.video_bpp_max
+RDPIOSettings.video_out_format
+RDPIOSettings.clipboard_use_pyperclip
+
+AgentPluginService.install_agent_plugin_from_repository
+
+# Remove after #1247 is completed
+DefacementEvent
+DefacementEvent.DefacementTarget.INTERNAL
+DefacementEvent.DefacementTarget.EXTERNAL
+DefacementEvent.defacement_target
+DEFACEMENT_T1491_TAG
+INTERNAL_DEFACEMENT_T1491_001_TAG
+EXTERNAL_DEFACEMENT_T1491_002_TAG

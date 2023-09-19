@@ -26,6 +26,8 @@ When ready, you can browse to the Infection Monkey running on the fresh deployme
 
 To login to the machine, use *ubuntu* username.
 
+Once you have access to the Monkey Island server, check out the [getting started page]({{< ref "/usage/getting-started" >}}).
+
 ## Integration with AWS services
 
 The Infection Monkey has built-in integrations with AWS that allows running Agents on EC2 instances.

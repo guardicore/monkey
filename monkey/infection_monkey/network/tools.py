@@ -1,9 +1,7 @@
 import logging
-import select
 import socket
 import struct
 import sys
-from ipaddress import IPv4Address
 from typing import Optional
 
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
@@ -13,40 +11,6 @@ DEFAULT_TIMEOUT = CONNECTION_TIMEOUT
 BANNER_READ = 1024
 
 logger = logging.getLogger(__name__)
-
-
-def check_tcp_port(ip: IPv4Address, port: int, timeout=DEFAULT_TIMEOUT, get_banner=False):
-    """
-    Checks if a given TCP port is open
-    :param ip: Target IP
-    :param port: Target Port
-    :param timeout: Timeout for socket connection
-    :param get_banner:  if true, pulls first BANNER_READ bytes from the socket.
-    :return: Tuple, T/F + banner if requested.
-    """
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(timeout)
-
-    try:
-        sock.connect((str(ip), port))
-    except socket.timeout:
-        return False, None
-    except socket.error as exc:
-        logger.debug("Check port: %s:%s, Exception: %s", ip, port, exc)
-        return False, None
-
-    banner = None
-
-    try:
-        if get_banner:
-            read_ready, _, _ = select.select([sock], [], [], timeout)
-            if len(read_ready) > 0:
-                banner = sock.recv(BANNER_READ).decode()
-    except socket.error:
-        pass
-
-    sock.close()
-    return True, banner
 
 
 def get_interface_to_target(dst: str) -> Optional[str]:

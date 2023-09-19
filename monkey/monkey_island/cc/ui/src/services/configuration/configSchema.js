@@ -1,6 +1,6 @@
 import PROPAGATION_CONFIGURATION_SCHEMA from './propagation/propagation.js';
 import CREDENTIALS_COLLECTORS from './credentialsCollectors.js';
-import RANSOMWARE_SCHEMA from './ransomware';
+import PAYLOADS from './payloads.js';
 import POLYMORPHISM_SCHEMA from './polymorphism.js'
 import {MASQUERADE} from './masquerade.js';
 
@@ -9,7 +9,12 @@ export const SCHEMA = {
   'type': 'object',
   'properties': {
     'propagation': PROPAGATION_CONFIGURATION_SCHEMA,
-    'payloads': RANSOMWARE_SCHEMA,
+    'payloads': {
+      'title': 'Payloads',
+      'type': 'array',
+      'uniqueItems': true,
+      'items': PAYLOADS
+    },
     'credentials_collectors': {
       'title': 'Credentials collectors',
       'type': 'array',

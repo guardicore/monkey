@@ -181,10 +181,20 @@ class RunOnIslandButton extends AuthComponent {
             errorDetails={this.state.errorDetails}/>
           <Button variant={'outline-monkey'} size='lg' className={'selection-button'}
                   onClick={this.runIslandMonkey}>
-            {icon}
-            <h1>{this.props.title}</h1>
-            {description}
-            {this.getMonkeyRunStateIcon()}
+            <div className="selection-button-content-wrapper">
+              <div className="selection-button-details-wrapper">
+                <div className="selection-button-title">
+                  {icon}
+                  <h1>{this.props.title}</h1>
+                </div>
+                <div className="selection-button-description">
+                  {description}
+                 </div>
+              </div>
+              <div className="selection-button-side-icon">
+                {this.getMonkeyRunStateIcon()}
+              </div>
+            </div>
           </Button>
         </Col>
       </Row>

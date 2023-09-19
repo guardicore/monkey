@@ -2,16 +2,7 @@ from typing import List, Optional
 
 from common import OperatingSystem
 from common.base_models import InfectionMonkeyBaseModel
-from common.types import NetworkPort, NetworkProtocol, NetworkService
-
-
-class DiscoveredService(InfectionMonkeyBaseModel):
-    protocol: NetworkProtocol
-    port: NetworkPort
-    service: NetworkService
-
-    def __hash__(self) -> int:
-        return hash((self.protocol, self.port))
+from common.types import DiscoveredService
 
 
 class FingerprintData(InfectionMonkeyBaseModel):

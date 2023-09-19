@@ -13,8 +13,6 @@ from monkey_island.cc.mongo_consts import MONGO_URL
 from monkey_island.cc.resources import (
     AgentEvents,
     AgentHeartbeat,
-    AgentPlugins,
-    AgentPluginsManifest,
     Agents,
     AgentSignals,
     ClearSimulationData,
@@ -27,7 +25,6 @@ from monkey_island.cc.resources import (
     TerminateAllAgents,
 )
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
-from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.root import Root
@@ -37,6 +34,7 @@ from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import (
     register_agent_binary_resources,
     register_agent_configuration_resources,
+    register_agent_plugin_resources,
     setup_authentication,
     setup_log_service,
 )
@@ -97,9 +95,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Agents)
     api.add_resource(LocalRun)
 
-    api.add_resource(IslandMode)
-    api.add_resource(AgentPlugins)
-    api.add_resource(AgentPluginsManifest)
     api.add_resource(Machines)
 
     api.add_resource(SecurityReport)
@@ -121,6 +116,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 
     register_agent_configuration_resources(api)
     register_agent_binary_resources(api)
+    register_agent_plugin_resources(api)
 
 
 def init_rpc_endpoints(api: FlaskDIWrapper):

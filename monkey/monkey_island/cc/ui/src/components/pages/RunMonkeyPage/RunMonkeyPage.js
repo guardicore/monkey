@@ -16,10 +16,10 @@ class RunMonkeyPageComponent extends AuthComponent {
         <p style={{'marginBottom': '2em', 'fontSize': '1.2em'}}>
           Go ahead and run the Monkey!
           <i> (Or fine-tune its behavior by <Link to="/configure">adjusting the
-          configuration.</Link>)
+          configuration</Link>)
           </i>
         </p>
-        <RunOptions islandMode={this.props.islandMode}/>
+        <RunOptions/>
       </Col>
     );
   }

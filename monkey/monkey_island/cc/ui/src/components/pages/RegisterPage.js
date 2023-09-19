@@ -34,7 +34,7 @@ class RegisterPageComponent extends React.Component {
   };
 
   redirectToHome = () => {
-    window.location.href = '/landing-page';
+    window.location.href = '/';
   };
 
   constructor(props) {
@@ -65,7 +65,7 @@ class RegisterPageComponent extends React.Component {
             <Row>
               <Col lg={8} md={8} sm={8}>
                 <h1 className='reg-title'>First time?</h1>
-                <h3 className='reg-subtitle'>Let's secure your Monkey Island!</h3>
+                <h3 className='reg-subtitle'>Register a user</h3>
                 <div>
                   <Form className={'auth-form'} onSubmit={this.register} >
                     <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>

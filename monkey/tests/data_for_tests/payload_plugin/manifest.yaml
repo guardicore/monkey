@@ -1,0 +1,13 @@
+name: MockPayload
+plugin_type: Payload
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - windows
+  - linux
+title: Mock Payload plugin
+description: A payload plugin for testing purposes
+version: 1.0.0
+safe: true
+link_to_documentation: https://www.akamai.com/infectionmonkey

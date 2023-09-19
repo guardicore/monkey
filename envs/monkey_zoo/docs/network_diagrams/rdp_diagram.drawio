@@ -1,0 +1,67 @@
+<mxfile host="app.diagrams.net" modified="2023-07-24T21:06:40.498Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/115.0" etag="rEXqdSshrbu4AeR1OwTY" version="21.5.2" type="device">
+  <diagram id="UsVsRtHn_Xg_yxI8nRbj" name="Page-1">
+    <mxGraphModel dx="1306" dy="809" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="zSNOpbOSZiu1sCjkxTfX-2" value="&lt;div&gt;rdp-65&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;10.2.3.65&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="460" y="200" width="130" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="5D_lDOLaWDc_HPFmy1rF-2" value="rdp-64&lt;br&gt;&lt;br&gt;10.2.3.64" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="260" y="200" width="130" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="zSNOpbOSZiu1sCjkxTfX-4" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;strokeColor=#FF3333;strokeWidth=3;" parent="1" source="zSNOpbOSZiu1sCjkxTfX-5" target="5D_lDOLaWDc_HPFmy1rF-2" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="162" y="242.03999999999996" as="sourcePoint" />
+            <mxPoint x="750" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zSNOpbOSZiu1sCjkxTfX-5" value="Island" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="20" y="200" width="130" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="zSNOpbOSZiu1sCjkxTfX-6" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;strokeColor=#999999;strokeWidth=3;" parent="1" source="5D_lDOLaWDc_HPFmy1rF-2" target="zSNOpbOSZiu1sCjkxTfX-5" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="680" y="420" as="sourcePoint" />
+            <mxPoint x="730" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zSNOpbOSZiu1sCjkxTfX-7" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;strokeColor=#FF3333;strokeWidth=3;" parent="1" source="5D_lDOLaWDc_HPFmy1rF-2" target="zSNOpbOSZiu1sCjkxTfX-2" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="680" y="420" as="sourcePoint" />
+            <mxPoint x="730" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zSNOpbOSZiu1sCjkxTfX-8" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;strokeColor=#0000CC;strokeWidth=3;" parent="1" source="zSNOpbOSZiu1sCjkxTfX-2" target="5D_lDOLaWDc_HPFmy1rF-2" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="680" y="420" as="sourcePoint" />
+            <mxPoint x="730" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zSNOpbOSZiu1sCjkxTfX-12" value="Password Authentication" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="265" y="80" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zSNOpbOSZiu1sCjkxTfX-13" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;shape=link;" parent="1" source="5D_lDOLaWDc_HPFmy1rF-2" target="zSNOpbOSZiu1sCjkxTfX-12" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="680" y="420" as="sourcePoint" />
+            <mxPoint x="730" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zSNOpbOSZiu1sCjkxTfX-14" value="Pass The Hash Authentication" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="660" y="225" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zSNOpbOSZiu1sCjkxTfX-15" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;shape=link;" parent="1" source="zSNOpbOSZiu1sCjkxTfX-2" target="zSNOpbOSZiu1sCjkxTfX-14" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="680" y="420" as="sourcePoint" />
+            <mxPoint x="730" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ujwls4BrjTNjKe9-xz2k-2" value="" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#EF8F21;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.ms_windows;" vertex="1" parent="1">
+          <mxGeometry x="360" y="280" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ujwls4BrjTNjKe9-xz2k-3" value="" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#EF8F21;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.veeam.ms_windows;" vertex="1" parent="1">
+          <mxGeometry x="560" y="280" width="30" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

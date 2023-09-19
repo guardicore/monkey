@@ -7,7 +7,6 @@ from tests.unit_tests.monkey_island.cc.mongomock_fixtures import *  # noqa: F401
 from tests.unit_tests.monkey_island.conftest import init_mock_security_app
 
 import monkey_island.cc.app
-import monkey_island.cc.resources.island_mode
 from monkey_island.cc.repositories import IFileRepository
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 

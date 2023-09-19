@@ -247,3 +247,20 @@ class IIslandAPIClient(ABC):
         :raises IslandAPIError: If an unexpected error occurs while attempting to send the
                                 contents of the agent's log to the island
         """
+
+    @abstractmethod
+    def terminate_signal_is_set(self) -> bool:
+        """
+        Checks if the agent's terminate signal is set
+
+        :raises IslandAPIAuthenticationError: If the client is not authorized to access this
+                                              endpoint
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
+        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
+                                       island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
+                                             island due to an error on the server
+        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
+        :raises IslandAPIError: If an unexpected error occurs while attempting to send the
+                                contents of the agent's log to the island
+        """

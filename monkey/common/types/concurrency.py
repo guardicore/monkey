@@ -11,7 +11,7 @@ class BasicLock(Protocol):
         exc_type: Optional[Type[BaseException]],
         exc_val: Optional[BaseException],
         exc_tb: Optional[TracebackType],
-    ) -> None:
+    ) -> Optional[bool]:
         ...
 
     def acquire(self, blocking: bool = ..., timeout: float = ...) -> bool:

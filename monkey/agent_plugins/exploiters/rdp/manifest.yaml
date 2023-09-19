@@ -1,0 +1,16 @@
+name: RDP
+plugin_type: Exploiter
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - windows
+title: RDP Exploiter
+version: 1.0.0
+description: Attempts a brute-force attack over RDP using known credentials.
+safe: true
+remediation_suggestion: >-
+    Change user passwords to complex passwords that are not shared with other computers on the network.
+
+    An Infection Monkey Agent authenticated over RDP using stolen/configured credentials.
+link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/rdp/

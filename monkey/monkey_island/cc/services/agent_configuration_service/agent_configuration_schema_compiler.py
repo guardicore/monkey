@@ -3,20 +3,14 @@ from typing import Any, Dict
 
 import dpath
 
-from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_configuration import AgentConfiguration
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
-from common.hard_coded_manifests import HARD_CODED_PAYLOADS_MANIFESTS
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )
-from monkey_island.cc.repositories import IAgentPluginRepository
+from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
 
-from .hard_coded_schemas import (
-    HARD_CODED_EXPLOITER_SCHEMAS,
-    HARD_CODED_FINGERPRINTER_SCHEMAS,
-    HARD_CODED_PAYLOADS_SCHEMAS,
-)
+from .hard_coded_schemas import HARD_CODED_FINGERPRINTER_SCHEMAS
 
 PLUGIN_PATH_IN_SCHEMA = {
     AgentPluginType.EXPLOITER: "definitions.ExploitationConfiguration.properties.exploiters",
@@ -27,8 +21,8 @@ PLUGIN_PATH_IN_SCHEMA = {
 
 
 class AgentConfigurationSchemaCompiler:
-    def __init__(self, agent_plugin_repository: IAgentPluginRepository):
-        self._agent_plugin_repository = agent_plugin_repository
+    def __init__(self, agent_plugin_service: IAgentPluginService):
+        self._agent_plugin_service = agent_plugin_service
 
     def get_schema(self) -> Dict[str, Any]:
         try:
@@ -46,24 +40,19 @@ class AgentConfigurationSchemaCompiler:
         # proper plugins
         schema = self._add_hard_coded_plugins(schema)
 
-        config_schemas = deepcopy(
-            self._agent_plugin_repository.get_all_plugin_configuration_schemas()
-        )
+        config_schemas = deepcopy(self._agent_plugin_service.get_all_plugin_configuration_schemas())
+        all_plugin_manifests = self._agent_plugin_service.get_all_plugin_manifests()
 
         for plugin_type in config_schemas.keys():
             for plugin_name in config_schemas[plugin_type].keys():
                 config_schema = config_schemas[plugin_type][plugin_name]
-                plugin_manifest = self._agent_plugin_repository.get_all_plugin_manifests()[
-                    plugin_type
-                ][plugin_name]
+                plugin_manifest = all_plugin_manifests[plugin_type][plugin_name]
                 config_schema.update(plugin_manifest.dict(simplify=True))
                 schema = self._add_plugin_to_schema(schema, plugin_type, plugin_name, config_schema)
         return schema
 
     def _add_hard_coded_plugins(self, schema: Dict[str, Any]) -> Dict[str, Any]:
-        schema = self._add_non_plugin_exploiters(schema)
         schema = self._add_non_plugin_fingerprinters(schema)
-        schema = self._add_non_plugin_payloads(schema)
         return schema
 
     def _add_properties_field_to_plugin_types(self, schema: Dict[str, Any]) -> Dict[str, Any]:
@@ -80,16 +69,6 @@ class AgentConfigurationSchemaCompiler:
             schema[plugin_name].update(manifest.dict(simplify=True))
         return schema
 
-    def _add_non_plugin_exploiters(self, schema: Dict[str, Any]) -> Dict[str, Any]:
-        properties = dpath.get(
-            schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.EXPLOITER] + ".properties", "."
-        )
-        exploiter_schemas = self._add_manifests_to_plugins_schema(
-            HARD_CODED_EXPLOITER_SCHEMAS, HARD_CODED_EXPLOITER_MANIFESTS
-        )
-        properties.update(exploiter_schemas)
-        return schema
-
     def _add_non_plugin_fingerprinters(self, schema: Dict[str, Any]) -> Dict[str, Any]:
         properties = dpath.get(
             schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.FINGERPRINTER] + ".properties", "."
@@ -98,16 +77,6 @@ class AgentConfigurationSchemaCompiler:
             HARD_CODED_FINGERPRINTER_SCHEMAS, HARD_CODED_FINGERPRINTER_MANIFESTS
         )
         properties.update(fingerprinter_schemas)
-        return schema
-
-    def _add_non_plugin_payloads(self, schema: Dict[str, Any]) -> Dict[str, Any]:
-        properties = dpath.get(
-            schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.PAYLOAD] + ".properties", "."
-        )
-        payload_schemas = self._add_manifests_to_plugins_schema(
-            HARD_CODED_PAYLOADS_SCHEMAS, HARD_CODED_PAYLOADS_MANIFESTS
-        )
-        properties.update(payload_schemas)
         return schema
 
     def _add_plugin_to_schema(

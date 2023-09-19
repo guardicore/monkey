@@ -124,12 +124,19 @@ def test_build_agent_download_command__linux(build_command_fn: Callable[[TargetH
     assert url in linux_download_command
 
 
-@pytest.mark.parametrize(
-    "build_command_fn", [build_agent_download_command, build_dropper_script_download_command]
-)
-def test_build_agent_download_command__windows(build_command_fn: Callable[[TargetHost, str], str]):
+def test_build_agent_download_command__windows():
+    target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.WINDOWS)
+    url = "https://example.com/agent"
+
+    windows_download_command = build_agent_download_command(target_host, url)
+
+    assert "Invoke-WebRequest" in windows_download_command
+    assert url in windows_download_command
+
+
+def test_build_droper_download_command__windows():
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.WINDOWS)
     url = "https://example.com/agent"
 
     with pytest.raises(NotImplementedError):
-        build_command_fn(target_host, url)
+        build_dropper_script_download_command(target_host, url)

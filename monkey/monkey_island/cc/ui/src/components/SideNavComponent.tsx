@@ -1,4 +1,4 @@
-import React, {ReactFragment, useState} from 'react';
+import React, {ReactFragment, useContext, useState} from 'react';
 import {Button} from 'react-bootstrap';
 import {NavLink} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -10,6 +10,8 @@ import {CompletedSteps} from './side-menu/CompletedSteps';
 import {isReportRoute, IslandRoutes} from './Main';
 import Logo from './logo/LogoComponent';
 import IslandResetModal from './ui-components/IslandResetModal';
+import {Badge} from '@mui/material';
+import {PluginsContext} from './contexts/plugins/PluginsContext';
 
 
 const logoImage = require('../images/monkey-icon.svg');
@@ -34,6 +36,9 @@ const SideNavComponent = ({
                             onLogout,
                           }: Props) => {
 
+  // @ts-ignore
+  const {numberOfPluginsThatRequiresUpdate} = useContext(PluginsContext);
+
   const [showResetModal, setShowResetModal] = useState(false);
 
   return (
@@ -55,18 +60,16 @@ const SideNavComponent = ({
           </>}
 
         <li>
-          <NavLink to={IslandRoutes.RunMonkeyPage} className={getNavLinkClass()}>
-            <span className='number'>1.</span>
-            Run Monkey
+          <NavLink to={IslandRoutes.RunMonkeyPage} className={`${getNavLinkClass()} step`}>
+            <span>1. Run Monkey</span>
             {completedSteps.runMonkey ?
               <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
               : ''}
           </NavLink>
         </li>
         <li>
-          <NavLink to={IslandRoutes.MapPage} className={getNavLinkClass()}>
-            <span className='number'>2.</span>
-            Infection Map
+          <NavLink to={IslandRoutes.MapPage} className={`${getNavLinkClass()} step`}>
+            <span>2. Infection Map</span>
             {completedSteps.infectionDone ?
               <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
               : ''}
@@ -74,10 +77,9 @@ const SideNavComponent = ({
         </li>
         <li>
           <NavLink to={defaultReport}
-                   className={(isReportRoute(location.pathname) ? 'active' : 'inactive') + ' ' + getNavLinkClass()}
+                   className={`${(isReportRoute(location.pathname) ? 'active' : 'inactive')} ${getNavLinkClass()} step`}
                    >
-            <span className='number'>3.</span>
-            Security Reports
+            <span>3. Security Reports</span>
             {completedSteps.reportDone ?
               <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
               : ''}
@@ -99,7 +101,7 @@ const SideNavComponent = ({
       </ul>
 
       <hr/>
-      <ul>
+      <ul className='general-nav-items'>
         <li><NavLink to={IslandRoutes.ConfigurePage}
                      className={getNavLinkClass()}>
           Configuration
@@ -107,6 +109,10 @@ const SideNavComponent = ({
         <li><NavLink to='/infection/events'
                      className={getNavLinkClass()}>
           Events
+        </NavLink></li>
+        <li><NavLink to={IslandRoutes.Marketplace}
+                     className={getNavLinkClass()}>
+          <Badge id="plugins-marketplace-link" badgeContent={numberOfPluginsThatRequiresUpdate} color="error"><span id="plugins-marketplace-label">Plugins</span></Badge>
         </NavLink></li>
         <li><Button variant={null} className={`${getNavLinkClass()} logout-button`}
                     onClick={onLogout} >

@@ -3,7 +3,7 @@ import os
 import subprocess
 from multiprocessing.dummy import Pool
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 AUTHENTICATION_COMMAND = "gcloud auth activate-service-account --key-file=%s"
 SET_PROPERTY_PROJECT = "gcloud config set project %s"
@@ -19,11 +19,11 @@ def initialize_gcp_client():
     abs_key_path = get_absolute_key_path()
 
     subprocess.call(get_auth_command(abs_key_path), shell=True)  # noqa: DUO116
-    LOGGER.info("GCP Handler passed key")
+    logger.info("GCP Handler passed key")
 
     subprocess.call(get_set_project_command(DEFAULT_PROJECT), shell=True)  # noqa: DUO116
-    LOGGER.info("GCP Handler set project")
-    LOGGER.info("GCP Handler initialized successfully")
+    logger.info("GCP Handler set project")
+    logger.info("GCP Handler initialized successfully")
 
 
 def get_absolute_key_path() -> str:
@@ -43,21 +43,21 @@ def start_machines(machine_list):
     Start all the machines in the list.
     :param machine_list: A dictionary with zone and machines per zone.
     """
-    LOGGER.info("Setting up all GCP machines...")
+    logger.info("Setting up all GCP machines...")
     try:
         run_gcp_pool(MACHINE_STARTING_COMMAND, machine_list)
-        LOGGER.info("GCP machines successfully started.")
+        logger.info("GCP machines successfully started.")
     except Exception as e:
-        LOGGER.error("GCP Handler failed to start GCP machines: %s" % e)
+        logger.error("GCP Handler failed to start GCP machines: %s" % e)
         raise e
 
 
 def stop_machines(machine_list):
     try:
         run_gcp_pool(MACHINE_STOPPING_COMMAND, machine_list)
-        LOGGER.info("GCP machines stopped successfully.")
+        logger.info("GCP machines stopped successfully.")
     except Exception as e:
-        LOGGER.error("GCP Handler failed to stop network machines: %s" % e)
+        logger.error("GCP Handler failed to stop network machines: %s" % e)
 
 
 def get_auth_command(key_path):

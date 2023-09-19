@@ -35,12 +35,13 @@ rm requirements.txt
 pushd "$PLUGIN_PATH/src" || fail "$PLUGIN_PATH/src does not exist"
 
 source_archive=$PLUGIN_PATH/$SOURCE_FILENAME
-tar -cf "$source_archive" --exclude __pycache__ --exclude .mypy_cache --exclude .pytest_cache --exclude .git --exclude .gitignore --exclude .DS_Store -- *
+tar -zcf "$source_archive" --exclude __pycache__ --exclude .mypy_cache --exclude .pytest_cache --exclude .git --exclude .gitignore --exclude .DS_Store -- *
 
 rm -rf vendor*
 popd || exit 1
 
-plugin_filename=$(get_plugin_filename) || fail "Failed to get plugin filename: $plugin_filename"
-tar -cf "$PLUGIN_PATH/$plugin_filename" "$MANIFEST_FILENAME" "$SCHEMA_FILENAME" "$SOURCE_FILENAME"
+plugin_filename=$(get_plugin_filename "$PLUGIN_PATH") || fail "Failed to get plugin filename: $plugin_filename"
+plugin_manifest_filename=$(get_plugin_manifest_filename "$PLUGIN_PATH")
+tar -cf "$PLUGIN_PATH/$plugin_filename" "$plugin_manifest_filename" "$SCHEMA_FILENAME" "$SOURCE_FILENAME"
 rm "$source_archive"
 popd || exit 1

@@ -12,7 +12,6 @@ from itertools import chain, product
 from threading import Lock
 from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
 
-from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_events import (
     AbstractAgentEvent,
     ExploitationEvent,
@@ -27,12 +26,12 @@ from common.types import PortStatus
 from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repositories import (
     IAgentEventRepository,
-    IAgentPluginRepository,
     IAgentRepository,
     IMachineRepository,
     INodeRepository,
 )
 from monkey_island.cc.services import IAgentConfigurationService
+from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
     get_monkey_exploited,
 )
@@ -68,7 +67,7 @@ class ReportService:
     _agent_event_repository: Optional[IAgentEventRepository] = None
     _machine_repository: Optional[IMachineRepository] = None
     _node_repository: Optional[INodeRepository] = None
-    _agent_plugin_repository: Optional[IAgentPluginRepository] = None
+    _agent_plugin_service: Optional[IAgentPluginService] = None
     _report: Dict[str, Dict] = {}
     _report_generation_lock: Lock = Lock()
 
@@ -80,14 +79,14 @@ class ReportService:
         agent_event_repository: IAgentEventRepository,
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
-        agent_plugin_repository: IAgentPluginRepository,
+        agent_plugin_service: IAgentPluginService,
     ):
         cls._agent_repository = agent_repository
         cls._agent_configuration_service = agent_configuration_service
         cls._agent_event_repository = agent_event_repository
         cls._machine_repository = machine_repository
         cls._node_repository = node_repository
-        cls._agent_plugin_repository = agent_plugin_repository
+        cls._agent_plugin_service = agent_plugin_service
 
     # This should pull from Simulation entity
     @classmethod
@@ -451,7 +450,7 @@ class ReportService:
         scanned_nodes = ReportService.get_scanned()
         exploited_cnt = len(
             get_monkey_exploited(
-                cls._agent_event_repository, cls._machine_repository, cls._agent_plugin_repository
+                cls._agent_event_repository, cls._machine_repository, cls._agent_plugin_service
             )
         )
         return {
@@ -525,14 +524,12 @@ class ReportService:
 
     @classmethod
     def _get_exploiter_manifests(cls) -> Dict[str, AgentPluginManifest]:
-        exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(  # type: ignore[union-attr] # noqa: E501
+        exploiter_manifests = cls._agent_plugin_service.get_all_plugin_manifests().get(  # type: ignore[union-attr] # noqa: E501
             AgentPluginType.EXPLOITER, {}
         )
         exploiter_manifests = deepcopy(exploiter_manifests)
         if not exploiter_manifests:
             logger.debug("No plugin exploiter manifests were found")
-
-        exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
 
         return exploiter_manifests
 

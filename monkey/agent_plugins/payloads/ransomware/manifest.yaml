@@ -1,0 +1,22 @@
+name: Ransomware
+plugin_type: Payload
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - linux
+  - windows
+title: Ransomware
+version: 1.0.0
+description: >-
+  Simulates a ransomware attack on your network using a set of configurable behaviors.
+
+  To simulate ransomware encryption, you'll need to provide Infection Monkey
+  with files that it can safely encrypt. Create a directory with some files on each
+  machine where the ransomware simulation will run. No files will be encrypted
+  if a directory is not specified or if the specified directory doesn't exist on a
+  victim machine.
+
+  Optionally, a README.txt file can be left in the specified target directory.
+safe: true
+link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/ransomware-simulation

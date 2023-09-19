@@ -22,7 +22,7 @@ from .utils import (
 #     then B(10.2.4.15) exploits C(10.2.5.16) with that key
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
-        "SSHExploiter": {},
+        "SSH": {},
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)

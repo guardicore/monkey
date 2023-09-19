@@ -79,3 +79,6 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
 
     def send_log(self, log_contents: str):
         return self._island_api_client.send_log(log_contents)
+
+    def terminate_signal_is_set(self) -> bool:
+        return self._island_api_client.terminate_signal_is_set()

@@ -5,7 +5,7 @@ from . import IAgentConfigurationService
 from .agent_configuration_schema_compiler import AgentConfigurationSchemaCompiler
 from .agent_configuration_service import AgentConfigurationService
 from .agent_configuration_validation_decorator import AgentConfigurationValidationDecorator
-from .event_handlers import reset_agent_configuration, set_agent_configuration_per_island_mode
+from .event_handlers import reset_agent_configuration
 from .file_agent_configuration_repository import FileAgentConfigurationRepository
 from .i_agent_configuration_repository import IAgentConfigurationRepository
 
@@ -48,8 +48,4 @@ def _register_event_handlers(container: DIContainer) -> None:
     island_event_queue.subscribe(
         IslandEventTopic.RESET_AGENT_CONFIGURATION,
         container.resolve(reset_agent_configuration),
-    )
-    island_event_queue.subscribe(
-        IslandEventTopic.SET_ISLAND_MODE,
-        container.resolve(set_agent_configuration_per_island_mode),
     )

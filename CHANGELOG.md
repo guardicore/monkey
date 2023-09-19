@@ -5,12 +5,54 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [2.1.1 - 2023-06-21]
+## [2.3.0 - 2023-09-19]
+### Added
+- Ability to filter Agent events by timestamp. #3397
+- Ability to filter Agent events by tag. #3396
+- Provide a common server object to the plugins that can be used to serve agent
+  binaries to the exploited machine over HTTP. #3410
+- CPUConsumptionEvent. #3411
+- RAMConsumptionEvent. #3411
+- HTTPRequestEvent. #3411
+- DefacementEvent. #1247
+- RDP exploiter plugin. #3425
+- A cryptojacker payload to simulate cryptojacker attacks. #3411
+- `PUT /api/install-agent-plugin`. #3417
+- `GET /api/agent-plugins/installed/manifests`. #3424
+- `GET /api/agent-plugins/available/index`. #3420
+- `POST /api/uninstall-agent-plugin` # 3422
+- Chrome credentials collector plugin. #3426
+- A plugin interface for payloads. #3390
+- The ability to install plugins from an online repository. #3413, #3418, #3616
+- Support for SMBv2+ in SMB exploiter. #3577
+- A UI for uploading agent plugin archives. #3417, #3611
+
+### Changed
+- Plugin source is now gzipped. #3392
+- Allowed characters in Agent event tags. #3399, #3676
+- Hard-coded Log4Shell exploiter to a plugin. #3388
+- Hard-coded SSH exploiter to a plugin. #3170
+- Identities and secrets can be associated when configuring credentials in the
+  UI. #3393
+- Hard-coded ransomware payload to a plugin. #3391
+- Text on the registration screen to improve clarity. #1984
+
+### Fixed
+- Agent hanging if plugins do not shut down. #3557
+- WMI exploiter hanging. #3543
+- Discovered network services are displayed in reports. #3000
+
+### Removed
+- Island mode configuration. #3400
+- Agent plugins from Island packages. #3616
+
+### Security
+- Fixed a ReDoS issue when validating ransomware file extensions. #3391
+
+## [2.2.1 - 2023-06-21]
 
 ### Fixed
 - A configuration issue that prevents Mimikatz from being used. #3433
-
-
 
 ## [2.2.0 - 2023-05-31]
 ### Added
@@ -37,6 +79,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Hard-coded PowerShell exploiter to a plugin. #3165
 
 ### Fixed
+- Agents were being caught by Windows Defender (and other antiviruses). #1289
 - Plugins are now being checked for local OS compatibility. #3275
 - A bug that could prevent multi-hop propagation via SMB. #3173
 - Exceptions being raised when WMI and Zerologon are used together. #1774
@@ -45,8 +88,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - A bug in URL sanitization. #3318
 
 ### Security
-- Fixes a bug where OTPs can be leaked by the hadoop exploiter. #3296
-- Fixes pypykatz leaking sensitive information into the logs. #3168, #3293
+- Fixed a bug where OTPs can be leaked by the hadoop exploiter. #3296
+- Fixed pypykatz leaking sensitive information into the logs. #3168, #3293
 
 ## [2.1.0] - 2023-04-19
 ### Added

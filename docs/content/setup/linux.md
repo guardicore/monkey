@@ -29,11 +29,11 @@ On Windows, AppImage can be run in WSL 2.
 
 1. Make the AppImage package executable:
     ```bash
-    chmod u+x InfectionMonkey-v2.2.0.AppImage
+    chmod u+x InfectionMonkey-v2.3.0.AppImage
     ```
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
-    ./InfectionMonkey-v2.2.0.AppImage
+    ./InfectionMonkey-v2.3.0.AppImage
     ```
 
    If you get errors related to FUSE, you may need to install FUSE 2.X first:
@@ -43,7 +43,8 @@ On Windows, AppImage can be run in WSL 2.
    ```
    More information about fixing FUSE-related errors can be found [here](https://docs.appimage.org/user-guide/troubleshooting/fuse.html).
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost:5000`. Once you have access to the Monkey Island server, check out the
+[getting started page]({{< ref "/usage/getting-started" >}}).
 
 {{% notice info %}}
 If you're prompted to delete your data directory and you're not sure what to
@@ -58,12 +59,12 @@ The Infection Monkey can be installed as a service and run on boot by running th
 with the following parameters. This requires root permissions, so run `sudo -v` and enter your
 password before running the script, if required.
 ```bash
-./InfectionMonkey-v2.2.0.AppImage service --install --user <USERNAME>
+./InfectionMonkey-v2.3.0.AppImage service --install --user <USERNAME>
 ```
 
 To uninstall it, run:
 ```bash
-./InfectionMonkey-v2.2.0.AppImage service --uninstall
+./InfectionMonkey-v2.3.0.AppImage service --uninstall
 ```
 
 {{% notice info %}}
@@ -77,7 +78,7 @@ You can configure the server by creating
 a [server configuration file](../../reference/server_configuration) and
 providing a path to it via command line parameters:
 
-`./InfectionMonkey-v2.2.0.AppImage --server-config="/path/to/server_config.json"`
+`./InfectionMonkey-v2.3.0.AppImage --server-config="/path/to/server_config.json"`
 
 ### Start Monkey Island with user-provided certificate
 
@@ -113,7 +114,7 @@ The server configuration file should look something like:
 
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
-    ./InfectionMonkey-v2.2.0.AppImage --server-config="/path/to/server_config.json"
+    ./InfectionMonkey-v2.3.0.AppImage --server-config="/path/to/server_config.json"
     ```
 
 1. Access the Monkey Island web UI by pointing your browser at
@@ -134,7 +135,7 @@ The server configuration file should look something like:
 
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
-    ./InfectionMonkey-v2.2.0.AppImage --server-config="/path/to/server_config.json"
+    ./InfectionMonkey-v2.3.0.AppImage --server-config="/path/to/server_config.json"
     ```
 
 1. Access the Monkey Island web UI by pointing your browser at

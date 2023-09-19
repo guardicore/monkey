@@ -1,7 +1,11 @@
-from typing import Sequence
+from typing import Sequence, Set
 
-from common.types import NetworkPort
+from common.types import NetworkPort, NetworkService
 from infection_monkey.i_puppet import TargetHost
+
+# NOTE: Don't migrate these functions to a user-facing interface
+#       without properly thinking about it. Are these functions stable enough?
+#       Are they promises that we want to keep to users who build their own plugins?
 
 
 def all_tcp_ports_are_closed(host: TargetHost, tcp_ports: Sequence[NetworkPort]) -> bool:
@@ -19,3 +23,12 @@ def all_udp_ports_are_closed(host: TargetHost, udp_ports: Sequence[NetworkPort])
     """
     closed_udp_ports = host.ports_status.udp_ports.closed
     return all([p in closed_udp_ports for p in udp_ports])
+
+
+def filter_out_closed_ports(host: TargetHost, ports: Sequence[NetworkPort]) -> Set[NetworkPort]:
+    return {port for port in ports if port not in host.ports_status.tcp_ports.closed}
+
+
+def get_open_http_ports(host: TargetHost) -> Sequence[NetworkPort]:
+    tcp_ports = host.ports_status.tcp_ports
+    return [port for port in tcp_ports.open if tcp_ports[port].service == NetworkService.HTTP]

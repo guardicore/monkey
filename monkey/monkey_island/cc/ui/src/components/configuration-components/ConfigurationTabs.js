@@ -1,4 +1,4 @@
-const CONFIGURATION_TABS = {
+export const CONFIGURATION_TABS = {
   PROPAGATION: 'propagation',
   PAYLOADS: 'payloads',
   CREDENTIALS_COLLECTORS: 'credentials_collectors',
@@ -7,7 +7,7 @@ const CONFIGURATION_TABS = {
   ADVANCED: 'advanced'
 };
 
-const advancedModeConfigTabs = [
+const CONFIGURATION_TABS_ORDER = [
   CONFIGURATION_TABS.PROPAGATION,
   CONFIGURATION_TABS.PAYLOADS,
   CONFIGURATION_TABS.CREDENTIALS_COLLECTORS,
@@ -16,17 +16,4 @@ const advancedModeConfigTabs = [
   CONFIGURATION_TABS.ADVANCED
 ];
 
-const ransomwareModeConfigTabs = [
-  CONFIGURATION_TABS.PROPAGATION,
-  CONFIGURATION_TABS.PAYLOADS,
-  CONFIGURATION_TABS.MASQUERADE,
-  CONFIGURATION_TABS.POLYMORPHISM,
-  CONFIGURATION_TABS.ADVANCED
-];
-
-const CONFIGURATION_TABS_PER_MODE = {
-  'advanced': advancedModeConfigTabs,
-  'ransomware': ransomwareModeConfigTabs
-};
-
-export default CONFIGURATION_TABS_PER_MODE;
+export default CONFIGURATION_TABS_ORDER;

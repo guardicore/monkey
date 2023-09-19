@@ -1,3 +1,5 @@
 from .agent_plugin_type import AgentPluginType
-from .agent_plugin_manifest import AgentPluginManifest
+from .agent_plugin_manifest import PluginName, PluginVersion, AgentPluginManifest
 from .agent_plugin import AgentPlugin
+from .agent_plugin_metadata import AgentPluginMetadata
+from .agent_plugin_repository_index import AgentPluginRepositoryIndex

@@ -24,10 +24,18 @@ scanning times in a real-world scenario and many more.
   - This account should have `Service Account User` and `Compute Instance Admin` permissions
 - A GCP key file for the service account
 
-Run envs/monkey_zoo/build_images.sh to build the images for the MonkeyZoo. These are the images from which the zoo will be deployed.
+To install the requirements run packer init, for example:
+```bash
+packer init ./browser-credentials.pkr.hcl
+```
+
+Then run the envs/monkey_zoo/build_images.sh to build the images for the MonkeyZoo. These are the images from which the zoo will be deployed.
 
 Example:
-  ./build_images.sh --project my-gcp-project --account-file /path/to/gcp_key.json packer/tunneling.pkr.hcl
+  `../build_images.sh --project-id my-gcp-project --account-file /path/to/gcp_key.json packer/tunneling.pkr.hcl`
+
+If you want to keep the machine running to debug the image, add `--debug` flag to the command.
+If you want to override an already existing image add `--force` flag to the command.
 
 ## MonkeyZoo network
 

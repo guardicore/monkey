@@ -5,7 +5,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheckSquare} from '@fortawesome/free-solid-svg-icons';
 import {faSquare} from '@fortawesome/free-regular-svg-icons';
 
-import {getComponentHeight} from './utils/HeightCalculator';
 import WarningIcon from './WarningIcon';
 
 function ChildCheckboxContainer(props) {
@@ -23,7 +22,7 @@ function ChildCheckboxContainer(props) {
 
   return(
     <Form.Group
-      style={{height: `${getComponentHeight(enumOptions.length)}px`}}
+      style={{height: 'auto', maxHeight: '250px'}}
       id={id} multiple={multiple} className='choice-block form-control'
       required={required} autoFocus={autofocus}>
       {

@@ -10,13 +10,17 @@ from uuid import uuid4
 
 import pytest
 import requests
+from treelib import Tree
 
 from common import OperatingSystem
-from common.credentials import Credentials, NTHash, Password, Username
 from common.types import OTP, SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.stolen_credentials_analyzer import StolenCredentialsAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
+from envs.monkey_zoo.blackbox.expected_credentials import (
+    expected_credentials_depth_1_a,
+    expected_credentials_depth_2_a,
+)
 from envs.monkey_zoo.blackbox.island_client.agent_requests import AgentRequests
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import (
@@ -59,7 +63,7 @@ DEFAULT_TIMEOUT_SECONDS = 2 * 60 + 30
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 LOG_DIR_PATH = "./logs"
 logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -67,15 +71,15 @@ def GCPHandler(request, no_gcp, gcp_machines_to_start):
     if no_gcp:
         return
     if len(gcp_machines_to_start) == 0:
-        LOGGER.info("No GCP machines to start.")
+        logger.info("No GCP machines to start.")
     else:
-        LOGGER.info(f"MACHINES TO START: {gcp_machines_to_start}")
+        logger.info(f"MACHINES TO START: {gcp_machines_to_start}")
 
         try:
             initialize_gcp_client()
             start_machines(gcp_machines_to_start)
         except Exception as e:
-            LOGGER.error("GCP Handler failed to initialize: %s." % e)
+            logger.error("GCP Handler failed to initialize: %s." % e)
             pytest.exit("Encountered an error while starting GCP machines. Stopping the tests.")
         wait_machine_bootup()
 
@@ -87,7 +91,7 @@ def GCPHandler(request, no_gcp, gcp_machines_to_start):
 
 @pytest.fixture(autouse=True, scope="session")
 def delete_logs():
-    LOGGER.info("Deleting monkey logs before new tests.")
+    logger.info("Deleting monkey logs before new tests.")
     TestLogsHandler.delete_log_folder_contents(TestMonkeyBlackbox.get_log_dir_path())
 
 
@@ -117,9 +121,12 @@ def island_client(monkey_island_requests):
 
 
 @pytest.fixture(autouse=True, scope="session")
-def register(island_client):
+def setup_island(island_client):
     logging.info("Registering a new user")
     island_client.register()
+
+    logging.info("Installing all available plugins")
+    island_client.install_agent_plugins()
 
 
 @pytest.mark.parametrize(
@@ -326,7 +333,6 @@ TERMINATE_AGENTS_ENDPOINT = "/api/agent-signals/terminate-all-agents"
 CLEAR_SIMULATION_DATA_ENDPOINT = "/api/clear-simulation-data"
 MONKEY_EXPLOITATION_ENDPOINT = "/api/exploitations/monkey"
 GET_ISLAND_LOG_ENDPOINT = "/api/island/log"
-ISLAND_MODE_ENDPOINT = "/api/island/mode"
 ISLAND_RUN_ENDPOINT = "/api/local-monkey"
 GET_NODES_ENDPOINT = "/api/nodes"
 PROPAGATION_CREDENTIALS_ENDPOINT = "/api/propagation-credentials"
@@ -337,6 +343,9 @@ RESET_AGENT_CONFIG_ENDPOINT = "/api/reset-agent-configuration"
 GET_SECURITY_REPORT_ENDPOINT = "/api/report/security"
 GET_ISLAND_VERSION_ENDPOINT = "/api/island/version"
 PUT_AGENT_CONFIG_ENDPOINT = "/api/agent-configuration"
+INSTALL_AGENT_PLUGIN_ENDPOINT = "/api/install-agent-plugin"
+AVAILABLE_AGENT_PLUGIN_INDEX_ENDPOINT = "/api/agent-plugins/available/index?force_refresh=true"
+UNINSTALL_AGENT_PLUGIN_ENDPOINT = "/api/uninstall-agent-plugin"
 
 
 def test_agent__cannot_access_nonagent_endpoints(island):
@@ -361,8 +370,6 @@ def test_agent__cannot_access_nonagent_endpoints(island):
     )
     assert agent_requests.get(MONKEY_EXPLOITATION_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
     assert agent_requests.get(GET_ISLAND_LOG_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
-    assert agent_requests.get(ISLAND_MODE_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
-    assert agent_requests.put(ISLAND_MODE_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
     assert agent_requests.post(ISLAND_RUN_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
     assert agent_requests.get(GET_MACHINES_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
     assert agent_requests.get(GET_NODES_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
@@ -382,6 +389,18 @@ def test_agent__cannot_access_nonagent_endpoints(island):
     assert agent_requests.get(GET_ISLAND_VERSION_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
     assert (
         agent_requests.put(PUT_AGENT_CONFIG_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
+    )
+    assert (
+        agent_requests.put(INSTALL_AGENT_PLUGIN_ENDPOINT, data=None).status_code
+        == HTTPStatus.FORBIDDEN
+    )
+    assert (
+        agent_requests.get(AVAILABLE_AGENT_PLUGIN_INDEX_ENDPOINT).status_code
+        == HTTPStatus.FORBIDDEN
+    )
+    assert (
+        agent_requests.post(UNINSTALL_AGENT_PLUGIN_ENDPOINT, data=None).status_code
+        == HTTPStatus.FORBIDDEN
     )
 
 
@@ -419,10 +438,6 @@ def test_unauthenticated_user_cannot_access_API(island):
     )
     assert island_requests.get(MONKEY_EXPLOITATION_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
     assert island_requests.get(GET_ISLAND_LOG_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
-    assert island_requests.get(ISLAND_MODE_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
-    assert (
-        island_requests.put(ISLAND_MODE_ENDPOINT, data=None).status_code == HTTPStatus.UNAUTHORIZED
-    )
     assert (
         island_requests.post(ISLAND_RUN_ENDPOINT, data=None).status_code == HTTPStatus.UNAUTHORIZED
     )
@@ -451,6 +466,18 @@ def test_unauthenticated_user_cannot_access_API(island):
     assert island_requests.get(GET_ISLAND_VERSION_ENDPOINT).status_code == HTTPStatus.UNAUTHORIZED
     assert (
         island_requests.put(PUT_AGENT_CONFIG_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert (
+        island_requests.put(INSTALL_AGENT_PLUGIN_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert (
+        island_requests.get(AVAILABLE_AGENT_PLUGIN_INDEX_ENDPOINT).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert (
+        island_requests.post(UNINSTALL_AGENT_PLUGIN_ENDPOINT, data=None).status_code
         == HTTPStatus.UNAUTHORIZED
     )
 
@@ -525,6 +552,18 @@ class TestMonkeyBlackbox:
         assert len(agent_hashes) == len(set(agent_hashes))
 
     @staticmethod
+    def assert_depth_restriction(agents: Sequence[Agent], configured_depth: int):
+        # Trying to add a node to the tree whose parent doesn't exist in the tree yet
+        # raises `NodeIDAbsentError`. Sorting the agents by registration time prevents that.
+        sorted_agents = sorted(agents, key=lambda agent: agent.registration_time)
+
+        propagation_tree = Tree()
+        for agent in sorted_agents:
+            propagation_tree.create_node(tag=agent.id, identifier=agent.id, parent=agent.parent_id)
+
+        assert propagation_tree.depth() <= configured_depth
+
+    @staticmethod
     def run_exploitation_test(
         island_client: MonkeyIslandClient,
         test_configuration: TestConfiguration,
@@ -539,7 +578,7 @@ class TestMonkeyBlackbox:
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
-        ExploitationTest(
+        exploitation_test = ExploitationTest(
             name=test_name,
             island_client=island_client,
             test_configuration=test_configuration,
@@ -547,7 +586,13 @@ class TestMonkeyBlackbox:
             analyzers=[analyzer],
             timeout=timeout_in_seconds,
             log_handler=log_handler,
-        ).run()
+        )
+        exploitation_test.run()
+
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=test_configuration.agent_configuration.propagation.maximum_depth,
+        )
 
     @staticmethod
     def get_log_dir_path():
@@ -560,6 +605,7 @@ class TestMonkeyBlackbox:
 
     def test_depth_2_a(self, island_client):
         test_name = "Depth2A test suite"
+
         communication_analyzer = CommunicationAnalyzer(
             island_client,
             get_target_ips(depth_2_a_test_configuration),
@@ -567,12 +613,16 @@ class TestMonkeyBlackbox:
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
+
+        stolen_credentials_analyzer = StolenCredentialsAnalyzer(
+            island_client, expected_credentials_depth_2_a
+        )
         exploitation_test = ExploitationTest(
             name=test_name,
             island_client=island_client,
             test_configuration=depth_2_a_test_configuration,
             masque=None,
-            analyzers=[communication_analyzer],
+            analyzers=[communication_analyzer, stolen_credentials_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         )
@@ -581,36 +631,15 @@ class TestMonkeyBlackbox:
         # asserting that Agent hashes are not unique
         assert len({a.sha256 for a in exploitation_test.agents}) == 2
 
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=depth_2_a_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
+        )
+
     def test_depth_1_a(self, island_client):
         test_name = "Depth1A test suite"
         masque = b"m0nk3y"
 
-        expected_credentials = {
-            Credentials(
-                identity=Username(username="m0nk3y"),
-                secret=NTHash(nt_hash="5da0889ea2081aa79f6852294cba4a5e"),
-            ),
-            Credentials(
-                identity=Username(username="m0nk3y"), secret=Password(password="pAJfG56JX><")
-            ),
-            Credentials(
-                identity=Username(username="m0nk3y"), secret=Password(password="Ivrrw5zEzs")
-            ),
-            Credentials(
-                identity=Username(username="vakaris_zilius"),
-                secret=NTHash(nt_hash="e1c0dc690821c13b10a41dccfc72e43a"),
-            ),
-            Credentials(
-                identity=Username(username="m0nk3y"),
-                secret=NTHash(nt_hash="fc525c9683e8fe067095ba2ddc971889"),
-            ),
-            Credentials(
-                identity=Username(username="m0nk3y"),
-                secret=NTHash(nt_hash="201fe0a0db9733e419875201c6bd36f2"),
-            ),
-        }
-
-        stolen_credentials_analyzer = StolenCredentialsAnalyzer(island_client, expected_credentials)
         communication_analyzer = CommunicationAnalyzer(
             island_client,
             get_target_ips(depth_1_a_test_configuration),
@@ -618,20 +647,29 @@ class TestMonkeyBlackbox:
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
+        stolen_credentials_analyzer = StolenCredentialsAnalyzer(
+            island_client, expected_credentials_depth_1_a
+        )
         exploitation_test = ExploitationTest(
             name=test_name,
             island_client=island_client,
             test_configuration=depth_1_a_test_configuration,
             masque=masque,
-            analyzers=[stolen_credentials_analyzer, communication_analyzer],
+            analyzers=[communication_analyzer, stolen_credentials_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         )
         exploitation_test.run()
+
         TestMonkeyBlackbox.assert_unique_agent_hashes(exploitation_test.agents)
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=depth_1_a_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
+        )
 
     def test_depth_3_a(self, island_client):
         test_name = "Depth3A test suite"
+
         communication_analyzer = CommunicationAnalyzer(
             island_client,
             get_target_ips(depth_3_a_test_configuration),
@@ -649,7 +687,12 @@ class TestMonkeyBlackbox:
             log_handler=log_handler,
         )
         exploitation_test.run()
+
         TestMonkeyBlackbox.assert_unique_agent_hashes(exploitation_test.agents)
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=depth_3_a_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
+        )
 
     def test_depth_4_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
@@ -674,7 +717,7 @@ class TestMonkeyBlackbox:
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
-        ExploitationTest(
+        exploitation_test = ExploitationTest(
             name=test_name,
             island_client=island_client,
             test_configuration=zerologon_test_configuration,
@@ -682,7 +725,13 @@ class TestMonkeyBlackbox:
             analyzers=[zero_logon_analyzer, communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
-        ).run()
+        )
+        exploitation_test.run()
+
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=zerologon_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
+        )
 
     # Not grouped because it's depth 1 but conflicts with SMB exploiter in group depth_1_a
     def test_smb_pth(self, island_client):

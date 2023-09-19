@@ -78,22 +78,7 @@ export default function UiSchema(props) {
       }
     },
     payloads: {
-      ransomware:{
-        encryption: {
-          file_extension: {
-            'ui:emptyValue': ''
-          },
-          directories: {
-            // Directory inputs are dynamically hidden
-          },
-          enabled: {
-            'ui:widget': 'hidden'
-          }
-        },
-        other_behaviors: {
-          'ui:widget': 'hidden'
-        }
-      }
+      'ui:ObjectFieldTemplate': PluginSelectorTemplate
     },
     credentials_collectors: {
       'ui:ObjectFieldTemplate': PluginSelectorTemplate
