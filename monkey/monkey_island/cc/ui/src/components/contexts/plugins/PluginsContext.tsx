@@ -69,7 +69,19 @@ export type PluginsContextType = {
   setInstalledPlugins: (installedPlugins: InstalledPlugin[]) => void,
   setAvailablePlugins: (availablePlugins: AvailablePlugin[]) => void,
   refreshAvailablePluginsFailure: boolean,
-  refreshInstalledPluginsFailure: boolean
+  refreshInstalledPluginsFailure: boolean,
+  successfullyInstalledPluginsIds: string[],
+  setSuccessfullyInstalledPluginsIds: (successfullyInstalledPluginsIds: (prevState) => any) => void,
+  pluginsInInstallationProcess: string[]
+  setPluginsInInstallationProcess: (pluginsInInstallationProcess: (prevState) => any) => void,
+  successfullyUpdatedPluginsIds: string[],
+  setSuccessfullyUpdatedPluginsIds: (successfullyUpdatedPluginsIds: (prevState) => any) => void,
+  pluginsInUpdateProcess: string[],
+  setPluginsInUpdateProcess: (pluginsInUpdateProcess: (prevState) => any) => void,
+  successfullyUninstalledPluginsIds: string[],
+  setSuccessfullyUninstalledPluginsIds: (successfullyUninstalledPluginsIds: (prevState) => any) => void,
+  pluginsInUninstallProcess: string[],
+  setPluginsInUninstallProcess: (pluginsInUninstallProcess: (prevState) => any) => void
 }
 
 export const PluginsContext = createContext<null | PluginsContextType>(null);
@@ -79,11 +91,18 @@ export const generatePluginId = (name, type, version) => {
 }
 
 
-export const PluginState = () :PluginsContextType => {
+export const PluginState = (): PluginsContextType => {
   const [refreshAvailablePluginsFailure, setRefreshAvailablePluginsFailure] = useState(false);
   const [refreshInstalledPluginsFailure, setRefreshInstalledPluginsFailure] = useState(false);
   const [availablePlugins, setAvailablePlugins] = useState([]);
   const [installedPlugins, setInstalledPlugins] = useState([]);
+  const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
+  const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
+  const [successfullyUpdatedPluginsIds, setSuccessfullyUpdatedPluginsIds] = useState([]);
+  const [pluginsInUpdateProcess, setPluginsInUpdateProcess] = useState([]);
+  const [successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds] = useState([]);
+  const [pluginsInUninstallProcess, setPluginsInUninstallProcess] = useState([]);
+
   const [numberOfPluginsThatRequiresUpdate, setNumberOfPluginsThatRequiresUpdate] = useState(0);
 
   useInterval(() => {
@@ -205,6 +224,18 @@ export const PluginState = () :PluginsContextType => {
     refreshAvailablePlugins,
     refreshInstalledPlugins,
     refreshAvailablePluginsFailure,
-    refreshInstalledPluginsFailure
+    refreshInstalledPluginsFailure,
+    successfullyInstalledPluginsIds,
+    setSuccessfullyInstalledPluginsIds,
+    pluginsInInstallationProcess,
+    setPluginsInInstallationProcess,
+    successfullyUpdatedPluginsIds,
+    setSuccessfullyUpdatedPluginsIds,
+    pluginsInUpdateProcess,
+    setPluginsInUpdateProcess,
+    successfullyUninstalledPluginsIds,
+    setSuccessfullyUninstalledPluginsIds,
+    pluginsInUninstallProcess,
+    setPluginsInUninstallProcess
   }
 }

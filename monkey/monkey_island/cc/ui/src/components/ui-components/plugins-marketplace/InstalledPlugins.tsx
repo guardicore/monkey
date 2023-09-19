@@ -27,15 +27,14 @@ const UPGRADEABLE_VALUE = 'upgradeable';
 const NO_INSTALLED_PLUGINS_MESSAGE = 'There are no plugins installed';
 const FETCHING_ERROR_MESSAGE = 'An error occurred while retrieving the installed plugins';
 
-const InstalledPlugins = (props) => {
-  // @ts-ignore
+const InstalledPlugins = () => {
   const {
-    successfullyUpdatedPluginsIds = [], setSuccessfullyUpdatedPluginsIds = {},
-    pluginsInUpdateProcess = [], setPluginsInUpdateProcess = {},
-    successfullyUninstalledPluginsIds = [], setSuccessfullyUninstalledPluginsIds = {},
-    pluginsInUninstallProcess = [], setPluginsInUninstallProcess = {}
-  } = {...props};
-  const {installedPlugins, refreshInstalledPlugins, availablePlugins, refreshInstalledPluginsFailure} = useContext(PluginsContext);
+    installedPlugins, refreshInstalledPlugins, availablePlugins, refreshInstalledPluginsFailure,
+    successfullyUpdatedPluginsIds, setSuccessfullyUpdatedPluginsIds,
+    pluginsInUpdateProcess, setPluginsInUpdateProcess,
+    successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds,
+    pluginsInUninstallProcess, setPluginsInUninstallProcess
+  } = useContext(PluginsContext);
   const [displayedRows, setDisplayedRows] = useState([]);
   const [filters, setFilters] = useState({});
 

@@ -40,15 +40,18 @@ export const isPluginInstalled = (availablePlugin :AvailablePlugin,
 const NO_AVAILABLE_PLUGINS_MESSAGE = 'There are no available plugins to be installed';
 const FETCHING_ERROR_MESSAGE = 'Couldn\'t fetch available plugins, check your internet connection and try again';
 
-const AvailablePlugins = (props) => {
+const AvailablePlugins = () => {
   const {
-    successfullyInstalledPluginsIds = [],
-    setSuccessfullyInstalledPluginsIds = {},
-    pluginsInInstallationProcess = [],
-    setPluginsInInstallationProcess = {}
-  } = {...props};
-  const {availablePlugins, installedPlugins,
-    refreshAvailablePlugins, refreshInstalledPlugins, refreshAvailablePluginsFailure} = useContext(PluginsContext);
+    availablePlugins,
+    installedPlugins,
+    refreshAvailablePlugins,
+    refreshInstalledPlugins,
+    refreshAvailablePluginsFailure,
+    successfullyInstalledPluginsIds,
+    setSuccessfullyInstalledPluginsIds,
+    pluginsInInstallationProcess,
+    setPluginsInInstallationProcess
+  } = useContext(PluginsContext);
   const [displayedRows, setDisplayedRows] = useState<AvailablePluginRowArray>([]);
   const [filters, setFilters] = useState({});
   const [isSpinning, setIsSpinning] = useState(false);

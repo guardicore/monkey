@@ -36,13 +36,14 @@ const a11yProps = (index) => {
 }
 
 const MarketplacePage = () => {
-  const {numberOfPluginsThatRequiresUpdate, refreshInstalledPlugins} = useContext(PluginsContext);
-  const [successfullyInstalledPluginsIds, setSuccessfullyInstalledPluginsIds] = useState([]);
-  const [pluginsInInstallationProcess, setPluginsInInstallationProcess] = useState([]);
-  const [successfullyUpdatedPluginsIds, setSuccessfullyUpdatedPluginsIds] = useState([]);
-  const [pluginsInUpdateProcess, setPluginsInUpdateProcess] = useState([]);
-  const [successfullyUninstalledPluginsIds, setSuccessfullyUninstalledPluginsIds] = useState([]);
-  const [pluginsInUninstallProcess, setPluginsInUninstallProcess] = useState([]);
+  const {
+    numberOfPluginsThatRequiresUpdate,
+    refreshInstalledPlugins,
+    pluginsInInstallationProcess,
+    setSuccessfullyInstalledPluginsIds,
+    setSuccessfullyUpdatedPluginsIds,
+    setSuccessfullyUninstalledPluginsIds
+  } = useContext(PluginsContext);
 
   const [tabValue, setTabValue] = useState(0);
 
@@ -79,22 +80,10 @@ const MarketplacePage = () => {
           </Tabs>
         </Box>
         <TabPanel value={tabValue} index={0}>
-          <AvailablePlugins
-            successfullyInstalledPluginsIds={successfullyInstalledPluginsIds}
-            setSuccessfullyInstalledPluginsIds={setSuccessfullyInstalledPluginsIds}
-            pluginsInInstallationProcess={pluginsInInstallationProcess}
-            setPluginsInInstallationProcess={setPluginsInInstallationProcess} />
+          <AvailablePlugins />
         </TabPanel>
         <TabPanel value={tabValue} index={1}>
-          <InstalledPlugins
-              successfullyUpdatedPluginsIds={successfullyUpdatedPluginsIds}
-              setSuccessfullyUpdatedPluginsIds={setSuccessfullyUpdatedPluginsIds}
-              pluginsInUpdateProcess={pluginsInUpdateProcess}
-              setPluginsInUpdateProcess={setPluginsInUpdateProcess}
-              successfullyUninstalledPluginsIds={successfullyUninstalledPluginsIds}
-              setSuccessfullyUninstalledPluginsIds={setSuccessfullyUninstalledPluginsIds}
-              pluginsInUninstallProcess={pluginsInUninstallProcess}
-              setPluginsInUninstallProcess={setPluginsInUninstallProcess} />
+          <InstalledPlugins />
         </TabPanel>
         <TabPanel value={tabValue} index={2}><UploadNewPlugin/></TabPanel>
         </Stack>
