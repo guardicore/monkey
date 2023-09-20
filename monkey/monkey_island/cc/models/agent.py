@@ -24,7 +24,7 @@ class Agent(MutableInfectionMonkeyBaseModel):
     start_time: datetime = Field(..., allow_mutation=False)
     """The time the agent process started"""
 
-    stop_time: Optional[datetime]
+    stop_time: Optional[datetime] = Field(default=None)
     """The time the agent process exited"""
 
     parent_id: Optional[AgentID] = Field(allow_mutation=False)
