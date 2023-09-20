@@ -12,14 +12,14 @@ repos:
         name: isort (pyi)
         types: [pyi]
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.9.1
     hooks:
       - id: black
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
-        additional_dependencies: [dlint]
+        additional_dependencies: [dlint==0.14.1]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:

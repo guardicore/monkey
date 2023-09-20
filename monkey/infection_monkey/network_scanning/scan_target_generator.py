@@ -124,7 +124,7 @@ def _get_segmentation_check_targets(
     inaccessible_ranges = _convert_to_range_object(inaccessible_subnets)
     subnet_pairs = itertools.product(inaccessible_ranges, inaccessible_ranges)
 
-    for (subnet1, subnet2) in subnet_pairs:
+    for subnet1, subnet2 in subnet_pairs:
         if _is_segmentation_check_required(local_ips, subnet1, subnet2):
             ips = _get_ips_from_ranges_to_scan([subnet2])
             ips_to_scan.extend(ips)

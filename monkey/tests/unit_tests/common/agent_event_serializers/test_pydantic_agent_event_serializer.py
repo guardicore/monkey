@@ -50,13 +50,13 @@ def test_pydantic_agent_event_serializer__deserialize_wrong_type(pydantic_agent_
         pydantic_agent_event_serializer.deserialize("bla")
 
 
-def test_pydantic_agent_event_serializer__de_serialize(pydantic_agent_event_serializer):
+def test_pydantic_agent_event_serializer__deserialize(pydantic_agent_event_serializer):
     pydantic_event = PydanticEvent(source=AGENT_ID, some_field="some_field")
 
     serialized_event = pydantic_agent_event_serializer.serialize(pydantic_event)
     deserialized_object = pydantic_agent_event_serializer.deserialize(serialized_event)
 
-    assert type(serialized_event) != type(deserialized_object)
+    assert type(serialized_event) != type(deserialized_object)  # noqa: E721
     assert deserialized_object == pydantic_event
 
 
