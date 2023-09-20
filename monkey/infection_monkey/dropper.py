@@ -19,14 +19,6 @@ from infection_monkey.utils.commands import (
 )
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 
-# Linux doesn't have WindowsError
-try:
-    WindowsError
-except NameError:
-    # noinspection PyShadowingBuiltins
-    WindowsError = IOError
-
-
 logger = logging.getLogger(__name__)
 
 MOVEFILE_DELAY_UNTIL_REBOOT = 4
@@ -94,7 +86,7 @@ class MonkeyDrops(object):
         try:
             shutil.move(source_path, destination_path)
             logger.info(f"Moved source file '{source_path}' into '{destination_path}'")
-        except (WindowsError, IOError, OSError) as exc:
+        except (IOError, OSError) as exc:
             logger.debug(
                 f"Error moving source file '{source_path}' into '{destination_path}': {exc}"
             )
@@ -107,7 +99,7 @@ class MonkeyDrops(object):
         try:
             shutil.copy(source_path, destination_path)
             logger.info(f"Copied source file '{source_path}' into '{destination_path}'")
-        except (WindowsError, IOError, OSError) as exc:
+        except (IOError, OSError) as exc:
             logger.debug(
                 f"Error copying source file '{source_path}' into '{destination_path}': {exc}"
             )
