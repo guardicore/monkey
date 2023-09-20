@@ -219,7 +219,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_authentication_token_expiration
     def send_heartbeat(self, timestamp: float):
-        data = AgentHeartbeat(timestamp=timestamp).dict(simplify=True)
+        data = AgentHeartbeat(timestamp=timestamp).dict(simplify=True)  # type: ignore [arg-type]
         self._http_client.post(f"/agent/{self._agent_id}/heartbeat", data)
 
     @handle_authentication_token_expiration

@@ -80,7 +80,7 @@ class SocketAddress(InfectionMonkeyBaseModel):
         if port is None:
             raise ValueError("SocketAddress requires a port")
 
-        return SocketAddress(ip=IPv4Address(ip), port=int(port))
+        return SocketAddress(ip=IPv4Address(ip), port=NetworkPort(port))
 
     def __hash__(self):
         return hash(str(self))

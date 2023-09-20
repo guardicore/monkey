@@ -23,6 +23,7 @@ from common.agent_event_serializers import (
     register_common_agent_event_serializers,
 )
 from common.agent_events import (
+    AgentEventTag,
     AgentShutdownEvent,
     CredentialsStolenEvent,
     HostnameDiscoveryEvent,
@@ -304,7 +305,7 @@ class InfectionMonkey:
         event = OSDiscoveryEvent(
             source=self._agent_id,
             timestamp=timestamp,
-            tags={SYSTEM_INFORMATION_DISCOVERY_T1082_TAG},
+            tags=frozenset({AgentEventTag(SYSTEM_INFORMATION_DISCOVERY_T1082_TAG)}),
             os=operating_system,
             version=operating_system_version,
         )

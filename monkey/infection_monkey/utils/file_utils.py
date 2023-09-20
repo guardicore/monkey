@@ -34,14 +34,14 @@ def is_not_shortcut_filter(f: Path) -> bool:
 def mark_file_for_deletion_on_windows(file_path: WindowsPath):
     file_source_path_ctypes = ctypes.c_char_p(str(file_path).encode())
 
-    mark_file_response = ctypes.windll.kernel32.MoveFileExA(
+    mark_file_response = ctypes.windll.kernel32.MoveFileExA(  # type: ignore [attr-defined]
         file_source_path_ctypes, None, MOVEFILE_DELAY_UNTIL_REBOOT
     )
 
     if mark_file_response == 0:
         logger.debug(
             f"Error marking file {file_path} for deletion on next boot:"
-            f"{ctypes.windll.kernel32.GetLastError()}"
+            f"{ctypes.windll.kernel32.GetLastError()}"  # type: ignore [attr-defined]
         )
         return
 

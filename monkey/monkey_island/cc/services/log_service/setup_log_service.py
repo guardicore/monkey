@@ -7,7 +7,7 @@ from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.server_utils.island_logger import get_log_file_path
 
 from .file_agent_log_repository import FileAgentLogRepository
-from .flask_resources.register_resources import register_resources
+from .flask_resources import register_resources
 from .i_agent_log_repository import IAgentLogRepository
 
 

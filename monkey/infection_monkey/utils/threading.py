@@ -36,7 +36,10 @@ def create_daemon_thread(target: Callable[..., None], name: str, args: Tuple = (
 
 
 def interruptible_iter(
-    iterator: Iterable, interrupt: Event, log_message: str = None, log_level: int = logging.DEBUG
+    iterator: Iterable,
+    interrupt: Event,
+    log_message: Optional[str] = None,
+    log_level: int = logging.DEBUG,
 ) -> Any:
     """
     Wraps an iterator so that the iterator can be interrupted if the `interrupt` event is set. This
