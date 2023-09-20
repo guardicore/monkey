@@ -1,6 +1,8 @@
 from common.agent_plugins import AgentPluginManifest, AgentPluginType, PluginName
 from common.operating_system import OperatingSystem
 
+# For `AgentPluginManifest.version`, mypy complains even if you
+# pass it a `PluginVersion` object, so we're ignoring the error.
 HARD_CODED_FINGERPRINTER_MANIFESTS = {
     "smb": AgentPluginManifest(
         name=PluginName("smb"),
