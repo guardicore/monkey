@@ -19,7 +19,7 @@ repos:
     rev: 6.1.0
     hooks:
       - id: flake8
-        additional_dependencies: [dlint]
+        additional_dependencies: [dlint==0.14.1]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
