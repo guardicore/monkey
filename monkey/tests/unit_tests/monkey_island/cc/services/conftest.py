@@ -9,7 +9,6 @@ def mock_flask_app():
     ds = app.security.datastore
 
     with app.app_context():
-
         inital_user = ds.find_user(email="unittest@me.com")
         if inital_user:
             ds.delete_user(inital_user)

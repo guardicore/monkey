@@ -66,7 +66,6 @@ def test_multiple_events_in_queue_published(
 def test_plugin_event_forwarder_flush(
     plugin_event_forwarder, multiprocessing_queue, mock_agent_event_queue
 ):
-
     for timestamp in range(5):
         multiprocessing_queue.put(MyEvent(timestamp=timestamp))
 
