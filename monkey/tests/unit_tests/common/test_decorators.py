@@ -1,5 +1,4 @@
 import time
-from unittest.mock import MagicMock
 
 from common.decorators import request_cache
 
