@@ -21,7 +21,7 @@ class AgentHeartbeat(AbstractResource):
     @roles_accepted(AccountRole.AGENT.name)
     def post(self, agent_id: AgentID):
         try:
-            heartbeat = AgentHeartbeatObject(**request.json)
+            heartbeat = AgentHeartbeatObject(**request.json)  # type: ignore [arg-type]
 
             self._island_event_queue.publish(
                 IslandEventTopic.AGENT_HEARTBEAT, agent_id=agent_id, heartbeat=heartbeat
