@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 
 
 class PasswordBasedBytesEncryptor(IEncryptor):
-
     _BUFFER_SIZE = pyAesCrypt.crypto.bufferSizeDef
 
     def __init__(self, password: str):
