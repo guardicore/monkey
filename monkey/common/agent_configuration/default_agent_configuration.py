@@ -1,4 +1,6 @@
-from typing import Dict
+from typing import Dict, Tuple
+
+from common.types import NetworkPort
 
 from . import AgentConfiguration
 from .agent_sub_configurations import (
@@ -17,7 +19,7 @@ CREDENTIALS_COLLECTORS: Dict[str, Dict] = {}
 
 PAYLOAD_CONFIGURATION: Dict[str, Dict] = {}
 
-TCP_PORTS = (
+TCP_PORTS: Tuple[int, ...] = (
     22,
     80,
     135,
@@ -36,12 +38,12 @@ TCP_PORTS = (
     9600,
 )
 
-TCP_SCAN_CONFIGURATION = TCPScanConfiguration(timeout=3.0, ports=TCP_PORTS)
+TCP_SCAN_CONFIGURATION = TCPScanConfiguration(timeout=3.0, ports=tuple(map(NetworkPort, TCP_PORTS)))
 ICMP_CONFIGURATION = ICMPScanConfiguration(timeout=1.0)
-HTTP_PORTS = (80, 443, 7001, 8008, 8080, 8983, 9600)
+HTTP_PORTS: Tuple[int, ...] = (80, 443, 7001, 8008, 8080, 8983, 9600)
 FINGERPRINTERS = (
     # Plugin configuration option contents are not converted to tuples
-    PluginConfiguration(name="http", options={"http_ports": list(HTTP_PORTS)}),
+    PluginConfiguration(name="http", options={"http_ports": list(map(NetworkPort, HTTP_PORTS))}),
     PluginConfiguration(name="mssql", options={}),
     PluginConfiguration(name="smb", options={}),
     PluginConfiguration(name="ssh", options={}),
@@ -57,7 +59,9 @@ NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
     targets=SCAN_TARGET_CONFIGURATION,
 )
 
-EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports=HTTP_PORTS)
+EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(
+    http_ports=tuple(map(NetworkPort, HTTP_PORTS))
+)
 
 EXPLOITATION_CONFIGURATION = ExploitationConfiguration(
     options=EXPLOITATION_OPTIONS_CONFIGURATION,
