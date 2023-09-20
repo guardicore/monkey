@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict
 
 from common.types import NetworkPort
 
@@ -19,31 +19,39 @@ CREDENTIALS_COLLECTORS: Dict[str, Dict] = {}
 
 PAYLOAD_CONFIGURATION: Dict[str, Dict] = {}
 
-TCP_PORTS: Tuple[int, ...] = (
-    22,
-    80,
-    135,
-    443,
-    445,
-    2222,
-    3306,
-    3389,
-    5985,
-    5986,
-    7001,
-    8008,
-    8080,
-    8088,
-    8983,
-    9600,
+TCP_PORTS: tuple[NetworkPort, ...] = (
+    NetworkPort(22),
+    NetworkPort(80),
+    NetworkPort(135),
+    NetworkPort(443),
+    NetworkPort(445),
+    NetworkPort(2222),
+    NetworkPort(3306),
+    NetworkPort(3389),
+    NetworkPort(5985),
+    NetworkPort(5986),
+    NetworkPort(7001),
+    NetworkPort(8008),
+    NetworkPort(8080),
+    NetworkPort(8088),
+    NetworkPort(8983),
+    NetworkPort(9600),
 )
 
-TCP_SCAN_CONFIGURATION = TCPScanConfiguration(timeout=3.0, ports=tuple(map(NetworkPort, TCP_PORTS)))
+TCP_SCAN_CONFIGURATION = TCPScanConfiguration(timeout=3.0, ports=TCP_PORTS)
 ICMP_CONFIGURATION = ICMPScanConfiguration(timeout=1.0)
-HTTP_PORTS: Tuple[int, ...] = (80, 443, 7001, 8008, 8080, 8983, 9600)
+HTTP_PORTS: tuple[NetworkPort, ...] = (
+    NetworkPort(80),
+    NetworkPort(443),
+    NetworkPort(7001),
+    NetworkPort(8008),
+    NetworkPort(8080),
+    NetworkPort(8983),
+    NetworkPort(9600),
+)
 FINGERPRINTERS = (
     # Plugin configuration option contents are not converted to tuples
-    PluginConfiguration(name="http", options={"http_ports": list(map(NetworkPort, HTTP_PORTS))}),
+    PluginConfiguration(name="http", options={"http_ports": list(HTTP_PORTS)}),
     PluginConfiguration(name="mssql", options={}),
     PluginConfiguration(name="smb", options={}),
     PluginConfiguration(name="ssh", options={}),
@@ -59,9 +67,7 @@ NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
     targets=SCAN_TARGET_CONFIGURATION,
 )
 
-EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(
-    http_ports=tuple(map(NetworkPort, HTTP_PORTS))
-)
+EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports=tuple(HTTP_PORTS))
 
 EXPLOITATION_CONFIGURATION = ExploitationConfiguration(
     options=EXPLOITATION_OPTIONS_CONFIGURATION,
