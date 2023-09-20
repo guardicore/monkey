@@ -12,7 +12,7 @@ per-file-ignores =
   monkey/monkey_island/cc/services/reporting/report.py:C901
 
 ### ignore "whitespace before ':'", "line break before binary operator" for
-### compatibility with black, and cyclomatic complexity (for now).
+### compatibility with black.
 extend-ignore = E203, W503
 
 ### --statistics Count the number of occurrences of each error/warning code and print a report.
