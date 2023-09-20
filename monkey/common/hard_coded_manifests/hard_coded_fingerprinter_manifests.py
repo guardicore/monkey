@@ -10,8 +10,6 @@ HARD_CODED_FINGERPRINTER_MANIFESTS = {
         title="SMB Fingerprinter",
         version="1.0.0",  # type: ignore [arg-type]
         description="Figures out if SMB is running and what's the version of it.",
-        remediation_suggestion=None,
-        link_to_documentation=None,
         safe=True,
     ),
     "ssh": AgentPluginManifest(
@@ -22,8 +20,6 @@ HARD_CODED_FINGERPRINTER_MANIFESTS = {
         title="SSH Fingerprinter",
         version="1.0.0",  # type: ignore [arg-type]
         description="Figures out if SSH is running.",
-        remediation_suggestion=None,
-        link_to_documentation=None,
         safe=True,
     ),
     "http": AgentPluginManifest(
@@ -34,8 +30,6 @@ HARD_CODED_FINGERPRINTER_MANIFESTS = {
         title="HTTP Fingerprinter",
         version="1.0.0",  # type: ignore [arg-type]
         description="Checks if host has HTTP/HTTPS ports open.",
-        remediation_suggestion=None,
-        link_to_documentation=None,
         safe=True,
     ),
     "mssql": AgentPluginManifest(
@@ -47,8 +41,6 @@ HARD_CODED_FINGERPRINTER_MANIFESTS = {
         version="1.0.0",  # type: ignore [arg-type]
         description="Checks if Microsoft SQL service is running and tries to gather "
         "information about it.",
-        remediation_suggestion=None,
-        link_to_documentation=None,
         safe=True,
     ),
 }

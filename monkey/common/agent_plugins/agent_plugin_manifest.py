@@ -74,8 +74,8 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
     title: Optional[str]
     version: PluginVersion
     description: Optional[str]
-    remediation_suggestion: Optional[str]
-    link_to_documentation: Optional[HttpUrl]
+    remediation_suggestion: Optional[str] = None
+    link_to_documentation: Optional[HttpUrl] = None
     safe: bool = False
 
     class Config(InfectionMonkeyModelConfig):
