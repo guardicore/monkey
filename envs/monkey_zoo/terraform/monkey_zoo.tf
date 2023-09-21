@@ -1,9 +1,3 @@
-
-// Local variables
-locals {
-  windows_2016 = google_compute_instance_template.windows2016.self_link
-}
-
 // Network
 resource "google_compute_network" "monkeyzoo" {
   name                    = "${local.resource_prefix}monkeyzoo"
@@ -100,10 +94,11 @@ resource "google_compute_instance" "hadoop-2" {
   metadata_startup_script = "[ ! -f /home/vakaris_zilius/.ssh/authorized_keys ] && sudo cat /home/vakaris_zilius/.ssh/id_rsa.pub >> /home/vakaris_zilius/.ssh/authorized_keys && sudo reboot"
 }
 
-resource "google_compute_instance_from_template" "hadoop-3" {
-  name                     = "${local.resource_prefix}hadoop-3"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-custom-4-8192"
+resource "google_compute_instance" "hadoop-3" {
+  name            = "${local.resource_prefix}hadoop-3"
+  machine_type    = "e2-custom-4-8192"
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.hadoop-3.self_link
@@ -188,11 +183,12 @@ resource "google_compute_instance" "tunneling-11" {
   }
 }
 
-resource "google_compute_instance_from_template" "tunneling-12" {
-  name                     = "${local.resource_prefix}tunneling-12"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.tunneling_zone
+resource "google_compute_instance" "tunneling-12" {
+  name            = "${local.resource_prefix}tunneling-12"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.tunneling_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-12.self_link
@@ -269,17 +265,17 @@ resource "google_compute_instance" "sshkeys-12" {
   }
 }
 
-resource "google_compute_instance_from_template" "rdp-64" {
-  name                     = "${local.resource_prefix}rdp-64"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "rdp-64" {
+  name            = "${local.resource_prefix}rdp-64"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows", "rdp-64"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.rdp-64.self_link
     }
   }
-  tags = ["rdp-64"]
   network_interface {
     subnetwork = "${local.resource_prefix}monkeyzoo-main-1"
     network_ip = "10.2.3.64"
@@ -311,9 +307,11 @@ resource "google_compute_instance" "rdp-65" {
 }
 
 
-resource "google_compute_instance_from_template" "mimikatz-14" {
-  name                     = "${local.resource_prefix}mimikatz-14"
-  source_instance_template = local.windows_2016
+resource "google_compute_instance" "mimikatz-14" {
+  name            = "${local.resource_prefix}mimikatz-14"
+  machine_type    = "n1-standard-1"
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.mimikatz-14.self_link
@@ -329,9 +327,11 @@ resource "google_compute_instance_from_template" "mimikatz-14" {
   }
 }
 
-resource "google_compute_instance_from_template" "mimikatz-15" {
-  name                     = "${local.resource_prefix}mimikatz-15"
-  source_instance_template = local.windows_2016
+resource "google_compute_instance" "mimikatz-15" {
+  name            = "${local.resource_prefix}mimikatz-15"
+  machine_type    = "n1-standard-1"
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.mimikatz-15.self_link
@@ -347,10 +347,11 @@ resource "google_compute_instance_from_template" "mimikatz-15" {
   }
 }
 
-resource "google_compute_instance_from_template" "mssql-16" {
-  name                     = "${local.resource_prefix}mssql-16"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-highcpu-4"
+resource "google_compute_instance" "mssql-16" {
+  name            = "${local.resource_prefix}mssql-16"
+  machine_type    = "e2-highcpu-4"
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.mssql-16.self_link
@@ -387,18 +388,18 @@ resource "google_compute_instance" "snmp-20" {
   }
 }
 
-resource "google_compute_instance_from_template" "powershell-3-48" {
-  name                     = "${local.resource_prefix}powershell-3-48"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "powershell-3-48" {
+  name            = "${local.resource_prefix}powershell-3-48"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-48"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-48.self_link
     }
     auto_delete = true
   }
-  tags = ["powershell", "powershell-48"]
   network_interface {
     subnetwork = "${local.resource_prefix}monkeyzoo-main-1"
     network_ip = "10.2.3.48"
@@ -408,18 +409,18 @@ resource "google_compute_instance_from_template" "powershell-3-48" {
   }
 }
 
-resource "google_compute_instance_from_template" "powershell-3-47" {
-  name                     = "${local.resource_prefix}powershell-3-47"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "powershell-3-47" {
+  name            = "${local.resource_prefix}powershell-3-47"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-47"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-47.self_link
     }
     auto_delete = true
   }
-  tags = ["powershell", "powershell-47"]
   network_interface {
     subnetwork = "${local.resource_prefix}monkeyzoo-main-1"
     network_ip = "10.2.3.47"
@@ -429,18 +430,18 @@ resource "google_compute_instance_from_template" "powershell-3-47" {
   }
 }
 
-resource "google_compute_instance_from_template" "powershell-3-46" {
-  name                     = "${local.resource_prefix}powershell-3-46"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "powershell-3-46" {
+  name            = "${local.resource_prefix}powershell-3-46"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-46"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-46.self_link
     }
     auto_delete = true
   }
-  tags = ["powershell", "powershell-46"]
   network_interface {
     subnetwork = "${local.resource_prefix}monkeyzoo-main-1"
     network_ip = "10.2.3.46"
@@ -450,18 +451,18 @@ resource "google_compute_instance_from_template" "powershell-3-46" {
   }
 }
 
-resource "google_compute_instance_from_template" "powershell-3-44" {
-  name                     = "${local.resource_prefix}powershell-3-44"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "powershell-3-44" {
+  name            = "${local.resource_prefix}powershell-3-44"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-44"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-44.self_link
     }
     auto_delete = true
   }
-  tags = ["powershell", "powershell-44"]
   network_interface {
     subnetwork = "${local.resource_prefix}monkeyzoo-main-1"
     network_ip = "10.2.3.44"
@@ -471,18 +472,18 @@ resource "google_compute_instance_from_template" "powershell-3-44" {
   }
 }
 
-resource "google_compute_instance_from_template" "powershell-3-45" {
-  name                     = "${local.resource_prefix}powershell-3-45"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "powershell-3-45" {
+  name            = "${local.resource_prefix}powershell-3-45"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-45"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-45.self_link
     }
     auto_delete = true
   }
-  tags = ["powershell", "powershell-45"]
   network_interface {
     subnetwork = "${local.resource_prefix}monkeyzoo-main-1"
     network_ip = "10.2.3.45"
@@ -604,11 +605,12 @@ resource "google_compute_instance" "log4j-solr-49" {
   }
 }
 
-resource "google_compute_instance_from_template" "log4j-solr-50" {
-  name                     = "${local.resource_prefix}log4j-solr-50"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-standard-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "log4j-solr-50" {
+  name            = "${local.resource_prefix}log4j-solr-50"
+  machine_type    = "e2-standard-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-solr-50.self_link
@@ -645,11 +647,12 @@ resource "google_compute_instance" "log4j-tomcat-51" {
   }
 }
 
-resource "google_compute_instance_from_template" "log4j-tomcat-52" {
-  name                     = "${local.resource_prefix}log4j-tomcat-52"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "log4j-tomcat-52" {
+  name            = "${local.resource_prefix}log4j-tomcat-52"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-tomcat-52.self_link
@@ -686,11 +689,12 @@ resource "google_compute_instance" "log4j-logstash-55" {
   }
 }
 
-resource "google_compute_instance_from_template" "log4j-logstash-56" {
-  name                     = "${local.resource_prefix}log4j-logstash-56"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "log4j-logstash-56" {
+  name            = "${local.resource_prefix}log4j-logstash-56"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-logstash-56.self_link
@@ -748,10 +752,11 @@ resource "google_compute_instance" "browser-credentials-67" {
   }
 }
 
-resource "google_compute_instance_from_template" "zerologon-25" {
-  name                     = "${local.resource_prefix}zerologon-25"
-  source_instance_template = local.windows_2016
-  machine_type             = "e2-custom-4-8192"
+resource "google_compute_instance" "zerologon-25" {
+  name            = "${local.resource_prefix}zerologon-25"
+  machine_type    = "e2-custom-4-8192"
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.zerologon-25.self_link
@@ -788,11 +793,11 @@ resource "google_compute_instance" "island-linux-250" {
   }
 }
 
-resource "google_compute_instance_from_template" "island-windows-251" {
-  name                     = "${local.resource_prefix}island-windows-251"
-  machine_type             = "e2-highcpu-4"
-  tags                     = ["island", "windows", "windowsserver2016"]
-  source_instance_template = local.windows_2016
+resource "google_compute_instance" "island-windows-251" {
+  name            = "${local.resource_prefix}island-windows-251"
+  machine_type    = "e2-highcpu-4"
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2016", "windows", "island"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.island-windows-251.self_link
