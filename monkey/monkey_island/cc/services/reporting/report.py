@@ -21,7 +21,6 @@ from common.agent_events import (
 )
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.network.network_range import NetworkRange
-from common.network.segmentation_utils import get_ip_if_in_subnet
 from common.types import PortStatus
 from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repositories import (
@@ -37,6 +36,7 @@ from monkey_island.cc.services.reporting.exploitations.monkey_exploitation impor
 )
 
 from .issue_processing.exploit_processing.exploiter_report_info import ExploiterReportInfo
+from .segmentation_utils import get_ip_if_in_subnet
 
 logger = logging.getLogger(__name__)
 
