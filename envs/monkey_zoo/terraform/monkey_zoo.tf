@@ -1,9 +1,8 @@
 
 // Local variables
 locals {
-  default_ubuntu = google_compute_instance_template.ubuntu16.self_link
-  windows_2012   = google_compute_instance_template.windows2012.self_link
-  windows_2016   = google_compute_instance_template.windows2016.self_link
+  windows_2012 = google_compute_instance_template.windows2012.self_link
+  windows_2016 = google_compute_instance_template.windows2016.self_link
 }
 
 // Network
@@ -80,9 +79,11 @@ resource "google_compute_subnetwork" "credential-reuse2" {
   network       = google_compute_network.credential-reuse2.self_link
 }
 
-resource "google_compute_instance_from_template" "hadoop-2" {
-  name                     = "${local.resource_prefix}hadoop-2"
-  source_instance_template = local.default_ubuntu
+resource "google_compute_instance" "hadoop-2" {
+  name            = "${local.resource_prefix}hadoop-2"
+  machine_type    = "n1-standard-1"
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.hadoop-2.self_link
@@ -166,11 +167,12 @@ resource "google_compute_instance" "tunneling-10" {
   }
 }
 
-resource "google_compute_instance_from_template" "tunneling-11" {
-  name                     = "${local.resource_prefix}tunneling-11"
-  source_instance_template = local.default_ubuntu
-  machine_type             = "e2-small"
-  zone                     = local.tunneling_zone
+resource "google_compute_instance" "tunneling-11" {
+  name            = "${local.resource_prefix}tunneling-11"
+  machine_type    = "e2-small"
+  zone            = local.tunneling_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-11.self_link
@@ -207,11 +209,12 @@ resource "google_compute_instance_from_template" "tunneling-12" {
   }
 }
 
-resource "google_compute_instance_from_template" "tunneling-13" {
-  name                     = "${local.resource_prefix}tunneling-13"
-  source_instance_template = local.default_ubuntu
-  machine_type             = "e2-small"
-  zone                     = local.tunneling_zone
+resource "google_compute_instance" "tunneling-13" {
+  name            = "${local.resource_prefix}tunneling-13"
+  machine_type    = "e2-small"
+  zone            = local.tunneling_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-13.self_link
@@ -227,10 +230,11 @@ resource "google_compute_instance_from_template" "tunneling-13" {
   }
 }
 
-resource "google_compute_instance_from_template" "sshkeys-11" {
-  name                     = "${local.resource_prefix}sshkeys-11"
-  source_instance_template = local.default_ubuntu
-  machine_type             = "custom-2-3840"
+resource "google_compute_instance" "sshkeys-11" {
+  name            = "${local.resource_prefix}sshkeys-11"
+  machine_type    = "custom-2-3840"
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.sshkeys-11.self_link
@@ -246,10 +250,11 @@ resource "google_compute_instance_from_template" "sshkeys-11" {
   }
 }
 
-resource "google_compute_instance_from_template" "sshkeys-12" {
-  name                     = "${local.resource_prefix}sshkeys-12"
-  source_instance_template = local.default_ubuntu
-  machine_type             = "custom-2-3840"
+resource "google_compute_instance" "sshkeys-12" {
+  name            = "${local.resource_prefix}sshkeys-12"
+  machine_type    = "custom-2-3840"
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.sshkeys-12.self_link
@@ -363,14 +368,11 @@ resource "google_compute_instance_from_template" "mssql-16" {
 }
 
 resource "google_compute_instance" "snmp-20" {
-  name           = "${local.resource_prefix}snmp-20"
-  machine_type   = "n1-standard-1"
-  zone           = local.main1_zone
-  can_ip_forward = false
-  service_account {
-    email  = local.service_account_email
-    scopes = ["cloud-platform"]
-  }
+  name            = "${local.resource_prefix}snmp-20"
+  machine_type    = "n1-standard-1"
+  zone            = local.main1_zone
+  can_ip_forward  = false
+  service_account = local.service_account
   boot_disk {
     initialize_params {
       image = data.google_compute_image.snmp-20.self_link
@@ -498,12 +500,12 @@ resource "google_compute_instance_from_template" "powershell-3-45" {
   }
 }
 
-resource "google_compute_instance_from_template" "credentials-reuse-14" {
-  name                     = "${local.resource_prefix}credentials-reuse-14"
-  tags                     = ["credentials-reuse"]
-  source_instance_template = local.default_ubuntu
-  machine_type             = "e2-small"
-  zone                     = local.credentials_reuse_zone
+resource "google_compute_instance" "credentials-reuse-14" {
+  name            = "${local.resource_prefix}credentials-reuse-14"
+  machine_type    = "e2-small"
+  zone            = local.credentials_reuse_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.credentials-reuse-14.self_link
@@ -526,12 +528,12 @@ resource "google_compute_instance_from_template" "credentials-reuse-14" {
   }
 }
 
-resource "google_compute_instance_from_template" "credentials-reuse-15" {
-  name                     = "${local.resource_prefix}credentials-reuse-15"
-  tags                     = ["credentials-reuse"]
-  source_instance_template = local.default_ubuntu
-  machine_type             = "e2-small"
-  zone                     = local.credentials_reuse_zone
+resource "google_compute_instance" "credentials-reuse-15" {
+  name            = "${local.resource_prefix}credentials-reuse-15"
+  machine_type    = "e2-small"
+  zone            = local.credentials_reuse_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.credentials-reuse-15.self_link
@@ -554,12 +556,12 @@ resource "google_compute_instance_from_template" "credentials-reuse-15" {
   }
 }
 
-resource "google_compute_instance_from_template" "credentials-reuse-16" {
-  name                     = "${local.resource_prefix}credentials-reuse-16"
-  tags                     = ["credentials-reuse"]
-  source_instance_template = local.default_ubuntu
-  machine_type             = "e2-small"
-  zone                     = local.credentials_reuse_zone
+resource "google_compute_instance" "credentials-reuse-16" {
+  name            = "${local.resource_prefix}credentials-reuse-16"
+  machine_type    = "e2-small"
+  zone            = local.credentials_reuse_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.credentials-reuse-16.self_link
@@ -582,11 +584,12 @@ resource "google_compute_instance_from_template" "credentials-reuse-16" {
   }
 }
 
-resource "google_compute_instance_from_template" "log4j-solr-49" {
-  name                     = "${local.resource_prefix}log4j-solr-49"
-  source_instance_template = local.default_ubuntu
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "log4j-solr-49" {
+  name            = "${local.resource_prefix}log4j-solr-49"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-solr-49.self_link
@@ -622,11 +625,12 @@ resource "google_compute_instance_from_template" "log4j-solr-50" {
   }
 }
 
-resource "google_compute_instance_from_template" "log4j-tomcat-51" {
-  name                     = "${local.resource_prefix}log4j-tomcat-51"
-  source_instance_template = local.default_ubuntu
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "log4j-tomcat-51" {
+  name            = "${local.resource_prefix}log4j-tomcat-51"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-tomcat-51.self_link
@@ -662,11 +666,12 @@ resource "google_compute_instance_from_template" "log4j-tomcat-52" {
   }
 }
 
-resource "google_compute_instance_from_template" "log4j-logstash-55" {
-  name                     = "${local.resource_prefix}log4j-logstash-55"
-  source_instance_template = local.default_ubuntu
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "log4j-logstash-55" {
+  name            = "${local.resource_prefix}log4j-logstash-55"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-logstash-55.self_link
@@ -702,11 +707,12 @@ resource "google_compute_instance_from_template" "log4j-logstash-56" {
   }
 }
 
-resource "google_compute_instance_from_template" "browser-credentials-66" {
-  name                     = "${local.resource_prefix}browser-credentials-66"
-  source_instance_template = local.default_ubuntu
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "browser-credentials-66" {
+  name            = "${local.resource_prefix}browser-credentials-66"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.browser-credentials-66.self_link
@@ -722,11 +728,12 @@ resource "google_compute_instance_from_template" "browser-credentials-66" {
   }
 }
 
-resource "google_compute_instance_from_template" "browser-credentials-67" {
-  name                     = "${local.resource_prefix}browser-credentials-67"
-  source_instance_template = local.default_ubuntu
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "browser-credentials-67" {
+  name            = "${local.resource_prefix}browser-credentials-67"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.browser-credentials-67.self_link
@@ -761,11 +768,11 @@ resource "google_compute_instance_from_template" "zerologon-25" {
   }
 }
 
-resource "google_compute_instance_from_template" "island-linux-250" {
-  name                     = "${local.resource_prefix}island-linux-250"
-  machine_type             = "n2-custom-2-4096"
-  tags                     = ["island", "linux", "ubuntu16"]
-  source_instance_template = local.default_ubuntu
+resource "google_compute_instance" "island-linux-250" {
+  name            = "${local.resource_prefix}island-linux-250"
+  machine_type    = "n2-custom-2-4096"
+  tags            = ["island", "linux", "ubuntu16"]
+  service_account = local.service_account
   boot_disk {
     initialize_params {
       image = data.google_compute_image.island-linux-250.self_link

@@ -50,8 +50,11 @@ provider "google" {
   credentials = var.credentials_file
 }
 locals {
-  resource_prefix        = ""
-  service_account_email  = var.service_account_email
+  resource_prefix = ""
+  service_account = {
+    email  = var.service_account_email
+    scopes = ["cloud-platform"]
+  }
   monkeyzoo_project      = "guardicore-22050661"
   main_zone              = var.main_zone
   main1_zone             = var.main1_zone
