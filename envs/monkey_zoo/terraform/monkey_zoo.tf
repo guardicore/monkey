@@ -1,7 +1,6 @@
 
 // Local variables
 locals {
-  windows_2012 = google_compute_instance_template.windows2012.self_link
   windows_2016 = google_compute_instance_template.windows2016.self_link
 }
 
@@ -290,18 +289,18 @@ resource "google_compute_instance_from_template" "rdp-64" {
   }
 }
 
-resource "google_compute_instance_from_template" "rdp-65" {
-  name                     = "${local.resource_prefix}rdp-65"
-  source_instance_template = local.windows_2012
-  machine_type             = "e2-highcpu-4"
-  zone                     = local.main1_zone
+resource "google_compute_instance" "rdp-65" {
+  name            = "${local.resource_prefix}rdp-65"
+  machine_type    = "e2-highcpu-4"
+  zone            = local.main1_zone
+  service_account = local.service_account
+  tags            = ["test-machine", "windowsserver2012", "windows", "rdp-65"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.rdp-65.self_link
     }
     auto_delete = true
   }
-  tags = ["rdp-65"]
   network_interface {
     subnetwork = "${local.resource_prefix}monkeyzoo-main-1"
     network_ip = "10.2.3.65"
