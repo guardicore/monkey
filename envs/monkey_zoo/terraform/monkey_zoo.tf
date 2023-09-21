@@ -115,16 +115,17 @@ resource "google_compute_instance" "hadoop-3" {
 }
 
 resource "google_compute_instance" "tunneling-9" {
-  name         = "${local.resource_prefix}tunneling-9"
-  machine_type = "n1-standard-2"
-  zone         = local.tunneling_zone
+  name            = "${local.resource_prefix}tunneling-9"
+  machine_type    = "n1-standard-2"
+  zone            = local.tunneling_zone
+  service_account = local.service_account
+  tags            = ["tunneling-9"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-9.self_link
     }
     auto_delete = true
   }
-  tags = ["tunneling-9"]
   network_interface {
     subnetwork = "${local.resource_prefix}tunneling-main"
     network_ip = "10.2.1.9"
@@ -139,9 +140,11 @@ resource "google_compute_instance" "tunneling-9" {
 }
 
 resource "google_compute_instance" "tunneling-10" {
-  name         = "${local.resource_prefix}tunneling-10"
-  machine_type = "n1-standard-2"
-  zone         = local.tunneling_zone
+  name            = "${local.resource_prefix}tunneling-10"
+  machine_type    = "n1-standard-2"
+  zone            = local.tunneling_zone
+  service_account = local.service_account
+  tags            = ["tunneling-10"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-10.self_link
@@ -371,7 +374,6 @@ resource "google_compute_instance" "snmp-20" {
   name            = "${local.resource_prefix}snmp-20"
   machine_type    = "n1-standard-1"
   zone            = local.main1_zone
-  can_ip_forward  = false
   service_account = local.service_account
   boot_disk {
     initialize_params {
