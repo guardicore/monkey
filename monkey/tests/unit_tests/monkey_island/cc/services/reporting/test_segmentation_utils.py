@@ -1,7 +1,7 @@
 from ipaddress import IPv4Address
 
 from common.network.network_range import CidrRange
-from common.network.segmentation_utils import get_ip_if_in_subnet
+from monkey_island.cc.services.reporting.segmentation_utils import get_ip_if_in_subnet
 
 SUBNET = CidrRange("10.10.2.0/24")
 
