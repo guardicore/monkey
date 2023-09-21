@@ -44,17 +44,14 @@ variable "credentials_file" {
 }
 
 provider "google" {
-  project     = var.project
-  region      = var.region
-  zone        = var.main_zone
-  credentials = var.credentials_file
+  project                     = var.project
+  region                      = var.region
+  zone                        = var.main_zone
+  credentials                 = var.credentials_file
+  impersonate_service_account = var.service_account_email
 }
 locals {
-  resource_prefix = ""
-  service_account = {
-    email  = var.service_account_email
-    scopes = ["cloud-platform"]
-  }
+  resource_prefix        = ""
   monkeyzoo_project      = "guardicore-22050661"
   main_zone              = var.main_zone
   main1_zone             = var.main1_zone
