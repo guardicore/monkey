@@ -1,4 +1,5 @@
 import threading
+from typing import Optional
 
 from .aws_metadata import fetch_aws_instance_metadata
 
@@ -33,17 +34,17 @@ class AWSInstance:
         return bool(self._instance_id)
 
     @property
-    def instance_id(self) -> str:
+    def instance_id(self) -> Optional[str]:
         self._wait_for_initialization_to_complete()
         return self._instance_id
 
     @property
-    def region(self) -> str:
+    def region(self) -> Optional[str]:
         self._wait_for_initialization_to_complete()
         return self._region
 
     @property
-    def account_id(self) -> str:
+    def account_id(self) -> Optional[str]:
         self._wait_for_initialization_to_complete()
         return self._account_id
 
