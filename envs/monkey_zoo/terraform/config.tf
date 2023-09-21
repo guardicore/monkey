@@ -7,13 +7,31 @@ variable "project" {
 variable "region" {
   description = "The GCP region to deploy to"
   type        = string
-  default     = "europe-west3"
+  default     = "europe-west1"
 }
 
-variable "zone" {
-  description = "The GCP zone to deploy to"
+variable "main_zone" {
+  description = "The GCP zone for machines on the .2 subnet"
   type        = string
-  default     = "europe-west3-b"
+  default     = "europe-west1-a"
+}
+
+variable "main1_zone" {
+  description = "The GCP zone for machines on the .3 subnet"
+  type        = string
+  default     = "europe-west1-b"
+}
+
+variable "tunneling_zone" {
+  description = "The GCP zone for tunneling machines"
+  type        = string
+  default     = "europe-west1-a"
+}
+
+variable "credentials_reuse_zone" {
+  description = "The GCP zone for credentials reuse machines"
+  type        = string
+  default     = "europe-west1-b"
 }
 
 variable "service_account_email" {
@@ -28,11 +46,15 @@ variable "credentials_file" {
 provider "google" {
   project     = var.project
   region      = var.region
-  zone        = var.zone
+  zone        = var.main_zone
   credentials = var.credentials_file
 }
 locals {
-  resource_prefix       = ""
-  service_account_email = var.service_account_email
-  monkeyzoo_project     = "guardicore-22050661"
+  resource_prefix        = ""
+  service_account_email  = var.service_account_email
+  monkeyzoo_project      = "guardicore-22050661"
+  main_zone              = var.main_zone
+  main1_zone             = var.main1_zone
+  tunneling_zone         = var.tunneling_zone
+  credentials_reuse_zone = var.credentials_reuse_zone
 }
