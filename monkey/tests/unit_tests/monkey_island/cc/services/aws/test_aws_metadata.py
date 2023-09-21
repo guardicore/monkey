@@ -4,7 +4,10 @@ import pytest
 import requests
 import requests_mock
 
-from common.aws.aws_metadata import AWS_LATEST_METADATA_URI_PREFIX, fetch_aws_instance_metadata
+from monkey_island.cc.services.aws.aws_metadata import (
+    AWS_LATEST_METADATA_URI_PREFIX,
+    fetch_aws_instance_metadata,
+)
 
 INSTANCE_ID_RESPONSE = "i-1234567890abcdef0"
 
