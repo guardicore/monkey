@@ -2,18 +2,12 @@ from uuid import UUID
 
 import pytest
 
-from common.agent_events import DefacementEvent
-from common.tags import (
-    DEFACEMENT_T1491_TAG,
-    EXTERNAL_DEFACEMENT_T1491_002_TAG,
-    INTERNAL_DEFACEMENT_T1491_001_TAG,
-)
+from common.agent_events import AgentEventTag, DefacementEvent
 
 AGENT_ID = UUID("012e7238-7b81-4108-8c7f-0787bc3f3c10")
 TIMESTAMP = 1664371327.4067292
-TAGS = frozenset(
-    {DEFACEMENT_T1491_TAG, INTERNAL_DEFACEMENT_T1491_001_TAG, EXTERNAL_DEFACEMENT_T1491_002_TAG}
-)
+TAGS: frozenset[AgentEventTag] = frozenset()
+
 DEFACEMENT_TARGET = DefacementEvent.DefacementTarget.INTERNAL
 DESCRIPTION = "Changed desktop wallpaper"
 
