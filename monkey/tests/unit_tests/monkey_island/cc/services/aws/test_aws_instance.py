@@ -1,6 +1,6 @@
 import pytest
 
-from common.aws import AWSInstance
+from monkey_island.cc.services.aws.aws_instance import AWSInstance
 
 INSTANCE_ID = "1234"
 REGION = "USA"
@@ -12,7 +12,8 @@ def patch_fetch_metadata(monkeypatch):
     def inner(instance_id: str, region: str, account_id: str):
         return_value = (instance_id, region, account_id)
         monkeypatch.setattr(
-            "common.aws.aws_instance.fetch_aws_instance_metadata", lambda: return_value
+            "monkey_island.cc.services.aws.aws_instance.fetch_aws_instance_metadata",
+            lambda: return_value,
         )
 
     return inner

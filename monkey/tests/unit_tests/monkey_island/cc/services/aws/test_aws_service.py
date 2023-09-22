@@ -3,8 +3,8 @@ from typing import Any, Dict, Optional, Sequence
 
 import pytest
 
-from common.aws import AWSInstance
 from monkey_island.cc.services import AWSService
+from monkey_island.cc.services.aws.aws_instance import AWSInstance
 
 EXPECTED_INSTANCE_1 = {
     "instance_id": "1",
