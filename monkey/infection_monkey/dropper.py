@@ -10,8 +10,8 @@ import time
 from pathlib import PosixPath, WindowsPath
 
 from common import OperatingSystem
-from common.utils.argparse_types import positive_int
 from common.utils.environment import get_os
+from infection_monkey.utils.argparse_types import positive_int
 from infection_monkey.utils.commands import (
     build_monkey_commandline_parameters,
     get_monkey_commandline_linux,
