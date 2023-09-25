@@ -1,4 +1,7 @@
 default_stages: [commit]
+default_language_version:
+  python: python3.11
+
 repos:
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
