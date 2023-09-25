@@ -9,6 +9,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Ports in Hadoop exploiter configuration can no longer be floating-point numbers.
+- Ports in Log4Shell exploiter configuration can no longer be floating-point numbers.
 
 
 ## [2.3.0 - 2023-09-19]
