@@ -35,8 +35,9 @@ variable "credentials_reuse_zone" {
 }
 
 variable "service_account_email" {
-  description = "The service account to use. Must have permissions to modify instances on the project"
+  description = "The service account to impersonate. The account must have permissions to modify instances on the project, and the account associated with the `credentials_file` must have permissions to impersonate this account"
   type        = string
+  default     = ""
 }
 
 variable "credentials_file" {
@@ -48,7 +49,7 @@ provider "google" {
   region                      = var.region
   zone                        = var.main_zone
   credentials                 = var.credentials_file
-  impersonate_service_account = var.service_account_email
+  impersonate_service_account = var.service_account_email == "" ? null : var.service_account_email
 }
 locals {
   resource_prefix        = ""
