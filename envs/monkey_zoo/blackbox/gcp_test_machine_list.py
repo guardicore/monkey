@@ -1,5 +1,5 @@
 GCP_TEST_MACHINE_LIST = {
-    "europe-west3-a": [
+    "europe-west1-c": [
         "sshkeys-11",
         "sshkeys-12",
         "hadoop-2",
@@ -38,7 +38,7 @@ GCP_TEST_MACHINE_LIST = {
 }
 
 DEPTH_2_A = {
-    "europe-west3-a": ["sshkeys-11", "sshkeys-12", "mimikatz-14", "mimikatz-15"],
+    "europe-west1-c": ["sshkeys-11", "sshkeys-12", "mimikatz-14", "mimikatz-15"],
     "europe-west1-b": [
         "powershell-3-46",
         "powershell-3-44",
@@ -48,7 +48,7 @@ DEPTH_2_A = {
 }
 
 DEPTH_1_A = {
-    "europe-west3-a": ["hadoop-2", "hadoop-3", "mssql-16", "mimikatz-15"],
+    "europe-west1-c": ["hadoop-2", "hadoop-3", "mssql-16", "mimikatz-15"],
     "europe-west1-b": [
         "log4j-logstash-55",
         "log4j-logstash-56",
@@ -63,7 +63,7 @@ DEPTH_1_A = {
 }
 
 DEPTH_3_A = {
-    "europe-west3-a": [
+    "europe-west1-d": [
         "tunneling-9",
         "tunneling-10",
         "tunneling-11",
@@ -76,7 +76,7 @@ DEPTH_3_A = {
 }
 
 DEPTH_4_A = {
-    "europe-west3-a": [
+    "europe-west1-d": [
         "tunneling-9",
         "tunneling-10",
         "tunneling-12",
@@ -85,7 +85,7 @@ DEPTH_4_A = {
 }
 
 ZEROLOGON = {
-    "europe-west3-a": [
+    "europe-west1-c": [
         "zerologon-25",
     ],
 }
@@ -98,7 +98,7 @@ CREDENTIALS_REUSE_SSH_KEY = {
     ],
 }
 
-SMB_PTH = {"europe-west3-a": ["mimikatz-15"]}
+SMB_PTH = {"europe-west1-c": ["mimikatz-15"]}
 
 GCP_SINGLE_TEST_LIST = {
     "test_depth_2_a": DEPTH_2_A,
