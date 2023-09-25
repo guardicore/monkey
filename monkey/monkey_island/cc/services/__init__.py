@@ -1,6 +1,7 @@
 from .agent_signals_service import AgentSignalsService
 
 from .aws import AWSService
+from .aws import build as build_aws_service
 
 from .authentication_service import setup_authentication
 

@@ -12,7 +12,6 @@ from common.agent_event_serializers import (
     register_common_agent_event_serializers,
 )
 from common.agent_events import AgentEventRegistry, register_common_agent_events
-from common.aws import AWSInstance
 from common.event_queue import (
     IAgentEventQueue,
     LockingAgentEventQueueDecorator,
@@ -57,6 +56,7 @@ from monkey_island.cc.services import (
     build_agent_binary_service,
     build_agent_configuration_service,
     build_agent_plugin_service,
+    build_aws_service,
 )
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
@@ -72,7 +72,6 @@ REPOSITORY_KEY_FILE_NAME = "repository_key.bin"
 def initialize_services(container: DIContainer, data_dir: Path):
     _register_conventions(container)
 
-    container.register_instance(AWSInstance, AWSInstance())
     container.register_instance(MongoClient, MongoClient(MONGO_URL, serverSelectionTimeoutMS=100))
     container.register_instance(
         ILockableEncryptor, RepositoryEncryptor(data_dir / REPOSITORY_KEY_FILE_NAME)
@@ -177,7 +176,7 @@ def _setup_agent_event_serializers(container: DIContainer):
 
 
 def _register_services(container: DIContainer):
-    container.register_instance(AWSService, container.resolve(AWSService))
+    container.register_instance(AWSService, build_aws_service())
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
     container.register_instance(IAgentBinaryService, build_agent_binary_service(container))
     container.register_instance(IAgentPluginService, build_agent_plugin_service(container))
