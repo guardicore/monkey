@@ -20,6 +20,7 @@ scanning times in a real-world scenario and many more.
 ### Requirements
 - [Packer](https://developer.hashicorp.com/packer/downloads)
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible)
+- An S3 bucket for storing terraform state
 - A [GCP Service Account](https://developers.google.com/identity/protocols/oauth2/service-account#creatinganaccount) for the project in which to create the images
   - This account should have `Service Account User` and `Compute Instance Admin` permissions
 - A GCP key file for the service account
