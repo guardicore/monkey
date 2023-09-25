@@ -1,3 +1,4 @@
 logs/
 **/.terraform/
 **/.terraform.lock.hcl
+**/terraform.*
