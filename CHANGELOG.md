@@ -5,6 +5,14 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Fixed
+- Ports in Hadoop exploiter configuration can no longer be floating-point numbers.
+- Ports in Log4Shell exploiter configuration can no longer be floating-point numbers.
+- Ports in MSSQL exploiter configuration can no longer be floating-point numbers.
+
+
 ## [2.3.0 - 2023-09-19]
 ### Added
 - Ability to filter Agent events by timestamp. #3397
