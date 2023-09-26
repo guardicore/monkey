@@ -67,7 +67,6 @@ folder or follow documentation in [documentation hub](https://techdocs.akamai.co
 In order to run all of the Unit Tests, run the command `python -m pytest` in the `monkey` directory.
 
 To get a coverage report, first make sure the `coverage` package is installed using `pip install coverage`. Run the command
-tmp
 `coverage run -m unittest` in the `monkey` directory and then `coverage html`. The coverage report can be found in
 `htmlcov.index`.
 
