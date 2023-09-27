@@ -1,12 +1,11 @@
 import json
 from ipaddress import IPv4Interface
-from typing import Any, Dict, Mapping, Optional, Sequence, TypeAlias
+from typing import Any, Dict, Mapping, Optional, Tuple, TypeAlias
 
 from pydantic import Field, validator
 
 from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel, MutableInfectionMonkeyModelConfig
-from common.transforms import make_immutable_sequence
 from common.types import HardwareID, NetworkService, SocketAddress
 
 from . import MachineID
@@ -51,7 +50,7 @@ class Machine(MutableInfectionMonkeyBaseModel):
     island: bool = Field(default=False, allow_mutation=False)
     """Whether or not the machine is an island (C&C server)"""
 
-    network_interfaces: Sequence[IPv4Interface] = tuple()
+    network_interfaces: Tuple[IPv4Interface, ...] = tuple()
     """The machine's networking interfaces"""
 
     operating_system: Optional[OperatingSystem] = Field(default=None)
@@ -65,10 +64,6 @@ class Machine(MutableInfectionMonkeyBaseModel):
 
     network_services: NetworkServices = Field(default_factory=dict)
     """All network services found running on the machine"""
-
-    _make_immutable_sequence = validator("network_interfaces", pre=True, allow_reuse=True)(
-        make_immutable_sequence
-    )
 
     def __hash__(self):
         return self.id
