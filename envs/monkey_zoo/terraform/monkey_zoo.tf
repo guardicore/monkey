@@ -261,7 +261,7 @@ resource "google_compute_instance" "sshkeys-12" {
 
 resource "google_compute_instance" "rdp-64" {
   name         = "${local.resource_prefix}rdp-64"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "windowsserver2016", "windows", "rdp-64"]
   boot_disk {
@@ -280,7 +280,7 @@ resource "google_compute_instance" "rdp-64" {
 
 resource "google_compute_instance" "rdp-65" {
   name         = "${local.resource_prefix}rdp-65"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "windowsserver2012", "windows", "rdp-65"]
   boot_disk {
@@ -377,7 +377,7 @@ resource "google_compute_instance" "snmp-20" {
 
 resource "google_compute_instance" "powershell-3-48" {
   name         = "${local.resource_prefix}powershell-3-48"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-48"]
   boot_disk {
@@ -397,7 +397,7 @@ resource "google_compute_instance" "powershell-3-48" {
 
 resource "google_compute_instance" "powershell-3-47" {
   name         = "${local.resource_prefix}powershell-3-47"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-47"]
   boot_disk {
@@ -417,7 +417,7 @@ resource "google_compute_instance" "powershell-3-47" {
 
 resource "google_compute_instance" "powershell-3-46" {
   name         = "${local.resource_prefix}powershell-3-46"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-46"]
   boot_disk {
@@ -437,7 +437,7 @@ resource "google_compute_instance" "powershell-3-46" {
 
 resource "google_compute_instance" "powershell-3-44" {
   name         = "${local.resource_prefix}powershell-3-44"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-44"]
   boot_disk {
@@ -457,7 +457,7 @@ resource "google_compute_instance" "powershell-3-44" {
 
 resource "google_compute_instance" "powershell-3-45" {
   name         = "${local.resource_prefix}powershell-3-45"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-45"]
   boot_disk {
@@ -585,12 +585,13 @@ resource "google_compute_instance" "log4j-solr-49" {
 
 resource "google_compute_instance" "log4j-solr-50" {
   name         = "${local.resource_prefix}log4j-solr-50"
-  machine_type = "e2-standard-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-solr-50.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -665,12 +666,13 @@ resource "google_compute_instance" "log4j-logstash-55" {
 
 resource "google_compute_instance" "log4j-logstash-56" {
   name         = "${local.resource_prefix}log4j-logstash-56"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-logstash-56.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -685,7 +687,7 @@ resource "google_compute_instance" "log4j-logstash-56" {
 
 resource "google_compute_instance" "browser-credentials-66" {
   name         = "${local.resource_prefix}browser-credentials-66"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
@@ -705,7 +707,7 @@ resource "google_compute_instance" "browser-credentials-66" {
 
 resource "google_compute_instance" "browser-credentials-67" {
   name         = "${local.resource_prefix}browser-credentials-67"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
