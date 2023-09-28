@@ -40,15 +40,16 @@ variable "service_account_email" {
   default     = ""
 }
 
-variable "credentials_file" {
-  description = "The file containing the GCP credentials to use. Must have permissions to use the service account"
+variable "credentials" {
+  description = "A JSON string containing the GCP credentials to use. Must have permissions to use the service account"
+  type        = string
 }
 
 provider "google" {
   project                     = var.project
   region                      = var.region
   zone                        = var.main_zone
-  credentials                 = var.credentials_file
+  credentials                 = var.credentials
   impersonate_service_account = var.service_account_email == "" ? null : var.service_account_email
 }
 locals {
