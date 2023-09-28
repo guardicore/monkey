@@ -1,7 +1,7 @@
 from typing import Any, Sequence, Type, TypeVar
 from unittest.mock import MagicMock
 
-from common import DIContainer, UnresolvableDependencyError
+from ophidian import DIContainer, UnresolvableDependencyError
 
 T = TypeVar("T")
 
