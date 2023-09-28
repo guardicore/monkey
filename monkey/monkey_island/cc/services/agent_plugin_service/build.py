@@ -1,4 +1,5 @@
-from common import DIContainer
+from ophidian import DIContainer
+
 from monkey_island.cc import Version
 
 from .agent_plugin_repository_logging_decorator import AgentPluginRepositoryLoggingDecorator

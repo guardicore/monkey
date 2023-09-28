@@ -3,8 +3,8 @@ from pathlib import Path
 from flask import Flask
 from flask_limiter import Limiter
 from flask_security import Security
+from ophidian import DIContainer
 
-from common import DIContainer
 from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 

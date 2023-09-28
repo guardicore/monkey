@@ -1,4 +1,5 @@
-from common import DIContainer
+from ophidian import DIContainer
+
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 
 from . import IAgentConfigurationService

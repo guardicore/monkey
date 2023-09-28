@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3d09d74b2ec43328055ccad426e354b8776d372db4896414a656e4b00bc84c5f"
+            "sha256": "961a9038d43a2e1fdddf833ce3b6ee0e2f4c346f490dafa78749df5e5b842831"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -674,6 +674,14 @@
             ],
             "markers": "python_version >= '3.7'",
             "version": "==0.27.0"
+        },
+        "ophidian-di": {
+            "hashes": [
+                "sha256:446be089fcf05f129557b449c92441779f964743eaf2a241feb135782f76ae65",
+                "sha256:56f9b104e44a8f745c8f8484fcb896c9ad801328c9f980107eb81404523f9f53"
+            ],
+            "index": "pypi",
+            "version": "==0.1.0.post1"
         },
         "ordered-set": {
             "hashes": [
