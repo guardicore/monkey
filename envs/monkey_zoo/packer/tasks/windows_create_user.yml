@@ -1,0 +1,10 @@
+---
+  - name: Create user
+    win_user:
+      name: "{{ username }}"
+      password: "{{ password }}"
+      password_never_expires: yes
+      state: present
+      update_password: on_create
+      groups_action: add
+      groups: "{{ user_groups }}"

@@ -1,0 +1,35 @@
+---
+# Setting up Apache Solr on Linux is almost the same as Windows
+#
+# Needed versions:
+#
+# Apache Solr 8.11.0
+# JDK 1.8u181
+#
+# Steps to install Apache Solr 8.11.0:
+#
+# 1. Download Apache Solr from this link https://www.apache.org/dyn/closer.lua/lucene/solr/8.11.0/solr-8.11.0.tgz?action=download
+# 2. Extract it to a desired location
+# 3. In order to run it, first you need to have JDK installed
+#    and JAVA_HOME env. variable to be set to the JDK location.
+# 4. Running Apache Solr is easy: `bin/solr start`
+#
+#
+# Steps to install JDK 1.8u181:
+
+# 1. Download JDK either from official site or use http://mirrors.rootpei.com/jdk/
+#    (Note: It is very slow)
+# 2. Extract and set the JAVA_HOME to the location/bin
+
+- name: Download Apache Solr
+  win_get_url:
+    url: https://archive.apache.org/dist/lucene/solr/8.11.0/solr-8.11.0.zip
+    dest: C:\Windows\Temp\solr-8.11.0.zip
+    # checksum_url: https://archive.apache.org/dist/lucene/solr/8.11.0/solr-8.11.0.zip.sha512
+    # checksum_algorithm: sha512
+    force: true
+- name: Extract Apache Solr
+  win_shell: Expand-Archive -Path C:\Windows\Temp\solr-8.11.0.zip -DestinationPath C:\
+- name: Schedule Solr startup task
+  win_command:
+    cmd: schtasks /create /tn "Start Solr" /tr "C:\solr-8.11.0\bin\solr.cmd restart -p 8983 -m 4g" /sc onstart

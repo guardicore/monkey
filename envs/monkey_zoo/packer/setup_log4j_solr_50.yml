@@ -1,0 +1,31 @@
+---
+- name: Configure a log4j_solr_50 machine image
+  hosts: all
+  vars:
+    user_name: m0nk3y
+    user_password: Passw0rd!
+  tasks:
+  - name: Change the hostname to log4j-solr-50
+    ansible.windows.win_hostname:
+      name: log4j-solr-50
+    register: res
+  - name: Reboot
+    ansible.windows.win_reboot:
+    when: res.reboot_required
+  - import_tasks: tasks/windows_create_user.yml
+    vars:
+      username: "{{ user_name }}"
+      password: "{{ user_password }}"
+      user_groups: [Administrators, "Remote Desktop Users"]
+  - import_tasks: tasks/windows_disable_automatic_updates.yml
+  - import_tasks: tasks/windows_disable_windows_defender.yml
+  - import_tasks: tasks/windows_install_apache_solr.yml
+    become: yes
+    become_user: "{{ user_name }}"
+    vars:
+      ansible_become_method: runas
+      ansible_become_password: "{{ user_password }}"
+  - name: Delete packer_user
+    win_user:
+      name: packer_user
+      state: absent

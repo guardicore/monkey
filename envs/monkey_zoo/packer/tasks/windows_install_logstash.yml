@@ -1,0 +1,13 @@
+---
+- name: Download Logstash 5.5.0
+  win_get_url:
+    url: https://artifacts.elastic.co/downloads/logstash/logstash-5.5.0.zip
+    dest: C:\Windows\Temp\logstash-5.5.0.zip
+    # checksum_url: https://artifacts.elastic.co/downloads/logstash/logstash-5.5.0.zip.sha1
+    # checksum_algorithm: sha1
+    force: true
+- name: Extract Logstash
+  win_shell: Expand-Archive -Path C:\Windows\Temp\logstash-5.5.0.zip -DestinationPath C:\
+- name: Schedule Logstash startup task
+  win_command:
+    cmd: schtasks /create /tn "Start Logstash" /tr "C:\logstash-5.5.0\bin\logstash.bat -f C:\logstash-5.5.0\config\hello_es.conf" /sc onstart
