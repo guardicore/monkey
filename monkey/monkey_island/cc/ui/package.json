@@ -15,7 +15,9 @@
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "serve": "node server.js --env=dev",
     "serve:dist": "node server.js --env=dist",
-    "start": "webpack-dev-server --mode development --open --history-api-fallback --port 8000 --host local-ip"
+    "start": "webpack-dev-server --mode development --open --history-api-fallback --port 8000 --host localhost",
+    "cy:run": "npx cypress run --e2e && npx cypress run --component",
+    "test": "start-server-and-test start http-get://localhost:8000 cy:run"
   },
   "repository": "",
   "keywords": [],
@@ -42,6 +44,7 @@
     "babel-plugin-emotion": "^11.0.0",
     "copyfiles": "^2.4.1",
     "css-loader": "^6.8.1",
+    "cypress": "^13.2.0",
     "eslint": "^8.42.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-webpack-plugin": "^4.0.1",
@@ -53,6 +56,7 @@
     "sass": "1.64.2",
     "sass-loader": "^13.3.2",
     "speed-measure-webpack-plugin": "^1.5.0",
+    "start-server-and-test": "^2.0.1",
     "style-loader": "^3.3.3",
     "thread-loader": "^4.0.2",
     "ts-loader": "^9.4.3",
