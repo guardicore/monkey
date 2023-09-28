@@ -16,7 +16,11 @@
     "serve": "node server.js --env=dev",
     "serve:dist": "node server.js --env=dist",
     "start": "webpack-dev-server --mode development --open --history-api-fallback --port 8000 --host localhost",
-    "cy:run": "npx cypress run --e2e && npx cypress run --component",
+    "cy:run-e2e": "npx cypress run --e2e",
+    "cy:run-component": "npx cypress run --component",
+    "cy:run": "cy:run e2e && cy:run component",
+    "test:e2e": "start-server-and-test start http-get://localhost:8000 cy:run-e2e",
+    "test:component": "start-server-and-test start http-get://localhost:8000 cy:run-component",
     "test": "start-server-and-test start http-get://localhost:8000 cy:run"
   },
   "repository": "",
