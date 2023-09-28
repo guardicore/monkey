@@ -95,11 +95,12 @@ resource "google_compute_instance" "hadoop-2" {
 
 resource "google_compute_instance" "hadoop-3" {
   name         = "${local.resource_prefix}hadoop-3"
-  machine_type = "e2-custom-4-8192"
+  machine_type = "e2-standard-2"
   tags         = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.hadoop-3.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -183,12 +184,13 @@ resource "google_compute_instance" "tunneling-11" {
 
 resource "google_compute_instance" "tunneling-12" {
   name         = "${local.resource_prefix}tunneling-12"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.tunneling_zone
   tags         = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-12.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -267,6 +269,7 @@ resource "google_compute_instance" "rdp-64" {
   boot_disk {
     initialize_params {
       image = data.google_compute_image.rdp-64.self_link
+      type  = "pd-ssd"
     }
   }
   network_interface {
@@ -286,6 +289,7 @@ resource "google_compute_instance" "rdp-65" {
   boot_disk {
     initialize_params {
       image = data.google_compute_image.rdp-65.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -306,6 +310,7 @@ resource "google_compute_instance" "mimikatz-14" {
   boot_disk {
     initialize_params {
       image = data.google_compute_image.mimikatz-14.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -325,6 +330,7 @@ resource "google_compute_instance" "mimikatz-15" {
   boot_disk {
     initialize_params {
       image = data.google_compute_image.mimikatz-15.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -339,11 +345,12 @@ resource "google_compute_instance" "mimikatz-15" {
 
 resource "google_compute_instance" "mssql-16" {
   name         = "${local.resource_prefix}mssql-16"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   tags         = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.mssql-16.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -383,6 +390,7 @@ resource "google_compute_instance" "powershell-3-48" {
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-48.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -403,6 +411,7 @@ resource "google_compute_instance" "powershell-3-47" {
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-47.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -423,6 +432,7 @@ resource "google_compute_instance" "powershell-3-46" {
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-46.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -443,6 +453,7 @@ resource "google_compute_instance" "powershell-3-44" {
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-44.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -463,6 +474,7 @@ resource "google_compute_instance" "powershell-3-45" {
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-45.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -626,12 +638,13 @@ resource "google_compute_instance" "log4j-tomcat-51" {
 
 resource "google_compute_instance" "log4j-tomcat-52" {
   name         = "${local.resource_prefix}log4j-tomcat-52"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-tomcat-52.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -689,10 +702,11 @@ resource "google_compute_instance" "browser-credentials-66" {
   name         = "${local.resource_prefix}browser-credentials-66"
   machine_type = "e2-standard-2"
   zone         = local.main1_zone
-  tags         = ["test-machine", "ubuntu16", "linux"]
+  tags         = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.browser-credentials-66.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -727,11 +741,12 @@ resource "google_compute_instance" "browser-credentials-67" {
 
 resource "google_compute_instance" "zerologon-25" {
   name         = "${local.resource_prefix}zerologon-25"
-  machine_type = "e2-custom-4-8192"
+  machine_type = "e2-standard-2"
   tags         = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.zerologon-25.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -766,11 +781,12 @@ resource "google_compute_instance" "island-linux-250" {
 
 resource "google_compute_instance" "island-windows-251" {
   name         = "${local.resource_prefix}island-windows-251"
-  machine_type = "e2-highcpu-4"
+  machine_type = "e2-standard-2"
   tags         = ["test-machine", "windowsserver2016", "windows", "island"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.island-windows-251.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
