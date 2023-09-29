@@ -1,14 +1,17 @@
 ---
 - name: Download JDK
   win_get_url:
-    url: https://cfdownload.adobe.com/pub/adobe/coldfusion/java/java11/java11019/jdk-11.0.19_windows-x64_bin.zip
-    dest: C:\Windows\Temp\jdk-11.0.19_windows-x64_bin.zip
+    url: https://download.macromedia.com/pub/coldfusion/java/java8/8u321/jdk/jdk-8u321-windows-x64.zip
+    dest: C:\Windows\Temp\jdk-8u321-windows-x64.zip
+    # checksum_url: https://download.macromedia.com/pub/coldfusion/java/java8/8u321/jdk/Checksum-JDK8u321.txt
+    checksum: 94ed3431d30f915cc8efff3e505fa0e09b625bb0ee3b5cc1fe5671e90da10c4d
+    checksum_algorithm: sha256
     force: true
 - name: Extract JDK
-  win_shell: Expand-Archive -Path C:\Windows\Temp\jdk-11.0.19_windows-x64_bin.zip -DestinationPath C:\
+  win_shell: Expand-Archive -Path C:\Windows\Temp\jdk-8u321-windows-x64.zip -DestinationPath C:\ -Force
 - name: Set JAVA_HOME
   win_environment:
     name: JAVA_HOME
-    value: C:\jdk-11.0.19
+    value: C:\jdk1.8.0_321
     level: machine
     state: present

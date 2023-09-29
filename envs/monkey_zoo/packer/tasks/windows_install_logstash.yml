@@ -4,10 +4,19 @@
     url: https://artifacts.elastic.co/downloads/logstash/logstash-5.5.0.zip
     dest: C:\Windows\Temp\logstash-5.5.0.zip
     # checksum_url: https://artifacts.elastic.co/downloads/logstash/logstash-5.5.0.zip.sha1
-    # checksum_algorithm: sha1
+    checksum: fcd7d216ebcd042fca2d9cbee73e6e8d39c06716
+    checksum_algorithm: sha1
     force: true
 - name: Extract Logstash
-  win_shell: Expand-Archive -Path C:\Windows\Temp\logstash-5.5.0.zip -DestinationPath C:\
+  win_shell: Expand-Archive -Path C:\Windows\Temp\logstash-5.5.0.zip -DestinationPath C:\ -Force
+- name: Create config file
+  win_copy:
+    src: files/logstash/hello_es.conf
+    dest: C:\logstash-5.5.0\config\hello_es.conf
+- name: Update logstash configuration
+  win_copy:
+    src: files/logstash/logstash.yml
+    dest: C:\logstash-5.5.0\config\logstash.yml
 - name: Schedule Logstash startup task
   win_command:
-    cmd: schtasks /create /tn "Start Logstash" /tr "C:\logstash-5.5.0\bin\logstash.bat -f C:\logstash-5.5.0\config\hello_es.conf" /sc onstart
+    cmd: schtasks /create /tn "Start Logstash" /tr "C:\logstash-5.5.0\bin\logstash.bat -f C:\logstash-5.5.0\config\hello_es.conf" /sc onstart /ru {{ user_name }} /rp {{ user_password | regex_replace('"', '\"') }}
