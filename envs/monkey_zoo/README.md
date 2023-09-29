@@ -25,18 +25,24 @@ scanning times in a real-world scenario and many more.
   - This account should have `Service Account User` and `Compute Instance Admin` permissions
 - A GCP key file for the service account
 
-To install the requirements run packer init, for example:
+The following commands assume that packer is run from the envs/monkey_zoo/packer directory.
+
+To install the requirements run `packer init`, e.g.:
 ```bash
-packer init ./browser-credentials.pkr.hcl
+packer init .
 ```
 
-Then run the envs/monkey_zoo/build_images.sh to build the images for the MonkeyZoo. These are the images from which the zoo will be deployed.
+Make sure that the values in `variables.pkr.hcl` and `variables.auto.pkrvars.hcl` are correct for your environment.
+Then, run the `packer build` to build the images for the MonkeyZoo. These are the images from which the zoo will be deployed.
 
 Example:
-  `../build_images.sh --project-id my-gcp-project --account-file /path/to/gcp_key.json packer/tunneling.pkr.hcl`
+  `packer build .`
 
-If you want to keep the machine running to debug the image, add `--debug` flag to the command.
-If you want to override an already existing image add `--force` flag to the command.
+Example:
+  `packer build -only googlecompute.mimikatz-15,googlecompute.snmp-20 .`
+
+If you want to keep the machine running to debug the image, add `-debug` flag to the command.
+If you want to override an already existing image add `-force` flag to the command.
 
 ## MonkeyZoo network
 
