@@ -12,6 +12,7 @@
       user_groups: [Administrators, "Remote Desktop Users"]
   - import_tasks: tasks/windows_disable_automatic_updates.yml
   - import_tasks: tasks/windows_disable_windows_defender.yml
+  - import_tasks: tasks/windows_disable_firewall.yml
   - import_tasks: tasks/windows_install_java.yml
   - import_tasks: tasks/windows_install_apache_solr.yml
     become: yes
