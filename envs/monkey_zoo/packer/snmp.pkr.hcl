@@ -34,6 +34,6 @@ build {
     ]
     provisioner "ansible" {
         only = ["googlecompute.snmp-20"]
-        playbook_file = "./packer/setup_snmp_agent.yml"
+        playbook_file = "${path.root}/setup_snmp_agent.yml"
     }
 }

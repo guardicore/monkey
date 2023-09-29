@@ -34,6 +34,6 @@ build {
     ]
     provisioner "ansible" {
         only = ["googlecompute.browser-credentials-67"]
-        playbook_file = "./packer/setup_browser_credentials_67.yml"
+        playbook_file = "${path.root}/setup_browser_credentials_67.yml"
     }
 }

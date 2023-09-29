@@ -65,7 +65,7 @@ build {
     only             = ["googlecompute.browser-credentials-66"]
     use_proxy        = false
     user             = "${var.packer_username}"
-    playbook_file    = "./packer/setup_browser_credentials_66.yml"
+    playbook_file    = "${path.root}/setup_browser_credentials_66.yml"
     ansible_env_vars = ["ANSIBLE_HOST_KEY_CHECKING=False"]
     extra_arguments  = [
       "-e", "ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore",
@@ -98,13 +98,13 @@ build {
 
   provisioner "file" {
     only   = ["googlecompute.browser-credentials-66"]
-    source = "./packer/files/chrome-creds.ps1"
+    source = "${path.root}/files/chrome-creds.ps1"
     destination = "C:\\Users\\m0nk3y\\Desktop\\chrome-creds.ps1"
   }
 
   provisioner "file" {
     only   = ["googlecompute.browser-credentials-66"]
-    source = "./packer/files/System.Data.SQLite.dll"
+    source = "${path.root}/files/System.Data.SQLite.dll"
     destination = "C:\\Users\\m0nk3y\\Desktop\\System.Data.SQLite.dll"
   }
 

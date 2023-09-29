@@ -46,10 +46,10 @@ build {
     ]
     provisioner "ansible" {
         only = ["googlecompute.tunneling-9"]
-        playbook_file = "./packer/setup_tunneling_9.yml"
+        playbook_file = "${path.root}/setup_tunneling_9.yml"
     }
     provisioner "ansible" {
         only = ["googlecompute.tunneling-10"]
-        playbook_file = "./packer/setup_tunneling_10.yml"
+        playbook_file = "${path.root}/setup_tunneling_10.yml"
     }
 }
