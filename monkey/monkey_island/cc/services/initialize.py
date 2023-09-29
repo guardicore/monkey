@@ -2,10 +2,10 @@ import logging
 import threading
 from pathlib import Path
 
+from ophidian import DIContainer
 from pubsub.core import Publisher
 from pymongo import MongoClient
 
-from common import DIContainer
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,

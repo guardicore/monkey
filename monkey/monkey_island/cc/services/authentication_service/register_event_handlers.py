@@ -1,4 +1,5 @@
-from common import DIContainer
+from ophidian import DIContainer
+
 from common.agent_events import AbstractAgentEvent, AgentShutdownEvent
 from common.event_queue import IAgentEventQueue
 from common.types import AgentID

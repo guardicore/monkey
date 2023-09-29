@@ -16,7 +16,6 @@ from agent_plugins.payloads.ransomware.src.ransomware_options import (
 from asyauth.common.credentials import UniCredential
 from flask_security import Security
 
-from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import (
     AbstractAgentEvent,
@@ -94,10 +93,6 @@ AgentPluginManifest.safe
 AgentPluginManifest.remediation_suggestion
 AgentPluginManifest.target_operating_systems
 AgentPluginManifest.supported_operating_systems
-
-# Unused, but kept for future potential
-DIContainer.release_convention
-DIContainer.release
 
 # Used by third party library
 LDAPServerFactory.buildProtocol

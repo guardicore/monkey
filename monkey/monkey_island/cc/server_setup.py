@@ -22,7 +22,8 @@ MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
-from common import DIContainer  # noqa: E402
+from ophidian import DIContainer  # noqa: E402
+
 from common.network.network_utils import get_my_ip_addresses  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402

@@ -1,4 +1,5 @@
-from common import DIContainer
+from ophidian import DIContainer
+
 from common.agent_events import (
     AgentShutdownEvent,
     CredentialsStolenEvent,
