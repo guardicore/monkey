@@ -55,16 +55,17 @@ build {
     ]
   }
 
-  provisioner "file" {
+  provisioner "powershell" {
     only   = ["googlecompute.browser-credentials-66"]
-    source = "${path.root}/files/chrome-creds.ps1"
-    destination = "C:\\Users\\m0nk3y\\Desktop\\chrome-creds.ps1"
+    elevated_user = "m0nk3y"
+    elevated_password = "P@ssw0rd!"
+    script = "${path.root}/files/browser-credentials/download-dependencies.ps1"
   }
 
   provisioner "file" {
     only   = ["googlecompute.browser-credentials-66"]
-    source = "${path.root}/files/System.Data.SQLite.dll"
-    destination = "C:\\Users\\m0nk3y\\Desktop\\System.Data.SQLite.dll"
+    source = "${path.root}/files/browser-credentials/chrome-creds.ps1"
+    destination = "C:\\Users\\m0nk3y\\Desktop\\chrome-creds.ps1"
   }
 
   provisioner "powershell" {
@@ -123,6 +124,7 @@ build {
       EOF
       ,
       "}",
+      "",
     ]
   }
 

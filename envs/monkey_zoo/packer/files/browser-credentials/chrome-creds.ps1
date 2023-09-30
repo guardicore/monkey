@@ -28,11 +28,6 @@
    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
    #>
 
-#requires -version 7
-
-using namespace "System.Security.Cryptography"
-
-
 
 param (
 	$LocalAppDataPath = (Get-ChildItem Env:\LOCALAPPDATA).Value,
@@ -80,14 +75,52 @@ Write-Host "LoginDataPath: $LoginDataPath"
 Write-Host "LocalStatePath: $LocalStatePath"
 Write-Host
 
+Add-Type -AssemblyName System.Security
+$bouncyccastledll = ".\BouncyCastle.Crypto.dll"
+
+# Unblock and load BouncyCastle.Crypto.dll
+Unblock-File $bouncyccastledll
+Add-Type -Path $bouncyccastledll
+
 # Get the master key and use it to create a AesGCcm object for decoding
 if ($LocalStatePath) {$localStateInfo = Get-Content -Raw $LocalStatePath | ConvertFrom-Json}
 if ($localStateInfo) {$encryptedkey   = [convert]::FromBase64String($localStateInfo.os_crypt.encrypted_key)}
 if ($encryptedkey -and [string]::new($encryptedkey[0..4]) -eq 'DPAPI') {
-    $masterKey       = [ProtectedData]::Unprotect(($encryptedkey | Select-Object -Skip 5),  $null, 'CurrentUser')
-    $Script:GCMKey   = [AesGcm]::new($masterKey) # Not present in Windows PowerShell 5, nor in PS Core V6.
+    $masterKey       = [System.Security.Cryptography.ProtectedData]::Unprotect(($encryptedkey | Select-Object -Skip 5),  $null, 'CurrentUser')
+    $Script:GCMKey   = $masterKey
 }
 else {Write-Warning  'Could not get key for new-style encyption. Will try with older Style' }
+
+function GcmEncrypt {
+    Param ( [byte[]]$nonce, [byte[]]$plainTextData, [ref]$output, [ref]$tag, [byte[]]$key, [byte[]]$associatedText )
+
+    $cipher = [Org.BouncyCastle.Crypto.Engines.AesEngine]::new();
+    $macSize = 8*$cipher.GetBlockSize();
+    $keyParam = [Org.BouncyCastle.Crypto.Parameters.KeyParameter]::new($key);
+    $keyParamAead = [Org.BouncyCastle.Crypto.Parameters.AeadParameters]::new($keyParam, $macSize, $nonce, $associatedText);
+    $cipherMode = [Org.BouncyCastle.Crypto.Modes.GcmBlockCipher]::new($cipher);
+    $cipherMode.Init($true, $keyParamAead);
+    $outputSize = $cipherMode.GetOutputSize($plainTextData.Length);
+    $cipherTextData = [byte[]]::new($outputSize);
+    $result = $cipherMode.ProcessBytes($plainTextData, 0, $plainTextData.Length, $cipherTextData, 0);
+    $result = $cipherMode.DoFinal($cipherTextData, $result);
+    $output.Value = $cipherTextData[0..($plainTextData.Length - 1)]
+    $tag.Value = $cipherTextData[$plainTextData.Length..($cipherTextData.Length - 1)]
+}
+
+function GcmDecrypt {
+    Param ( [byte[]]$nonce, [byte[]]$cipherTextData, [byte[]]$tag, [ref]$output, [byte[]]$key, [byte[]]$associatedText )
+
+    $fullCipherData = $cipherTextData + $tag
+    $cipher = [Org.BouncyCastle.Crypto.Engines.AesEngine]::new();
+    $macSize = 8*$cipher.GetBlockSize();
+    $keyParam = [Org.BouncyCastle.Crypto.Parameters.KeyParameter]::new($key);
+    $keyParamAead = [Org.BouncyCastle.Crypto.Parameters.AeadParameters]::new($keyParam, $macSize, $nonce, $associatedText);
+    $cipherMode = [Org.BouncyCastle.Crypto.Modes.GcmBlockCipher]::new($cipher);
+    $cipherMode.Init($false, $keyParamAead);
+    $result = $cipherMode.ProcessBytes($fullCipherData, 0, $fullCipherData.Length, $output.Value, 0);
+    $result = $cipherMode.DoFinal($output.Value, $result);
+}
 
 # Used to decrypt passwords
 # Use AES GCM decryption if ciphertext starts "V10" & GCMKey exists, else try ProtectedData.unprotect
@@ -102,13 +135,23 @@ function DecryptPassword  {
 			$iv = $Encrypted[3..14]
 			$cipherText = $Encrypted[15..($Encrypted.Length-17)]
 			$tag = $Encrypted[-16..-1]
-            $Script:GCMKey.Decrypt($iv, $cipherText, $tag, $output, $null)
+            GcmDecrypt -nonce $iv -cipherTextData $cipherText -tag $tag -output:([ref]$output) -key $Script:GCMKey -associatedText $null
             [string]::new($output)
         }
-        else {[string]::new([ProtectedData]::Unprotect($Encrypted,  $null, 'CurrentUser')) }
+        else {[string]::new([System.Security.Cryptography.ProtectedData]::Unprotect($Encrypted,  $null, 'CurrentUser')) }
     }
-    catch {Write-Warning "Error decrypting password ${Encrypted}"}
+    catch {Write-Warning "Error decrypting password ${Encrypted}: $_"}
 }
+
+function StrOrEmpty {
+    Param ( $Strval )
+
+    if ([string]::IsNullOrEmpty($Strval)) {
+        return ""
+    }
+    return $Strval
+}
+
 
 # Used to encrypt passwords
 # Uses AES GCM encryption if GCMKey exists, otherwise ProtectedData.Protect
@@ -121,13 +164,14 @@ function EncryptPassword  {
 			# Generate the empty byte arrays which will be filled with data during encryption
 			$tag = [byte[]]::new(16)
 			$output = [byte[]]::new($Unencrypted.Length) # same length as payload.
-            $Script:GCMKey.Encrypt($iv, [system.Text.Encoding]::UTF8.GetBytes($Unencrypted), $output, $tag, $null)
+            [byte[]] $passwordData = [system.Text.Encoding]::UTF8.GetBytes($Unencrypted)
+            GcmEncrypt -nonce $iv -plainTextData $passwordData -output:([ref]$output) -tag:([ref]$tag) -key $Script:GCMKey -associatedText $null
 			$ver = [system.Text.Encoding]::UTF8.GetBytes("v10")
             #Ciphertext bytes run 0-2="V10"; 3-14=12_byte_IV; 15 to len-17=payload; final-16=16_byte_auth_tag
 			[byte[]] $protected = $ver + $iv + $output + $tag
 			return ,$protected # This is needed to return a byte array, see https://stackoverflow.com/a/61440166/2018733
         }
-        else {[string]::new([ProtectedData]::Protect($Unencrypted, $null, 'CurrentUser')) }
+        else {[string]::new([System.Security.Cryptography.ProtectedData]::Protect($Unencrypted, $null, 'CurrentUser')) }
     }
     catch {
 		Write-Warning "Error encrypting password ${Unencrypted}"
@@ -222,7 +266,7 @@ Switch ($Command)
 
 		"Export" {
 
-			if ($id –lt 0) {
+			if ($id -lt 0) {
 				Write-Warning "You need to indicate the credentials to be exported, by specifying the parameter -id  as follows:"
 				Write-Warning "./$scriptName -command Export -id 1"
 				return
@@ -244,26 +288,26 @@ Switch ($Command)
 				Write-Host "Exporting creds for" $datarow.origin_url "..."
 
 				$exp = "./$scriptName -Command Import ```n"
-				$exp += "	-origin_url " + ([string]::IsNullOrEmpty($datarow.origin_url) ? "`"`"" : $datarow.origin_url) + " ```n"
-				$exp += "	-action_url " + ([string]::IsNullOrEmpty($datarow.action_url) ? "`"`"" : $datarow.action_url) + " ```n"
-				$exp += "	-username_element " + ([string]::IsNullOrEmpty($datarow.username_element) ? "`"`"" : $datarow.username_element) + " ```n"
-				$exp += "	-username_value " + ([string]::IsNullOrEmpty($datarow.username_value) ? "`"`"" : $datarow.username_value) + " ```n"
-				$exp += "	-password_element " + ([string]::IsNullOrEmpty($datarow.password_element) ? "`"`"" : $datarow.password_element) + " ```n"
+				$exp += "	-origin_url " + (StrOrEmpty($datarow.origin_url)) + " ```n"
+				$exp += "	-action_url " + (StrOrEmpty($datarow.action_url)) + " ```n"
+				$exp += "	-username_element " + (StrOrEmpty($datarow.username_element)) + " ```n"
+				$exp += "	-username_value " + (StrOrEmpty($datarow.username_value)) + " ```n"
+				$exp += "	-password_element " + (StrOrEmpty($datarow.password_element)) + " ```n"
 				$exp += "	-password_value " + (DecryptPassword $datarow.password_value) + " ```n"
-				$exp += "	-submit_element " + ([string]::IsNullOrEmpty($datarow.submit_element) ? "`"`"" : $datarow.submit_element) + " ```n"
-				$exp += "	-signon_realm " + ([string]::IsNullOrEmpty($datarow.signon_realm) ? "`"`"" : $datarow.signon_realm) + " ```n"
+				$exp += "	-submit_element " + (StrOrEmpty($datarow.submit_element)) + " ```n"
+				$exp += "	-signon_realm " + (StrOrEmpty($datarow.signon_realm)) + " ```n"
 				$exp += "	-blacklisted_by_user " + $datarow.blacklisted_by_user + " ```n"
 				$exp += "	-scheme " + $datarow.scheme + " ```n"
 				$exp += "	-password_type " + $datarow.password_type + " ```n"
 				$exp += "	-times_used " + $datarow.times_used + " ```n"
-				$exp += "	-form_data " + [System.Convert]::ToHexString($datarow.form_data) + " ```n"
-				$exp += "	-display_name " +([string]::IsNullOrEmpty($datarow.display_name) ? "`"`"" : $datarow.display_name) + " ```n"
-				$exp += "	-icon_url " + ([string]::IsNullOrEmpty($datarow.icon_url) ? "`"`"" : $datarow.icon_url) + " ```n"
-				$exp += "	-federation_url " + ([string]::IsNullOrEmpty($datarow.federation_url) ? "`"`"" : $datarow.federation_url) + " ```n"
+				$exp += "	-form_data " + [BitConverter]::ToString($datarow.form_data) + " ```n"
+				$exp += "	-display_name " + (StrOrEmpty($datarow.display_name)) + " ```n"
+				$exp += "	-icon_url " + (StrOrEmpty($datarow.icon_url)) + " ```n"
+				$exp += "	-federation_url " + (StrOrEmpty($datarow.federation_url)) + " ```n"
 				$exp += "	-skip_zero_click " + $datarow.skip_zero_click + " ```n"
 				$exp += "	-generation_upload_status " + $datarow.generation_upload_status + " ```n"
-				$exp += "	-possible_username_pairs " + [System.Convert]::ToHexString($datarow.possible_username_pairs) + " ```n"
-				$exp += "	-moving_blocked_for " + [System.Convert]::ToHexString($datarow.moving_blocked_for) + " `n"
+				$exp += "	-possible_username_pairs " + [BitConverter]::ToString($datarow.possible_username_pairs) + " ```n"
+				$exp += "	-moving_blocked_for " + [BitConverter]::ToString($datarow.moving_blocked_for) + " `n"
 
 				Write-Host
 				Write-Host $exp
