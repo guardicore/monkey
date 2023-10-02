@@ -47,12 +47,7 @@ build {
     only   = ["googlecompute.browser-credentials-66"]
     elevated_user = "m0nk3y"
     elevated_password = "P@ssw0rd!"
-    inline = [
-      "$process = Start-Process \"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" -ArgumentList \"-first-run\" -PassThru",
-      "Start-Sleep -Seconds 10",
-      "$process",
-      "Stop-Process -Id $process.Id",
-    ]
+    script = "${path.root}/files/browser-credentials/generate_local_state.ps1"
   }
 
   provisioner "powershell" {
@@ -124,8 +119,6 @@ build {
       EOF
       ,
       "}",
-      "",
     ]
   }
-
 }
