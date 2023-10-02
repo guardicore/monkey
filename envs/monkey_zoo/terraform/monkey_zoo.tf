@@ -115,7 +115,7 @@ resource "google_compute_instance" "hadoop-3" {
 
 resource "google_compute_instance" "tunneling-9" {
   name         = "${local.resource_prefix}tunneling-9"
-  machine_type = "n1-standard-2"
+  machine_type = "n1-standard-1"
   zone         = local.tunneling_zone
   tags         = ["tunneling-9"]
   boot_disk {
@@ -139,7 +139,7 @@ resource "google_compute_instance" "tunneling-9" {
 
 resource "google_compute_instance" "tunneling-10" {
   name         = "${local.resource_prefix}tunneling-10"
-  machine_type = "n1-standard-2"
+  machine_type = "n1-standard-1"
   zone         = local.tunneling_zone
   tags         = ["tunneling-10"]
   boot_disk {
@@ -225,7 +225,7 @@ resource "google_compute_instance" "tunneling-13" {
 
 resource "google_compute_instance" "sshkeys-11" {
   name         = "${local.resource_prefix}sshkeys-11"
-  machine_type = "custom-2-3840"
+  machine_type = "e2-medium"
   tags         = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
@@ -244,7 +244,7 @@ resource "google_compute_instance" "sshkeys-11" {
 
 resource "google_compute_instance" "sshkeys-12" {
   name         = "${local.resource_prefix}sshkeys-12"
-  machine_type = "custom-2-3840"
+  machine_type = "e2-medium"
   tags         = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
@@ -700,7 +700,7 @@ resource "google_compute_instance" "log4j-logstash-56" {
 
 resource "google_compute_instance" "browser-credentials-66" {
   name         = "${local.resource_prefix}browser-credentials-66"
-  machine_type = "e2-standard-2"
+  machine_type = "e2-highcpu-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "windowsserver2016", "windows"]
   boot_disk {
@@ -721,7 +721,7 @@ resource "google_compute_instance" "browser-credentials-66" {
 
 resource "google_compute_instance" "browser-credentials-67" {
   name         = "${local.resource_prefix}browser-credentials-67"
-  machine_type = "e2-standard-2"
+  machine_type = "e2-highcpu-2"
   zone         = local.main1_zone
   tags         = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
