@@ -2,13 +2,13 @@ import copy
 from base64 import b64encode
 from typing import Any, Dict
 
+from monkeytypes import OperatingSystem
 from tests.common.fake_manifests import (
     FAKE_AGENT_MANIFEST_DICT_IN,
     FAKE_AGENT_MANIFEST_DICT_OUT,
     FAKE_MANIFEST_OBJECT,
 )
 
-from common import OperatingSystem
 from common.agent_plugins.agent_plugin import AgentPlugin
 
 FAKE_ZEROLOGON_PLUGIN_CONFIG_SCHEMA = {

@@ -3,9 +3,9 @@ from pathlib import PurePosixPath, PureWindowsPath
 from uuid import UUID
 
 import pytest
+from monkeytypes import OperatingSystem
 from pydantic.errors import IntegerError
 
-from common import OperatingSystem
 from common.agent_events import FileEncryptionEvent
 
 TARGET_IP_STR = "192.168.1.10"

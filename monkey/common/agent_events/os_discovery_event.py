@@ -1,4 +1,4 @@
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
 
 from . import AbstractAgentEvent
 
