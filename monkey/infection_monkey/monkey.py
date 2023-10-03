@@ -13,6 +13,7 @@ from pathlib import Path, WindowsPath
 from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
 
+from monkeytypes import AgentPluginType
 from pubsub.core import Publisher
 from serpentarium import PluginLoader, PluginThreadName
 from serpentarium.logging import configure_child_process_logger
@@ -30,7 +31,6 @@ from common.agent_events import (
     OSDiscoveryEvent,
     PropagationEvent,
 )
-from common.agent_plugins import AgentPluginType
 from common.agent_registration_data import AgentRegistrationData
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher

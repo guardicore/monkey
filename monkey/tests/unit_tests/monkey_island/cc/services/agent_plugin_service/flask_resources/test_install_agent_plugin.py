@@ -2,10 +2,11 @@ from http import HTTPStatus
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import AgentPluginType
 from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from common.agent_plugins import AgentPluginType, PluginVersion
+from common.agent_plugins import PluginVersion
 from monkey_island.cc.repositories import RetrievalError, StorageError
 from monkey_island.cc.services import IAgentPluginService
 from monkey_island.cc.services.agent_plugin_service.errors import PluginInstallationError

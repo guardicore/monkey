@@ -1,7 +1,8 @@
 import abc
 from typing import Any, Dict, Mapping, Sequence
 
-from common.agent_plugins import AgentPluginType
+from monkeytypes import AgentPluginType
+
 from common.credentials import Credentials
 from common.types import Event, NetworkPort
 

@@ -2,7 +2,7 @@ import copy
 from base64 import b64encode
 from typing import Any, Dict
 
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
+from tests.common.fake_manifests import (
     FAKE_AGENT_MANIFEST_DICT_IN,
     FAKE_AGENT_MANIFEST_DICT_OUT,
     FAKE_MANIFEST_OBJECT,

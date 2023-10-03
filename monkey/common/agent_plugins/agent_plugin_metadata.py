@@ -1,11 +1,12 @@
 from pathlib import PurePosixPath
 from typing import Any, Callable, Dict, Type, Union
 
+from monkeytypes import AgentPluginType
 from pydantic import Field, validator
 
 from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 
-from . import AgentPluginType, PluginName, PluginVersion
+from . import PluginName, PluginVersion
 
 
 class AgentPluginMetadata(InfectionMonkeyBaseModel):

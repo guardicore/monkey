@@ -1,4 +1,6 @@
-from common.agent_plugins import AgentPluginManifest, AgentPluginType, PluginName
+from monkeytypes import AgentPluginManifest, AgentPluginType
+
+from common.agent_plugins import PluginName
 from common.operating_system import OperatingSystem
 
 # For `AgentPluginManifest.version`, mypy complains even if you

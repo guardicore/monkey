@@ -6,7 +6,9 @@ import gridfs
 import mongomock
 import pytest
 from mongomock.gridfs import enable_gridfs_integration
+from monkeytypes import AgentPluginType
 from pymongo.errors import ConnectionFailure
+from tests.common.fake_manifests import FAKE_NAME
 from tests.data_for_tests.agent_plugin.manifests import (
     CREDENTIALS_COLLECTOR_MANIFEST_1,
     CREDENTIALS_COLLECTOR_NAME_1,
@@ -15,14 +17,13 @@ from tests.data_for_tests.agent_plugin.manifests import (
     EXPLOITER_NAME_1,
     EXPLOITER_NAME_2,
 )
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_NAME
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
     FAKE_AGENT_PLUGIN_1,
     FAKE_PLUGIN_CONFIG_SCHEMA_1,
 )
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginType, PluginName
+from common.agent_plugins import AgentPlugin, PluginName
 from monkey_island.cc.repositories import (
     RemovalError,
     RetrievalError,

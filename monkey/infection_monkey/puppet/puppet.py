@@ -1,7 +1,8 @@
 import logging
 from typing import Any, Dict, Mapping, Sequence
 
-from common.agent_plugins import AgentPluginType
+from monkeytypes import AgentPluginType
+
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from common.credentials import Credentials
 from common.event_queue import IAgentEventQueue

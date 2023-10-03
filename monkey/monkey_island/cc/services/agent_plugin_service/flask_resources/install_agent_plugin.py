@@ -5,8 +5,9 @@ from typing import Tuple
 
 from flask import make_response, request
 from flask_security import auth_token_required, roles_accepted
+from monkeytypes import AgentPluginType
 
-from common.agent_plugins import AgentPluginType, PluginName, PluginVersion
+from common.agent_plugins import PluginName, PluginVersion
 from monkey_island.cc.flask_utils import AbstractResource, responses
 from monkey_island.cc.services.authentication_service import AccountRole
 

@@ -5,14 +5,13 @@ from typing import Any, Dict, List
 
 import requests
 import yaml
+from monkeytypes import AgentPluginManifest, AgentPluginType
 
 from common import OperatingSystem
 from common.agent_plugins import (
     AgentPlugin,
-    AgentPluginManifest,
     AgentPluginMetadata,
     AgentPluginRepositoryIndex,
-    AgentPluginType,
     PluginName,
     PluginVersion,
 )

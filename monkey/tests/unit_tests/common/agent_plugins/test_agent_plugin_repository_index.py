@@ -3,9 +3,10 @@ from enum import Enum
 from pathlib import PurePosixPath
 
 import pytest
+from monkeytypes import AgentPluginType
 from semver import VersionInfo
 
-from common.agent_plugins import AgentPluginMetadata, AgentPluginRepositoryIndex, AgentPluginType
+from common.agent_plugins import AgentPluginMetadata, AgentPluginRepositoryIndex
 from common.agent_plugins.agent_plugin_repository_index import (  # type: ignore[attr-defined]
     DEVELOPMENT,
 )

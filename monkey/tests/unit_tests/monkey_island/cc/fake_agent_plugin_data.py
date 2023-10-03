@@ -1,10 +1,8 @@
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
-    FAKE_MANIFEST_OBJECT,
-    FAKE_NAME2,
-)
+from monkeytypes import AgentPluginManifest
+from tests.common.fake_manifests import FAKE_MANIFEST_OBJECT, FAKE_NAME2
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest
+from common.agent_plugins import AgentPlugin
 
 FAKE_PLUGIN_CONFIG_SCHEMA_1 = {
     "title": "Mock exploiter",
