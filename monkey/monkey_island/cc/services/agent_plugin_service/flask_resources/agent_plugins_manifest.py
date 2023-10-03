@@ -3,9 +3,9 @@ from http import HTTPStatus
 
 from flask import make_response
 from flask_security import auth_token_required, roles_accepted
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType
 
-from common.agent_plugins import AgentPluginManifest, PluginName
+from common.agent_plugins import PluginName
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )

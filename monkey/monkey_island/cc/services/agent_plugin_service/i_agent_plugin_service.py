@@ -1,16 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType
 
 from common import OperatingSystem
-from common.agent_plugins import (
-    AgentPlugin,
-    AgentPluginManifest,
-    AgentPluginRepositoryIndex,
-    PluginName,
-    PluginVersion,
-)
+from common.agent_plugins import AgentPlugin, AgentPluginRepositoryIndex, PluginName, PluginVersion
 
 
 class IAgentPluginService(ABC):

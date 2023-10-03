@@ -6,13 +6,13 @@ from tarfile import TarFile
 from typing import Any, BinaryIO, Callable, Dict
 
 import pytest
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType
 from tests.unit_tests.monkey_island.cc.services.agent_plugin_service.conftest import (
     build_agent_plugin_tar,
 )
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest
+from common.agent_plugins import AgentPlugin
 from monkey_island.cc.services.agent_plugin_service.plugin_archive_parser import (
     VendorDirName,
     get_plugin_manifest,

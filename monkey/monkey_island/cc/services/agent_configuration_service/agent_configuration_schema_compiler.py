@@ -2,10 +2,9 @@ from copy import deepcopy
 from typing import Any, Dict
 
 import dpath
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType
 
 from common.agent_configuration import AgentConfiguration
-from common.agent_plugins import AgentPluginManifest
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )
