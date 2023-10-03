@@ -2,12 +2,12 @@ from http import HTTPStatus
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import AgentPluginType
 from tests.common import StubDIContainer
 from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_TYPE
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from common.agent_plugins import AgentPluginType
 from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
 from monkey_island.cc.services.agent_plugin_service.errors import PluginUninstallationError
 from monkey_island.cc.services.agent_plugin_service.flask_resources import UninstallAgentPlugin

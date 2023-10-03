@@ -12,6 +12,8 @@ from itertools import chain, product
 from threading import Lock
 from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
 
+from monkeytypes import AgentPluginType
+
 from common.agent_events import (
     AbstractAgentEvent,
     ExploitationEvent,
@@ -19,7 +21,7 @@ from common.agent_events import (
     PingScanEvent,
     TCPScanEvent,
 )
-from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPluginManifest
 from common.network.network_range import NetworkRange
 from common.types import PortStatus
 from monkey_island.cc.models import CommunicationType, Machine

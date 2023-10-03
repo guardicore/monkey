@@ -7,9 +7,10 @@ from typing import Any, BinaryIO, Callable, Dict, Tuple
 
 import pytest
 import yaml
+from monkeytypes import AgentPluginType
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest
 
 BuildAgentPluginCallable = Callable[[bytes, Tuple[OperatingSystem, ...]], AgentPlugin]
 

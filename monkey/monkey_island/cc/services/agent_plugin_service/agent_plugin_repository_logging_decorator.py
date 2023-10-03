@@ -1,8 +1,10 @@
 import logging
 from typing import Any, Dict, Optional
 
+from monkeytypes import AgentPluginType
+
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType, PluginName
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, PluginName
 
 from .i_agent_plugin_repository import IAgentPluginRepository
 

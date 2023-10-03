@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 
 import requests
 import yaml
+from monkeytypes import AgentPluginType
 
 from common import OperatingSystem
 from common.agent_plugins import (
@@ -12,7 +13,6 @@ from common.agent_plugins import (
     AgentPluginManifest,
     AgentPluginMetadata,
     AgentPluginRepositoryIndex,
-    AgentPluginType,
     PluginName,
     PluginVersion,
 )
