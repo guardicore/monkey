@@ -2,10 +2,9 @@ import gzip
 from pathlib import Path
 
 import pytest
-from monkeytypes import AgentPluginManifest, AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
 from tests.utils import assert_directories_equal
 
-from common import OperatingSystem
 from common.agent_plugins import AgentPlugin
 from common.utils.environment import is_windows_os
 from infection_monkey.puppet import PluginSourceExtractor

@@ -3,9 +3,9 @@ import subprocess
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OperatingSystem
 
 import infection_monkey.network_scanning.ping_scanner  # noqa: F401
-from common import OperatingSystem
 from common.agent_events import PingScanEvent
 from common.types import AgentID
 from infection_monkey.i_puppet import PingScanData

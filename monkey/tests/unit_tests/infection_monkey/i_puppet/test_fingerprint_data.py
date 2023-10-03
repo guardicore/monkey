@@ -1,8 +1,8 @@
 from typing import Any, Dict
 
 import pytest
+from monkeytypes import OperatingSystem
 
-from common import OperatingSystem
 from common.types import DiscoveredService, NetworkProtocol, NetworkService
 from infection_monkey.i_puppet import FingerprintData
 

@@ -7,10 +7,10 @@ from typing import Any, Dict, List, Sequence
 
 import requests
 from egg_timer import EggTimer
-from monkeytypes import AgentPluginManifest, AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
 from requests import Response
 
-from common import AgentHeartbeat, AgentRegistrationData, AgentSignals, OperatingSystem
+from common import AgentHeartbeat, AgentRegistrationData, AgentSignals
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent

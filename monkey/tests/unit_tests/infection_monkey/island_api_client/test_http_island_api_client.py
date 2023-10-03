@@ -7,13 +7,13 @@ from uuid import UUID
 
 import pytest
 import requests
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginType, OperatingSystem
 from tests.common.example_agent_configuration import AGENT_CONFIGURATION
 from tests.common.fake_manifests import FAKE_AGENT_MANIFEST_DICT, FAKE_MANIFEST_OBJECT, FAKE_NAME
 from tests.data_for_tests.otp import TEST_OTP
 from tests.data_for_tests.propagation_credentials import CREDENTIALS_DICTS
 
-from common import AgentRegistrationData, AgentSignals, OperatingSystem
+from common import AgentRegistrationData, AgentSignals
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,

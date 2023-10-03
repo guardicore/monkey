@@ -1,7 +1,7 @@
 import abc
 import io
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
 
 # TODO: The Island also has an IAgentBinaryRepository with a totally different interface. At the
 #       moment, the Island and Agent have different needs, but at some point we should unify these.

@@ -3,10 +3,10 @@ from typing import Set
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OperatingSystem
 from tests.unit_tests.infection_monkey.master.mock_puppet import MockPuppet
 from tests.utils import ThreadSafeMagicMock
 
-from common import OperatingSystem
 from common.agent_configuration.agent_sub_configurations import (
     ICMPScanConfiguration,
     NetworkScanConfiguration,

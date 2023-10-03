@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from typing import Callable, TypeAlias
 from uuid import UUID
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from common.types import Event
 
 ReservationID: TypeAlias = UUID
