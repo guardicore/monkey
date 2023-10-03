@@ -7,6 +7,6 @@ target_operating_systems:
   - linux
   - windows
 title: Chrome Credentials Collector
-version: 1.0.0
+version: 2.0.0
 description: Collects credentials from Chrome-based browsers.
 safe: true
