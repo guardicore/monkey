@@ -7,14 +7,14 @@ from typing import Any, Dict, List, Sequence
 
 import requests
 from egg_timer import EggTimer
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType
 from requests import Response
 
 from common import AgentHeartbeat, AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
-from common.agent_plugins import AgentPlugin, AgentPluginManifest
+from common.agent_plugins import AgentPlugin
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from common.credentials import Credentials

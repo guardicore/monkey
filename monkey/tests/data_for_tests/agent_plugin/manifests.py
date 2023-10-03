@@ -1,7 +1,7 @@
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPluginManifest, PluginName
+from common.agent_plugins import PluginName
 
 EXPLOITER_NAME_1 = PluginName("MockExploiter")
 EXPLOITER_NAME_2 = PluginName("MockExploiter2")

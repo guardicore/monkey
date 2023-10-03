@@ -1,12 +1,12 @@
 from typing import Any, Dict, Sequence
 
 from jsonschema import validate
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
-from common.agent_plugins import AgentPlugin, AgentPluginManifest
+from common.agent_plugins import AgentPlugin
 from common.credentials import Credentials
 
 from . import IIslandAPIClient, IslandAPIError
