@@ -24,6 +24,7 @@ serpentarium = "==0.5.0"
 jsonschema = "*"
 semver = "==2.13.0"
 email-validator = "*"
+monkey-types = "*"
 
 [dev-packages]
 mypy = "*"
