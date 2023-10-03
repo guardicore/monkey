@@ -1,0 +1,52 @@
+---
+- name: Install python
+  apt:
+    name: python3.11
+    update_cache: yes
+  ignore_errors: yes
+  register: install_res
+
+# If the apt install fails, try to install from deadsnakes
+- block:
+  - name: Install dependencies
+    apt:
+      name: software-properties-common
+  - name: Add deadsnakes repository
+    shell: sudo add-apt-repository ppa:deadsnakes/ppa -y
+  - name: Install python from deadsnakes
+    apt:
+      name: python3.11
+      update_cache: yes
+  when: install_res.rc != 0
+
+  # If the deadsnakes install fails, install from source
+  rescue:
+  - name: Install python build dependencies
+    apt:
+      name:
+        - build-essential
+        - zlib1g-dev
+        - libncurses5-dev
+        - libgdbm-dev
+        - libnss3-dev
+        - libssl-dev
+        - libreadline-dev
+        - libffi-dev
+        - libsqlite3-dev
+        - wget
+        - libbz2-dev
+        - pkg-config
+  - name: Install python from source
+    shell: |
+      WORK_DIR=`mktemp -d`
+      cd $WORK_DIR
+      wget -c https://www.python.org/ftp/python/3.11.4/Python-3.11.4.tgz -O - | tar -xz -C $WORK_DIR
+      cd $WORK_DIR/Python-3.11.*
+      ./configure --enable-optimizations
+      make -j $(nproc)
+      sudo make altinstall
+      cd -
+      sudo rm -rf $WORK_DIR
+
+- name: Install pip
+  shell: curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
