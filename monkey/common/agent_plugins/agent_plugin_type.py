@@ -1,1 +1,0 @@
-from monkeytypes import AgentPluginType

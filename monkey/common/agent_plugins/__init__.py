@@ -1,4 +1,4 @@
-from monkeytypes import PluginName, PluginVersion, AgentPluginManifest, AgentPluginType
+from monkeytypes import PluginName, PluginVersion, AgentPluginManifest
 from .agent_plugin import AgentPlugin
 from .agent_plugin_metadata import AgentPluginMetadata
 from .agent_plugin_repository_index import AgentPluginRepositoryIndex

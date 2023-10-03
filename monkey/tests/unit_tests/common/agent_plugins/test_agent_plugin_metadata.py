@@ -1,4 +1,6 @@
-from common.agent_plugins import AgentPluginMetadata, AgentPluginType
+from monkeytypes import AgentPluginType
+
+from common.agent_plugins import AgentPluginMetadata
 
 from .test_agent_plugin_repository_index import PAYLOAD_PLUGIN_NAME, PLUGIN_VERSION_1_2_3
 

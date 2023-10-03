@@ -2,10 +2,10 @@ import copy
 from typing import Any, Dict
 
 import pytest
+from monkeytypes import AgentPluginType
 
 from common import OperatingSystem
 from common.agent_plugins.agent_plugin_manifest import AgentPluginManifest
-from common.agent_plugins.agent_plugin_type import AgentPluginType
 
 FAKE_NAME = "rdp_exploiter"
 FAKE_NAME2 = "ssh_exploiter"
