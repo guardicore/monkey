@@ -107,7 +107,3 @@ venv/
 
 # MacOS
 .DS_Store
-
-# Terraform usage files
-envs/monkey_zoo/terraform/.terraform*
-envs/monkey_zoo/terraform/terraform.*
