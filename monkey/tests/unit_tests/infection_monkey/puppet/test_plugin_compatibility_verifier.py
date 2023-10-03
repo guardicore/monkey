@@ -3,12 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from monkeytypes import AgentPluginManifest, AgentPluginType
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
-    FAKE_MANIFEST_OBJECT,
-    FAKE_NAME,
-    FAKE_NAME2,
-    URL,
-)
+from tests.common.fake_manifests import FAKE_MANIFEST_OBJECT, FAKE_NAME, FAKE_NAME2, URL
 
 from common import OperatingSystem
 from infection_monkey.i_puppet import TargetHost

@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from monkeytypes import AgentPluginType
 from tests.common import StubDIContainer
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_TYPE
+from tests.common.fake_manifests import FAKE_TYPE
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 

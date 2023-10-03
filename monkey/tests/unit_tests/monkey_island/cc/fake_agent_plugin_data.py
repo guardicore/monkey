@@ -1,8 +1,5 @@
 from monkeytypes import AgentPluginManifest
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
-    FAKE_MANIFEST_OBJECT,
-    FAKE_NAME2,
-)
+from tests.common.fake_manifests import FAKE_MANIFEST_OBJECT, FAKE_NAME2
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin

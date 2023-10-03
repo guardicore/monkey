@@ -9,13 +9,9 @@ import pytest
 import requests
 from monkeytypes import AgentPluginType
 from tests.common.example_agent_configuration import AGENT_CONFIGURATION
+from tests.common.fake_manifests import FAKE_AGENT_MANIFEST_DICT, FAKE_MANIFEST_OBJECT, FAKE_NAME
 from tests.data_for_tests.otp import TEST_OTP
 from tests.data_for_tests.propagation_credentials import CREDENTIALS_DICTS
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
-    FAKE_AGENT_MANIFEST_DICT,
-    FAKE_MANIFEST_OBJECT,
-    FAKE_NAME,
-)
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
