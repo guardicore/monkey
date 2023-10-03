@@ -1,6 +1,6 @@
 from typing import BinaryIO, Optional
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
 
 from . import IAgentBinaryService
 from .i_agent_binary_repository import IAgentBinaryRepository

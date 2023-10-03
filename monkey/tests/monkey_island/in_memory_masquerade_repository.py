@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from monkey_island.cc.services.agent_binary_service.i_masquerade_repository import (
     IMasqueradeRepository,
 )

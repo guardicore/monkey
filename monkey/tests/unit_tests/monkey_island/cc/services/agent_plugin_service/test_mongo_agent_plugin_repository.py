@@ -6,7 +6,7 @@ import gridfs
 import mongomock
 import pytest
 from mongomock.gridfs import enable_gridfs_integration
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginType, OperatingSystem
 from pymongo.errors import ConnectionFailure
 from tests.common.fake_manifests import FAKE_NAME
 from tests.data_for_tests.agent_plugin.manifests import (
@@ -22,7 +22,6 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
     FAKE_PLUGIN_CONFIG_SCHEMA_1,
 )
 
-from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, PluginName
 from monkey_island.cc.repositories import (
     RemovalError,

@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 import mongomock
 import pytest
+from monkeytypes import OperatingSystem
 
-from common import OperatingSystem
 from monkey_island.cc.repositories import RemovalError, RetrievalError, StorageError
 from monkey_island.cc.services.agent_binary_service.i_masquerade_repository import (
     IMasqueradeRepository,

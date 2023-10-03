@@ -5,12 +5,11 @@ from unittest.mock import MagicMock
 import pytest
 import requests
 import requests_mock
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginType, OperatingSystem
 from tests.unit_tests.monkey_island.cc.services.agent_plugin_service.conftest import (
     build_agent_plugin_tar,
 )
 
-from common import OperatingSystem
 from common.agent_plugins import AgentPluginRepositoryIndex, PluginName, PluginVersion
 from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment

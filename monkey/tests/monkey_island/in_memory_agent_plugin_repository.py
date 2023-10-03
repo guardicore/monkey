@@ -1,8 +1,7 @@
 from typing import Any, Dict, List, Optional
 
-from monkeytypes import AgentPluginManifest, AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
 
-from common import OperatingSystem
 from common.agent_plugins import AgentPlugin
 from monkey_island.cc.repositories import RetrievalError, UnknownRecordError
 from monkey_island.cc.services.agent_plugin_service.i_agent_plugin_repository import (

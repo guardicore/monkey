@@ -2,9 +2,9 @@ import io
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OperatingSystem
 from tests.monkey_island import InMemoryFileRepository
 
-from common import OperatingSystem
 from monkey_island.cc.repositories import IFileRepository, RetrievalError
 from monkey_island.cc.services.agent_binary_service.agent_binary_repository import (
     LINUX_AGENT_FILE_NAME,
