@@ -6,7 +6,7 @@ supported_operating_systems:
 target_operating_systems:
   - linux
 title: SSH Exploiter
-version: 1.0.0
+version: 2.0.0
 description: Attempts a brute-force attack against SSH using known credentials, including SSH keys.
 safe: true
 remediation_suggestion: >-
