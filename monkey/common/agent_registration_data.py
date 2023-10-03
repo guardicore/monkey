@@ -3,9 +3,9 @@ from ipaddress import IPv4Interface
 from typing import Optional
 from uuid import UUID
 
+from monkeytypes.base_models import InfectionMonkeyBaseModel
 from pydantic import Field
 
-from .base_models import InfectionMonkeyBaseModel
 from .types import HardwareID, SocketAddress
 
 

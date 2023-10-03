@@ -1,8 +1,8 @@
 from typing import Dict, Tuple
 
+from monkeytypes.base_models import MutableInfectionMonkeyBaseModel
 from pydantic import Field, PositiveFloat, conint, validator
 
-from common.base_models import MutableInfectionMonkeyBaseModel
 from common.types import NetworkPort
 
 from .validators import validate_ip, validate_subnet_range

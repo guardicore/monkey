@@ -1,8 +1,7 @@
 from typing import Dict
 
+from monkeytypes.base_models import MutableInfectionMonkeyBaseModel
 from pydantic import Field, confloat
-
-from common.base_models import MutableInfectionMonkeyBaseModel
 
 from .agent_sub_configurations import PolymorphismConfiguration, PropagationConfiguration
 
