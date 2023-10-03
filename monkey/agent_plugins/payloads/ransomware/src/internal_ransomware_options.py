@@ -2,7 +2,8 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from common.utils.environment import get_os
 from common.utils.file_utils import InvalidPath, expand_path
 
