@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from common.base_models import InfectionMonkeyBaseModel
+from monkeytypes import InfectionMonkeyBaseModel
 
 
 class TerminateAllAgents(InfectionMonkeyBaseModel):
