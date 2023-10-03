@@ -5,9 +5,8 @@ from http import HTTPStatus
 from threading import Thread
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
-from monkeytype import AgentPluginType
+from monkeytypes import AgentPluginType, OperatingSystem
 
-from common import OperatingSystem
 from common.agent_plugins import AgentPluginRepositoryIndex
 from common.credentials import Credentials
 from common.types import AgentID, MachineID
