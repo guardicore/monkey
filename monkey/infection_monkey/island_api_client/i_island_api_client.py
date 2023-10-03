@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Sequence
 
+from monkeytypes import AgentPluginType
+
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.credentials import Credentials
 
 

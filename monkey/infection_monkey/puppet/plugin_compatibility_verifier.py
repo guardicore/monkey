@@ -2,8 +2,10 @@ import logging
 import threading
 from typing import Dict, Optional
 
+from monkeytypes import AgentPluginType
+
 from common import OperatingSystem
-from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPluginManifest
 from infection_monkey.i_puppet import TargetHost
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 

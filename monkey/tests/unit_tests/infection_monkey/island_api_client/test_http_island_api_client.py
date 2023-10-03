@@ -7,6 +7,7 @@ from uuid import UUID
 
 import pytest
 import requests
+from monkeytypes import AgentPluginType
 from tests.common.example_agent_configuration import AGENT_CONFIGURATION
 from tests.data_for_tests.otp import TEST_OTP
 from tests.data_for_tests.propagation_credentials import CREDENTIALS_DICTS
@@ -23,7 +24,6 @@ from common.agent_event_serializers import (
     PydanticAgentEventSerializer,
 )
 from common.agent_events import AbstractAgentEvent
-from common.agent_plugins import AgentPluginType
 from common.base_models import InfectionMonkeyBaseModel
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from common.credentials import Credentials
