@@ -1,0 +1,11 @@
+- name: Locating all files in dir {{ directory }}
+  find:
+    path: "{{ directory }}"
+  register: cleanup
+  ignore_errors: true
+- name: Removing all files previously found in dir {{ directory }}
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ cleanup.files }}"
+  ignore_errors: true

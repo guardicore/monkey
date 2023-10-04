@@ -1,0 +1,13 @@
+---
+- name: Disable via policy
+  win_command:
+    cmd: reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware /t REG_DWORD /d 1 /f
+- name: Check if windows defender scan task exists
+  win_command:
+    cmd: schtasks /query /tn "\Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan" >NUL 2>&1
+  register: res
+  ignore_errors: yes
+- name: Disable windows defender scans
+  win_command:
+    cmd: schtasks /change /tn "\Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan" /disable
+  when: res.rc == 0

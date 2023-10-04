@@ -1,0 +1,17 @@
+---
+- name: Download JDK
+  win_get_url:
+    url: https://download.macromedia.com/pub/coldfusion/java/java8/8u321/jdk/jdk-8u321-windows-x64.zip
+    dest: C:\Windows\Temp\jdk-8u321-windows-x64.zip
+    # checksum_url: https://download.macromedia.com/pub/coldfusion/java/java8/8u321/jdk/Checksum-JDK8u321.txt
+    checksum: 94ed3431d30f915cc8efff3e505fa0e09b625bb0ee3b5cc1fe5671e90da10c4d
+    checksum_algorithm: sha256
+    force: true
+- name: Extract JDK
+  win_shell: Expand-Archive -Path C:\Windows\Temp\jdk-8u321-windows-x64.zip -DestinationPath C:\ -Force
+- name: Set JAVA_HOME
+  win_environment:
+    name: JAVA_HOME
+    value: C:\jdk1.8.0_321
+    level: machine
+    state: present

@@ -1,49 +1,7 @@
-packer {
-  required_plugins {
-    googlecompute = {
-      source  = "github.com/hashicorp/googlecompute"
-      version = "~> 1"
-    }
-    ansible = {
-      source  = "github.com/hashicorp/ansible"
-      version = "~> 1"
-    }
-  }
-}
-
-variable "project_id" {
-    type = string
-}
-variable "zone" {
-    type = string
-    default = "europe-west1-b"
-}
-variable "machine_type" {
-    type = string
-    default = "e2-standard-4"
-}
-variable "source_image" {
-    type = string
-    default = "windows-server-2016-dc-v20211216"
-}
-variable "account_file" {
-    type = string
-}
-variable "packer_username" {
-    type = string
-    default = "packer_user"
-}
-variable "packer_user_password" {
-    type = string
-    default = "Passw0rd"
-}
-
-
-
 source "googlecompute" "rdp-64" {
     image_name = "rdp-64"
     project_id = "${var.project_id}"
-    source_image = "${var.source_image}"
+    source_image = "${var.windows_source_image}"
     zone = "${var.zone}"
     disk_size = 50
     machine_type = "${var.machine_type}"
@@ -86,7 +44,7 @@ build {
         only = ["googlecompute.rdp-64"]
         use_proxy = false
         user = "${var.packer_username}"
-        playbook_file = "./packer/setup_rdp_64.yml"
+        playbook_file = "${path.root}/setup_rdp_64.yml"
         ansible_env_vars = ["ANSIBLE_HOST_KEY_CHECKING=False"]
         extra_arguments = [
                 "-e", "ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore",
@@ -98,7 +56,7 @@ build {
         only = ["googlecompute.rdp-65"]
         use_proxy = false
         user = "${var.packer_username}"
-        playbook_file = "./packer/setup_rdp_65.yml"
+        playbook_file = "${path.root}/setup_rdp_65.yml"
         ansible_env_vars = ["ANSIBLE_HOST_KEY_CHECKING=False"]
         extra_arguments = [
                 "-e", "ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore",

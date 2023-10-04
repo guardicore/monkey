@@ -89,14 +89,15 @@ To deploy:
 
 5.  (Optional) Generate images
 
-    To build the images, run the script located at `envs/monkey_zoo/build_images.sh`, providing it:
-        - The target project in which the images will be stored
-        - The account file, e.g. `gcp_key.json`
-        - The packer files to build
+    To build the images, run `packer build .` from the `envs/monkey_zoo/packer` directory. This will build all of the images. You may limit the images to build by providing a comma-separated list of names. Also, verify that the variables in the `envs/monkey_zoo/packer/variables.pkr.hcl` and `envs/monkey_zoo/packer/variables.auto.pkrvars.hcl` are correct for your environment.
 
     For example,
 
-        `build_images.sh -p guardicore-22050661 --account-file gcp_keys/gcp_key.json` packer/tunneling.pkr.hcl
+        `packer build -only googlecompute.tunneling-9,googlecompute.tunneling-10 .`
+
+    or
+
+        `packer build -only googlecompute.tunneling-*`
 
 6.  Change configurations located in the
     ../monkey/envs/monkey\_zoo/terraform/config.tf file (don’t forget to
