@@ -1,0 +1,16 @@
+---
+- name: Download build tools
+  win_get_url: https://aka.ms/vs/17/release/vs_BuildTools.exe
+  dest: C:\Windows\Temp\vs_BuildTools.exe
+- name: Install build tools
+  win_shell: C:\Windows\Temp\vs_BuildTools.exe --quiet --wait --norestart --nocache --installPath C:\vs_BuildTools --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --includeOptional
+
+
+# cd $env:USERPROFILE
+
+# Start-Process $exePath -ArgumentList "--layout .\vs_BuildTools --quiet" -Wait
+# cd vs_BuildTools
+
+# Start-Process vs_setup.exe -ArgumentList "--installPath $env:USERPROFILE\vs_BuildTools2022 --nocache --wait --noUpdateInstaller --noWeb --allWorkloads --includeRecommended --includeOptional --quiet --norestart" -Wait
+
+# [Environment]::SetEnvironmentVariable('Path', "$([Environment]::GetEnvironmentVariable('Path', 'Machine'));$env:USERPROFILE\vs_BuildTools2022", 'Machine')

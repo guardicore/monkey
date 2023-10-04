@@ -1,0 +1,16 @@
+---
+- name: Download gcloud SDK
+  # Using the versioned archives since it allows one to install a specific version
+  # See: https://cloud.google.com/sdk/docs/downloads-versioned-archives
+  win_get_url:
+    url: https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-449.0.0-windows-x86_64.zip
+    checksum: 741c344e9dbbd6928a5e9e25aea32ac9d782525d86309fd6b185be64c66294a8
+    checksum_algorithm: sha256
+    dest: C:\Windows\Temp\gcloud.zip
+- name: Extract gcloud SDK
+  win_shell: Expand-Archive -Path C:\Windows\Temp\gcloud.zip -DestinationPath C:\
+- name: Install gcloud SDK
+  win_shell: C:\google-cloud-sdk\install.bat --quiet
+- name: Add gcloud SDK to PATH
+  win_path:
+    elements: C:\google-cloud-sdk\bin

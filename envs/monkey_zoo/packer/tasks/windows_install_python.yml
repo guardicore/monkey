@@ -1,0 +1,13 @@
+---
+- name: Download Python
+  win_get_url:
+    url: https://www.python.org/ftp/python/3.11.4/python-3.11.4-amd64.exe
+    dest: C:\Windows\Temp\
+    checksum: e4413bb7448cd13b437dffffba294ca0
+    checksum_algorithm: md5
+- name: Install Python
+  win_package:
+    path: C:\Windows\Temp\python-3.11.4-amd64.exe
+    # Settings: https://docs.python.org/3.11/using/windows.html#installing-without-ui
+    arguments: /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+    creates: C:\Program Files\Python311\

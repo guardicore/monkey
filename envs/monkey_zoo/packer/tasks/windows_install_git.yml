@@ -1,0 +1,7 @@
+---
+- name: Download git installer
+  win_get_url:
+    url: https://github.com/git-for-windows/git/releases/download/v2.42.0.windows.2/Git-2.42.0.2-64-bit.exe
+    dest: C:\Windows\Temp\install-git.exe
+- name: Install git
+  win_shell: C:\Windows\Temp\install-git.exe /VERYSILENT /NORESTART
