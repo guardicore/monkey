@@ -1,7 +1,8 @@
 from typing import Callable, Collection, TypeAlias
 
+from monkeytypes import Event
+
 from common.credentials import Credentials
-from common.types import Event
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 
