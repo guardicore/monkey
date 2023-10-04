@@ -2,10 +2,13 @@ import json
 from ipaddress import IPv4Interface
 from typing import Any, Dict, Mapping, Optional, Tuple, TypeAlias
 
-from monkeytypes import OperatingSystem
+from monkeytypes import (
+    MutableInfectionMonkeyBaseModel,
+    MutableInfectionMonkeyModelConfig,
+    OperatingSystem,
+)
 from pydantic import Field, validator
 
-from common.base_models import MutableInfectionMonkeyBaseModel, MutableInfectionMonkeyModelConfig
 from common.types import HardwareID, NetworkService, SocketAddress
 
 from . import MachineID

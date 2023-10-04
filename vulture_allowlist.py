@@ -30,7 +30,6 @@ from common.agent_plugins import (
     AgentPluginMetadata,
     AgentPluginRepositoryIndex,
 )
-from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.concurrency import BasicLock
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.decorators import request_cache
@@ -60,12 +59,6 @@ ScanTargetConfiguration.inaccessible_subnets
 ScanTargetConfiguration.subnets_valid
 ScanTargetConfiguration.inaccessible_subnets_valid
 
-InfectionMonkeyModelConfig.allow_mutation
-InfectionMonkeyModelConfig.underscore_attrs_are_private
-InfectionMonkeyModelConfig.extra
-
-MutableInfectionMonkeyModelConfig.allow_mutation
-MutableInfectionMonkeyModelConfig.validate_assignment
 
 BasicLock.acquire
 BasicLock.release

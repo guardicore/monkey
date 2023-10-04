@@ -1,8 +1,7 @@
 from typing import List, Optional
 
-from monkeytypes import OperatingSystem
+from monkeytypes import InfectionMonkeyBaseModel, OperatingSystem
 
-from common.base_models import InfectionMonkeyBaseModel
 from common.types import DiscoveredService
 
 

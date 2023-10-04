@@ -1,8 +1,8 @@
 from typing import Optional
 
+from monkeytypes import InfectionMonkeyBaseModel
 from pydantic import Field
 
-from common.base_models import InfectionMonkeyBaseModel
 from common.types import NetworkPort, NetworkProtocol, NetworkService, PortStatus
 
 

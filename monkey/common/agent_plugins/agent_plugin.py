@@ -1,9 +1,13 @@
 from base64 import b64encode
 from typing import Any, Callable, Dict, Mapping, Tuple, Type
 
-from monkeytypes import AgentPluginManifest, OperatingSystem
+from monkeytypes import (
+    AgentPluginManifest,
+    InfectionMonkeyBaseModel,
+    InfectionMonkeyModelConfig,
+    OperatingSystem,
+)
 
-from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 from common.types import B64Bytes
 
 

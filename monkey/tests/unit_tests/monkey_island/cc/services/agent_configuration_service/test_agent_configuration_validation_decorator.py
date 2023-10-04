@@ -1,7 +1,7 @@
 import pytest
+from monkeytypes import MutableInfectionMonkeyBaseModel
 from tests.monkey_island import InMemoryAgentConfigurationRepository, InMemoryAgentPluginRepository
 
-from common.base_models import MutableInfectionMonkeyBaseModel
 from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.services import PluginConfigurationValidationError
 from monkey_island.cc.services.agent_configuration_service.agent_configuration_schema_compiler import (  # noqa: E501

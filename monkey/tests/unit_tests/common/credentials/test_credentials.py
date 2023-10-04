@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 
 import pytest
+from monkeytypes import InfectionMonkeyBaseModel
 from pydantic import SecretBytes
 from pydantic.types import SecretStr
 from tests.data_for_tests.propagation_credentials import (
@@ -15,7 +16,6 @@ from tests.data_for_tests.propagation_credentials import (
     PRIVATE_KEY_1,
 )
 
-from common.base_models import InfectionMonkeyBaseModel
 from common.credentials import Credentials, get_plaintext
 
 

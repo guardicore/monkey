@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional
 
-from common.base_models import InfectionMonkeyBaseModel
+from monkeytypes import InfectionMonkeyBaseModel
 
 
 class Simulation(InfectionMonkeyBaseModel):
