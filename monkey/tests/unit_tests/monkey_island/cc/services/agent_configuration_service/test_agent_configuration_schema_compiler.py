@@ -2,6 +2,7 @@ import copy
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OperatingSystem
 from tests.common.fake_manifests import FAKE_NAME, FAKE_NAME2
 from tests.monkey_island import InMemoryAgentPluginRepository
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
@@ -9,7 +10,6 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
     FAKE_AGENT_PLUGIN_2,
 )
 
-from common import OperatingSystem
 from monkey_island.cc.services.agent_configuration_service.agent_configuration_schema_compiler import (  # noqa: E501
     AgentConfigurationSchemaCompiler,
 )

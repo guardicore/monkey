@@ -7,7 +7,8 @@ from ipaddress import IPv4Address
 from time import time
 from typing import Tuple
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from common.agent_events import PingScanEvent
 from common.event_queue import IAgentEventQueue
 from common.types import AgentID

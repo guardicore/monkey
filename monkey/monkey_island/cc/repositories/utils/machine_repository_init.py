@@ -1,8 +1,8 @@
 import platform
 
 from _socket import gethostname
+from monkeytypes import OperatingSystem
 
-from common import OperatingSystem
 from common.network.network_utils import get_network_interfaces
 from common.utils.environment import get_hardware_id
 from monkey_island.cc.models import Machine

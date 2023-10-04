@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 from pathlib import PurePath
 from typing import Collection, Set
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from common.agent_events import AgentEventTag
 from common.credentials import Credentials
 

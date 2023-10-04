@@ -13,12 +13,11 @@ from pathlib import Path, WindowsPath
 from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
 
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginType, OperatingSystem
 from pubsub.core import Publisher
 from serpentarium import PluginLoader, PluginThreadName
 from serpentarium.logging import configure_child_process_logger
 
-from common import OperatingSystem
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,

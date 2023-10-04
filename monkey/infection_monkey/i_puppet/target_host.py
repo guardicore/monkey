@@ -3,9 +3,9 @@ from collections import UserDict
 from ipaddress import IPv4Address
 from typing import Optional, Set
 
+from monkeytypes import OperatingSystem
 from pydantic import Field, validate_arguments
 
-from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel, MutableInfectionMonkeyModelConfig
 from common.types import NetworkPort, PortStatus
 

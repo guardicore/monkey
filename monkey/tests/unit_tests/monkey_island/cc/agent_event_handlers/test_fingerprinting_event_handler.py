@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeytypes import OperatingSystem
 
-from common import OperatingSystem
 from common.agent_events import FingerprintingEvent
 from common.types import (
     DiscoveredService,

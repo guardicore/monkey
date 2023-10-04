@@ -1,8 +1,8 @@
 from typing import Optional
 
+from monkeytypes import OperatingSystem
 from pymongo import MongoClient
 
-from common import OperatingSystem
 from monkey_island.cc.repositories import RemovalError, RetrievalError, StorageError
 from monkey_island.cc.repositories.consts import MONGO_OBJECT_ID_KEY
 

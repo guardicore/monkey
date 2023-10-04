@@ -5,8 +5,8 @@ from unittest.mock import MagicMock
 import agent_plugins.payloads.ransomware.src.ransomware_builder as ransomware_builder
 import pytest
 from agent_plugins.payloads.ransomware.src.ransomware_options import RansomwareOptions
+from monkeytypes import OperatingSystem
 
-from common import OperatingSystem
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 from common.utils.environment import get_os

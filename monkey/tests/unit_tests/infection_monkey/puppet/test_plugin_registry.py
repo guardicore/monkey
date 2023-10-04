@@ -2,10 +2,9 @@ from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
-from monkeytypes import AgentPluginManifest, AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
 from serpentarium import MultiprocessingPlugin, PluginLoader, SingleUsePlugin
 
-from common import OperatingSystem
 from common.agent_plugins import AgentPlugin
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID

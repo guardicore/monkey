@@ -3,7 +3,8 @@ import time
 from ipaddress import IPv4Address
 from typing import Dict, Optional, Sequence, Tuple
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from common.agent_events import FingerprintingEvent
 from common.event_queue import IAgentEventPublisher
 from common.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG

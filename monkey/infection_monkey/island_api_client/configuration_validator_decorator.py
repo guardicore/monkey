@@ -1,9 +1,9 @@
 from typing import Any, Dict, Sequence
 
 from jsonschema import validate
-from monkeytypes import AgentPluginManifest, AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
 
-from common import AgentRegistrationData, AgentSignals, OperatingSystem
+from common import AgentRegistrationData, AgentSignals
 from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin

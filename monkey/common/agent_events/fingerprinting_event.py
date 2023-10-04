@@ -1,9 +1,9 @@
 from ipaddress import IPv4Address
 from typing import Optional, Tuple
 
+from monkeytypes import OperatingSystem
 from pydantic import Field
 
-from common import OperatingSystem
 from common.types import DiscoveredService
 
 from . import AbstractAgentEvent

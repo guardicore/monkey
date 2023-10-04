@@ -1,9 +1,8 @@
 from pathlib import PurePath, PurePosixPath, PureWindowsPath
 from typing import Any, Dict, Mapping, Tuple
 
+from monkeytypes import OperatingSystem
 from pydantic import Field, validator
-
-from common import OperatingSystem
 
 from . import AbstractAgentEvent
 

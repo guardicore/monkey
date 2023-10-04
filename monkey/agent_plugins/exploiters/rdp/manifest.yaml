@@ -6,7 +6,7 @@ supported_operating_systems:
 target_operating_systems:
   - windows
 title: RDP Exploiter
-version: 1.0.0
+version: 2.0.0
 description: Attempts a brute-force attack over RDP using known credentials.
 safe: true
 remediation_suggestion: >-

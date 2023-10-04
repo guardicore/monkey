@@ -6,9 +6,9 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeytypes import OperatingSystem
 from tests.monkey_island import InMemoryMachineRepository
 
-from common import OperatingSystem
 from common.agent_events import PingScanEvent, TCPScanEvent
 from common.types import MachineID, NetworkService, PortStatus, SocketAddress
 from monkey_island.cc.agent_event_handlers import ScanEventHandler

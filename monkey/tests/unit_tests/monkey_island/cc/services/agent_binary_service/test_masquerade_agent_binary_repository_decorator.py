@@ -1,10 +1,10 @@
 import io
 
 import pytest
+from monkeytypes import OperatingSystem
 from tests.monkey_island import InMemoryAgentBinaryRepository
 from tests.monkey_island.in_memory_masquerade_repository import InMemoryMasqueradeRepository
 
-from common import OperatingSystem
 from monkey_island.cc.services.agent_binary_service.i_agent_binary_repository import (
     IAgentBinaryRepository,
 )

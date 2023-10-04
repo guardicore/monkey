@@ -4,8 +4,8 @@ from types import MappingProxyType
 from typing import MutableSequence
 
 import pytest
+from monkeytypes import OperatingSystem
 
-from common import OperatingSystem
 from common.types import NetworkService, SocketAddress
 from monkey_island.cc.models import Machine
 

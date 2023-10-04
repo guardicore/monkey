@@ -1,6 +1,7 @@
 import logging
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 from common.utils.environment import get_os

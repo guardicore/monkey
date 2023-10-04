@@ -7,9 +7,9 @@ from agent_plugins.payloads.ransomware.src.internal_ransomware_options import (
     InternalRansomwareOptions,
 )
 from agent_plugins.payloads.ransomware.src.ransomware_options import RansomwareOptions
+from monkeytypes import OperatingSystem
 from tests.utils import raise_
 
-from common import OperatingSystem
 from common.utils.environment import get_os
 from common.utils.file_utils import InvalidPath
 

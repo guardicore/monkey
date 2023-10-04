@@ -1,6 +1,7 @@
 import io
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from monkey_island.cc.services.agent_binary_service.i_agent_binary_repository import (
     IAgentBinaryRepository,
 )

@@ -8,7 +8,8 @@ from pathlib import Path
 from shutil import copyfileobj
 from typing import Sequence
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.types import OTP
 from monkey_island.cc.repositories import RetrievalError

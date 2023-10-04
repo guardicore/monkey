@@ -3,8 +3,8 @@ from threading import Event
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OperatingSystem
 
-from common import OperatingSystem
 from common.agent_configuration.agent_sub_configurations import (
     NetworkScanConfiguration,
     PropagationConfiguration,

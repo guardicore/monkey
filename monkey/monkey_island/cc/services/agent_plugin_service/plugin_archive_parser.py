@@ -13,9 +13,8 @@ from tarfile import TarFile, TarInfo
 from typing import IO, Any, BinaryIO, Dict, List, Mapping, Sequence
 
 import yaml
-from monkeytypes import AgentPluginManifest
+from monkeytypes import AgentPluginManifest, OperatingSystem
 
-from common import OperatingSystem
 from common.agent_plugins import AgentPlugin
 
 MANIFEST_FILENAMES = ["manifest.yaml", "manifest.yml"]

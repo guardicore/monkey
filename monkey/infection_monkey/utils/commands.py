@@ -1,7 +1,8 @@
 from pathlib import PurePath
 from typing import List, Optional, Sequence, Union
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.types import OTP, AgentID
 from infection_monkey.exploit.tools.helpers import get_agent_dst_path, get_dropper_script_dst_path

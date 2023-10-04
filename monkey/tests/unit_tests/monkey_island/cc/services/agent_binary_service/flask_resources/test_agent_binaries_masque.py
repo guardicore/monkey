@@ -2,10 +2,10 @@ from http import HTTPStatus
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OperatingSystem
 from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from common import OperatingSystem
 from monkey_island.cc.services import IAgentBinaryService
 from monkey_island.cc.services.agent_binary_service.flask_resources.agent_binaries_masque import (
     AgentBinariesMasque,

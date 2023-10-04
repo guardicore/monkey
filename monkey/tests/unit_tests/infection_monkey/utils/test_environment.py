@@ -1,6 +1,6 @@
 import pytest
+from monkeytypes import OperatingSystem
 
-from common import OperatingSystem
 from infection_monkey.utils.environment import get_os
 
 

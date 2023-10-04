@@ -1,8 +1,8 @@
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OperatingSystem
 
-from common import OperatingSystem
 from common.types import NetworkPort, NetworkProtocol, PortStatus
 from infection_monkey.i_puppet import PortScanData, TargetHostPorts
 

@@ -1,9 +1,9 @@
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OperatingSystem
 from tests.unit_tests.monkey_island.cc.models.test_agent import AGENT_ID
 
-from common import OperatingSystem
 from common.event_queue import IAgentEventPublisher
 from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import FingerprintData, PortScanData

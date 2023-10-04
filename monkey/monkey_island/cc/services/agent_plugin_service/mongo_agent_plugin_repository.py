@@ -4,11 +4,10 @@ from typing import Any, Dict, Optional
 
 import gridfs
 from bson.errors import BSONError
-from monkeytypes import AgentPluginManifest, AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
-from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, PluginName
 from monkey_island.cc.repositories import (
     RemovalError,
