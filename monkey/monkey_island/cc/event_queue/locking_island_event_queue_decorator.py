@@ -1,4 +1,4 @@
-from common.types.concurrency import RLock
+from monkeytypes import RLock
 
 from . import IIslandEventQueue, IslandEventSubscriber, IslandEventTopic
 
