@@ -1,0 +1,9 @@
+---
+- name: Install gcloud CLI
+  shell: |
+    curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-449.0.0-linux-x86_64.tar.gz | tar -xz -C /opt
+    /opt/google-cloud-sdk/install.sh --quiet
+    ln -sf /opt/google-cloud-sdk/bin/bq /usr/bin/bq
+    ln -sf /opt/google-cloud-sdk/bin/gcloud /usr/bin/gcloud
+    ln -sf /opt/google-cloud-sdk/bin/git-credential-gcloud.sh /usr/bin/git-credential-gcloud.sh
+    ln -sf /opt/google-cloud-sdk/bin/gsutil /usr/bin/gsutil
