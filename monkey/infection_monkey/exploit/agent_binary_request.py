@@ -2,9 +2,7 @@ from dataclasses import dataclass
 from typing import Callable, TypeAlias
 from uuid import UUID
 
-from monkeytypes import OperatingSystem
-
-from common.types import Event
+from monkeytypes import Event, OperatingSystem
 
 ReservationID: TypeAlias = UUID
 AgentBinaryTransform: TypeAlias = Callable[[bytes], bytes]

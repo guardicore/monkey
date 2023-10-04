@@ -1,10 +1,10 @@
 import abc
 from typing import Any, Dict, Mapping, Sequence
 
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginType, Event
 
 from common.credentials import Credentials
-from common.types import Event, NetworkPort
+from common.types import NetworkPort
 
 from . import ExploiterResult, FingerprintData, PingScanData
 from .target_host import PortScanDataDict, TargetHost

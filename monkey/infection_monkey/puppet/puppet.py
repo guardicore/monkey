@@ -1,12 +1,12 @@
 import logging
 from typing import Any, Dict, Mapping, Sequence
 
-from monkeytypes import AgentPluginType
+from monkeytypes import AgentPluginType, Event
 
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from common.credentials import Credentials
 from common.event_queue import IAgentEventQueue
-from common.types import AgentID, Event, NetworkPort
+from common.types import AgentID, NetworkPort
 from infection_monkey import network_scanning
 from infection_monkey.i_puppet import (
     ExploiterResult,
