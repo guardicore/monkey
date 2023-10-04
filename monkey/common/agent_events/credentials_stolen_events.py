@@ -1,8 +1,8 @@
 from typing import Sequence
 
+from monkeytypes import InfectionMonkeyModelConfig
 from pydantic import Field
 
-from common.base_models import InfectionMonkeyModelConfig
 from common.credentials import Credentials
 
 from ..credentials.encoding import SecretEncodingConfig

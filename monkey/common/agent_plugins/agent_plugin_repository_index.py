@@ -1,11 +1,13 @@
 import time
 from typing import Any, Dict, List, Literal, Union
 
-from monkeytypes import AgentPluginType
+from monkeytypes import (
+    AgentPluginType,
+    MutableInfectionMonkeyBaseModel,
+    MutableInfectionMonkeyModelConfig,
+)
 from pydantic import Field, validator
 from semver import VersionInfo
-
-from common.base_models import MutableInfectionMonkeyBaseModel, MutableInfectionMonkeyModelConfig
 
 from . import AgentPluginMetadata, PluginName
 

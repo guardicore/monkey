@@ -3,9 +3,9 @@ from abc import ABC
 from ipaddress import IPv4Address
 from typing import FrozenSet, Union
 
+from monkeytypes import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 from pydantic import ConstrainedStr, Field
 
-from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 from common.types import AgentID, MachineID
 
 EVENT_TAG_REGEX = r"^[a-zA-Z0-9._-]+$"
