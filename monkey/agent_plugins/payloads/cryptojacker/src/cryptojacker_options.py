@@ -1,6 +1,6 @@
+from monkeytypes import InfectionMonkeyBaseModel
 from pydantic import Field
 
-from common.base_models import InfectionMonkeyBaseModel
 from common.types import PercentLimited
 
 
