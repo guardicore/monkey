@@ -1,8 +1,7 @@
 from typing import List
 
+from monkeytypes import InfectionMonkeyBaseModel
 from pydantic import Field
-
-from common.base_models import InfectionMonkeyBaseModel
 
 
 class MimikatzOptions(InfectionMonkeyBaseModel):
