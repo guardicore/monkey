@@ -1,9 +1,8 @@
 import re
 from typing import Optional
 
+from monkeytypes import InfectionMonkeyBaseModel
 from pydantic import ConstrainedStr, Field
-
-from common.base_models import InfectionMonkeyBaseModel
 
 valid_file_extension_regex = re.compile(r"^(\.[A-Za-z0-9_]+)?$")
 
