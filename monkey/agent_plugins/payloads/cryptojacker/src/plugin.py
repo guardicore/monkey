@@ -1,7 +1,8 @@
 import logging
 from pprint import pformat
-from threading import Event
 from typing import Any, Dict
+
+from monkeytypes import Event
 
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID, SocketAddress

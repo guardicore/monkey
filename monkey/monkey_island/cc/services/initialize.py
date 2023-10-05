@@ -2,6 +2,7 @@ import logging
 import threading
 from pathlib import Path
 
+from monkeytypes import BasicLock, RLock
 from ophidian import DIContainer
 from pubsub.core import Publisher
 from pymongo import MongoClient
@@ -17,7 +18,6 @@ from common.event_queue import (
     LockingAgentEventQueueDecorator,
     PyPubSubAgentEventQueue,
 )
-from common.types.concurrency import BasicLock, RLock
 from monkey_island.cc.event_queue import (
     IIslandEventQueue,
     LockingIslandEventQueueDecorator,

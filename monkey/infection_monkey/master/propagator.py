@@ -4,20 +4,15 @@ from ipaddress import IPv4Address, IPv4Interface
 from queue import Queue
 from typing import List, Mapping, MutableMapping, Sequence
 
+from monkeytypes import Event
+
 from common.agent_configuration import (
     ExploitationConfiguration,
     NetworkScanConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import (
-    DiscoveredService,
-    Event,
-    NetworkPort,
-    NetworkProtocol,
-    NetworkService,
-    PortStatus,
-)
+from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import (
     ExploiterResult,
     FingerprintData,

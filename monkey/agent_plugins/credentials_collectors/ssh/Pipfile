@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 
 [dev-packages]
+monkey-types = "*"
 
 [requires]
 python_version = "3.11"

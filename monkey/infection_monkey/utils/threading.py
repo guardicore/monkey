@@ -5,7 +5,7 @@ from itertools import count
 from threading import Lock, Thread
 from typing import Any, Callable, Iterable, Iterator, Optional, Tuple, TypeVar
 
-from common.types import Event
+from monkeytypes import Event
 
 logger = logging.getLogger(__name__)
 
