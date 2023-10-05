@@ -1,4 +1,4 @@
-from common.types import OTP
+from monkeytypes import OTP
 
 from .authentication_facade import AuthenticationFacade
 from .i_otp_generator import IOTPGenerator

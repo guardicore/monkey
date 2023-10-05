@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from common.types import OTP
+from monkeytypes import OTP
 
 
 class IOTPRepository(ABC):

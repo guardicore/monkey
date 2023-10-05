@@ -5,9 +5,9 @@ from enum import Enum, auto
 
 import botocore
 from egg_timer import EggTimer
+from monkeytypes import OTP
 
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
-from common.types import OTP
 
 STATUS_CHECK_SLEEP_TIME = 1
 LINUX_DOCUMENT_NAME = "AWS-RunShellScript"

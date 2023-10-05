@@ -2,8 +2,8 @@ from itertools import chain, repeat
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OTP
 
-from common.types import OTP
 from monkey_island.cc.services.aws.aws_command_runner import (
     LINUX_DOCUMENT_NAME,
     WINDOWS_DOCUMENT_NAME,

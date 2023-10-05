@@ -8,10 +8,9 @@ from pathlib import Path
 from shutil import copyfileobj
 from typing import Sequence
 
-from monkeytypes import OperatingSystem
+from monkeytypes import OTP, OperatingSystem
 
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
-from common.types import OTP
 from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.services import IAgentBinaryService
