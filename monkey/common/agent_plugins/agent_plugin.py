@@ -3,12 +3,11 @@ from typing import Any, Callable, Dict, Mapping, Tuple, Type
 
 from monkeytypes import (
     AgentPluginManifest,
+    B64Bytes,
     InfectionMonkeyBaseModel,
     InfectionMonkeyModelConfig,
     OperatingSystem,
 )
-
-from common.types import B64Bytes
 
 
 class AgentPlugin(InfectionMonkeyBaseModel):

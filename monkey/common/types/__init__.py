@@ -1,6 +1,5 @@
 from monkeytypes import (
     AgentID,
-    B64Bytes,
     DiscoveredService,
     FileExtension,
     HardwareID,
