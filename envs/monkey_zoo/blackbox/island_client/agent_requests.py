@@ -2,8 +2,9 @@ from http import HTTPStatus
 from typing import Dict
 
 import requests
+from monkeytypes import OTP
 
-from common.types import OTP, AgentID
+from common.types import AgentID
 
 from .i_monkey_island_requests import IMonkeyIslandRequests
 
