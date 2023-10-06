@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 
 import mongomock
 import pytest
+from monkeytypes import OTP
 
-from common.types import OTP
 from monkey_island.cc.repositories import (
     RemovalError,
     RetrievalError,

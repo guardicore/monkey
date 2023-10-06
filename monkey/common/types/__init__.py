@@ -1,7 +1,5 @@
 from monkeytypes import (
-    OTP,
     AgentID,
-    B64Bytes,
     DiscoveredService,
     FileExtension,
     HardwareID,
@@ -16,5 +14,4 @@ from monkeytypes import (
     PercentLimited,
     PortStatus,
     SocketAddress,
-    Token,
 )

@@ -5,10 +5,10 @@ import mongomock
 import pymongo
 import pytest
 from flask_security import UserDatastore
+from monkeytypes import OTP
 from tests.common import StubDIContainer
 
 from common.event_queue import IAgentEventQueue
-from common.types import OTP
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor

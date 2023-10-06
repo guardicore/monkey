@@ -4,9 +4,9 @@ from functools import lru_cache
 from typing import Any, Mapping
 
 from bson.objectid import ObjectId
+from monkeytypes import OTP
 from pymongo import MongoClient
 
-from common.types import OTP
 from monkey_island.cc.repositories import (
     MONGO_OBJECT_ID_KEY,
     RemovalError,

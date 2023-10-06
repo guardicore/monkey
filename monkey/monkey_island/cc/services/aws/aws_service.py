@@ -5,8 +5,8 @@ from typing import Any, Iterable, Mapping, Sequence
 
 import boto3
 import botocore
+from monkeytypes import OTP
 
-from common.types import OTP
 from common.utils.code_utils import queue_to_list
 
 from .aws_command_runner import AWSCommandResults, start_infection_monkey_agent
