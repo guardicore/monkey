@@ -1,9 +1,9 @@
 from typing import Callable
 
+from monkeytypes import AgentID, SocketAddress
 from serpentarium import SingleUsePlugin
 
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID, SocketAddress
 
 from .i_plugin_factory import IPluginFactory
 

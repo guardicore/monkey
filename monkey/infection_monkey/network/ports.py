@@ -1,6 +1,6 @@
 from typing import List
 
-from common.types import NetworkPort
+from monkeytypes import NetworkPort
 
 COMMON_PORTS: List[NetworkPort] = [
     NetworkPort(8080),  # http-proxy

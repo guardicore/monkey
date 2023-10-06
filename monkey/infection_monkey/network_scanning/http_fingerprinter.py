@@ -5,14 +5,7 @@ from http import HTTPMethod
 from ipaddress import IPv4Address
 from typing import Dict, Optional, Sequence, Set
 
-from requests import head
-from requests.exceptions import ConnectionError, Timeout
-from requests.structures import CaseInsensitiveDict
-
-from common.agent_events import FingerprintingEvent, HTTPRequestEvent
-from common.event_queue import IAgentEventPublisher
-from common.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
-from common.types import (
+from monkeytypes import (
     AgentID,
     DiscoveredService,
     NetworkPort,
@@ -20,6 +13,13 @@ from common.types import (
     NetworkService,
     PortStatus,
 )
+from requests import head
+from requests.exceptions import ConnectionError, Timeout
+from requests.structures import CaseInsensitiveDict
+
+from common.agent_events import FingerprintingEvent, HTTPRequestEvent
+from common.event_queue import IAgentEventPublisher
+from common.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 logger = logging.getLogger(__name__)

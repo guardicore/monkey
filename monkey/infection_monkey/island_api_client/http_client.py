@@ -5,11 +5,11 @@ from http import HTTPStatus
 from typing import Any, Dict, Optional
 
 import requests
+from monkeytypes import JSONSerializable
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
-from common.types import JSONSerializable
 
 from .island_api_client_errors import (
     IslandAPIAuthenticationError,

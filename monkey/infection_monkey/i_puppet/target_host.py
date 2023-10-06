@@ -6,11 +6,11 @@ from typing import Optional, Set
 from monkeytypes import (
     MutableInfectionMonkeyBaseModel,
     MutableInfectionMonkeyModelConfig,
+    NetworkPort,
     OperatingSystem,
+    PortStatus,
 )
 from pydantic import Field, validate_arguments
-
-from common.types import NetworkPort, PortStatus
 
 from . import PortScanData
 

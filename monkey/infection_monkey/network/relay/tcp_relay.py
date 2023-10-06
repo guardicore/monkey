@@ -3,7 +3,8 @@ from logging import getLogger
 from threading import Lock, Thread
 from time import sleep
 
-from common.types import NetworkPort, SocketAddress
+from monkeytypes import NetworkPort, SocketAddress
+
 from infection_monkey.network.relay import (
     RelayConnectionHandler,
     RelayUserHandler,

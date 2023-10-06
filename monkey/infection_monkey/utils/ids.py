@@ -1,6 +1,7 @@
 from uuid import uuid4
 
-from common.types import AgentID, HardwareID
+from monkeytypes import AgentID, HardwareID
+
 from common.utils.environment import get_hardware_id
 
 

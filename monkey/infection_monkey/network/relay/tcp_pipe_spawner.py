@@ -3,7 +3,7 @@ from logging import getLogger
 from threading import Lock
 from typing import Set
 
-from common.types import SocketAddress
+from monkeytypes import SocketAddress
 
 from .consts import SOCKET_TIMEOUT
 from .sockets_pipe import SocketsPipe

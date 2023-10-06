@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from common.types import SocketAddress
+from monkeytypes import SocketAddress
 
 from . import IIslandAPIClient
 
