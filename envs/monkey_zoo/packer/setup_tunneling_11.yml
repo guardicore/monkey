@@ -1,0 +1,47 @@
+---
+- name: Configure Tunneling-11
+  hosts: all
+  remote_user: root
+
+  tasks:
+    - name: Add m0nk3y user
+      user:
+        name: m0nk3y
+        password: "{{ '3Q=(Ge(+&w]*' | password_hash('sha512') }}"
+        groups:
+          - sudo
+        append: yes
+    - name: Enable Password Authentication
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication.*no'
+        line: "PasswordAuthentication yes"
+        state: present
+        backup: yes
+    - name: Remove sshguard
+      apt:
+        name: sshguard
+        state: absent
+    - name: Install ufw
+      apt:
+        name: ufw
+        update_cache: yes
+    # Note: With firewall rules, order matters. Specific rules should come first, then general rules.
+    #       This is because the only the first matching rule is evaluated.
+    - name: Allow ssh from 10.2.0.10 and 10.2.1.10, but not 10.2.1.9
+      shell: |
+        ufw allow from 10.2.0.10 to any port 22
+        ufw allow from 10.2.1.10 to any port 22
+        ufw deny from 10.2.1.9 to any port 22
+    - name: Deny traffic to/from 10.2.0.10 and 10.2.1.10
+      shell: |
+        ufw deny in from 10.2.0.10 to any
+        ufw deny in from 10.2.1.10 to any
+        ufw deny out to 10.2.0.10
+        ufw deny out to 10.2.1.10
+    - name: Allow ssh
+      shell: |
+        ufw allow ssh
+    - name: Enable firewall
+      shell: |
+        yes | ufw enable
