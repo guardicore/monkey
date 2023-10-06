@@ -1,0 +1,45 @@
+---
+- name: Configure Tunneling-13
+  hosts: all
+  remote_user: root
+
+  tasks:
+    - name: Add m0nk3y user
+      user:
+        name: m0nk3y
+        password: "{{ 'prM2qsroTI' | password_hash('sha512') }}"
+        groups:
+          - sudo
+        append: yes
+    - name: Enable Password Authentication
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication.*no'
+        line: "PasswordAuthentication yes"
+        state: present
+        backup: yes
+    - name: Remove sshguard
+      apt:
+        name: sshguard
+        state: absent
+    - name: Install ufw
+      apt:
+        name: ufw
+        update_cache: yes
+    - name: Deny traffic to/from 10.2.0.10 and 10.2.0.11
+      shell: |
+        ufw deny from 10.2.0.10 to any
+        ufw deny from 10.2.0.11 to any
+        ufw deny out to 10.2.0.10
+        ufw deny out to 10.2.0.11
+    - name: Allow ssh
+      shell: ufw allow ssh
+    - name: Deny ping to/from 10.2.0.10 and 10.2.0.11
+      shell: |
+        iptables -A INPUT -s 10.2.0.10 -p icmp -j DROP
+        iptables -A OUTPUT -d 10.2.0.10 -p icmp -j DROP
+        iptables -A INPUT -s 10.2.0.11 -p icmp -j DROP
+        iptables -A OUTPUT -d 10.2.0.11 -p icmp -j DROP
+    - name: Enable firewall
+      shell: |
+        yes | ufw enable
