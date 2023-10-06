@@ -163,12 +163,13 @@ resource "google_compute_instance" "tunneling-10" {
 
 resource "google_compute_instance" "tunneling-11" {
   name         = "${local.resource_prefix}tunneling-11"
-  machine_type = "e2-small"
+  machine_type = "n1-standard-1"
   zone         = local.tunneling_zone
   tags         = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-11.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
@@ -205,12 +206,13 @@ resource "google_compute_instance" "tunneling-12" {
 
 resource "google_compute_instance" "tunneling-13" {
   name         = "${local.resource_prefix}tunneling-13"
-  machine_type = "e2-small"
+  machine_type = "n1-standard-1"
   zone         = local.tunneling_zone
   tags         = ["test-machine", "ubuntu16", "linux"]
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-13.self_link
+      type  = "pd-ssd"
     }
     auto_delete = true
   }
