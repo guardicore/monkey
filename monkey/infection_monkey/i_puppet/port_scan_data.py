@@ -1,9 +1,13 @@
 from typing import Optional
 
-from monkeytypes import InfectionMonkeyBaseModel
+from monkeytypes import (
+    InfectionMonkeyBaseModel,
+    NetworkPort,
+    NetworkProtocol,
+    NetworkService,
+    PortStatus,
+)
 from pydantic import Field
-
-from common.types import NetworkPort, NetworkProtocol, NetworkService, PortStatus
 
 
 class PortScanData(InfectionMonkeyBaseModel):

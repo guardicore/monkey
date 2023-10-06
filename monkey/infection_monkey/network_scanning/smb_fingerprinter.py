@@ -5,20 +5,20 @@ import time
 from ipaddress import IPv4Address
 from typing import Dict, List, Optional, Sequence
 
-from monkeytypes import OperatingSystem
-from odict import odict
-
-from common.agent_events import FingerprintingEvent
-from common.event_queue import IAgentEventPublisher
-from common.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
-from common.types import (
+from monkeytypes import (
     AgentID,
     DiscoveredService,
     NetworkPort,
     NetworkProtocol,
     NetworkService,
+    OperatingSystem,
     PortStatus,
 )
+from odict import odict
+
+from common.agent_events import FingerprintingEvent
+from common.event_queue import IAgentEventPublisher
+from common.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 SMB_PORT = NetworkPort(445)

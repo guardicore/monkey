@@ -1,8 +1,6 @@
 from typing import List, Optional
 
-from monkeytypes import InfectionMonkeyBaseModel, OperatingSystem
-
-from common.types import DiscoveredService
+from monkeytypes import DiscoveredService, InfectionMonkeyBaseModel, OperatingSystem
 
 
 class FingerprintData(InfectionMonkeyBaseModel):

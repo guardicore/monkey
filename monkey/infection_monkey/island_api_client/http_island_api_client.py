@@ -7,7 +7,15 @@ from typing import Any, Dict, List, Sequence
 
 import requests
 from egg_timer import EggTimer
-from monkeytypes import OTP, AgentPluginManifest, AgentPluginType, BasicLock, OperatingSystem
+from monkeytypes import (
+    OTP,
+    AgentID,
+    AgentPluginManifest,
+    AgentPluginType,
+    BasicLock,
+    JSONSerializable,
+    OperatingSystem,
+)
 from requests import Response
 
 from common import AgentHeartbeat, AgentRegistrationData, AgentSignals
@@ -18,7 +26,6 @@ from common.agent_plugins import AgentPlugin
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from common.credentials import Credentials
-from common.types import AgentID, JSONSerializable
 
 from . import IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient
