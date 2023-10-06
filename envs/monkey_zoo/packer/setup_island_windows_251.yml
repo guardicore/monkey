@@ -6,6 +6,7 @@
     - import_tasks: tasks/windows_install_gcloud.yml
     - import_tasks: tasks/windows_install_build_tools.yml
     - import_tasks: tasks/windows_install_git.yml
+    - import_tasks: tasks/windows_install_ssh.yml
     # disable windows defender
     # disable windows update?
     # add user for bb tests?

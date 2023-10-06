@@ -1,0 +1,12 @@
+---
+- name: Install OpenSSH
+  win_get_url:
+    url: https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.2.2.0p1-Beta/OpenSSH-Win64-v9.2.2.0.msi
+    dest: C:\Windows\Temp\OpenSSH.msi
+- name: Install OpenSSH
+  win_package:
+    path: C:\Windows\Temp\OpenSSH.msi
+    arguments: /quiet
+    creates: C:\Program Files\OpenSSH\
+
+# TODO: Upload whatever SSH keys are needed to the instance
