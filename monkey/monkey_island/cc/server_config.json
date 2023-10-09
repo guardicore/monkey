@@ -2,5 +2,9 @@
   "log_level": "DEBUG",
   "mongodb": {
         "start_mongodb": true
+  },
+  "ssl_certificate": {
+        "ssl_certificate_file": "%AppData%\\monkey_island\\monkey-test.crt",
+        "ssl_certificate_key_file": "%AppData%\\monkey_island\\monkey-test.key"
   }
 }
