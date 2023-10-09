@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
-from common.credentials import Credentials
+from monkeytypes import Credentials
 
 
 class ICredentialsRepository(ABC):
