@@ -180,6 +180,9 @@ resource "google_compute_instance" "tunneling-11" {
   network_interface {
     subnetwork = "${local.resource_prefix}tunneling-main"
     network_ip = "10.2.1.11"
+    access_config {
+      // Allows Ephemeral IPs
+    }
   }
 }
 
