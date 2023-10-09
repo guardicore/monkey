@@ -786,7 +786,7 @@ resource "google_compute_instance" "island-linux-250" {
 
 resource "google_compute_instance" "island-windows-251" {
   name         = "${local.resource_prefix}island-windows-251"
-  machine_type = "e2-standard-2"
+  machine_type = "e2-custom-4-8192"
   tags         = ["test-machine", "windowsserver2016", "windows", "island"]
   boot_disk {
     initialize_params {
