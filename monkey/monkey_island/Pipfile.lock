@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "018ccac92f1247c02195cae2b5de7d488789ce0ec1fb00b85f9b79528f62c104"
+            "sha256": "44a45f58eca754d1c754599abf4a4982927b2e6b7687f69358b7e3cb6f1db971"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -683,13 +683,13 @@
             "index": "pypi",
             "version": "==0.2.0"
         },
-        "ophidian-di": {
+        "ophidian": {
             "hashes": [
-                "sha256:446be089fcf05f129557b449c92441779f964743eaf2a241feb135782f76ae65",
-                "sha256:56f9b104e44a8f745c8f8484fcb896c9ad801328c9f980107eb81404523f9f53"
+                "sha256:a93e813827f94506e3f9fb230cdab14b745636d48c2c0fbd7db07808a9413aea",
+                "sha256:c38278303333cece5def36ff9692d15caff41f33beaf5545e63eecd18740904a"
             ],
             "index": "pypi",
-            "version": "==0.1.0.post1"
+            "version": "==0.2.0"
         },
         "ordered-set": {
             "hashes": [
