@@ -47,24 +47,20 @@ build {
     only   = ["googlecompute.browser-credentials-66"]
     elevated_user = "m0nk3y"
     elevated_password = "P@ssw0rd!"
-    inline = [
-      "$process = Start-Process \"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" -ArgumentList \"-first-run\" -PassThru",
-      "Start-Sleep -Seconds 10",
-      "$process",
-      "Stop-Process -Id $process.Id",
-    ]
+    script = "${path.root}/files/browser-credentials/generate_local_state.ps1"
+  }
+
+  provisioner "powershell" {
+    only   = ["googlecompute.browser-credentials-66"]
+    elevated_user = "m0nk3y"
+    elevated_password = "P@ssw0rd!"
+    script = "${path.root}/files/browser-credentials/download-dependencies.ps1"
   }
 
   provisioner "file" {
     only   = ["googlecompute.browser-credentials-66"]
-    source = "${path.root}/files/chrome-creds.ps1"
+    source = "${path.root}/files/browser-credentials/chrome-creds.ps1"
     destination = "C:\\Users\\m0nk3y\\Desktop\\chrome-creds.ps1"
-  }
-
-  provisioner "file" {
-    only   = ["googlecompute.browser-credentials-66"]
-    source = "${path.root}/files/System.Data.SQLite.dll"
-    destination = "C:\\Users\\m0nk3y\\Desktop\\System.Data.SQLite.dll"
   }
 
   provisioner "powershell" {
@@ -125,5 +121,4 @@ build {
       "}",
     ]
   }
-
 }
