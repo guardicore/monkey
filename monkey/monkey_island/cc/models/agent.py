@@ -1,10 +1,8 @@
 from datetime import datetime
 from typing import Optional
 
-from monkeytypes import MutableInfectionMonkeyBaseModel
+from monkeytypes import MutableInfectionMonkeyBaseModel, SocketAddress
 from pydantic import Field
-
-from common.types import SocketAddress
 
 from . import AgentID, MachineID
 

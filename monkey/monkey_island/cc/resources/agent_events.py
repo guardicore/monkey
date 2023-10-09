@@ -6,11 +6,11 @@ from typing import Iterable, Optional, Sequence, Tuple, Type
 
 from flask import request
 from flask_security import auth_token_required, roles_accepted
+from monkeytypes import JSONSerializable
 
 from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
 from common.agent_events import EVENT_TAG_REGEX, AbstractAgentEvent, AgentEventRegistry
 from common.event_queue import IAgentEventQueue
-from common.types import JSONSerializable
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import IAgentEventRepository
 from monkey_island.cc.services.authentication_service import AccountRole

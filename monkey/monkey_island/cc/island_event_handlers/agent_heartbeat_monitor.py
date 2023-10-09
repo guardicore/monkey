@@ -2,9 +2,10 @@ import logging
 from datetime import datetime, timezone
 from typing import Dict, Sequence
 
+from monkeytypes import AgentID
+
 from common import AgentHeartbeat
 from common.common_consts import HEARTBEAT_INTERVAL
-from common.types import AgentID
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import Agent
 from monkey_island.cc.repositories import IAgentRepository

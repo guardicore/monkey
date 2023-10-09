@@ -3,9 +3,9 @@ from itertools import count
 from threading import Lock
 from typing import Any, Sequence
 
+from monkeytypes import HardwareID
 from pymongo import MongoClient
 
-from common.types import HardwareID
 from monkey_island.cc.models import Machine, MachineID, NetworkServices
 
 from . import IMachineRepository, RemovalError, RetrievalError, StorageError, UnknownRecordError

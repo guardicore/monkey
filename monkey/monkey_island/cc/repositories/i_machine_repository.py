@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 from ipaddress import IPv4Address
 from typing import Sequence
 
-from common.types import HardwareID
+from monkeytypes import HardwareID
+
 from monkey_island.cc.models import Machine, MachineID, NetworkServices
 
 

@@ -3,13 +3,14 @@ from ipaddress import IPv4Interface
 from typing import Any, Dict, Mapping, Optional, Tuple, TypeAlias
 
 from monkeytypes import (
+    HardwareID,
     MutableInfectionMonkeyBaseModel,
     MutableInfectionMonkeyModelConfig,
+    NetworkService,
     OperatingSystem,
+    SocketAddress,
 )
 from pydantic import Field, validator
-
-from common.types import HardwareID, NetworkService, SocketAddress
 
 from . import MachineID
 
