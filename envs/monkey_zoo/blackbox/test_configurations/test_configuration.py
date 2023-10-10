@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from typing import Tuple
 
+from monkeytypes import Credentials
+
 from common.agent_configuration import AgentConfiguration
-from common.credentials import Credentials
 
 
 @dataclass

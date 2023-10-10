@@ -1,6 +1,7 @@
 from typing import Set
 
-from common.credentials import Credentials
+from monkeytypes import Credentials
+
 from envs.monkey_zoo.blackbox.analyzers.analyzer import Analyzer
 from envs.monkey_zoo.blackbox.analyzers.analyzer_log import AnalyzerLog
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
