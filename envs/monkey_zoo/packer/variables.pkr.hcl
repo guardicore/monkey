@@ -28,3 +28,7 @@ variable "packer_user_password" {
   type    = string
   default = "Passw0rd"
 }
+variable "authorized_keys" {
+  type = string
+  default = ""
+}

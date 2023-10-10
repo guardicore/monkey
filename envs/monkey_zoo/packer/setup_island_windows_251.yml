@@ -1,8 +1,26 @@
 ---
 - name: Configure the Windows island
   hosts: all
+  vars:
+    user_name: m0nk3y
+    user_password: Fgk5^SH@5fnB
   tasks:
     - import_tasks: tasks/windows_disable_automatic_updates.yml
+    - import_tasks: tasks/windows_create_user.yml
+      vars:
+        username: "{{ user_name }}"
+        password: "{{ user_password }}"
+        user_groups: [Administrators, "Remote Desktop Users"]
+    - import_tasks: tasks/windows_install_ssh.yml
+    - name: Add authorized keys
+      win_copy:
+        src: "{{ authorized_keys }}"
+        dest: "C:\\Users\\{{ user_name }}\\.ssh\\authorized_keys"
+      when: authorized_keys | default('', true) | trim != ''
+    - name: No authorized keys message
+      debug:
+        msg: "WARNING: No authorized keys provided"
+      when: authorized_keys | default('', true) | trim == ''
     - import_tasks: tasks/windows_install_python.yml
     - import_tasks: tasks/windows_install_gcloud.yml
     - import_tasks: tasks/windows_install_build_tools.yml

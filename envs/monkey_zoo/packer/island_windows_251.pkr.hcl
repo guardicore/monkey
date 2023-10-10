@@ -29,6 +29,7 @@ build {
     extra_arguments  = [
       "-e", "ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore",
       "-e", "ansible_password=${var.packer_user_password}",
+      "-e", "authorized_keys=${var.authorized_keys}",
       "-vvv"
     ]
   }
