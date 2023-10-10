@@ -1,6 +1,7 @@
 from typing import Sequence
 
-from common.credentials import Credentials
+from monkeytypes import Credentials
+
 from monkey_island.cc.repositories import ICredentialsRepository
 
 
