@@ -13,6 +13,7 @@ from monkeytypes import (
     AgentPluginManifest,
     AgentPluginType,
     BasicLock,
+    Credentials,
     JSONSerializable,
     OperatingSystem,
 )
@@ -25,7 +26,6 @@ from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
-from common.credentials import Credentials
 
 from . import IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient

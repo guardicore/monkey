@@ -2,10 +2,9 @@ from abc import ABC, abstractmethod
 from pathlib import PurePath
 from typing import Collection, Set
 
-from monkeytypes import OperatingSystem
+from monkeytypes import Credentials, OperatingSystem
 
 from common.agent_events import AgentEventTag
-from common.credentials import Credentials
 
 
 class RemoteAccessClientError(Exception):
