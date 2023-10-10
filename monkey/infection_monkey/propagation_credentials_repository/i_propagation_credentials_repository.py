@@ -1,7 +1,7 @@
 import abc
 from typing import Iterable
 
-from common.credentials import Credentials
+from monkeytypes import Credentials
 
 
 class IPropagationCredentialsRepository(metaclass=abc.ABCMeta):

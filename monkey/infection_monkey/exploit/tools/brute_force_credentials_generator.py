@@ -12,7 +12,7 @@ from typing import (
     TypeGuard,
 )
 
-from common.credentials import Credentials, Identity, Secret
+from monkeytypes import Credentials, Identity, Secret
 
 
 class identity_type_filter:

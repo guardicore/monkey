@@ -1,6 +1,7 @@
 from typing import Callable, Iterable
 
-from common.credentials import Credentials
+from monkeytypes import Credentials
+
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 
 

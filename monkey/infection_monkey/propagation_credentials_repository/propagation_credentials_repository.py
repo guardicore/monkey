@@ -5,7 +5,8 @@ from multiprocessing import get_context
 from multiprocessing.managers import SyncManager
 from typing import Iterable
 
-from common.credentials import Credentials
+from monkeytypes import Credentials
+
 from infection_monkey.island_api_client import IIslandAPIClient
 
 from .i_propagation_credentials_repository import IPropagationCredentialsRepository
