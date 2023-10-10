@@ -14,8 +14,8 @@ sys.path.insert(0, monkey_path)
 # Change this import to use this script with different plugins
 from agent_plugins.credentials_collectors.chrome.src.plugin import Plugin  # noqa: E402
 from monkeytypes import OperatingSystem  # noqa: E402
+from monkeytypes import Credentials, Password, Username  # noqa: E402
 
-from common.credentials import Credentials, Password, Username  # noqa: E402
 from common.event_queue import IAgentEventPublisher  # noqa: E402
 from infection_monkey.i_puppet import TargetHost  # noqa: E402
 
