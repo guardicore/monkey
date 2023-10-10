@@ -1,9 +1,17 @@
 import logging
 from typing import Any, Dict, Mapping, Sequence
 
-from monkeytypes import AgentPluginType, Event, OperatingSystem
+from monkeytypes import (
+    AgentPluginType,
+    Credentials,
+    Event,
+    LMHash,
+    OperatingSystem,
+    Password,
+    SSHKeypair,
+    Username,
+)
 
-from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
 from common.types import DiscoveredService, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import (
     ExploiterResult,

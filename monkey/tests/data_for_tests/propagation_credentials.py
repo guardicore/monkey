@@ -1,16 +1,7 @@
 from itertools import product
 
+from monkeytypes import Credentials, EmailAddress, LMHash, NTHash, Password, SSHKeypair, Username
 from pydantic import SecretStr
-
-from common.credentials import (
-    Credentials,
-    EmailAddress,
-    LMHash,
-    NTHash,
-    Password,
-    SSHKeypair,
-    Username,
-)
 
 USERNAME = "m0nk3y_user"
 SPECIAL_USERNAME = "m0nk3y.user"
