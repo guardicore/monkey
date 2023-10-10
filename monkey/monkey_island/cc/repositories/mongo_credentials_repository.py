@@ -1,8 +1,8 @@
 from typing import Any, Dict, Mapping, Sequence
 
+from monkeytypes import Credentials
 from pymongo import MongoClient
 
-from common.credentials import Credentials
 from monkey_island.cc.repositories import (
     ICredentialsRepository,
     RemovalError,
