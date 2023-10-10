@@ -3,9 +3,8 @@ from collections.abc import Collection
 from contextlib import suppress
 from typing import Optional
 
-from monkeytypes import Event
+from monkeytypes import Credentials, EmailAddress, Event, Password, Username
 
-from common.credentials import Credentials, EmailAddress, Password, Username
 from infection_monkey.utils.threading import interruptible_iter
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath

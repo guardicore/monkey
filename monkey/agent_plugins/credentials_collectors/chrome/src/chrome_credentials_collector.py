@@ -1,10 +1,9 @@
 import time
 from collections.abc import Collection, Sequence
 
-from monkeytypes import Event
+from monkeytypes import Credentials, Event
 
 from common.agent_events import CredentialsStolenEvent
-from common.credentials import Credentials
 from common.event_queue import IAgentEventPublisher
 from common.tags import (
     CREDENTIALS_FROM_PASSWORD_STORES_T1555_TAG,

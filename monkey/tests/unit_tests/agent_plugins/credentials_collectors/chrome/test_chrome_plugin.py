@@ -2,9 +2,9 @@ import threading
 from unittest.mock import MagicMock
 
 from agent_plugins.credentials_collectors.chrome.src.plugin import Plugin
+from monkeytypes import Credentials, Password, Username
 from tests.utils import get_reference_to_exception_raising_function
 
-from common.credentials import Credentials, Password, Username
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 
