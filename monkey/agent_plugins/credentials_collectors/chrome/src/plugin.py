@@ -1,9 +1,8 @@
 import logging
 from typing import Any, Mapping, Sequence
 
-from monkeytypes import Event
+from monkeytypes import Credentials, Event
 
-from common.credentials import Credentials
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 
