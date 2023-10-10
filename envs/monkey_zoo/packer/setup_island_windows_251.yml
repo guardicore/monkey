@@ -2,11 +2,9 @@
 - name: Configure the Windows island
   hosts: all
   tasks:
+    - import_tasks: tasks/windows_disable_automatic_updates.yml
     - import_tasks: tasks/windows_install_python.yml
     - import_tasks: tasks/windows_install_gcloud.yml
     - import_tasks: tasks/windows_install_build_tools.yml
     - import_tasks: tasks/windows_install_git.yml
-    - import_tasks: tasks/windows_install_ssh.yml
-    # disable windows defender
-    # disable windows update?
-    # add user for bb tests?
+    - import_tasks: tasks/windows_disable_windows_defender.yml
