@@ -1,7 +1,8 @@
 import logging
 import os
 import subprocess
-from multiprocessing.dummy import Pool
+from collections.abc import Collection
+from multiprocessing import Pool
 
 logger = logging.getLogger(__name__)
 
@@ -38,23 +39,23 @@ def get_absolute_key_path() -> str:
     return absolute_key_path
 
 
-def start_machines(machine_list):
+def start_machines(machine_list: dict[str, Collection[str]]):
     """
     Start all the machines in the list.
     :param machine_list: A dictionary with zone and machines per zone.
     """
     logger.info("Setting up all GCP machines...")
     try:
-        run_gcp_pool(MACHINE_STARTING_COMMAND, machine_list)
+        run_gcp_command(MACHINE_STARTING_COMMAND, machine_list)
         logger.info("GCP machines successfully started.")
     except Exception as e:
         logger.error("GCP Handler failed to start GCP machines: %s" % e)
         raise e
 
 
-def stop_machines(machine_list):
+def stop_machines(machine_list: dict[str, Collection[str]]):
     try:
-        run_gcp_pool(MACHINE_STOPPING_COMMAND, machine_list)
+        run_gcp_command(MACHINE_STOPPING_COMMAND, machine_list)
         logger.info("GCP machines stopped successfully.")
     except Exception as e:
         logger.error("GCP Handler failed to stop network machines: %s" % e)
@@ -68,19 +69,20 @@ def get_set_project_command(project):
     return SET_PROPERTY_PROJECT % project
 
 
-def run_gcp_command(arglist):
-    gcp_cmd, machine_list, zone = arglist
+def _run_gcp_command(gcp_command: str, machine_list: Collection[str], zone: str):
+    """Runs the command in the given zone"""
     ret = subprocess.run(  # noqa DUO116
-        (gcp_cmd % (" ".join(machine_list), zone)),
+        (gcp_command % (" ".join(machine_list), zone)),
         stderr=subprocess.PIPE,
         stdout=subprocess.PIPE,
         shell=True,
     )
     if ret.returncode != 0:
-        raise Exception(f"Failed starting GCP machines: {ret.stderr}")
+        raise Exception(f"Failed starting GCP machines: {ret.stderr.decode()}")
 
 
-def run_gcp_pool(gcp_command, machine_list):
+def run_gcp_command(gcp_command: str, machine_list: dict[str, Collection[str]]):
     arglist = [(gcp_command, machine_list[zone], zone) for zone in machine_list]
-    with Pool(2) as pool:
-        pool.map(run_gcp_command, arglist)
+    num_commands = len(arglist)
+    with Pool(num_commands) as pool:
+        pool.map(lambda args: _run_gcp_command(*args), arglist)
