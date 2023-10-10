@@ -4,10 +4,9 @@ import time
 from pathlib import PosixPath
 from typing import Any, Dict, Iterable, Mapping, Optional, Sequence
 
-from monkeytypes import Event
+from monkeytypes import Credentials, Event, SSHKeypair, Username
 
 from common.agent_events import CredentialsStolenEvent
-from common.credentials import Credentials, SSHKeypair, Username
 from common.event_queue import IAgentEventPublisher
 from common.tags import (
     DATA_FROM_LOCAL_SYSTEM_T1005_TAG,
