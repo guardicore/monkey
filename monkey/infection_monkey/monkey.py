@@ -426,6 +426,7 @@ class InfectionMonkey:
                 self._propagation_credentials_repository,
                 self._tcp_port_selector,
                 otp_provider,
+                AGENT_OTP_ENVIRONMENT_VARIABLE,
                 create_plugin,
             ),
             AgentPluginType.PAYLOAD: PayloadPluginFactory(
