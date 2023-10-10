@@ -15,11 +15,12 @@ URL = "1.1.1.1/agent"
 
 
 @pytest.fixture
-def build_command():
+def build_command(mock_agent_otp_environment_variable):
     def build(host: Optional[TargetHost] = None) -> str:
         return build_snmp_command(
             host or TARGET_HOST,
             URL,
+            mock_agent_otp_environment_variable,
             OTP,
         )
 
@@ -36,3 +37,9 @@ def test_url_used(build_command):
     command = build_command()
 
     assert URL in command
+
+
+def test_agent_otp_env_var_used(build_command, mock_agent_otp_environment_variable):
+    command = build_command()
+
+    assert mock_agent_otp_environment_variable in command
