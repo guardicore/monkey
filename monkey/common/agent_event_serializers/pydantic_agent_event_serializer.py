@@ -3,7 +3,6 @@ from typing import Generic, Type, TypeVar
 
 from common.agent_events import AbstractAgentEvent
 from common.types import JSONSerializable
-from common.utils.code_utils import del_key
 
 from . import EVENT_TYPE_FIELD, IAgentEventSerializer
 
@@ -33,6 +32,6 @@ class PydanticAgentEventSerializer(IAgentEventSerializer, Generic[T]):
 
         # pydantic serialized events will always be dicts with a copy() method
         event_dict = serialized_event.copy()  # type: ignore[union-attr]
-        del_key(event_dict, EVENT_TYPE_FIELD)
+        event_dict.pop(EVENT_TYPE_FIELD, None)
 
         return self._event_class(**event_dict)
