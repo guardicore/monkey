@@ -7,7 +7,7 @@ name = "pypi"
 psutil = "*"
 
 [dev-packages]
-monkey-types = "*"
+monkey-types = {ref = "3732-upgrade-pydantic-to-v2"}
 
 [requires]
 python_version = "3.11"
