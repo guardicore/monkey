@@ -17,14 +17,14 @@ pywin32 = {version = "*", sys_platform = "== 'win32'"} # Lock file is not create
 pefile = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
 paramiko = ">=3.1.0"
 pypubsub = "*"
-pydantic = "<2.0.0"
+pydantic = "==2.4.2"
 egg-timer = "*"
 cryptography = "*"
 serpentarium = "==0.5.0"
 jsonschema = "*"
 semver = "==2.13.0"
 email-validator = "*"
-monkey-types = "*"
+monkey-types = {git = "https://github.com/guardicode/monkeytypes", ref = "3732-upgrade-pydantic-to-v2"}
 
 [dev-packages]
 mypy = "*"
