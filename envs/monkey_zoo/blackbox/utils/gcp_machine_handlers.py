@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 from collections.abc import Collection
-from multiprocessing import Pool
+from threading import Thread
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +82,11 @@ def _run_gcp_command(gcp_command: str, machine_list: Collection[str], zone: str)
 
 
 def run_gcp_command(gcp_command: str, machine_list: dict[str, Collection[str]]):
-    arglist = [(gcp_command, machine_list[zone], zone) for zone in machine_list]
-    num_commands = len(arglist)
-    with Pool(num_commands) as pool:
-        pool.map(lambda args: _run_gcp_command(*args), arglist)
+    command_threads = [
+        Thread(target=_run_gcp_command, args=(gcp_command, machine_list[zone], zone))
+        for zone in machine_list
+    ]
+    for thread in command_threads:
+        thread.start()
+    for thread in command_threads:
+        thread.join()
