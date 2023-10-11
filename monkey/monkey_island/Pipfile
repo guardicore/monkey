@@ -18,7 +18,7 @@ ring = ">=0.7.3"
 Flask-RESTful = ">=0.3.8"
 Flask = "==2.2.5"  # v2.3.0 removes JSONEncoder which causes exceptions
 Flask-Limiter = "*"
-Werkzeug = ">=1.0.1"
+Werkzeug = "==2.3.0"
 pyaescrypt = "*"
 python-dateutil = "*"
 cffi = "*"  # Without explicit install: ModuleNotFoundError: No module named '_cffi_backend'
@@ -30,7 +30,7 @@ pymongo = "*"
 cryptography = "*"
 semantic-version = "*"
 pypubsub = "*"
-pydantic = "<2.0.0"
+pydantic = "==2.4.2"
 egg-timer = "*"
 pyyaml = "*"
 semver = "==2.13.0"
@@ -38,7 +38,7 @@ flask-security-too = "*"
 flask-mongoengine = "*"
 bleach = "*"
 email-validator = "*"
-monkey-types = "*"
+monkey-types = {git = "https://github.com/guardicode/monkeytypes", ref = "3732-upgrade-pydantic-to-v2"}
 ophidian = "*"
 
 [dev-packages]
