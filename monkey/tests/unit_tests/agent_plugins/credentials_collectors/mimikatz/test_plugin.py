@@ -6,9 +6,9 @@ import pytest
 from agent_plugins.credentials_collectors.mimikatz.src.mimikatz_options import MimikatzOptions
 from agent_plugins.credentials_collectors.mimikatz.src.plugin import MIMIKATZ_EVENT_TAGS, Plugin
 from agent_plugins.credentials_collectors.mimikatz.src.windows_credentials import WindowsCredentials
+from monkeytypes import Credentials, LMHash, NTHash, Password, Username
 
 from common.agent_events import CredentialsStolenEvent
-from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 

@@ -4,11 +4,11 @@ from typing import Sequence
 from urllib.parse import urljoin
 
 import pytest
+from monkeytypes import Credentials, LMHash, NTHash, Password
 from tests.common import StubDIContainer
 from tests.data_for_tests.propagation_credentials import LM_HASH, NT_HASH, PASSWORD_1, PASSWORD_2
 from tests.monkey_island import InMemoryCredentialsRepository
 
-from common.credentials import Credentials, LMHash, NTHash, Password
 from monkey_island.cc.repositories import ICredentialsRepository
 from monkey_island.cc.resources import PropagationCredentials
 from monkey_island.cc.resources.propagation_credentials import (

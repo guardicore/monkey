@@ -7,9 +7,8 @@ import pytest
 from agent_plugins.credentials_collectors.chrome.src.browser_credentials_database_path import (
     BrowserCredentialsDatabasePath,
 )
+from monkeytypes import Credentials, EmailAddress, Password, Username
 from tests.utils import get_reference_to_exception_raising_function
-
-from common.credentials import Credentials, EmailAddress, Password, Username
 
 LOGINS_A = [("user1", b"password1"), ("user2", b"password2")]
 LOGINS_B = [("user3@email.com", b"password3")]

@@ -13,7 +13,7 @@ from agent_plugins.payloads.ransomware.src.ransomware_options import (
     linux_target_dir,
     windows_target_dir,
 )
-from asyauth.common.credentials import UniCredential
+from asyauth.monkeytypes import UniCredential
 from flask_security import Security
 
 from common.agent_configuration import ScanTargetConfiguration
@@ -31,7 +31,6 @@ from common.agent_plugins import (
     AgentPluginRepositoryIndex,
 )
 from common.concurrency import BasicLock
-from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.decorators import request_cache
 from common.tags import (
     DEFACEMENT_T1491_TAG,

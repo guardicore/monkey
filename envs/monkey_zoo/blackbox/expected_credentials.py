@@ -1,4 +1,4 @@
-from common.credentials import Credentials, EmailAddress, NTHash, Password, SSHKeypair, Username
+from monkeytypes import Credentials, EmailAddress, NTHash, Password, SSHKeypair, Username
 
 # Depth 2a
 ssh_private_key = """-----BEGIN RSA PRIVATE KEY-----

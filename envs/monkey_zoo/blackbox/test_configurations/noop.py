@@ -1,5 +1,7 @@
 from typing import Tuple
 
+from monkeytypes import Credentials
+
 from common.agent_configuration import (
     AgentConfiguration,
     ExploitationConfiguration,
@@ -11,7 +13,6 @@ from common.agent_configuration import (
     ScanTargetConfiguration,
     TCPScanConfiguration,
 )
-from common.credentials import Credentials
 
 from . import TestConfiguration
 

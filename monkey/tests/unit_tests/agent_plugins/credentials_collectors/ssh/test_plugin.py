@@ -3,8 +3,8 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import Credentials, SSHKeypair, Username
 
-from common.credentials import Credentials, SSHKeypair, Username
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 

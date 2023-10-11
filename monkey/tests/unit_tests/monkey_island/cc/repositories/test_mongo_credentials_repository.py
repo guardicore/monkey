@@ -3,11 +3,11 @@ from unittest.mock import MagicMock
 
 import mongomock
 import pytest
+from monkeytypes import Credentials
 from pymongo import MongoClient
 from tests.data_for_tests.propagation_credentials import CREDENTIALS
 from tests.unit_tests.monkey_island.cc.repositories.mongo import get_all_collections_in_mongo
 
-from common.credentials import Credentials
 from monkey_island.cc.repositories import (
     ICredentialsRepository,
     MongoCredentialsRepository,

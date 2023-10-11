@@ -2,8 +2,8 @@ from http import HTTPStatus
 
 from flask import request
 from flask_security import auth_token_required, roles_accepted
+from monkeytypes import Credentials
 
-from common.credentials import Credentials
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import ICredentialsRepository
 from monkey_island.cc.services.authentication_service import AccountRole

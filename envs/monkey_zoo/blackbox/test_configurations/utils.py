@@ -1,7 +1,8 @@
 from typing import Dict, Mapping, Optional, Sequence, Tuple
 
+from monkeytypes import Credentials
+
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
-from common.credentials import Credentials
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 
 

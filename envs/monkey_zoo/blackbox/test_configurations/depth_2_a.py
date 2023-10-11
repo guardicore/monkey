@@ -1,8 +1,9 @@
 import dataclasses
 from typing import Dict, Mapping
 
+from monkeytypes import Credentials, NTHash, Password, Username
+
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
-from common.credentials import Credentials, NTHash, Password, Username
 
 from .noop import noop_test_configuration
 from .utils import (
