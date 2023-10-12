@@ -389,7 +389,7 @@ def test_island_api_client_get_agent_configuration_schema():
         "required": ["some_field", "other_field"],
         "additionalProperties": False,
     }
-    api_client = _build_client_with_json_response(AgentConfigurationSchema.schema())
+    api_client = _build_client_with_json_response(AgentConfigurationSchema.model_json_schema())
 
     actual_agent_configuration_schema = api_client.get_agent_configuration_schema()
     assert actual_agent_configuration_schema == expected_agent_configuration_schema
@@ -442,7 +442,7 @@ def test_island_api_client_get_credentials_for_propagation():
 
 
 def test_island_api_client_get_config():
-    agent_config_dict = AgentConfiguration(**AGENT_CONFIGURATION).dict(simplify=True)
+    agent_config_dict = AgentConfiguration(**AGENT_CONFIGURATION).model_dump(mode="json")
     api_client = _build_client_with_json_response(agent_config_dict)
 
     assert api_client.get_config() == AgentConfiguration(**AGENT_CONFIGURATION)
