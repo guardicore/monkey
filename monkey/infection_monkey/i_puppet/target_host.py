@@ -3,20 +3,14 @@ from collections import UserDict
 from ipaddress import IPv4Address
 from typing import Optional, Set
 
-from monkeytypes import (
-    MutableInfectionMonkeyBaseModel,
-    MutableInfectionMonkeyModelConfig,
-    NetworkPort,
-    OperatingSystem,
-    PortStatus,
-)
-from pydantic import Field, validate_arguments
+from monkeytypes import MutableInfectionMonkeyBaseModel, NetworkPort, OperatingSystem, PortStatus
+from pydantic import ConfigDict, Field, field_serializer, validate_call
 
 from . import PortScanData
 
 
 class PortScanDataDict(UserDict[NetworkPort, PortScanData]):
-    @validate_arguments
+    @validate_call
     def __setitem__(self, key: NetworkPort, value: PortScanData):
         super().__setitem__(key, value)
 
@@ -35,17 +29,17 @@ class PortScanDataDict(UserDict[NetworkPort, PortScanData]):
 
 
 class TargetHostPorts(MutableInfectionMonkeyBaseModel):
-    class Config(MutableInfectionMonkeyModelConfig):
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     tcp_ports: PortScanDataDict = Field(default_factory=PortScanDataDict)
     udp_ports: PortScanDataDict = Field(default_factory=PortScanDataDict)
 
+    @field_serializer("tcp_ports", "udp_ports", when_used="json")
+    def dump_ports(self, v):
+        return dict(v)
+
 
 class TargetHost(MutableInfectionMonkeyBaseModel):
-    class Config(MutableInfectionMonkeyModelConfig):
-        json_encoders = {PortScanDataDict: dict}
-
     ip: IPv4Address
     operating_system: Optional[OperatingSystem] = Field(default=None)
     icmp: bool = Field(default=False)
@@ -55,4 +49,4 @@ class TargetHost(MutableInfectionMonkeyBaseModel):
         return hash(self.ip)
 
     def __str__(self):
-        return pprint.pformat(self.dict(simplify=True))
+        return pprint.pformat(self.model_dump(mode="json"))
