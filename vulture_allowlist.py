@@ -69,7 +69,6 @@ BasicLock.release
 PluginName.strip_whitespace
 PluginName.regex
 
-SecretEncodingConfig.json_encoders
 
 LMHash.validate_hash_format
 NTHash.validate_hash_format
@@ -129,8 +128,8 @@ Deployment.APPIMAGE
 Deployment.DOCKER
 
 # Pydantic models
-Machine.Config.json_dumps
 Machine._socketaddress_from_string
+Machine.dump_network_services
 # Unused, but potentially useful
 Machine.island
 
