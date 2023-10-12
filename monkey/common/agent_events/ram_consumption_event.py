@@ -16,4 +16,4 @@ class RAMConsumptionEvent(AbstractAgentEvent):
     """
 
     utilization: Percent
-    bytes: Annotated[int, Field(ge=0, strict=True)]  # type: ignore [valid-type]
+    bytes: Annotated[int, Field(ge=0, strict=True)]
