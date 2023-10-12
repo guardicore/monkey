@@ -145,7 +145,9 @@ class ReportService:
                     {
                         "hostname": machine.hostname,
                         "ip_addresses": [str(iface.ip) for iface in machine.network_interfaces],
-                        "accessible_from_nodes": [m.dict(simplify=True) for m in accessible_from],
+                        "accessible_from_nodes": [
+                            m.model_dump(mode="json") for m in accessible_from
+                        ],
                         "domain_name": "",
                         # TODO add services
                         "services": [],

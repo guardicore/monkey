@@ -21,7 +21,7 @@ class APIEncoder(JSONEncoder):
         if issubclass(type(value), set):
             return list(value)
         if issubclass(type(value), BaseModel):
-            return value.dict(simplify=True)
+            return value.model_dump(mode="json")
         try:
             return JSONEncoder.default(self, value)
         except TypeError:

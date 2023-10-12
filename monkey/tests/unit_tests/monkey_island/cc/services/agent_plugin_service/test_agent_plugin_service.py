@@ -291,8 +291,10 @@ def test_agent_plugin_service__get_available_plugins(
     actual_index_1 = agent_plugin_service.get_available_plugins(force_refresh=False)
     actual_index_2 = agent_plugin_service.get_available_plugins(force_refresh=False)
 
-    assert actual_index_1.dict(simplify=True) == actual_index_2.dict(simplify=True)
-    assert actual_index_1.dict(simplify=True) == EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX
+    assert actual_index_1.model_dump(mode="json") == actual_index_2.model_dump(mode="json")
+    assert (
+        actual_index_1.model_dump(mode="json") == EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX
+    )
 
 
 def test_agent_plugin_service__get_available_plugins_refresh(
@@ -308,9 +310,11 @@ def test_agent_plugin_service__get_available_plugins_refresh(
     actual_index_2 = agent_plugin_service.get_available_plugins(force_refresh=False)
     actual_index_3 = agent_plugin_service.get_available_plugins(force_refresh=True)
 
-    assert actual_index_1.dict(simplify=True) == EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX
-    assert actual_index_1.dict(simplify=True) == actual_index_2.dict(simplify=True)
-    assert actual_index_3.dict(simplify=True) != actual_index_2.dict(simplify=True)
+    assert (
+        actual_index_1.model_dump(mode="json") == EXPECTED_SERIALIZED_AGENT_PLUGIN_REPOSITORY_INDEX
+    )
+    assert actual_index_1.model_dump(mode="json") == actual_index_2.model_dump(mode="json")
+    assert actual_index_3.model_dump(mode="json") != actual_index_2.model_dump(mode="json")
 
 
 def test_agent_plugin_service__get_available_plugins_exception(
