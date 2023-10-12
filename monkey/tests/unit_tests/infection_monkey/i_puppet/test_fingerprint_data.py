@@ -42,7 +42,7 @@ FINGERPRINT_DATA_OBJECT = FingerprintData(
 
 
 def test_fingerprint_data__serialization():
-    assert FINGERPRINT_DATA_OBJECT.dict(simplify=True) == FINGERPRINT_DATA_DICT_IN
+    assert FINGERPRINT_DATA_OBJECT.model_dump(mode="json") == FINGERPRINT_DATA_DICT_IN
 
 
 def test_fingerprint_data__deserialization():
@@ -58,7 +58,7 @@ def test_fingerprint_data__deserialization():
     ],
 )
 def test_discovered_service__serialization(discovered_service_object, discovered_service_dict):
-    assert discovered_service_object.dict(simplify=True) == discovered_service_dict
+    assert discovered_service_object.model_dump(mode="json") == discovered_service_dict
 
 
 @pytest.mark.parametrize(
