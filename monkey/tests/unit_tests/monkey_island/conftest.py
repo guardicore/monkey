@@ -64,7 +64,7 @@ def init_mock_datastore() -> MongoEngineUserDatastore:
     db = MongoEngine()
     db.disconnect(alias="default")
     db_name = insecure_generate_random_string(8)
-    db.connect(db_name, mongo_client_class=mongomock.MongoClient)
+    db.connect(db_name, mongo_client_class=mongomock.MongoClient, uuidRepresentation="pythonLegacy")
 
     return MongoEngineUserDatastore(db, User, Role)
 
