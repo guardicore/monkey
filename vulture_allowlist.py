@@ -42,6 +42,7 @@ from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFacto
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
+from infection_monkey.i_puppet import TargetHost
 from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFirewall
 from infection_monkey.utils import commands
 from monkey.common.types import Percent
@@ -51,6 +52,9 @@ from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEvent
 from monkey_island.cc.services.agent_plugin_service import AgentPluginService
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
+
+TargetHost.model_config
+TargetHost.dump_ports
 
 # Pydantic configurations are not picked up
 ScanTargetConfiguration.blocked_ips_valid
