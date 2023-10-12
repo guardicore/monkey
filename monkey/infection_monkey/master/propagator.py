@@ -104,9 +104,11 @@ class Propagator:
 
             modified_options = fingerprinter.options.copy()
             modified_options["http_ports"] = list(http_ports)
-            modified_fingerprinters[i] = fingerprinter.copy(update={"options": modified_options})
+            modified_fingerprinters[i] = fingerprinter.model_copy(
+                update={"options": modified_options}
+            )
 
-        return network_scan.copy(update={"fingerprinters": modified_fingerprinters})
+        return network_scan.model_copy(update={"fingerprinters": modified_fingerprinters})
 
     def _scan_network(self, scan_config: NetworkScanConfiguration, stop: Event):
         logger.info("Starting network scan")
