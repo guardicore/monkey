@@ -1,7 +1,8 @@
 from typing import Dict, Tuple
 
-from monkeytypes.base_models import MutableInfectionMonkeyBaseModel
-from pydantic import Field, PositiveFloat, conint, validator
+from monkeytypes import MutableInfectionMonkeyBaseModel
+from pydantic import BeforeValidator, Field, PositiveFloat
+from typing_extensions import Annotated
 
 from common.types import NetworkPort
 
@@ -34,6 +35,20 @@ class PluginConfiguration(MutableInfectionMonkeyBaseModel):
     options: Dict
 
 
+def _subnet_validator(subnet_range: str):
+    validate_subnet_range(subnet_range)
+    return subnet_range
+
+
+def _ip_validator(ip: str):
+    validate_ip(ip)
+    return ip
+
+
+Subnet = Annotated[str, BeforeValidator(_subnet_validator)]
+BlockedIP = Annotated[str, BeforeValidator(_ip_validator)]
+
+
 class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
     """
     Configuration of network targets to scan and exploit
@@ -57,7 +72,7 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
         "interface, this setting could cause scanning and exploitation of systems outside your "
         "organization.",
     )
-    subnets: Tuple[str, ...] = Field(
+    subnets: Tuple[Subnet, ...] = Field(
         title="Scan target list",
         description="List of targets the Monkey will try to scan. Targets can be "
         "IPs, subnets or hosts. "
@@ -69,10 +84,10 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
         '\tTarget a specific host: "printer.example"',
         default=[],
     )
-    blocked_ips: Tuple[str, ...] = Field(
+    blocked_ips: Tuple[BlockedIP, ...] = Field(
         title="Blocked IPs", description="List of IPs that the monkey will not scan.", default=[]
     )
-    inaccessible_subnets: Tuple[str, ...] = Field(
+    inaccessible_subnets: Tuple[Subnet, ...] = Field(
         title="Network segmentation testing",
         description="Test for network segmentation by providing a list of network segments "
         "that should not be accessible to each other.\n\n "
@@ -93,21 +108,6 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
         "ping sweep.",
         default=[],
     )
-
-    @validator("subnets", each_item=True)
-    def subnets_valid(cls, subnet_range):
-        validate_subnet_range(subnet_range)
-        return subnet_range
-
-    @validator("blocked_ips", each_item=True)
-    def blocked_ips_valid(cls, ip):
-        validate_ip(ip)
-        return ip
-
-    @validator("inaccessible_subnets", each_item=True)
-    def inaccessible_subnets_valid(cls, subnet_range):
-        validate_subnet_range(subnet_range)
-        return subnet_range
 
 
 class ICMPScanConfiguration(MutableInfectionMonkeyBaseModel):
@@ -206,7 +206,7 @@ class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
         :param exploitation: Configuration for exploitation
     """
 
-    maximum_depth: conint(ge=0) = Field(  # type: ignore[valid-type]
+    maximum_depth: Annotated[int, Field(ge=0)] = Field(  # type: ignore[valid-type]
         title="Maximum scan depth",
         description="Amount of hops allowed for the monkey to spread from the "
         "Island server. \n \u26A0"
