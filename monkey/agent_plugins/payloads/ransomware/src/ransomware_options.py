@@ -2,7 +2,8 @@ import re
 from typing import Optional
 
 from monkeytypes import InfectionMonkeyBaseModel
-from pydantic import ConstrainedStr, Field
+from pydantic import Field, StringConstraints
+from typing_extensions import Annotated
 
 valid_file_extension_regex = re.compile(r"^(\.[A-Za-z0-9_]+)?$")
 
@@ -23,7 +24,7 @@ valid_ransomware_path_linux_regex = re.compile(
 )
 
 _windows_absolute_path_regex = re.compile("^([A-Za-z]:(\\\\|/))")  # path starts like `C:\` OR `C:/`
-_windows_env_var_non_numeric_regex = re.compile(r"[A-Za-z#$'()*+,\-\.?@[\]_`\{\}~ ]")
+_windows_env_var_non_numeric_regex = re.compile(r"[A-Za-z#$'()*+,\-\.?@[\]_`\{\}~ ]]")
 _windows_path_starts_with_env_variable_regex = re.compile(
     rf"^%({_windows_env_var_non_numeric_regex.pattern}+({_windows_env_var_non_numeric_regex.pattern}|\d)*)%"  # noqa: E501
 )  # path starts like `$` OR `%abc%`
@@ -39,17 +40,13 @@ valid_ransomware_path_windows_regex = re.compile(
     )
 )
 
-
-class FileExtension(ConstrainedStr):
-    regex = valid_file_extension_regex
-
-
-class LinuxDirectory(ConstrainedStr):
-    regex = valid_ransomware_path_linux_regex
-
-
-class WindowsDirectory(ConstrainedStr):
-    regex = valid_ransomware_path_windows_regex
+FileExtension = Annotated[str, StringConstraints(pattern=valid_file_extension_regex.pattern)]
+LinuxDirectory = Annotated[
+    str, StringConstraints(pattern=valid_ransomware_path_linux_regex.pattern)
+]
+WindowsDirectory = Annotated[
+    str, StringConstraints(pattern=valid_ransomware_path_windows_regex.pattern)
+]
 
 
 class RansomwareOptions(InfectionMonkeyBaseModel):
