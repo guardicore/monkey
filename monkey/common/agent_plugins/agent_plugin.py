@@ -1,13 +1,8 @@
 from base64 import b64encode
-from typing import Any, Callable, Dict, Mapping, Tuple, Type
+from typing import Any, Dict, Tuple
 
-from monkeytypes import (
-    AgentPluginManifest,
-    B64Bytes,
-    InfectionMonkeyBaseModel,
-    InfectionMonkeyModelConfig,
-    OperatingSystem,
-)
+from monkeytypes import AgentPluginManifest, B64Bytes, InfectionMonkeyBaseModel, OperatingSystem
+from pydantic import field_serializer
 
 
 class AgentPlugin(InfectionMonkeyBaseModel):
@@ -28,11 +23,6 @@ class AgentPlugin(InfectionMonkeyBaseModel):
     source_archive: B64Bytes
     supported_operating_systems: Tuple[OperatingSystem, ...]
 
-    class Config(InfectionMonkeyModelConfig):
-        # b64encode() returns bytes, so we call decode() to transform bytes to str
-        # Pydantic is not able to inherit AgentPluginManifest json encoders
-        # so we update the current encoders
-        json_encoders: Mapping[Type, Callable[[Any], Any]] = {
-            bytes: lambda byte_field: b64encode(byte_field).decode(),
-            **AgentPluginManifest.Config.json_encoders,
-        }
+    @field_serializer("source_archive", when_used="json")
+    def dump_source_archive(self, v):
+        return b64encode(v).decode()
