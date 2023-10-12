@@ -63,7 +63,7 @@ def target_machine() -> Machine:
 
 SOURCE_NODE = Node(
     machine_id=SOURCE_MACHINE_ID,
-    connections=[],
+    connections={},
     tcp_connections={
         44: (SocketAddress(ip="1.1.1.1", port=40), SocketAddress(ip="2.2.2.2", port=50))
     },
