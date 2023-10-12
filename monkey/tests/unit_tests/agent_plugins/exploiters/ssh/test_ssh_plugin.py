@@ -99,7 +99,7 @@ def test_run__attempts_exploit_if_port_status_unknown(
     mock_ssh_exploiter: BruteForceExploiter,
     target_host: TargetHost,
 ):
-    host = target_host
+    host = target_host.model_copy(deep=True)
     host.ports_status.tcp_ports = PortScanDataDict({})
     result = plugin.run(
         host=host,
@@ -118,7 +118,7 @@ def test_run__attempts_exploit_if_port_status_open(
     mock_ssh_exploiter: BruteForceExploiter,
     target_host: TargetHost,
 ):
-    host = target_host
+    host = target_host.model_copy(deep=True)
     host.ports_status.tcp_ports = PortScanDataDict(
         {SSH_PORTS[0]: PortScanData(port=SSH_PORTS[0], status=PortStatus.OPEN)}
     )
@@ -139,7 +139,7 @@ def test_run__skips_exploit_if_port_status_closed(
     mock_ssh_exploiter: BruteForceExploiter,
     target_host: TargetHost,
 ):
-    host = target_host
+    host = target_host.model_copy(deep=True)
     host.ports_status.tcp_ports = PortScanDataDict(
         {
             SSH_PORTS[0]: PortScanData(port=SSH_PORTS[0], status=PortStatus.CLOSED),
