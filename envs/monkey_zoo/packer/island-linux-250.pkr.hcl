@@ -1,7 +1,7 @@
 source "googlecompute" "island-linux-250" {
-    image_name = "island-linux-250"
+    image_name = "island-linux-250-test"
     project_id = "${var.project_id}"
-    source_image = "ubuntu-1804-bionic-v20230418"
+    source_image = "ubuntu-2004-focal-v20230907"
     zone = "${var.zone}"
     disk_size = 10
     machine_type = "${var.machine_type}"

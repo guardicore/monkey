@@ -4,6 +4,9 @@
   remote_user: root
 
   tasks:
+    - import_tasks: tasks/linux_setup_docker.yml
+    - import_tasks: tasks/linux_install_gcloud.yml
+    - import_tasks: tasks/linux_install_python.yml
     - name: Enable Password Authentication
       lineinfile:
         dest: /etc/ssh/sshd_config
@@ -15,6 +18,3 @@
       apt:
         name: sshguard
         state: absent
-    - import_tasks: tasks/linux_install_python.yml
-    - import_tasks: tasks/linux_setup_docker.yml
-    - import_tasks: tasks/linux_install_gcloud.yml
