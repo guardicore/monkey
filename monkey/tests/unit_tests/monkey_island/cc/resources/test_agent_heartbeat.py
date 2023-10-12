@@ -30,7 +30,7 @@ def test_agent_heartbeat_post(flask_client, mock_island_event_queue):
     heartbeat = AgentHeartbeat(timestamp=TIMESTAMP)
     resp = flask_client.post(
         f"/api/agent/{AGENT_ID}/heartbeat",
-        json=heartbeat.dict(simplify=True),
+        json=heartbeat.model_dump(mode="json"),
         follow_redirects=True,
     )
 
