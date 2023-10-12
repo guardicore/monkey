@@ -24,7 +24,7 @@ valid_ransomware_path_linux_regex = re.compile(
 )
 
 _windows_absolute_path_regex = re.compile("^([A-Za-z]:(\\\\|/))")  # path starts like `C:\` OR `C:/`
-_windows_env_var_non_numeric_regex = re.compile(r"[A-Za-z#$'()*+,\-\.?@[\]_`\{\}~ ]]")
+_windows_env_var_non_numeric_regex = re.compile(r"[A-Za-z#$'()*+,\-\.?@\[\]_`\{\}~ ]")
 _windows_path_starts_with_env_variable_regex = re.compile(
     rf"^%({_windows_env_var_non_numeric_regex.pattern}+({_windows_env_var_non_numeric_regex.pattern}|\d)*)%"  # noqa: E501
 )  # path starts like `$` OR `%abc%`
