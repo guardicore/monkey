@@ -21,7 +21,7 @@ def test_constructor(url: str):
     assert event.target is None
     assert len(event.tags) == 0
     assert event.method == METHOD
-    assert event.url == url
+    assert str(event.url) == url
 
 
 @pytest.mark.parametrize(
