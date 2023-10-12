@@ -45,18 +45,13 @@ def test_from_dict():
 def test_to_dict():
     ping_scan_event = PingScanEvent(**PING_OBJECT_DICT)
 
-    assert ping_scan_event.dict(simplify=True) == PING_SIMPLE_DICT
+    assert ping_scan_event.model_dump(mode="json") == PING_SIMPLE_DICT
 
 
 @pytest.mark.parametrize(
     "key, value",
     [
-        ("source", "not-an-uuid"),
         ("source", -1),
-        ("timestamp", "not-a-timestamp"),
-        ("response_received", "not-a-bool"),
-        ("os", 2.1),
-        ("os", "bsd"),
     ],
 )
 def test_construct_invalid_field__type_error(key, value):
@@ -70,7 +65,12 @@ def test_construct_invalid_field__type_error(key, value):
 @pytest.mark.parametrize(
     "key, value",
     [
+        ("source", "not-an-uuid"),
+        ("timestamp", "not-a-timestamp"),
+        ("response_received", "not-a-bool"),
         ("target", "not-a-IPv4Address"),
+        ("os", 2.1),
+        ("os", "bsd"),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):
@@ -98,6 +98,6 @@ def test_construct__extra_fields_forbidden():
 
 
 def test_ping_scan_event_deserialization_dict():
-    serialized_event = PING_EVENT.dict()
+    serialized_event = PING_EVENT.model_dump()
     deserialized_event = PingScanEvent(**serialized_event)
     assert deserialized_event == PING_EVENT
