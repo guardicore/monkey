@@ -2,7 +2,7 @@ from pathlib import PurePath, PurePosixPath, PureWindowsPath
 from typing import Any, Dict, Mapping, Tuple
 
 from monkeytypes import OperatingSystem
-from pydantic import Field, validator
+from pydantic import ConfigDict, Field, field_serializer, field_validator
 
 from . import AbstractAgentEvent
 
@@ -30,15 +30,18 @@ class FileEncryptionEvent(AbstractAgentEvent):
         :param error_message: Message if an error occurs during file encryption
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     file_path: PurePath
     success: bool
     error_message: str = Field(default="")
 
-    class Config:
-        arbitrary_types_allowed = True
-        json_encoders = {PurePath: _serialize_pure_path}
+    @field_serializer("file_path", when_used="json")
+    def dump_file_path(self, v):
+        return _serialize_pure_path(v)
 
-    @validator("file_path", pre=True)
+    @field_validator("file_path", mode="before")
+    @classmethod
     def _file_path_to_pure_path(cls, v: Any) -> PurePath:
         if isinstance(v, PurePath):
             return v
