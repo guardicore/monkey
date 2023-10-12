@@ -59,7 +59,8 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
             agent_configuration = self._island_api_client.get_config()
             agent_configuration_schema = self._island_api_client.get_agent_configuration_schema()
             validate(
-                instance=agent_configuration.dict(simplify=True), schema=agent_configuration_schema
+                instance=agent_configuration.model_dump(mode="json"),
+                schema=agent_configuration_schema,
             )
             return agent_configuration
         except Exception as err:
