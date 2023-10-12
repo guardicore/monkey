@@ -73,7 +73,8 @@ NTHash.validate_hash_format
 NetworkPort.ge
 NetworkPort.le
 
-FileEncryptionEvent.arbitrary_types_allowed
+FileEncryptionEvent.model_config
+FileEncryptionEvent.dump_file_path
 FileEncryptionEvent._file_path_to_pure_path
 
 AbstractAgentEvent.smart_union
@@ -145,6 +146,7 @@ Lock.exc_tb
 Lock.blocking
 Lock.locked
 
+AgentPlugin.dump_source_archive
 AgentPlugin.supported_operating_systems
 
 BrowserCredentialsDatabasePath.database_file_path
@@ -190,7 +192,11 @@ request_cache
 # Remove after the plugin interface is in place
 AgentPluginMetadata.resource_path
 AgentPluginMetadata._str_to_pure_posix_path
+AgentPluginMetadata.model_config
+AgentPluginMetadata.dump_string
 AgentPluginRepositoryIndex
+AgentPluginRepositoryIndex.model_config
+AgentPluginRepositoryIndex.dump_compatible_infection_monkey_version
 AgentPluginRepositoryIndex.compatible_infection_monkey_version
 AgentPluginRepositoryIndex._infection_monkey_version_parser
 AgentPluginRepositoryIndex._sort_plugins_by_version
