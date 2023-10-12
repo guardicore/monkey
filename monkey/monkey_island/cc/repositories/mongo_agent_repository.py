@@ -21,7 +21,7 @@ class MongoAgentRepository(IAgentRepository):
     def upsert_agent(self, agent: Agent):
         try:
             result = self._agents_collection.replace_one(
-                {"id": str(agent.id)}, agent.dict(simplify=True), upsert=True
+                {"id": str(agent.id)}, agent.model_dump(mode="json"), upsert=True
             )
         except Exception as err:
             raise StorageError(f'Error updating agent with ID "{agent.id}": {err}')
