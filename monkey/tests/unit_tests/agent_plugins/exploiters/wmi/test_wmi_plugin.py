@@ -21,9 +21,7 @@ from infection_monkey.propagation_credentials_repository import IPropagationCred
 AGENT_ID = UUID("5c145d4e-ec61-44f7-998e-17477112f50f")
 BAD_WMI_OPTIONS_DICT = {"blah": "blah"}
 TARGET_IP = IPv4Address("1.1.1.1")
-OPEN_WMI_PORTS = TargetHostPorts(
-    tcp_ports=PortScanDataDict({p: PortScanData(port=p, status=PortStatus.OPEN) for p in WMI_PORTS})
-)
+
 OTHER_PORT = 9999
 EMPTY_TARGET_HOST_PORTS = TargetHostPorts()
 SERVERS = ["10.10.10.10"]
@@ -31,11 +29,20 @@ EXPLOITER_RESULT = ExploiterResult(True, False, error_message="Test error")
 
 
 @pytest.fixture
-def target_host() -> TargetHost:
+def open_wmi_ports():
+    return TargetHostPorts(
+        tcp_ports=PortScanDataDict(
+            {p: PortScanData(port=p, status=PortStatus.OPEN) for p in WMI_PORTS}
+        )
+    )
+
+
+@pytest.fixture
+def target_host(open_wmi_ports) -> TargetHost:
     return TargetHost(
         ip=TARGET_IP,
         operating_system=OperatingSystem.WINDOWS,
-        ports_status=OPEN_WMI_PORTS,
+        ports_status=open_wmi_ports,
     )
 
 
@@ -108,7 +115,7 @@ def test_run__attempts_exploit_if_port_status_unknown(
     target_host: TargetHost,
     tcp_port_status: PortScanDataDict,
 ):
-    host = target_host.model_copy(deep=True)
+    host = target_host
     host.ports_status.tcp_ports = tcp_port_status
     result = plugin.run(
         host=host,
@@ -127,7 +134,7 @@ def test_run__attempts_exploit_if_port_status_open(
     mock_wmi_exploiter: BruteForceExploiter,
     target_host: TargetHost,
 ):
-    host = target_host.model_copy(deep=True)
+    host = target_host
     host.ports_status.tcp_ports = PortScanDataDict(
         {WMI_PORTS[0]: PortScanData(port=WMI_PORTS[0], status=PortStatus.OPEN)}
     )
@@ -148,7 +155,7 @@ def test_run__skips_exploit_if_port_status_closed(
     mock_wmi_exploiter: BruteForceExploiter,
     target_host: TargetHost,
 ):
-    host = target_host.model_copy(deep=True)
+    host = target_host
     host.ports_status.tcp_ports = PortScanDataDict(
         {
             WMI_PORTS[0]: PortScanData(port=WMI_PORTS[0], status=PortStatus.CLOSED),
