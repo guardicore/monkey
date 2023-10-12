@@ -4,7 +4,7 @@ from types import MappingProxyType
 from typing import MutableSequence
 
 import pytest
-from monkeytypes import OperatingSystem
+from monkeytypes import IllegalMutationError, OperatingSystem
 
 from common.types import NetworkService, SocketAddress
 from monkey_island.cc.models import Machine
@@ -58,25 +58,18 @@ def test_from_dict():
 def test_to_dict():
     m = Machine(**MACHINE_OBJECT_DICT)
 
-    assert m.dict(simplify=True) == dict(MACHINE_SIMPLE_DICT)
+    assert m.model_dump(mode="json") == dict(MACHINE_SIMPLE_DICT)
 
 
 @pytest.mark.parametrize(
     "key, value",
     [
-        ("id", "not-an-int"),
-        ("hardware_id", "not-an-int"),
-        ("island", "not-a-bool"),
         ("network_interfaces", "not-a-list"),
-        ("operating_system", 2.1),
-        ("operating_system", "bsd"),
         ("operating_system_version", {}),
         ("hostname", []),
         ("network_services", 42),
         ("network_services", [SOCKET_ADDR_1]),
         ("network_services", None),
-        ("network_services", {SOCKET_ADDR_1: "Hello"}),
-        ("network_services", {SocketAddress.from_string(SOCKET_ADDR_1): "Hello"}),
     ],
 )
 def test_construct_invalid_field__type_error(key, value):
@@ -91,10 +84,17 @@ def test_construct_invalid_field__type_error(key, value):
     "key, value",
     [
         ("id", -1),
+        ("id", "not-an-int"),
+        ("island", "not-a-bool"),
         ("hardware_id", 0),
+        ("hardware_id", "not-an-int"),
+        ("operating_system", 2.1),
+        ("operating_system", "bsd"),
         ("network_interfaces", [1, "stuff", 3]),
         ("network_interfaces", ["10.0.0.1/16", 2, []]),
         ("network_services", {"192.168.": NetworkService.UNKNOWN.value}),
+        ("network_services", {SOCKET_ADDR_1: "Hello"}),
+        ("network_services", {SocketAddress.from_string(SOCKET_ADDR_1): "Hello"}),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):
@@ -124,7 +124,7 @@ def test_construct__extra_fields_forbidden():
 
 def test_id_immutable():
     m = Machine(**MACHINE_OBJECT_DICT)
-    with pytest.raises(TypeError):
+    with pytest.raises(IllegalMutationError):
         m.id = 2
 
 
@@ -153,7 +153,7 @@ def test_hardware_id_default():
 
 def test_island_immutable():
     m = Machine(**MACHINE_OBJECT_DICT)
-    with pytest.raises(TypeError):
+    with pytest.raises(IllegalMutationError):
         m.island = True
 
 
