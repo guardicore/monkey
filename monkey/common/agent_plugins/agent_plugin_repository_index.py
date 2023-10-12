@@ -1,12 +1,8 @@
 import time
 from typing import Any, Dict, List, Literal, Union
 
-from monkeytypes import (
-    AgentPluginType,
-    MutableInfectionMonkeyBaseModel,
-    MutableInfectionMonkeyModelConfig,
-)
-from pydantic import Field, validator
+from monkeytypes import AgentPluginType, MutableInfectionMonkeyBaseModel
+from pydantic import ConfigDict, Field, field_serializer, field_validator
 from semver import VersionInfo
 
 from . import AgentPluginMetadata, PluginName
@@ -26,6 +22,8 @@ class AgentPluginRepositoryIndex(MutableInfectionMonkeyBaseModel):
         :param plugins: Plugins' metadata, segregated by type and sorted by version
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True, use_enum_values=True)
+
     timestamp: float = Field(default_factory=time.time)
     # We can't simply use `DEVELOPMENT` here because it throws `pydantic.errors.ConfigError`.
     # This workaround requires us to ignore a mypy error.
@@ -34,15 +32,12 @@ class AgentPluginRepositoryIndex(MutableInfectionMonkeyBaseModel):
     ]
     plugins: Dict[AgentPluginType, Dict[PluginName, List[AgentPluginMetadata]]]
 
-    class Config(MutableInfectionMonkeyModelConfig):
-        arbitrary_types_allowed = True
-        use_enum_values = True
-        json_encoders = {
-            **AgentPluginMetadata.Config.json_encoders,
-            VersionInfo: lambda v: str(v),
-        }
+    @field_serializer("compatible_infection_monkey_version", when_used="json")
+    def dump_compatible_infection_monkey_version(self, v):
+        return str(v)
 
-    @validator("plugins")
+    @field_validator("plugins")
+    @classmethod
     def _sort_plugins_by_version(cls, plugins):
         # if a plugin has multiple versions, this sorts them in ascending order
         for plugin_type in plugins:
@@ -52,7 +47,8 @@ class AgentPluginRepositoryIndex(MutableInfectionMonkeyBaseModel):
 
         return plugins
 
-    @validator("compatible_infection_monkey_version", pre=True)
+    @field_validator("compatible_infection_monkey_version", mode="before")
+    @classmethod
     def _infection_monkey_version_parser(
         cls, value: Union[VersionInfo, str, Dict[str, Any]]
     ) -> Union[VersionInfo, Literal[f"{DEVELOPMENT}"]]:  # type: ignore[valid-type]
@@ -67,6 +63,7 @@ class AgentPluginRepositoryIndex(MutableInfectionMonkeyBaseModel):
 
         raise TypeError(f'Expected "{DEVELOPMENT}" or a valid semantic version, got {type(value)}')
 
-    @validator("plugins")
+    @field_validator("plugins")
+    @classmethod
     def _convert_str_type_to_enum(cls, plugins):
         return {AgentPluginType(t): plugins for t, plugins in plugins.items()}
