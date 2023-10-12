@@ -21,6 +21,6 @@ class FingerprintingEvent(AbstractAgentEvent):
     """
 
     target: IPv4Address
-    os: Optional[OperatingSystem]
-    os_version: Optional[str]
+    os: Optional[OperatingSystem] = Field(default=None)
+    os_version: Optional[str] = Field(default=None)
     discovered_services: Tuple[DiscoveredService, ...] = Field(default_factory=tuple)
