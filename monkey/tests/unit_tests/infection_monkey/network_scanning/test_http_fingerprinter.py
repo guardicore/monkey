@@ -9,7 +9,7 @@ from common.types import DiscoveredService, NetworkPort, NetworkProtocol, Networ
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 
-OPTIONS = {"http_ports": [80, 444, 1080, 8080, 9200]}
+OPTIONS = {"http_ports": [81, 444, 1080, 8080, 9200]}
 
 PYTHON_SERVER_HEADER = {"Server": "SimpleHTTP/0.6 Python/3.6.9"}
 APACHE_SERVER_HEADER = {"Server": "Apache/Server/Header"}
@@ -47,8 +47,8 @@ def http_fingerprinter(mock_agent_event_publisher):
 
 def test_no_http_ports_open(mock_get_http_headers, mock_agent_event_publisher, http_fingerprinter):
     port_scan_data = {
-        80: PortScanData(
-            port=80, status=PortStatus.CLOSED, banner="", service=NetworkService.UNKNOWN  # HTTP
+        81: PortScanData(
+            port=81, status=PortStatus.CLOSED, banner="", service=NetworkService.UNKNOWN  # HTTP
         ),
         123: PortScanData(
             port=123, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN
@@ -70,8 +70,8 @@ def test_fingerprint_only_port_444(
     mock_get_http_headers, mock_agent_event_publisher, http_fingerprinter
 ):
     port_scan_data = {
-        80: PortScanData(
-            port=80, status=PortStatus.CLOSED, banner="", service=NetworkService.UNKNOWN  # HTTP
+        81: PortScanData(
+            port=81, status=PortStatus.CLOSED, banner="", service=NetworkService.UNKNOWN  # HTTP
         ),
         123: PortScanData(
             port=123, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN
@@ -115,8 +115,8 @@ def test_open_port_no_http_server(
     mock_get_http_headers, mock_agent_event_publisher, http_fingerprinter
 ):
     port_scan_data = {
-        80: PortScanData(
-            port=80, status=PortStatus.CLOSED, banner="", service=NetworkService.UNKNOWN  # HTTP
+        81: PortScanData(
+            port=81, status=PortStatus.CLOSED, banner="", service=NetworkService.UNKNOWN  # HTTP
         ),
         123: PortScanData(
             port=123, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN
@@ -152,8 +152,8 @@ def test_open_port_no_http_server(
 
 def test_multiple_open_ports(mock_get_http_headers, mock_agent_event_publisher, http_fingerprinter):
     port_scan_data = {
-        80: PortScanData(
-            port=80, status=PortStatus.CLOSED, banner="", service=NetworkService.UNKNOWN  # HTTP
+        81: PortScanData(
+            port=81, status=PortStatus.CLOSED, banner="", service=NetworkService.UNKNOWN  # HTTP
         ),
         444: PortScanData(
             port=444, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN  # HTTPS
