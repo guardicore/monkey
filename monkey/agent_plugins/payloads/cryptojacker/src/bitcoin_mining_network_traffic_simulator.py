@@ -10,7 +10,6 @@ import requests
 from requests.exceptions import ConnectionError, ConnectTimeout, ReadTimeout
 
 from common.agent_events import HTTPRequestEvent
-from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID, SocketAddress
 from common.utils.code_utils import PeriodicCaller
@@ -20,7 +19,7 @@ from .consts import CRYPTOJACKER_PAYLOAD_TAG
 # Based on some very unofficial sources, it seems like 60 seconds is a good interval.
 # https://bitcointalk.org/index.php?topic=1091724.0
 REQUEST_INTERVAL = 60  # seconds
-
+BITCOIN_MINING_REQUEST_TIMEOUT = 5  # seconds
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +75,7 @@ class BitcoinMiningNetworkTrafficSimulator:
                 url,
                 data=body,
                 headers=self._headers,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
+                timeout=BITCOIN_MINING_REQUEST_TIMEOUT,
             )
         except ConnectTimeout as err:
             logger.warning(f"{failure_warning_msg}: {err}")
