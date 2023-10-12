@@ -4,6 +4,7 @@ from typing import MutableSequence, Sequence
 from uuid import UUID
 
 import pytest
+from monkeytypes import IllegalMutationError
 
 from common import AgentRegistrationData
 from common.types import SocketAddress
@@ -26,9 +27,9 @@ AGENT_REGISTRATION_MESSAGE_OBJECT_DICT = {
 AGENT_REGISTRATION_MESSAGE_SIMPLE_DICT = {
     "id": str(AGENT_ID),
     "machine_hardware_id": 2,
-    "start_time": "2022-08-18T18:46:48+00:00",
+    "start_time": "2022-08-18T18:46:48Z",
     "parent_id": str(PARENT_ID),
-    "cc_server": SOCKET_ADDRESS.dict(simplify=True),
+    "cc_server": SOCKET_ADDRESS.model_dump(mode="json"),
     "network_interfaces": ["10.0.0.1/24", "192.168.5.32/16"],
     "sha256": AGENT_SHA256,
 }
@@ -38,7 +39,7 @@ def test_to_dict():
     a = AgentRegistrationData(**AGENT_REGISTRATION_MESSAGE_OBJECT_DICT)
     simple_dict = AGENT_REGISTRATION_MESSAGE_SIMPLE_DICT.copy()
 
-    assert a.dict(simplify=True) == simple_dict
+    assert a.model_dump(mode="json") == simple_dict
 
 
 def test_from_serialized():
@@ -52,10 +53,10 @@ def test_from_serialized():
     "key, value",
     [
         ("id", 1),
-        ("machine_hardware_id", "not-an-int"),
         ("start_time", None),
         ("parent_id", 2.1),
         ("cc_server", [1]),
+        ("cc_server", []),
         ("network_interfaces", "not-a-list"),
         ("sha256", []),
     ],
@@ -72,9 +73,9 @@ def test_construct_invalid_field__type_error(key, value):
     "key, value",
     [
         ("machine_hardware_id", -1),
+        ("machine_hardware_id", "not-an-int"),
         ("start_time", "not-a-date-time"),
         ("network_interfaces", [1, "stuff", 3]),
-        ("cc_server", []),
         ("sha256", "not-a-hex-string-although-it-is-of-the-correct-length-for-sha256"),
         ("sha256", "12345678123456781234567812345678123456781234567812345678123456780"),
         ("sha256", "12345678"),
@@ -103,7 +104,7 @@ def test_construct_invalid_field__value_error(key, value):
 def test_fields_immutable(key, value):
     a = AgentRegistrationData(**AGENT_REGISTRATION_MESSAGE_OBJECT_DICT)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(IllegalMutationError):
         setattr(a, key, value)
 
 

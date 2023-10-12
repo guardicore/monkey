@@ -24,4 +24,4 @@ class AgentSignals(AbstractResource):
     @roles_accepted(AccountRole.AGENT.name)
     def get(self, agent_id: AgentID):
         agent_signals = self._agent_signals_service.get_signals(agent_id)
-        return agent_signals.dict(simplify=True), HTTPStatus.OK
+        return agent_signals.model_dump(mode="json"), HTTPStatus.OK

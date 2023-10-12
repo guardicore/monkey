@@ -33,7 +33,8 @@ class AgentConfigurationValidationDecorator(IAgentConfigurationRepository):
             agent_configuration_schema = self._agent_configuration_schema_compiler.get_schema()
             agent_configuration = self._agent_configuration_repository.get_configuration()
             validate(
-                instance=agent_configuration.dict(simplify=True), schema=agent_configuration_schema
+                instance=agent_configuration.model_dump(mode="json"),
+                schema=agent_configuration_schema,
             )
             return agent_configuration
         except Exception as err:
@@ -43,7 +44,7 @@ class AgentConfigurationValidationDecorator(IAgentConfigurationRepository):
 
     def update_configuration(self, agent_configuration: AgentConfiguration):
         try:
-            agent_configuration_dict = agent_configuration.dict(simplify=True)
+            agent_configuration_dict = agent_configuration.model_dump(mode="json")
             agent_configuration_schema = self._agent_configuration_schema_compiler.get_schema()
 
             validate(instance=agent_configuration_dict, schema=agent_configuration_schema)

@@ -23,7 +23,7 @@ class AgentConfiguration(AbstractResource):
     @roles_accepted(AccountRole.AGENT.name, AccountRole.ISLAND_INTERFACE.name)
     def get(self):
         configuration = self._agent_configuration_service.get_configuration()
-        configuration_dict = configuration.dict(simplify=True)
+        configuration_dict = configuration.model_dump(mode="json")
         return make_response(configuration_dict, HTTPStatus.OK)
 
     @auth_token_required

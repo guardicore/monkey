@@ -55,7 +55,7 @@ def binary_collections(mongo_client) -> Dict[OperatingSystem, gridfs.GridFS]:
     return collections
 
 
-plugin_manifest_dict = EXPLOITER_MANIFEST_1.dict(simplify=True)
+plugin_manifest_dict = EXPLOITER_MANIFEST_1.model_dump(mode="json")
 plugin_schema_dict = FAKE_PLUGIN_CONFIG_SCHEMA_1
 
 basic_plugin_dict = {
@@ -152,9 +152,9 @@ def test_get_plugin__RetrievalError_if_unsupported_os(
 def test_get_all_plugin_manifests(plugin_file, insert_plugin, agent_plugin_repository):
     dict1 = copy.deepcopy(basic_plugin_dict)
     dict2 = copy.deepcopy(basic_plugin_dict)
-    dict2["plugin_manifest"] = EXPLOITER_MANIFEST_2.dict(simplify=True)
+    dict2["plugin_manifest"] = EXPLOITER_MANIFEST_2.model_dump(mode="json")
     dict3 = copy.deepcopy(basic_plugin_dict)
-    dict3["plugin_manifest"] = CREDENTIALS_COLLECTOR_MANIFEST_1.dict(simplify=True)
+    dict3["plugin_manifest"] = CREDENTIALS_COLLECTOR_MANIFEST_1.model_dump(mode="json")
 
     with open(plugin_file, "rb") as file:
         insert_plugin(file, OperatingSystem.WINDOWS, dict1)
@@ -198,7 +198,7 @@ def test_get_all_plugin_manifests__retrieval_error_if_no_connection(
 def test_get_all_plugin_configuration_schemas(plugin_file, insert_plugin, agent_plugin_repository):
     dict1 = copy.deepcopy(basic_plugin_dict)
     dict2 = copy.deepcopy(basic_plugin_dict)
-    dict2["plugin_manifest"] = EXPLOITER_MANIFEST_2.dict(simplify=True)
+    dict2["plugin_manifest"] = EXPLOITER_MANIFEST_2.model_dump(mode="json")
 
     with open(plugin_file, "rb") as file:
         insert_plugin(file, OperatingSystem.WINDOWS, dict1)

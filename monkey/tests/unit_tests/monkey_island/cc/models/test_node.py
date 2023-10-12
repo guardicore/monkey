@@ -1,6 +1,7 @@
 from typing import MutableSequence
 
 import pytest
+from monkeytypes import IllegalMutationError
 
 from common.types import SocketAddress
 from monkey_island.cc.models import CommunicationType, Node
@@ -44,7 +45,7 @@ def test_serialization():
 
     n = Node(**node_dict)
 
-    serialized_node = n.dict(simplify=True)
+    serialized_node = n.model_dump(mode="json")
 
     # NOTE: Comparing these nodes is difficult because sets are not ordered
     assert len(serialized_node) == len(node_dict)
@@ -62,7 +63,7 @@ def test_serialization():
 def test_machine_id_immutable():
     n = Node(machine_id=1, connections={})
 
-    with pytest.raises(TypeError):
+    with pytest.raises(IllegalMutationError):
         n.machine_id = 2
 
 

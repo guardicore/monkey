@@ -41,4 +41,4 @@ class AvailableAgentPluginsIndex(AbstractResource):
             force_refresh=force_refresh
         )
 
-        return make_response(available_plugins.dict(simplify=True), HTTPStatus.OK)
+        return make_response(available_plugins.model_dump(mode="json"), HTTPStatus.OK)

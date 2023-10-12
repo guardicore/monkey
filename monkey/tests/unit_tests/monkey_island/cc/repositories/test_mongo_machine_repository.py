@@ -77,7 +77,7 @@ EXPECTED_SERVICES_2 = {
 def mongo_client() -> mongomock.MongoClient:
     client = mongomock.MongoClient()
     client.monkey_island.machines.insert_many(
-        (mongo_dot_encoder(m.dict(simplify=True)) for m in MACHINES)
+        (mongo_dot_encoder(m.model_dump(mode="json")) for m in MACHINES)
     )
     return client
 

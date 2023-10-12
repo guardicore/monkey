@@ -27,7 +27,7 @@ def test_terminate_all_agents_post(flask_client):
     terminate_all_agents = TerminateAllAgentsObject(timestamp=TIMESTAMP)
     resp = flask_client.post(
         TerminateAllAgents.urls[0],
-        json=terminate_all_agents.dict(simplify=True),
+        json=terminate_all_agents.model_dump(mode="json"),
         follow_redirects=True,
     )
     assert resp.status_code == HTTPStatus.NO_CONTENT
