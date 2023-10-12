@@ -16,4 +16,4 @@ class CPUConsumptionEvent(AbstractAgentEvent):
     """
 
     utilization: Percent
-    cpu_number: Annotated[int, Field(ge=0, strict=True)]  # type: ignore [valid-type]
+    cpu_number: Annotated[int, Field(ge=0, strict=True)]
