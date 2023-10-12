@@ -68,7 +68,7 @@ CC_SERVER = SocketAddress(ip="127.0.0.1", port=1984)
 @pytest.fixture
 def agent_repository() -> IAgentRepository:
     mongo_client = mongomock.MongoClient()
-    mongo_client.monkey_island.agents.insert_many((a.dict(simplify=True) for a in AGENTS))
+    mongo_client.monkey_island.agents.insert_many((a.model_dump(mode="json") for a in AGENTS))
     return MongoAgentRepository(mongo_client)
 
 
