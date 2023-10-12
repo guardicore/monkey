@@ -17,12 +17,12 @@ CRYPTOJACKER_OPTIONS_OBJECT = CryptojackerOptions(
 
 
 def test_cryptojacker_options__serialization():
-    assert CRYPTOJACKER_OPTIONS_OBJECT.dict(simplify=True) == CRYPTOJACKER_OPTIONS_DICT
+    assert CRYPTOJACKER_OPTIONS_OBJECT.model_dump(mode="json") == CRYPTOJACKER_OPTIONS_DICT
 
 
 def test_cryptojacker_options__full_serialization():
     assert (
-        CryptojackerOptions(**CRYPTOJACKER_OPTIONS_OBJECT.dict(simplify=True))
+        CryptojackerOptions(**CRYPTOJACKER_OPTIONS_OBJECT.model_dump(mode="json"))
         == CRYPTOJACKER_OPTIONS_OBJECT
     )
 
