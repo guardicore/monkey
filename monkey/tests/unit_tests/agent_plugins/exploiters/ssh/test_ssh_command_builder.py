@@ -30,7 +30,7 @@ def otp_provider() -> IAgentOTPProvider:
 def test_command(
     otp_provider: IAgentOTPProvider,
     os: Optional[OperatingSystem],
-    mock_agent_otp_environment_variable,
+    agent_otp_environment_variable,
 ):
     target_host = TargetHost(ip=IPv4Address("127.0.0.1"), operating_system=os)
 
@@ -40,7 +40,7 @@ def test_command(
         SERVERS,
         DEPTH,
         AGENT_EXE_PATH,
-        mock_agent_otp_environment_variable,
+        agent_otp_environment_variable,
         otp_provider,
     )
 

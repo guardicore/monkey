@@ -22,13 +22,13 @@ def otp_provider() -> IAgentOTPProvider:
     return provider
 
 
-def test_command(otp_provider: IAgentOTPProvider, mock_agent_otp_environment_variable):
+def test_command(otp_provider: IAgentOTPProvider, agent_otp_environment_variable):
     command = build_rdp_command(
         AGENT_ID,
         SERVERS,
         DEPTH,
         AGENT_EXE_PATH,
-        mock_agent_otp_environment_variable,
+        agent_otp_environment_variable,
         otp_provider,
     )
 

@@ -17,7 +17,7 @@ OTP = "123456"
 
 
 @pytest.fixture
-def build_command(mock_agent_otp_environment_variable):
+def build_command(agent_otp_environment_variable):
     def build(host: TargetHost) -> str:
         return build_hadoop_command(
             AGENT_ID,
@@ -26,7 +26,7 @@ def build_command(mock_agent_otp_environment_variable):
             DEPTH,
             AGENT_DESTINATION_PATH,
             AGENT_DOWNLOAD_URL,
-            mock_agent_otp_environment_variable,
+            agent_otp_environment_variable,
             OTP,
         )
 

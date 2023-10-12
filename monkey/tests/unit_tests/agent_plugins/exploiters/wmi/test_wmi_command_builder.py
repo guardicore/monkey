@@ -32,7 +32,7 @@ def test_servers(
     remote_agent_binary_full_path: PureWindowsPath,
     remote_agent_binary_destination_path: PureWindowsPath,
     otp_provider: IAgentOTPProvider,
-    mock_agent_otp_environment_variable,
+    agent_otp_environment_variable,
 ):
     servers = ["127.0.0.1", "192.168.1.100", "172.1.2.3"]
     command = build_wmi_command(
@@ -41,7 +41,7 @@ def test_servers(
         2,
         DROPPER_EXE_PATH,
         AGENT_EXE_PATH,
-        mock_agent_otp_environment_variable,
+        agent_otp_environment_variable,
         otp_provider,
     )
 
@@ -49,42 +49,42 @@ def test_servers(
         assert s in command
 
 
-def test_dropper_used(otp_provider: IAgentOTPProvider, mock_agent_otp_environment_variable):
+def test_dropper_used(otp_provider: IAgentOTPProvider, agent_otp_environment_variable):
     command = build_wmi_command(
         AGENT_ID,
         ["127.0.0.1"],
         2,
         DROPPER_EXE_PATH,
         AGENT_EXE_PATH,
-        mock_agent_otp_environment_variable,
+        agent_otp_environment_variable,
         otp_provider,
     )
 
     assert DROPPER_ARG in command
 
 
-def test_monkey_used(otp_provider: IAgentOTPProvider, mock_agent_otp_environment_variable):
+def test_monkey_used(otp_provider: IAgentOTPProvider, agent_otp_environment_variable):
     command = build_wmi_command(
         AGENT_ID,
         ["127.0.0.1"],
         2,
         AGENT_EXE_PATH,
         AGENT_EXE_PATH,
-        mock_agent_otp_environment_variable,
+        agent_otp_environment_variable,
         otp_provider,
     )
 
     assert MONKEY_ARG in command
 
 
-def test_otp_used(otp_provider: IAgentOTPProvider, mock_agent_otp_environment_variable):
+def test_otp_used(otp_provider: IAgentOTPProvider, agent_otp_environment_variable):
     command = build_wmi_command(
         AGENT_ID,
         ["127.0.0.1"],
         2,
         AGENT_EXE_PATH,
         AGENT_EXE_PATH,
-        mock_agent_otp_environment_variable,
+        agent_otp_environment_variable,
         otp_provider,
     )
 

@@ -21,7 +21,7 @@ def otp_provider() -> IAgentOTPProvider:
     return provider
 
 
-def test_dropper_used(mock_agent_otp_environment_variable):
+def test_dropper_used(agent_otp_environment_variable):
     target_host = TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.WINDOWS)
     command = build_log4shell_command(
         AGENT_ID,
@@ -29,7 +29,7 @@ def test_dropper_used(mock_agent_otp_environment_variable):
         SERVERS,
         2,
         "http://some_link",
-        mock_agent_otp_environment_variable,
+        agent_otp_environment_variable,
         OTP,
     )
 
@@ -37,7 +37,7 @@ def test_dropper_used(mock_agent_otp_environment_variable):
 
 
 @pytest.mark.parametrize("os", [OperatingSystem.WINDOWS, None])
-def test_windows_command(os, mock_agent_otp_environment_variable):
+def test_windows_command(os, agent_otp_environment_variable):
     target_host = TargetHost(ip="1.1.1.1", operating_system=os)
     command = build_log4shell_command(
         AGENT_ID,
@@ -45,14 +45,14 @@ def test_windows_command(os, mock_agent_otp_environment_variable):
         SERVERS,
         2,
         "http://some_link",
-        mock_agent_otp_environment_variable,
+        agent_otp_environment_variable,
         OTP,
     )
 
     assert "powershell" in command
 
 
-def test_linux_command(mock_agent_otp_environment_variable):
+def test_linux_command(agent_otp_environment_variable):
     target_host = TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.LINUX)
     command = build_log4shell_command(
         AGENT_ID,
@@ -60,7 +60,7 @@ def test_linux_command(mock_agent_otp_environment_variable):
         SERVERS,
         2,
         "http://some_link",
-        mock_agent_otp_environment_variable,
+        agent_otp_environment_variable,
         OTP,
     )
 
