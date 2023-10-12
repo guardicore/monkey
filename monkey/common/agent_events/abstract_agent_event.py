@@ -3,16 +3,16 @@ from abc import ABC
 from ipaddress import IPv4Address
 from typing import FrozenSet, Union
 
-from monkeytypes import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
-from pydantic import ConstrainedStr, Field
+from monkeytypes import InfectionMonkeyBaseModel
+from pydantic import Field, StringConstraints
+from typing_extensions import Annotated
 
 from common.types import AgentID, MachineID
 
 EVENT_TAG_REGEX = r"^[a-zA-Z0-9._-]+$"
 
 
-class AgentEventTag(ConstrainedStr):
-    regex = EVENT_TAG_REGEX
+AgentEventTag = Annotated[str, StringConstraints(pattern=EVENT_TAG_REGEX)]
 
 
 class AbstractAgentEvent(InfectionMonkeyBaseModel, ABC):
@@ -34,9 +34,6 @@ class AbstractAgentEvent(InfectionMonkeyBaseModel, ABC):
     target: Union[MachineID, IPv4Address, None] = Field(default=None)
     timestamp: float = Field(default_factory=time.time)
     tags: FrozenSet[AgentEventTag] = Field(default_factory=frozenset)
-
-    class Config(InfectionMonkeyModelConfig):
-        smart_union = True
 
     def __hash__(self):
         return hash((type(self), *tuple(self.__dict__.values())))
