@@ -120,7 +120,7 @@ def test_run__attempts_exploit_if_port_status_unknown(
     target_host: TargetHost,
     tcp_port_status: PortScanDataDict,
 ):
-    host = target_host
+    host = target_host.model_copy(deep=True)
     host.ports_status.tcp_ports = tcp_port_status
     result = plugin.run(
         host=host,
@@ -173,7 +173,7 @@ def test_run__attempts_exploit_if_port_status_open(
     target_host: TargetHost,
     tcp_port_status: PortScanDataDict,
 ):
-    host = target_host
+    host = target_host.model_copy(deep=True)
     host.ports_status.tcp_ports = tcp_port_status
     result = plugin.run(
         host=host,
@@ -192,7 +192,7 @@ def test_run__skips_exploit_if_port_status_closed(
     mock_powershell_exploiter: BruteForceExploiter,
     target_host: TargetHost,
 ):
-    host = target_host
+    host = target_host.model_copy(deep=True)
     host.ports_status.tcp_ports = PortScanDataDict(
         {
             POWERSHELL_PORTS[0]: PortScanData(port=POWERSHELL_PORTS[0], status=PortStatus.CLOSED),
