@@ -69,7 +69,9 @@ def build_agent_plugin_tar(
     fileobj = io.BytesIO()
     with TarFile(fileobj=fileobj, mode="w") as tar:
         manifest_tarinfo = TarInfo(manifest_file_name)
-        manifest_bytes = yaml.safe_dump(agent_plugin.plugin_manifest.dict(simplify=True)).encode()
+        manifest_bytes = yaml.safe_dump(
+            agent_plugin.plugin_manifest.model_dump(mode="json")
+        ).encode()
         manifest_tarinfo.size = len(manifest_bytes)
         tar.addfile(manifest_tarinfo, io.BytesIO(manifest_bytes))
 
@@ -109,6 +111,7 @@ def build_agent_plugin(agent_plugin_manifest: AgentPluginManifest, config_schema
 def agent_plugin_manifest() -> AgentPluginManifest:
     return AgentPluginManifest(
         name="TestPlugin",
+        title=None,
         plugin_type=AgentPluginType.EXPLOITER,
         version="1.0.0",
         supported_operating_systems=[OperatingSystem.LINUX, OperatingSystem.WINDOWS],

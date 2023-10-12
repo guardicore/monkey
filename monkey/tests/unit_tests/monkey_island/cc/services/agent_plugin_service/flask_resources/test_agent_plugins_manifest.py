@@ -39,7 +39,7 @@ def test_get_plugin_manifest(flask_client, agent_plugin_repository):
 
     expected_response = {
         "description": None,
-        "link_to_documentation": "http://www.beefface.com",
+        "link_to_documentation": "http://www.beefface.com/",
         "name": "rdp_exploiter",
         "plugin_type": "Exploiter",
         "safe": False,
