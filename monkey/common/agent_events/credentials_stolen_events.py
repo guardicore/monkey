@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from monkeytypes import Credentials, InfectionMonkeyModelConfig, SecretEncodingConfig
+from monkeytypes import Credentials
 from pydantic import Field
 
 from . import AbstractAgentEvent
@@ -15,6 +15,3 @@ class CredentialsStolenEvent(AbstractAgentEvent):
     """
 
     stolen_credentials: Sequence[Credentials] = Field(default_factory=list)
-
-    class Config(SecretEncodingConfig, InfectionMonkeyModelConfig):
-        pass

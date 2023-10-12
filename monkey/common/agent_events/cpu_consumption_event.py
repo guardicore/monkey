@@ -1,4 +1,5 @@
-from pydantic import conint
+from pydantic import Field
+from typing_extensions import Annotated
 
 from common.types import Percent
 
@@ -15,4 +16,4 @@ class CPUConsumptionEvent(AbstractAgentEvent):
     """
 
     utilization: Percent
-    cpu_number: conint(ge=0, strict=True)  # type: ignore [valid-type]
+    cpu_number: Annotated[int, Field(ge=0, strict=True)]

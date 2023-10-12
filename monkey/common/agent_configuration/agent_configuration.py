@@ -1,13 +1,14 @@
 from typing import Dict
 
 from monkeytypes.base_models import MutableInfectionMonkeyBaseModel
-from pydantic import Field, confloat
+from pydantic import Field
+from typing_extensions import Annotated
 
 from .agent_sub_configurations import PolymorphismConfiguration, PropagationConfiguration
 
 
 class AgentConfiguration(MutableInfectionMonkeyBaseModel):
-    keep_tunnel_open_time: confloat(ge=0) = Field(  # type: ignore[valid-type]
+    keep_tunnel_open_time: Annotated[float, Field(ge=0)] = Field(  # type: ignore[valid-type]
         title="Keep tunnel open time",
         description="Time to keep tunnel open before "
         "going down after last exploit (in "

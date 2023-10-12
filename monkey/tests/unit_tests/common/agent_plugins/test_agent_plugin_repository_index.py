@@ -89,7 +89,7 @@ REPOSITORY_INDEX_VERSION_SERIALIZED = {
     ],
 )
 def test_agent_plugin_repository_index_serialization(object_, expected_serialization):
-    assert object_.dict(simplify=True) == expected_serialization
+    assert object_.model_dump(mode="json") == expected_serialization
 
 
 @pytest.mark.parametrize(

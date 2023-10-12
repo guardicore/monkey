@@ -9,7 +9,7 @@ FAKE_TYPE = "Exploiter"
 FAKE_OPERATING_SYSTEMS = ["linux"]
 FAKE_SUPPORTED_OPERATING_SYSTEMS = ["linux", "windows"]
 FAKE_TITLE = "Remote Desktop Protocol exploiter"
-URL = "http://www.beefface.com"
+URL = "http://www.beefface.com/"
 
 FAKE_AGENT_MANIFEST_DICT_IN: dict[str, Any] = {
     "name": FAKE_NAME,

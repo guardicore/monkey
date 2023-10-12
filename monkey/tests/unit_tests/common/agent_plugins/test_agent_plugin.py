@@ -70,11 +70,12 @@ FAKE_AGENT_PLUGIN_OBJECT = AgentPlugin(
 
 
 def test_agent_plugin__serialization():
-    assert FAKE_AGENT_PLUGIN_OBJECT.dict(simplify=True) == FAKE_AGENT_PLUGIN_DICT_OUT
+    assert FAKE_AGENT_PLUGIN_OBJECT.model_dump(mode="json") == FAKE_AGENT_PLUGIN_DICT_OUT
 
 
 def test_agent_plugin__full_serialization():
-    assert AgentPlugin(**FAKE_AGENT_PLUGIN_OBJECT.dict(simplify=True)) == FAKE_AGENT_PLUGIN_OBJECT
+    model = AgentPlugin(**FAKE_AGENT_PLUGIN_OBJECT.model_dump(mode="json"))
+    assert model == FAKE_AGENT_PLUGIN_OBJECT
 
 
 def test_agent_plugin__deserialization():

@@ -13,7 +13,7 @@ TEST_EVENT = CredentialsStolenEvent(stolen_credentials=CREDENTIALS, source=AGENT
 
 
 def test_credentials_stolen_event_serialization_json():
-    serialized_event = TEST_EVENT.json()
+    serialized_event = TEST_EVENT.model_dump_json()
     assert PLAINTEXT_PASSWORD in serialized_event
     assert PLAINTEXT_LM_HASH in serialized_event
     assert PLAINTEXT_NT_HASH in serialized_event
@@ -21,6 +21,6 @@ def test_credentials_stolen_event_serialization_json():
 
 
 def test_credential_stolen_event_deserialization_json():
-    serialized_event = TEST_EVENT.json()
-    deserialized_event = CredentialsStolenEvent.parse_raw(serialized_event)
+    serialized_event = TEST_EVENT.model_dump_json()
+    deserialized_event = CredentialsStolenEvent.model_validate_json(serialized_event)
     assert deserialized_event == TEST_EVENT

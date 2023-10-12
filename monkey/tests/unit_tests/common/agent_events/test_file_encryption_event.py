@@ -4,7 +4,6 @@ from uuid import UUID
 
 import pytest
 from monkeytypes import OperatingSystem
-from pydantic.errors import IntegerError
 
 from common.agent_events import FileEncryptionEvent
 
@@ -59,7 +58,7 @@ def test_constructor(linux_file_encryption_event_dict):
 
 
 def test_serialization():
-    serialized_event = LINUX_FILE_ENCRYPTION_EVENT.dict(simplify=True)
+    serialized_event = LINUX_FILE_ENCRYPTION_EVENT.model_dump(mode="json")
     assert serialized_event == LINUX_FILE_ENCRYPTION_SIMPLE_DICT
 
 
@@ -70,7 +69,6 @@ def test_serialization():
         ("file_path", 1234),
         ("file_path", {"path": None, "os": OperatingSystem.WINDOWS.value}),
         ("file_path", {"path": str(LINUX_FILE_ENCRYPTED_PATH), "os": None}),
-        ("success", "not-a-bool"),
         ("error_message", None),
     ],
 )
@@ -87,6 +85,7 @@ def test_construct_invalid_field__type_error(key, value):
     [
         ("file_path", {"bogus_field": "bogus"}),
         ("file_path", {"path": str(LINUX_FILE_ENCRYPTED_PATH), "os": "FakeOS"}),
+        ("success", "not-a-bool"),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):
@@ -101,7 +100,7 @@ def test_construct_invalid_field__integer_error():
     invalid_value_dict = LINUX_FILE_ENCRYPTION_SIMPLE_DICT.copy()
     invalid_value_dict["target"] = "not-an-ip-or-integer"
 
-    with pytest.raises(IntegerError):
+    with pytest.raises(ValueError):
         FileEncryptionEvent(**invalid_value_dict)
 
 
@@ -118,7 +117,7 @@ def test_construct__extra_fields_forbidden():
     [LINUX_FILE_ENCRYPTION_EVENT, WINDOWS_FILE_ENCRYPTION_EVENT],
 )
 def test_file_encryption_event__de_serialization(event):
-    serialized_event = event.dict(simplify=True)
+    serialized_event = event.model_dump(mode="json")
     deserialized_event = FileEncryptionEvent(**serialized_event)
 
     assert isinstance(deserialized_event.file_path, type(event.file_path))
