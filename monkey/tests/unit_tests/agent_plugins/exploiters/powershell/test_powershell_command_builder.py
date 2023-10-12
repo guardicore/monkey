@@ -22,15 +22,14 @@ def otp_provider() -> IAgentOTPProvider:
     return provider
 
 
-def test_servers(
-    otp_provider: IAgentOTPProvider,
-):
+def test_servers(otp_provider: IAgentOTPProvider, agent_otp_environment_variable):
     servers = ["127.0.0.1", "192.168.1.100", "172.1.2.3"]
     command = build_powershell_command(
         AGENT_ID,
         servers,
         2,
         DROPPER_EXE_PATH,
+        agent_otp_environment_variable,
         otp_provider,
     )
 
@@ -38,24 +37,26 @@ def test_servers(
         assert s in command
 
 
-def test_dropper_used(otp_provider: IAgentOTPProvider):
+def test_dropper_used(otp_provider: IAgentOTPProvider, agent_otp_environment_variable):
     command = build_powershell_command(
         AGENT_ID,
         ["127.0.0.1"],
         2,
         DROPPER_EXE_PATH,
+        agent_otp_environment_variable,
         otp_provider,
     )
 
     assert DROPPER_ARG in command
 
 
-def test_otp_used(otp_provider: IAgentOTPProvider):
+def test_otp_used(otp_provider: IAgentOTPProvider, agent_otp_environment_variable):
     command = build_powershell_command(
         AGENT_ID,
         ["127.0.0.1"],
         2,
         DROPPER_EXE_PATH,
+        agent_otp_environment_variable,
         otp_provider,
     )
 

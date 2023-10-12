@@ -22,12 +22,13 @@ def otp_provider() -> IAgentOTPProvider:
     return provider
 
 
-def test_command(otp_provider: IAgentOTPProvider):
+def test_command(otp_provider: IAgentOTPProvider, agent_otp_environment_variable):
     command = build_rdp_command(
         AGENT_ID,
         SERVERS,
         DEPTH,
         AGENT_EXE_PATH,
+        agent_otp_environment_variable,
         otp_provider,
     )
 

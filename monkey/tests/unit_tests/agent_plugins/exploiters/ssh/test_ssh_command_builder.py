@@ -27,7 +27,11 @@ def otp_provider() -> IAgentOTPProvider:
 
 
 @pytest.mark.parametrize("os", [OperatingSystem.LINUX, None])
-def test_command(otp_provider: IAgentOTPProvider, os: Optional[OperatingSystem]):
+def test_command(
+    otp_provider: IAgentOTPProvider,
+    os: Optional[OperatingSystem],
+    agent_otp_environment_variable,
+):
     target_host = TargetHost(ip=IPv4Address("127.0.0.1"), operating_system=os)
 
     command = build_ssh_command(
@@ -36,6 +40,7 @@ def test_command(otp_provider: IAgentOTPProvider, os: Optional[OperatingSystem])
         SERVERS,
         DEPTH,
         AGENT_EXE_PATH,
+        agent_otp_environment_variable,
         otp_provider,
     )
 
