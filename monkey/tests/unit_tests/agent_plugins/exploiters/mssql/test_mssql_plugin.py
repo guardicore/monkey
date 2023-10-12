@@ -124,7 +124,7 @@ def test_run__attempts_exploit_if_port_status_unknown(
     target_host: TargetHost,
     tcp_port_status: PortScanDataDict,
 ):
-    host = target_host
+    host = target_host.model_copy(deep=True)
     host.ports_status.tcp_ports = tcp_port_status
     result = plugin.run(
         host=host,
@@ -183,7 +183,7 @@ def test_run__attempts_exploit_if_port_status_open(
     target_host: TargetHost,
     tcp_port_status: PortScanDataDict,
 ):
-    host = target_host
+    host = target_host.model_copy(deep=True)
     host.ports_status.tcp_ports = tcp_port_status
     result = plugin.run(
         host=host,
@@ -202,7 +202,7 @@ def test_run__skips_exploit_if_port_status_closed(
     mock_mssql_exploiter,
     target_host: TargetHost,
 ):
-    host = target_host
+    host = target_host.model_copy(deep=True)
     host.ports_status.tcp_ports = PortScanDataDict(
         {
             MSSQL_PORTS[0]: PortScanData(
@@ -232,7 +232,7 @@ def test_run__if_discovered_mssql_unknown_ports(
     mock_mssql_exploiter,
     target_host: TargetHost,
 ):
-    host = target_host
+    host = target_host.model_copy(deep=True)
     host.ports_status.tcp_ports = PortScanDataDict(
         {
             MSSQL_PORTS[0]: PortScanData(
