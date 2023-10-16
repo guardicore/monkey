@@ -154,30 +154,11 @@ SCHEMA = {
             "required": ["tcp", "icmp", "fingerprinters", "targets"],
             "additionalProperties": False,
         },
-        "ExploitationOptionsConfiguration": {
-            "title": "ExploitationOptionsConfiguration",
-            "description": "A configuration for exploitation options\n\nAttributes:\n    :param http_ports: HTTP ports to exploit",
-            "type": "object",
-            "properties": {
-                "http_ports": {
-                    "title": "HTTP Ports",
-                    "description": "List of ports the monkey will check if are being used for HTTP",
-                    "default": [80, 8080, 443, 8008, 7001, 8983, 9600],
-                    "type": "array",
-                    "items": {"type": "integer", "minimum": 0, "maximum": 65535},
-                }
-            },
-            "additionalProperties": False,
-        },
         "ExploitationConfiguration": {
             "title": "ExploitationConfiguration",
             "description": "A configuration for exploitation\n\nAttributes:\n    :param options: Exploitation options shared by all exploiters\n    :param exploiters: Configuration enabled exploiters",
             "type": "object",
             "properties": {
-                "options": {
-                    "title": "Exploiters Options",
-                    "allOf": [{"$ref": "#/definitions/ExploitationOptionsConfiguration"}],
-                },
                 "exploiters": {
                     "title": "Enabled exploiters",
                     "type": "object",
@@ -271,7 +252,7 @@ SCHEMA = {
                     "additionalProperties": False,
                 },
             },
-            "required": ["options", "exploiters"],
+            "required": ["exploiters"],
             "additionalProperties": False,
         },
         "PropagationConfiguration": {

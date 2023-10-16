@@ -5,7 +5,6 @@ from common.types import NetworkPort
 from . import AgentConfiguration
 from .agent_sub_configurations import (
     ExploitationConfiguration,
-    ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
     PluginConfiguration,
@@ -67,10 +66,7 @@ NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
     targets=SCAN_TARGET_CONFIGURATION,
 )
 
-EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports=tuple(HTTP_PORTS))
-
 EXPLOITATION_CONFIGURATION = ExploitationConfiguration(
-    options=EXPLOITATION_OPTIONS_CONFIGURATION,
     exploiters={},
 )
 

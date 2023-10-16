@@ -41,7 +41,6 @@ raw_exploitation_configuration = {
         "Exploiter1": {},
         "Exploiter6": {},
     },
-    "options": {"http_ports": []},
 }
 
 

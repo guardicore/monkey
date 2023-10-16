@@ -60,14 +60,10 @@ class Propagator:
         network_scan_completed = threading.Event()
         self._hosts_to_exploit = Queue()
 
-        network_scan = self._add_http_ports_to_fingerprinters(
-            propagation_config.network_scan, propagation_config.exploitation.options.http_ports
-        )
-
         scan_thread = create_daemon_thread(
             target=self._scan_network,
             name="PropagatorScanThread",
-            args=(network_scan, stop),
+            args=(propagation_config.network_scan, stop),
         )
         exploit_thread = create_daemon_thread(
             target=self._exploit_hosts,
@@ -90,23 +86,6 @@ class Propagator:
         exploit_thread.join()
 
         logger.info("Finished attempting to propagate")
-
-    @staticmethod
-    def _add_http_ports_to_fingerprinters(
-        network_scan: NetworkScanConfiguration, http_ports: Sequence[int]
-    ) -> NetworkScanConfiguration:
-        # This is a hack to add http_ports to the options of fingerprinters
-        # It will be reworked. See https://github.com/guardicore/monkey/issues/2136
-        modified_fingerprinters = [*network_scan.fingerprinters]
-        for i, fingerprinter in enumerate(modified_fingerprinters):
-            if fingerprinter.name != "http":
-                continue
-
-            modified_options = fingerprinter.options.copy()
-            modified_options["http_ports"] = list(http_ports)
-            modified_fingerprinters[i] = fingerprinter.copy(update={"options": modified_options})
-
-        return network_scan.copy(update={"fingerprinters": modified_fingerprinters})
 
     def _scan_network(self, scan_config: NetworkScanConfiguration, stop: Event):
         logger.info("Starting network scan")
