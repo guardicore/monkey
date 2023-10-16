@@ -1,7 +1,6 @@
 from .agent_configuration import AgentConfiguration
 from .agent_sub_configurations import (
     ExploitationConfiguration,
-    ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
     PluginConfiguration,

@@ -178,21 +178,6 @@ class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
     )
 
 
-class ExploitationOptionsConfiguration(MutableInfectionMonkeyBaseModel):
-    """
-    A configuration for exploitation options
-
-    Attributes:
-        :param http_ports: HTTP ports to exploit
-    """
-
-    http_ports: Tuple[NetworkPort, ...] = Field(
-        title="HTTP ports",
-        description="List of ports the Agent will check for using an HTTP protocol",
-        default=[80, 8080, 443, 8008, 7001, 8983, 9600],
-    )
-
-
 class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for exploitation
@@ -207,10 +192,6 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
         description="Click on an exploiter to get more information"
         " about it. \n \u26A0 Note that using unsafe exploits may"
         " cause crashes of the exploited machine/service.",
-    )
-    options: ExploitationOptionsConfiguration = Field(
-        title="Exploiters options",
-        description="Configure exploitation options shared by all exploiters",
     )
 
 
