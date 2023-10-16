@@ -184,7 +184,6 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
 
     Attributes:
         :param exploiters: Configuration enabled exploiters
-        :param options: Exploitation options shared by all exploiters
     """
 
     exploiters: Dict[str, Dict] = Field(
