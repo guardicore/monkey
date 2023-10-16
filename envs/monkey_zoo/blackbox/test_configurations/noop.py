@@ -5,7 +5,6 @@ from monkeytypes import Credentials
 from common.agent_configuration import (
     AgentConfiguration,
     ExploitationConfiguration,
-    ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
     PolymorphismConfiguration,
@@ -28,10 +27,7 @@ _network_scan_configuration = NetworkScanConfiguration(
     targets=_scan_target_configuration,
 )
 
-_exploitation_options_configuration = ExploitationOptionsConfiguration(http_ports=[])
-_exploitation_configuration = ExploitationConfiguration(
-    options=_exploitation_options_configuration, exploiters=[]
-)
+_exploitation_configuration = ExploitationConfiguration(exploiters=[])
 
 _propagation_configuration = PropagationConfiguration(
     maximum_depth=0,
