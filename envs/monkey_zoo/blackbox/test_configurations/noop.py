@@ -27,7 +27,7 @@ _network_scan_configuration = NetworkScanConfiguration(
     targets=_scan_target_configuration,
 )
 
-_exploitation_configuration = ExploitationConfiguration(exploiters=[])
+_exploitation_configuration = ExploitationConfiguration(exploiters={})
 
 _propagation_configuration = PropagationConfiguration(
     maximum_depth=0,

@@ -150,7 +150,7 @@ class MonkeyIslandClient(object):
     def _import_config(self, test_configuration: TestConfiguration):
         response = self.requests.put_json(
             "api/agent-configuration",
-            json=test_configuration.agent_configuration.dict(simplify=True),
+            json=test_configuration.agent_configuration.to_json_dict(),
         )
         if response.ok:
             logger.info("Configuration is imported.")
@@ -161,7 +161,7 @@ class MonkeyIslandClient(object):
     @avoid_race_condition
     def _import_credentials(self, propagation_credentials: List[Credentials]):
         serialized_propagation_credentials = [
-            credentials.dict(simplify=True) for credentials in propagation_credentials
+            credentials.to_json_dict() for credentials in propagation_credentials
         ]
         response = self.requests.put_json(
             "/api/propagation-credentials/configured-credentials",
@@ -191,7 +191,7 @@ class MonkeyIslandClient(object):
         # TODO change this request, because monkey-control resource got removed
         response = self.requests.post_json(
             "api/agent-signals/terminate-all-agents",
-            json=TerminateAllAgents(timestamp=time.time()).dict(simplify=True),
+            json=TerminateAllAgents(timestamp=time.time()).to_json_dict(),
         )
         if response.ok:
             logger.info("Killing all monkeys after the test.")
