@@ -22,7 +22,6 @@ from tests.common.example_agent_configuration import (
 from common.agent_configuration.agent_configuration import AgentConfiguration
 from common.agent_configuration.agent_sub_configurations import (
     ExploitationConfiguration,
-    ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
     PluginConfiguration,
@@ -129,20 +128,6 @@ def test_network_scan_configuration():
     assert config.targets.inaccessible_subnets == tuple(INACCESSIBLE_SUBNETS)
     assert config.targets.scan_my_networks == SCAN_MY_NETWORKS
     assert config.targets.subnets == tuple(SUBNETS)
-
-
-def test_exploitation_options_configuration_schema():
-    ports = [0, 1, 2, 3]
-
-    config = ExploitationOptionsConfiguration(http_ports=ports)
-
-    assert config.http_ports == tuple(ports)
-
-
-@pytest.mark.parametrize("ports", INVALID_PORTS)
-def test_exploitation_options_configuration_schema__ports_out_of_range(ports):
-    with pytest.raises(ValueError):
-        ExploitationOptionsConfiguration(http_ports=ports)
 
 
 def test_exploiter_configuration_schema():

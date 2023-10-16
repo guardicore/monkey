@@ -32,7 +32,6 @@ NETWORK_SCAN_CONFIGURATION = {
 EXPLOITERS: Dict[str, Dict] = {}
 
 EXPLOITATION_CONFIGURATION = {
-    "options": {"http_ports": PORTS},
     "exploiters": EXPLOITERS,
 }
 
