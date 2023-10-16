@@ -15,7 +15,7 @@ def main():
                  hookspath=['./pyinstaller_hooks'],
                  runtime_hooks=None,
                  binaries=None,
-                 datas=[("../common/BUILD", "/common")],
+                 datas=[("../common/BUILD", "common")],
                  excludes=None,
                  win_no_prefer_redirects=None,
                  win_private_assemblies=None,
