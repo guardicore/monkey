@@ -38,7 +38,7 @@ flask-security-too = "*"
 flask-mongoengine = "*"
 bleach = "*"
 email-validator = "*"
-monkey-types = {git = "https://github.com/guardicode/monkeytypes", ref = "3732-upgrade-pydantic-to-v2"}
+monkey-types = "*"
 ophidian = "*"
 
 [dev-packages]
