@@ -59,10 +59,6 @@ provider "google" {
   impersonate_service_account = var.service_account_email == "" ? null : var.service_account_email
 }
 locals {
-  resource_prefix        = ""
-  monkeyzoo_project      = "guardicore-22050661"
-  main_zone              = var.main_zone
-  main1_zone             = var.main1_zone
-  tunneling_zone         = var.tunneling_zone
-  credentials_reuse_zone = var.credentials_reuse_zone
+  resource_prefix   = ""
+  monkeyzoo_project = "guardicore-22050661"
 }

@@ -118,7 +118,7 @@ resource "google_compute_instance" "hadoop-3" {
 resource "google_compute_instance" "tunneling-9" {
   name              = "${local.resource_prefix}tunneling-9"
   machine_type      = "n1-standard-1"
-  zone              = local.tunneling_zone
+  zone              = var.tunneling_zone
   tags              = ["tunneling-9"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -143,7 +143,7 @@ resource "google_compute_instance" "tunneling-9" {
 resource "google_compute_instance" "tunneling-10" {
   name              = "${local.resource_prefix}tunneling-10"
   machine_type      = "n1-standard-1"
-  zone              = local.tunneling_zone
+  zone              = var.tunneling_zone
   tags              = ["tunneling-10"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -168,7 +168,7 @@ resource "google_compute_instance" "tunneling-10" {
 resource "google_compute_instance" "tunneling-11" {
   name              = "${local.resource_prefix}tunneling-11"
   machine_type      = "n1-standard-1"
-  zone              = local.tunneling_zone
+  zone              = var.tunneling_zone
   tags              = ["test-machine", "ubuntu16", "linux"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -194,7 +194,7 @@ resource "google_compute_instance" "tunneling-11" {
 resource "google_compute_instance" "tunneling-12" {
   name              = "${local.resource_prefix}tunneling-12"
   machine_type      = "e2-standard-2"
-  zone              = local.tunneling_zone
+  zone              = var.tunneling_zone
   tags              = ["test-machine", "windowsserver2016", "windows"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -216,7 +216,7 @@ resource "google_compute_instance" "tunneling-12" {
 resource "google_compute_instance" "tunneling-13" {
   name              = "${local.resource_prefix}tunneling-13"
   machine_type      = "n1-standard-1"
-  zone              = local.tunneling_zone
+  zone              = var.tunneling_zone
   tags              = ["test-machine", "ubuntu16", "linux"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -278,7 +278,7 @@ resource "google_compute_instance" "sshkeys-12" {
 resource "google_compute_instance" "rdp-64" {
   name              = "${local.resource_prefix}rdp-64"
   machine_type      = "e2-standard-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "windowsserver2016", "windows", "rdp-64"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -299,7 +299,7 @@ resource "google_compute_instance" "rdp-64" {
 resource "google_compute_instance" "rdp-65" {
   name              = "${local.resource_prefix}rdp-65"
   machine_type      = "e2-standard-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "windowsserver2012", "windows", "rdp-65"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -385,7 +385,7 @@ resource "google_compute_instance" "mssql-16" {
 resource "google_compute_instance" "snmp-20" {
   name              = "${local.resource_prefix}snmp-20"
   machine_type      = "n1-standard-1"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
@@ -405,7 +405,7 @@ resource "google_compute_instance" "snmp-20" {
 resource "google_compute_instance" "powershell-3-48" {
   name              = "${local.resource_prefix}powershell-3-48"
   machine_type      = "e2-standard-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-48"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -427,7 +427,7 @@ resource "google_compute_instance" "powershell-3-48" {
 resource "google_compute_instance" "powershell-3-47" {
   name              = "${local.resource_prefix}powershell-3-47"
   machine_type      = "e2-standard-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-47"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -449,7 +449,7 @@ resource "google_compute_instance" "powershell-3-47" {
 resource "google_compute_instance" "powershell-3-46" {
   name              = "${local.resource_prefix}powershell-3-46"
   machine_type      = "e2-standard-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-46"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -471,7 +471,7 @@ resource "google_compute_instance" "powershell-3-46" {
 resource "google_compute_instance" "powershell-3-44" {
   name              = "${local.resource_prefix}powershell-3-44"
   machine_type      = "e2-standard-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-44"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -493,7 +493,7 @@ resource "google_compute_instance" "powershell-3-44" {
 resource "google_compute_instance" "powershell-3-45" {
   name              = "${local.resource_prefix}powershell-3-45"
   machine_type      = "e2-standard-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-45"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -522,7 +522,7 @@ resource "google_compute_instance" "powershell-3-45" {
 resource "google_compute_instance" "credentials-reuse-14" {
   name              = "${local.resource_prefix}credentials-reuse-14"
   machine_type      = "e2-small"
-  zone              = local.credentials_reuse_zone
+  zone              = var.credentials_reuse_zone
   tags              = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -550,7 +550,7 @@ resource "google_compute_instance" "credentials-reuse-14" {
 resource "google_compute_instance" "credentials-reuse-15" {
   name              = "${local.resource_prefix}credentials-reuse-15"
   machine_type      = "e2-small"
-  zone              = local.credentials_reuse_zone
+  zone              = var.credentials_reuse_zone
   tags              = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -578,7 +578,7 @@ resource "google_compute_instance" "credentials-reuse-15" {
 resource "google_compute_instance" "credentials-reuse-16" {
   name              = "${local.resource_prefix}credentials-reuse-16"
   machine_type      = "e2-small"
-  zone              = local.credentials_reuse_zone
+  zone              = var.credentials_reuse_zone
   tags              = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -606,7 +606,7 @@ resource "google_compute_instance" "credentials-reuse-16" {
 resource "google_compute_instance" "log4j-solr-49" {
   name              = "${local.resource_prefix}log4j-solr-49"
   machine_type      = "e2-highcpu-4"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "ubuntu16", "linux"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -627,7 +627,7 @@ resource "google_compute_instance" "log4j-solr-49" {
 resource "google_compute_instance" "log4j-solr-50" {
   name              = "${local.resource_prefix}log4j-solr-50"
   machine_type      = "e2-standard-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "windowsserver2016", "windows"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -649,7 +649,7 @@ resource "google_compute_instance" "log4j-solr-50" {
 resource "google_compute_instance" "log4j-tomcat-51" {
   name              = "${local.resource_prefix}log4j-tomcat-51"
   machine_type      = "e2-highcpu-4"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "ubuntu16", "linux"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -670,7 +670,7 @@ resource "google_compute_instance" "log4j-tomcat-51" {
 resource "google_compute_instance" "log4j-tomcat-52" {
   name              = "${local.resource_prefix}log4j-tomcat-52"
   machine_type      = "e2-standard-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "windowsserver2016", "windows"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -692,7 +692,7 @@ resource "google_compute_instance" "log4j-tomcat-52" {
 resource "google_compute_instance" "log4j-logstash-55" {
   name              = "${local.resource_prefix}log4j-logstash-55"
   machine_type      = "e2-highcpu-4"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "ubuntu16", "linux"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -713,7 +713,7 @@ resource "google_compute_instance" "log4j-logstash-55" {
 resource "google_compute_instance" "log4j-logstash-56" {
   name              = "${local.resource_prefix}log4j-logstash-56"
   machine_type      = "e2-standard-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "windowsserver2016", "windows"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -735,7 +735,7 @@ resource "google_compute_instance" "log4j-logstash-56" {
 resource "google_compute_instance" "browser-credentials-66" {
   name              = "${local.resource_prefix}browser-credentials-66"
   machine_type      = "e2-highcpu-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "windowsserver2016", "windows"]
   resource_policies = var.resource_policies
   boot_disk {
@@ -757,7 +757,7 @@ resource "google_compute_instance" "browser-credentials-66" {
 resource "google_compute_instance" "browser-credentials-67" {
   name              = "${local.resource_prefix}browser-credentials-67"
   machine_type      = "e2-highcpu-2"
-  zone              = local.main1_zone
+  zone              = var.main1_zone
   tags              = ["test-machine", "ubuntu16", "linux"]
   resource_policies = var.resource_policies
   boot_disk {
