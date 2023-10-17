@@ -66,8 +66,8 @@ class LoginPageComponent extends React.Component {
                 <h1 className='auth-title'>Login</h1>
                 <div>
                   <Form className={'auth-form'} onSubmit={this.login}>
-                    <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
-                    <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
+                    <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username' required/>
+                    <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password' required/>
                     <Button className={'monkey-submit-button'} type={'submit'}>
                       Login
                     </Button>
