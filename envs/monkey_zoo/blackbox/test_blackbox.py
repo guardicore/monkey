@@ -498,7 +498,7 @@ def test_agent_logout(island):
         "id": LOGOUT_AGENT_ID,
         "machine_hardware_id": 2,
         "start_time": "2022-08-18T18:46:48+00:00",
-        "cc_server": SocketAddress.from_string(island).dict(simplify=True),
+        "cc_server": SocketAddress.from_string(island).to_json_dict(),
         "network_interfaces": [],
     }
 
