@@ -1,7 +1,9 @@
 ---
 - name: Install python
   apt:
-    name: python3.11
+    name:
+      - python3.11
+      - python3.11-venv
     update_cache: yes
   ignore_errors: yes
   register: install_res
@@ -15,7 +17,9 @@
     shell: sudo -E add-apt-repository ppa:deadsnakes/ppa -y
   - name: Install python from deadsnakes
     apt:
-      name: python3.11
+      name:
+        - python3.11
+        - python3.11-venv
       update_cache: yes
   when: install_res.failed == true
 
