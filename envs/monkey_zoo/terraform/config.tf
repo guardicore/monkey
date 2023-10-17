@@ -45,6 +45,12 @@ variable "credentials" {
   type        = string
 }
 
+variable "resource_policies" {
+  description = "A list of resource policies to attach to the instances"
+  type        = list(string)
+  default     = []
+}
+
 provider "google" {
   project                     = var.project
   region                      = var.region
