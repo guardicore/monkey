@@ -4,14 +4,15 @@ from ipaddress import IPv4Address
 from typing import Optional, Set
 
 from monkeytypes import MutableInfectionMonkeyBaseModel, NetworkPort, OperatingSystem, PortStatus
-from pydantic import ConfigDict, Field, field_serializer, validate_call
+from pydantic import ConfigDict, Field, TypeAdapter, field_serializer
 
 from . import PortScanData
 
 
 class PortScanDataDict(UserDict[NetworkPort, PortScanData]):
-    @validate_call
     def __setitem__(self, key: NetworkPort, value: PortScanData):
+        TypeAdapter(NetworkPort).validate_python(key)
+        PortScanData.model_validate(value)
         super().__setitem__(key, value)
 
     @property
