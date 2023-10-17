@@ -68,8 +68,8 @@ class RegisterPageComponent extends React.Component {
                 <h3 className='reg-subtitle'>Register a user</h3>
                 <div>
                   <Form className={'auth-form'} onSubmit={this.register} >
-                    <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
-                    <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
+                    <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username' required/>
+                    <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password' required/>
                     <Button className={'monkey-submit-button'} type={'submit'} >
                       {
                         this.state.loading ?
