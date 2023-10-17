@@ -45,6 +45,12 @@ variable "credentials" {
   type        = string
 }
 
+variable "resource_policies" {
+  description = "A list of resource policies to attach to the instances"
+  type        = list(string)
+  default     = []
+}
+
 provider "google" {
   project                     = var.project
   region                      = var.region
@@ -53,10 +59,6 @@ provider "google" {
   impersonate_service_account = var.service_account_email == "" ? null : var.service_account_email
 }
 locals {
-  resource_prefix        = ""
-  monkeyzoo_project      = "guardicore-22050661"
-  main_zone              = var.main_zone
-  main1_zone             = var.main1_zone
-  tunneling_zone         = var.tunneling_zone
-  credentials_reuse_zone = var.credentials_reuse_zone
+  resource_prefix   = ""
+  monkeyzoo_project = "guardicore-22050661"
 }

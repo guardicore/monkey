@@ -73,9 +73,10 @@ resource "google_compute_subnetwork" "credential-reuse2" {
 }
 
 resource "google_compute_instance" "hadoop-2" {
-  name         = "${local.resource_prefix}hadoop-2"
-  machine_type = "n1-standard-1"
-  tags         = ["test-machine", "ubuntu16", "linux"]
+  name              = "${local.resource_prefix}hadoop-2"
+  machine_type      = "n1-standard-1"
+  tags              = ["test-machine", "ubuntu16", "linux"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.hadoop-2.self_link
@@ -94,9 +95,10 @@ resource "google_compute_instance" "hadoop-2" {
 }
 
 resource "google_compute_instance" "hadoop-3" {
-  name         = "${local.resource_prefix}hadoop-3"
-  machine_type = "e2-standard-2"
-  tags         = ["test-machine", "windowsserver2016", "windows"]
+  name              = "${local.resource_prefix}hadoop-3"
+  machine_type      = "e2-standard-2"
+  tags              = ["test-machine", "windowsserver2016", "windows"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.hadoop-3.self_link
@@ -114,10 +116,11 @@ resource "google_compute_instance" "hadoop-3" {
 }
 
 resource "google_compute_instance" "tunneling-9" {
-  name         = "${local.resource_prefix}tunneling-9"
-  machine_type = "n1-standard-1"
-  zone         = local.tunneling_zone
-  tags         = ["tunneling-9"]
+  name              = "${local.resource_prefix}tunneling-9"
+  machine_type      = "n1-standard-1"
+  zone              = var.tunneling_zone
+  tags              = ["tunneling-9"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-9.self_link
@@ -138,10 +141,11 @@ resource "google_compute_instance" "tunneling-9" {
 }
 
 resource "google_compute_instance" "tunneling-10" {
-  name         = "${local.resource_prefix}tunneling-10"
-  machine_type = "n1-standard-1"
-  zone         = local.tunneling_zone
-  tags         = ["tunneling-10"]
+  name              = "${local.resource_prefix}tunneling-10"
+  machine_type      = "n1-standard-1"
+  zone              = var.tunneling_zone
+  tags              = ["tunneling-10"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-10.self_link
@@ -162,10 +166,11 @@ resource "google_compute_instance" "tunneling-10" {
 }
 
 resource "google_compute_instance" "tunneling-11" {
-  name         = "${local.resource_prefix}tunneling-11"
-  machine_type = "n1-standard-1"
-  zone         = local.tunneling_zone
-  tags         = ["test-machine", "ubuntu16", "linux"]
+  name              = "${local.resource_prefix}tunneling-11"
+  machine_type      = "n1-standard-1"
+  zone              = var.tunneling_zone
+  tags              = ["test-machine", "ubuntu16", "linux"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-11.self_link
@@ -187,10 +192,11 @@ resource "google_compute_instance" "tunneling-11" {
 }
 
 resource "google_compute_instance" "tunneling-12" {
-  name         = "${local.resource_prefix}tunneling-12"
-  machine_type = "e2-standard-2"
-  zone         = local.tunneling_zone
-  tags         = ["test-machine", "windowsserver2016", "windows"]
+  name              = "${local.resource_prefix}tunneling-12"
+  machine_type      = "e2-standard-2"
+  zone              = var.tunneling_zone
+  tags              = ["test-machine", "windowsserver2016", "windows"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-12.self_link
@@ -208,10 +214,11 @@ resource "google_compute_instance" "tunneling-12" {
 }
 
 resource "google_compute_instance" "tunneling-13" {
-  name         = "${local.resource_prefix}tunneling-13"
-  machine_type = "n1-standard-1"
-  zone         = local.tunneling_zone
-  tags         = ["test-machine", "ubuntu16", "linux"]
+  name              = "${local.resource_prefix}tunneling-13"
+  machine_type      = "n1-standard-1"
+  zone              = var.tunneling_zone
+  tags              = ["test-machine", "ubuntu16", "linux"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.tunneling-13.self_link
@@ -229,9 +236,10 @@ resource "google_compute_instance" "tunneling-13" {
 }
 
 resource "google_compute_instance" "sshkeys-11" {
-  name         = "${local.resource_prefix}sshkeys-11"
-  machine_type = "e2-medium"
-  tags         = ["test-machine", "ubuntu16", "linux"]
+  name              = "${local.resource_prefix}sshkeys-11"
+  machine_type      = "e2-medium"
+  tags              = ["test-machine", "ubuntu16", "linux"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.sshkeys-11.self_link
@@ -248,9 +256,10 @@ resource "google_compute_instance" "sshkeys-11" {
 }
 
 resource "google_compute_instance" "sshkeys-12" {
-  name         = "${local.resource_prefix}sshkeys-12"
-  machine_type = "e2-medium"
-  tags         = ["test-machine", "ubuntu16", "linux"]
+  name              = "${local.resource_prefix}sshkeys-12"
+  machine_type      = "e2-medium"
+  tags              = ["test-machine", "ubuntu16", "linux"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.sshkeys-12.self_link
@@ -267,10 +276,11 @@ resource "google_compute_instance" "sshkeys-12" {
 }
 
 resource "google_compute_instance" "rdp-64" {
-  name         = "${local.resource_prefix}rdp-64"
-  machine_type = "e2-standard-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "windowsserver2016", "windows", "rdp-64"]
+  name              = "${local.resource_prefix}rdp-64"
+  machine_type      = "e2-standard-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "windowsserver2016", "windows", "rdp-64"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.rdp-64.self_link
@@ -287,10 +297,11 @@ resource "google_compute_instance" "rdp-64" {
 }
 
 resource "google_compute_instance" "rdp-65" {
-  name         = "${local.resource_prefix}rdp-65"
-  machine_type = "e2-standard-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "windowsserver2012", "windows", "rdp-65"]
+  name              = "${local.resource_prefix}rdp-65"
+  machine_type      = "e2-standard-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "windowsserver2012", "windows", "rdp-65"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.rdp-65.self_link
@@ -309,9 +320,10 @@ resource "google_compute_instance" "rdp-65" {
 
 
 resource "google_compute_instance" "mimikatz-14" {
-  name         = "${local.resource_prefix}mimikatz-14"
-  machine_type = "n1-standard-1"
-  tags         = ["test-machine", "windowsserver2016", "windows"]
+  name              = "${local.resource_prefix}mimikatz-14"
+  machine_type      = "n1-standard-1"
+  tags              = ["test-machine", "windowsserver2016", "windows"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.mimikatz-14.self_link
@@ -329,9 +341,10 @@ resource "google_compute_instance" "mimikatz-14" {
 }
 
 resource "google_compute_instance" "mimikatz-15" {
-  name         = "${local.resource_prefix}mimikatz-15"
-  machine_type = "n1-standard-1"
-  tags         = ["test-machine", "windowsserver2016", "windows"]
+  name              = "${local.resource_prefix}mimikatz-15"
+  machine_type      = "n1-standard-1"
+  tags              = ["test-machine", "windowsserver2016", "windows"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.mimikatz-15.self_link
@@ -349,9 +362,10 @@ resource "google_compute_instance" "mimikatz-15" {
 }
 
 resource "google_compute_instance" "mssql-16" {
-  name         = "${local.resource_prefix}mssql-16"
-  machine_type = "e2-standard-2"
-  tags         = ["test-machine", "windowsserver2016", "windows"]
+  name              = "${local.resource_prefix}mssql-16"
+  machine_type      = "e2-standard-2"
+  tags              = ["test-machine", "windowsserver2016", "windows"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.mssql-16.self_link
@@ -369,9 +383,10 @@ resource "google_compute_instance" "mssql-16" {
 }
 
 resource "google_compute_instance" "snmp-20" {
-  name         = "${local.resource_prefix}snmp-20"
-  machine_type = "n1-standard-1"
-  zone         = local.main1_zone
+  name              = "${local.resource_prefix}snmp-20"
+  machine_type      = "n1-standard-1"
+  zone              = var.main1_zone
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.snmp-20.self_link
@@ -388,10 +403,11 @@ resource "google_compute_instance" "snmp-20" {
 }
 
 resource "google_compute_instance" "powershell-3-48" {
-  name         = "${local.resource_prefix}powershell-3-48"
-  machine_type = "e2-standard-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-48"]
+  name              = "${local.resource_prefix}powershell-3-48"
+  machine_type      = "e2-standard-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-48"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-48.self_link
@@ -409,10 +425,11 @@ resource "google_compute_instance" "powershell-3-48" {
 }
 
 resource "google_compute_instance" "powershell-3-47" {
-  name         = "${local.resource_prefix}powershell-3-47"
-  machine_type = "e2-standard-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-47"]
+  name              = "${local.resource_prefix}powershell-3-47"
+  machine_type      = "e2-standard-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-47"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-47.self_link
@@ -430,10 +447,11 @@ resource "google_compute_instance" "powershell-3-47" {
 }
 
 resource "google_compute_instance" "powershell-3-46" {
-  name         = "${local.resource_prefix}powershell-3-46"
-  machine_type = "e2-standard-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-46"]
+  name              = "${local.resource_prefix}powershell-3-46"
+  machine_type      = "e2-standard-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-46"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-46.self_link
@@ -451,10 +469,11 @@ resource "google_compute_instance" "powershell-3-46" {
 }
 
 resource "google_compute_instance" "powershell-3-44" {
-  name         = "${local.resource_prefix}powershell-3-44"
-  machine_type = "e2-standard-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-44"]
+  name              = "${local.resource_prefix}powershell-3-44"
+  machine_type      = "e2-standard-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-44"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-44.self_link
@@ -472,10 +491,11 @@ resource "google_compute_instance" "powershell-3-44" {
 }
 
 resource "google_compute_instance" "powershell-3-45" {
-  name         = "${local.resource_prefix}powershell-3-45"
-  machine_type = "e2-standard-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-45"]
+  name              = "${local.resource_prefix}powershell-3-45"
+  machine_type      = "e2-standard-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "windowsserver2016", "windows", "powershell", "powershell-45"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.powershell-3-45.self_link
@@ -500,10 +520,11 @@ resource "google_compute_instance" "powershell-3-45" {
 }
 
 resource "google_compute_instance" "credentials-reuse-14" {
-  name         = "${local.resource_prefix}credentials-reuse-14"
-  machine_type = "e2-small"
-  zone         = local.credentials_reuse_zone
-  tags         = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
+  name              = "${local.resource_prefix}credentials-reuse-14"
+  machine_type      = "e2-small"
+  zone              = var.credentials_reuse_zone
+  tags              = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.credentials-reuse-14.self_link
@@ -527,10 +548,11 @@ resource "google_compute_instance" "credentials-reuse-14" {
 }
 
 resource "google_compute_instance" "credentials-reuse-15" {
-  name         = "${local.resource_prefix}credentials-reuse-15"
-  machine_type = "e2-small"
-  zone         = local.credentials_reuse_zone
-  tags         = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
+  name              = "${local.resource_prefix}credentials-reuse-15"
+  machine_type      = "e2-small"
+  zone              = var.credentials_reuse_zone
+  tags              = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.credentials-reuse-15.self_link
@@ -554,10 +576,11 @@ resource "google_compute_instance" "credentials-reuse-15" {
 }
 
 resource "google_compute_instance" "credentials-reuse-16" {
-  name         = "${local.resource_prefix}credentials-reuse-16"
-  machine_type = "e2-small"
-  zone         = local.credentials_reuse_zone
-  tags         = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
+  name              = "${local.resource_prefix}credentials-reuse-16"
+  machine_type      = "e2-small"
+  zone              = var.credentials_reuse_zone
+  tags              = ["test-machine", "ubuntu16", "linux", "credentials-reuse"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.credentials-reuse-16.self_link
@@ -581,10 +604,11 @@ resource "google_compute_instance" "credentials-reuse-16" {
 }
 
 resource "google_compute_instance" "log4j-solr-49" {
-  name         = "${local.resource_prefix}log4j-solr-49"
-  machine_type = "e2-highcpu-4"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "ubuntu16", "linux"]
+  name              = "${local.resource_prefix}log4j-solr-49"
+  machine_type      = "e2-highcpu-4"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "ubuntu16", "linux"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-solr-49.self_link
@@ -601,10 +625,11 @@ resource "google_compute_instance" "log4j-solr-49" {
 }
 
 resource "google_compute_instance" "log4j-solr-50" {
-  name         = "${local.resource_prefix}log4j-solr-50"
-  machine_type = "e2-standard-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "windowsserver2016", "windows"]
+  name              = "${local.resource_prefix}log4j-solr-50"
+  machine_type      = "e2-standard-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "windowsserver2016", "windows"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-solr-50.self_link
@@ -622,10 +647,11 @@ resource "google_compute_instance" "log4j-solr-50" {
 }
 
 resource "google_compute_instance" "log4j-tomcat-51" {
-  name         = "${local.resource_prefix}log4j-tomcat-51"
-  machine_type = "e2-highcpu-4"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "ubuntu16", "linux"]
+  name              = "${local.resource_prefix}log4j-tomcat-51"
+  machine_type      = "e2-highcpu-4"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "ubuntu16", "linux"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-tomcat-51.self_link
@@ -642,10 +668,11 @@ resource "google_compute_instance" "log4j-tomcat-51" {
 }
 
 resource "google_compute_instance" "log4j-tomcat-52" {
-  name         = "${local.resource_prefix}log4j-tomcat-52"
-  machine_type = "e2-standard-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "windowsserver2016", "windows"]
+  name              = "${local.resource_prefix}log4j-tomcat-52"
+  machine_type      = "e2-standard-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "windowsserver2016", "windows"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-tomcat-52.self_link
@@ -663,10 +690,11 @@ resource "google_compute_instance" "log4j-tomcat-52" {
 }
 
 resource "google_compute_instance" "log4j-logstash-55" {
-  name         = "${local.resource_prefix}log4j-logstash-55"
-  machine_type = "e2-highcpu-4"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "ubuntu16", "linux"]
+  name              = "${local.resource_prefix}log4j-logstash-55"
+  machine_type      = "e2-highcpu-4"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "ubuntu16", "linux"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-logstash-55.self_link
@@ -683,10 +711,11 @@ resource "google_compute_instance" "log4j-logstash-55" {
 }
 
 resource "google_compute_instance" "log4j-logstash-56" {
-  name         = "${local.resource_prefix}log4j-logstash-56"
-  machine_type = "e2-standard-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "windowsserver2016", "windows"]
+  name              = "${local.resource_prefix}log4j-logstash-56"
+  machine_type      = "e2-standard-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "windowsserver2016", "windows"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.log4j-logstash-56.self_link
@@ -704,10 +733,11 @@ resource "google_compute_instance" "log4j-logstash-56" {
 }
 
 resource "google_compute_instance" "browser-credentials-66" {
-  name         = "${local.resource_prefix}browser-credentials-66"
-  machine_type = "e2-highcpu-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "windowsserver2016", "windows"]
+  name              = "${local.resource_prefix}browser-credentials-66"
+  machine_type      = "e2-highcpu-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "windowsserver2016", "windows"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.browser-credentials-66.self_link
@@ -725,10 +755,11 @@ resource "google_compute_instance" "browser-credentials-66" {
 }
 
 resource "google_compute_instance" "browser-credentials-67" {
-  name         = "${local.resource_prefix}browser-credentials-67"
-  machine_type = "e2-highcpu-2"
-  zone         = local.main1_zone
-  tags         = ["test-machine", "ubuntu16", "linux"]
+  name              = "${local.resource_prefix}browser-credentials-67"
+  machine_type      = "e2-highcpu-2"
+  zone              = var.main1_zone
+  tags              = ["test-machine", "ubuntu16", "linux"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.browser-credentials-67.self_link
@@ -745,9 +776,10 @@ resource "google_compute_instance" "browser-credentials-67" {
 }
 
 resource "google_compute_instance" "zerologon-25" {
-  name         = "${local.resource_prefix}zerologon-25"
-  machine_type = "e2-standard-2"
-  tags         = ["test-machine", "windowsserver2016", "windows"]
+  name              = "${local.resource_prefix}zerologon-25"
+  machine_type      = "e2-standard-2"
+  tags              = ["test-machine", "windowsserver2016", "windows"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.zerologon-25.self_link
@@ -765,9 +797,10 @@ resource "google_compute_instance" "zerologon-25" {
 }
 
 resource "google_compute_instance" "island-linux-250" {
-  name         = "${local.resource_prefix}island-linux-250"
-  machine_type = "n2-custom-2-4096"
-  tags         = ["island", "linux", "ubuntu16"]
+  name              = "${local.resource_prefix}island-linux-250"
+  machine_type      = "n2-custom-2-4096"
+  tags              = ["island", "linux", "ubuntu16"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.island-linux-250.self_link
@@ -785,9 +818,10 @@ resource "google_compute_instance" "island-linux-250" {
 }
 
 resource "google_compute_instance" "island-windows-251" {
-  name         = "${local.resource_prefix}island-windows-251"
-  machine_type = "e2-custom-4-8192"
-  tags         = ["test-machine", "windowsserver2016", "windows", "island"]
+  name              = "${local.resource_prefix}island-windows-251"
+  machine_type      = "e2-custom-4-8192"
+  tags              = ["test-machine", "windowsserver2016", "windows", "island"]
+  resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
       image = data.google_compute_image.island-windows-251.self_link
