@@ -1,5 +1,5 @@
 source "googlecompute" "island-linux-250" {
-    image_name = "island-linux-250-test"
+    image_name = "island-linux-250"
     project_id = "${var.project_id}"
     source_image = "ubuntu-2004-focal-v20230907"
     zone = "${var.zone}"
