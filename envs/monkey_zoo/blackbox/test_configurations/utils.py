@@ -54,15 +54,6 @@ def add_credentials_collectors(
     return agent_configuration_copy
 
 
-def add_http_ports(
-    agent_configuration: AgentConfiguration, http_ports: Sequence[int]
-) -> AgentConfiguration:
-    agent_configuration_copy = agent_configuration.copy(deep=True)
-    agent_configuration_copy.propagation.exploitation.options.http_ports = http_ports
-
-    return agent_configuration_copy
-
-
 def set_keep_tunnel_open_time(
     agent_configuration: AgentConfiguration, keep_tunnel_open_time: int
 ) -> AgentConfiguration:
