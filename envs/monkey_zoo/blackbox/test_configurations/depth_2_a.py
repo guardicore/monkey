@@ -10,7 +10,6 @@ from .utils import (
     add_credentials_collectors,
     add_exploiters,
     add_fingerprinters,
-    add_http_ports,
     add_subnets,
     add_tcp_ports,
     replace_agent_configuration,
@@ -32,7 +31,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
         "Log4Shell": {
             # no ports are configured but because `try_all_discovered_http_ports` is
             # set to true, the exploiter should exploit 10.2.3.46 on port 8080 (configured
-            # at `agent_configuration.propagation.exploitation.options.http_ports`)
+            # in the HTTP fingerprinter)
             "try_all_discovered_http_ports": True,
             "target_ports": [],
         },
@@ -68,7 +67,7 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
 
 def _add_fingerprinters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     fingerprinters = [
-        PluginConfiguration(name="http", options={}),
+        PluginConfiguration(name="http", options={"http_ports": [8080]}),
         PluginConfiguration(name="smb", options={}),
         PluginConfiguration(name="ssh", options={}),
     ]
@@ -81,16 +80,11 @@ def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguratio
     return add_tcp_ports(agent_configuration, ports)
 
 
-def _add_http_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    return add_http_ports(agent_configuration, [8080])
-
-
 test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 2)
 test_agent_configuration = _add_exploiters(test_agent_configuration)
 test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_fingerprinters(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
-test_agent_configuration = _add_http_ports(test_agent_configuration)
 test_agent_configuration = _add_credentials_collectors(test_agent_configuration)
 
 CREDENTIALS = (
