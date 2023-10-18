@@ -50,6 +50,5 @@
       sudo make altinstall
       cd -
       sudo rm -rf $WORK_DIR
-
-- name: Install pip
-  shell: curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
+  - name: Install pip
+    shell: curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
