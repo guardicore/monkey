@@ -16,6 +16,9 @@ const initialSection = sectionOrder[0];
 export const EXPLOITERS_PATH_PROPAGATION = 'exploitation.exploiters';
 export const EXPLOITERS_CONFIG_PATH = 'propagation.' + EXPLOITERS_PATH_PROPAGATION;
 
+export const FINGERPRINTERS_PATH_PROPAGATION = 'network_scan.fingerprinters';
+export const FINGERPRINTERS_CONFIG_PATH = 'propagation.' + FINGERPRINTERS_PATH_PROPAGATION;
+
 export default function PropagationConfig(props) {
   const {
     schema,
