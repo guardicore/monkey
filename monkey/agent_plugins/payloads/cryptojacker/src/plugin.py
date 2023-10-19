@@ -6,7 +6,6 @@ from monkeytypes import Event
 
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID, SocketAddress
-from common.utils.code_utils import del_key
 from infection_monkey.i_puppet import PayloadResult
 
 from .cryptojacker_builder import build_cryptojacker
@@ -36,9 +35,6 @@ class Plugin:
         interrupt: Event,
         **kwargs,
     ) -> PayloadResult:
-        # HTTP ports options are hack because they are needed in fingerprinters
-        del_key(options, "http_ports")
-
         try:
             logger.debug(f"Parsing options: {pformat(options)}")
             cryptojacker_options = CryptojackerOptions(**options)
