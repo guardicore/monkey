@@ -170,7 +170,7 @@ class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
     tcp: TCPScanConfiguration = Field(
         title="TCP scanner", description="Configure TCP scanning options"
     )
-    fingerprinters: Tuple[PluginConfiguration, ...] = Field(
+    fingerprinters: Dict[str, Dict] = Field(
         title="Fingerprinters",
         description="Fingerprint modules collect info about external "
         "services that Infection Monkey scans.",
