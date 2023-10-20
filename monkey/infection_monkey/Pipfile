@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pyinstaller = "*"
+pyinstaller = "==5.13.0"
 ifaddr = "*"
 ipaddress = ">=1.0.23"
 odict = "==1.7.0"
