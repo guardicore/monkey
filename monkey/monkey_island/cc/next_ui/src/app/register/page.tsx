@@ -1,7 +1,7 @@
 'use client';
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Button } from '@mui/material';
-import * as React from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -13,30 +13,58 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useLoginMutation } from '@/redux/features/api/authentication/authApi';
+import {useEffect, useState} from 'react';
 
-const LoginPage = () => {
-    const [login, { isLoading, isError, error }] = useLoginMutation();
+const RegistrationPage = () => {
 
-    const [loginFormValues, setLoginFormValues] = React.useState({
+    const [successfulRegistration, setSuccessfulRegistration] = useState(false);
+    const router = useRouter()
+
+    useEffect(() => {
+        if (successfulRegistration) {
+            router.push("/")
+        }
+    }, [successfulRegistration])
+
+    const register = async (registrationFormValues: any) => {
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(registrationFormValues)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data)
+            localStorage.setItem('authentication_token', data.response.user.authentication_token);
+            setSuccessfulRegistration(true)
+        } else {
+            console.log('Registration failed.');
+        }
+    }
+
+    const [loading, setLoading] = React.useState(false);
+
+    const [registrationFormValues, setRegistrationFormValues] = React.useState({
         username: '',
         password: ''
     });
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        await login(loginFormValues);
-        redirect('/');
+        await register(registrationFormValues);
     };
 
-    const handleLoginFormValueChange = (e: any) => {
+    const handleRegistrationFormValueChange = (e: any) => {
         const name = e.target.name;
         const value =
             e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-        setLoginFormValues({ ...loginFormValues, [name]: value });
+        setRegistrationFormValues({ ...registrationFormValues, [name]: value });
     };
 
-    const renderLoginForm = () => {
+    const renderRegistrationForm = () => {
         return (
             <>
                 <Container component="main" maxWidth="xs">
@@ -52,7 +80,7 @@ const LoginPage = () => {
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Sign in
+                            Registration
                         </Typography>
                         <Box
                             component="form"
@@ -66,8 +94,8 @@ const LoginPage = () => {
                                 label="username"
                                 name="username"
                                 autoComplete="username"
-                                value={loginFormValues.username}
-                                onChange={handleLoginFormValueChange}
+                                value={registrationFormValues.username}
+                                onChange={handleRegistrationFormValueChange}
                                 autoFocus
                             />
                             <TextField
@@ -79,8 +107,8 @@ const LoginPage = () => {
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
-                                value={loginFormValues.password}
-                                onChange={handleLoginFormValueChange}
+                                value={registrationFormValues.password}
+                                onChange={handleRegistrationFormValueChange}
                             />
                             <FormControlLabel
                                 control={
@@ -92,16 +120,13 @@ const LoginPage = () => {
                                 label="Remember me"
                             />
                             <Button
-                                disabled={isLoading}
+                                disabled={loading}
                                 type="submit"
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}>
-                                {isLoading ? 'Loading...' : 'Sign In'}
+                                {loading ? 'Loading...' : 'Register'}
                             </Button>
-
-                            {/* @ts-ignore */}
-                            {isError && <p>{error.message}</p>}
 
                             <Grid container>
                                 <Grid item xs>
@@ -122,6 +147,7 @@ const LoginPage = () => {
         );
     };
 
-    return renderLoginForm();
+    return renderRegistrationForm();
 };
-export default LoginPage;
+
+export default RegistrationPage;
