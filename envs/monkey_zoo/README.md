@@ -41,7 +41,8 @@ Example:
 Example:
   `packer build -only googlecompute.mimikatz-15,googlecompute.snmp-20 .`
 
-If you want to keep the machine running to debug the image, add `-debug` flag to the command.
+If you want to disable parallelization and output debugging info, add `-debug` flag to the command.
+If you want to allow editing and retrying of a failed script, use the `-on-error=ask` flag.
 If you want to override an already existing image add `-force` flag to the command.
 
 ## MonkeyZoo network

@@ -1,17 +1,26 @@
 ---
-- name: Download JDK
-  win_get_url:
-    url: https://download.macromedia.com/pub/coldfusion/java/java8/8u321/jdk/jdk-8u321-windows-x64.zip
-    dest: C:\Windows\Temp\jdk-8u321-windows-x64.zip
-    # checksum_url: https://download.macromedia.com/pub/coldfusion/java/java8/8u321/jdk/Checksum-JDK8u321.txt
-    checksum: 94ed3431d30f915cc8efff3e505fa0e09b625bb0ee3b5cc1fe5671e90da10c4d
-    checksum_algorithm: sha256
+- name: Local Download JDK
+  local_action:
+    module: get_url
+    url: https://javadl.oracle.com/webapps/download/GetFile/1.8.0_181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/windows-i586/server-jre-8u181-windows-x64.tar.gz
+    dest: /tmp/jdk-8u181-windows-x64.tar.gz
+    checksum: sha256:7799b9007760663da32a3b177a0b9ea42ec268afaa69dcf8518cdce5136c3768
     force: true
-- name: Extract JDK
-  win_shell: Expand-Archive -Path C:\Windows\Temp\jdk-8u321-windows-x64.zip -DestinationPath C:\ -Force
+    headers:
+      Cookie: oraclelicense=a
+- name: Local Extract JDK
+  local_action:
+    module: unarchive
+    src: /tmp/jdk-8u181-windows-x64.tar.gz
+    dest: /tmp/
+- name: Copy JDK
+  win_copy:
+    src: /tmp/jdk1.8.0_181
+    dest: C:\
+    force: yes
 - name: Set JAVA_HOME
   win_environment:
     name: JAVA_HOME
-    value: C:\jdk1.8.0_321
+    value: C:\jdk1.8.0_181
     level: machine
     state: present
