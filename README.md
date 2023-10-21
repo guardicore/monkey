@@ -7,15 +7,15 @@
 ![GitHub stars](https://img.shields.io/github/stars/guardicore/monkey)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/guardicore/monkey)
 
-## Data center Security Testing Tool
+## Data Center Security Testing Tool
 
 Welcome to the Infection Monkey!
 
-The Infection Monkey is an open source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self propagate across a data center and reports success to a centralized Monkey Island server.
+The Infection Monkey is an open-source security tool for testing a data center's resiliency to perimeter breaches and internal server infection. The Monkey uses various methods to self-propagate across a data center and reports success to a centralized Monkey Island server.
 
 The Infection Monkey is comprised of two parts:
 
-* **Monkey** - A tool which infects other machines and propagates to them.
+* **Monkey** - A tool that infects other machines and propagates to them.
 * **Monkey Island** - A dedicated server to control and visualize the Infection Monkey's progress inside the data center.
 
 To read more about the Monkey, visit [akamai.com/infectionmonkey](https://www.akamai.com/infectionmonkey).
@@ -50,9 +50,9 @@ Check out the [Setup](https://techdocs.akamai.com/infection-monkey/docs/setting-
 
 The Infection Monkey supports a variety of platforms, documented [in our documentation hub](https://techdocs.akamai.com/infection-monkey/docs/operating-systems/).
 
-## Building the Monkey from source
-To deploy development version of monkey you should refer to readme in the [deployment scripts](deployment_scripts)
-folder or follow documentation in [documentation hub](https://techdocs.akamai.com/infection-monkey/docs/development-setup/).
+## Building the Monkey from the source
+To deploy the development version of Monkey you should refer to readme in the [deployment scripts](deployment_scripts)
+folder or follow the documentation in the [documentation hub](https://techdocs.akamai.com/infection-monkey/docs/development-setup/).
 
 ### Build status
 | Branch | Status |
@@ -67,7 +67,7 @@ folder or follow documentation in [documentation hub](https://techdocs.akamai.co
 In order to run all of the Unit Tests, run the command `python -m pytest` in the `monkey` directory.
 
 To get a coverage report, first make sure the `coverage` package is installed using `pip install coverage`. Run the command
-`coverage run -m unittest` in the `monkey` directory and then `coverage html`. The coverage report can be found in
+`coverage run -m unit test` in the `monkey` directory and then `coverage html`. The coverage report can be found in
 `htmlcov.index`.
 
 ### Blackbox tests
