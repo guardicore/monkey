@@ -64,11 +64,13 @@ folder or follow the documentation in the [documentation hub](https://techdocs.a
 
 ### Unit Tests
 
-In order to run all of the Unit Tests, run the command `python -m pytest` in the `monkey` directory.
+In order to run all of the Unit Tests, run the command `pytest` in the `monkey`
+directory.
 
-To get a coverage report, first make sure the `coverage` package is installed using `pip install coverage`. Run the command
-`coverage run -m unit test` in the `monkey` directory and then `coverage html`. The coverage report can be found in
-`htmlcov.index`.
+To get a coverage report, first make sure the `pytest-cov` package is installed
+using `pip install pytest-cov`. Run the command `pytest --cov-report=html --cov
+.` in the `monkey/` directory. The coverage report can be found in
+`htmlcov/index.html`.
 
 ### Blackbox tests
 
