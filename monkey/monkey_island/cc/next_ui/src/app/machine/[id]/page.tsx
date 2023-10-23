@@ -1,20 +1,35 @@
 'use client';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchMachines, machineById} from '@/features/machineSlice';
-import {useEffect} from 'react';
+import {useMemo} from 'react';
+import {useGetAllMachinesQuery} from '@/fetching/islandApiSlice';
+import {createSelector} from 'reselect';
+import MachineView from '@/components/machineView';
+
 
 export default function Machine({params}: { params: { id: string } }) {
-    const dispatch = useDispatch()
-    const machine = useSelector((state) => machineById(state, params.id))
+    const theId = params.id
 
-    useEffect(() => {
-        dispatch(fetchMachines())
+    const getSpecificMachine = useMemo(() => {
+        const emptyObject = {}
+        return createSelector(
+            res => res.data,
+            (res, machineId) => machineId,
+            (data, machineId) => {
+                return data?.find(machine => Number(machine.id) === Number(machineId)) ?? emptyObject
+            }
+        )
     }, [])
+
+    const {specificMachine} = useGetAllMachinesQuery(undefined, {
+        pollingInterval: 3000,
+        selectFromResult: result => ({
+            specificMachine: getSpecificMachine(result, theId)
+        })
+    })
 
     return (
         <div>
             Machine: <br/>
-            <pre>{JSON.stringify(machine, null, 2)}</pre>
+            {specificMachine === undefined ? <p>Loading...</p> : <MachineView machine={specificMachine}/>}
         </div>
     )
 }
