@@ -135,7 +135,7 @@ def test_upsert_communication_from_event__no_target_ip(network_model_update_faca
 
 def test_cache_reset__get_or_create_target_machine(network_model_update_facade, machine_repository):
     original_target = network_model_update_facade.get_or_create_target_machine(TARGET_IP_ADDRESS)
-    original_target_machine_no_interfaces = TARGET_MACHINE.model_copy()
+    original_target_machine_no_interfaces = TARGET_MACHINE.copy()
     original_target_machine_no_interfaces.network_interfaces = []
     machine_repository.upsert_machine(original_target_machine_no_interfaces)
 

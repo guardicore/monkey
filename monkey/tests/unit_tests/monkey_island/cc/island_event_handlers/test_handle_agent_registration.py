@@ -138,7 +138,7 @@ def test_existing_machine_updated__find_by_ip(handler, machine_repository):
         existing_machine.network_interfaces[0].ip, existing_machine
     )
 
-    expected_updated_machine = existing_machine.model_copy()
+    expected_updated_machine = existing_machine.copy()
     expected_updated_machine.hardware_id = agent_registration_data.machine_hardware_id
     expected_updated_machine.network_interfaces = agent_registration_data.network_interfaces
 

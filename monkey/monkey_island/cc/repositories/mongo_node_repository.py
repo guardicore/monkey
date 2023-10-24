@@ -41,7 +41,7 @@ class MongoNodeRepository(INodeRepository):
         communications.add(communication_type)
         connections[dst] = frozenset(communications)
 
-        new_node = node.model_copy()
+        new_node = node.copy()
         new_node.connections = connections
 
         return new_node
