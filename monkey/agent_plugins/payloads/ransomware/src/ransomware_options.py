@@ -1,8 +1,7 @@
-from typing import Optional
+from typing import Annotated, Optional
 
 from monkeytypes import InfectionMonkeyBaseModel
 from pydantic import Field, StringConstraints
-from typing_extensions import Annotated
 
 valid_file_extension_pattern = r"^(\.[A-Za-z0-9_]+)?$"
 
