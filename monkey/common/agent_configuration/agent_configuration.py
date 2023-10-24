@@ -8,7 +8,7 @@ from .agent_sub_configurations import PolymorphismConfiguration, PropagationConf
 
 
 class AgentConfiguration(MutableInfectionMonkeyBaseModel):
-    keep_tunnel_open_time: Annotated[float, Field(ge=0)] = Field(  # type: ignore[valid-type]
+    keep_tunnel_open_time: Annotated[float, Field(ge=0)] = Field(
         title="Keep tunnel open time",
         description="Time to keep tunnel open before "
         "going down after last exploit (in "
