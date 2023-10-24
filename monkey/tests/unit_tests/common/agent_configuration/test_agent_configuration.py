@@ -144,7 +144,7 @@ def test_exploiter_configuration_schema():
 
 def test_exploitation_configuration():
     config = ExploitationConfiguration(**EXPLOITATION_CONFIGURATION)
-    config_dict = config.model_dump(mode="json")
+    config_dict = config.to_json_dict()
 
     assert isinstance(config, ExploitationConfiguration)
     assert config_dict == EXPLOITATION_CONFIGURATION
@@ -152,7 +152,7 @@ def test_exploitation_configuration():
 
 def test_propagation_configuration():
     config = PropagationConfiguration(**PROPAGATION_CONFIGURATION)
-    config_dict = config.model_dump(mode="json")
+    config_dict = config.to_json_dict()
 
     assert isinstance(config, PropagationConfiguration)
     assert isinstance(config.network_scan, NetworkScanConfiguration)
@@ -180,7 +180,7 @@ def test_propagation_configuration__maximum_depth_zero():
 
 def test_agent_configuration():
     config = AgentConfiguration(**AGENT_CONFIGURATION)
-    config_dict = config.model_dump(mode="json")
+    config_dict = config.to_json_dict()
 
     assert isinstance(config, AgentConfiguration)
     assert config.keep_tunnel_open_time == 30

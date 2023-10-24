@@ -58,7 +58,7 @@ def test_constructor(linux_file_encryption_event_dict):
 
 
 def test_serialization():
-    serialized_event = LINUX_FILE_ENCRYPTION_EVENT.model_dump(mode="json")
+    serialized_event = LINUX_FILE_ENCRYPTION_EVENT.to_json_dict()
     assert serialized_event == LINUX_FILE_ENCRYPTION_SIMPLE_DICT
 
 
@@ -117,7 +117,7 @@ def test_construct__extra_fields_forbidden():
     [LINUX_FILE_ENCRYPTION_EVENT, WINDOWS_FILE_ENCRYPTION_EVENT],
 )
 def test_file_encryption_event__de_serialization(event):
-    serialized_event = event.model_dump(mode="json")
+    serialized_event = event.to_json_dict()
     deserialized_event = FileEncryptionEvent(**serialized_event)
 
     assert isinstance(deserialized_event.file_path, type(event.file_path))

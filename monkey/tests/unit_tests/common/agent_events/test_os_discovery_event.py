@@ -60,7 +60,7 @@ def test_constructor__extra_fields_forbidden():
 
 
 def test_serialization():
-    serialized_event = OS_DISCOVERY_EVENT.model_dump(mode="json")
+    serialized_event = OS_DISCOVERY_EVENT.to_json_dict()
     assert serialized_event == OS_DISCOVERY_SIMPLE_DICT
 
 

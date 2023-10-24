@@ -45,7 +45,7 @@ def test_from_dict():
 def test_to_dict():
     ping_scan_event = PingScanEvent(**PING_OBJECT_DICT)
 
-    assert ping_scan_event.model_dump(mode="json") == PING_SIMPLE_DICT
+    assert ping_scan_event.to_json_dict() == PING_SIMPLE_DICT
 
 
 @pytest.mark.parametrize(

@@ -52,7 +52,7 @@ def test_constructor(tcp_event_dict):
 
 
 def test_to_dict():
-    TCP_SCAN_EVENT.model_dump(mode="json") == TCP_SIMPLE_DICT
+    TCP_SCAN_EVENT.to_json_dict() == TCP_SIMPLE_DICT
 
 
 @pytest.mark.parametrize(

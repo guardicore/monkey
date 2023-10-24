@@ -16,7 +16,7 @@ PLUGIN_VERSION_1_2_3_SERIALIZED = {
 
 
 def test_agent_plugin_metadata_serialization():
-    assert PLUGIN_VERSION_1_2_3.model_dump(mode="json") == PLUGIN_VERSION_1_2_3_SERIALIZED
+    assert PLUGIN_VERSION_1_2_3.to_json_dict() == PLUGIN_VERSION_1_2_3_SERIALIZED
 
 
 def test_agent_plugin_metadata_deserialization():

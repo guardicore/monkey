@@ -66,7 +66,7 @@ def test_constructor__extra_fields_forbidden():
 
 
 def test_serialization():
-    serialized_event = DEFACEMENT_EVENT.model_dump(mode="json")
+    serialized_event = DEFACEMENT_EVENT.to_json_dict()
     assert serialized_event == DEFACEMENT_SIMPLE_DICT
 
 
