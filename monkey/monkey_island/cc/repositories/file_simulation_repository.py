@@ -23,7 +23,7 @@ class FileSimulationRepository(ISimulationRepository):
             raise RetrievalError(f"Error retrieving the simulation state: {err}")
 
     def save_simulation(self, simulation: Simulation):
-        simulation_json = simulation.model_dump_json()
+        simulation_json = simulation.to_json()
 
         self._file_repository.save_file(
             SIMULATION_STATE_FILE_NAME, io.BytesIO(simulation_json.encode())
