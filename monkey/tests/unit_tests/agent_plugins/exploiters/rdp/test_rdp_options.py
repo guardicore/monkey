@@ -29,11 +29,11 @@ RDP_CONNECT_TIMEOUT_LE_EXCEPTION = {"rdp_connect_timeout": 101}
 
 
 def test_rdp_options__serialization():
-    assert RDP_OPTIONS_OBJECT.model_dump(mode="json") == RDP_OPTIONS_DICT
+    assert RDP_OPTIONS_OBJECT.to_json_dict() == RDP_OPTIONS_DICT
 
 
 def test_rdp_options__full_serialization():
-    assert RDPOptions(**RDP_OPTIONS_OBJECT.model_dump(mode="json")) == RDP_OPTIONS_OBJECT
+    assert RDPOptions(**RDP_OPTIONS_OBJECT.to_json_dict()) == RDP_OPTIONS_OBJECT
 
 
 def test_rdp_options__deserialization():

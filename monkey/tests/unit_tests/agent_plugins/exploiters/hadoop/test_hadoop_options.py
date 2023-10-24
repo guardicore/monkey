@@ -31,11 +31,11 @@ DOWNLOAD_TIMEOUT_EXCEPTION = {"agent_binary_download_timeout": -100}
 
 
 def test_hadoop_options__serialization():
-    assert HADOOP_OPTIONS_OBJECT.model_dump(mode="json") == HADOOP_OPTIONS_DICT
+    assert HADOOP_OPTIONS_OBJECT.to_json_dict() == HADOOP_OPTIONS_DICT
 
 
 def test_hadoop_options__full_serialization():
-    assert HadoopOptions(**HADOOP_OPTIONS_OBJECT.model_dump(mode="json")) == HADOOP_OPTIONS_OBJECT
+    assert HadoopOptions(**HADOOP_OPTIONS_OBJECT.to_json_dict()) == HADOOP_OPTIONS_OBJECT
 
 
 def test_hadoop_options__deserialization():

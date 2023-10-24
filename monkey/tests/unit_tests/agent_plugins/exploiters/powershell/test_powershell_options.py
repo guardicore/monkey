@@ -18,13 +18,12 @@ CONNECTION_TIMEOUT_EXCEPTION = {"winrm_connect_timeout": 0}
 
 
 def test_powershell_options__serialization():
-    assert POWERSHELL_OPTIONS_OBJECT.model_dump(mode="json") == POWERSHELL_OPTIONS_DICT
+    assert POWERSHELL_OPTIONS_OBJECT.to_json_dict() == POWERSHELL_OPTIONS_DICT
 
 
 def test_powershell_options__full_serialization():
     assert (
-        PowerShellOptions(**POWERSHELL_OPTIONS_OBJECT.model_dump(mode="json"))
-        == POWERSHELL_OPTIONS_OBJECT
+        PowerShellOptions(**POWERSHELL_OPTIONS_OBJECT.to_json_dict()) == POWERSHELL_OPTIONS_OBJECT
     )
 
 

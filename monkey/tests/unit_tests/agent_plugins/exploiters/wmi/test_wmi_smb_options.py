@@ -21,11 +21,11 @@ SMB_TIMEOUT_EXCEPTION = {"smb_connect_timeout": 101}
 
 
 def test_smb_options__serialization():
-    assert SMB_OPTIONS_OBJECT.model_dump(mode="json") == SMB_OPTIONS_DICT
+    assert SMB_OPTIONS_OBJECT.to_json_dict() == SMB_OPTIONS_DICT
 
 
 def test_smb_options__full_serialization():
-    assert SMBOptions(**SMB_OPTIONS_OBJECT.model_dump(mode="json")) == SMB_OPTIONS_OBJECT
+    assert SMBOptions(**SMB_OPTIONS_OBJECT.to_json_dict()) == SMB_OPTIONS_OBJECT
 
 
 def test_smb_options__deserialization():

@@ -16,11 +16,11 @@ SSH_TIMEOUT_EXCEPTION_TOO_HIGH = {"connect_timeout": 101}
 
 
 def test_ssh_options__serialization():
-    assert SSH_OPTIONS_OBJECT.model_dump(mode="json") == SSH_OPTIONS_DICT
+    assert SSH_OPTIONS_OBJECT.to_json_dict() == SSH_OPTIONS_DICT
 
 
 def test_ssh_options__full_serialization():
-    assert SSHOptions(**SSH_OPTIONS_OBJECT.model_dump(mode="json")) == SSH_OPTIONS_OBJECT
+    assert SSHOptions(**SSH_OPTIONS_OBJECT.to_json_dict()) == SSH_OPTIONS_OBJECT
 
 
 def test_ssh_options__deserialization():

@@ -10,14 +10,11 @@ TOO_MANY_MAX_ATTEMPTS = 10000
 
 
 def test_zerologon_options__serialization():
-    assert ZEROLOGON_OPTIONS_OBJECT.model_dump(mode="json") == ZER0LOGON_OPTIONS_DICT
+    assert ZEROLOGON_OPTIONS_OBJECT.to_json_dict() == ZER0LOGON_OPTIONS_DICT
 
 
 def test_smb_options__full_serialization():
-    assert (
-        ZerologonOptions(**ZEROLOGON_OPTIONS_OBJECT.model_dump(mode="json"))
-        == ZEROLOGON_OPTIONS_OBJECT
-    )
+    assert ZerologonOptions(**ZEROLOGON_OPTIONS_OBJECT.to_json_dict()) == ZEROLOGON_OPTIONS_OBJECT
 
 
 def test_zerologon_options__deserialization():

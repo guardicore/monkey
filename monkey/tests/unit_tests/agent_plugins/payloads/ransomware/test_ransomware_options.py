@@ -17,13 +17,12 @@ RANSOMWARE_OPTIONS_OBJECT = RansomwareOptions(
 
 
 def test_ransomware_options__serialization():
-    assert RANSOMWARE_OPTIONS_OBJECT.model_dump(mode="json") == RANSOMWARE_OPTIONS_DICT
+    assert RANSOMWARE_OPTIONS_OBJECT.to_json_dict() == RANSOMWARE_OPTIONS_DICT
 
 
 def test_ransomware_options__full_serialization():
     assert (
-        RansomwareOptions(**RANSOMWARE_OPTIONS_OBJECT.model_dump(mode="json"))
-        == RANSOMWARE_OPTIONS_OBJECT
+        RansomwareOptions(**RANSOMWARE_OPTIONS_OBJECT.to_json_dict()) == RANSOMWARE_OPTIONS_OBJECT
     )
 
 

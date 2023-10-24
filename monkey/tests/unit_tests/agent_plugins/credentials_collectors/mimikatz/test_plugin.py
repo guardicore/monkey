@@ -203,6 +203,6 @@ def test_exclude_username_prefixes(monkeypatch):
     }
     options = MimikatzOptions(excluded_username_prefixes=["sensitive-", "admin"])
 
-    collected_credentials = collect_credentials(options.model_dump(mode="json"))
+    collected_credentials = collect_credentials(options.to_json_dict())
     assert len(collected_credentials) == len(expected_credentials)
     assert set(collected_credentials) == expected_credentials

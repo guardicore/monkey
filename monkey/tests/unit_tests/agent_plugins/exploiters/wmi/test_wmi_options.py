@@ -19,11 +19,11 @@ CONNECT_TIMEOUT_EXCEPTION = {"agent_binary_upload_timeout": 30.0, "smb_connect_t
 
 
 def test_wmi_options__serialization():
-    assert WMI_OPTIONS_OBJECT.model_dump(mode="json") == WMI_OPTIONS_DICT
+    assert WMI_OPTIONS_OBJECT.to_json_dict() == WMI_OPTIONS_DICT
 
 
 def test_wmi_options__full_serialization():
-    assert WMIOptions(**WMI_OPTIONS_OBJECT.model_dump(mode="json")) == WMI_OPTIONS_OBJECT
+    assert WMIOptions(**WMI_OPTIONS_OBJECT.to_json_dict()) == WMI_OPTIONS_OBJECT
 
 
 def test_wmi_options__deserialization():

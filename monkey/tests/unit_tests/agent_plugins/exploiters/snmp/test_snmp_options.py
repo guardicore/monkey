@@ -25,11 +25,11 @@ RETRIES_EXCEPTION = {"snmp_retries": -1}
 
 
 def test_snmp_options__serialization():
-    assert SNMP_OPTIONS_OBJECT.model_dump(mode="json") == SNMP_OPTIONS_DICT
+    assert SNMP_OPTIONS_OBJECT.to_json_dict() == SNMP_OPTIONS_DICT
 
 
 def test_hadoop_options__full_serialization():
-    assert SNMPOptions(**SNMP_OPTIONS_OBJECT.model_dump(mode="json")) == SNMP_OPTIONS_OBJECT
+    assert SNMPOptions(**SNMP_OPTIONS_OBJECT.to_json_dict()) == SNMP_OPTIONS_OBJECT
 
 
 def test_hadoop_options__deserialization():

@@ -20,14 +20,11 @@ AGENT_DOWNLOAD_TIMEOUT_EXCEPTION = {"agent_binary_download_timeout": -100}
 
 
 def test_log4shell_options__serialization():
-    assert LOG4SHELL_OPTIONS_OBJECT.model_dump(mode="json") == LOG4SHELL_OPTIONS_DICT
+    assert LOG4SHELL_OPTIONS_OBJECT.to_json_dict() == LOG4SHELL_OPTIONS_DICT
 
 
 def test_log4shell_options__full_serialization():
-    assert (
-        Log4ShellOptions(**LOG4SHELL_OPTIONS_OBJECT.model_dump(mode="json"))
-        == LOG4SHELL_OPTIONS_OBJECT
-    )
+    assert Log4ShellOptions(**LOG4SHELL_OPTIONS_OBJECT.to_json_dict()) == LOG4SHELL_OPTIONS_OBJECT
 
 
 def test_hadoop_options__deserialization():

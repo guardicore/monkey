@@ -33,11 +33,11 @@ DOWNLOAD_TIMEOUT_EXCEPTION = {"agent_binary_download_timeout": -100}
 
 
 def test_mssql_options__serialization():
-    assert MSSQL_OPTIONS_OBJECT.model_dump(mode="json") == MSSQL_OPTIONS_DICT
+    assert MSSQL_OPTIONS_OBJECT.to_json_dict() == MSSQL_OPTIONS_DICT
 
 
 def test_mssql_options__full_serialization():
-    assert MSSQLOptions(**MSSQL_OPTIONS_OBJECT.model_dump(mode="json")) == MSSQL_OPTIONS_OBJECT
+    assert MSSQLOptions(**MSSQL_OPTIONS_OBJECT.to_json_dict()) == MSSQL_OPTIONS_OBJECT
 
 
 def test_msqql_options__deserialization():
