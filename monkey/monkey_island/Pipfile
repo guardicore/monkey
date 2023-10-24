@@ -18,7 +18,7 @@ ring = ">=0.7.3"
 Flask-RESTful = ">=0.3.8"
 Flask = "==2.2.5"  # v2.3.0 removes JSONEncoder which causes exceptions
 Flask-Limiter = "*"
-Werkzeug = "==2.3.0"
+Werkzeug = "==2.*"
 pyaescrypt = "*"
 python-dateutil = "*"
 cffi = "*"  # Without explicit install: ModuleNotFoundError: No module named '_cffi_backend'
