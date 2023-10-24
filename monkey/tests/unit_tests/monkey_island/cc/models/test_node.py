@@ -45,7 +45,7 @@ def test_serialization():
 
     n = Node(**node_dict)
 
-    serialized_node = n.model_dump(mode="json")
+    serialized_node = n.to_json_dict()
 
     # NOTE: Comparing these nodes is difficult because sets are not ordered
     assert len(serialized_node) == len(node_dict)

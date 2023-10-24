@@ -33,7 +33,7 @@ class AgentConfigurationValidationDecorator(IAgentConfigurationRepository):
             agent_configuration_schema = self._agent_configuration_schema_compiler.get_schema()
             agent_configuration = self._agent_configuration_repository.get_configuration()
             validate(
-                instance=agent_configuration.model_dump(mode="json"),
+                instance=agent_configuration.to_json_dict(),
                 schema=agent_configuration_schema,
             )
             return agent_configuration
@@ -44,7 +44,7 @@ class AgentConfigurationValidationDecorator(IAgentConfigurationRepository):
 
     def update_configuration(self, agent_configuration: AgentConfiguration):
         try:
-            agent_configuration_dict = agent_configuration.model_dump(mode="json")
+            agent_configuration_dict = agent_configuration.to_json_dict()
             agent_configuration_schema = self._agent_configuration_schema_compiler.get_schema()
 
             validate(instance=agent_configuration_dict, schema=agent_configuration_schema)

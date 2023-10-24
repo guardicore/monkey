@@ -62,7 +62,7 @@ def empty_node_repository() -> INodeRepository:
 @pytest.fixture
 def mongo_client() -> mongomock.MongoClient:
     client = mongomock.MongoClient()
-    client.monkey_island.nodes.insert_many((n.model_dump(mode="json") for n in NODES))
+    client.monkey_island.nodes.insert_many((n.to_json_dict() for n in NODES))
     return client
 
 

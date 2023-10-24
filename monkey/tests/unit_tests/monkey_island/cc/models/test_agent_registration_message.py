@@ -29,7 +29,7 @@ AGENT_REGISTRATION_MESSAGE_SIMPLE_DICT = {
     "machine_hardware_id": 2,
     "start_time": "2022-08-18T18:46:48Z",
     "parent_id": str(PARENT_ID),
-    "cc_server": SOCKET_ADDRESS.model_dump(mode="json"),
+    "cc_server": SOCKET_ADDRESS.to_json_dict(),
     "network_interfaces": ["10.0.0.1/24", "192.168.5.32/16"],
     "sha256": AGENT_SHA256,
 }
@@ -39,7 +39,7 @@ def test_to_dict():
     a = AgentRegistrationData(**AGENT_REGISTRATION_MESSAGE_OBJECT_DICT)
     simple_dict = AGENT_REGISTRATION_MESSAGE_SIMPLE_DICT.copy()
 
-    assert a.model_dump(mode="json") == simple_dict
+    assert a.to_json_dict() == simple_dict
 
 
 def test_from_serialized():

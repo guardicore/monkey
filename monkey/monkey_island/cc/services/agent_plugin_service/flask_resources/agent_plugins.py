@@ -51,7 +51,7 @@ class AgentPlugins(AbstractResource):
                 plugin_type=agent_plugin_type,
                 plugin_name=PluginName(name),
             )
-            return make_response(agent_plugin.model_dump(mode="json"), HTTPStatus.OK)
+            return make_response(agent_plugin.to_json_dict(), HTTPStatus.OK)
         except UnknownRecordError:
             message = f"Plugin '{name}' of type '{plugin_type}' not found for os '{host_os}'."
             logger.warning(message)

@@ -47,7 +47,7 @@ class AgentConfigurationSchemaCompiler:
             for plugin_name in config_schemas[plugin_type].keys():
                 config_schema = config_schemas[plugin_type][plugin_name]
                 plugin_manifest = all_plugin_manifests[plugin_type][plugin_name]
-                config_schema.update(plugin_manifest.model_dump(mode="json"))
+                config_schema.update(plugin_manifest.to_json_dict())
                 schema = self._add_plugin_to_schema(schema, plugin_type, plugin_name, config_schema)
         return schema
 
@@ -66,7 +66,7 @@ class AgentConfigurationSchemaCompiler:
         self, schema: Dict[str, Any], manifests: Dict[str, AgentPluginManifest]
     ) -> Dict[str, Any]:
         for plugin_name, manifest in manifests.items():
-            schema[plugin_name].update(manifest.model_dump(mode="json"))
+            schema[plugin_name].update(manifest.to_json_dict())
         return schema
 
     def _add_non_plugin_fingerprinters(self, schema: Dict[str, Any]) -> Dict[str, Any]:

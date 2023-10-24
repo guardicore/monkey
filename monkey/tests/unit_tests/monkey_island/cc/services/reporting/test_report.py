@@ -161,14 +161,14 @@ EXPECTED_SCANNED_MACHINES = [
     {
         "hostname": MACHINE_1.hostname,
         "ip_addresses": [str(iface.ip) for iface in MACHINE_1.network_interfaces],
-        "accessible_from_nodes": [ISLAND_MACHINE.model_dump(mode="json")],
+        "accessible_from_nodes": [ISLAND_MACHINE.to_json_dict()],
         "services": [],
         "domain_name": "",
     },
     {
         "hostname": MACHINE_2.hostname,
         "ip_addresses": [str(iface.ip) for iface in MACHINE_2.network_interfaces],
-        "accessible_from_nodes": [MACHINE_1.model_dump(mode="json")],
+        "accessible_from_nodes": [MACHINE_1.to_json_dict()],
         "services": [],
         "domain_name": "",
     },

@@ -62,7 +62,7 @@ class MongoNodeRepository(INodeRepository):
     def upsert_node(self, node: Node):
         try:
             result = self._nodes_collection.replace_one(
-                {SRC_FIELD_NAME: node.machine_id}, node.model_dump(mode="json"), upsert=True
+                {SRC_FIELD_NAME: node.machine_id}, node.to_json_dict(), upsert=True
             )
         except Exception as err:
             raise StorageError(f"{UPSERT_ERROR_MESSAGE}: {err}")

@@ -44,6 +44,6 @@ class InstalledAgentPluginsManifests(AbstractResource):
             for plugin_name in manifests[plugin_type]:
                 simplified[plugin_type.value][plugin_name] = manifests[plugin_type][
                     plugin_name
-                ].model_dump(mode="json")
+                ].to_json_dict()
 
         return simplified

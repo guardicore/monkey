@@ -69,9 +69,7 @@ def build_agent_plugin_tar(
     fileobj = io.BytesIO()
     with TarFile(fileobj=fileobj, mode="w") as tar:
         manifest_tarinfo = TarInfo(manifest_file_name)
-        manifest_bytes = yaml.safe_dump(
-            agent_plugin.plugin_manifest.model_dump(mode="json")
-        ).encode()
+        manifest_bytes = yaml.safe_dump(agent_plugin.plugin_manifest.to_json_dict()).encode()
         manifest_tarinfo.size = len(manifest_bytes)
         tar.addfile(manifest_tarinfo, io.BytesIO(manifest_bytes))
 

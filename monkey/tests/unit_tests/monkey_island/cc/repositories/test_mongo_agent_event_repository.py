@@ -255,7 +255,7 @@ def is_encrypted_event(original_event: AbstractAgentEvent, other_event) -> bool:
     - The remaining fields are the encrypted version of the original fields
     """
 
-    event = original_event.model_dump(mode="json")
+    event = original_event.to_json_dict()
 
     # Note: The serializer adds a "type" field
     event["type"] = type(original_event).__name__

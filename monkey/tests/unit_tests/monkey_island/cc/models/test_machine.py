@@ -58,7 +58,7 @@ def test_from_dict():
 def test_to_dict():
     m = Machine(**MACHINE_OBJECT_DICT)
 
-    assert m.model_dump(mode="json") == dict(MACHINE_SIMPLE_DICT)
+    assert m.to_json_dict() == dict(MACHINE_SIMPLE_DICT)
 
 
 @pytest.mark.parametrize(

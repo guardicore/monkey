@@ -52,7 +52,7 @@ def test_to_dict():
     agent_simple_dict["stop_time"] = None
     agent_simple_dict["cc_server"] = None
 
-    assert a.model_dump(mode="json") == agent_simple_dict
+    assert a.to_json_dict() == agent_simple_dict
 
 
 @pytest.mark.parametrize(
