@@ -59,7 +59,7 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
             agent_configuration = self._island_api_client.get_config()
             agent_configuration_schema = self._island_api_client.get_agent_configuration_schema()
             validate(
-                instance=agent_configuration.model_dump(mode="json"),
+                instance=agent_configuration.to_json_dict(),
                 schema=agent_configuration_schema,
             )
             return agent_configuration

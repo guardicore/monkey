@@ -50,4 +50,4 @@ class TargetHost(MutableInfectionMonkeyBaseModel):
         return hash(self.ip)
 
     def __str__(self):
-        return pprint.pformat(self.model_dump(mode="json"))
+        return pprint.pformat(self.to_json_dict())

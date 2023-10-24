@@ -442,7 +442,7 @@ def test_island_api_client_get_credentials_for_propagation():
 
 
 def test_island_api_client_get_config():
-    agent_config_dict = AgentConfiguration(**AGENT_CONFIGURATION).model_dump(mode="json")
+    agent_config_dict = AgentConfiguration(**AGENT_CONFIGURATION).to_json_dict()
     api_client = _build_client_with_json_response(agent_config_dict)
 
     assert api_client.get_config() == AgentConfiguration(**AGENT_CONFIGURATION)
