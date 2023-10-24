@@ -1,11 +1,10 @@
 import time
 from abc import ABC
 from ipaddress import IPv4Address
-from typing import FrozenSet, Union
+from typing import Annotated, FrozenSet, Union
 
 from monkeytypes import InfectionMonkeyBaseModel
 from pydantic import Field, StringConstraints
-from typing_extensions import Annotated
 
 from common.types import AgentID, MachineID
 

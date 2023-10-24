@@ -1,8 +1,7 @@
-from typing import Dict
+from typing import Annotated, Dict
 
 from monkeytypes.base_models import MutableInfectionMonkeyBaseModel
 from pydantic import Field
-from typing_extensions import Annotated
 
 from .agent_sub_configurations import PolymorphismConfiguration, PropagationConfiguration
 

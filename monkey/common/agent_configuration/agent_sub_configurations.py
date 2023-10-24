@@ -1,8 +1,7 @@
-from typing import Dict, Tuple
+from typing import Annotated, Dict, Tuple
 
 from monkeytypes import MutableInfectionMonkeyBaseModel
 from pydantic import BeforeValidator, Field, PositiveFloat
-from typing_extensions import Annotated
 
 from common.types import NetworkPort
 
