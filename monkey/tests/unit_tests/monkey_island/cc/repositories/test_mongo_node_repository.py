@@ -129,7 +129,7 @@ def test_upsert_communication__new_node(node_repository):
 def test_upsert_communication__update_existing_connection(node_repository):
     src_machine_id = 1
     dst_machine_id = 2
-    expected_node = NODES[0].model_copy(deep=True)
+    expected_node = NODES[0].deep_copy()
     expected_node.connections[2] = frozenset(
         (*expected_node.connections[2], CommunicationType.EXPLOITED)
     )
@@ -147,7 +147,7 @@ def test_upsert_communication__update_existing_connection(node_repository):
 def test_upsert_communication__update_existing_node_add_connection(node_repository):
     src_machine_id = 2
     dst_machine_id = 5
-    expected_node = NODES[1].model_copy(deep=True)
+    expected_node = NODES[1].deep_copy()
     expected_node.connections[5] = frozenset((CommunicationType.SCANNED,))
     node_repository.upsert_communication(src_machine_id, dst_machine_id, CommunicationType.SCANNED)
     nodes = node_repository.get_nodes()
