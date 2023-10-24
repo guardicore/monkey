@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from uuid import UUID
 
 import pytest
+from monkeytypes import IllegalMutationError
 
 from monkey_island.cc.models import Agent
 
@@ -22,8 +23,8 @@ AGENT_SIMPLE_DICT = {
     "id": str(AGENT_ID),
     "machine_id": 2,
     "parent_id": str(PARENT_ID),
-    "registration_time": "2022-08-18T18:46:50+00:00",
-    "start_time": "2022-08-18T18:46:48+00:00",
+    "registration_time": "2022-08-18T18:46:50Z",
+    "start_time": "2022-08-18T18:46:48Z",
     "sha256": SHA256,
 }
 
@@ -51,20 +52,21 @@ def test_to_dict():
     agent_simple_dict["stop_time"] = None
     agent_simple_dict["cc_server"] = None
 
-    assert a.dict(simplify=True) == agent_simple_dict
+    assert a.to_json_dict() == agent_simple_dict
 
 
 @pytest.mark.parametrize(
     "key, value",
     [
         ("id", 1),
-        ("machine_id", "not-an-int"),
         ("registration_time", None),
         ("start_time", None),
         ("stop_time", []),
         ("parent_id", 2.1),
         ("cc_server", [1]),
         ("sha256", []),
+        ("sha256", 1),
+        ("cc_server", []),
     ],
 )
 def test_construct_invalid_field__type_error(key, value):
@@ -79,14 +81,13 @@ def test_construct_invalid_field__type_error(key, value):
     "key, value",
     [
         ("machine_id", -1),
+        ("machine_id", "not-an-int"),
         ("registration_time", "not-a-datetime"),
         ("start_time", "not-a-datetime"),
         ("stop_time", "not-a-datetime"),
-        ("cc_server", []),
         ("sha256", "abcdef"),  # too short
         ("sha256", "this_string_has_the_right_length_but_includes_non_hex_characters"),
         ("sha256", "1234567812345678123456781234567812345678123456781234567812345678abcdef"),
-        ("sha256", 1),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):
@@ -100,35 +101,35 @@ def test_construct_invalid_field__value_error(key, value):
 def test_id_immutable():
     a = Agent(**AGENT_SIMPLE_DICT)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(IllegalMutationError):
         a.id = PARENT_ID
 
 
 def test_machine_id_immutable():
     a = Agent(**AGENT_SIMPLE_DICT)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(IllegalMutationError):
         a.machine_id = 10
 
 
 def test_registration_time_immutable():
     a = Agent(**AGENT_SIMPLE_DICT)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(IllegalMutationError):
         a.registration_time = 100
 
 
 def test_start_time_immutable():
     a = Agent(**AGENT_SIMPLE_DICT)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(IllegalMutationError):
         a.start_time = 100
 
 
 def test_parent_id_immutable():
     a = Agent(**AGENT_SIMPLE_DICT)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(IllegalMutationError):
         a.parent_id = AGENT_ID
 
 
@@ -142,12 +143,12 @@ def test_stop_time_set_validated():
 def test_cc_server_set_validated():
     a = Agent(**AGENT_SIMPLE_DICT)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         a.cc_server = []
 
 
 def test_sha256_immutable():
     a = Agent(**AGENT_SIMPLE_DICT)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(IllegalMutationError):
         a.sha256 = "testing!"

@@ -1,4 +1,6 @@
-from pydantic import conint
+from typing import Annotated
+
+from pydantic import Field
 
 from common.types import Percent
 
@@ -15,4 +17,4 @@ class RAMConsumptionEvent(AbstractAgentEvent):
     """
 
     utilization: Percent
-    bytes: conint(ge=0, strict=True)  # type: ignore [valid-type]
+    bytes: Annotated[int, Field(ge=0, strict=True)]

@@ -57,7 +57,7 @@ def test_constructor__extra_fields_forbidden():
 
 
 def test_serialization():
-    serialized_event = HOSTNAME_DISCOVERY_EVENT.dict(simplify=True)
+    serialized_event = HOSTNAME_DISCOVERY_EVENT.to_json_dict()
     assert serialized_event == HOSTNAME_DISCOVERY_SIMPLE_DICT
 
 

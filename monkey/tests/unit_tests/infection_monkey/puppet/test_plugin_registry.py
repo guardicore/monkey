@@ -87,7 +87,9 @@ PLUGIN_NAME = "test_plugin"
 
 
 def agent_plugin_of_type(plugin_type: AgentPluginType) -> AgentPlugin:
-    manifest = AgentPluginManifest(name=PLUGIN_NAME, version="1.0.0", plugin_type=plugin_type)
+    manifest = AgentPluginManifest(
+        name=PLUGIN_NAME, version="1.0.0", plugin_type=plugin_type, title=None
+    )
     return AgentPlugin(
         plugin_manifest=manifest,
         config_schema={},

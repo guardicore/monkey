@@ -48,7 +48,7 @@ CREDENTIALS_COLLECTORS: Dict[str, Dict] = {
 POLYMORPHISM_CONFIGURATION = {"randomize_agent_hash": False}
 
 AGENT_CONFIGURATION = {
-    "keep_tunnel_open_time": 30,
+    "keep_tunnel_open_time": 30.0,
     "credentials_collectors": CREDENTIALS_COLLECTORS,
     "payloads": {},
     "propagation": PROPAGATION_CONFIGURATION,

@@ -29,7 +29,7 @@ from monkey_island.cc.repositories.consts import MONGO_OBJECT_ID_KEY
 
 
 class FakeAgentEvent(AbstractAgentEvent):
-    data = Field(default=435)
+    data: int = Field(default=435)
 
 
 class FakeAgentItemEvent(AbstractAgentEvent):
@@ -255,7 +255,7 @@ def is_encrypted_event(original_event: AbstractAgentEvent, other_event) -> bool:
     - The remaining fields are the encrypted version of the original fields
     """
 
-    event = original_event.dict(simplify=True)
+    event = original_event.to_json_dict()
 
     # Note: The serializer adds a "type" field
     event["type"] = type(original_event).__name__

@@ -19,7 +19,7 @@ class PydanticAgentEventSerializer(IAgentEventSerializer, Generic[T]):
         if not isinstance(event, self._event_class):
             raise TypeError(f"Event object must be of type: {self._event_class.__name__}")
 
-        event_dict = event.dict(simplify=True)
+        event_dict = event.to_json_dict()
         event_dict[EVENT_TYPE_FIELD] = type(event).__name__
 
         return event_dict

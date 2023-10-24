@@ -204,7 +204,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     def register_agent(self, agent_registration_data: AgentRegistrationData):
         self._http_client.post(
             "/agents",
-            agent_registration_data.dict(simplify=True),
+            agent_registration_data.to_json_dict(),
             SHORT_REQUEST_TIMEOUT,
         )
 
@@ -226,7 +226,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_authentication_token_expiration
     def send_heartbeat(self, timestamp: float):
-        data = AgentHeartbeat(timestamp=timestamp).dict(simplify=True)  # type: ignore [arg-type]
+        data = AgentHeartbeat(timestamp=timestamp).to_json_dict()  # type: ignore [arg-type]
         self._http_client.post(f"/agent/{self._agent_id}/heartbeat", data)
 
     @handle_authentication_token_expiration

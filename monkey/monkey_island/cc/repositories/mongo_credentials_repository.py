@@ -70,7 +70,7 @@ class MongoCredentialsRepository(ICredentialsRepository):
     def _save_credentials_to_collection(self, credentials: Sequence[Credentials], collection):
         try:
             for c in credentials:
-                encrypted_credentials = self._encrypt_credentials_mapping(c.dict(simplify=True))
+                encrypted_credentials = self._encrypt_credentials_mapping(c.to_json_dict())
                 collection.insert_one(encrypted_credentials)
         except Exception as err:
             raise StorageError(err)

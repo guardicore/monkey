@@ -16,4 +16,4 @@ class AgentRegistrationData(InfectionMonkeyBaseModel):
     parent_id: Optional[UUID]
     cc_server: SocketAddress
     network_interfaces: tuple[IPv4Interface, ...]
-    sha256: str = Field(regex=r"^[0-9a-fA-F]{64}$")
+    sha256: str = Field(pattern=r"^[0-9a-fA-F]{64}$")

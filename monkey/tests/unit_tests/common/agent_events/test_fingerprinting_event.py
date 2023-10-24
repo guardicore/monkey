@@ -49,7 +49,7 @@ FINGERPRINTING_SIMPLE_DICT = {
     "tags": [],
     "os": "linux",
     "os_version": OS_VERSION,
-    "discovered_services": [ds.dict(simplify=True) for ds in DISCOVERED_SERVICES],
+    "discovered_services": [ds.to_json_dict() for ds in DISCOVERED_SERVICES],
 }
 
 
@@ -64,13 +64,13 @@ def test_from_dict():
 def test_to_dict():
     fingerprinting_event = FingerprintingEvent(**FINGERPRINTING_OBJECT_DICT)
 
-    assert fingerprinting_event.dict(simplify=True) == FINGERPRINTING_SIMPLE_DICT
+    assert fingerprinting_event.to_json_dict() == FINGERPRINTING_SIMPLE_DICT
 
 
 def test_deserialization_dict():
     original = FINGERPRINTING_EVENT
 
-    serialized_event = original.dict()
+    serialized_event = original.to_dict()
     deserialized_event = FingerprintingEvent(**serialized_event)
 
     assert deserialized_event == original

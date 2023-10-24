@@ -27,22 +27,26 @@ POWERSHELL_PORTS = [POWERSHELL_NO_SSL_PORT, POWERSHELL_SSL_PORT]
 AGENT_ID = UUID("5c145d4e-ec61-44f7-998e-17477112f50f")
 BAD_POWERSHELL_OPTIONS_DICT = {"blah": "blah"}
 TARGET_IP = IPv4Address("1.1.1.1")
-OPEN_POWERSHELL_PORTS = TargetHostPorts(
-    tcp_ports=PortScanDataDict(
-        {p: PortScanData(port=p, status=PortStatus.OPEN) for p in POWERSHELL_PORTS}
-    )
-)
 EMPTY_TARGET_HOST_PORTS = TargetHostPorts()
 SERVERS = ["10.10.10.10"]
 EXPLOITER_RESULT = ExploiterResult(True, False, error_message="Test error")
 
 
 @pytest.fixture
-def target_host() -> TargetHost:
+def open_powershell_ports():
+    return TargetHostPorts(
+        tcp_ports=PortScanDataDict(
+            {p: PortScanData(port=p, status=PortStatus.OPEN) for p in POWERSHELL_PORTS}
+        )
+    )
+
+
+@pytest.fixture
+def target_host(open_powershell_ports) -> TargetHost:
     return TargetHost(
         ip=TARGET_IP,
         operating_system=OperatingSystem.WINDOWS,
-        ports_status=OPEN_POWERSHELL_PORTS,
+        ports_status=open_powershell_ports,
     )
 
 

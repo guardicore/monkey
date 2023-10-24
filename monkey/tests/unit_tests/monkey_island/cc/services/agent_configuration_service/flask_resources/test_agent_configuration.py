@@ -40,7 +40,7 @@ def flask_client(build_flask_client, in_memory_agent_plugin_repository):
 def test_agent_configuration_endpoint(flask_client):
     resp = flask_client.put(
         AGENT_CONFIGURATION_URL,
-        json=AgentConfiguration(**AGENT_CONFIGURATION).dict(simplify=True),
+        json=AgentConfiguration(**AGENT_CONFIGURATION).to_json_dict(),
         follow_redirects=True,
     )
     assert resp.status_code == HTTPStatus.NO_CONTENT
@@ -71,7 +71,7 @@ def test_agent_configuration_service_raises_exception(
     with build_flask_client(container) as flask_client:
         resp = flask_client.put(
             AGENT_CONFIGURATION_URL,
-            json=AgentConfiguration(**AGENT_CONFIGURATION).dict(simplify=True),
+            json=AgentConfiguration(**AGENT_CONFIGURATION).to_json_dict(),
             follow_redirects=True,
         )
     assert resp.status_code == expected_status
@@ -88,7 +88,7 @@ def run_invalid_config_test(flask_client, config: JSONSerializable):
 
 
 def test_agent_configuration_invalid_type(flask_client):
-    config = AgentConfiguration(**AGENT_CONFIGURATION).dict(simplify=True)
+    config = AgentConfiguration(**AGENT_CONFIGURATION).to_json_dict()
     config["keep_tunnel_open_time"] = "not-a-float"
 
     run_invalid_config_test(flask_client, config)

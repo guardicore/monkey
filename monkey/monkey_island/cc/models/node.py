@@ -20,7 +20,7 @@ class Node(MutableInfectionMonkeyBaseModel):
     throughout the network.
     """
 
-    machine_id: MachineID = Field(..., allow_mutation=False)
+    machine_id: MachineID = Field(..., frozen=True)
     """The MachineID of the node (source)"""
 
     connections: NodeConnections = {}

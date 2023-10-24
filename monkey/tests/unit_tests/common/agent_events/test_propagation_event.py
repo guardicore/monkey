@@ -46,8 +46,6 @@ def test_constructor(propagation_event_dict):
 @pytest.mark.parametrize(
     "key, value",
     [
-        ("target", None),
-        ("success", "not-a-bool"),
         ("exploiter_name", None),
         ("error_message", None),
     ],
@@ -64,6 +62,8 @@ def test_construct_invalid_field__type_error(key, value):
     "key, value",
     [
         ("target", "not-an-ip"),
+        ("target", None),
+        ("success", "not-a-bool"),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):

@@ -15,7 +15,7 @@ def main():
                  hookspath=['./pyinstaller_hooks'],
                  runtime_hooks=None,
                  binaries=None,
-                 datas=[("../common/BUILD", "/common")],
+                 datas=[("../common/BUILD", "common")],
                  excludes=None,
                  win_no_prefer_redirects=None,
                  win_private_assemblies=None,
@@ -69,7 +69,7 @@ def get_hidden_imports():
     # to plugins, we can attempt to remove the cryptography dependency from the agent entirely.
     # UPDATE: We can't remove the dependency entirely as doing so causes the Agent to crash.
     #         See https://github.com/guardicore/monkey/issues/3170#issuecomment-1623503645.
-    imports = ['_cffi_backend', '_mssql', 'asyncore', 'logging.config', 'cryptography.hazmat.primitives.padding', 'xml.dom', 'timeit', 'sqlite3']
+    imports = ['_cffi_backend', '_mssql', 'asyncore', 'logging.config', 'cryptography.hazmat.primitives.padding', 'xml.dom',  'xml.etree', 'xml.etree.ElementTree','timeit', 'sqlite3']
     if is_windows():
         imports.append('queue')
         imports.append('pkg_resources.py2_warn')

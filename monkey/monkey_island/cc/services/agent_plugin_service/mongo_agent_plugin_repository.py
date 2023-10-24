@@ -139,7 +139,7 @@ class MongoAgentPluginRepository(IAgentPluginRepository):
     def store_agent_plugin(self, operating_system: OperatingSystem, agent_plugin: AgentPlugin):
         plugin_name = agent_plugin.plugin_manifest.name
         plugin_type = agent_plugin.plugin_manifest.plugin_type
-        new_plugin_dict = agent_plugin.dict(simplify=True, exclude={"source_archive"})
+        new_plugin_dict = agent_plugin.model_dump(mode="json", exclude={"source_archive"})
 
         try:
             plugin_dict = self._get_agent_plugin(plugin_type, plugin_name)

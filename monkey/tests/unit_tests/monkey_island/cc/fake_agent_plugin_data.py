@@ -57,7 +57,7 @@ FAKE_PLUGIN_CONFIG_SCHEMA_2 = {
 
 FAKE_PLUGIN_ARCHIVE_2 = b"other random bytes"
 
-_manifest_params = FAKE_MANIFEST_OBJECT.dict(simplify=True)
+_manifest_params = FAKE_MANIFEST_OBJECT.to_json_dict()
 _manifest_params["name"] = FAKE_NAME2
 
 FAKE_AGENT_PLUGIN_2 = AgentPlugin(

@@ -41,6 +41,7 @@ EXPLOITER_MANIFEST_INCOMPLETE = AgentPluginManifest(
     plugin_type=AgentPluginType.EXPLOITER,
     target_operating_systems=tuple(),
     version="1.0.0",
+    title="MockExploiter3",
 )
 
 CREDENTIALS_COLLECTOR_MANIFEST_1 = AgentPluginManifest(

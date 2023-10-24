@@ -52,16 +52,13 @@ def test_constructor(tcp_event_dict):
 
 
 def test_to_dict():
-    TCP_SCAN_EVENT.dict(simplify=True) == TCP_SIMPLE_DICT
+    TCP_SCAN_EVENT.to_json_dict() == TCP_SIMPLE_DICT
 
 
 @pytest.mark.parametrize(
     "key, value",
     [
-        ("target", None),
         ("ports", "not-a-dict"),
-        ("ports", {"not-a-number": "open"}),
-        ("ports", {22: "bogus"}),
     ],
 )
 def test_construct_invalid_field__type_error(key, value):
@@ -75,8 +72,11 @@ def test_construct_invalid_field__type_error(key, value):
 @pytest.mark.parametrize(
     "key, value",
     [
+        ("target", None),
         ("target", "not-an-ip"),
         ("ports", {99999: "closed"}),
+        ("ports", {"not-a-number": "open"}),
+        ("ports", {22: "bogus"}),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):

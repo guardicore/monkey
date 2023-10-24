@@ -46,7 +46,7 @@ class AgentPluginsManifest(AbstractResource):
             logger.warning(message)
             return make_response({"message": message}, HTTPStatus.NOT_FOUND)
 
-        return make_response(plugin_manifest.dict(simplify=True), HTTPStatus.OK)
+        return make_response(plugin_manifest.to_json_dict(), HTTPStatus.OK)
 
     def _get_plugin_manifest(
         self, plugin_type: AgentPluginType, name: PluginName

@@ -43,7 +43,7 @@ def test_get_plugin(flask_client, agent_plugin_repository):
         "config_schema": FAKE_AGENT_PLUGIN_1.config_schema,
         "plugin_manifest": {
             "description": None,
-            "link_to_documentation": "http://www.beefface.com",
+            "link_to_documentation": "http://www.beefface.com/",
             "name": FAKE_NAME,
             "plugin_type": FAKE_TYPE,
             "version": "1.0.0",

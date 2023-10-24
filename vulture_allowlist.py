@@ -42,6 +42,7 @@ from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFacto
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
+from infection_monkey.i_puppet import TargetHost
 from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFirewall
 from infection_monkey.utils import commands
 from monkey.common.types import Percent
@@ -51,6 +52,9 @@ from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEvent
 from monkey_island.cc.services.agent_plugin_service import AgentPluginService
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
+
+TargetHost.model_config
+TargetHost.dump_ports
 
 # Pydantic configurations are not picked up
 ScanTargetConfiguration.blocked_ips_valid
@@ -65,7 +69,6 @@ BasicLock.release
 PluginName.strip_whitespace
 PluginName.regex
 
-SecretEncodingConfig.json_encoders
 
 LMHash.validate_hash_format
 NTHash.validate_hash_format
@@ -73,7 +76,8 @@ NTHash.validate_hash_format
 NetworkPort.ge
 NetworkPort.le
 
-FileEncryptionEvent.arbitrary_types_allowed
+FileEncryptionEvent.model_config
+FileEncryptionEvent.dump_file_path
 FileEncryptionEvent._file_path_to_pure_path
 
 AbstractAgentEvent.smart_union
@@ -124,8 +128,8 @@ Deployment.APPIMAGE
 Deployment.DOCKER
 
 # Pydantic models
-Machine.Config.json_dumps
 Machine._socketaddress_from_string
+Machine.dump_network_services
 # Unused, but potentially useful
 Machine.island
 
@@ -145,6 +149,7 @@ Lock.exc_tb
 Lock.blocking
 Lock.locked
 
+AgentPlugin.dump_source_archive
 AgentPlugin.supported_operating_systems
 
 BrowserCredentialsDatabasePath.database_file_path
@@ -190,7 +195,11 @@ request_cache
 # Remove after the plugin interface is in place
 AgentPluginMetadata.resource_path
 AgentPluginMetadata._str_to_pure_posix_path
+AgentPluginMetadata.model_config
+AgentPluginMetadata.dump_string
 AgentPluginRepositoryIndex
+AgentPluginRepositoryIndex.model_config
+AgentPluginRepositoryIndex.dump_compatible_infection_monkey_version
 AgentPluginRepositoryIndex.compatible_infection_monkey_version
 AgentPluginRepositoryIndex._infection_monkey_version_parser
 AgentPluginRepositoryIndex._sort_plugins_by_version

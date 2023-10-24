@@ -1,5 +1,5 @@
-source "googlecompute" "log4j-solr-50-test" {
-  image_name     = "log4j-solr-50-test"
+source "googlecompute" "log4j-solr-50" {
+  image_name     = "log4j-solr-50"
   project_id     = "${var.project_id}"
   source_image   = "${var.windows_source_image}"
   zone           = "${var.zone}"
@@ -18,10 +18,10 @@ source "googlecompute" "log4j-solr-50-test" {
 
 build {
   sources = [
-    "source.googlecompute.log4j-solr-50-test",
+    "source.googlecompute.log4j-solr-50",
   ]
   provisioner "ansible" {
-    only             = ["googlecompute.log4j-solr-50-test"]
+    only             = ["googlecompute.log4j-solr-50"]
     use_proxy        = false
     user             = "${var.packer_username}"
     playbook_file    = "${path.root}/setup_log4j_solr_50.yml"

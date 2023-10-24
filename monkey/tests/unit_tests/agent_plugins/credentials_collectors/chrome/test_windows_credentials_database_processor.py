@@ -106,7 +106,7 @@ def test_username_credential_saved_if_decrypt_password_fails(credentials_databas
     credentials_database_processor._decrypt_password = lambda *_: None
 
     credentials = credentials_database_processor(Event(), [PROFILE_C])
-    expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity)]
+    expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity, secret=None)]
 
     assert len(credentials) == 1
     assert expected_credentials == credentials
@@ -122,7 +122,7 @@ def test_username_credential_saved_if_win32crypt_unprotect_data_fails(
     )
 
     credentials = credentials_database_processor(Event(), [PROFILE_B])
-    expected_credentials = [Credentials(identity=CREDENTIALS_B[0].identity)]
+    expected_credentials = [Credentials(identity=CREDENTIALS_B[0].identity, secret=None)]
 
     assert len(credentials) == 1
     assert expected_credentials == credentials
@@ -139,7 +139,7 @@ def test_username_credential_saved_if_decrypted_password_is_empty(
     )
 
     credentials = credentials_database_processor(Event(), [PROFILE_C])
-    expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity)]
+    expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity, secret=None)]
 
     assert len(credentials) == 1
     assert expected_credentials == credentials
@@ -156,7 +156,7 @@ def test_username_credential_saved_if_error_decrypting_password(
     )
 
     credentials = credentials_database_processor(Event(), [PROFILE_C])
-    expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity)]
+    expected_credentials = [Credentials(identity=CREDENTIALS_C[0].identity, secret=None)]
 
     assert len(credentials) == 1
     assert expected_credentials == credentials

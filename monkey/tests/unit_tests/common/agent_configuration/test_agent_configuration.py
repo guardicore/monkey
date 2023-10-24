@@ -49,12 +49,14 @@ def test_scan_target_configuration():
     assert config.subnets == tuple(SUBNETS)
 
 
-@pytest.mark.parametrize("invalid_blocked_ip_list", [["abc"], [1]])
-def test_scan_target_configuration__invalid_blocked_ips(invalid_blocked_ip_list):
+@pytest.mark.parametrize(
+    "invalid_blocked_ip_list, error", [(["abc"], ValueError), ([1], TypeError)]
+)
+def test_scan_target_configuration__invalid_blocked_ips(invalid_blocked_ip_list, error):
     invalid_blocked_ips = SCAN_TARGET_CONFIGURATION.copy()
     invalid_blocked_ips["blocked_ips"] = invalid_blocked_ip_list
 
-    with pytest.raises(ValueError):
+    with pytest.raises(error):
         ScanTargetConfiguration(**invalid_blocked_ips)
 
 
@@ -142,7 +144,7 @@ def test_exploiter_configuration_schema():
 
 def test_exploitation_configuration():
     config = ExploitationConfiguration(**EXPLOITATION_CONFIGURATION)
-    config_dict = config.dict(simplify=True)
+    config_dict = config.to_json_dict()
 
     assert isinstance(config, ExploitationConfiguration)
     assert config_dict == EXPLOITATION_CONFIGURATION
@@ -150,7 +152,7 @@ def test_exploitation_configuration():
 
 def test_propagation_configuration():
     config = PropagationConfiguration(**PROPAGATION_CONFIGURATION)
-    config_dict = config.dict(simplify=True)
+    config_dict = config.to_json_dict()
 
     assert isinstance(config, PropagationConfiguration)
     assert isinstance(config.network_scan, NetworkScanConfiguration)
@@ -178,7 +180,7 @@ def test_propagation_configuration__maximum_depth_zero():
 
 def test_agent_configuration():
     config = AgentConfiguration(**AGENT_CONFIGURATION)
-    config_dict = config.dict(simplify=True)
+    config_dict = config.to_json_dict()
 
     assert isinstance(config, AgentConfiguration)
     assert config.keep_tunnel_open_time == 30
@@ -205,9 +207,9 @@ def test_agent_configuration__keep_tunnel_open_time():
         AgentConfiguration(**negative_keep_tunnel_open_time_configuration)
 
 
-def test_incorrect_type():
+def test_incorrect_value():
     valid_config = AgentConfiguration(**AGENT_CONFIGURATION)
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         valid_config_dict = valid_config.__dict__
         valid_config_dict["keep_tunnel_open_time"] = "not_a_float"
         AgentConfiguration(**valid_config_dict)

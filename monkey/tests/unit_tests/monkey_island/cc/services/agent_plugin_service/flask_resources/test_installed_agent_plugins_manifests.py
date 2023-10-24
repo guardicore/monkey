@@ -49,7 +49,7 @@ def test_get_installed_plugins_manifests(flask_client, agent_plugin_repository):
         "Exploiter": {
             FAKE_NAME: {
                 "description": None,
-                "link_to_documentation": "http://www.beefface.com",
+                "link_to_documentation": "http://www.beefface.com/",
                 "name": FAKE_NAME,
                 "plugin_type": FAKE_TYPE,
                 "version": "1.0.0",
@@ -61,7 +61,7 @@ def test_get_installed_plugins_manifests(flask_client, agent_plugin_repository):
             },
             FAKE_NAME2: {
                 "description": None,
-                "link_to_documentation": "http://www.beefface.com",
+                "link_to_documentation": "http://www.beefface.com/",
                 "name": FAKE_NAME2,
                 "plugin_type": FAKE_TYPE,
                 "version": "1.0.0",

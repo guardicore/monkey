@@ -22,29 +22,34 @@ AGENT_ID = UUID("5c145d4e-ec61-44f7-998e-17477112f50f")
 BAD_MSSQL_OPTIONS_DICT = {"blah": "blah"}
 TARGET_IP = IPv4Address("1.1.1.1")
 MSSQL_PORTS = [NetworkPort(1433), NetworkPort(1434)]
-OPEN_MSSQL_PORTS = TargetHostPorts(
-    tcp_ports=PortScanDataDict(
-        {
-            MSSQL_PORTS[0]: PortScanData(
-                port=MSSQL_PORTS[0], status=PortStatus.OPEN, service=NetworkService.MSSQL
-            ),
-            MSSQL_PORTS[1]: PortScanData(
-                port=MSSQL_PORTS[1], status=PortStatus.OPEN, service=NetworkService.UNKNOWN
-            ),
-        }
-    )
-)
+
 EMPTY_TARGET_HOST_PORTS = TargetHostPorts()
 SERVERS = ["10.10.10.10"]
 EXPLOITER_RESULT = ExploiterResult(True, False, error_message="Test error")
 
 
 @pytest.fixture
-def target_host() -> TargetHost:
+def open_mssql_ports():
+    return TargetHostPorts(
+        tcp_ports=PortScanDataDict(
+            {
+                MSSQL_PORTS[0]: PortScanData(
+                    port=MSSQL_PORTS[0], status=PortStatus.OPEN, service=NetworkService.MSSQL
+                ),
+                MSSQL_PORTS[1]: PortScanData(
+                    port=MSSQL_PORTS[1], status=PortStatus.OPEN, service=NetworkService.UNKNOWN
+                ),
+            }
+        )
+    )
+
+
+@pytest.fixture
+def target_host(open_mssql_ports) -> TargetHost:
     return TargetHost(
         ip=TARGET_IP,
         operating_system=OperatingSystem.WINDOWS,
-        ports_status=OPEN_MSSQL_PORTS,
+        ports_status=open_mssql_ports,
     )
 
 

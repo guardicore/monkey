@@ -77,7 +77,7 @@ PROPAGATION_CONFIGURATION = PropagationConfiguration(
 )
 
 DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
-    keep_tunnel_open_time=30,
+    keep_tunnel_open_time=30.0,
     credentials_collectors=CREDENTIALS_COLLECTORS,
     payloads=PAYLOAD_CONFIGURATION,
     propagation=PROPAGATION_CONFIGURATION,
