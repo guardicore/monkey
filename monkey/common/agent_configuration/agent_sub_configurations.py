@@ -84,7 +84,9 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
         default=[],
     )
     blocked_ips: Tuple[BlockedIP, ...] = Field(
-        title="Blocked IPs", description="List of IPs that the monkey will not scan.", default=[]
+        title="Blocked IPs",
+        description="List of IPs that the monkey will not scan.",
+        default=[],
     )
     inaccessible_subnets: Tuple[Subnet, ...] = Field(
         title="Network segmentation testing",
@@ -205,15 +207,19 @@ class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
         :param exploitation: Configuration for exploitation
     """
 
-    maximum_depth: Annotated[int, Field(ge=0)] = Field(  # type: ignore[valid-type]
-        title="Maximum scan depth",
-        description="Amount of hops allowed for the monkey to spread from the "
-        "Island server. \n \u26A0"
-        " Note that setting this value too high may result in the "
-        'Monkey propagating too far, if "Scan Agent\'s networks" is enabled.\n'
-        "Setting this to 0 will disable all scanning and exploitation.",
-        default=2,
-    )
+    maximum_depth: Annotated[
+        int,
+        Field(
+            ge=0,
+            title="Maximum scan depth",
+            description="Amount of hops allowed for the monkey to spread from the "
+            "Island server. \n \u26A0"
+            " Note that setting this value too high may result in the "
+            'Monkey propagating too far, if "Scan Agent\'s networks" is enabled.\n'
+            "Setting this to 0 will disable all scanning and exploitation.",
+            default=2,
+        ),
+    ]
     network_scan: NetworkScanConfiguration = Field(
         title="Network analysis",
         description="Configure the network analysis that the Agents will perform",
