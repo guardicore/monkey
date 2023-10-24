@@ -7,13 +7,17 @@ from .agent_sub_configurations import PolymorphismConfiguration, PropagationConf
 
 
 class AgentConfiguration(MutableInfectionMonkeyBaseModel):
-    keep_tunnel_open_time: Annotated[float, Field(ge=0)] = Field(
-        title="Keep tunnel open time",
-        description="Time to keep tunnel open before "
-        "going down after last exploit (in "
-        "seconds)",
-        default=30,
-    )
+    keep_tunnel_open_time: Annotated[
+        float,
+        Field(
+            ge=0,
+            title="Keep tunnel open time",
+            description="Time to keep tunnel open before "
+            "going down after last exploit (in "
+            "seconds)",
+            default=30,
+        ),
+    ]
     credentials_collectors: Dict[str, Dict] = Field(
         title="Enabled credentials collectors",
         description="Click on a credentials collector to get more information"
