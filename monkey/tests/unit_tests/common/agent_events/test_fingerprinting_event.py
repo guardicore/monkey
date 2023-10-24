@@ -70,7 +70,7 @@ def test_to_dict():
 def test_deserialization_dict():
     original = FINGERPRINTING_EVENT
 
-    serialized_event = original.model_dump()
+    serialized_event = original.to_dict()
     deserialized_event = FingerprintingEvent(**serialized_event)
 
     assert deserialized_event == original

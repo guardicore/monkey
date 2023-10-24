@@ -98,6 +98,6 @@ def test_construct__extra_fields_forbidden():
 
 
 def test_ping_scan_event_deserialization_dict():
-    serialized_event = PING_EVENT.model_dump()
+    serialized_event = PING_EVENT.to_dict()
     deserialized_event = PingScanEvent(**serialized_event)
     assert deserialized_event == PING_EVENT
