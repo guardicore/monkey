@@ -31,5 +31,5 @@ $UPX_FOLDER = "upx-3.96-win64"
 # Other url's
 $OPEN_SSL_URL = "https://indy.fulgan.com/SSL/openssl-1.0.2u-x64_86-win64.zip"
 $CPP_URL = "https://go.microsoft.com/fwlink/?LinkId=746572"
-$NPM_URL = "https://nodejs.org/dist/v16.14.2/node-v16.14.2-x64.msi"
+$NPM_URL = "https://nodejs.org/dist/v20.7.0/node-v20.7.0-x64.msi"
 $UPX_URL = "https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip"

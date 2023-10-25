@@ -1,7 +1,9 @@
 WORKSPACE=${WORKSPACE:-$HOME}
 DEFAULT_REPO_MONKEY_HOME=$WORKSPACE/git/monkey
 MONKEY_ORIGIN_URL="https://github.com/guardicore/monkey.git"
-NODE_SRC=https://deb.nodesource.com/setup_16.x
+NODE_VERSION=v20.7.0
+NODE_DISTRO=linux-x64
+NODE_SRC=https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-$NODE_DISTRO.tar.xz
 BUILD_SCRIPTS_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
 DIST_DIR="$BUILD_SCRIPTS_DIR/dist"
 
@@ -69,10 +71,16 @@ handle_error() {
 }
 
 install_nodejs() {
+  node -v | grep $NODE_VERSION > /dev/null && return 0
   log_message "Installing nodejs"
 
-  curl -sL $NODE_SRC | sudo -E bash -
-  sudo apt-get install -y nodejs
+  dest_path=/usr/local/lib/nodejs
+  sudo rm -rf $dest_path
+  sudo mkdir -p $dest_path
+  curl -sL $NODE_SRC | sudo tar xJf - -C $dest_path
+  sudo ln -sf "$dest_path/node-$NODE_VERSION-$NODE_DISTRO/bin/node" /usr/bin/node
+  sudo ln -sf "$dest_path/node-$NODE_VERSION-$NODE_DISTRO/bin/npm" /usr/bin/npm
+  sudo ln -sf "$dest_path/node-$NODE_VERSION-$NODE_DISTRO/bin/npx" /usr/bin/npx
 }
 
 is_valid_git_repo() {
