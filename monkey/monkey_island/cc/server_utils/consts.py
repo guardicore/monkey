@@ -23,6 +23,7 @@ def _get_monkey_island_abs_path() -> str:
 SERVER_CONFIG_FILENAME = "server_config.json"
 
 MONKEY_ISLAND_ABS_PATH = _get_monkey_island_abs_path()
+UI_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "next_ui")
 
 DEFAULT_DATA_DIR = expand_path(get_default_data_dir())
 
@@ -33,6 +34,11 @@ MONGO_EXECUTABLE_PATH = (
     _MONGO_EXECUTABLE_PATH_WIN if is_windows_os() else _MONGO_EXECUTABLE_PATH_LINUX
 )
 MONGO_CONNECTION_TIMEOUT = 15
+
+_NODE_EXECUTABLE_PATH_WIN = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "node", "node.exe")
+_NODE_EXECUTABLE_PATH_LINUX = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "node", "node")
+NODE_EXECUTABLE_PATH = _NODE_EXECUTABLE_PATH_WIN if is_windows_os() else _NODE_EXECUTABLE_PATH_LINUX
+NEXTJS_EXECUTION_COMMAND = [NODE_EXECUTABLE_PATH, "server.js"]
 
 DEFAULT_LOG_LEVEL = "INFO"
 
