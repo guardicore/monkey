@@ -15,6 +15,10 @@ from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.setup.config_setup import get_server_config
+from monkey_island.cc.setup.nextjs.nextjs_setup import (
+    register_nextjs_shutdown_callback,
+    start_nextjs,
+)
 
 # Add the monkey_island directory to the path, to make sure imports that don't start with
 # "monkey_island." work.
@@ -64,6 +68,7 @@ def run_monkey_island():
     _send_analytics(deployment, version)
 
     _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
+    _start_nextjs_server(config_options.data_dir)
 
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
     setup_island_event_handlers(container)
@@ -173,6 +178,11 @@ def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
         sys.exit(1)
 
 
+def _start_nextjs_server(data_dir: Path):
+    nextjs_process = start_nextjs(data_dir)
+    register_nextjs_shutdown_callback(nextjs_process)
+
+
 def _start_island_server(
     ip_addresses: Sequence[IPv4Address],
     should_setup_only: bool,
@@ -231,7 +241,7 @@ def _log_init_info(ip_addresses: Sequence[IPv4Address]):
 
 
 def _log_web_interface_access_urls(ip_addresses: Sequence[IPv4Address]):
-    web_interface_urls = ", ".join([f"https://{ip}:{ISLAND_PORT}" for ip in ip_addresses])
+    web_interface_urls = ", ".join([f"https://{ip}" for ip in ip_addresses])
     logger.info(
         "To access the web interface, navigate to one of the the following URLs using your "
         f"browser: {web_interface_urls}"
@@ -253,7 +263,8 @@ def _send_analytics(deployment: Deployment, version: Version):
             )
         except requests.exceptions.ConnectionError as err:
             logger.info(
-                f"Failed to send deployment type and version number to the analytics server: {err}"
+                f"Failed to send deployment type and version number to the analytics server: "
+                f"{err}"
             )
 
     Thread(target=_inner, args=(deployment, version), daemon=True).start()
