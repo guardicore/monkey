@@ -2,6 +2,7 @@
 const nextConfig = {
     reactStrictMode: true,
     env: {},
+    output: 'standalone',
     typescript: {
         // !! WARN !!
         // Dangerously allow production builds to successfully complete even if
