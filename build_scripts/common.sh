@@ -94,6 +94,13 @@ build_frontend() {
     npm run build # Same as production build?
   fi
 
+  cp -r "$ui_dir/public" "$ui_dir/.next/standalone/"
+  cp -r "$ui_dir/.next/static" "$ui_dir/.next/standalone/.next/"
+  # Use standalone folder only
+  mv "$ui_dir/.next/standalone" "${ui_dir}_standalone"
+  rm -rf "$ui_dir"
+  mv "${ui_dir}_standalone" "$ui_dir"
+
   popd || handle_error
 
   remove_node_modules "$ui_dir"
