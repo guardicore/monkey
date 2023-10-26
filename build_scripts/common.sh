@@ -1,4 +1,6 @@
 CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
+NODE_VERSION="v20.7.0"
+NODE_URL="https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz"
 
 copy_monkey_island_to_build_dir() {
   local src=$1
@@ -20,6 +22,12 @@ modify_deployment() {
     local deployment_file_path="$2/monkey_island/cc/deployment.json"
     echo -e "{\n    \"deployment\": \"$1\"\n}" > $deployment_file_path
   fi
+}
+
+add_node_to_build_dir() {
+  local build_dir="$1"
+  local node_dir="$build_dir/monkey_island/bin/node"
+  "$build_dir/monkey_island/linux/install_node.sh" "${node_dir}"
 }
 
 add_agent_binaries_to_build_dir() {

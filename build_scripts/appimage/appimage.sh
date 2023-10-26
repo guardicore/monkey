@@ -42,6 +42,7 @@ setup_build_dir() {
   copy_infection_monkey_service_to_build_dir
   modify_deployment "$deployment_type" "$BUILD_DIR"
   add_agent_binaries_to_build_dir "$agent_binary_dir" "$BUILD_DIR"
+  add_node_to_build_dir "$BUILD_DIR"
 
   install_monkey_island_python_dependencies
   install_mongodb
