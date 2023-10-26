@@ -12,8 +12,8 @@ copy_monkey_island_to_build_dir() {
 
   rsync \
       -ar \
-      --exclude=monkey_island/cc/ui/node_modules \
-      --exclude=monkey_island/cc/ui/.npm \
+      --exclude=monkey_island/cc/next_ui/node_modules \
+      --exclude=monkey_island/cc/next_ui/.next \
       "$src"/monkey_island "$build_dir/"
 }
 
@@ -81,7 +81,7 @@ generate_ssl_cert() {
 }
 
 build_frontend() {
-  local ui_dir="$1/monkey_island/cc/ui"
+  local ui_dir="$1/monkey_island/cc/next_ui"
   local is_release_build=$2
   pushd "$ui_dir" || handle_error
 
@@ -89,10 +89,10 @@ build_frontend() {
   npm ci
   if [ "$is_release_build" == true ]; then
     log_message "Running production front end build"
-    npm run dist
+    npm run build
   else
     log_message "Running development front end build"
-    npm run dev
+    npm run build # Same as production build?
   fi
 
   popd || handle_error
@@ -104,7 +104,6 @@ remove_node_modules() {
   # Node has served its purpose. We don't need to deliver the node modules with
   # the package.
   rm -rf "$1/node_modules"
-  rm -rf "$1/.npm"
 }
 
 get_commit_id() {
