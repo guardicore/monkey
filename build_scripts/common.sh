@@ -13,7 +13,6 @@ copy_monkey_island_to_build_dir() {
   rsync \
       -ar \
       --exclude=monkey_island/cc/next_ui/node_modules \
-      --exclude=monkey_island/cc/next_ui/.next \
       "$src"/monkey_island "$build_dir/"
 }
 
