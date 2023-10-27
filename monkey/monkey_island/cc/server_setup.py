@@ -28,7 +28,7 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
 
 from ophidian import DIContainer  # noqa: E402
 
-from common.network.network_utils import get_my_ip_addresses  # noqa: E402
+from common.network.network_utils import get_my_ip_addresses, is_local_port_in_use  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
@@ -48,7 +48,10 @@ from monkey_island.cc.setup import (  # noqa: E402
 )
 from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory, setup_data_dir  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
-from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
+from monkey_island.cc.setup.island_config_options import (  # noqa: E402
+    NODE_PORT,
+    IslandConfigOptions,
+)
 from monkey_island.cc.setup.mongo import mongo_setup  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess  # noqa: E402
 
@@ -68,7 +71,7 @@ def run_monkey_island():
     _send_analytics(deployment, version)
 
     _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
-    _start_nextjs_server(config_options.data_dir)
+    _start_nextjs_server(config_options)
 
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
     setup_island_event_handlers(container)
@@ -178,8 +181,20 @@ def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
         sys.exit(1)
 
 
-def _start_nextjs_server(data_dir: Path):
-    nextjs_process = start_nextjs(data_dir)
+def _start_nextjs_server(config_options: IslandConfigOptions):
+    if not config_options.node_port:
+        logger.error(
+            f"Node server port is not specified in the config file."
+            f" Specify it as {NODE_PORT} in server configuration file and try again."
+        )
+        sys.exit(1)
+    if is_local_port_in_use(config_options.node_port):
+        logger.error(
+            f"Node server port {config_options.node_port} is already in use. "
+            f"Specify another port in the server configuration file and try again."
+        )
+        sys.exit(1)
+    nextjs_process = start_nextjs(config_options.data_dir)
     register_nextjs_shutdown_callback(nextjs_process)
 
 

@@ -1,5 +1,6 @@
 import logging
 import subprocess
+from typing import Optional
 
 from monkey_island.cc.server_utils.consts import NEXTJS_EXECUTION_COMMAND, UI_DIR
 
@@ -14,7 +15,7 @@ class NextJsProcess:
         """
         self._next_js_run_cmd = NEXTJS_EXECUTION_COMMAND
         self._log_file = log_file
-        self._process = None
+        self._process: Optional[subprocess.Popen[bytes]] = None
 
     def start(self):
         logger.info("Starting UI server(Next.js) process.")
