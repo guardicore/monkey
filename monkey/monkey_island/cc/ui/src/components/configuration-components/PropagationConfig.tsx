@@ -77,6 +77,10 @@ export default function PropagationConfig(props) {
                               credentials={credentials} />
     } else {
       let selectedSectionData = configuration[selectedSection];
+      let selectedConfigPlugins = selectedPlugins[selectedConfigSection];
+      if(selectedConfigSection === 'propagation'){
+        selectedConfigPlugins = selectedConfigPlugins[selectedSection];
+      }
       return <Form schema={displayedSchema}
                    uiSchema={displayedUiSchema}
                    formData={selectedSectionData}
@@ -92,9 +96,10 @@ export default function PropagationConfig(props) {
                    // children={true} hides the submit button
                    children={true}
                    formContext={{
-                     'selectedPlugins': selectedPlugins[selectedConfigSection],
+                     'selectedPlugins': selectedConfigPlugins,
                      'setSelectedPlugins': setSelectedPlugins,
                      'section': selectedConfigSection,
+                     'subSection': selectedSection,
                      setUiSchema: setUiSchemaForCurrentSection
                    }}/>
     }

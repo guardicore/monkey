@@ -9,7 +9,8 @@ import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamati
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import PropagationConfig, {
-  EXPLOITERS_CONFIG_PATH
+  EXPLOITERS_CONFIG_PATH,
+  FINGERPRINTERS_CONFIG_PATH
 } from '../configuration-components/PropagationConfig';
 import MasqueradeConfig from '../configuration-components/MasqueradeConfig';
 import {CREDENTIALS_COLLECTORS_CONFIG_PATH, PAYLOADS_CONFIG_PATH} from '../configuration-components/PluginSelectorTemplate';
@@ -108,7 +109,10 @@ class ConfigurePageComponent extends AuthComponent {
         this.setState({
           configuration: monkeyConfig,
           selectedPlugins: {
-              [CONFIGURATION_TABS.PROPAGATION]: this.getSelectedPlugins(monkeyConfig, EXPLOITERS_CONFIG_PATH),
+              [CONFIGURATION_TABS.PROPAGATION]: {
+                  'exploitation': this.getSelectedPlugins(monkeyConfig, EXPLOITERS_CONFIG_PATH),
+                  'network_scan': this.getSelectedPlugins(monkeyConfig, FINGERPRINTERS_CONFIG_PATH)
+              },
               [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: this.getSelectedPlugins(monkeyConfig, CREDENTIALS_COLLECTORS_CONFIG_PATH),
               [CONFIGURATION_TABS.PAYLOADS]: this.getSelectedPlugins(monkeyConfig, PAYLOADS_CONFIG_PATH)
             },
@@ -188,7 +192,10 @@ class ConfigurePageComponent extends AuthComponent {
         data = reformatConfig(data);
         this.setState({
           selectedPlugins: {
-              [CONFIGURATION_TABS.PROPAGATION]: this.getSelectedPlugins(data, EXPLOITERS_CONFIG_PATH),
+              [CONFIGURATION_TABS.PROPAGATION]: {
+                  'exploitation': this.getSelectedPlugins(data, EXPLOITERS_CONFIG_PATH),
+                  'network_scan': this.getSelectedPlugins(data, FINGERPRINTERS_CONFIG_PATH)
+              },
               [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: this.getSelectedPlugins(data, CREDENTIALS_COLLECTORS_CONFIG_PATH),
               [CONFIGURATION_TABS.PAYLOADS]: this.getSelectedPlugins(data, PAYLOADS_CONFIG_PATH)
           },
@@ -198,8 +205,13 @@ class ConfigurePageComponent extends AuthComponent {
       });
   }
 
-  setSelectedPlugins = (plugins, key) => {
-    this.setState({selectedPlugins: {...this.state.selectedPlugins, [key]: plugins}});
+  setSelectedPlugins = (plugins, key, subKey) => {
+    this.setState({
+      selectedPlugins: {
+        ...this.state.selectedPlugins,
+        [key]: key === 'propagation' ? { ...(this.state.selectedPlugins[key] || {}),[subKey]: plugins } : plugins
+      }
+    });
   }
 
   onSubmit = () => {
@@ -228,7 +240,7 @@ class ConfigurePageComponent extends AuthComponent {
   // submitting/exporting the configuration
   filterUnselectedPlugins() {
     let pluginTypes = {
-      [CONFIGURATION_TABS.PROPAGATION]: EXPLOITERS_CONFIG_PATH,
+      [CONFIGURATION_TABS.PROPAGATION]: {'exploitation': EXPLOITERS_CONFIG_PATH, 'network_scan': FINGERPRINTERS_CONFIG_PATH},
       [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: CREDENTIALS_COLLECTORS_CONFIG_PATH,
       [CONFIGURATION_TABS.PAYLOADS]: PAYLOADS_CONFIG_PATH
     };
@@ -236,18 +248,30 @@ class ConfigurePageComponent extends AuthComponent {
 
     for (let pluginType in pluginTypes){
       let pluginPath = pluginTypes[pluginType];
-      let pluginFormData = _.get(this.state.configuration, pluginPath);
-      let filteredPlugins = {};
-      for (let plugin of [...this.state.selectedPlugins[pluginType] ?? []]){
-        if (pluginFormData[plugin] === undefined) {
-          filteredPlugins[plugin] = {};
-        } else {
-          filteredPlugins[plugin] = pluginFormData[plugin];
+      let selectedConfigPlugins = this.state.selectedPlugins?.[pluginType] || [];
+      if(pluginType === CONFIGURATION_TABS.PROPAGATION){
+        for(let propagationType in pluginPath){
+          let propagationPath = pluginPath[propagationType];
+          selectedConfigPlugins = this.state.selectedPlugins?.[pluginType]?.[propagationType] || [];
+          this.setPluginInConfig(config, selectedConfigPlugins, propagationPath)
         }
       }
-      _.set(config, pluginPath, filteredPlugins)
+      this.setPluginInConfig(config, selectedConfigPlugins, pluginPath);
     }
     return config;
+  }
+
+  setPluginInConfig(config, plugins, pluginPath){
+    let pluginFormData = _.get(this.state.configuration, pluginPath);
+    let filteredPlugins = {};
+    for (let plugin of plugins){
+      if (pluginFormData[plugin] === undefined) {
+        filteredPlugins[plugin] = {};
+      } else {
+        filteredPlugins[plugin] = pluginFormData[plugin];
+      }
+    }
+    _.set(config, pluginPath, filteredPlugins)
   }
 
   configSubmit(config) {

@@ -4,7 +4,7 @@ import ChildCheckboxContainer from '../ui-components/ChildCheckbox';
 import {AdvancedMultiSelectHeader} from '../ui-components/AdvancedMultiSelect';
 import {MasterCheckboxState} from '../ui-components/MasterCheckbox';
 import {InfoPane, WarningType} from '../ui-components/InfoPane';
-import {EXPLOITERS_PATH_PROPAGATION} from './PropagationConfig';
+import {EXPLOITERS_PATH_PROPAGATION, FINGERPRINTERS_PATH_PROPAGATION} from './PropagationConfig';
 import {CONFIGURATION_TABS} from './ConfigurationTabs.js'
 import {Link} from 'react-router-dom';
 import {IslandRoutes} from '../Main';
@@ -12,7 +12,10 @@ import {IslandRoutes} from '../Main';
 export const CREDENTIALS_COLLECTORS_CONFIG_PATH = 'credentials_collectors';
 export const PAYLOADS_CONFIG_PATH = 'payloads';
 const PLUGIN_SCHEMA_PATH = {
-  [CONFIGURATION_TABS.PROPAGATION]: EXPLOITERS_PATH_PROPAGATION,
+  [CONFIGURATION_TABS.PROPAGATION]: {
+    'exploitation': EXPLOITERS_PATH_PROPAGATION,
+    'network_scan': FINGERPRINTERS_PATH_PROPAGATION
+  },
   [CONFIGURATION_TABS.CREDENTIALS_COLLECTORS]: CREDENTIALS_COLLECTORS_CONFIG_PATH,
   [CONFIGURATION_TABS.PAYLOADS]: PAYLOADS_CONFIG_PATH
 };
@@ -57,7 +60,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     } else {
       plugins.add(pluginName);
     }
-    props.formContext.setSelectedPlugins(plugins, props.formContext.section);
+      props.formContext.setSelectedPlugins(plugins, props.formContext.section, props.formContext.subSection);
   }
 
   const updateUISchema = () => {
@@ -65,8 +68,11 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     for (let pluginName of Object.keys(defaultSchema)) {
       uiSchema[pluginName] = Object.assign({...uiSchema[pluginName]}, {'ui:readonly': !props.formContext.selectedPlugins.has(pluginName)});
     }
-
-    props.formContext.setUiSchema(uiSchema, PLUGIN_SCHEMA_PATH[props.formContext.section]);
+    let pluginSchemaPath = PLUGIN_SCHEMA_PATH[props.formContext.section];
+    if(props.formContext.section === 'propagation'){
+      pluginSchemaPath = pluginSchemaPath[props.formContext.subSection];
+    }
+    props.formContext.setUiSchema(uiSchema, pluginSchemaPath);
   }
 
   function getMasterCheckboxState(selectValues) {
@@ -89,11 +95,12 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
 
   function onMasterPluginCheckboxClick() {
     let checkboxState = getMasterCheckboxState([...props.formContext.selectedPlugins]);
-    let selectedSection = props.formContext.section
+    let selectedSection = props.formContext.section;
+    let selectedSubSection = props.formContext.subSection;
     if (checkboxState == MasterCheckboxState.ALL) {
-      props.formContext.setSelectedPlugins(new Set(), selectedSection);
+      props.formContext.setSelectedPlugins(new Set(), selectedSection, selectedSubSection);
     } else {
-     props.formContext.setSelectedPlugins(new Set(Object.keys(defaultSchema)), selectedSection);
+     props.formContext.setSelectedPlugins(new Set(Object.keys(defaultSchema)), selectedSection, selectedSubSection);
     }
   }
 
@@ -113,7 +120,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   function onResetClick() {
     let safePluginNames = [...props.formContext.selectedPlugins].filter(
       pluginName => isPluginSafe(pluginName));
-    props.formContext.setSelectedPlugins(new Set(safePluginNames), props.formContext.section);
+    props.formContext.setSelectedPlugins(new Set(safePluginNames), props.formContext.section, props.formContext.subSection);
   }
 
   const linkToPluginPage = () => {

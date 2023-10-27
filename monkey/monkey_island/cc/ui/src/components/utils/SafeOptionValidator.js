@@ -3,7 +3,7 @@ function getLegacyPluginDescriptors(schema, config) {
     {
       name: 'Fingerprinters',
       allPlugins: schema.properties.propagation.properties.network_scan.properties.fingerprinters.properties,
-      selectedPlugins: config.propagation.network_scan.fingerprinters
+      selectedPlugins: Object.keys(config.propagation.network_scan.fingerprinters)
     }
   ]);
 }
