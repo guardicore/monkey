@@ -16,9 +16,6 @@ const initialSection = sectionOrder[0];
 export const EXPLOITERS_PATH_PROPAGATION = 'exploitation.exploiters';
 export const EXPLOITERS_CONFIG_PATH = 'propagation.' + EXPLOITERS_PATH_PROPAGATION;
 
-export const FINGERPRINTERS_PATH_PROPAGATION = 'network_scan.fingerprinters';
-export const FINGERPRINTERS_CONFIG_PATH = 'propagation.' + FINGERPRINTERS_PATH_PROPAGATION;
-
 export default function PropagationConfig(props) {
   const {
     schema,
@@ -77,10 +74,6 @@ export default function PropagationConfig(props) {
                               credentials={credentials} />
     } else {
       let selectedSectionData = configuration[selectedSection];
-      let selectedConfigPlugins = selectedPlugins[selectedConfigSection];
-      if(selectedConfigSection === 'propagation'){
-        selectedConfigPlugins = selectedConfigPlugins[selectedSection];
-      }
       return <Form schema={displayedSchema}
                    uiSchema={displayedUiSchema}
                    formData={selectedSectionData}
@@ -96,10 +89,9 @@ export default function PropagationConfig(props) {
                    // children={true} hides the submit button
                    children={true}
                    formContext={{
-                     'selectedPlugins': selectedConfigPlugins,
+                     'selectedPlugins': selectedPlugins[selectedConfigSection],
                      'setSelectedPlugins': setSelectedPlugins,
                      'section': selectedConfigSection,
-                     'subSection': selectedSection,
                      setUiSchema: setUiSchemaForCurrentSection
                    }}/>
     }
