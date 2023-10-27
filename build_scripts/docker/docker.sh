@@ -21,7 +21,7 @@ setup_build_dir() {
   copy_server_config_to_build_dir "$build_dir"
   modify_deployment "$deployment_type" "$build_dir"
   add_agent_binaries_to_build_dir "$agent_binary_dir" "$build_dir"
-  add_node_to_build_dir "$build_dir"
+  add_node_to_build_dir "$build_dir" || handle_error
 
   generate_ssl_cert "$build_dir"
 
