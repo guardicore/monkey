@@ -1,8 +1,8 @@
-from typing import Dict, Mapping, Optional, Sequence, Tuple
+from typing import Any, Dict, Mapping, Optional, Sequence, Tuple
 
 from monkeytypes import Credentials
 
-from common.agent_configuration import AgentConfiguration, PluginConfiguration
+from common.agent_configuration import AgentConfiguration
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 
 
@@ -19,7 +19,7 @@ def add_exploiters(
 
 
 def add_fingerprinters(
-    agent_configuration: AgentConfiguration, fingerprinters: Sequence[PluginConfiguration]
+    agent_configuration: AgentConfiguration, fingerprinters: Dict[str, Dict[str, Any]]
 ) -> AgentConfiguration:
     agent_configuration_copy = agent_configuration.deep_copy()
     agent_configuration_copy.propagation.network_scan.fingerprinters = fingerprinters
