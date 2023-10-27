@@ -185,7 +185,7 @@ def _start_nextjs_server(config_options: IslandConfigOptions):
     if not config_options.node_port:
         logger.error(
             f"Node server port is not specified in the config file."
-            f" Specify it as {NODE_PORT} in server configuration file and try again."
+            f' Specify it as "{NODE_PORT}" in the server configuration file and try again.'
         )
         sys.exit(1)
     if is_local_port_in_use(config_options.node_port):
