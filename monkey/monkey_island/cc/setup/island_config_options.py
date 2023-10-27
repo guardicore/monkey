@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from types import MappingProxyType as ImmutableMapping
-from typing import Mapping
+from typing import Mapping, Optional
 
 from common.utils.file_utils import expand_path
 from monkey_island.cc.server_utils.consts import (
@@ -19,6 +19,7 @@ _SSL_CERT_KEY = "ssl_certificate_key_file"
 _MONGODB = "mongodb"
 _START_MONGODB = "start_mongodb"
 _LOG_LEVEL = "log_level"
+NODE_PORT = "node_port"
 
 
 class IslandConfigOptions:
@@ -28,6 +29,7 @@ class IslandConfigOptions:
         self.start_mongodb = DEFAULT_START_MONGO_DB
         self.crt_path = DEFAULT_CRT_PATH
         self.key_path = DEFAULT_KEY_PATH
+        self.node_port: Optional[int] = None
 
         self._expand_paths()
 
@@ -37,6 +39,7 @@ class IslandConfigOptions:
         self.data_dir = config_contents.get(_DATA_DIR, self.data_dir)
 
         self.log_level = config_contents.get(_LOG_LEVEL, self.log_level)
+        self.node_port = config_contents.get(NODE_PORT, self.node_port)
 
         self.start_mongodb = config_contents.get(
             _MONGODB, {_START_MONGODB: self.start_mongodb}

@@ -2,5 +2,6 @@
   "log_level": "DEBUG",
   "mongodb": {
         "start_mongodb": true
-  }
+  },
+  "node_port": 443
 }
