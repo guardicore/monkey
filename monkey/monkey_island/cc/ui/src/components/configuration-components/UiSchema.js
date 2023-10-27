@@ -69,7 +69,7 @@ export default function UiSchema(props) {
           }
         },
         fingerprinters: {
-          'ui:ObjectFieldTemplate': PluginSelectorTemplate
+          'ui:widget': 'hidden'
         }
       }
     },
