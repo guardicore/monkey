@@ -10,9 +10,7 @@ copy_monkey_island_to_build_dir() {
   cp "$src"/monkey_island.py "$build_dir"
   cp -r "$src"/common "$build_dir/"
 
-  rsync \
-      -ar \
-      --exclude=monkey_island/cc/next_ui/node_modules \
+  rsync -ar \
       "$src"/monkey_island "$build_dir/"
 }
 
@@ -94,8 +92,10 @@ build_frontend() {
     npm run build # Same as production build?
   fi
 
+  log_message "Deploying standalone build"
   cp -r "$ui_dir/public" "$ui_dir/.next/standalone/"
   cp -r "$ui_dir/.next/static" "$ui_dir/.next/standalone/.next/"
+  cp "$ui_dir/server.js" "$ui_dir/.next/standalone/"
   # Use standalone folder only
   mv "$ui_dir/.next/standalone" "${ui_dir}_standalone"
   rm -rf "$ui_dir"
