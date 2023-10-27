@@ -1,4 +1,5 @@
 import ipaddress
+import socket
 from ipaddress import IPv4Address, IPv4Interface
 from typing import Iterable, List, Sequence
 
@@ -27,3 +28,8 @@ def _select_ipv4_ips(ips: Iterable[ifaddr.IP]) -> Iterable[ifaddr.IP]:
 def _is_ipv4(ip: ifaddr.IP) -> bool:
     # In ifaddr, IPv4 addresses are strings, while IPv6 addresses are tuples
     return type(ip.ip) is str
+
+
+def is_local_port_in_use(port: int) -> bool:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(("localhost", port)) == 0
