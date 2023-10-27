@@ -102,14 +102,6 @@ build_frontend() {
   mv "${ui_dir}_standalone" "$ui_dir"
 
   popd || handle_error
-
-  remove_node_modules "$ui_dir"
-}
-
-remove_node_modules() {
-  # Node has served its purpose. We don't need to deliver the node modules with
-  # the package.
-  rm -rf "$1/node_modules"
 }
 
 get_commit_id() {
