@@ -4,15 +4,18 @@ const next = require('next');
 const https = require('https');
 
 const fs = require('fs');
-const port = 443;
-const app = next({ dev: false, port: port });
+
+const config = fs.readFileSync('../server_config.json')
+const configJson = JSON.parse(config)
+const port = configJson.node_port
 
 const sslOptions = {
     key: fs.readFileSync('../server.key'),
     cert: fs.readFileSync('../server.crt'),
 };
 
-const handle = app.getRequestHandler();
+const app = next({dev: false, port: port});
+const handle = app.getRequestHandler()
 
 app.prepare().then(() => {
     console.log('Starting server...');
