@@ -1,7 +1,5 @@
-from monkeytypes import InfectionMonkeyBaseModel
+from monkeytypes import InfectionMonkeyBaseModel, PercentLimited
 from pydantic import Field
-
-from common.types import PercentLimited
 
 
 class CryptojackerOptions(InfectionMonkeyBaseModel):
