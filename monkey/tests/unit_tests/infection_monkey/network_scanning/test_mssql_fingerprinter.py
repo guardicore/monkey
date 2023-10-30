@@ -2,10 +2,11 @@ import socket
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import PortStatus
 from tests.unit_tests.monkey_island.cc.models.test_agent import AGENT_ID
 
 from common.event_queue import IAgentEventPublisher
-from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
+from common.types import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning.mssql_fingerprinter import (
     SQL_BROWSER_DEFAULT_PORT,
