@@ -1,8 +1,10 @@
 import logging
 from pprint import pformat
 
+from monkeytypes import SocketAddress
+
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID, PercentLimited, SocketAddress
+from common.types import AgentID, PercentLimited
 
 from .bitcoin_mining_network_traffic_simulator import BitcoinMiningNetworkTrafficSimulator
 from .cpu_utilizer import CPUUtilizer
