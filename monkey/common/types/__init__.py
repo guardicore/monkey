@@ -12,5 +12,4 @@ from monkeytypes import (
     NonNegativeFloat,
     Percent,
     PercentLimited,
-    PortStatus,
 )
