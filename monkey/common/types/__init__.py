@@ -11,5 +11,4 @@ from monkeytypes import (
     NetworkService,
     NonNegativeFloat,
     Percent,
-    PercentLimited,
 )
