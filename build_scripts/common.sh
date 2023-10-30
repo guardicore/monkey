@@ -95,6 +95,8 @@ build_frontend() {
   log_message "Deploying standalone build"
   cp -r "$ui_dir/public" "$ui_dir/.next/standalone/"
   cp -r "$ui_dir/.next/static" "$ui_dir/.next/standalone/.next/"
+  # Since we use a custom server.js, we need all of next.js, not just the traced files
+  cp -r "$ui_dir/node_modules/next" "$ui_dir/.next/standalone/node_modules/"
   cp "$ui_dir/server.js" "$ui_dir/.next/standalone/"
   # Use standalone folder only
   mv "$ui_dir/.next/standalone" "${ui_dir}_standalone"
