@@ -9,5 +9,4 @@ from monkeytypes import (
     NetworkPort,
     NetworkProtocol,
     NetworkService,
-    NonNegativeFloat,
 )
