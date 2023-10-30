@@ -13,5 +13,4 @@ from monkeytypes import (
     Percent,
     PercentLimited,
     PortStatus,
-    SocketAddress,
 )
