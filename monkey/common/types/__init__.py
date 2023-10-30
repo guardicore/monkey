@@ -8,5 +8,4 @@ from monkeytypes import (
     MachineID,
     NetworkPort,
     NetworkProtocol,
-    NetworkService,
 )
