@@ -4,9 +4,8 @@ from types import MappingProxyType
 from typing import MutableSequence
 
 import pytest
-from monkeytypes import IllegalMutationError, OperatingSystem, SocketAddress
+from monkeytypes import IllegalMutationError, NetworkService, OperatingSystem, SocketAddress
 
-from common.types import NetworkService
 from monkey_island.cc.models import Machine
 
 SOCKET_ADDR_1 = "192.168.1.10:5000"
