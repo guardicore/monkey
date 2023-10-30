@@ -45,7 +45,6 @@ from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.i_puppet import TargetHost
 from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFirewall
 from infection_monkey.utils import commands
-from monkey.common.types import Percent
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository

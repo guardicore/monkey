@@ -10,5 +10,4 @@ from monkeytypes import (
     NetworkProtocol,
     NetworkService,
     NonNegativeFloat,
-    Percent,
 )

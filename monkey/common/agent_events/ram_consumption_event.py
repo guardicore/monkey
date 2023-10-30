@@ -1,8 +1,7 @@
 from typing import Annotated
 
+from monkeytypes import Percent
 from pydantic import Field
-
-from common.types import Percent
 
 from . import AbstractAgentEvent
 
