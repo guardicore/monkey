@@ -8,11 +8,12 @@ from monkeytypes import (
     LMHash,
     OperatingSystem,
     Password,
+    PortStatus,
     SSHKeypair,
     Username,
 )
 
-from common.types import DiscoveredService, NetworkProtocol, NetworkService, PortStatus
+from common.types import DiscoveredService, NetworkProtocol, NetworkService
 from infection_monkey.i_puppet import (
     ExploiterResult,
     FingerprintData,
