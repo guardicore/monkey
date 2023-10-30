@@ -4,9 +4,9 @@ from uuid import UUID
 import pytest
 import requests
 import requests_mock
+from monkeytypes import SocketAddress
 from urllib3.exceptions import ConnectTimeoutError
 
-from common.types import SocketAddress
 from infection_monkey.island_api_client import (
     IslandAPIConnectionError,
     IslandAPIError,
