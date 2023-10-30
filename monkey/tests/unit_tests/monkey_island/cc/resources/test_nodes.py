@@ -1,10 +1,10 @@
 from http import HTTPStatus
 
 import pytest
+from monkeytypes import SocketAddress
 from tests.common import StubDIContainer
 from tests.monkey_island import InMemoryNodeRepository
 
-from common.types import SocketAddress
 from monkey_island.cc.models import CommunicationType, Node
 from monkey_island.cc.repositories import INodeRepository
 from monkey_island.cc.resources import Nodes

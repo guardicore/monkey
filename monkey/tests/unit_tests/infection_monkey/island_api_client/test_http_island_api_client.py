@@ -7,7 +7,13 @@ from uuid import UUID
 
 import pytest
 import requests
-from monkeytypes import AgentPluginType, Credentials, InfectionMonkeyBaseModel, OperatingSystem
+from monkeytypes import (
+    AgentPluginType,
+    Credentials,
+    InfectionMonkeyBaseModel,
+    OperatingSystem,
+    SocketAddress,
+)
 from tests.common.example_agent_configuration import AGENT_CONFIGURATION
 from tests.common.fake_manifests import FAKE_AGENT_MANIFEST_DICT, FAKE_MANIFEST_OBJECT, FAKE_NAME
 from tests.data_for_tests.otp import TEST_OTP
@@ -21,7 +27,6 @@ from common.agent_event_serializers import (
 )
 from common.agent_events import AbstractAgentEvent
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
-from common.types import SocketAddress
 from infection_monkey.island_api_client import (
     HTTPIslandAPIClient,
     IslandAPIError,

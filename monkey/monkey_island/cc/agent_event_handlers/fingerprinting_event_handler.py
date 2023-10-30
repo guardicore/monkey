@@ -1,5 +1,6 @@
+from monkeytypes import SocketAddress
+
 from common.agent_events import FingerprintingEvent
-from common.types import SocketAddress
 from monkey_island.cc.models import Machine, NetworkServices
 from monkey_island.cc.repositories import IMachineRepository, NetworkModelUpdateFacade
 

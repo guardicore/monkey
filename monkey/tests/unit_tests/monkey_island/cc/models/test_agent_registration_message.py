@@ -4,10 +4,9 @@ from typing import MutableSequence, Sequence
 from uuid import UUID
 
 import pytest
-from monkeytypes import IllegalMutationError
+from monkeytypes import IllegalMutationError, SocketAddress
 
 from common import AgentRegistrationData
-from common.types import SocketAddress
 
 AGENT_ID = UUID("012e7238-7b81-4108-8c7f-0787bc3f3c10")
 PARENT_ID = UUID("0fc9afcb-1902-436b-bd5c-1ad194252484")

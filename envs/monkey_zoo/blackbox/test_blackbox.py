@@ -10,10 +10,9 @@ from uuid import uuid4
 
 import pytest
 import requests
-from monkeytypes import OTP, OperatingSystem
+from monkeytypes import OTP, OperatingSystem, SocketAddress
 from treelib import Tree
 
-from common.types import SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.stolen_credentials_analyzer import StolenCredentialsAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer

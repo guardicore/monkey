@@ -3,9 +3,9 @@ from ipaddress import IPv4Address, IPv4Interface
 from uuid import UUID
 
 import pytest
+from monkeytypes import SocketAddress
 from tests.monkey_island import InMemoryAgentRepository, InMemoryMachineRepository
 
-from common.types import SocketAddress
 from monkey_island.cc.models import Agent, Machine
 from monkey_island.cc.repositories import AgentMachineFacade, IAgentRepository, IMachineRepository
 

@@ -3,10 +3,10 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeytypes import SocketAddress
 from tests.monkey_island import InMemoryMachineRepository
 
 from common.agent_events import HostnameDiscoveryEvent
-from common.types import SocketAddress
 from monkey_island.cc.agent_event_handlers import update_machine_hostname
 from monkey_island.cc.models import Agent, Machine
 from monkey_island.cc.repositories import (

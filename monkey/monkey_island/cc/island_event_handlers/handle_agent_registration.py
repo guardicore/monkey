@@ -3,8 +3,9 @@ from datetime import datetime
 from ipaddress import IPv4Interface
 from typing import Callable, List, Optional
 
+from monkeytypes import SocketAddress
+
 from common import AgentRegistrationData
-from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine
 from monkey_island.cc.repositories import (
     IAgentRepository,

@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 import mongomock
 import pytest
+from monkeytypes import SocketAddress
 
-from common.types import SocketAddress
 from monkey_island.cc.models import CommunicationType, Node
 from monkey_island.cc.repositories import (
     INodeRepository,
