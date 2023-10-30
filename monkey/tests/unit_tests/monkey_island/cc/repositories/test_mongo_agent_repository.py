@@ -5,8 +5,8 @@ from uuid import uuid4
 
 import mongomock
 import pytest
+from monkeytypes import SocketAddress
 
-from common.types import SocketAddress
 from monkey_island.cc.models import Agent
 from monkey_island.cc.repositories import (
     IAgentRepository,

@@ -1,10 +1,10 @@
 from ipaddress import IPv4Interface
 from typing import Any, Dict, Mapping, Optional, Tuple, TypeAlias
 
-from monkeytypes import MutableInfectionMonkeyBaseModel, OperatingSystem
+from monkeytypes import MutableInfectionMonkeyBaseModel, OperatingSystem, SocketAddress
 from pydantic import Field, field_serializer, field_validator
 
-from common.types import HardwareID, NetworkService, SocketAddress
+from common.types import HardwareID, NetworkService
 
 from . import MachineID
 

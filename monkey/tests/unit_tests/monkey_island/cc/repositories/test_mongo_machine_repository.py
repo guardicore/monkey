@@ -4,9 +4,9 @@ from unittest.mock import MagicMock
 
 import mongomock
 import pytest
-from monkeytypes import OperatingSystem
+from monkeytypes import OperatingSystem, SocketAddress
 
-from common.types import NetworkService, SocketAddress
+from common.types import NetworkService
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import (
     IMachineRepository,
