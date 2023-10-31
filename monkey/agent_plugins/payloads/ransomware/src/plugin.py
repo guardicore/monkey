@@ -2,10 +2,9 @@ import logging
 from pprint import pformat
 from typing import Any, Dict
 
-from monkeytypes import Event
+from monkeytypes import AgentID, Event
 
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 from infection_monkey.i_puppet import PayloadResult
 
 from .ransomware_builder import build_ransomware

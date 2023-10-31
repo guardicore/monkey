@@ -3,10 +3,11 @@ import threading
 from pathlib import Path
 from typing import Iterable
 
+from monkeytypes import AgentID
+
 from common.agent_events import FileEncryptionEvent
 from common.event_queue import IAgentEventPublisher
 from common.tags import DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG
-from common.types import AgentID
 from infection_monkey.utils.threading import interruptible_function, interruptible_iter
 
 from .consts import README_FILE_NAME, README_SRC

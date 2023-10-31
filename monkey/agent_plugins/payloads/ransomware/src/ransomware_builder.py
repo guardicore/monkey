@@ -1,8 +1,9 @@
 import logging
 from pprint import pformat
 
+from monkeytypes import AgentID
+
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 from common.utils.environment import get_os
 
 from .bit_manipulators import flip_bits
