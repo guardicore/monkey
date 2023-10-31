@@ -1,9 +1,9 @@
 from typing import Dict, FrozenSet, Mapping, Tuple, TypeAlias
 
-from monkeytypes import MutableInfectionMonkeyBaseModel, SocketAddress
+from monkeytypes import MachineID, MutableInfectionMonkeyBaseModel, SocketAddress
 from pydantic import Field
 
-from . import CommunicationType, MachineID
+from . import CommunicationType
 
 NodeConnections: TypeAlias = Mapping[MachineID, FrozenSet[CommunicationType]]
 TCPConnections: TypeAlias = Dict[MachineID, Tuple[SocketAddress, ...]]
