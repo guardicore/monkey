@@ -2,11 +2,10 @@ from http import HTTPMethod
 from unittest.mock import MagicMock
 
 import pytest
-from monkeytypes import NetworkPort, NetworkProtocol, NetworkService, PortStatus
+from monkeytypes import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from tests.unit_tests.monkey_island.cc.models.test_agent import AGENT_ID
 
 from common.event_queue import IAgentEventPublisher
-from common.types import DiscoveredService
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 
