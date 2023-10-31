@@ -5,10 +5,10 @@ from http import HTTPStatus
 from threading import Thread
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
-from monkeytypes import AgentPluginType, Credentials, OperatingSystem
+from monkeytypes import AgentPluginType, Credentials, MachineID, OperatingSystem
 
 from common.agent_plugins import AgentPluginRepositoryIndex
-from common.types import AgentID, MachineID
+from common.types import AgentID
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 from monkey_island.cc.models import Agent, Machine, TerminateAllAgents

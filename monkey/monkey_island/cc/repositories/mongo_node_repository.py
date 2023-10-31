@@ -1,9 +1,10 @@
 from copy import deepcopy
 from typing import Sequence
 
+from monkeytypes import MachineID
 from pymongo import MongoClient
 
-from monkey_island.cc.models import CommunicationType, MachineID, Node
+from monkey_island.cc.models import CommunicationType, Node
 
 from ..models.node import TCPConnections
 from . import INodeRepository, RemovalError, RetrievalError, StorageError, UnknownRecordError

@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import Optional
 
-from monkeytypes import MutableInfectionMonkeyBaseModel, SocketAddress
+from monkeytypes import MachineID, MutableInfectionMonkeyBaseModel, SocketAddress
 from pydantic import Field
 
-from . import AgentID, MachineID
+from . import AgentID
 
 
 class Agent(MutableInfectionMonkeyBaseModel):

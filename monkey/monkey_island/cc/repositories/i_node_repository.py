@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
-from monkey_island.cc.models import CommunicationType, MachineID, Node, TCPConnections
+from monkeytypes import MachineID
+
+from monkey_island.cc.models import CommunicationType, Node, TCPConnections
 
 
 class INodeRepository(ABC):

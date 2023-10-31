@@ -2,6 +2,7 @@ from ipaddress import IPv4Interface
 from typing import Any, Dict, Mapping, Optional, Tuple, TypeAlias
 
 from monkeytypes import (
+    MachineID,
     MutableInfectionMonkeyBaseModel,
     NetworkService,
     OperatingSystem,
@@ -10,8 +11,6 @@ from monkeytypes import (
 from pydantic import Field, field_serializer, field_validator
 
 from common.types import HardwareID
-
-from . import MachineID
 
 NetworkServices: TypeAlias = Dict[SocketAddress, NetworkService]
 

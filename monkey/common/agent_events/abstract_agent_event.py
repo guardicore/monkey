@@ -3,10 +3,10 @@ from abc import ABC
 from ipaddress import IPv4Address
 from typing import Annotated, FrozenSet, Union
 
-from monkeytypes import InfectionMonkeyBaseModel
+from monkeytypes import InfectionMonkeyBaseModel, MachineID
 from pydantic import Field, StringConstraints
 
-from common.types import AgentID, MachineID
+from common.types import AgentID
 
 EVENT_TAG_REGEX = r"^[a-zA-Z0-9._-]+$"
 

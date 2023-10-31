@@ -5,5 +5,4 @@ from monkeytypes import (
     HardwareID,
     IntRange,
     JSONSerializable,
-    MachineID,
 )

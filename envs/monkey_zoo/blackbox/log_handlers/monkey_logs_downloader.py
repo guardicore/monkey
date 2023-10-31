@@ -4,7 +4,8 @@ from pathlib import Path
 from threading import Thread
 from typing import List, Mapping
 
-from common.types import MachineID
+from monkeytypes import MachineID
+
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 from envs.monkey_zoo.blackbox.log_handlers.island_log_parser import IslandLogParser
 from envs.monkey_zoo.blackbox.utils import bb_singleton
