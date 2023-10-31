@@ -1,8 +1,9 @@
 import logging
 from typing import Generic, Type, TypeVar
 
+from monkeytypes import JSONSerializable
+
 from common.agent_events import AbstractAgentEvent
-from common.types import JSONSerializable
 
 from . import EVENT_TYPE_FIELD, IAgentEventSerializer
 

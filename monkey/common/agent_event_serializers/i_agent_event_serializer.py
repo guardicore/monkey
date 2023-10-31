@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 
+from monkeytypes import JSONSerializable
+
 from common.agent_events import AbstractAgentEvent
-from common.types import JSONSerializable
 
 
 class IAgentEventSerializer(ABC):
