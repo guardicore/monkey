@@ -6,5 +6,4 @@ from monkeytypes import (
     IntRange,
     JSONSerializable,
     MachineID,
-    NetworkPort,
 )

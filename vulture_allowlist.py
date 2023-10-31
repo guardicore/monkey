@@ -37,7 +37,7 @@ from common.tags import (
     EXTERNAL_DEFACEMENT_T1491_002_TAG,
     INTERNAL_DEFACEMENT_T1491_001_TAG,
 )
-from common.types import Lock, NetworkPort, PluginName
+from common.types import Lock, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
@@ -72,8 +72,6 @@ PluginName.regex
 LMHash.validate_hash_format
 NTHash.validate_hash_format
 
-NetworkPort.ge
-NetworkPort.le
 
 FileEncryptionEvent.model_config
 FileEncryptionEvent.dump_file_path

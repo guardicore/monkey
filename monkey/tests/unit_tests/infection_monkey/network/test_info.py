@@ -7,8 +7,8 @@ from time import sleep
 from typing import Tuple
 
 import pytest
+from monkeytypes import NetworkPort
 
-from common.types import NetworkPort
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.ports import COMMON_PORTS
 

@@ -1,6 +1,6 @@
 from typing import Dict
 
-from common.types import NetworkPort
+from monkeytypes import NetworkPort
 
 from . import AgentConfiguration
 from .agent_sub_configurations import (
