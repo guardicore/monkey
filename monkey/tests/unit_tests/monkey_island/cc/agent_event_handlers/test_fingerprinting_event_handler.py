@@ -3,10 +3,16 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
-from monkeytypes import NetworkPort, NetworkProtocol, NetworkService, OperatingSystem, SocketAddress
+from monkeytypes import (
+    DiscoveredService,
+    NetworkPort,
+    NetworkProtocol,
+    NetworkService,
+    OperatingSystem,
+    SocketAddress,
+)
 
 from common.agent_events import FingerprintingEvent
-from common.types import DiscoveredService
 from monkey_island.cc.agent_event_handlers import FingerprintingEventHandler
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IMachineRepository, NetworkModelUpdateFacade
