@@ -6,10 +6,9 @@ from agent_plugins.payloads.cryptojacker.src.memory_utilizer import (
     MEMORY_CONSUMPTION_SAFETY_LIMIT,
     MemoryUtilizer,
 )
-from monkeytypes import PercentLimited
+from monkeytypes import AgentID, PercentLimited
 
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 
 AGENT_ID = AgentID("9614480d-471b-4568-86b5-cb922a34ed8a")
 TARGET_UTILIZATION = PercentLimited(50)
