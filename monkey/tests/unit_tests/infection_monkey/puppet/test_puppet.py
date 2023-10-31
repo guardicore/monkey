@@ -3,12 +3,11 @@ from typing import Optional
 from unittest.mock import MagicMock
 
 import pytest
-from monkeytypes import AgentPluginType, OperatingSystem
+from monkeytypes import AgentID, AgentPluginType, OperatingSystem
 from tests.common.fake_manifests import FAKE_NAME, FAKE_NAME2
 from tests.data_for_tests.propagation_credentials import CREDENTIALS
 
 from common.event_queue import IAgentEventQueue
-from common.types import AgentID
 from infection_monkey.i_puppet import (
     IncompatibleLocalOperatingSystemError,
     IncompatibleTargetOperatingSystemError,
