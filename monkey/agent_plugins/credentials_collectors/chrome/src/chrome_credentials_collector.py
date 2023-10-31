@@ -1,7 +1,7 @@
 import time
 from collections.abc import Collection, Sequence
 
-from monkeytypes import Credentials, Event
+from monkeytypes import AgentID, Credentials, Event
 
 from common.agent_events import CredentialsStolenEvent
 from common.event_queue import IAgentEventPublisher
@@ -10,7 +10,6 @@ from common.tags import (
     DATA_FROM_LOCAL_SYSTEM_T1005_TAG,
     UNSECURED_CREDENTIALS_T1552_TAG,
 )
-from common.types import AgentID
 
 from .typedef import CredentialsDatabaseProcessorCallable, CredentialsDatabaseSelectorCallable
 

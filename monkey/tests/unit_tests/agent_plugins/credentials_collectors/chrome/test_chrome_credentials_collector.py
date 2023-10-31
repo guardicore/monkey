@@ -9,10 +9,10 @@ from agent_plugins.credentials_collectors.chrome.src.typedef import (
     CredentialsDatabaseProcessorCallable,
     CredentialsDatabaseSelectorCallable,
 )
+from monkeytypes import AgentID
 from tests.data_for_tests.propagation_credentials import CREDENTIALS
 
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 
 AGENT_ID = AgentID("43b1dabd-27e3-4c13-9c2d-fc870f7266cc")
 DATABASE_PATHS = [PurePath("some_path"), PurePath("some_other_path")]
