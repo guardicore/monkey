@@ -1,10 +1,9 @@
 from logging import getLogger
 from typing import List, Sequence
 
-from monkeytypes import NetworkService, PortStatus, SocketAddress
+from monkeytypes import NetworkPort, NetworkService, PortStatus, SocketAddress
 
 from common.agent_events import PingScanEvent, TCPScanEvent
-from common.types import NetworkPort
 from monkey_island.cc.models import CommunicationType, Machine, NetworkServices
 from monkey_island.cc.repositories import (
     IMachineRepository,
