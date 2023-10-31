@@ -3,14 +3,19 @@ from threading import Event
 from unittest.mock import MagicMock
 
 import pytest
-from monkeytypes import NetworkProtocol, NetworkService, OperatingSystem, PortStatus
+from monkeytypes import (
+    DiscoveredService,
+    NetworkProtocol,
+    NetworkService,
+    OperatingSystem,
+    PortStatus,
+)
 
 from common.agent_configuration.agent_sub_configurations import (
     NetworkScanConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import DiscoveredService
 from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData, TargetHost
 from infection_monkey.master import Exploiter, IPScanResults, Propagator
 

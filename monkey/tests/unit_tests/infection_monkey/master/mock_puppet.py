@@ -4,6 +4,7 @@ from typing import Any, Dict, Mapping, Sequence
 from monkeytypes import (
     AgentPluginType,
     Credentials,
+    DiscoveredService,
     Event,
     LMHash,
     NetworkProtocol,
@@ -15,7 +16,6 @@ from monkeytypes import (
     Username,
 )
 
-from common.types import DiscoveredService
 from infection_monkey.i_puppet import (
     ExploiterResult,
     FingerprintData,
