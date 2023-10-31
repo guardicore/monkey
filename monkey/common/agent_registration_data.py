@@ -3,10 +3,8 @@ from ipaddress import IPv4Interface
 from typing import Optional
 from uuid import UUID
 
-from monkeytypes import InfectionMonkeyBaseModel, SocketAddress
+from monkeytypes import HardwareID, InfectionMonkeyBaseModel, SocketAddress
 from pydantic import Field
-
-from .types import HardwareID
 
 
 class AgentRegistrationData(InfectionMonkeyBaseModel):
