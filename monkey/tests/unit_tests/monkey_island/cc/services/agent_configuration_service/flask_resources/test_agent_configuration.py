@@ -4,13 +4,13 @@ from typing import Type
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import JSONSerializable
 from tests.common import StubDIContainer
 from tests.common.example_agent_configuration import AGENT_CONFIGURATION
 from tests.monkey_island import InMemoryAgentConfigurationService, InMemoryAgentPluginRepository
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from common.agent_configuration import AgentConfiguration
-from common.types import JSONSerializable
 from monkey_island.cc.repositories import StorageError
 from monkey_island.cc.services import IAgentConfigurationService, PluginConfigurationValidationError
 from monkey_island.cc.services.agent_configuration_service.flask_resources.agent_configuration import (  # noqa: E501
