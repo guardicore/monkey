@@ -3,5 +3,4 @@ from monkeytypes import (
     DiscoveredService,
     FileExtension,
     HardwareID,
-    IntRange,
 )
