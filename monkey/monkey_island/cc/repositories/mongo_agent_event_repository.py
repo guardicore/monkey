@@ -2,6 +2,7 @@ import logging
 from typing import Any, Dict, Sequence, Type
 
 import pymongo
+from monkeytypes import AgentID
 from pymongo import MongoClient
 
 from common.agent_event_serializers import (
@@ -21,7 +22,6 @@ from common.agent_events import (
     PropagationEvent,
     TCPScanEvent,
 )
-from common.types import AgentID
 from monkey_island.cc.repositories import IAgentEventRepository
 from monkey_island.cc.repositories.i_agent_event_repository import T
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor

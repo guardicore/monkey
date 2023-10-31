@@ -2,10 +2,9 @@ import logging
 from datetime import datetime
 from typing import Optional
 
-from monkeytypes import MachineID
+from monkeytypes import AgentID, MachineID
 
 from common.agent_signals import AgentSignals
-from common.types import AgentID
 from monkey_island.cc.models import Agent, Simulation, TerminateAllAgents
 from monkey_island.cc.repositories import IAgentRepository, ISimulationRepository
 
