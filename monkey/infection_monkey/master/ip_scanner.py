@@ -6,10 +6,7 @@ from typing import Callable, Dict, Sequence
 
 from monkeytypes import Event, PortStatus
 
-from common.agent_configuration.agent_sub_configurations import (
-    NetworkScanConfiguration,
-    PluginConfiguration,
-)
+from common.agent_configuration.agent_sub_configurations import NetworkScanConfiguration
 from infection_monkey.i_puppet import FingerprintData, IPuppet, PingScanData, PortScanDataDict
 from infection_monkey.network import NetworkAddress
 from infection_monkey.utils.threading import interruptible_iter, run_worker_threads
@@ -93,16 +90,16 @@ class IPScanner:
     def _run_fingerprinters(
         self,
         ip: str,
-        fingerprinters: Sequence[PluginConfiguration],
+        fingerprinters: Dict[str, Dict],
         ping_scan_data: PingScanData,
         port_scan_data: PortScanDataDict,
         stop: Event,
     ) -> Dict[str, FingerprintData]:
         fingerprint_data = {}
 
-        for f in interruptible_iter(fingerprinters, stop):
-            fingerprint_data[f.name] = self._puppet.fingerprint(
-                f.name, ip, ping_scan_data, port_scan_data, f.options
+        for name, options in interruptible_iter(fingerprinters.items(), stop):
+            fingerprint_data[name] = self._puppet.fingerprint(
+                name, ip, ping_scan_data, port_scan_data, options
             )
 
         return fingerprint_data

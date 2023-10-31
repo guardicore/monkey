@@ -21,7 +21,7 @@ ICMP_CONFIGURATION = {"timeout": TIMEOUT}
 PORTS = [0, 8080, 443]
 TCP_SCAN_CONFIGURATION = {"timeout": TIMEOUT, "ports": PORTS}
 
-FINGERPRINTERS = [{"name": "mssql", "options": {}}]
+FINGERPRINTERS: Dict[str, Dict] = {"mssql": {}}
 NETWORK_SCAN_CONFIGURATION = {
     "tcp": TCP_SCAN_CONFIGURATION,
     "icmp": ICMP_CONFIGURATION,

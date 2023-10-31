@@ -7,6 +7,7 @@ from monkeytypes import (
     DiscoveredService,
     Event,
     LMHash,
+    NetworkPort,
     NetworkProtocol,
     NetworkService,
     OperatingSystem,
@@ -36,7 +37,7 @@ logger = logging.getLogger()
 
 
 class MockPuppet(IPuppet):
-    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
+    def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
         logger.debug(f"load_plugin({plugin}, {plugin_type})")
 
     def run_credentials_collector(
@@ -86,7 +87,7 @@ class MockPuppet(IPuppet):
         return PingScanData(response_received=False, os=None)
 
     def scan_tcp_ports(
-        self, host: str, ports: Sequence[int], timeout: float = 3
+        self, host: str, ports: Sequence[NetworkPort], timeout: float = 3
     ) -> PortScanDataDict:
         logger.debug(f"run_scan_tcp_port({host}, {ports}, {timeout})")
         dot_1_results = {
@@ -122,7 +123,7 @@ class MockPuppet(IPuppet):
         name: str,
         host: str,
         ping_scan_data: PingScanData,
-        port_scan_data: Dict[int, PortScanData],
+        port_scan_data: PortScanDataDict,
         options: Dict,
     ) -> FingerprintData:
         logger.debug(f"fingerprint({name}, {host})")
@@ -178,7 +179,7 @@ class MockPuppet(IPuppet):
         host: TargetHost,
         current_depth: int,
         servers: Sequence[str],
-        options: Dict,
+        options: Mapping,
         interrupt: Event,
     ) -> ExploiterResult:
         logger.debug(f"exploit_hosts({name}, {host.ip}, {options})")
