@@ -4,5 +4,4 @@ from monkeytypes import (
     FileExtension,
     HardwareID,
     IntRange,
-    JSONSerializable,
 )
