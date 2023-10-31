@@ -6,6 +6,7 @@ from monkeytypes import (
     Credentials,
     Event,
     LMHash,
+    NetworkProtocol,
     NetworkService,
     OperatingSystem,
     Password,
@@ -14,7 +15,7 @@ from monkeytypes import (
     Username,
 )
 
-from common.types import DiscoveredService, NetworkProtocol
+from common.types import DiscoveredService
 from infection_monkey.i_puppet import (
     ExploiterResult,
     FingerprintData,

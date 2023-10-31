@@ -7,5 +7,4 @@ from monkeytypes import (
     JSONSerializable,
     MachineID,
     NetworkPort,
-    NetworkProtocol,
 )
