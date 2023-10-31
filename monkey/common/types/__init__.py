@@ -1,3 +1,0 @@
-from monkeytypes import (
-    AgentID,
-)

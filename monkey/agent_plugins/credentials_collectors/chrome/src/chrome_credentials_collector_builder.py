@@ -1,9 +1,8 @@
 import logging
 
-from monkeytypes import OperatingSystem
+from monkeytypes import AgentID, OperatingSystem
 
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 from common.utils.environment import get_os
 
 from .chrome_credentials_collector import ChromeCredentialsCollector

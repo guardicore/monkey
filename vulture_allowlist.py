@@ -37,7 +37,6 @@ from common.tags import (
     EXTERNAL_DEFACEMENT_T1491_002_TAG,
     INTERNAL_DEFACEMENT_T1491_001_TAG,
 )
-from common.types import Lock, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
@@ -64,9 +63,6 @@ ScanTargetConfiguration.inaccessible_subnets_valid
 
 BasicLock.acquire
 BasicLock.release
-
-PluginName.strip_whitespace
-PluginName.regex
 
 
 LMHash.validate_hash_format
@@ -139,12 +135,6 @@ MongoAgentEventRepository.get_events_by_source
 AWSCommandResults.response_code  # monkey_island/cc/services/aws/aws_command_runner.py:26
 
 MonkeyExploitation.label
-
-Lock.exc_type
-Lock.exc_val
-Lock.exc_tb
-Lock.blocking
-Lock.locked
 
 AgentPlugin.dump_source_archive
 AgentPlugin.supported_operating_systems

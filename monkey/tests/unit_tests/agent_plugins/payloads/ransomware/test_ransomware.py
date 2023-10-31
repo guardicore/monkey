@@ -15,7 +15,7 @@ from agent_plugins.payloads.ransomware.src.typedef import (
     FileSelectorCallable,
     ReadmeDropperCallable,
 )
-from monkeytypes import Event
+from monkeytypes import AgentID, Event
 from tests.unit_tests.agent_plugins.payloads.ransomware.ransomware_target_files import (
     ALL_ZEROS_PDF,
     HELLO_TXT,
@@ -25,7 +25,6 @@ from tests.utils import is_user_admin
 
 from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
 from common.event_queue import AgentEventSubscriber, IAgentEventPublisher
-from common.types import AgentID
 
 BuildRansomwareCallable: TypeAlias = Callable[
     [InternalRansomwareOptions, FileEncryptorCallable, FileSelectorCallable, ReadmeDropperCallable],

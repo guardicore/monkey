@@ -1,8 +1,7 @@
 from functools import lru_cache
 
-from monkeytypes import MachineID
+from monkeytypes import AgentID, MachineID
 
-from common.types import AgentID
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IAgentRepository, IMachineRepository
 

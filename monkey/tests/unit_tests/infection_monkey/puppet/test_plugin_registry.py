@@ -2,12 +2,11 @@ from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
-from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
+from monkeytypes import AgentID, AgentPluginManifest, AgentPluginType, OperatingSystem
 from serpentarium import MultiprocessingPlugin, PluginLoader, SingleUsePlugin
 
 from common.agent_plugins import AgentPlugin
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 from infection_monkey.exploit import IAgentBinaryRepository, IAgentOTPProvider
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import (

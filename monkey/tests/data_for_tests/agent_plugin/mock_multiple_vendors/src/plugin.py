@@ -3,10 +3,10 @@ from threading import Event, current_thread
 from typing import Any, Dict, Sequence
 
 import mock_dependency
+from monkeytypes import AgentID
 
 from common.agent_events import ExploitationEvent
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 from infection_monkey.exploit import IAgentBinaryRepository
 from infection_monkey.i_puppet import ExploiterResult, TargetHost
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository

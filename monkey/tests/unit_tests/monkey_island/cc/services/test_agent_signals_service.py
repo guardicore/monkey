@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeytypes import AgentID
 
-from common.types import AgentID
 from monkey_island.cc.models import Agent, Simulation, TerminateAllAgents
 from monkey_island.cc.repositories import (
     IAgentRepository,
