@@ -2,12 +2,11 @@ import logging
 from pprint import pformat
 from typing import Any, Collection, Mapping, Sequence
 
-from monkeytypes import Credentials, Event, LMHash, NTHash, Password, Username
+from monkeytypes import AgentID, Credentials, Event, LMHash, NTHash, Password, Username
 
 from common.agent_events import CredentialsStolenEvent
 from common.event_queue import IAgentEventPublisher
 from common.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DUMPING_T1003_TAG
-from common.types import AgentID
 
 from .mimikatz_options import MimikatzOptions
 from .pypykatz_handler import get_windows_creds
