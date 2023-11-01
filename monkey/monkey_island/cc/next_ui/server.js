@@ -5,17 +5,17 @@ const https = require('https');
 
 const fs = require('fs');
 
-const config = fs.readFileSync('../server_config.json')
-const configJson = JSON.parse(config)
-const port = configJson.node_port
+const port = process.env.NODE_PORT;
+const ssl_cert_path = process.env.SSL_CERT_PATH;
+const ssl_key_path = process.env.SSL_KEY_PATH;
 
 const sslOptions = {
-    key: fs.readFileSync('../server.key'),
-    cert: fs.readFileSync('../server.crt'),
+    key: fs.readFileSync(ssl_key_path),
+    cert: fs.readFileSync(ssl_cert_path)
 };
 
 const app = next({dev: false, port: port});
-const handle = app.getRequestHandler()
+const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
     console.log('Starting server...');
