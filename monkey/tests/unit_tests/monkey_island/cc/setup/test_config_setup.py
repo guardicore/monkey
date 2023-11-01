@@ -47,34 +47,34 @@ def cmd_args_with_server_config(cmd_server_config_path):
 
 
 def test_extract_config_defaults(empty_cmd_args):
-    expected = IslandConfigOptions({})
-    assert expected.__dict__ == get_server_config(empty_cmd_args).__dict__
+    expected = IslandConfigOptions()
+    assert expected.to_dict() == get_server_config(empty_cmd_args).to_dict()
 
 
 def test_deployment_config_overrides_defaults(deployment_server_config_path, empty_cmd_args):
-    expected = IslandConfigOptions({"log_level": "/log_level_2"})
+    expected = IslandConfigOptions(log_level="/log_level_2")
     create_server_config(dumps({"log_level": "/log_level_2"}), deployment_server_config_path)
-    assert expected.__dict__ == get_server_config(empty_cmd_args).__dict__
+    assert expected.to_dict() == get_server_config(empty_cmd_args).to_dict()
 
 
 def test_cmd_config_overrides_everything(
     deployment_server_config_path, cmd_server_config_path, cmd_args_with_server_config
 ):
-    expected = IslandConfigOptions({"log_level": "/log_level_3"})
+    expected = IslandConfigOptions(log_level="/log_level_3")
     create_server_config(dumps({"log_level": "/log_level_2"}), deployment_server_config_path)
     create_server_config(dumps({"log_level": "/log_level_3"}), cmd_server_config_path)
     extracted_config = get_server_config(cmd_args_with_server_config)
-    assert expected.__dict__ == extracted_config.__dict__
+    assert expected.to_dict() == extracted_config.to_dict()
 
 
 def test_not_overriding_unspecified_values(
     deployment_server_config_path, cmd_server_config_path, cmd_args_with_server_config
 ):
-    expected = IslandConfigOptions({"log_level": "/log_level_2", "data_dir": "/data_dir1"})
+    expected = IslandConfigOptions(log_level="/log_level_2", data_dir="/data_dir1")
     create_server_config(dumps({"data_dir": "/data_dir1"}), deployment_server_config_path)
     create_server_config(dumps({"log_level": "/log_level_2"}), cmd_server_config_path)
     extracted_config = get_server_config(cmd_args_with_server_config)
-    assert expected.__dict__ == extracted_config.__dict__
+    assert expected.to_dict() == extracted_config.to_dict()
 
 
 def test_paths_get_expanded(deployment_server_config_path, empty_cmd_args):

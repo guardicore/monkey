@@ -48,10 +48,7 @@ from monkey_island.cc.setup import (  # noqa: E402
 )
 from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory, setup_data_dir  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
-from monkey_island.cc.setup.island_config_options import (  # noqa: E402
-    NODE_PORT,
-    IslandConfigOptions,
-)
+from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo import mongo_setup  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess  # noqa: E402
 
@@ -70,7 +67,7 @@ def run_monkey_island():
 
     _send_analytics(deployment, version)
 
-    _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
+    _initialize_mongodb_connection(config_options.mongodb.start_mongodb, config_options.data_dir)
     _start_nextjs_server(config_options)
 
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
@@ -182,12 +179,6 @@ def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
 
 
 def _start_nextjs_server(config_options: IslandConfigOptions):
-    if not config_options.node_port:
-        logger.error(
-            f"Node server port is not specified in the config file."
-            f' Specify it as "{NODE_PORT}" in the server configuration file and try again.'
-        )
-        sys.exit(1)
     if is_local_port_in_use(config_options.node_port):
         logger.error(
             f"Node server port {config_options.node_port} is already in use. "
@@ -213,15 +204,15 @@ def _start_island_server(
         return
 
     logger.info(
-        f"Using certificate path: {config_options.crt_path}, and key path: "
-        f"{config_options.key_path}."
+        f"Using certificate path: {config_options.ssl_certificate.ssl_certificate_file}, "
+        f"and key path: {config_options.ssl_certificate.ssl_certificate_key_file}."
     )
 
     http_server = WSGIServer(
         ("0.0.0.0", ISLAND_PORT),
         app,
-        certfile=config_options.crt_path,
-        keyfile=config_options.key_path,
+        certfile=config_options.ssl_certificate.ssl_certificate_file,
+        keyfile=config_options.ssl_certificate.ssl_certificate_key_file,
         log=_get_wsgi_server_logger(),
         error_log=logger,
     )

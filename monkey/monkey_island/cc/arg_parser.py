@@ -1,10 +1,11 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
 class IslandCmdArgs:
     setup_only: bool
-    server_config_path: str
+    server_config_path: Optional[str]
 
 
 def parse_cli_args() -> IslandCmdArgs:
