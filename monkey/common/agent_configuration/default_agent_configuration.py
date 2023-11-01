@@ -7,7 +7,6 @@ from .agent_sub_configurations import (
     ExploitationConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
-    PluginConfiguration,
     PolymorphismConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
@@ -39,22 +38,6 @@ TCP_PORTS: tuple[NetworkPort, ...] = (
 
 TCP_SCAN_CONFIGURATION = TCPScanConfiguration(timeout=3.0, ports=TCP_PORTS)
 ICMP_CONFIGURATION = ICMPScanConfiguration(timeout=1.0)
-HTTP_PORTS: tuple[NetworkPort, ...] = (
-    NetworkPort(80),
-    NetworkPort(443),
-    NetworkPort(7001),
-    NetworkPort(8008),
-    NetworkPort(8080),
-    NetworkPort(8983),
-    NetworkPort(9600),
-)
-FINGERPRINTERS = (
-    # Plugin configuration option contents are not converted to tuples
-    PluginConfiguration(name="http", options={"http_ports": list(HTTP_PORTS)}),
-    PluginConfiguration(name="mssql", options={}),
-    PluginConfiguration(name="smb", options={}),
-    PluginConfiguration(name="ssh", options={}),
-)
 
 SCAN_TARGET_CONFIGURATION = ScanTargetConfiguration(
     blocked_ips=tuple(), inaccessible_subnets=tuple(), scan_my_networks=False, subnets=tuple()
@@ -62,7 +45,7 @@ SCAN_TARGET_CONFIGURATION = ScanTargetConfiguration(
 NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
     tcp=TCP_SCAN_CONFIGURATION,
     icmp=ICMP_CONFIGURATION,
-    fingerprinters=FINGERPRINTERS,
+    fingerprinters={},
     targets=SCAN_TARGET_CONFIGURATION,
 )
 

@@ -10,7 +10,6 @@ from tests.utils import ThreadSafeMagicMock
 from common.agent_configuration.agent_sub_configurations import (
     ICMPScanConfiguration,
     NetworkScanConfiguration,
-    PluginConfiguration,
     TCPScanConfiguration,
 )
 from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData
@@ -35,11 +34,11 @@ def scan_config(default_agent_configuration):
         ],
     )
     icmp_config = ICMPScanConfiguration(timeout=1)
-    fingerprinter_config = [
-        PluginConfiguration(name="HTTPFinger", options={}),
-        PluginConfiguration(name="SMBFinger", options={}),
-        PluginConfiguration(name="SSHFinger", options={}),
-    ]
+    fingerprinter_config = {
+        "HTTPFinger": {},
+        "SMBFinger": {},
+        "SSHFinger": {},
+    }
     scan_config = NetworkScanConfiguration(
         tcp=tcp_config,
         icmp=icmp_config,

@@ -124,8 +124,7 @@ def test_network_scan_configuration():
     assert config.tcp.ports == tuple(TCP_SCAN_CONFIGURATION["ports"])
     assert config.tcp.timeout == TCP_SCAN_CONFIGURATION["timeout"]
     assert config.icmp.timeout == ICMP_CONFIGURATION["timeout"]
-    assert config.fingerprinters[0].name == FINGERPRINTERS[0]["name"]
-    assert config.fingerprinters[0].options == FINGERPRINTERS[0]["options"]
+    assert config.fingerprinters == FINGERPRINTERS
     assert config.targets.blocked_ips == tuple(BLOCKED_IPS)
     assert config.targets.inaccessible_subnets == tuple(INACCESSIBLE_SUBNETS)
     assert config.targets.scan_my_networks == SCAN_MY_NETWORKS

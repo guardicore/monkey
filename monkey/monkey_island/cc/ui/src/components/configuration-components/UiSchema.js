@@ -1,4 +1,3 @@
-import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import CheckboxWithMessage from './CheckboxWithMessage';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 import SensitiveTextareaInput from '../ui-components/SensitiveTextareaInput';
@@ -70,10 +69,7 @@ export default function UiSchema(props) {
           }
         },
         fingerprinters: {
-          'ui:widget': AdvancedMultiSelect,
-          fingerprinter_classes: {
-            'ui:classNames': 'config-template-no-header'
-          }
+          'ui:widget': 'hidden'
         }
       }
     },

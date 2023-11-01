@@ -23,7 +23,7 @@ _scan_target_configuration = ScanTargetConfiguration(
 _network_scan_configuration = NetworkScanConfiguration(
     tcp=_tcp_scan_configuration,
     icmp=_icmp_scan_configuration,
-    fingerprinters=[],
+    fingerprinters={},
     targets=_scan_target_configuration,
 )
 

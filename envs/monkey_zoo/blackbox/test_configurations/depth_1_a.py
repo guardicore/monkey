@@ -1,9 +1,9 @@
 import dataclasses
-from typing import Dict, Mapping
+from typing import Any, Dict, Mapping
 
 from monkeytypes import Credentials, NTHash, Password, Username
 
-from common.agent_configuration import AgentConfiguration, PluginConfiguration
+from common.agent_configuration import AgentConfiguration
 
 from .noop import noop_test_configuration
 from .utils import (
@@ -57,10 +57,10 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
 
 
 def _add_fingerprinters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    fingerprinters = [
-        PluginConfiguration(name="http", options={}),
-        PluginConfiguration(name="mssql", options={}),
-    ]
+    fingerprinters: Dict[str, Dict[str, Any]] = {
+        "http": {},
+        "mssql": {},
+    }
 
     return add_fingerprinters(agent_configuration, fingerprinters)
 

@@ -9,7 +9,7 @@ const NETWORK_SCAN_CONFIGURATION_SCHEMA  = {
   'properties': {
     'fingerprinters': {
       'title': 'Fingerprinters',
-      'type': 'array',
+      'type': 'object',
       'uniqueItems': true,
       'items': FINGERPRINTER_CLASSES
     },

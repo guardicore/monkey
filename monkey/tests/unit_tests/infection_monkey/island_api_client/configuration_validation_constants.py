@@ -142,7 +142,7 @@ SCHEMA = {
                 "fingerprinters": {
                     "title": "Fingerprinters",
                     "description": "Fingerprint modules collect info about external services",
-                    "type": "array",
+                    "type": "object",
                     "items": {"$ref": "#/definitions/PluginConfiguration"},
                 },
                 "targets": {

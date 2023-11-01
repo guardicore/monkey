@@ -1,9 +1,9 @@
 import dataclasses
-from typing import Dict, Mapping
+from typing import Any, Dict, Mapping
 
 from monkeytypes import Credentials, NTHash, Password, Username
 
-from common.agent_configuration import AgentConfiguration, PluginConfiguration
+from common.agent_configuration import AgentConfiguration
 
 from .noop import noop_test_configuration
 from .utils import (
@@ -66,11 +66,11 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
 
 
 def _add_fingerprinters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    fingerprinters = [
-        PluginConfiguration(name="http", options={"http_ports": [8080]}),
-        PluginConfiguration(name="smb", options={}),
-        PluginConfiguration(name="ssh", options={}),
-    ]
+    fingerprinters: Dict[str, Dict[str, Any]] = {
+        "http": {"http_ports": [8080]},
+        "smb": {},
+        "ssh": {},
+    }
 
     return add_fingerprinters(agent_configuration, fingerprinters)
 
