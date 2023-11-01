@@ -1,7 +1,9 @@
 import logging
+import os
 import subprocess
 from typing import Optional
 
+from common.types import NetworkPort
 from monkey_island.cc.server_utils.consts import NEXTJS_EXECUTION_COMMAND, UI_DIR
 
 TERMINATE_TIMEOUT = 10
@@ -9,12 +11,15 @@ logger = logging.getLogger(__name__)
 
 
 class NextJsProcess:
-    def __init__(self, log_file: str):
+    def __init__(self, log_file: str, port: NetworkPort, ssl_cert_path: str, ssl_key_path: str):
         """
         @param log_file: Path to the file that will contain nextjs logs
         """
         self._next_js_run_cmd = NEXTJS_EXECUTION_COMMAND
         self._log_file = log_file
+        self._port = port
+        self._ssl_cert_path = ssl_cert_path
+        self._ssl_key_path = ssl_key_path
         self._process: Optional[subprocess.Popen[bytes]] = None
 
     def start(self):
@@ -25,8 +30,16 @@ class NextJsProcess:
         logger.info(f"UI log will be available at {self._log_file}.")
 
         with open(self._log_file, "w") as log:
+            node_env = os.environ.copy()
+            node_env["NODE_PORT"] = str(self._port)
+            node_env["SSL_CERT_PATH"] = self._ssl_cert_path
+            node_env["SSL_KEY_PATH"] = self._ssl_key_path
             self._process = subprocess.Popen(
-                self._next_js_run_cmd, cwd=UI_DIR, stderr=subprocess.STDOUT, stdout=log
+                self._next_js_run_cmd,
+                cwd=UI_DIR,
+                stderr=subprocess.STDOUT,
+                stdout=log,
+                env=node_env,
             )
 
         logger.info("UI server(Next.js) has been started!")
