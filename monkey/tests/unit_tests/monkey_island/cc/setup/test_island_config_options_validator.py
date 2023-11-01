@@ -9,11 +9,9 @@ from monkey_island.cc.setup.island_config_options_validator import raise_on_inva
 
 def certificate_test_island_config_options(crt_file, key_file):
     return IslandConfigOptions(
-        {
-            "ssl_certificate": {
-                "ssl_certificate_file": crt_file,
-                "ssl_certificate_key_file": key_file,
-            }
+        ssl_certificate={
+            "ssl_certificate_file": crt_file,
+            "ssl_certificate_key_file": key_file,
         }
     )
 
@@ -37,7 +35,7 @@ def test_linux_valid_crt_and_key_paths(linux_island_config_options):
 
 @pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
 def test_linux_crt_path_does_not_exist(linux_island_config_options):
-    os.remove(linux_island_config_options.crt_path)
+    os.remove(linux_island_config_options.ssl_certificate.ssl_certificate_file)
 
     with pytest.raises(FileNotFoundError):
         raise_on_invalid_options(linux_island_config_options)
@@ -45,7 +43,7 @@ def test_linux_crt_path_does_not_exist(linux_island_config_options):
 
 @pytest.mark.skipif(os.name != "posix", reason="Tests Posix (not Windows) permissions.")
 def test_linux_key_path_does_not_exist(linux_island_config_options):
-    os.remove(linux_island_config_options.key_path)
+    os.remove(linux_island_config_options.ssl_certificate.ssl_certificate_key_file)
 
     with pytest.raises(FileNotFoundError):
         raise_on_invalid_options(linux_island_config_options)
@@ -70,7 +68,7 @@ def test_windows_valid_crt_and_key_paths(windows_island_config_options):
 
 @pytest.mark.skipif(os.name == "posix", reason="Tests Windows (not Posix) permissions.")
 def test_windows_crt_path_does_not_exist(windows_island_config_options):
-    os.remove(windows_island_config_options.crt_path)
+    os.remove(windows_island_config_options.ssl_certificate.ssl_certificate_file)
 
     with pytest.raises(FileNotFoundError):
         raise_on_invalid_options(windows_island_config_options)
@@ -78,7 +76,7 @@ def test_windows_crt_path_does_not_exist(windows_island_config_options):
 
 @pytest.mark.skipif(os.name == "posix", reason="Tests Windows (not Posix) permissions.")
 def test_windows_key_path_does_not_exist(windows_island_config_options):
-    os.remove(windows_island_config_options.key_path)
+    os.remove(windows_island_config_options.ssl_certificate.ssl_certificate_key_file)
 
     with pytest.raises(FileNotFoundError):
         raise_on_invalid_options(windows_island_config_options)

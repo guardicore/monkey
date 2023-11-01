@@ -47,6 +47,8 @@ DEFAULT_START_MONGO_DB = True
 DEFAULT_CRT_PATH = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.crt"))
 DEFAULT_KEY_PATH = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))
 
+DEFAULT_NODE_PORT = 443
+
 GEVENT_EXCEPTION_LOG = "gevent_exceptions.log"
 
 ISLAND_PORT = 5000
