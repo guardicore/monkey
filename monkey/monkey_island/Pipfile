@@ -65,6 +65,13 @@ types-pyyaml = "*"
 pytest-xdist = "*"
 pytest-freezer = "*"
 treelib = "*"
+types-requests = "*"
+types-boto = "*"
+types-psutil = "*"
+botocore-stubs = "*"
+types-pyinstaller = "*"
+types-pywin32 = "*"
+types-jsonschema = "*"
 
 [requires]
 python_version = "3.11"
