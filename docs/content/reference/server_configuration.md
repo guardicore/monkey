@@ -10,6 +10,11 @@ weight: 1
 
 The Monkey Island Server is configured by creating a `server_config.json` file.
 
+{{% notice info %}}
+Refer to the [setup guides](../../setup/) to learn how to use
+the `server_config.json` file for each deployment.
+{{% /notice %}}
+
 ### Creating a configuration file
 
 Here's an example `server_config.json` with all options specified:
