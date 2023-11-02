@@ -22,8 +22,8 @@ class Version:
 
     def __init__(self, version_number: str, deployment: Deployment):
         self._version_number = version_number
-        self._latest_version = None
-        self._download_url = None
+        self._latest_version: Optional[str] = None
+        self._download_url: Optional[str] = None
         self._deployment = deployment
         self._initialization_complete = Event()
 

@@ -56,8 +56,11 @@ def decrypt_event(
     data = event_data.copy()
     for field in event_data.keys():
         if field.startswith("encrypted_"):
+            field_data = event_data[field]
+            if not isinstance(field_data, str):
+                raise TypeError(f"Encrypted field must be a string: {field}")
             data[field[len(ENCRYPTED_PREFIX) :]] = json.loads(
-                str(decrypt(event_data[field].encode()), "utf-8")
+                str(decrypt(field_data.encode()), "utf-8")
             )
             del data[field]
 

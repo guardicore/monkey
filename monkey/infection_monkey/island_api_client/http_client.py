@@ -53,6 +53,9 @@ def handle_island_errors(fn):
 
 
 def _handle_http_error(http_error: requests.exceptions.HTTPError):
+    if http_error.response is None:
+        raise IslandAPIError(http_error)
+
     if http_error.response.status_code in [
         HTTPStatus.UNAUTHORIZED.value,
         HTTPStatus.FORBIDDEN.value,

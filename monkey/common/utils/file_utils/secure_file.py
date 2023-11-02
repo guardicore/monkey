@@ -72,7 +72,7 @@ def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
 
         detached_handle = handle.Detach()
 
-        return win32file._open_osfhandle(detached_handle, os.O_RDWR)
+        return win32file._open_osfhandle(detached_handle, os.O_RDWR)  # type: ignore[attr-defined]
 
     except Exception as ex:
         logger.error(f'Could not create a file at "{path}": {str(ex)}')
