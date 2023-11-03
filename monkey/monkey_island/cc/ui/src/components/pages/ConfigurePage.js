@@ -39,6 +39,7 @@ import RefParser from '@apidevtools/json-schema-ref-parser';
 import {MASQUERADE} from '../../services/configuration/masquerade';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 import {nanoid} from 'nanoid';
+import track from 'react-tracking';
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
 const RESET_URL = '/api/reset-agent-configuration';
@@ -49,6 +50,8 @@ const configSaveAction = 'config-saved';
 
 const EMPTY_BYTES_ARRAY = new Uint8Array(new ArrayBuffer(0));
 
+
+@track({page: 'ConfigureMonkey'})
 class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
@@ -371,6 +374,14 @@ class ConfigurePageComponent extends AuthComponent {
     await this.attemptConfigSubmit();
   };
 
+  @track((props, state, [config]) => ({ // eslint-disable-line no-unused-vars
+    name: 'agent-configuration-submit',
+    credentials_collectors: Object.keys(_.get(config, 'credentials_collectors', '')).join(),
+    exploiters: Object.keys(_.get(config, 'propagation.exploitation.exploiters', '')).join(),
+    payloads: Object.keys(_.get(config, 'payloads', '')).join(),
+    maximum_depth: _.get(config, 'propagation.general.maximum_depth'),
+    keep_tunnel_open_time: config.advanced.keep_tunnel_open_time
+  }))
   sendConfig(config) {
     config = reformatConfig(config, true);
 
