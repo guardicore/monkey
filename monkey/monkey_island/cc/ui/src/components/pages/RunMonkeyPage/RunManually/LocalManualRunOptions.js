@@ -109,7 +109,10 @@ const getContents = (props) => {
       </div>
 
       <div style={{'marginTop': '1.4em'}}></div>
-      <CommandDisplay commands={commands} onCopy={getOtp} />
+      <CommandDisplay commands={commands} onCopy={() => {
+        props.tracking.trackEvent({ category: 'click', name: 'copy-local-run-command' });
+        getOtp();
+      }} />
       <div style={{marginTop: '-0.5em', marginBottom: '0.5em'}}>
         <CommandExpirationTimer minutes={minutes} seconds={seconds}/>
       </div>

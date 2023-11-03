@@ -24,6 +24,7 @@ import LogoutPage from './pages/LogoutPage';
 import MarketplacePage from './pages/MarketplacePage';
 import PluginsProvider from './contexts/plugins/PluginsProvider';
 import {PluginState} from './contexts/plugins/PluginsContext';
+import track from 'react-tracking';
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -57,6 +58,11 @@ function withPluginState(Component) {
   };
 }
 
+@track({page: 'Monkey Island'}, { dispatch: (event) => {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', event.name, event);
+  }
+} })
 class AppComponent extends AuthComponent {
   private interval: Timeout;
   private pluginsFetched: boolean;

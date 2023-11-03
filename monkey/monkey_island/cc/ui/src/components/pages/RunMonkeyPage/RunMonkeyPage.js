@@ -3,8 +3,9 @@ import {Col} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import AuthComponent from '../../AuthComponent';
 import RunOptions from './RunOptions';
+import track from 'react-tracking';
 
-
+@track({ page: 'RunMonkey' })
 class RunMonkeyPageComponent extends AuthComponent {
 
   render() {

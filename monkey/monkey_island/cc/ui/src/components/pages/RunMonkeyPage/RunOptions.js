@@ -8,6 +8,7 @@ import {faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
 import RunOnIslandButton from './RunOnIslandButton';
 import AWSRunButton from './RunOnAWS/AWSRunButton';
 import {getAllMachines, getIslandIPsFromMachines} from '../../utils/ServerUtils';
+import track from 'react-tracking';
 
 function RunOptions(props) {
 
@@ -56,7 +57,7 @@ function RunOptions(props) {
                              icon={faLaptopCode}
                              onButtonClick={() => {
                                setComponent(LocalManualRunOptions,
-                                 {ips: ips, setComponent: setComponent})
+                                 {...props, ips: ips, setComponent: setComponent})
                              }}/>
         { <AWSRunButton setComponent={setComponent}/> }
       </>
@@ -66,4 +67,4 @@ function RunOptions(props) {
   return currentContent;
 }
 
-export default RunOptions;
+export default track({page: 'RunOptions'})(RunOptions);
