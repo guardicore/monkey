@@ -63,7 +63,7 @@ been signed by a private certificate authority.
 
 ### 4. Accessing Monkey Island
 
-After the Monkey Island docker container starts, you can access Monkey Island by pointing your browser at `https://localhost:5000`.
+After the Monkey Island docker container starts, you can access Monkey Island by pointing your browser at `https://localhost`.
 
 Once you have access to the Monkey Island server, check out the [getting started page]({{< ref "/usage/getting-started" >}}).
 
@@ -107,6 +107,22 @@ You can configure the server by mounting a volume and specifying a
         infectionmonkey/monkey-island:latest --server-config="/monkey_island_data/server_config.json"
     ```
 
+### Change listening port
+
+The Island API is running on port 5000 and it can't be changed. However, the node server serving
+the UI and proxying the requests to the API can be configured to listen on a different port.
+
+1. Stop the Monkey Island process.
+1. Modify the `server_config.json` by adding the following lines:
+    ```json
+    {
+      ...
+      "node_port": 8080,
+      ...
+    }
+    ```
+1. Run the Monkey Island again, it will be accessible on `https://localhost:8080`.
+
 ### Start Monkey Island with user-provided certificate
 
 By default, Infection Monkey comes with a [self-signed SSL
@@ -148,7 +164,7 @@ private certificate authority.
         infectionmonkey/monkey-island:latest --server-config="/monkey_island_data/server_config.json"
     ```
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost`.
 
 ### Change logging level
 
@@ -170,7 +186,7 @@ private certificate authority.
         infectionmonkey/monkey-island:latest --setup-only --server-config="/monkey_island_data/server_config.json"
     ```
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost`.
 
 ## Upgrading
 

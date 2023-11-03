@@ -43,7 +43,7 @@ On Windows, AppImage can be run in WSL 2.
    ```
    More information about fixing FUSE-related errors can be found [here](https://docs.appimage.org/user-guide/troubleshooting/fuse.html).
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`. Once you have access to the Monkey Island server, check out the
+   `https://localhost`. Once you have access to the Monkey Island server, check out the
 [getting started page]({{< ref "/usage/getting-started" >}}).
 
 {{% notice info %}}
@@ -79,6 +79,22 @@ a [server configuration file](../../reference/server_configuration) and
 providing a path to it via command line parameters:
 
 `./InfectionMonkey-v2.3.0.AppImage --server-config="/path/to/server_config.json"`
+
+### Change listening port
+
+The Island API is running on port 5000 and it can't be changed. However, the node server serving
+the UI and proxying the requests to the API can be configured to listen on a different port.
+
+1. Stop the Monkey Island process.
+1. Modify the `server_config.json` by adding the following lines:
+    ```json
+    {
+      ...
+      "node_port": 8080,
+      ...
+    }
+    ```
+1. Run the Monkey Island again, it will be accessible on `https://localhost:8080`.
 
 ### Start Monkey Island with user-provided certificate
 
@@ -118,7 +134,7 @@ The server configuration file should look something like:
     ```
 
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost`.
 
 ### Change logging level
 
@@ -139,7 +155,7 @@ The server configuration file should look something like:
     ```
 
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost`.
 
 ## Upgrading
 

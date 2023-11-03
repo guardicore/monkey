@@ -8,7 +8,7 @@ weight: 1
 
 ## Configuring the Monkey Island
 
-The Monkey Island Server is configured by creating a `server_config.json` file.
+The Monkey Island Server is configured through the `server_config.json` file.
 
 {{% notice info %}}
 Refer to the [setup guides](../../setup/) to learn how to use
@@ -20,6 +20,7 @@ the `server_config.json` file for each deployment.
 Here's an example `server_config.json` with all options specified:
 ```json
 {
+  "node_port": 443,
   "log_level": "DEBUG",
   "ssl_certificate": {
     "ssl_certificate_file": "<PATH_TO_CRT_FILE>",
@@ -28,8 +29,7 @@ Here's an example `server_config.json` with all options specified:
   "mongodb": {
     "start_mongodb": true
   },
-  "data_dir": "/monkey_island_data",
-  "node_port": 443
+  "data_dir": "/monkey_island_data"
 }
 ```
 
@@ -47,8 +47,8 @@ Only relevant options can be specified, for example:
 
 See setup instructions for your operating system to understand how to apply these.
 
+ - `node_port` - port on that serves the Island UI. It also proxies requests to the Island API. Default is `443`.
  - `log_level` - can be set to `"DEBUG"`(verbose), `"INFO"`(less verbose) or `"ERROR"`(silent, except errors).
  - `ssl_certificate` - contains paths for files, required to run the Island Server with custom certificate.
  - `data_dir` - path to a writeable directory where the Island will store the database and other files.
  - `mongodb` - options for MongoDB. Should not be changed unless you want to run your own instance of MongoDB.
- - `node_port` - port on which to serve the Island
