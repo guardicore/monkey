@@ -58,11 +58,7 @@ function withPluginState(Component) {
   };
 }
 
-@track({page: 'Monkey Island'}, { dispatch: (event) => {
-  if (typeof gtag !== 'undefined') {
-    gtag('event', event.name, event);
-  }
-} })
+@track({page: 'Monkey Island'})
 class AppComponent extends AuthComponent {
   private interval: Timeout;
   private pluginsFetched: boolean;
