@@ -7,9 +7,6 @@ from tests.common.example_agent_configuration import (
     ICMP_CONFIGURATION,
     INACCESSIBLE_SUBNETS,
     NETWORK_SCAN_CONFIGURATION,
-    PLUGIN_CONFIGURATION,
-    PLUGIN_NAME,
-    PLUGIN_OPTIONS,
     PORTS,
     PROPAGATION_CONFIGURATION,
     SCAN_MY_NETWORKS,
@@ -24,20 +21,12 @@ from common.agent_configuration.agent_sub_configurations import (
     ExploitationConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
-    PluginConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
     TCPScanConfiguration,
 )
 
 INVALID_PORTS = [[-1, 1, 2], [1, 2, 99999]]
-
-
-def test_build_plugin_configuration():
-    config = PluginConfiguration(**PLUGIN_CONFIGURATION)
-
-    assert config.name == PLUGIN_NAME
-    assert config.options == PLUGIN_OPTIONS
 
 
 def test_scan_target_configuration():
@@ -129,16 +118,6 @@ def test_network_scan_configuration():
     assert config.targets.inaccessible_subnets == tuple(INACCESSIBLE_SUBNETS)
     assert config.targets.scan_my_networks == SCAN_MY_NETWORKS
     assert config.targets.subnets == tuple(SUBNETS)
-
-
-def test_exploiter_configuration_schema():
-    name = "bond"
-    options = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
-
-    config = PluginConfiguration(name=name, options=options)
-
-    assert config.name == name
-    assert config.options == options
 
 
 def test_exploitation_configuration():
