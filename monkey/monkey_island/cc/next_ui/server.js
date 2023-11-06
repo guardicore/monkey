@@ -5,6 +5,7 @@ const https = require('https');
 
 const fs = require('fs');
 
+const host = '0.0.0.0';
 const port = process.env.NODE_PORT;
 const ssl_cert_path = process.env.SSL_CERT_PATH;
 const ssl_key_path = process.env.SSL_KEY_PATH;
@@ -14,7 +15,7 @@ const sslOptions = {
     cert: fs.readFileSync(ssl_cert_path)
 };
 
-const app = next({dev: false, port: port});
+const app = next({dev: false, hostname:host, port: port});
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
@@ -28,6 +29,6 @@ app.prepare().then(() => {
         throw err;
     });
     server.listen(port, () => {
-        console.log('> Ready on https://localhost:' + port);
+        console.log(`Ready on https://${host}:${port}`);
     });
 });
