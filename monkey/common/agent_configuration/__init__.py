@@ -3,7 +3,6 @@ from .agent_sub_configurations import (
     ExploitationConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
-    PluginConfiguration,
     PolymorphismConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,

@@ -1,8 +1,6 @@
 from typing import Dict
 
 PLUGIN_NAME = "bond"
-PLUGIN_OPTIONS = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
-PLUGIN_CONFIGURATION = {"name": PLUGIN_NAME, "options": PLUGIN_OPTIONS}
 
 BLOCKED_IPS = ["10.0.0.1", "192.168.1.1"]
 INACCESSIBLE_SUBNETS = ["172.0.0.0/24", "172.2.2.0/24", "192.168.56.0/24"]

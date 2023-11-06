@@ -29,17 +29,6 @@ SCHEMA = {
     "required": ["credentials_collectors", "payloads", "propagation"],
     "additionalProperties": False,
     "definitions": {
-        "PluginConfiguration": {
-            "title": "PluginConfiguration",
-            "description": 'A configuration for plugins\n\nAttributes:\n    :param name: Name of the plugin\n                 Example: "ransomware"\n    :param options: Any other information/configuration fields relevant to the plugin\n                    Example: {\n                        "encryption": {\n                            "enabled": True,\n                            "directories": {\n                                "linux_target_dir": "~/this_dir",\n                                "windows_target_dir": "C:   hat_dir"\n                            },\n                        },\n                        "other_behaviors": {\n                            "readme": True\n                        },\n                    }',
-            "type": "object",
-            "properties": {
-                "name": {"title": "Name", "type": "string"},
-                "options": {"title": "Options", "type": "object"},
-            },
-            "required": ["name", "options"],
-            "additionalProperties": False,
-        },
         "TCPScanConfiguration": {
             "title": "TCPScanConfiguration",
             "description": "A configuration for TCP scanning\n\nAttributes:\n    :param timeout: Maximum time in seconds to wait for a response from the target\n    :param ports: Ports to scan",
