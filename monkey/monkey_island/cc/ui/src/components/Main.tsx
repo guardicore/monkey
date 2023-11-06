@@ -25,6 +25,16 @@ import MarketplacePage from './pages/MarketplacePage';
 import PluginsProvider from './contexts/plugins/PluginsProvider';
 import {PluginState} from './contexts/plugins/PluginsContext';
 import track from 'react-tracking';
+var Countly = require('countly-sdk-web');
+
+Countly.init({
+    app_key: "4425b820237d29f162805c230df7ab5ffbd4ea3c",
+    url: "http://139.144.216.175/"
+});
+// track sessions automatically
+Countly.track_sessions();
+// track pageviews automatically
+Countly.track_pageview();
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -58,7 +68,9 @@ function withPluginState(Component) {
   };
 }
 
-@track({page: 'Monkey Island'})
+@track({page: 'Monkey Island'}, {dispatch: (data) => (
+  Countly.q.push(['add_event',{...data}])
+)})
 class AppComponent extends AuthComponent {
   private interval: Timeout;
   private pluginsFetched: boolean;

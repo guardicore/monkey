@@ -110,7 +110,7 @@ const getContents = (props) => {
 
       <div style={{'marginTop': '1.4em'}}></div>
       <CommandDisplay commands={commands} onCopy={() => {
-        props.tracking.trackEvent({ event: 'agent-start-method', method: 'manual' });
+        props.tracking.trackEvent({ key: 'agent-start-method', method: 'manual' });
         getOtp();
       }} />
       <div style={{marginTop: '-0.5em', marginBottom: '0.5em'}}>
