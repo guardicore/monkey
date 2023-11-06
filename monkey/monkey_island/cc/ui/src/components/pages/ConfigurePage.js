@@ -376,9 +376,9 @@ class ConfigurePageComponent extends AuthComponent {
 
   @track((props, state, [config]) => ({ // eslint-disable-line no-unused-vars
     event: 'agent-configuration-submit',
-    credentials_collectors: Object.keys(_.get(config, 'credentials_collectors', '')).join(),
-    exploiters: Object.keys(_.get(config, 'propagation.exploitation.exploiters', '')).join(),
-    payloads: Object.keys(_.get(config, 'payloads', '')).join(),
+    credentials_collectors: Object.keys(_.get(config, 'credentials_collectors', '')),
+    exploiters: Object.keys(_.get(config, 'propagation.exploitation.exploiters', '')),
+    payloads: Object.keys(_.get(config, 'payloads', '')),
     maximum_depth: _.get(config, 'propagation.general.maximum_depth'),
     keep_tunnel_open_time: config.advanced.keep_tunnel_open_time
   }))
