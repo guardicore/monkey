@@ -16,6 +16,7 @@ class InternalRansomwareOptions:
     def __init__(self, options: RansomwareOptions):
         self.file_extension: Optional[str] = options.file_extension
         self.leave_readme: bool = options.leave_readme
+        self.change_wallpaper: bool = options.change_wallpaper
         self.target_directory: Optional[Path] = InternalRansomwareOptions._choose_target_directory(
             options
         )
