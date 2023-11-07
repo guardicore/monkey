@@ -6,12 +6,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Collection, Dict, Optional, Set
 
+from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .chrome_browser_local_data import (
     ChromeBrowserLocalData,
     ChromeBrowserLocalState,
     read_local_state,
 )
-from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .windows_decryption import win32crypt_unprotect_data
 
 logger = logging.getLogger(__name__)
