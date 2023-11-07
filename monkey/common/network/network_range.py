@@ -1,8 +1,8 @@
 import ipaddress
 import logging
 import random
-import socket
 import re
+import socket
 import struct
 from abc import ABCMeta, abstractmethod
 from typing import Iterable, List, Tuple
