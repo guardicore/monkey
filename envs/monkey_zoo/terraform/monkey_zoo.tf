@@ -804,6 +804,7 @@ resource "google_compute_instance" "island-linux-250" {
   boot_disk {
     initialize_params {
       image = data.google_compute_image.island-linux-250.self_link
+      size  = 20
     }
     auto_delete = true
   }
