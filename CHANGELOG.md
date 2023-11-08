@@ -49,10 +49,12 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Agent hanging if plugins do not shut down. #3557
 - WMI exploiter hanging. #3543
 - Discovered network services are displayed in reports. #3000
+- Services count in scanned servers table in security report. #3701
 
 ### Removed
 - Island mode configuration. #3400
 - Agent plugins from Island packages. #3616
+- "Reset the Island" button from UI. #3694
 
 ### Security
 - Fixed a ReDoS issue when validating ransomware file extensions. #3391
