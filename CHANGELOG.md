@@ -7,11 +7,22 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-### Fixed
-- Ports in Hadoop exploiter configuration can no longer be floating-point numbers.
-- Ports in Log4Shell exploiter configuration can no longer be floating-point numbers.
-- Ports in MSSQL exploiter configuration can no longer be floating-point numbers.
+### Added
 
+### Changed
+
+### Fixed
+- Ports in Hadoop exploiter configuration can no longer be floating-point numbers. #3734
+- Ports in Log4Shell exploiter configuration can no longer be floating-point numbers. #3734
+- Ports in MSSQL exploiter configuration can no longer be floating-point numbers. #3734
+- SMB exploiter configuration bug that wouldn't allow submission. #3839
+- Hadoop exploiter configuration bug that wouldn't allow submission. #3839
+- Inconsistent error messages on login screen. #3702
+
+### Removed
+- Fingerprinter configuration from UI. #3769, #3826
+
+### Security
 
 ## [2.3.0 - 2023-09-19]
 ### Added
@@ -49,10 +60,12 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Agent hanging if plugins do not shut down. #3557
 - WMI exploiter hanging. #3543
 - Discovered network services are displayed in reports. #3000
+- Services count in scanned servers table in security report. #3701
 
 ### Removed
 - Island mode configuration. #3400
 - Agent plugins from Island packages. #3616
+- "Reset the Island" button from UI. #3694
 
 ### Security
 - Fixed a ReDoS issue when validating ransomware file extensions. #3391
