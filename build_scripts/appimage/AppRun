@@ -8,26 +8,30 @@ APPDIR="${APPDIR:-${here}}"
 # Export SSL certificate
 export SSL_CERT_FILE="${APPDIR}/opt/_internal/certs.pem"
 
-if [ "$1" == "service" ] ; then
+if [ "$1" == "service" ]; then
     exec /bin/bash "${APPDIR}/install-infection-monkey-service.sh" ${@:2}
 fi
 
-
 # Check if running as root
 if [ $(id -u) -eq 0 ]; then
-    echo "Warning: running as root is not recommended. You should instead run the AppImage as a regular user."
-    echo "If you want to run the Agent as root, do so by choosing manual run mode."
+    echo "AppImage: Warning! Running as root is not recommended. You should instead run the AppImage as a regular user."
+    echo "AppImage: If you want to run the Agent as root, do so by choosing manual run mode."
 else
-    # Prompt to allow capabilities to open port < 1024
-    echo "Adding permission for Infection Monkey to open port < 1024. By default the UI is served on port 443."
-    sudo setcap 'cap_net_bind_service=+ep' "${APPIMAGE}"
-    echo "Capabilities added, re-run the AppImage."
-    exit 0
+    sudo getcap ${APPIMAGE} | grep -q cap_net_bind_service+ep
+    NET_BIND_CAP=$?
+    if [ $NET_BIND_CAP -eq 1 ]; then
+        # Prompt to allow capabilities to open port < 1024
+        echo "AppImage: Adding permission for Infection Monkey to open port < 1024. By default the UI is served on port 443."
+        sudo setcap 'cap_net_bind_service=+ep' "${APPIMAGE}"
+        echo "AppImage: Capabilities added, re-run the AppImage."
+        exit 0
+    else
+        echo "AppImage: Infection Monkey AppImage already has the capability to open <1024 port. Continuing"
+    fi
 fi
 
 # Call the entry point
-for opt in "$@"
-do
+for opt in "$@"; do
     [ "${opt:0:1}" != "-" ] && break
     if [[ "${opt}" =~ "I" ]] || [[ "${opt}" =~ "E" ]]; then
         # Environment variables are disabled ($PYTHONHOME). Let's run in a safe
