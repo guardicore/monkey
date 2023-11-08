@@ -7,11 +7,22 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-### Fixed
-- Ports in Hadoop exploiter configuration can no longer be floating-point numbers.
-- Ports in Log4Shell exploiter configuration can no longer be floating-point numbers.
-- Ports in MSSQL exploiter configuration can no longer be floating-point numbers.
+### Added
 
+### Changed
+
+### Fixed
+- Ports in Hadoop exploiter configuration can no longer be floating-point numbers. #3734
+- Ports in Log4Shell exploiter configuration can no longer be floating-point numbers. #3734
+- Ports in MSSQL exploiter configuration can no longer be floating-point numbers. #3734
+- SMB exploiter configuration bug that wouldn't allow submission. #3839
+- Hadoop exploiter configuration bug that wouldn't allow submission. #3839
+- Inconsistent error messages on login screen. #3702
+
+### Removed
+- Fingerprinter configuration from UI. #3769, #3826
+
+### Security
 
 ## [2.3.0 - 2023-09-19]
 ### Added
