@@ -15,6 +15,6 @@ class WallpaperChanger:
     def change_wallpaper(self):
         if self._operating_system == OperatingSystem.WINDOWS:
             # Directly set the wallpaper for Windows OS using the source image
-            ctypes.windll.user32.SystemParametersInfoW(  # type: ignore
+            ctypes.windll.user32.SystemParametersInfoW(  # type: ignore [attr-defined]
                 SPI_SETDESKWALLPAPER, 0, str(self.IMAGE_PATH), 3
             )
