@@ -15,8 +15,8 @@ from .internal_ransomware_options import InternalRansomwareOptions
 from .typedef import (
     FileEncryptorCallable,
     FileSelectorCallable,
-    ImageDropperCallable,
     ReadmeDropperCallable,
+    WallpaperChangerCallable,
 )
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class Ransomware:
         encrypt_file: FileEncryptorCallable,
         select_files: FileSelectorCallable,
         leave_readme: ReadmeDropperCallable,
-        change_wallpaper: ImageDropperCallable,
+        change_wallpaper: WallpaperChangerCallable,
         agent_event_publisher: IAgentEventPublisher,
         agent_id: AgentID,
     ):
@@ -41,7 +41,7 @@ class Ransomware:
         self._encrypt_file = encrypt_file
         self._select_files = select_files
         self._leave_readme = leave_readme
-        self.change_wallpaper = change_wallpaper
+        self._change_wallpaper = change_wallpaper
         self._agent_event_publisher = agent_event_publisher
         self._agent_id = agent_id
 
@@ -128,6 +128,6 @@ class Ransomware:
     @interruptible_function(msg="Received a stop signal, skipping changing the wallpaper")
     def _leave_wallpaper_in_target_directory(self, *, interrupt: threading.Event):
         try:
-            self.change_wallpaper(IMAGE_SRC, self._image_file_path)
+            self._change_wallpaper(IMAGE_SRC, self._image_file_path)
         except Exception as err:
             logger.warning(f"An error occurred while attempting to change the Wallpaper: {err}")
