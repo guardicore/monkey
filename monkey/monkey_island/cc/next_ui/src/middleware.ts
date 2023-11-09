@@ -2,13 +2,12 @@ import { withAuth } from 'next-auth/middleware';
 import authPages from '@/app/api/auth/[...nextauth]/authPages';
 import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
+import { AUTH_PATHS } from '@/constants/authPaths.constants';
 
 const ROOT_PATH: string = '/';
-const SIGNUP_PATH: string = '/signup';
-const SIGNIN_PATH: string = '/signin';
 const PROTECTED_PATHS_FOR_AUTHORIZED_USER: string[] = [
-    SIGNIN_PATH,
-    SIGNUP_PATH
+    AUTH_PATHS.SIGN_IN,
+    AUTH_PATHS.SIGN_UP
 ];
 
 const isPathProtectedForAuthorizedUser = (pathname: string) => {
@@ -29,7 +28,7 @@ export default async function middleware(req: any) {
         return NextResponse.redirect(new URL(ROOT_PATH, req.url));
     }
 
-    if (!isAuthenticated && pathname.startsWith(SIGNUP_PATH)) {
+    if (!isAuthenticated && pathname.startsWith(AUTH_PATHS.SIGN_UP)) {
         // https://nextjs.org/docs/app/api-reference/functions/next-response#next
         return NextResponse.next();
     }
