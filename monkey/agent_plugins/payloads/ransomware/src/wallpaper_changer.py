@@ -3,7 +3,7 @@ import logging
 import shutil
 from pathlib import Path
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
 
 SPI_SETDESKWALLPAPER = 20
 logger = logging.getLogger(__name__)
