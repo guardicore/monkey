@@ -8,13 +8,13 @@ from common.utils.environment import get_os
 
 from .bit_manipulators import flip_bits
 from .file_selectors import ProductionSafeTargetFileSelector
-from .image_dropper import ImageDropper
 from .in_place_file_encryptor import InPlaceFileEncryptor
 from .internal_ransomware_options import InternalRansomwareOptions
 from .ransomware import Ransomware
 from .ransomware_options import RansomwareOptions
 from .readme_dropper import ReadmeDropper
 from .targeted_file_extensions import TARGETED_FILE_EXTENSIONS
+from .wallpaper_changer import WallpaperChanger
 
 CHUNK_SIZE = 4096 * 24
 
@@ -64,4 +64,4 @@ def _build_leave_readme():
 
 
 def _build_leave_image():
-    return ImageDropper(get_os()).leave_image
+    return WallpaperChanger(get_os()).leave_image

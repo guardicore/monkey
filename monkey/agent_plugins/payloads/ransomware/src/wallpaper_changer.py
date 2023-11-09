@@ -9,7 +9,7 @@ SPI_SETDESKWALLPAPER = 20
 logger = logging.getLogger(__name__)
 
 
-class ImageDropper:
+class WallpaperChanger:
     def __init__(self, operating_system: OperatingSystem):
         self._operating_system = operating_system
 
