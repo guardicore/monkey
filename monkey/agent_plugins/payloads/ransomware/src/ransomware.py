@@ -10,7 +10,7 @@ from common.event_queue import IAgentEventPublisher
 from common.tags import DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG
 from infection_monkey.utils.threading import interruptible_function, interruptible_iter
 
-from .consts import IMAGE_FILE_NAME, IMAGE_SRC, README_FILE_NAME, README_SRC
+from .consts import README_FILE_NAME, README_SRC
 from .internal_ransomware_options import InternalRansomwareOptions
 from .typedef import (
     FileEncryptorCallable,
@@ -51,11 +51,6 @@ class Ransomware:
             if self._target_directory
             else None
         )
-        self._image_file_path = (
-            self._target_directory / IMAGE_FILE_NAME  # type: ignore
-            if self._target_directory
-            else None
-        )
 
     def run(self, interrupt: threading.Event):
         if not self._target_directory:
@@ -86,7 +81,7 @@ class Ransomware:
             self._leave_readme_in_target_directory(interrupt=interrupt)
 
         if self._config.change_wallpaper:
-            self._leave_wallpaper_in_target_directory(interrupt=interrupt)
+            self._change_wallpaper_in_target_computer(interrupt=interrupt)
 
     def _find_files(self) -> Iterable[Path]:
         logger.info(f"Collecting files in {self._target_directory}")
@@ -126,8 +121,8 @@ class Ransomware:
             logger.warning(f"An error occurred while attempting to leave a README.txt file: {err}")
 
     @interruptible_function(msg="Received a stop signal, skipping changing the wallpaper")
-    def _leave_wallpaper_in_target_directory(self, *, interrupt: threading.Event):
+    def _change_wallpaper_in_target_computer(self, *, interrupt: threading.Event):
         try:
-            self._change_wallpaper(IMAGE_SRC, self._image_file_path)
+            self._change_wallpaper()
         except Exception as err:
             logger.warning(f"An error occurred while attempting to change the Wallpaper: {err}")
