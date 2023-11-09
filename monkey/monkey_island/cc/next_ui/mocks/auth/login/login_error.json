@@ -1,0 +1,15 @@
+{
+    "meta": {
+        "code": 400
+    },
+    "response": {
+        "field_errors": {
+            "null": [
+                "Authentication failed - identity or password/passcode invalid"
+            ]
+        },
+        "errors": [
+            "Authentication failed - identity or password/passcode invalid"
+        ]
+    }
+}
