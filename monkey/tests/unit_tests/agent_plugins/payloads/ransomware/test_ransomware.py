@@ -14,6 +14,7 @@ from agent_plugins.payloads.ransomware.src.typedef import (
     FileEncryptorCallable,
     FileSelectorCallable,
     ReadmeDropperCallable,
+    WallpaperChangerCallable,
 )
 from monkeytypes import AgentID, Event
 from tests.unit_tests.agent_plugins.payloads.ransomware.ransomware_target_files import (
@@ -27,7 +28,13 @@ from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
 from common.event_queue import AgentEventSubscriber, IAgentEventPublisher
 
 BuildRansomwareCallable: TypeAlias = Callable[
-    [InternalRansomwareOptions, FileEncryptorCallable, FileSelectorCallable, ReadmeDropperCallable],
+    [
+        InternalRansomwareOptions,
+        FileEncryptorCallable,
+        FileSelectorCallable,
+        ReadmeDropperCallable,
+        WallpaperChangerCallable,
+    ],
     Ransomware,
 ]
 
@@ -69,6 +76,7 @@ def build_ransomware(
     mock_file_encryptor: FileEncryptorCallable,
     mock_file_selector: FileSelectorCallable,
     mock_leave_readme: ReadmeDropperCallable,
+    mock_wallpaper_changer: WallpaperChangerCallable,
     agent_event_publisher_spy: IAgentEventPublisher,
 ) -> BuildRansomwareCallable:
     def inner(
@@ -76,12 +84,14 @@ def build_ransomware(
         file_encryptor: FileEncryptorCallable = mock_file_encryptor,
         file_selector: FileSelectorCallable = mock_file_selector,
         leave_readme: ReadmeDropperCallable = mock_leave_readme,
+        change_wallpaper: WallpaperChangerCallable = mock_wallpaper_changer,
     ) -> Ransomware:
         return Ransomware(
             config,
             file_encryptor,
             file_selector,
             leave_readme,
+            change_wallpaper,
             agent_event_publisher_spy,
             AgentID("8f53f4fb-2d33-465a-aa9c-de704a7e42b3"),
         )
@@ -94,12 +104,21 @@ def internal_ransomware_options(
     ransomware_file_extension: str, ransomware_test_data: Path
 ) -> InternalRansomwareOptions:
     class InternalRansomwareOptionsStub(InternalRansomwareOptions):
-        def __init__(self, leave_readme: bool, file_extension: str, target_directory: Path):
+        def __init__(
+            self,
+            leave_readme: bool,
+            change_wallpaper: bool,
+            file_extension: str,
+            target_directory: Path,
+        ):
             self.leave_readme = leave_readme
+            self.change_wallpaper = change_wallpaper
             self.file_extension = file_extension
             self.target_directory = target_directory
 
-    return InternalRansomwareOptionsStub(False, ransomware_file_extension, ransomware_test_data)
+    return InternalRansomwareOptionsStub(
+        False, False, ransomware_file_extension, ransomware_test_data
+    )
 
 
 @pytest.fixture
@@ -120,6 +139,11 @@ def mock_file_selector(ransomware_test_data) -> FileSelectorCallable:
 
 @pytest.fixture
 def mock_leave_readme() -> ReadmeDropperCallable:
+    return MagicMock()
+
+
+@pytest.fixture
+def mock_wallpaper_changer() -> WallpaperChangerCallable:
     return MagicMock()
 
 

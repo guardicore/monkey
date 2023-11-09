@@ -6,6 +6,7 @@ RANSOMWARE_OPTIONS_DICT = {
     "linux_target_dir": "/tmp",
     "windows_target_dir": "C:/temp/",
     "leave_readme": True,
+    "change_wallpaper": False,
 }
 
 RANSOMWARE_OPTIONS_OBJECT = RansomwareOptions(
@@ -13,6 +14,7 @@ RANSOMWARE_OPTIONS_OBJECT = RansomwareOptions(
     linux_target_dir="/tmp",
     windows_target_dir="C:/temp/",
     leave_readme=True,
+    change_wallpaper=False,
 )
 
 
