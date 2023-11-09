@@ -1,9 +1,8 @@
 import logging
-import threading
 from pathlib import Path
 from typing import Iterable
 
-from monkeytypes import AgentID
+from monkeytypes import AgentID, Event
 
 from common.agent_events import FileEncryptionEvent
 from common.event_queue import IAgentEventPublisher
@@ -52,7 +51,7 @@ class Ransomware:
             else None
         )
 
-    def run(self, interrupt: threading.Event):
+    def run(self, interrupt: Event):
         if not self._target_directory:
             return
 
@@ -87,7 +86,7 @@ class Ransomware:
         logger.info(f"Collecting files in {self._target_directory}")
         return self._select_files(self._target_directory)  # type: ignore
 
-    def _encrypt_selected_files(self, files_to_encrypt: Iterable[Path], interrupt: threading.Event):
+    def _encrypt_selected_files(self, files_to_encrypt: Iterable[Path], interrupt: Event):
         logger.info(f"Encrypting files in {self._target_directory}")
 
         interrupted_message = "Received a stop signal, skipping encryption of remaining files"
@@ -114,14 +113,14 @@ class Ransomware:
         self._agent_event_publisher.publish(file_encryption_event)
 
     @interruptible_function(msg="Received a stop signal, skipping leave readme")
-    def _leave_readme_in_target_directory(self, *, interrupt: threading.Event):
+    def _leave_readme_in_target_directory(self, *, interrupt: Event):
         try:
             self._leave_readme(README_SRC, self._readme_file_path)  # type: ignore
         except Exception as err:
             logger.warning(f"An error occurred while attempting to leave a README.txt file: {err}")
 
     @interruptible_function(msg="Received a stop signal, skipping changing the wallpaper")
-    def _change_wallpaper_in_target_computer(self, *, interrupt: threading.Event):
+    def _change_wallpaper_in_target_computer(self, *, interrupt: Event):
         try:
             self._change_wallpaper()
         except Exception as err:
