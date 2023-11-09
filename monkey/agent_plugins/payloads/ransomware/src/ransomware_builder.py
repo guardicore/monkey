@@ -32,14 +32,14 @@ def build_ransomware(
     file_encryptor = _build_file_encryptor(internal_ransomware_options.file_extension)
     file_selector = _build_file_selector(internal_ransomware_options.file_extension)
     leave_readme = _build_leave_readme()
-    leave_image = _build_leave_image()
+    change_wallpaper = _build_change_wallpaper()
 
     return Ransomware(
         internal_ransomware_options,
         file_encryptor,
         file_selector,
         leave_readme,
-        leave_image,
+        change_wallpaper,
         agent_event_publisher,
         agent_id,
     )
@@ -63,5 +63,5 @@ def _build_leave_readme():
     return ReadmeDropper(get_os()).leave_readme
 
 
-def _build_leave_image():
-    return WallpaperChanger(get_os()).leave_image
+def _build_change_wallpaper():
+    return WallpaperChanger(get_os()).change_wallpaper
