@@ -199,6 +199,19 @@ def test_interrupt_while_encrypting(
     mfe.assert_any_call(ransomware_test_data / HELLO_TXT)
 
 
+def test_encryption_skipped_if_no_directory(
+    build_ransomware: BuildRansomwareCallable,
+    internal_ransomware_options: InternalRansomwareOptions,
+    mock_file_encryptor: FileEncryptorCallable,
+):
+    internal_ransomware_options.target_directory = None
+
+    ransomware = build_ransomware(internal_ransomware_options)  # type: ignore [call-arg]
+    ransomware.run(threading.Event())
+
+    assert mock_file_encryptor.call_count == 0
+
+
 def test_no_readme_after_interrupt(
     internal_ransomware_options: InternalRansomwareOptions,
     build_ransomware: BuildRansomwareCallable,
@@ -212,19 +225,6 @@ def test_no_readme_after_interrupt(
     ransomware.run(interrupt)
 
     mock_leave_readme.assert_not_called()
-
-
-def test_encryption_skipped_if_no_directory(
-    build_ransomware: BuildRansomwareCallable,
-    internal_ransomware_options: InternalRansomwareOptions,
-    mock_file_encryptor: FileEncryptorCallable,
-):
-    internal_ransomware_options.target_directory = None
-
-    ransomware = build_ransomware(internal_ransomware_options)  # type: ignore [call-arg]
-    ransomware.run(threading.Event())
-
-    assert mock_file_encryptor.call_count == 0
 
 
 def test_readme_false(
@@ -273,6 +273,58 @@ def test_leave_readme_exceptions_handled(
     leave_readme = MagicMock(side_effect=Exception("Test exception when leaving README"))
     internal_ransomware_options.leave_readme = True
     ransomware = build_ransomware(config=internal_ransomware_options, leave_readme=leave_readme)  # type: ignore [call-arg]  # noqa: E501
+
+    # Test will fail if exception is raised and not handled
+    ransomware.run(threading.Event())
+
+
+def test_no_wallpaper_change_after_interrupt(
+    internal_ransomware_options: InternalRansomwareOptions,
+    build_ransomware: BuildRansomwareCallable,
+    interrupt: Event,
+    mock_wallpaper_changer: WallpaperChangerCallable,
+):
+    internal_ransomware_options.change_wallpaper = True
+    ransomware = build_ransomware(internal_ransomware_options)  # type: ignore [call-arg]
+
+    interrupt.set()
+    ransomware.run(interrupt)
+
+    mock_wallpaper_changer.assert_not_called()
+
+
+def test_change_wallpaper_false(
+    build_ransomware: BuildRansomwareCallable,
+    internal_ransomware_options: InternalRansomwareOptions,
+    mock_wallpaper_changer: WallpaperChangerCallable,
+):
+    internal_ransomware_options.change_wallpaper = False
+    ransomware = build_ransomware(internal_ransomware_options)  # type: ignore [call-arg]
+
+    ransomware.run(threading.Event())
+    mock_wallpaper_changer.assert_not_called()
+
+
+def test_change_wallpaper_true(
+    build_ransomware: BuildRansomwareCallable,
+    internal_ransomware_options: InternalRansomwareOptions,
+    mock_wallpaper_changer: WallpaperChangerCallable,
+    ransomware_test_data: Path,
+):
+    internal_ransomware_options.change_wallpaper = True
+    ransomware = build_ransomware(internal_ransomware_options)  # type: ignore [call-arg]
+
+    ransomware.run(threading.Event())
+    mock_wallpaper_changer.call_count == 1
+
+
+def test_change_wallpaper_exceptions_handled(
+    build_ransomware: BuildRansomwareCallable,
+    internal_ransomware_options: InternalRansomwareOptions,
+):
+    change_wallpaper = MagicMock(side_effect=Exception("Test exception when changing wallpaper"))
+    internal_ransomware_options.change_wallpaper = True
+    ransomware = build_ransomware(config=internal_ransomware_options, change_wallpaper=change_wallpaper)  # type: ignore [call-arg]  # noqa: E501
 
     # Test will fail if exception is raised and not handled
     ransomware.run(threading.Event())
