@@ -1,8 +1,11 @@
+//eslint-disable-next-line @typescript-eslint/no-var-requires
 const next = require('next');
 
 // note the "https" not "http" required module. You will get an error if trying to connect with https
+//eslint-disable-next-line @typescript-eslint/no-var-requires
 const https = require('https');
 
+//eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs');
 
 const host = '0.0.0.0';

@@ -1,5 +1,7 @@
+import { AUTH_PATHS } from '@/constants/authPaths.constants';
+
 const authPages = {
-    signIn: '/signin'
+    signIn: AUTH_PATHS.SIGN_IN
 };
 
 export default authPages;

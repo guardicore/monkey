@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { THEME_APPEARANCE } from '@/theme/theme';
+import { THEME_APPEARANCE } from '@/providers/theme/theme';
 import {
     executeIfWindowDefined,
     localStorageGetItem

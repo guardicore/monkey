@@ -23,6 +23,7 @@ const RegisterPage = () => {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         const registerData: any = await register(registerFormValues);
+        console.log('registerData', registerData);
         if (
             !(
                 registerData?.error?.status === 400 ||
