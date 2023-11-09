@@ -1,0 +1,19 @@
+{
+    "meta": {
+        "code": 400
+    },
+    "response": {
+        "field_errors": {
+            "password": [
+                "Password must be at least 8 characters"
+            ],
+            "username": [
+                "Username must be at least 4 characters and less than 32 characters"
+            ]
+        },
+        "errors": [
+            "Password must be at least 8 characters",
+            "Username must be at least 4 characters and less than 32 characters"
+        ]
+    }
+}
