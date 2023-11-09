@@ -60,7 +60,7 @@ class RansomwareOptions(InfectionMonkeyBaseModel):
         "directory.",
     )
     change_wallpaper: bool = Field(
-        default=True,
+        default=False,
         description=(
             "If enabled, Infection Monkey will change the Desktop Wallpaper "
             "in Windows Systems, explaining that the computer was part of a "
