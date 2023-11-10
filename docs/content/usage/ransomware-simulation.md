@@ -42,7 +42,7 @@ caution: you'll no longer be able to tell if the file has been encrypted based
 on the filename alone!
 
 ![Ransomware
-configuration](/images/island/configuration_page/ransomware_configuration.jpg
+configuration](/images/island/configuration_page/ransomware_configuration.png
 "Ransomware configuration")
 
 ### 3. Configure propagation
