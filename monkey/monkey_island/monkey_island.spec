@@ -11,7 +11,7 @@ def main():
     # These data files and folders will be included in the bundle.
     # The format of the tuples is (src, dest_dir). See https://pythonhosted.org/PyInstaller/spec-files.html#adding-data-files
     added_datas = [
-        ("../common/BUILD", "/common")
+        ("../common/BUILD", "common")
     ]
 
     a = Analysis(['main.py'],
