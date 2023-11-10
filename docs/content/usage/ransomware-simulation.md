@@ -187,3 +187,16 @@ The README.txt file informs the user that a ransomware simulation has taken
 place and that they should contact their administrator. The contents of the
 file can be found
 [here](https://github.com/guardicore/monkey/blob/master/monkey/agent_plugins/payloads/ransomware/src/ransomware_readme.txt).
+
+
+### Changing the desktop wallpaper
+
+Infection Monkey can change the desktop wallpaper as a more conspicuous
+indication that a ransomware attack has occurred. This feature is currently
+only applicable to victim machines running Windows.
+
+When this feature is enabled, the desktop background will be changed to this:
+
+![Ransomware
+wallpaper](/images/island/others/ransomware_wallpaper_downsized.png
+"Ransomware wallpaper")
