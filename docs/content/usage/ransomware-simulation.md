@@ -198,5 +198,5 @@ only applicable to victim machines running Windows.
 When this feature is enabled, the desktop background will be changed to this:
 
 ![Ransomware
-wallpaper](https://github.com/guardicore/monkey/blob/master/monkey/agent_plugins/payloads/ransomware/src/ransomware_wallpaper.png
+wallpaper](/images/island/others/ransomware_wallpaper_downsized.png
 "Ransomware wallpaper")
