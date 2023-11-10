@@ -10,6 +10,9 @@ SPI_SETDESKWALLPAPER = 20
 
 logger = logging.getLogger(__name__)
 
+# Textless wallpaper can be downloaded from
+# https://guardicore-infectionmonkey.s3.amazonaws.com/Files/Assets/ransomware_wallpaper_no_text.png
+
 
 class WallpaperChanger:
     WALLPAPER_PATH = Path(__file__).parent / "ransomware_wallpaper.png"
