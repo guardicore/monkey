@@ -25,3 +25,5 @@ class WallpaperChanger:
                 SPI_SETDESKWALLPAPER, 0, str(self.WALLPAPER_PATH), 3
             )
             logger.info("Wallpaper changed")
+        else:
+            raise NotImplementedError("Changing wallpaper is only supported on Windows OS")

@@ -4,9 +4,9 @@ from typing import Iterable
 
 from monkeytypes import AgentID, Event
 
-from common.agent_events import FileEncryptionEvent
+from common.agent_events import DefacementEvent, FileEncryptionEvent
 from common.event_queue import IAgentEventPublisher
-from common.tags import DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG
+from common.tags import DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG, DEFACEMENT_T1491_TAG
 from infection_monkey.utils.threading import interruptible_function, interruptible_iter
 
 from .consts import README_FILE_NAME, README_SRC
@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 RANSOMWARE_PAYLOAD_TAG = "ransomware-payload"
 RANSOMWARE_TAGS = frozenset({RANSOMWARE_PAYLOAD_TAG, DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG})
+WALLPAPER_UPLOAD_TAGS = frozenset({DEFACEMENT_T1491_TAG})
 
 
 class Ransomware:
@@ -113,6 +114,15 @@ class Ransomware:
         )
         self._agent_event_publisher.publish(file_encryption_event)
 
+    def _publish_defacement_event(self, description: str):
+        defacement_event = DefacementEvent(
+            source=self._agent_id,
+            defacement_target=DefacementEvent.DefacementTarget.INTERNAL,
+            description=description,
+            tags=WALLPAPER_UPLOAD_TAGS,
+        )
+        self._agent_event_publisher.publish(defacement_event)
+
     @interruptible_function(msg="Received a stop signal, skipping leave readme")
     def _leave_readme_in_target_directory(self, *, interrupt: Event):
         try:
@@ -124,5 +134,9 @@ class Ransomware:
     def _change_wallpaper_in_target_computer(self, *, interrupt: Event):
         try:
             self._change_wallpaper()
+            self._publish_defacement_event("Wallpaper changed as part of a ransomware attack")
+        # This is expected on Linux
+        except NotImplementedError as err:
+            logger.debug(err)
         except Exception as err:
             logger.warning(f"An error occurred while attempting to change the Wallpaper: {err}")
