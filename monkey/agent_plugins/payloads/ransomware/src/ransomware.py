@@ -53,6 +53,7 @@ class Ransomware:
 
     def run(self, interrupt: Event):
         if not self._target_directory:
+            logger.info("No target directory was supplied, skipping the ransomware payload")
             return
 
         logger.info("Running ransomware payload")
