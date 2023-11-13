@@ -135,8 +135,8 @@ class Ransomware:
         try:
             self._change_wallpaper()
             self._publish_defacement_event("Wallpaper changed as part of a ransomware attack")
-        # This is expected on Linux
         except NotImplementedError as err:
+            # This is expected on Linux
             logger.debug(err)
         except Exception as err:
             logger.warning(f"An error occurred while attempting to change the Wallpaper: {err}")
