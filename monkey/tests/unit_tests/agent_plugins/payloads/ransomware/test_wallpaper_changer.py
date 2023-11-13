@@ -36,6 +36,7 @@ def test_windows(SystemParametersInfoW: MagicMock):
 def test_not_windows(SystemParametersInfoW: MagicMock):
     wallpaper_changer = WallpaperChanger(OperatingSystem.LINUX)
 
-    wallpaper_changer.change_wallpaper()
+    with pytest.raises(NotImplementedError):
+        wallpaper_changer.change_wallpaper()
 
     assert SystemParametersInfoW.call_count == 0
