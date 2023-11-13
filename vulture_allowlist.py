@@ -30,7 +30,6 @@ from common.agent_plugins import (
     AgentPluginMetadata,
     AgentPluginRepositoryIndex,
 )
-from common.concurrency import BasicLock
 from common.decorators import request_cache
 from common.tags import (
     DEFACEMENT_T1491_TAG,
@@ -59,10 +58,6 @@ ScanTargetConfiguration.blocked_ips_valid
 ScanTargetConfiguration.inaccessible_subnets
 ScanTargetConfiguration.subnets_valid
 ScanTargetConfiguration.inaccessible_subnets_valid
-
-
-BasicLock.acquire
-BasicLock.release
 
 
 LMHash.validate_hash_format
