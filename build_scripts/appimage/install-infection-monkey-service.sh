@@ -37,7 +37,7 @@ install_service() {
   install_systemd_unit "$1"
 
   echo "The Infection Monkey service has been installed and will start on boot."
-  echo "Run 'systemctl start infection-monkey' to start the service now."
+  echo "Run 'sudo systemctl start infection-monkey' to start the service now."
 }
 
 exit_if_service_installed() {
@@ -69,6 +69,7 @@ After=network.target
 User=$1
 Type=simple
 ExecStart="${MONKEY_BIN}/${APPIMAGE_NAME}"
+AmbientCapabilities=CAP_NET_BIND_SERVICE
 
 [Install]
 WantedBy=multi-user.target
