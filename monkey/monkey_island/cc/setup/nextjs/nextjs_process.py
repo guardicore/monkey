@@ -31,7 +31,7 @@ class NextJsProcess:
 
         with open(self._log_file, "w") as log:
             node_env = os.environ.copy()
-            node_env["NODE_PORT"] = str(self._port)
+            node_env["JAVASCRIPT_RUNTIME_PORT"] = str(self._port)
             node_env["SSL_CERT_PATH"] = self._ssl_cert_path
             node_env["SSL_KEY_PATH"] = self._ssl_key_path
             self._process = subprocess.Popen(
