@@ -14,20 +14,8 @@ fi
 
 # Check if running as root
 if [ $(id -u) -eq 0 ]; then
-    echo "AppImage: Warning! Running as root is not recommended. You should instead run the AppImage as a regular user."
+    echo "AppImage: Warning: running as root is not recommended. You should instead run the AppImage as a regular user."
     echo "AppImage: If you want to run the Agent as root, do so by choosing manual run mode."
-else
-    sudo getcap ${APPIMAGE} | grep -q cap_net_bind_service+ep
-    NET_BIND_CAP=$?
-    if [ $NET_BIND_CAP -eq 1 ]; then
-        # Prompt to allow capabilities to open port < 1024
-        echo "AppImage: Adding permission for Infection Monkey to open port < 1024. By default the UI is served on port 443."
-        sudo setcap 'cap_net_bind_service=+ep' "${APPIMAGE}"
-        echo "AppImage: Capabilities added, re-run the AppImage."
-        exit 0
-    else
-        echo "AppImage: Infection Monkey AppImage already has the capability to open <1024 port. Continuing"
-    fi
 fi
 
 # Call the entry point
@@ -41,7 +29,12 @@ for opt in "$@"; do
     fi
 done
 
+# Save HOME and USER because capsh changes them. Until ubuntu adds --noenv option we have to rely on a workaround
+export HOME_ORIGINAL=$HOME
+export USER_ORIGINAL=$USER
+
 export PYTHONNOUSERSITE=1
-(PYTHONHOME="${APPDIR}/opt/python3.11" exec "${APPDIR}/opt/python3.11/bin/python3.11" "${APPDIR}/usr/src/monkey_island.py" $@)
+
+(PYTHONHOME="${APPDIR}/opt/python3.11" exec sudo capsh --keep=1 --user=${USER_ORIGINAL} --inh=cap_net_bind_service --addamb=cap_net_bind_service -- -c "env HOME=${HOME_ORIGINAL} USER=${USER_ORIGINAL} ${APPDIR}/opt/python3.11/bin/python3.11 ${APPDIR}/usr/src/monkey_island.py" $@)
 
 exit "$?"
