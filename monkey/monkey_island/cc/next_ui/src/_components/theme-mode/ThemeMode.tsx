@@ -4,7 +4,7 @@ import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
-import { THEME_APPEARANCE } from '@/theme/theme';
+import { THEME_APPEARANCE } from '@/providers/theme/theme';
 import { setThemeAppearance } from '@/redux/features/theme/theme.slice';
 import classes from './themeMode.module.scss';
 
