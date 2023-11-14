@@ -20,6 +20,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - SMB exploiter configuration bug that wouldn't allow submission. #3839
 - Hadoop exploiter configuration bug that wouldn't allow submission. #3839
 - Inconsistent error messages on login screen. #3702
+- A bug that prevented filtering on certain event types. #3864
 
 ### Removed
 - Fingerprinter configuration from UI. #3769, #3826
