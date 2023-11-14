@@ -3,5 +3,5 @@
   "mongodb": {
         "start_mongodb": true
   },
-  "node_port": 443
+  "javascript_runtime_port": 443
 }
