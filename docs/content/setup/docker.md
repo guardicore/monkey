@@ -109,8 +109,10 @@ You can configure the server by mounting a volume and specifying a
 
 ### Change listening port
 
-The Island API is running on port 5000 and it can't be changed. However, the node server serving
-the UI and proxying the requests to the API can be configured to listen on a different port.
+The Island server can be accessed on port 443 by default. On that port javascript runtime (Node server)
+serves the UI and proxies requests to the backend API.
+
+It can be changed by modifying the `server_config.json` file:
 
 1. Stop the Monkey Island process.
 1. Modify the `server_config.json` by adding the following lines:
@@ -122,6 +124,8 @@ the UI and proxying the requests to the API can be configured to listen on a dif
     }
     ```
 1. Run the Monkey Island again, it will be accessible on `https://localhost:8080`.
+
+The backend API is served on port 5000 and this port can't be changed.
 
 ### Start Monkey Island with user-provided certificate
 
