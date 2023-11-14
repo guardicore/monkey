@@ -13,7 +13,7 @@ if [ "$1" == "service" ]; then
 fi
 
 # Check if running as root
-if [ $(id -u) -eq 0 ]; then
+if [ "$EUID" -eq 0 ]; then
     echo "AppImage: Warning: running as root is not recommended. You should instead run the AppImage as a regular user."
     echo "AppImage: If you want to run the Agent as root, do so by choosing manual run mode."
 fi
