@@ -18,6 +18,7 @@ FROM python:$PYTHON_VERSION-slim
 COPY --from=builder /monkey /monkey
 WORKDIR /monkey
 EXPOSE 5000
+# Javascript runtime server is running on port 443 by default
 EXPOSE 443
 ENV MONKEY_DOCKER_CONTAINER=true
 RUN apt-get update \
