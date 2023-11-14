@@ -179,15 +179,15 @@ def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
 
 
 def _start_nextjs_server(config_options: IslandConfigOptions):
-    if is_local_port_in_use(config_options.node_port):
+    if is_local_port_in_use(config_options.javascript_runtime_port):
         logger.error(
-            f"Node server port {config_options.node_port} is already in use. "
+            f"Node server port {config_options.javascript_runtime_port} is already in use. "
             f"Specify another port in the server configuration file and try again."
         )
         sys.exit(1)
     nextjs_process = start_nextjs(
         config_options.data_dir,
-        config_options.node_port,
+        config_options.javascript_runtime_port,
         config_options.ssl_certificate.ssl_certificate_file,
         config_options.ssl_certificate.ssl_certificate_key_file,
     )
