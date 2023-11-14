@@ -94,7 +94,7 @@ the UI and proxying the requests to the API can be configured to listen on a dif
       ...
     }
     ```
-1. Run the Monkey Island again, it will be accessible on `https://localhost:8080`.
+1. Run the AppImage/service again, Monkey Island server will be accessible on `https://localhost:8080`.
 
 ### Start Monkey Island with user-provided certificate
 
