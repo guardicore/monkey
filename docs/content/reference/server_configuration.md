@@ -20,7 +20,7 @@ the `server_config.json` file for each deployment.
 Here's an example `server_config.json` with all options specified:
 ```json
 {
-  "node_port": 443,
+  "javascript_runtime_port": 443,
   "log_level": "DEBUG",
   "ssl_certificate": {
     "ssl_certificate_file": "<PATH_TO_CRT_FILE>",
@@ -47,7 +47,7 @@ Only relevant options can be specified, for example:
 
 See setup instructions for your operating system to understand how to apply these.
 
- - `node_port` - port on that serves the Island UI. It also proxies requests to the Island API. Default is `443`.
+ - `javascript_runtime_port` - Port that serves the UI. It also proxies requests to the Island API. Default is `443`.
  - `log_level` - can be set to `"DEBUG"`(verbose), `"INFO"`(less verbose) or `"ERROR"`(silent, except errors).
  - `ssl_certificate` - contains paths for files, required to run the Island Server with custom certificate.
  - `data_dir` - path to a writeable directory where the Island will store the database and other files.

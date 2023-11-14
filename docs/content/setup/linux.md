@@ -90,7 +90,7 @@ the UI and proxying the requests to the API can be configured to listen on a dif
     ```json
     {
       ...
-      "node_port": 8080,
+      "javascript_runtime_port": 8080,
       ...
     }
     ```
