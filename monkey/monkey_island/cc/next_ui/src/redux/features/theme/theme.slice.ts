@@ -20,8 +20,8 @@ const getThemeAppearance = () => {
     return savedThemeAppearance
         ? savedThemeAppearance
         : userPrefersDark
-        ? THEME_APPEARANCE.DARK_MODE
-        : THEME_APPEARANCE.LIGHT_MODE;
+          ? THEME_APPEARANCE.DARK_MODE
+          : THEME_APPEARANCE.LIGHT_MODE;
 };
 
 const initialState = {
