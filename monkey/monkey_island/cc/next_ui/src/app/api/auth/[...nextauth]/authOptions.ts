@@ -167,6 +167,5 @@ export const authOptions: NextAuthOptions = {
         strategy: 'jwt',
         maxAge: 900 // 15 minutes
     },
-    secret: SECRET,
     pages: authPages
 };
