@@ -30,6 +30,14 @@ def _is_ipv4(ip: ifaddr.IP) -> bool:
     return type(ip.ip) is str
 
 
+def port_is_used(
+    port: int,
+    ip_addresses: Optional[Sequence[IPv4Address]],
+) -> bool:
+    connections = get_connections([port], ip_addresses)
+    return len(connections) > 0
+
+
 def get_connections(
     ports: Optional[Sequence[int]] = None,
     ip_addresses: Optional[Sequence[IPv4Address]] = None,
