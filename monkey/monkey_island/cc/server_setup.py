@@ -179,7 +179,7 @@ def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
 
 
 def _start_nextjs_server(ip_addresses: Sequence[IPv4Address], config_options: IslandConfigOptions):
-    if port_is_used(ip_addresses, config_options.javascript_runtime_port):
+    if port_is_used(config_options.javascript_runtime_port, ip_addresses):
         logger.error(
             f"Node server port {config_options.javascript_runtime_port} is already in use. "
             f"Specify another port in the server configuration file and try again."
