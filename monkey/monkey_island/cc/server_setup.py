@@ -28,7 +28,7 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
 
 from ophidian import DIContainer  # noqa: E402
 
-from common.network.network_utils import get_my_ip_addresses, is_local_port_in_use  # noqa: E402
+from common.network.network_utils import get_my_ip_addresses, port_is_used  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
@@ -68,7 +68,7 @@ def run_monkey_island():
     _send_analytics(deployment, version)
 
     _initialize_mongodb_connection(config_options.mongodb.start_mongodb, config_options.data_dir)
-    _start_nextjs_server(config_options)
+    _start_nextjs_server(ip_addresses, config_options)
 
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
     setup_island_event_handlers(container)
@@ -178,8 +178,8 @@ def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
         sys.exit(1)
 
 
-def _start_nextjs_server(config_options: IslandConfigOptions):
-    if is_local_port_in_use(config_options.javascript_runtime_port):
+def _start_nextjs_server(ip_addresses: Sequence[IPv4Address], config_options: IslandConfigOptions):
+    if port_is_used(ip_addresses, config_options.javascript_runtime_port):
         logger.error(
             f"Node server port {config_options.javascript_runtime_port} is already in use. "
             f"Specify another port in the server configuration file and try again."
