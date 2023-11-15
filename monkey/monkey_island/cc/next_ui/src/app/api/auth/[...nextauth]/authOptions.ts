@@ -4,6 +4,8 @@ import authPages from './authPages';
 import { nanoid } from 'nanoid';
 import { HTTP_METHODS } from '@/constants/http.constants';
 
+const SECRET: string = nanoid();
+
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
@@ -165,6 +167,6 @@ export const authOptions: NextAuthOptions = {
         strategy: 'jwt',
         maxAge: 900 // 15 minutes
     },
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: SECRET,
     pages: authPages
 };
