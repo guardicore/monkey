@@ -2,7 +2,7 @@ import { internalApiSlice } from '@/redux/features/api/internalApiSlice';
 import { API_AUTH_ENDPOINTS } from '@/redux/features/api/authentication/constants/auth.constants';
 import { signOut } from 'next-auth/react';
 import { HTTP_METHODS } from '@/constants/http.constants';
-import { AUTH_PATHS } from '@/constants/authPaths.constants';
+import { AUTH_PATHS } from '@/constants/paths.constants';
 
 const customExtraOptions = {
     isInternalRequest: true
