@@ -42,10 +42,6 @@ const RegisterPage = () => {
         const value =
             e.target.type === 'checkbox' ? e.target.checked : e.target.value;
         setRegisterFormValues({ ...registerFormValues, [name]: value });
-        setRegisterFormValues({
-            username: 'admin',
-            password: '12345678'
-        });
     };
 
     const renderRegisterForm = () => {
