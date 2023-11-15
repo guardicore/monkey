@@ -1,9 +1,9 @@
 import ipaddress
-import socket
 from ipaddress import IPv4Address, IPv4Interface
-from typing import Iterable, List, Sequence
+from typing import Iterable, List, Optional, Sequence
 
 import ifaddr
+import psutil
 
 
 def get_my_ip_addresses() -> Sequence[IPv4Address]:
@@ -28,6 +28,17 @@ def _is_ipv4(ip: ifaddr.IP) -> bool:
     return type(ip.ip) is str
 
 
-def is_local_port_in_use(port: int) -> bool:
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        return s.connect_ex(("localhost", port)) == 0
+def get_connections(
+    ports: Optional[Sequence[int]] = None,
+    ip_addresses: Optional[Sequence[IPv4Address]] = None,
+) -> List[psutil._common.sconn]:
+    connections = psutil.net_connections()
+    if ports:
+        ports_ = list(map(str, ports))
+        connections = [connection for connection in connections if connection.laddr.port in ports_]
+    if ip_addresses:
+        ip_addresses_ = list(map(str, ip_addresses))
+        connections = [
+            connection for connection in connections if connection.laddr.ip in ip_addresses_
+        ]
+    return connections
