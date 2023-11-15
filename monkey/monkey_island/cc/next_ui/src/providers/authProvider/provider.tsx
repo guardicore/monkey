@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
-import { AUTH_PATHS } from '@/constants/authPaths.constants';
+import { AUTH_PATHS } from '@/constants/paths.constants';
 
 const UNAUTHENTICATED: string = 'unauthenticated';
 
