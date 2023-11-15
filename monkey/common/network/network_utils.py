@@ -44,8 +44,7 @@ def get_connections(
 ) -> List[psutil._common.sconn]:
     connections = psutil.net_connections()
     if ports:
-        ports_ = list(map(str, ports))
-        connections = [connection for connection in connections if connection.laddr.port in ports_]
+        connections = [connection for connection in connections if connection.laddr.port in ports]
     if ip_addresses:
         ip_addresses_ = list(map(str, ip_addresses))
         connections = [
