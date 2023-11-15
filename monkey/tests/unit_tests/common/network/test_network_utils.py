@@ -12,11 +12,11 @@ def build_connection(ip, port):
 
 def test_get_connections__connection_found(monkeypatch):
     connections = [
-        build_connection("127.1.1.1", "443"),
-        build_connection("127.2.2.2", "443"),
+        build_connection("127.1.1.1", 443),
+        build_connection("127.2.2.2", 443),
     ]
     monkeypatch.setattr("psutil.net_connections", MagicMock(return_value=connections))
-    expected_connection = build_connection("127.2.2.2", "443")
+    expected_connection = build_connection("127.2.2.2", 443)
 
     found_connections = get_connections(ports=[443], ip_addresses=[IPv4Address("127.2.2.2")])
 
@@ -26,9 +26,9 @@ def test_get_connections__connection_found(monkeypatch):
 
 def test_get_connections__no_connection_found(monkeypatch):
     connections = [
-        build_connection("127.1.1.1", "443"),
-        build_connection("127.2.2.2", "443"),
-        build_connection("127.3.3.3", "123"),
+        build_connection("127.1.1.1", 443),
+        build_connection("127.2.2.2", 443),
+        build_connection("127.3.3.3", 123),
     ]
     monkeypatch.setattr("psutil.net_connections", MagicMock(return_value=connections))
 
@@ -39,9 +39,9 @@ def test_get_connections__no_connection_found(monkeypatch):
 
 def test_get_connections__all_connections(monkeypatch):
     connections = [
-        build_connection("127.1.1.1", "443"),
-        build_connection("127.2.2.2", "443"),
-        build_connection("127.3.3.3", "123"),
+        build_connection("127.1.1.1", 443),
+        build_connection("127.2.2.2", 443),
+        build_connection("127.3.3.3", 123),
     ]
     monkeypatch.setattr("psutil.net_connections", MagicMock(return_value=connections))
 
