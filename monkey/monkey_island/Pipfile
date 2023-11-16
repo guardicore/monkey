@@ -40,6 +40,7 @@ bleach = "*"
 email-validator = "*"
 monkey-types = "*"
 ophidian = "*"
+monkeyevents = "*"
 
 [dev-packages]
 virtualenv = "==20.16.2" # Pinned to 20.16.2 due to importlib-metadat/flake8 issue
