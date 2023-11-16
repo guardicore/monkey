@@ -2,11 +2,11 @@ import logging
 from pathlib import Path
 from typing import Iterable
 
+from monkeyevents import DefacementEvent, FileEncryptionEvent
+from monkeyevents.tags import DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG, DEFACEMENT_T1491_TAG
 from monkeytypes import AgentID, Event
 
-from common.agent_events import DefacementEvent, FileEncryptionEvent
 from common.event_queue import IAgentEventPublisher
-from common.tags import DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG, DEFACEMENT_T1491_TAG
 from infection_monkey.utils.threading import interruptible_function, interruptible_iter
 
 from .consts import README_FILE_NAME, README_SRC
