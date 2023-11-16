@@ -2,15 +2,9 @@ import logging
 from typing import Any, Dict, Sequence, Type
 
 import pymongo
-from monkeytypes import AgentID
-from pymongo import MongoClient
-
-from common.agent_event_serializers import (
+from monkeyevents import (
     EVENT_TYPE_FIELD,
     TIMESTAMP_FIELD,
-    AgentEventSerializerRegistry,
-)
-from common.agent_events import (
     AbstractAgentEvent,
     AgentShutdownEvent,
     ExploitationEvent,
@@ -22,6 +16,10 @@ from common.agent_events import (
     PropagationEvent,
     TCPScanEvent,
 )
+from monkeytypes import AgentID
+from pymongo import MongoClient
+
+from common.agent_event_serializers import AgentEventSerializerRegistry
 from monkey_island.cc.repositories import IAgentEventRepository
 from monkey_island.cc.repositories.i_agent_event_repository import T
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor

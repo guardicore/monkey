@@ -5,14 +5,12 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeyevents import AbstractAgentEvent, AgentEventTag, PydanticAgentEventSerializer
 from pydantic import Field
 from tests.common import StubDIContainer
 
-from common.agent_event_serializers import (
-    AgentEventSerializerRegistry,
-    PydanticAgentEventSerializer,
-)
-from common.agent_events import AbstractAgentEvent, AgentEventRegistry, AgentEventTag
+from common.agent_event_serializers import AgentEventSerializerRegistry
+from common.agent_events import AgentEventRegistry
 from common.event_queue import IAgentEventQueue
 from monkey_island.cc.repositories import IAgentEventRepository
 from monkey_island.cc.resources import AgentEvents

@@ -1,8 +1,8 @@
 from typing import Sequence, Type, TypeVar
 
+from monkeyevents import AbstractAgentEvent
 from monkeytypes import AgentID
 
-from common.agent_events import AbstractAgentEvent
 from monkey_island.cc.repositories import IAgentEventRepository
 
 T = TypeVar("T", bound=AbstractAgentEvent)

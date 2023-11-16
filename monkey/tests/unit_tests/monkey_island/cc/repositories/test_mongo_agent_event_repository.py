@@ -5,15 +5,12 @@ from unittest.mock import MagicMock
 
 import mongomock
 import pytest
+from monkeyevents import AbstractAgentEvent, PydanticAgentEventSerializer
 from pydantic import Field
 from pymongo import MongoClient
 from tests.unit_tests.monkey_island.cc.repositories.mongo import get_all_collections_in_mongo
 
-from common.agent_event_serializers import (
-    AgentEventSerializerRegistry,
-    PydanticAgentEventSerializer,
-)
-from common.agent_events import AbstractAgentEvent
+from common.agent_event_serializers import AgentEventSerializerRegistry
 from monkey_island.cc.repositories import (
     IAgentEventRepository,
     MongoAgentEventRepository,

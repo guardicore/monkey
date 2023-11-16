@@ -1,4 +1,5 @@
-from common.agent_events import HostnameDiscoveryEvent
+from monkeyevents import HostnameDiscoveryEvent
+
 from monkey_island.cc.repositories import AgentMachineFacade
 
 

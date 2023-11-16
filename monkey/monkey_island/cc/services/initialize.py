@@ -2,6 +2,7 @@ import logging
 import threading
 from pathlib import Path
 
+from monkeyevents import AgentEventRegistry
 from monkeytypes import BasicLock, RLock
 from ophidian import DIContainer
 from pubsub.core import Publisher
@@ -12,7 +13,7 @@ from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
-from common.agent_events import AgentEventRegistry, register_common_agent_events
+from common.agent_events import register_common_agent_events
 from common.event_queue import (
     IAgentEventQueue,
     LockingAgentEventQueueDecorator,

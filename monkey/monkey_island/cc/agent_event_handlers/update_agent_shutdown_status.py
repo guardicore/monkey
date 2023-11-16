@@ -2,8 +2,8 @@ import logging
 from datetime import datetime
 
 import pytz
+from monkeyevents import AbstractAgentEvent
 
-from common.agent_events import AbstractAgentEvent
 from monkey_island.cc.repositories import IAgentRepository
 
 logger = logging.getLogger(__name__)
