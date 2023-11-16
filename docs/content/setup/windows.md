@@ -39,23 +39,20 @@ The default path is
 
 ### Change listening port
 
-The Island server can be accessed on port 443 by default. On that port javascript runtime (Node server)
-serves the UI and proxies requests to the backend API.
+The Island server can be accessed on port 443(HTTPS) by default.
 
-It can be changed by modifying the `server_config.json` file:
+This port can be changed by modifying the `server_config.json` file:
 
 1. Stop the Monkey Island process.
 1. Modify the `server_config.json` by adding the following lines:
     ```json
     {
       ...
-      "javascript_runtime_port": 8080,
+      "island_port": 8080,
       ...
     }
     ```
 1. Run the Monkey Island again, it will be accessible on `https://localhost:8080`.
-
-The backend API is served on port 5000 and this port can't be changed.
 
 ### Start Monkey Island with user-provided certificate
 
