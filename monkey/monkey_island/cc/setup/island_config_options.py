@@ -10,11 +10,12 @@ from common.utils.file_utils import expand_path
 from monkey_island.cc.server_utils.consts import (
     DEFAULT_CRT_PATH,
     DEFAULT_DATA_DIR,
-    DEFAULT_JAVASCRIPT_RUNTIME_PORT,
     DEFAULT_KEY_PATH,
     DEFAULT_LOG_LEVEL,
     DEFAULT_START_MONGO_DB,
 )
+
+DEFAULT_ISLAND_PORT = 443
 
 
 class MongoDBConfig(InfectionMonkeyBaseModel):
@@ -35,4 +36,4 @@ class IslandConfigOptions(InfectionMonkeyBaseModel):
     log_level: str = DEFAULT_LOG_LEVEL
     mongodb: MongoDBConfig = MongoDBConfig()
     ssl_certificate: SSLCertificatesConfig = SSLCertificatesConfig()
-    javascript_runtime_port: int = DEFAULT_JAVASCRIPT_RUNTIME_PORT
+    island_port: int = DEFAULT_ISLAND_PORT
