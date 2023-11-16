@@ -1,9 +1,9 @@
 import logging
 from typing import Type
 
+from monkeyevents import AbstractAgentEvent
 from pubsub.core import Publisher
 
-from common.agent_events import AbstractAgentEvent
 from common.event_queue import PyPubSubPublisherWrapper
 
 from . import AgentEventSubscriber, IAgentEventQueue

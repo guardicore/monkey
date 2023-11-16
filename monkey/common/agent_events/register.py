@@ -1,6 +1,6 @@
 import inspect
 
-import common.agent_events
+import monkeyevents
 
 from . import AgentEventRegistry
 
@@ -8,11 +8,11 @@ from . import AgentEventRegistry
 def register_common_agent_events(
     agent_event_registry: AgentEventRegistry,
 ):
-    for _, event_class in inspect.getmembers(common.agent_events, inspect.isclass):
-        if event_class is common.agent_events.AbstractAgentEvent:
+    for _, event_class in inspect.getmembers(monkeyevents, inspect.isclass):
+        if event_class is monkeyevents.AbstractAgentEvent:
             continue
 
-        if not issubclass(event_class, common.agent_events.AbstractAgentEvent):
+        if not issubclass(event_class, monkeyevents.AbstractAgentEvent):
             continue
 
         agent_event_registry.register(event_class)

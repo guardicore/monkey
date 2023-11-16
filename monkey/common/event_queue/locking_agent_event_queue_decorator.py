@@ -1,8 +1,7 @@
 from typing import Type
 
+from monkeyevents import AbstractAgentEvent
 from monkeytypes import BasicLock
-
-from common.agent_events import AbstractAgentEvent
 
 from . import AgentEventSubscriber, IAgentEventQueue
 
