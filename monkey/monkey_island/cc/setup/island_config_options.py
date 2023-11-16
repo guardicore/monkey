@@ -22,6 +22,7 @@ class MongoDBConfig(InfectionMonkeyBaseModel):
     start_mongodb: bool = DEFAULT_START_MONGO_DB
 
 
+# TODO: rename redundant ssl_certificate_file and split the classes into idividual files
 class SSLCertificatesConfig(InfectionMonkeyBaseModel):
     ssl_certificate_file: Annotated[
         Path, Field(default=Path(DEFAULT_CRT_PATH)), BeforeValidator(expand_path)
