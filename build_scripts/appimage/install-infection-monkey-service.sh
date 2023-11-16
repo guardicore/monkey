@@ -58,6 +58,7 @@ After=network.target
 [Service]
 User=$1
 Type=simple
+Environment="MONKEY_APPIMAGE_SERVICE_RUN=1"
 ExecStart="${MONKEY_BIN}/${APPIMAGE_NAME}"
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 
