@@ -3,11 +3,11 @@ import time
 from ipaddress import IPv4Address
 from typing import Dict, Optional, Sequence, Tuple
 
+from monkeyevents import FingerprintingEvent
+from monkeyevents.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
 from monkeytypes import AgentID, DiscoveredService, NetworkProtocol, NetworkService, OperatingSystem
 
-from common.agent_events import FingerprintingEvent
 from common.event_queue import IAgentEventPublisher
-from common.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 SSH_REGEX = r"SSH-\d\.\d-OpenSSH"

@@ -1,10 +1,10 @@
 from typing import Any, Dict, Sequence
 
+from monkeyevents import AbstractAgentEvent
 from monkeytypes import AgentPluginManifest, AgentPluginType, Credentials, OperatingSystem
 
 from common import AgentRegistrationData, AgentSignals
 from common.agent_configuration import AgentConfiguration
-from common.agent_events import AbstractAgentEvent
 from common.agent_plugins import AgentPlugin
 from infection_monkey.island_api_client import IIslandAPIClient
 

@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeyevents import AbstractAgentEvent
 
-from common.agent_events import AbstractAgentEvent
 from common.event_queue import IAgentEventQueue
 from infection_monkey.plugin_event_forwarder import PluginEventForwarder
 
