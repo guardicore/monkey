@@ -2,8 +2,8 @@ from ipaddress import IPv4Address
 from unittest.mock import MagicMock
 
 import pytest
+from monkeyevents import ExploitationEvent, PasswordRestorationEvent
 
-from common.agent_events import ExploitationEvent, PasswordRestorationEvent
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.i_puppet import TargetHost
 from infection_monkey.utils.ids import get_agent_id
