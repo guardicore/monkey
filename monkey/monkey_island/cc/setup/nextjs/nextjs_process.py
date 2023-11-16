@@ -4,10 +4,18 @@ import subprocess
 from typing import Optional
 
 from common.types import NetworkPort
-from monkey_island.cc.server_utils.consts import NEXTJS_EXECUTION_COMMAND, UI_DIR
+from common.utils.environment import is_windows_os
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 TERMINATE_TIMEOUT = 10
 logger = logging.getLogger(__name__)
+
+
+UI_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "next_ui")
+_NODE_EXECUTABLE_PATH_WIN = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "node", "node.exe")
+_NODE_EXECUTABLE_PATH_LINUX = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "node", "node")
+NODE_EXECUTABLE_PATH = _NODE_EXECUTABLE_PATH_WIN if is_windows_os() else _NODE_EXECUTABLE_PATH_LINUX
+NEXTJS_EXECUTION_COMMAND = [NODE_EXECUTABLE_PATH, "server.js"]
 
 
 class NextJsProcess:
