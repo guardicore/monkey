@@ -3,11 +3,11 @@ import time
 from typing import Optional
 
 import psutil
+from monkeyevents import RAMConsumptionEvent
+from monkeyevents.tags import RESOURCE_HIJACKING_T1496_TAG
 from monkeytypes import AgentID, PercentLimited
 
-from common.agent_events import RAMConsumptionEvent
 from common.event_queue import IAgentEventPublisher
-from common.tags import RESOURCE_HIJACKING_T1496_TAG
 from common.utils.code_utils import PeriodicCaller
 
 from .consts import CRYPTOJACKER_PAYLOAD_TAG
