@@ -1,9 +1,8 @@
 from typing import List
 
-from monkeyevents import PasswordRestorationEvent
+from monkeyevents import EVENT_TYPE_FIELD, PasswordRestorationEvent
 from monkeytypes import Credentials, LMHash, NTHash, Username
 
-from common.agent_event_serializers import EVENT_TYPE_FIELD
 from envs.monkey_zoo.blackbox.analyzers.analyzer import Analyzer
 from envs.monkey_zoo.blackbox.analyzers.analyzer_log import AnalyzerLog
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
