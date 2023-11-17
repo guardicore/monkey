@@ -6,6 +6,8 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- Configurable Island port through node proxy server. #3827
 
 ### Added
 - Ability to change wallpaper as part of the ransomware simulation on Windows.
