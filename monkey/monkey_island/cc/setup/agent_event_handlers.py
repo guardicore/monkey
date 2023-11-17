@@ -1,6 +1,4 @@
-from ophidian import DIContainer
-
-from common.agent_events import (
+from monkeyevents import (
     AgentShutdownEvent,
     CredentialsStolenEvent,
     ExploitationEvent,
@@ -10,6 +8,8 @@ from common.agent_events import (
     PingScanEvent,
     TCPScanEvent,
 )
+from ophidian import DIContainer
+
 from common.event_queue import IAgentEventQueue
 from monkey_island.cc.agent_event_handlers import (
     FingerprintingEventHandler,

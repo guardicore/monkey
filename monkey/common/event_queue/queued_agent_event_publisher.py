@@ -1,6 +1,6 @@
 from multiprocessing import Queue
 
-from common.agent_events import AbstractAgentEvent
+from monkeyevents import AbstractAgentEvent
 
 from . import IAgentEventPublisher
 

@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Sequence, Type, TypeVar
 
+from monkeyevents import AbstractAgentEvent
 from monkeytypes import AgentID
-
-from common.agent_events import AbstractAgentEvent
 
 T = TypeVar("T", bound=AbstractAgentEvent)
 

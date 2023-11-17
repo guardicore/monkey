@@ -3,10 +3,10 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeyevents import AbstractAgentEvent
 from monkeytypes import SocketAddress
 from tests.monkey_island import InMemoryAgentRepository, InMemoryMachineRepository
 
-from common.agent_events import AbstractAgentEvent
 from monkey_island.cc.models import Agent, CommunicationType, Machine
 from monkey_island.cc.repositories import (
     AgentMachineFacade,

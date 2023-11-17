@@ -1,7 +1,8 @@
 import logging
 from typing import Optional
 
-from common.agent_events import PropagationEvent
+from monkeyevents import PropagationEvent
+
 from infection_monkey.network.relay import TCPRelay
 
 logger = logging.getLogger(__name__)

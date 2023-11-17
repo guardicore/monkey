@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "79929cfd76e2372c146930180eff020ab1909ca16814fe715fef9d2209c978b0"
+            "sha256": "05cc953f553c0b12abe10c73be50bac512ffc59d0591481b90611d7c61ebc883"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -80,6 +80,14 @@
             "index": "pypi",
             "markers": "python_version >= '3.11' and python_version < '4.0'",
             "version": "==0.3.0"
+        },
+        "monkeyevents": {
+            "hashes": [
+                "sha256:002112c62f0e2f569f7cda746a9587a4a50aecadc8c450d51ffa641ebf5c0366",
+                "sha256:a6e092ad6d549a7ced24334d69a8c275117ac537a1b2b041e3e8b37be6456c03"
+            ],
+            "index": "pypi",
+            "version": "==0.2.0"
         },
         "pydantic": {
             "extras": [

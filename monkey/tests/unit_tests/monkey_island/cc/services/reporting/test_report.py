@@ -6,6 +6,12 @@ from uuid import UUID
 
 import pytest
 import pytz
+from monkeyevents import (
+    AgentShutdownEvent,
+    ExploitationEvent,
+    PasswordRestorationEvent,
+    PropagationEvent,
+)
 from monkeytypes import AgentPluginType, SocketAddress
 from tests.data_for_tests.agent_plugin.manifests import (
     EXPLOITER_INCOMPLETE_MANIFEST,
@@ -21,12 +27,6 @@ from tests.monkey_island import (
     InMemoryAgentRepository,
 )
 
-from common.agent_events import (
-    AgentShutdownEvent,
-    ExploitationEvent,
-    PasswordRestorationEvent,
-    PropagationEvent,
-)
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
 from monkey_island.cc.repositories import IAgentEventRepository, IAgentRepository
 from monkey_island.cc.services.agent_plugin_service import IAgentPluginService

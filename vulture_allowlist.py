@@ -17,13 +17,6 @@ from asyauth.monkeytypes import UniCredential
 from flask_security import Security
 
 from common.agent_configuration import ScanTargetConfiguration
-from common.agent_events import (
-    AbstractAgentEvent,
-    CPUConsumptionEvent,
-    DefacementEvent,
-    FileEncryptionEvent,
-    RAMConsumptionEvent,
-)
 from common.agent_plugins import (
     AgentPlugin,
     AgentPluginManifest,
@@ -31,11 +24,6 @@ from common.agent_plugins import (
     AgentPluginRepositoryIndex,
 )
 from common.decorators import request_cache
-from common.tags import (
-    DEFACEMENT_T1491_TAG,
-    EXTERNAL_DEFACEMENT_T1491_002_TAG,
-    INTERNAL_DEFACEMENT_T1491_001_TAG,
-)
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
@@ -63,12 +51,6 @@ ScanTargetConfiguration.inaccessible_subnets_valid
 LMHash.validate_hash_format
 NTHash.validate_hash_format
 
-
-FileEncryptionEvent.model_config
-FileEncryptionEvent.dump_file_path
-FileEncryptionEvent._file_path_to_pure_path
-
-AbstractAgentEvent.smart_union
 
 AgentPluginManifest.title
 AgentPluginManifest.description
@@ -188,10 +170,6 @@ AgentPluginRepositoryIndex._sort_plugins_by_version
 AgentPluginRepositoryIndex.use_enum_values
 AgentPluginRepositoryIndex._convert_str_type_to_enum
 
-CPUConsumptionEvent.cpu_number
-CPUConsumptionEvent.utilization
-RAMConsumptionEvent.utilization
-
 # RDP
 InMemoryFileProvider.get_file_data
 InMemoryFileProvider.get_file_size
@@ -203,12 +181,3 @@ RDPIOSettings.video_out_format
 RDPIOSettings.clipboard_use_pyperclip
 
 AgentPluginService.install_agent_plugin_from_repository
-
-# Remove after #1247 is completed
-DefacementEvent
-DefacementEvent.DefacementTarget.INTERNAL
-DefacementEvent.DefacementTarget.EXTERNAL
-DefacementEvent.defacement_target
-DEFACEMENT_T1491_TAG
-INTERNAL_DEFACEMENT_T1491_001_TAG
-EXTERNAL_DEFACEMENT_T1491_002_TAG

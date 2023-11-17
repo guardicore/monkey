@@ -1,10 +1,10 @@
 from unittest.mock import MagicMock
 
 import pytest
+from monkeyevents import AbstractAgentEvent, IAgentEventSerializer
 from pydantic import Field
 
-from common.agent_event_serializers import AgentEventSerializerRegistry, IAgentEventSerializer
-from common.agent_events import AbstractAgentEvent
+from common.agent_event_serializers import AgentEventSerializerRegistry
 
 
 class SomeEvent(AbstractAgentEvent):

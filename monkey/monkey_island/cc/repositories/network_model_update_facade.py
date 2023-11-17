@@ -1,9 +1,9 @@
 from functools import lru_cache
 from ipaddress import IPv4Address, IPv4Interface
 
+from monkeyevents import AbstractAgentEvent
 from monkeytypes import AgentID, MachineID
 
-from common.agent_events import AbstractAgentEvent
 from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repositories import (
     AgentMachineFacade,

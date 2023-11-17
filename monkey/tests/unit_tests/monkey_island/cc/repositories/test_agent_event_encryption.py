@@ -2,9 +2,8 @@ import uuid
 from typing import Dict, Sequence
 
 import pytest
+from monkeyevents import AbstractAgentEvent, PydanticAgentEventSerializer
 
-from common.agent_event_serializers import PydanticAgentEventSerializer
-from common.agent_events import AbstractAgentEvent
 from monkey_island.cc.repositories.agent_event_encryption import decrypt_event, encrypt_event
 
 

@@ -7,9 +7,9 @@ from ipaddress import IPv4Address
 from time import time
 from typing import Tuple
 
+from monkeyevents import PingScanEvent
 from monkeytypes import AgentID, OperatingSystem
 
-from common.agent_events import PingScanEvent
 from common.event_queue import IAgentEventQueue
 from common.utils.environment import is_windows_os
 from infection_monkey.i_puppet import PingScanData

@@ -4,9 +4,9 @@ from threading import Event, current_thread
 from typing import Any, Dict, Sequence
 
 import mock_dependency
+from monkeyevents import CredentialsStolenEvent
 from monkeytypes import AgentID, Credentials, Password, Username
 
-from common.agent_events import CredentialsStolenEvent
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.utils.threading import interruptible_iter
 

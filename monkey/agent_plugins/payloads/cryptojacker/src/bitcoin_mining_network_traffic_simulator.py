@@ -7,10 +7,10 @@ from http import HTTPMethod
 from typing import Optional
 
 import requests
+from monkeyevents import HTTPRequestEvent
 from monkeytypes import AgentID, SocketAddress
 from requests.exceptions import ConnectionError, ConnectTimeout, ReadTimeout
 
-from common.agent_events import HTTPRequestEvent
 from common.event_queue import IAgentEventPublisher
 from common.utils.code_utils import PeriodicCaller
 

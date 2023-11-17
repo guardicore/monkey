@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "475a1d5a6dc8297430ad544c0d9957104ebbe5e67d5672adb71f2bd1f48cf8f3"
+            "sha256": "eb82c096efa5475a194cf97744c066e76669d5205ce9726b15b6a18e30c05abc"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -366,6 +366,7 @@
                 "sha256:58107ed83443e86067e41eff4631b058178191a355886f8e479e347fa1285fdf",
                 "sha256:edee9b0a7ff26621bd5a8c10ff484ae28737a2410d99b0bb9a6850c7fb977aa0"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.7'",
             "version": "==2.2.5"
         },
@@ -708,6 +709,14 @@
             "index": "pypi",
             "markers": "python_version >= '3.11' and python_version < '4.0'",
             "version": "==0.3.0"
+        },
+        "monkeyevents": {
+            "hashes": [
+                "sha256:002112c62f0e2f569f7cda746a9587a4a50aecadc8c450d51ffa641ebf5c0366",
+                "sha256:a6e092ad6d549a7ced24334d69a8c275117ac537a1b2b041e3e8b37be6456c03"
+            ],
+            "index": "pypi",
+            "version": "==0.2.0"
         },
         "ophidian": {
             "hashes": [
@@ -2020,6 +2029,7 @@
                 "sha256:844d7237d3f6280b0416f5375d9556cfd84df1945356fcc34b82e8aaacab40f3",
                 "sha256:f16491cad05a13f4825ecdf9ee4ff02925d9a3b1cf103d4d02f2f81802cce653"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.7'",
             "version": "==1.17.1"
         },

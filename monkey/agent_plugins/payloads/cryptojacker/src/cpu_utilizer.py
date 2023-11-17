@@ -6,11 +6,11 @@ from random import randbytes  # noqa: DUO102 (this isn't for cryptographic use)
 from typing import Optional
 
 import psutil
+from monkeyevents import CPUConsumptionEvent
+from monkeyevents.tags import RESOURCE_HIJACKING_T1496_TAG
 from monkeytypes import AgentID, NonNegativeFloat, OperatingSystem, PercentLimited
 
-from common.agent_events import CPUConsumptionEvent
 from common.event_queue import IAgentEventPublisher
-from common.tags import RESOURCE_HIJACKING_T1496_TAG
 from common.utils.environment import get_os
 from infection_monkey.utils.threading import create_daemon_thread
 

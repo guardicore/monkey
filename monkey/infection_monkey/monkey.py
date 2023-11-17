@@ -13,6 +13,15 @@ from pathlib import Path, WindowsPath
 from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
 
+from monkeyevents import (
+    AgentEventTag,
+    AgentShutdownEvent,
+    CredentialsStolenEvent,
+    HostnameDiscoveryEvent,
+    OSDiscoveryEvent,
+    PropagationEvent,
+)
+from monkeyevents.tags.attack import SYSTEM_INFORMATION_DISCOVERY_T1082_TAG
 from monkeytypes import OTP, AgentPluginType, NetworkPort, OperatingSystem, SocketAddress
 from pubsub.core import Publisher
 from serpentarium import PluginLoader, PluginThreadName
@@ -22,19 +31,10 @@ from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
-from common.agent_events import (
-    AgentEventTag,
-    AgentShutdownEvent,
-    CredentialsStolenEvent,
-    HostnameDiscoveryEvent,
-    OSDiscoveryEvent,
-    PropagationEvent,
-)
 from common.agent_registration_data import AgentRegistrationData
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
-from common.tags.attack import SYSTEM_INFORMATION_DISCOVERY_T1082_TAG
 from common.utils.code_utils import del_key, secure_generate_random_string
 from common.utils.environment import get_os
 from common.utils.file_utils import create_secure_directory, get_binary_io_sha256_hash

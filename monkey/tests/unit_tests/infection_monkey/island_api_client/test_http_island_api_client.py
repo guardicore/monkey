@@ -7,6 +7,7 @@ from uuid import UUID
 
 import pytest
 import requests
+from monkeyevents import AbstractAgentEvent, PydanticAgentEventSerializer
 from monkeytypes import (
     AgentPluginType,
     Credentials,
@@ -21,11 +22,7 @@ from tests.data_for_tests.propagation_credentials import CREDENTIALS_DICTS
 
 from common import AgentRegistrationData, AgentSignals
 from common.agent_configuration import AgentConfiguration
-from common.agent_event_serializers import (
-    AgentEventSerializerRegistry,
-    PydanticAgentEventSerializer,
-)
-from common.agent_events import AbstractAgentEvent
+from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
 from infection_monkey.island_api_client import (
     HTTPIslandAPIClient,

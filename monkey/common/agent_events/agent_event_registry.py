@@ -1,6 +1,6 @@
 from typing import Type
 
-from common.agent_events import AbstractAgentEvent
+from monkeyevents import AbstractAgentEvent
 
 
 class AgentEventRegistry:

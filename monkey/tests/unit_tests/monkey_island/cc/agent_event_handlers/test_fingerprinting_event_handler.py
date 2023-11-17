@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeyevents import FingerprintingEvent
 from monkeytypes import (
     DiscoveredService,
     NetworkPort,
@@ -12,7 +13,6 @@ from monkeytypes import (
     SocketAddress,
 )
 
-from common.agent_events import FingerprintingEvent
 from monkey_island.cc.agent_event_handlers import FingerprintingEventHandler
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IMachineRepository, NetworkModelUpdateFacade
