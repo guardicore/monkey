@@ -21,6 +21,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Hadoop exploiter configuration bug that wouldn't allow submission. #3839
 - Inconsistent error messages on login screen. #3702
 - A bug that prevented filtering on certain event types. #3864
+- Link-local IPs are no longer shown under Run Monkey -> Manual in the UI. #3825
 
 ### Removed
 - Fingerprinter configuration from UI. #3769, #3826
