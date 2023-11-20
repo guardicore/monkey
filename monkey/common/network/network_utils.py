@@ -13,7 +13,9 @@ def get_network_interfaces() -> List[IPv4Interface]:
     local_interfaces = []
     for adapter in ifaddr.get_adapters():
         for ip in _select_ipv4_ips(adapter.ips):
-            local_interfaces.append(ipaddress.IPv4Interface(f"{ip.ip}/{ip.network_prefix}"))
+            interface = ipaddress.IPv4Interface(f"{ip.ip}/{ip.network_prefix}")
+            if not interface.ip.is_link_local:
+                local_interfaces.append(interface)
 
     return local_interfaces
 
