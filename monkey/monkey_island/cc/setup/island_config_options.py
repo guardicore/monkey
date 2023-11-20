@@ -1,7 +1,10 @@
 from __future__ import annotations
 
-from types import MappingProxyType as ImmutableMapping
-from typing import Mapping
+from pathlib import Path
+from typing import Annotated
+
+from monkeytypes import InfectionMonkeyBaseModel
+from pydantic import BeforeValidator, Field
 
 from common.utils.file_utils import expand_path
 from monkey_island.cc.server_utils.consts import (
@@ -12,46 +15,26 @@ from monkey_island.cc.server_utils.consts import (
     DEFAULT_START_MONGO_DB,
 )
 
-_DATA_DIR = "data_dir"
-_SSL_CERT = "ssl_certificate"
-_SSL_CERT_FILE = "ssl_certificate_file"
-_SSL_CERT_KEY = "ssl_certificate_key_file"
-_MONGODB = "mongodb"
-_START_MONGODB = "start_mongodb"
-_LOG_LEVEL = "log_level"
+DEFAULT_ISLAND_PORT = 443
 
 
-class IslandConfigOptions:
-    def __init__(self, config_contents: Mapping[str, Mapping] = ImmutableMapping({})):
-        self.data_dir = DEFAULT_DATA_DIR
-        self.log_level = DEFAULT_LOG_LEVEL
-        self.start_mongodb = DEFAULT_START_MONGO_DB
-        self.crt_path = DEFAULT_CRT_PATH
-        self.key_path = DEFAULT_KEY_PATH
+class MongoDBConfig(InfectionMonkeyBaseModel):
+    start_mongodb: bool = DEFAULT_START_MONGO_DB
 
-        self._expand_paths()
 
-        self.update(config_contents)
+# TODO: rename redundant ssl_certificate_file and split the classes into idividual files
+class SSLCertificatesConfig(InfectionMonkeyBaseModel):
+    ssl_certificate_file: Annotated[
+        Path, Field(default=Path(DEFAULT_CRT_PATH)), BeforeValidator(expand_path)
+    ]
+    ssl_certificate_key_file: Annotated[
+        Path, Field(default=Path(DEFAULT_KEY_PATH)), BeforeValidator(expand_path)
+    ]
 
-    def update(self, config_contents: Mapping[str, Mapping]):
-        self.data_dir = config_contents.get(_DATA_DIR, self.data_dir)
 
-        self.log_level = config_contents.get(_LOG_LEVEL, self.log_level)
-
-        self.start_mongodb = config_contents.get(
-            _MONGODB, {_START_MONGODB: self.start_mongodb}
-        ).get(_START_MONGODB, self.start_mongodb)
-
-        self.crt_path = config_contents.get(_SSL_CERT, {_SSL_CERT_FILE: self.crt_path}).get(
-            _SSL_CERT_FILE, self.crt_path
-        )
-        self.key_path = config_contents.get(_SSL_CERT, {_SSL_CERT_KEY: self.key_path}).get(
-            _SSL_CERT_KEY, self.key_path
-        )
-
-        self._expand_paths()
-
-    def _expand_paths(self):
-        self.data_dir = expand_path(str(self.data_dir))
-        self.crt_path = expand_path(str(self.crt_path))
-        self.key_path = expand_path(str(self.key_path))
+class IslandConfigOptions(InfectionMonkeyBaseModel):
+    data_dir: Annotated[Path, Field(default=DEFAULT_DATA_DIR), BeforeValidator(expand_path)]
+    log_level: str = DEFAULT_LOG_LEVEL
+    mongodb: MongoDBConfig = MongoDBConfig()
+    ssl_certificate: SSLCertificatesConfig = SSLCertificatesConfig()
+    island_port: int = DEFAULT_ISLAND_PORT

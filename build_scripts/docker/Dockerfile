@@ -18,6 +18,8 @@ FROM python:$PYTHON_VERSION-slim
 COPY --from=builder /monkey /monkey
 WORKDIR /monkey
 EXPOSE 5000
+# Javascript runtime server is running on port 443 by default
+EXPOSE 443
 ENV MONKEY_DOCKER_CONTAINER=true
 RUN apt-get update \
     && apt-get install -y iputils-ping \
@@ -29,6 +31,8 @@ RUN apt-get update \
     && chmod 444 /monkey/monkey_island/cc/server.crt \
     && mkdir /monkey_island_data \
     && chmod 700 /monkey_island_data \
-    && chown -R monkey-island:monkey-island /monkey_island_data
+    && chown -R monkey-island:monkey-island /monkey_island_data \
+    && setcap 'cap_net_bind_service=+ep' /monkey/monkey_island/bin/node/node
+
 USER monkey-island
 ENTRYPOINT ["/monkey/entrypoint.sh"]

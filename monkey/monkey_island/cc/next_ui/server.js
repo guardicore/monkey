@@ -4,14 +4,18 @@ const next = require('next');
 const https = require('https');
 
 const fs = require('fs');
-const port = 443;
-const app = next({ dev: false, port: port });
+
+const host = '0.0.0.0';
+const port = process.env.JAVASCRIPT_RUNTIME_PORT;
+const ssl_cert_path = process.env.SSL_CERT_PATH;
+const ssl_key_path = process.env.SSL_KEY_PATH;
 
 const sslOptions = {
-    key: fs.readFileSync('../server.key'),
-    cert: fs.readFileSync('../server.crt'),
+    key: fs.readFileSync(ssl_key_path),
+    cert: fs.readFileSync(ssl_cert_path)
 };
 
+const app = next({dev: false, hostname:host, port: port});
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
@@ -25,6 +29,6 @@ app.prepare().then(() => {
         throw err;
     });
     server.listen(port, () => {
-        console.log('> Ready on https://localhost:' + port);
+        console.log(`Ready on https://${host}:${port}`);
     });
 });

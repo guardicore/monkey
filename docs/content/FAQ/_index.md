@@ -20,6 +20,7 @@ Below are some of the most common questions we receive about the Infection Monke
   - [Downloading logs](#downloading-logs)
   - [Log locations](#log-locations)
   - [Monkey Island Server logs](#monkey-island-server-logs)
+  - [Monkey Island UI logs](#monkey-island-ui-logs)
   - [Infection Monkey Agent logs](#infection-monkey-agent-logs)
 - [Running the Infection Monkey in a production environment](#running-the-infection-monkey-in-a-production-environment)
   - [How much of a footprint does the Infection Monkey leave?](#how-much-of-a-footprint-does-the-infection-monkey-leave)
@@ -196,6 +197,14 @@ The log enables you to see which requests were requested from the server and ext
 
 It's also possible to change the default log level by editing `log_level` value in a [server configuration file](../../reference/server_configuration).
 `log_level` can be set to `info`(default, less verbose) or `debug`(more verbose).
+
+
+#### Monkey Island UI logs
+
+The Monkey Island's UI log file (`nextjs.log`) is located in the
+[data directory]({{< ref "/reference/data_directory" >}}).
+
+This log contains the output of the server process hosting the web interface.
 
 
 #### Infection Monkey Agent logs

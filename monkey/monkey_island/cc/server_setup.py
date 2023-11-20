@@ -28,7 +28,7 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
 
 from ophidian import DIContainer  # noqa: E402
 
-from common.network.network_utils import get_my_ip_addresses  # noqa: E402
+from common.network.network_utils import get_my_ip_addresses, port_is_used  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
@@ -67,8 +67,8 @@ def run_monkey_island():
 
     _send_analytics(deployment, version)
 
-    _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
-    _start_nextjs_server(config_options.data_dir)
+    _initialize_mongodb_connection(config_options.mongodb.start_mongodb, config_options.data_dir)
+    _start_nextjs_server(ip_addresses, config_options)
 
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
     setup_island_event_handlers(container)
@@ -178,8 +178,20 @@ def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
         sys.exit(1)
 
 
-def _start_nextjs_server(data_dir: Path):
-    nextjs_process = start_nextjs(data_dir)
+def _start_nextjs_server(ip_addresses: Sequence[IPv4Address], config_options: IslandConfigOptions):
+    nextjs_port = config_options.island_port
+    if port_is_used(nextjs_port, ip_addresses):
+        logger.error(
+            f"Node server port {nextjs_port} is already in use. "
+            f"Specify another port in the server configuration file and try again."
+        )
+        sys.exit(1)
+    nextjs_process = start_nextjs(
+        config_options.data_dir,
+        nextjs_port,
+        config_options.ssl_certificate.ssl_certificate_file,
+        config_options.ssl_certificate.ssl_certificate_key_file,
+    )
     register_nextjs_shutdown_callback(nextjs_process)
 
 
@@ -198,15 +210,15 @@ def _start_island_server(
         return
 
     logger.info(
-        f"Using certificate path: {config_options.crt_path}, and key path: "
-        f"{config_options.key_path}."
+        f"Using certificate path: {config_options.ssl_certificate.ssl_certificate_file}, "
+        f"and key path: {config_options.ssl_certificate.ssl_certificate_key_file}."
     )
 
     http_server = WSGIServer(
         ("0.0.0.0", ISLAND_PORT),
         app,
-        certfile=config_options.crt_path,
-        keyfile=config_options.key_path,
+        certfile=config_options.ssl_certificate.ssl_certificate_file,
+        keyfile=config_options.ssl_certificate.ssl_certificate_key_file,
         log=_get_wsgi_server_logger(),
         error_log=logger,
     )
