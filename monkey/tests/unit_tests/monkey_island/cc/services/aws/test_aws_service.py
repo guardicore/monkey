@@ -6,6 +6,8 @@ import pytest
 from monkey_island.cc.services import AWSService
 from monkey_island.cc.services.aws.aws_instance import AWSInstance
 
+PORT = 443
+
 EXPECTED_INSTANCE_1 = {
     "instance_id": "1",
     "name": "comp1",
@@ -89,13 +91,13 @@ class StubAWSInstance(AWSInstance):
 
 def test_aws_is_on_aws__true():
     aws_instance = StubAWSInstance("1")
-    aws_service = AWSService(aws_instance)
+    aws_service = AWSService(aws_instance, PORT)
     assert aws_service.island_is_running_on_aws() is True
 
 
 def test_aws_is_on_aws__False():
     aws_instance = StubAWSInstance()
-    aws_service = AWSService(aws_instance)
+    aws_service = AWSService(aws_instance, PORT)
     assert aws_service.island_is_running_on_aws() is False
 
 
@@ -111,7 +113,7 @@ def aws_instance():
 
 @pytest.fixture
 def aws_service(aws_instance):
-    return AWSService(aws_instance)
+    return AWSService(aws_instance, PORT)
 
 
 def test_instance_id(aws_service):
@@ -128,7 +130,7 @@ def test_account_id(aws_service):
 
 class MockAWSService(AWSService):
     def __init__(self, aws_instance: AWSInstance, instance_info_response: Sequence[Dict[str, Any]]):
-        super().__init__(aws_instance)
+        super().__init__(aws_instance, PORT)
         self._instance_info_response = instance_info_response
 
     def _get_raw_managed_instances(self):
