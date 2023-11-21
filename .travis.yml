@@ -33,6 +33,9 @@ jobs:
         - pip install pip --upgrade
         - pipenv --version
         # Install island and monkey requirements as they are needed by UT's
+        - pushd monkey/agent_plugins
+        - find . -name 'Pipfile' -execdir pipenv sync --dev \;
+        - popd
         - pushd monkey/monkey_island
         - pipenv sync --dev  # This installs dependencies from lock
         - popd
@@ -71,7 +74,6 @@ jobs:
 
         ## run unit tests and generate coverage data
         - cd monkey  # this is our source dir
-        - pip install pytest-xdist
         - python -m pytest -n auto --dist worksteal --cov=. # have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
         # check js code. the npm install must happen after the flake8 because the node_modules folder will cause a lot of errors.
@@ -109,6 +111,9 @@ jobs:
         - nproc
         - pip install pipenv
           # Install island and monkey requirements as they are needed by UT's
+        - pushd monkey/agent_plugins
+        - find . -name 'Pipfile' -execdir pipenv sync --dev \;
+        - popd
         - pushd monkey/monkey_island
         - pipenv sync --dev  # This installs dependencies from lock
         - popd
@@ -119,7 +124,6 @@ jobs:
       script:
         ## run unit tests and generate coverage data
         - cd monkey  # this is our source dir
-        - pip install pytest-xdist
         - python -m pytest -n auto --dist worksteal
 
 
