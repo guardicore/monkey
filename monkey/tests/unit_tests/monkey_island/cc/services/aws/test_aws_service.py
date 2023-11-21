@@ -21,7 +21,7 @@ EXPECTED_INSTANCE_2 = {
     "ip_address": "192.168.1.2",
 }
 
-EMPTY_INSTANCE_INFO_RESPONSE = []
+EMPTY_INSTANCE_INFO_RESPONSE: list = []
 FULL_INSTANCE_INFO_RESPONSE = [
     {
         "ActivationId": "string",
@@ -89,15 +89,19 @@ class StubAWSInstance(AWSInstance):
         self._initialization_complete.set()
 
 
-def test_aws_is_on_aws__true():
-    aws_instance = StubAWSInstance("1")
-    aws_service = AWSService(aws_instance, PORT)
+def test_aws_is_on_aws__true(monkeypatch):
+    monkeypatch.setattr(
+        "monkey_island.cc.services.aws.aws_service.AWSInstance", lambda: StubAWSInstance("1")
+    )
+    aws_service = AWSService(PORT)
     assert aws_service.island_is_running_on_aws() is True
 
 
-def test_aws_is_on_aws__False():
-    aws_instance = StubAWSInstance()
-    aws_service = AWSService(aws_instance, PORT)
+def test_aws_is_on_aws__False(monkeypatch):
+    monkeypatch.setattr(
+        "monkey_island.cc.services.aws.aws_service.AWSInstance", lambda: StubAWSInstance()
+    )
+    aws_service = AWSService(PORT)
     assert aws_service.island_is_running_on_aws() is False
 
 
@@ -107,13 +111,16 @@ ACCOUNT_ID = "3"
 
 
 @pytest.fixture
-def aws_instance():
-    return StubAWSInstance(INSTANCE_ID, REGION, ACCOUNT_ID)
+def mock_aws_instance(monkeypatch):
+    aws_instance = StubAWSInstance(INSTANCE_ID, REGION, ACCOUNT_ID)
+    monkeypatch.setattr(
+        "monkey_island.cc.services.aws.aws_service.AWSInstance", lambda: aws_instance
+    )
 
 
 @pytest.fixture
-def aws_service(aws_instance):
-    return AWSService(aws_instance, PORT)
+def aws_service(monkeypatch, mock_aws_instance):
+    return AWSService(PORT)
 
 
 def test_instance_id(aws_service):
@@ -129,22 +136,22 @@ def test_account_id(aws_service):
 
 
 class MockAWSService(AWSService):
-    def __init__(self, aws_instance: AWSInstance, instance_info_response: Sequence[Dict[str, Any]]):
-        super().__init__(aws_instance, PORT)
+    def __init__(self, instance_info_response: Sequence[Dict[str, Any]]):
+        super().__init__(PORT)
         self._instance_info_response = instance_info_response
 
     def _get_raw_managed_instances(self):
         return self._instance_info_response
 
 
-def test_get_managed_instances__empty(aws_instance):
-    aws_service = MockAWSService(aws_instance, EMPTY_INSTANCE_INFO_RESPONSE)
+def test_get_managed_instances__empty(mock_aws_instance):
+    aws_service = MockAWSService(EMPTY_INSTANCE_INFO_RESPONSE)
     instances = aws_service.get_managed_instances()
     assert len(instances) == 0
 
 
-def test_get_managed_instances(aws_instance):
-    aws_service = MockAWSService(aws_instance, FULL_INSTANCE_INFO_RESPONSE)
+def test_get_managed_instances(mock_aws_instance):
+    aws_service = MockAWSService(FULL_INSTANCE_INFO_RESPONSE)
     instances = aws_service.get_managed_instances()
 
     assert len(instances) == 2
