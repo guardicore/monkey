@@ -70,7 +70,9 @@ def run_monkey_island():
     _initialize_mongodb_connection(config_options.mongodb.start_mongodb, config_options.data_dir)
     _start_nextjs_server(ip_addresses, config_options)
 
-    container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
+    container = _initialize_di_container(
+        ip_addresses, config_options.island_port, version, config_options.data_dir
+    )
     setup_island_event_handlers(container)
     setup_agent_event_handlers(container)
 
@@ -133,12 +135,14 @@ def _get_deployment() -> Deployment:
 
 def _initialize_di_container(
     ip_addresses: Sequence[IPv4Address],
+    island_port: int,
     version: Version,
     data_dir: Path,
 ) -> DIContainer:
     container = DIContainer()
 
     container.register_convention(Sequence[IPv4Address], "ip_addresses", ip_addresses)
+    container.register_convention(int, "island_port", island_port)
     container.register_instance(Version, version)
     container.register_convention(Path, "data_dir", data_dir)
 
