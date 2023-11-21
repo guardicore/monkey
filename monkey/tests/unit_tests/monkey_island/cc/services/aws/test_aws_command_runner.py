@@ -16,6 +16,7 @@ TIMEOUT = 0.1
 INSTANCE_ID = "BEEFFACE"
 ISLAND_IP = "127.0.0.1"
 INSTANCE_OTP = OTP("supersecretone")
+PORT = 443
 
 
 @pytest.fixture
@@ -139,7 +140,7 @@ def successful_mock_client(send_command_response, success_response):
 
 def test_correct_instance_id(successful_mock_client):
     start_infection_monkey_agent(
-        successful_mock_client, INSTANCE_ID, "linux", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+        successful_mock_client, INSTANCE_ID, "linux", INSTANCE_OTP, ISLAND_IP, PORT, TIMEOUT
     )
 
     successful_mock_client.send_command.assert_called_once()
@@ -149,7 +150,7 @@ def test_correct_instance_id(successful_mock_client):
 
 def test_linux_doc_name(successful_mock_client):
     start_infection_monkey_agent(
-        successful_mock_client, INSTANCE_ID, "linux", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+        successful_mock_client, INSTANCE_ID, "linux", INSTANCE_OTP, ISLAND_IP, PORT, TIMEOUT
     )
 
     successful_mock_client.send_command.assert_called_once()
@@ -159,7 +160,7 @@ def test_linux_doc_name(successful_mock_client):
 
 def test_windows_doc_name(successful_mock_client):
     start_infection_monkey_agent(
-        successful_mock_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+        successful_mock_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, PORT, TIMEOUT
     )
 
     successful_mock_client.send_command.assert_called_once()
@@ -169,7 +170,7 @@ def test_windows_doc_name(successful_mock_client):
 
 def test_linux_command(successful_mock_client):
     start_infection_monkey_agent(
-        successful_mock_client, INSTANCE_ID, "linux", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+        successful_mock_client, INSTANCE_ID, "linux", INSTANCE_OTP, ISLAND_IP, PORT, TIMEOUT
     )
 
     successful_mock_client.send_command.assert_called_once()
@@ -179,7 +180,7 @@ def test_linux_command(successful_mock_client):
 
 def test_windows_command(successful_mock_client):
     start_infection_monkey_agent(
-        successful_mock_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+        successful_mock_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, PORT, TIMEOUT
     )
 
     successful_mock_client.send_command.assert_called_once()
@@ -195,7 +196,7 @@ def test_multiple_status_queries(send_command_response, in_progress_response, su
     )
 
     command_results = start_infection_monkey_agent(
-        aws_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+        aws_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, PORT, TIMEOUT
     )
     assert command_results.status == AWSCommandStatus.SUCCESS
 
@@ -206,7 +207,7 @@ def test_in_progress_timeout(send_command_response, in_progress_response):
     aws_client.get_command_invocation = MagicMock(return_value=in_progress_response)
 
     command_results = start_infection_monkey_agent(
-        aws_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+        aws_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, PORT, TIMEOUT
     )
     assert command_results.status == AWSCommandStatus.IN_PROGRESS
 
@@ -217,7 +218,7 @@ def test_failed_command(send_command_response, error_response):
     aws_client.get_command_invocation = MagicMock(return_value=error_response)
 
     command_results = start_infection_monkey_agent(
-        aws_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, TIMEOUT
+        aws_client, INSTANCE_ID, "windows", INSTANCE_OTP, ISLAND_IP, PORT, TIMEOUT
     )
     assert command_results.status == AWSCommandStatus.ERROR
 
