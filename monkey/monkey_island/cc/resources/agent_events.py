@@ -1,4 +1,3 @@
-import json
 import logging
 import re
 from bisect import bisect_left, bisect_right
@@ -65,8 +64,12 @@ class AgentEvents(AbstractResource):
         except Exception as err:
             return {"error": str(err)}, HTTPStatus.UNPROCESSABLE_ENTITY
 
-        # TODO revert
-        serialized_events = [{"id": 123}, {"id": 456}, {"id": 789}]
+        events = self._get_filtered_events(type_, tag, success, timestamp_constraint)
+
+        try:
+            serialized_events = self._serialize_events(events)
+        except (TypeError, ValueError) as err:
+            return {"error": str(err)}, HTTPStatus.INTERNAL_SERVER_ERROR
 
         return serialized_events, HTTPStatus.OK
 
