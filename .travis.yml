@@ -130,7 +130,7 @@ jobs:
 notifications:
   slack:  # Notify to slack
       rooms:
-      - infectionmonkey:QaXbsx4g7tHFJW0lhtiBmoAg#ci  # room: #ci
+      - secure: "Qd3uu9YiaLXnZJsBWEyt/n0jLKuC8ULjllY8i09ZejQ2mR9XWWu+lqMNUd6h+T2ukSao0+Hgvuz2CKmTJtKla0HFMsc3r/V65XXAaMINVoek7+rZFzuqTC0jcUYX0jyxjExaJoFfz1ue2JZTHJLPNvLcnuwP3xxXscxrgppki8MO28T17aIbnxNA/hUpb5byW1BTF30z9raUe/Z/Z02cUrqNFkrEHKnsg7QRJkO5wp8eh8ZYYytd7vtZoiZjlTPLh5yTmUTL4MW2Fet2+x6UBCYqcVSG2rOlh69aVtVpg4YAB7YJABb28ZXu1VG7W+1qiCZA1Ol8G2GzU3dNB+pG8Zvk0dfQ56QdK6LX55tW3biTB6dyknyMp1ZCqbsh4GeOQ3RW8O24PZ/jwIV8Y2fSzSylgWnZd58gMnhDgmQFZbGJSWUvkUFoAFdf/E/XyXS4cKe0RyQfdRGVCHdQ2HfeGqSHt2D905KjQb/Sc2y199hRFZJ3eq6bSeOt4sKJpD0eMQKQMO9NSxNP59lHAMlFfQSNx1qPr/zQ3n2NvXPjhS7aEcnkhSgT5FmeUTB3vWILGyHYS1OdASDBGCsG/bxtUmgVUers7XSltwnjjAqbew7aER9b/flX6SAsbSowKXNDVL85HbWwvzQ0XC9I0aBBdzKESXfUktCzxyLiF/Ddb1s="
       on_success: change
       on_failure: always
   email:
