@@ -12,13 +12,14 @@ const host = '0.0.0.0';
 const port = process.env.NEXT_PUBLIC_JAVASCRIPT_RUNTIME_PORT;
 const ssl_cert_path = process.env.SSL_CERT_PATH;
 const ssl_key_path = process.env.SSL_KEY_PATH;
+const dev = Boolean(process.env.DEV);
 
 const sslOptions = {
     key: fs.readFileSync(ssl_key_path),
     cert: fs.readFileSync(ssl_cert_path)
 };
 
-const app = next({dev: false, hostname:host, port: port});
+const app = next({ dev: dev, hostname: host, port: port });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
