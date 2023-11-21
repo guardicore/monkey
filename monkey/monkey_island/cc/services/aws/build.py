@@ -1,6 +1,7 @@
-from .aws_instance import AWSInstance
+from ophidian import DIContainer
+
 from .aws_service import AWSService
 
 
-def build() -> AWSService:
-    return AWSService(AWSInstance())
+def build(container: DIContainer) -> AWSService:
+    return container.resolve(AWSService)
