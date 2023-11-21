@@ -8,11 +8,12 @@ from pubsub.core import Publisher
 from pymongo import MongoClient
 
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration
-from common.agent_event_serializers import (
+from common.agent_events import (
+    AgentEventRegistry,
     AgentEventSerializerRegistry,
-    register_common_agent_event_serializers,
+    register_builtin_agent_event_serializers,
+    register_builtin_agent_events,
 )
-from common.agent_events import AgentEventRegistry, register_common_agent_events
 from common.event_queue import (
     IAgentEventQueue,
     LockingAgentEventQueueDecorator,
@@ -163,14 +164,14 @@ def _build_machine_repository(container: DIContainer) -> IMachineRepository:
 
 def _setup_agent_event_registry(container: DIContainer):
     agent_event_registry = AgentEventRegistry()
-    register_common_agent_events(agent_event_registry)
+    register_builtin_agent_events(agent_event_registry)
 
     container.register_instance(AgentEventRegistry, agent_event_registry)
 
 
 def _setup_agent_event_serializers(container: DIContainer):
     agent_event_serializer_registry = AgentEventSerializerRegistry()
-    register_common_agent_event_serializers(agent_event_serializer_registry)
+    register_builtin_agent_event_serializers(agent_event_serializer_registry)
 
     container.register_instance(AgentEventSerializerRegistry, agent_event_serializer_registry)
 

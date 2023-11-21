@@ -27,9 +27,9 @@ from pubsub.core import Publisher
 from serpentarium import PluginLoader, PluginThreadName
 from serpentarium.logging import configure_child_process_logger
 
-from common.agent_event_serializers import (
+from common.agent_events import (
     AgentEventSerializerRegistry,
-    register_common_agent_event_serializers,
+    register_builtin_agent_event_serializers,
 )
 from common.agent_registration_data import AgentRegistrationData
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
@@ -363,7 +363,7 @@ class InfectionMonkey:
     # TODO: This is just a placeholder for now. We will modify/integrate it with PR #2279.
     def _setup_agent_event_serializers(self) -> AgentEventSerializerRegistry:
         agent_event_serializer_registry = AgentEventSerializerRegistry()
-        register_common_agent_event_serializers(agent_event_serializer_registry)
+        register_builtin_agent_event_serializers(agent_event_serializer_registry)
 
         return agent_event_serializer_registry
 
