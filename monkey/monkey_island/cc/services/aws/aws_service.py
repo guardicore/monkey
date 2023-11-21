@@ -23,13 +23,11 @@ logger = logging.getLogger(__name__)
 
 
 class AWSService:
-    def __init__(self, aws_instance: AWSInstance, island_port: int):
+    def __init__(self, island_port: int):
         """
-        :param aws_instance: An AWSInstance object representing the AWS instance that the Island is
-                             running on
         :param island_port: The port that the Island is running on
         """
-        self._aws_instance = aws_instance
+        self._aws_instance = AWSInstance()
         self._island_port = island_port
 
     def island_is_running_on_aws(self) -> bool:
