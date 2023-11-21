@@ -10,7 +10,7 @@ from monkey_island.cc.services.authentication_service.authentication_facade impo
 )
 from monkey_island.cc.services.authentication_service.flask_resources.register import Register
 
-USERNAME = "test_user"
+USERNAME = "testuser"
 PASSWORD = "test_password"
 TEST_REQUEST = f'{{"username": "{USERNAME}", "password": "{PASSWORD}"}}'
 FLASK_REGISTER_IMPORT = (
@@ -109,3 +109,17 @@ def test_register_error(
     response = make_registration_request(TEST_REQUEST)
 
     assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+def test_register_invalid_username(
+    monkeypatch, make_registration_request, mock_authentication_facade: AuthenticationFacade
+):
+    mock_authentication_facade.handle_successful_registration = MagicMock(side_effect=Exception())
+    invalid_username_request = (
+        f'{{"username": "constrainted-username123", "password": "{PASSWORD}"}}'
+    )
+    response = make_registration_request(invalid_username_request)
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert "response" in response.json
+    assert "errors" in response.json["response"]
