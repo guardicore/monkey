@@ -1,8 +1,9 @@
+# TCI Support Test Run
 # Infection Monkey travis.yml. See Travis documentation for information about this file structure.
 
 # If you change this file, you can validate using Travis CI's Build Config Explorer https://config.travis-ci.com/explore
 
-group: travis_latest
+# group: travis_latest
 
 branches:
   only:
@@ -18,8 +19,6 @@ jobs:
         - 3.11
       os: linux
       dist: focal
-      vm:
-        size: x-large
       env:
         - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv LIBSODIUM_MAKE_ARGS=-j8
 
@@ -96,8 +95,6 @@ jobs:
     - name: "Monkey Windows"
       language: bash
       os: windows
-      vm:
-        size: x-large
       before_install:
         - choco install python --version=3.11
         - python -m pip install -U pip setuptools virtualenv
