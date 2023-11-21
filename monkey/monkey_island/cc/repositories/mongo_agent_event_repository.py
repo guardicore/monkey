@@ -19,7 +19,7 @@ from monkeyevents import (
 from monkeytypes import AgentID
 from pymongo import MongoClient
 
-from common.agent_event_serializers import AgentEventSerializerRegistry
+from common.agent_events import AgentEventSerializerRegistry
 from monkey_island.cc.repositories import IAgentEventRepository
 from monkey_island.cc.repositories.i_agent_event_repository import T
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor

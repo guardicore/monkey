@@ -9,8 +9,7 @@ from monkeyevents import AbstractAgentEvent, AgentEventTag, PydanticAgentEventSe
 from pydantic import Field
 from tests.common import StubDIContainer
 
-from common.agent_event_serializers import AgentEventSerializerRegistry
-from common.agent_events import AgentEventRegistry
+from common.agent_events import AgentEventRegistry, AgentEventSerializerRegistry
 from common.event_queue import IAgentEventQueue
 from monkey_island.cc.repositories import IAgentEventRepository
 from monkey_island.cc.resources import AgentEvents

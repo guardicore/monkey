@@ -1,6 +1,6 @@
 from monkeytypes import AgentID, BasicLock, SocketAddress
 
-from common.agent_event_serializers import AgentEventSerializerRegistry
+from common.agent_events import AgentEventSerializerRegistry
 
 from . import (
     AbstractIslandAPIClientFactory,

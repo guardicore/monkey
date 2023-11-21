@@ -1,2 +1,4 @@
 from .agent_event_registry import AgentEventRegistry
 from .register_agent_events import register_common_agent_events
+from .agent_event_serializer_registry import AgentEventSerializerRegistry
+from .register_agent_event_serializers import register_common_agent_event_serializers

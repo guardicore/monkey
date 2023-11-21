@@ -9,8 +9,7 @@ from flask_security import auth_token_required, roles_accepted
 from monkeyevents import EVENT_TAG_REGEX, EVENT_TYPE_FIELD, AbstractAgentEvent
 from monkeytypes import JSONSerializable
 
-from common.agent_event_serializers import AgentEventSerializerRegistry
-from common.agent_events import AgentEventRegistry
+from common.agent_events import AgentEventRegistry, AgentEventSerializerRegistry
 from common.event_queue import IAgentEventQueue
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import IAgentEventRepository

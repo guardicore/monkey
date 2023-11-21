@@ -27,7 +27,7 @@ from pubsub.core import Publisher
 from serpentarium import PluginLoader, PluginThreadName
 from serpentarium.logging import configure_child_process_logger
 
-from common.agent_event_serializers import (
+from common.agent_events import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )

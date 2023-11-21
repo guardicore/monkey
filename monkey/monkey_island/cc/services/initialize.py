@@ -8,11 +8,12 @@ from pubsub.core import Publisher
 from pymongo import MongoClient
 
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration
-from common.agent_event_serializers import (
+from common.agent_events import (
+    AgentEventRegistry,
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
+    register_common_agent_events,
 )
-from common.agent_events import AgentEventRegistry, register_common_agent_events
 from common.event_queue import (
     IAgentEventQueue,
     LockingAgentEventQueueDecorator,
