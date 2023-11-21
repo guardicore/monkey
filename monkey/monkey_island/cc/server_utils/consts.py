@@ -43,4 +43,4 @@ DEFAULT_KEY_PATH = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))
 
 GEVENT_EXCEPTION_LOG = "gevent_exceptions.log"
 
-ISLAND_PORT = 5000
+FLASK_PORT = 5000
