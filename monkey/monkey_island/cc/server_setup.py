@@ -13,7 +13,7 @@ from gevent.pywsgi import WSGIServer
 
 from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment
-from monkey_island.cc.server_utils.consts import ISLAND_PORT
+from monkey_island.cc.server_utils.consts import FLASK_PORT
 from monkey_island.cc.setup.config_setup import get_server_config
 from monkey_island.cc.setup.nextjs.nextjs_setup import (
     register_nextjs_shutdown_callback,
@@ -219,7 +219,7 @@ def _start_island_server(
     )
 
     http_server = WSGIServer(
-        ("0.0.0.0", ISLAND_PORT),
+        ("0.0.0.0", FLASK_PORT),
         app,
         certfile=config_options.ssl_certificate.ssl_certificate_file,
         keyfile=config_options.ssl_certificate.ssl_certificate_key_file,
