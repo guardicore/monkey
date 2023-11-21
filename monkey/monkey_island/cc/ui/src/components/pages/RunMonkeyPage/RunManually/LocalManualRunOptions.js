@@ -10,7 +10,7 @@ import {Button, Form} from 'react-bootstrap';
 import IslandHttpClient, { APIEndpoint } from '../../../IslandHttpClient';
 import { useTimer } from 'react-timer-hook';
 import { CommandExpirationTimer } from '../utils/CommandExpirationTimer';
-
+import { NODE_PORT } from '../utils/ServerUtils';
 
 const LocalManualRunOptions = (props) => {
   return InlineSelection(getContents, {
@@ -42,6 +42,7 @@ const getContents = (props) => {
   useEffect(() => {
     getOtp();
   }, [])
+
   useEffect(() => {
     setCommands(generateCommands());
   }, [osType, selectedIp, customUsername, otp])
@@ -68,10 +69,10 @@ const getContents = (props) => {
 
   function generateCommands() {
     if (osType === OS_TYPES.WINDOWS_64) {
-      return [{type: 'PowerShell', command: GenerateLocalWindowsPowershell(selectedIp, customUsername, otp)}]
+      return [{type: 'PowerShell', command: GenerateLocalWindowsPowershell(selectedIp, NODE_PORT, customUsername, otp)}]
     } else {
-      return [{type: 'cURL', command: GenerateLocalLinuxCurl(selectedIp, customUsername, otp)},
-        {type: 'Wget', command: GenerateLocalLinuxWget(selectedIp, customUsername, otp)}]
+      return [{type: 'cURL', command: GenerateLocalLinuxCurl(selectedIp, NODE_PORT, customUsername, otp)},
+        {type: 'Wget', command: GenerateLocalLinuxWget(selectedIp, NODE_PORT, customUsername, otp)}]
     }
   }
 
