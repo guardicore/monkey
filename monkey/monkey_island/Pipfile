@@ -40,7 +40,6 @@ bleach = "*"
 email-validator = "*"
 monkey-types = "*"
 ophidian = "*"
-pysnmp = "*"
 psutil = "*"
 
 [dev-packages]
