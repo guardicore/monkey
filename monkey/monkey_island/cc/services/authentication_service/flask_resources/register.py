@@ -1,7 +1,8 @@
 import logging
 from http import HTTPStatus
+from typing import List
 
-from flask import Response, make_response, request
+from flask import Response, current_app, make_response, request
 from flask.typing import ResponseValue
 from flask_security.views import register
 
@@ -40,6 +41,10 @@ class Register(AbstractResource):
         except Exception:
             return responses.make_response_to_invalid_request()
 
+        errors = self._validate_username_and_password(username, password)
+        if errors:
+            return make_response({"response": {"errors": errors}}, HTTPStatus.BAD_REQUEST)
+
         response: ResponseValue = register()
 
         # Register view treat the request as form submit which may return something
@@ -54,3 +59,21 @@ class Register(AbstractResource):
             )
 
         return make_response(response)
+
+    def _validate_username_and_password(self, username: str, password: str) -> List[str]:
+        validation_messages = []
+        security = current_app.extensions["security"]
+        username_util = security._username_util
+        password_util = security._password_util
+
+        username_errors = username_util.validate(username)[0]
+        password_errors = password_util.validate(password, False)[0]
+        if username_errors is not None:
+            validation_messages.append(username_errors)
+        elif username == "":
+            validation_messages.append("Username not provided")
+
+        if password_errors is not None:
+            validation_messages += password_errors
+
+        return validation_messages
