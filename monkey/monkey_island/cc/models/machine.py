@@ -1,4 +1,3 @@
-import random
 from ipaddress import IPv4Interface
 from typing import Any, Dict, Mapping, Optional, Tuple, TypeAlias
 
@@ -61,9 +60,6 @@ class Machine(MutableInfectionMonkeyBaseModel):
     @field_serializer("network_services", when_used="json")
     def dump_network_services(self, value: Any):
         return {str(addr): val for addr, val in value.items()}
-
-    # TODO revert this
-    test_field: str = Field(default_factory=lambda: str(random.randint(0, 1000)))
 
     def __hash__(self):
         return self.id
