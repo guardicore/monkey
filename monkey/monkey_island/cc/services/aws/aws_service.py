@@ -23,12 +23,14 @@ logger = logging.getLogger(__name__)
 
 
 class AWSService:
-    def __init__(self, aws_instance: AWSInstance):
+    def __init__(self, aws_instance: AWSInstance, island_port: int):
         """
         :param aws_instance: An AWSInstance object representing the AWS instance that the Island is
                              running on
+        :param island_port: The port that the Island is running on
         """
         self._aws_instance = aws_instance
+        self._island_port = island_port
 
     def island_is_running_on_aws(self) -> bool:
         """
@@ -114,7 +116,7 @@ class AWSService:
     ):
         ssm_client = boto3.client("ssm", self.island_aws_instance.region)
         command_results = start_infection_monkey_agent(
-            ssm_client, instance_id, os, otp, island_ip, timeout
+            ssm_client, instance_id, os, otp, island_ip, self._island_port, timeout
         )
         results_queue.put(command_results)
 
