@@ -41,7 +41,6 @@ email-validator = "*"
 monkey-types = "*"
 ophidian = "*"
 monkeyevents = "*"
-pysnmp = "*"
 psutil = "*"
 
 [dev-packages]
