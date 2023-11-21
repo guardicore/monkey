@@ -1,2 +1,2 @@
 from .agent_event_registry import AgentEventRegistry
-from .register import register_common_agent_events
+from .register_agent_events import register_common_agent_events
