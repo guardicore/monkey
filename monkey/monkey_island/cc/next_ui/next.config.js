@@ -1,11 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
-    env: {},
-    //output: 'standalone',
     compiler: {
-        removeConsole:
-            process.env.NODE_ENV === process.env.NEXT_PUBLIC_PRODUCTION_KEY
+        removeConsole: false,
     },
     typescript: {
         // !! WARN !!
