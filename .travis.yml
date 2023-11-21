@@ -47,7 +47,7 @@ jobs:
         - node --version
         - npm --version
         - nvm --version
-        - nvm install 16
+        - nvm install 20
         - nvm use node
         - npm i -g eslint
         - node --version
