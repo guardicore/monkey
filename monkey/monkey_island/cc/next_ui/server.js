@@ -1,4 +1,8 @@
-import JS_RUNTIME_PORT from '../ui/src/components/pages/RunMonkeyPage/utils/ServerUtils.tsx';
+function getJSRuntimePort() {
+    return process.env.JAVASCRIPT_RUNTIME_PORT;
+}
+
+export const JS_RUNTIME_PORT = getJSRuntimePort();
 
 const next = require('next');
 
