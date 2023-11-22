@@ -2,3 +2,4 @@
 omit =
     */test_*.py
     */*_test.py
+    tests/*

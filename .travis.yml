@@ -2,8 +2,6 @@
 
 # If you change this file, you can validate using Travis CI's Build Config Explorer https://config.travis-ci.com/explore
 
-group: travis_latest
-
 branches:
   only:
     - develop
@@ -18,8 +16,6 @@ jobs:
         - 3.11
       os: linux
       dist: focal
-      vm:
-        size: x-large
       env:
         - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv LIBSODIUM_MAKE_ARGS=-j8
 
@@ -37,6 +33,9 @@ jobs:
         - pip install pip --upgrade
         - pipenv --version
         # Install island and monkey requirements as they are needed by UT's
+        - pushd monkey/agent_plugins
+        - find . -name 'Pipfile' -execdir pipenv sync --dev \;
+        - popd
         - pushd monkey/monkey_island
         - pipenv sync --dev  # This installs dependencies from lock
         - popd
@@ -48,7 +47,7 @@ jobs:
         - node --version
         - npm --version
         - nvm --version
-        - nvm install 16
+        - nvm install 20
         - nvm use node
         - npm i -g eslint
         - node --version
@@ -75,7 +74,6 @@ jobs:
 
         ## run unit tests and generate coverage data
         - cd monkey  # this is our source dir
-        - pip install pytest-xdist
         - python -m pytest -n auto --dist worksteal --cov=. # have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
         # check js code. the npm install must happen after the flake8 because the node_modules folder will cause a lot of errors.
@@ -96,8 +94,6 @@ jobs:
     - name: "Monkey Windows"
       language: bash
       os: windows
-      vm:
-        size: x-large
       before_install:
         - choco install python --version=3.11
         - python -m pip install -U pip setuptools virtualenv
@@ -115,6 +111,9 @@ jobs:
         - nproc
         - pip install pipenv
           # Install island and monkey requirements as they are needed by UT's
+        - pushd monkey/agent_plugins
+        - find . -name 'Pipfile' -execdir pipenv sync --dev \;
+        - popd
         - pushd monkey/monkey_island
         - pipenv sync --dev  # This installs dependencies from lock
         - popd
@@ -125,7 +124,6 @@ jobs:
       script:
         ## run unit tests and generate coverage data
         - cd monkey  # this is our source dir
-        - pip install pytest-xdist
         - python -m pytest -n auto --dist worksteal
 
 
