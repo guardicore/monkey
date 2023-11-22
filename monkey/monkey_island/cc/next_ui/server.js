@@ -1,9 +1,3 @@
-function getJSRuntimePort() {
-    return process.env.JAVASCRIPT_RUNTIME_PORT;
-}
-
-export const JS_RUNTIME_PORT = getJSRuntimePort();
-
 const next = require('next');
 
 // note the "https" not "http" required module. You will get an error if trying to connect with https
@@ -12,7 +6,7 @@ const https = require('https');
 const fs = require('fs');
 
 const host = '0.0.0.0';
-const port = JS_RUNTIME_PORT;
+const port = process.env.JAVASCRIPT_RUNTIME_PORT;
 const ssl_cert_path = process.env.SSL_CERT_PATH;
 const ssl_key_path = process.env.SSL_KEY_PATH;
 
