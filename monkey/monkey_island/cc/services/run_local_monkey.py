@@ -27,12 +27,12 @@ class LocalMonkeyRunService:
         self,
         data_dir: Path,
         agent_binary_service: IAgentBinaryService,
-        ip_addresses: Sequence[IPv4Address],
+        island_ip_addresses: Sequence[IPv4Address],
         island_port: int,
     ):
         self._data_dir = data_dir
         self._agent_binary_service = agent_binary_service
-        self._ips = ip_addresses
+        self._ips = island_ip_addresses
         self._island_port = island_port
 
     def run_local_monkey(self, otp: OTP):
