@@ -134,14 +134,14 @@ def _get_deployment() -> Deployment:
 
 
 def _initialize_di_container(
-    ip_addresses: Sequence[IPv4Address],
+    island_ip_addresses: Sequence[IPv4Address],
     island_port: int,
     version: Version,
     data_dir: Path,
 ) -> DIContainer:
     container = DIContainer()
 
-    container.register_convention(Sequence[IPv4Address], "ip_addresses", ip_addresses)
+    container.register_convention(Sequence[IPv4Address], "island_ip_addresses", island_ip_addresses)
     container.register_convention(int, "island_port", island_port)
     container.register_instance(Version, version)
     container.register_convention(Path, "data_dir", data_dir)
