@@ -10,7 +10,7 @@ import {Button, Form} from 'react-bootstrap';
 import IslandHttpClient, { APIEndpoint } from '../../../IslandHttpClient';
 import { useTimer } from 'react-timer-hook';
 import { CommandExpirationTimer } from '../utils/CommandExpirationTimer';
-import JS_RUNTIME_PORT from '../../../../../../next_ui/server';
+import { JS_RUNTIME_PORT } from '../../../../../../next_ui/src/app/consts.tsx';
 
 const LocalManualRunOptions = (props) => {
   return InlineSelection(getContents, {
