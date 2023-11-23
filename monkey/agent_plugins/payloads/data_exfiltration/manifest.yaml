@@ -1,0 +1,22 @@
+name: Data Exfiltration
+plugin_type: Payload
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - linux
+  - windows
+title: Ransomware
+version: 1.0.0
+description: >-
+  Simulates a data exfiltration attack on your network using a set of configurable behaviours.
+
+  To simulate data exfiltration, you'll need to provide Infection Monkey
+  with files or enable data generation that it can safely exfiltrate. Create a directory with
+  some files on each machine where the data exfiltration will run. No files will be exfiltrated
+  if a directory is not specified or doesn't exists, or if data generation is disabled in options.
+
+  Also define a data exfiltration mechanism which will be used when the payload runs.
+  The payload will use that mechanism to exfiltrate the data.
+safe: true
+link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/data-exfiltration-simulation
