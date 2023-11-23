@@ -1,0 +1,184 @@
+{
+    "title": "Data Exfiltration",
+    "description": "A paylod used to simulate Data Exfiltration from a machine.",
+    "type": "object",
+    "properties": {
+        "linux_root_dir": {
+            "title": "Linux root directory",
+            "type": ["null", "string"],
+            "pattern": "^$|^/|^\\$|^~",
+            "description": "A path to a root directory on Linux systems that contains files or directories you will allow Infection Monkey to exfiltrate. If no directory is specified, no files will be exfiltrated.",
+            "default": ""
+        },
+        "windows_root_dir": {
+            "title": "Windows root directory",
+            "type": ["null", "string"],
+            "pattern": "^$|^([A-Za-z]:(\\\\|/))|^%([A-Za-z#$'()*+,\\-\\.?@[\\]_`\\{\\}~ ]+([A-Za-z#$'()*+,\\-\\.?@[\\]_`\\{\\}~ ]|\\d)*)%|^\\\\{2}",
+            "description": "A path to a root directory on Windows systems that contains files or directories you will allow Infection Monkey to exfiltrate. If no directory is specified, no files will be exfiltrated.",
+            "default": ""
+        },
+        "recursive_exfiltration": {
+            "title": "Recursive Exfiltration through root directory",
+            "type": "boolean",
+            "description": "If enabled, Infection Monkey will recursively exfiltrate in each directory of the root directory specified.",
+            "default": false
+        },
+        "file_extenstions": {
+            "title": "Allowed list of file extensions",
+            "type": "array",
+            "description": " TODO: Make it a comma-separated input field. A comma-separated file extension which our payload will try to exfiltrated. If no file extenstions are provided, no files will be exfiltrated.",
+            "items": {
+                "type": "string"
+            }
+        },
+        "data_generation": {
+            "title": "Data Generation",
+            "description": "If options specified, the Infection Monkey will generate example data which will be exfiltrated",
+            "type": "object",
+            "properties": {
+                "enable_data_generation": {
+                    "title": "Enable Data Generation",
+                    "type": "boolean",
+                    "description": "If enabled, Infection Monkey will generate as much data as specified as limit.",
+                    "default": false
+                },
+                "data_limit": {
+                    "title": "Limit of generated data in Mb",
+                    "type": "number",
+                    "description": "Limit for the generated data in megabytes. If no limit specified, no data will be generated.",
+                    "minimum": 0,
+                    "default": 0
+                },
+                "data_types": {
+                    "title": "Types of generated data",
+                    "type": "array",
+                    "description": " TODO: Make it a checkbox list. Choose what type of data you want to be generated. If no types are selected, no data will be generated.",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "Credit cards",
+                            "Social Security Numbers",
+                            "Random Data"
+                        ]
+                    }
+                }
+          }
+        },
+        "data_exfiltration_mechanisms": {
+            "title": "Data Exfiltration Mechanisms",
+            "type": "object",
+            "description": "Data exfiltration mechanism which will be used in the process of Data Exfiltration.",
+            "oneOf": [
+                {
+                    "title": "S3 Bucket",
+                    "properties": {
+                        "s3_bucket": {
+                            "title": "S3 Bucket",
+                            "type": "object",
+                            "properties": {
+                                "s3_bucket_url": {
+                                    "title": "S3 Bucket URL",
+                                    "type": "string",
+                                    "description" : " TODO: Make it a url input field. S3 Bucket URL which will be used to push the data to. If not provided, no data will be pushed to a S3 Bucket"
+                                },
+                                "aws_credentials": {
+                                    "title": "AWS Credentials",
+                                    "type": "object",
+                                    "properties": {
+                                        "access_key": {
+                                            "title": "Access Key",
+                                            "type": "string"
+                                        },
+                                        "secret_key": {
+                                            "title": "Secret Key",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "access_key",
+                                        "private_key"
+                                    ]
+                                }
+                            }
+                        }
+
+                    },
+                    "required": [
+                        "s3_bucket"
+                    ]
+                },
+                {
+                    "title": "SSH/SFTP",
+                    "properties": {
+                        "ssh_sftp": {
+                            "title": "SSH/SFTP",
+                            "type": "object",
+                            "properties": {
+                                "credentials": {
+                                    "title": "Authentication credentials",
+                                    "type": "object",
+                                    "description": "Credentials used to authetnicate over SSH/SFTP",
+                                    "oneOf": [
+                                        {
+                                            "title": "Authentication Credentials",
+                                            "properties": {
+                                                "username": {
+                                                    "title": "Username for SSH authentication",
+                                                    "type": "string"
+                                                },
+                                                "password": {
+                                                    "title": "Password for SSH authentication",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "username",
+                                                "password"
+                                            ]
+                                        },
+                                        {
+                                            "title": "SSH Keypair",
+                                            "description": "TODO: Make it a sshkeypair field.",
+                                            "properties": {
+                                                "public_key": {
+                                                    "title": "Public Key used for SSH authentication",
+                                                    "type": "string"
+                                                },
+                                                "private_key": {
+                                                    "title": "Private Key used for SSH authentication",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "public_key",
+                                                "private_key"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "port": {
+                                    "title": "SSH/SFTP Port",
+                                    "type": "number",
+                                    "description": "Network port used for SSH/SFTP communication.",
+                                    "minimum": 0,
+                                    "maximum": 65535,
+                                    "default": 22
+                                },
+                                "data_location": {
+                                    "title": "Data Location directory",
+                                    "type": ["null", "string"],
+                                    "pattern": "^$|^/|^\\$|^~",
+                                    "description": "A path to a directory on Linux systems that the data will be exfiltrated to. If no directory is specified, no data will be exfiltrated.",
+                                    "default": ""
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "ssh_sftp"
+                    ]
+                }
+            ]
+        }
+    }
+}
