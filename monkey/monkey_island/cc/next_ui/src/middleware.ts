@@ -9,15 +9,25 @@ const PROTECTED_PATHS_FOR_AUTHORIZED_USER: string[] = [
     AUTH_PATHS.SIGN_UP
 ];
 
+// if pathname starts with any of the paths in PROTECTED_PATHS_FOR_AUTHORIZED_USER
+// return true
 const isPathProtectedForAuthorizedUser = (pathname: string) => {
-    // if pathname starts with any of the paths in PROTECTED_PATHS_FOR_AUTHORIZED_USER
-    // return true
     return PROTECTED_PATHS_FOR_AUTHORIZED_USER.some((path: string) =>
         pathname.startsWith(path)
     );
 };
 
+// NextResponse.next() - continue to next middleware
+// https://nextjs.org/docs/app/api-reference/functions/next-response#next
+// NextResponse.redirect() - redirect to a new location
 export default async function middleware(req: any) {
+    const isProduction =
+        process.env.NODE_ENV === process.env.NEXT_PUBLIC_PRODUCTION_KEY;
+
+    if (!isProduction) {
+        return NextResponse.next();
+    }
+
     const token = await getToken({ req });
     const isAuthenticated = !!token;
     const pathname = req.nextUrl.pathname;
@@ -30,7 +40,6 @@ export default async function middleware(req: any) {
     }
 
     if (!isAuthenticated && pathname.startsWith(AUTH_PATHS.SIGN_UP)) {
-        // https://nextjs.org/docs/app/api-reference/functions/next-response#next
         return NextResponse.next();
     }
 
