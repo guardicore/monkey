@@ -1,5 +1,5 @@
 function getJSRuntimePort() {
-    return process.env.JAVASCRIPT_RUNTIME_PORT;
+    return process.env.NEXT_PUBLIC_JAVASCRIPT_RUNTIME_PORT;
 }
 
 export const JS_RUNTIME_PORT = getJSRuntimePort();
