@@ -39,6 +39,7 @@
         "singleQuote": true,
         "trailingComma": "none",
         "bracketSameLine": true,
+        "endOfLine": "auto",
         "singleAttributePerLine": false
       }
     ],
