@@ -13,6 +13,7 @@ from gevent.pywsgi import WSGIServer
 
 from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment
+from monkey_island.cc.feature_flags import NEXT_JS_UI_FEATURE
 from monkey_island.cc.server_utils.consts import FLASK_PORT
 from monkey_island.cc.setup.config_setup import get_server_config
 from monkey_island.cc.setup.nextjs.nextjs_setup import (
@@ -68,7 +69,12 @@ def run_monkey_island():
     _send_analytics(deployment, version)
 
     _initialize_mongodb_connection(config_options.mongodb.start_mongodb, config_options.data_dir)
-    _start_nextjs_server(ip_addresses, config_options)
+    if NEXT_JS_UI_FEATURE:
+        _start_nextjs_server(ip_addresses, config_options)
+    else:
+        new_options = config_options.to_dict()
+        new_options["island_port"] = FLASK_PORT
+        config_options = IslandConfigOptions(**new_options)
 
     container = _initialize_di_container(
         ip_addresses, config_options.island_port, version, config_options.data_dir
