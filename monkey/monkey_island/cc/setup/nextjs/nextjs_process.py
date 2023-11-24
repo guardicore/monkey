@@ -3,7 +3,8 @@ import os
 import subprocess
 from typing import Optional
 
-from common.types import NetworkPort
+from monkeytypes import NetworkPort
+
 from common.utils.environment import is_windows_os
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 

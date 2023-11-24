@@ -2,7 +2,8 @@ import atexit
 import os
 from pathlib import Path
 
-from common.types import NetworkPort
+from monkeytypes import NetworkPort
+
 from monkey_island.cc.setup.nextjs.nextjs_process import NextJsProcess
 
 NEXTJS_LOG_FILENAME = "nextjs.log"
