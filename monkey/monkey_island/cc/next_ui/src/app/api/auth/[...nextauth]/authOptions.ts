@@ -4,8 +4,6 @@ import authPages from './authPages';
 import { nanoid } from 'nanoid';
 import { HTTP_METHODS } from '@/constants/http.constants';
 
-const SECRET: string = nanoid();
-
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
@@ -15,39 +13,24 @@ export const authOptions: NextAuthOptions = {
                 const { username, password } = credentials as any;
                 let resBody: any = null;
 
-                if (!username || !password) {
+                const loginResponse = await fetch(
+                    `${process.env.BASE_API}/login`,
+                    {
+                        method: HTTP_METHODS.POST,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        // @ts-ignore
+                        body: JSON.stringify({ username, password })
+                    }
+                );
+
+                if (loginResponse.status !== 200) {
                     return null;
                 }
 
-                // This is where you need to retrieve user data
-                // to verify with credentials
-                // Docs: https://next-auth.js.org/configuration/providers/credentials
-                try {
-                    const loginResponse = await fetch(
-                        `${process.env.BASE_API}/login`,
-                        {
-                            method: HTTP_METHODS.POST,
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            // @ts-ignore
-                            body: JSON.stringify({ username, password })
-                        }
-                    );
-                    resBody = await loginResponse.json();
-                } catch (e) {
-                    return null;
-                }
+                resBody = await loginResponse.json();
 
-                if (!resBody) {
-                    return null;
-                }
-
-                const statusCode = resBody?.meta?.code;
-
-                if (statusCode !== 200) {
-                    return null;
-                }
                 const user = resBody?.response?.user;
 
                 if (user) {
