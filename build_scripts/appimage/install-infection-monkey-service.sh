@@ -32,11 +32,20 @@ echo_help() {
 }
 
 install_service() {
+  exit_if_service_installed
   copy_appimage
   install_systemd_unit "$1"
 
   echo "The Infection Monkey service has been installed and will start on boot."
   echo "Run 'systemctl start infection-monkey' to start the service now."
+}
+
+exit_if_service_installed() {
+  if sudo systemctl list-units --full --all | grep -Fq "${SYSTEMD_UNIT_FILENAME}"; then
+    echo "Error: Service ${SYSTEMD_UNIT_FILENAME} is already installed."
+    echo -e "Please uninstall it with \033[1msudo ${SCRIPT_NAME} service --uninstall\033[0m before proceeding."
+    die
+  fi
 }
 
 copy_appimage() {
@@ -71,7 +80,20 @@ EOF
 
 uninstall_service() {
   if [ -d "${MONKEY_DATA_DIR}" ] ; then
-    sudo -u "$1" rm -rf "${MONKEY_DATA_DIR}"
+    read -r -p "Existing data directory (${MONKEY_DATA_DIR}) needs to be deleted. All data from previous runs will be lost. Proceed to delete? (y/n) " choice
+
+    case "$choice" in
+      y|Y )
+        username=$(systemctl show -p User ${SYSTEMD_UNIT_FILENAME} | cut -d'=' -f2)
+        sudo -u "${username}" rm -rf "${MONKEY_DATA_DIR}"
+        ;;
+      n|N )
+        die "Unable to uninstall ${SYSTEMD_UNIT_FILENAME}. Please backup and delete the existing data directory (${MONKEY_DATA_DIR}). Then, try again. To learn how to restore and use a backup, please refer to the documentation."
+        ;;
+      * )
+        die "Invalid input. Please enter 'y' or 'n'."
+        ;;
+    esac
   fi
 
   if [ -f "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
