@@ -8,6 +8,7 @@ TMP_SYSTEMD_UNIT="${PWD}/${SYSTEMD_UNIT_FILENAME}"
 SYSTEMD_DIR="/lib/systemd/system"
 MONKEY_BIN="/opt/infection-monkey/bin"
 APPIMAGE_NAME="InfectionMonkey.AppImage"
+MONKEY_DATA_DIR="$HOME/.monkey_island"
 
 die() {
     echo "$1" >&2
@@ -69,6 +70,10 @@ EOF
 }
 
 uninstall_service() {
+  if [ -d "${MONKEY_DATA_DIR}" ] ; then
+    sudo -u "$1" rm -rf "${MONKEY_DATA_DIR}"
+  fi
+
   if [ -f "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
     sudo rm -f "${MONKEY_BIN}/${APPIMAGE_NAME}"
   fi
@@ -80,7 +85,7 @@ uninstall_service() {
     sudo systemctl daemon-reload
   fi
 
-  echo "The Infection Monkey service has been uninstalled"
+  echo "The Infection Monkey service has been uninstalled. Data directory ${MONKEY_DATA_DIR} has been removed."
 }
 
 exit_if_user_doesnt_exist() {
@@ -149,7 +154,7 @@ if $do_install && $do_uninstall ; then
 fi
 
 if $do_uninstall ; then
-  uninstall_service
+  uninstall_service "$username"
   exit 0
 fi
 
