@@ -178,7 +178,7 @@ the Infection Map.
 
 ### Log locations
 
-If the logs can't be downloaded through the UI for any reason, you can collect the log files
+If the logs cannot be downloaded through the UI for any reason, you can collect the log files
 directly from the machine where an Agent or Monkey Island ran.
 
 #### Monkey Island Server logs

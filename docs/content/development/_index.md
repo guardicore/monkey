@@ -35,7 +35,7 @@ It's important to note that the Infection Monkey must be absolutely reliable. Ot
 
 ### Analysis plugins 🔬
 
-Successfully attacking every server in the network has little value if the Infection Monkey can't provide recommendations for reducing future risk. Whether it's explaining how the Infection Monkey used stolen credentials or escaped from locked-down networks, analysis is what helps users translate the Infection Monkey's activities into actionable next steps for improving security.
+Successfully attacking every server in the network has little value if the Infection Monkey cannot provide recommendations for reducing future risk. Whether it's explaining how the Infection Monkey used stolen credentials or escaped from locked-down networks, analysis is what helps users translate the Infection Monkey's activities into actionable next steps for improving security.
 
 ### Better code 💪
 

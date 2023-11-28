@@ -16,7 +16,7 @@ used to encrypt the file.
 
 {{% notice warning %}}
 Make sure that you don't lose your password. The data in encrypted
-configuration files can't be recovered if password is lost.
+configuration files cannot be recovered if password is lost.
 {{% /notice %}}
 
 ![Export
