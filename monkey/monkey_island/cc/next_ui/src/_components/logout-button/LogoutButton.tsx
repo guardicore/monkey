@@ -10,15 +10,16 @@ const LogoutButton = () => {
     const [logout, { isLoading }] = useLogoutMutation();
 
     const handleButtonClick = async () => {
+        // @ts-ignore
         logout(); // logout from server
     };
 
-    if (
-        status === AUTH_STATUS.UNAUTHENTICATED ||
-        status === AUTH_STATUS.LOADING
-    ) {
-        return null;
-    }
+    // if (
+    //     status === AUTH_STATUS.UNAUTHENTICATED ||
+    //     status === AUTH_STATUS.LOADING
+    // ) {
+    //     return null;
+    // }
 
     return (
         <Button

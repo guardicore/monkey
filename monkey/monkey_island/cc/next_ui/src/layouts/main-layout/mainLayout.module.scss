@@ -1,3 +1,5 @@
+@use 'src/styles/variables' as *;
+
 #main-layout {
   height: 100vh;
   width: 100vw;
@@ -7,7 +9,7 @@
 
   :global {
     #app-bar-wrapper {
-      height: 50px;
+      height: $app-bar-height;
       display: flex;
     }
 

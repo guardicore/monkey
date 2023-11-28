@@ -4,7 +4,7 @@ import authPages from './authPages';
 import { nanoid } from 'nanoid';
 import { HTTP_METHODS } from '@/constants/http.constants';
 
-const SECRET: string = nanoid();
+// const SECRET: string = nanoid();
 
 export const authOptions: NextAuthOptions = {
     providers: [

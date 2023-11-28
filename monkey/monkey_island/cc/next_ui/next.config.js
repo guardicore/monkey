@@ -6,6 +6,10 @@ const nextConfig = {
     compiler: {
         removeConsole:
             process.env.NODE_ENV === process.env.NEXT_PUBLIC_PRODUCTION_KEY
+                ? {
+                      exclude: ['error']
+                  }
+                : false
     },
     typescript: {
         // !! WARN !!

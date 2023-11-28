@@ -1,4 +1,5 @@
 import classes from './mainLayout.module.scss';
+import MonkeyAppBar from '@/_components/app-bar/AppBar';
 // import MonkeyAppBar from '@/_components/app-bar/AppBar';
 
 export default function MainLayout({
@@ -8,7 +9,9 @@ export default function MainLayout({
 }) {
     return (
         <div id={classes['main-layout']}>
-            <div id="app-bar-wrapper">app bar for monkey</div>
+            <div id="app-bar-wrapper">
+                <MonkeyAppBar />
+            </div>
             <main id="app-content-wrapper">{children}</main>
         </div>
     );
