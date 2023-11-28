@@ -14,7 +14,7 @@ or encrypted data. If your configuration contains any sensitive data, such as
 usernames and passwords, you can choose a password during export that will be
 used to encrypt the file.
 
-{{% notice note %}}
+{{% notice warning %}}
 Make sure that you don't lose your password. The data in encrypted
 configuration files can't be recovered if password is lost.
 {{% /notice %}}
