@@ -1,9 +1,9 @@
 import './globals.css';
-import type {Metadata} from 'next';
-import {Inter} from 'next/font/google';
-import {ReduxProvider} from '@/features/provider';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import { RootProvider } from '@/providers/RootProvider';
 
-const inter = Inter({subsets: ['latin']});
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
     title: 'Infection Monkey',
@@ -11,18 +11,15 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-                                       children
-                                   }: {
+    children
+}: {
     children: React.ReactNode;
 }) {
     return (
         <html lang="en">
-            <ReduxProvider>
-                <body className={inter.className}>
-                    <h1>Infection Monkey</h1>
-                    {children}
-                </body>
-            </ReduxProvider>
+            <body className={inter.className}>
+                <RootProvider>{children}</RootProvider>
+            </body>
         </html>
     );
 }
