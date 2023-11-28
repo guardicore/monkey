@@ -14,8 +14,10 @@ or encrypted data. If your configuration contains any sensitive data, such as
 usernames and passwords, you can choose a password during export that will be
 used to encrypt the file.
 
-> **_NOTE:_** Make sure that you don't lose your password. The data in
-> encrypted configuration files can't be recovered if password is lost.
+{{% notice note %}}
+Make sure that you don't lose your password. The data in encrypted
+configuration files can't be recovered if password is lost.
+{{% /notice %}}
 
 ![Export
 Configuration](/images/island/configuration_page/export_configuration.png
@@ -28,12 +30,17 @@ You can import a configuration file by clicking the **Import** button at the
 bottom of the configuration page. If the configuration file is encrypted you
 will be prompted to enter the password.
 
-> **_NOTE:_** Configuration files that were exported from older versions of
-> Infection Monkey cannot necessarily be imported into newer versions.
+{{% notice note %}}
+Configuration files that were exported from older versions of Infection Monkey
+cannot necessarily be imported into newer versions.
+{{% /notice %}}
 
-> **_NOTE:_** If a configuration file enables plugins (e.g. exploiters or
-> payloads) that are not installed, the Monkey Island will refuse to import it.
-> You can install plugins on the [plugin installation page](/usage/plugins/).
+
+{{% notice note %}}
+If a configuration file enables plugins (e.g. exploiters or payloads) that are
+not installed, the Monkey Island will refuse to import it. You can install
+plugins on the [plugin installation page](/usage/plugins/).
+{{% /notice %}}
 
 ### Importing a plaintext configuration file
 ![Configuration without
