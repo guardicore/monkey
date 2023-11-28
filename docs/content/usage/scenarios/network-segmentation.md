@@ -12,7 +12,7 @@ Segmentation is a method of creating secure zones in data centers and cloud depl
 
 [Segmentation is key](https://www.akamai.com/products/akamai-segmentation/use-cases) to protecting your network. It can reduce the network's attack surface and minimize the damage caused during a breach.
 
-You can use the Infection Monkey's cross-segment traffic feature to verify that your network segmentation configuration is adequate. This way, you can ensure that, even if a bad actor breaches your defenses, they can't move laterally between segments.
+You can use the Infection Monkey's cross-segment traffic feature to verify that your network segmentation configuration is adequate. This way, you can ensure that, even if a bad actor breaches your defenses, they cannot move laterally between segments.
 
 
 ## Configuration
@@ -26,7 +26,7 @@ You can use the Infection Monkey's cross-segment traffic feature to verify that 
 
 Execute The Infection Monkey on machines in different subnetworks using the "Manual" run option.
 
- Note that if the Infection Monkey can't communicate to the Monkey Island, it will
+ Note that if the Infection Monkey cannot communicate to the Monkey Island, it will
  not be able to send scan results, so make sure all machines can reach the Monkey Island.
 
 ![How to configure network segmentation testing](/images/island/configuration_page/segmentation_configuration.png "How to configure network segmentation testing")

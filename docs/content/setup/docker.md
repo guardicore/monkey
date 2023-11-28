@@ -193,7 +193,7 @@ using a different secret key to encrypt sensitive data than was initially used
 to store data in the `monkey-mongo` container.
 
 ```
-UnicodeDecodeError: 'utf-8' codec can't decode byte 0xee in position 0: invalid continuation byte
+UnicodeDecodeError: 'utf-8' codec cannot decode byte 0xee in position 0: invalid continuation byte
 ```
 
 Starting a new container from the `infectionmonkey/monkey-island:VERSION` image
