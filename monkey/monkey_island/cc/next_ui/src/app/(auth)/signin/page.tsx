@@ -4,47 +4,36 @@ import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useRegisterMutation } from '@/redux/features/api/authentication/internalAuthApi';
 import { login } from '@/helpers/signin/signin';
+import { useState } from 'react';
 
-const RegisterPage = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [register, { isLoading, isError, error }] = useRegisterMutation();
-
-    const [registerFormValues, setRegisterFormValues] = React.useState({
+const SignInPage = () => {
+    const [loginFormValues, setLoginFormValues] = useState({
         username: '',
         password: ''
     });
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        const registerData: any = await register(registerFormValues);
-        console.log('registerData', registerData);
-        if (
-            !(
-                registerData?.error?.status === 400 ||
-                registerData?.status === 400
-            )
-        ) {
-            await login(registerFormValues);
-        } else {
-            // TODO: something with error
-            console.log(registerData?.error?.data);
-        }
+        await login(loginFormValues);
     };
 
-    const handleRegisterFormValueChange = (e: any) => {
+    const handleLoginFormValueChange = (e: any) => {
         const name = e.target.name;
         const value =
             e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-        setRegisterFormValues({ ...registerFormValues, [name]: value });
+        setLoginFormValues({ ...loginFormValues, [name]: value });
     };
 
-    const renderRegisterForm = () => {
+    const renderLoginForm = () => {
         return (
             <>
                 <Container component="main" maxWidth="xs">
@@ -60,7 +49,7 @@ const RegisterPage = () => {
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Register
+                            Sign in
                         </Typography>
                         <Box
                             component="form"
@@ -74,8 +63,8 @@ const RegisterPage = () => {
                                 label="username"
                                 name="username"
                                 autoComplete="username"
-                                value={registerFormValues.username}
-                                onChange={handleRegisterFormValueChange}
+                                value={loginFormValues.username}
+                                onChange={handleLoginFormValueChange}
                                 autoFocus
                             />
                             <TextField
@@ -87,19 +76,41 @@ const RegisterPage = () => {
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
-                                value={registerFormValues.password}
-                                onChange={handleRegisterFormValueChange}
+                                value={loginFormValues.password}
+                                onChange={handleLoginFormValueChange}
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        value="remember"
+                                        color="primary"
+                                    />
+                                }
+                                label="Remember me"
                             />
                             <Button
                                 type="submit"
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}>
-                                Sign Up
+                                Sign In
                             </Button>
 
                             {/* @ts-ignore */}
                             {/*{isError && <p>{error.message}</p>}*/}
+
+                            <Grid container>
+                                <Grid item xs>
+                                    <Link href="#" variant="body2">
+                                        Forgot password?
+                                    </Link>
+                                </Grid>
+                                <Grid item>
+                                    <Link href="#" variant="body2">
+                                        {"Don't have an account? Sign Up"}
+                                    </Link>
+                                </Grid>
+                            </Grid>
                         </Box>
                     </Box>
                 </Container>
@@ -107,6 +118,6 @@ const RegisterPage = () => {
         );
     };
 
-    return renderRegisterForm();
+    return renderLoginForm();
 };
-export default RegisterPage;
+export default SignInPage;
