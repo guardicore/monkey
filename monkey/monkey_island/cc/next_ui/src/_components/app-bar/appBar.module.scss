@@ -1,0 +1,30 @@
+@use 'src/styles/variables' as *;
+
+#app-bar {
+  :global {
+    .MuiContainer-root {
+      height: $app-bar-height;
+
+      .MuiToolbar-root {
+        min-height: $app-bar-height;
+        height: $app-bar-height;
+        display: flex;
+        justify-content: space-between;
+
+        .app-logo-container {
+          display: flex;
+
+          :hover {
+            cursor: pointer;
+          }
+        }
+
+        .app-links {
+          width: 100%;
+          display: flex;
+          justify-content: space-evenly;
+        }
+      }
+    }
+  }
+}
