@@ -1,0 +1,22 @@
+@use 'src/styles/variables' as *;
+
+#main-layout {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  :global {
+    #app-bar-wrapper {
+      height: $app-bar-height;
+      display: flex;
+    }
+
+    #app-content-wrapper {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+  }
+}

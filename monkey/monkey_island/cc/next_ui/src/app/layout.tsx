@@ -1,4 +1,4 @@
-import './globals.css';
+import '../styles/globals.scss';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { RootProvider } from '@/providers/RootProvider';
@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     description: 'Adversary Emulation Platform'
 };
 
+// This layout is used for all pages including the SSR pages (auth, 404, etc.)
 export default function RootLayout({
     children
 }: {
