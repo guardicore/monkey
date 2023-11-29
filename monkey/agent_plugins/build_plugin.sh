@@ -52,7 +52,7 @@ config_schema = {}
 
 if Path("${plugin_options_filepath}").exists():
   from $plugin_options_filename import $plugin_options_model_name
-  config_schema = $plugin_options_model_name.model_json_schema()
+  config_schema = {"properties": $plugin_options_model_name.model_json_schema()["properties"]}
 
 with open("${PLUGIN_PATH}/config-schema.json", "w") as f:
   f.write(json.dumps(config_schema))
