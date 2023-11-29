@@ -35,6 +35,30 @@ rm requirements.txt
 pushd "$PLUGIN_PATH/src" || fail "$PLUGIN_PATH/src does not exist"
 
 source_archive=$PLUGIN_PATH/$SOURCE_FILENAME
+
+plugin_name=$(get_plugin_name "$PLUGIN_PATH")
+
+plugin_name_lowercase=$(lower "$plugin_name")
+plugin_options_filename="${plugin_name_lowercase}_options"
+plugin_options_filepath="${PLUGIN_PATH}/src/${plugin_options_filename}.py"
+plugin_options_model_name="${plugin_name}Options"
+
+python3.11 << EOF
+
+import json
+from pathlib import Path
+
+config_schema = {}
+
+if Path("${plugin_options_filepath}").exists():
+  from $plugin_options_filename import $plugin_options_model_name
+  config_schema = $plugin_options_model_name.model_json_schema()
+
+with open("${PLUGIN_PATH}/config-schema.json", "w") as f:
+  f.write(json.dumps(config_schema))
+
+EOF
+
 tar -zcf "$source_archive" --exclude __pycache__ --exclude .mypy_cache --exclude .pytest_cache --exclude .git --exclude .gitignore --exclude .DS_Store -- *
 
 rm -rf vendor*
