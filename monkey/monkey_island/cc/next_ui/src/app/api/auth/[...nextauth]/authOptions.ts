@@ -13,6 +13,10 @@ export const authOptions: NextAuthOptions = {
                 const { username, password } = credentials as any;
                 let resBody: any = null;
 
+                if (!username || !password) {
+                    return null;
+                }
+
                 const loginResponse = await fetch(
                     `${process.env.BASE_API}/login`,
                     {
