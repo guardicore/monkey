@@ -48,7 +48,7 @@ python3.11 << EOF
 import json
 from pathlib import Path
 
-config_schema = {}
+config_schema = {"type": "object"}
 
 if Path("${plugin_options_filepath}").exists():
   from $plugin_options_filename import $plugin_options_model_name
