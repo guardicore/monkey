@@ -35,11 +35,21 @@ get_plugin_filename() {
 
     manifest_filename=$(get_plugin_manifest_filename "$_plugin_path")
 
-    _name=$(get_value_from_key "${_plugin_path}/${manifest_filename}" name) || fail "Failed to get plugin name"
-    _name=$(ltrim "$_name")
+    _name=$(get_plugin_name "${_plugin_path}")
     _type=$(get_value_from_key "${_plugin_path}/${manifest_filename}" plugin_type) || fail "Failed to get plugin type"
     _type=$(ltrim "$(lower "$_type")")
     echo "${_name}-${_type}.tar"
+}
+
+get_plugin_name() {
+    _plugin_path=${1:-"."}
+
+    manifest_filename=$(get_plugin_manifest_filename "$_plugin_path")
+
+    _name=$(get_value_from_key "${_plugin_path}/${manifest_filename}" name) || fail "Failed to get plugin name"
+    _name=$(ltrim "$_name")
+
+    echo ${_name}
 }
 
 get_plugin_manifest_filename() {
