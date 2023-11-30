@@ -35,8 +35,9 @@ rm requirements.txt
 pushd "$PLUGIN_PATH/src" || fail "$PLUGIN_PATH/src does not exist"
 
 source_archive=$PLUGIN_PATH/$SOURCE_FILENAME
+plugin_manifest_filename=$(get_plugin_manifest_filename "$PLUGIN_PATH")
 
-plugin_name=$(get_plugin_name "$PLUGIN_PATH")
+plugin_name=$(get_plugin_name "$PLUGIN_PATH" "$plugin_manifest_filename")
 
 plugin_name_lowercase=$(lower "$plugin_name")
 plugin_options_filename="${plugin_name_lowercase}_options"
@@ -65,7 +66,6 @@ rm -rf vendor*
 popd || exit 1
 
 plugin_filename=$(get_plugin_filename "$PLUGIN_PATH") || fail "Failed to get plugin filename: $plugin_filename"
-plugin_manifest_filename=$(get_plugin_manifest_filename "$PLUGIN_PATH")
 tar -cf "$PLUGIN_PATH/$plugin_filename" "$plugin_manifest_filename" "$SCHEMA_FILENAME" "$SOURCE_FILENAME"
 rm "$source_archive"
 popd || exit 1
