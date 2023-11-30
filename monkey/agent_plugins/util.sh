@@ -67,7 +67,7 @@ get_plugin_type() {
     _manifest_filename=$2
 
     _type=$(get_value_from_key "${_plugin_path}/${_manifest_filename}" plugin_type) || fail "Failed to get plugin type"
-    _type=$(ltrim "$_type")
+    _type=$(ltrim "$(lower "$_type")")
 
     echo ${_type}
 }
