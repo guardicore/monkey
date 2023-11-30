@@ -9,8 +9,6 @@ const PROTECTED_PATHS_FOR_AUTHORIZED_USER: string[] = [
     AUTH_PATHS.SIGN_UP
 ];
 
-// if pathname starts with any of the paths in PROTECTED_PATHS_FOR_AUTHORIZED_USER
-// return true
 const isPathProtectedForAuthorizedUser = (pathname: string) => {
     return PROTECTED_PATHS_FOR_AUTHORIZED_USER.some((path: string) =>
         pathname.startsWith(path)
