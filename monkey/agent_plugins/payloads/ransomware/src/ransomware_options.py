@@ -42,25 +42,30 @@ WindowsDirectory = Annotated[str, StringConstraints(pattern=valid_ransomware_pat
 class RansomwareOptions(InfectionMonkeyBaseModel):
     file_extension: FileExtension = Field(
         default=".m0nk3y",
+        title="File Extension",
         description="The file extension that the Infection Monkey will use for the encrypted file.",
     )
     linux_target_dir: Optional[LinuxDirectory] = Field(
         default=None,
+        title="Linux Target Directory",
         description="A path to a directory on Linux systems that contains files you will allow "
         "Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
     )
     windows_target_dir: Optional[WindowsDirectory] = Field(
         default=None,
+        title="Windows Target Directory",
         description="A path to a directory on Windows systems that contains files you will allow "
         "Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
     )
     leave_readme: bool = Field(
         default=True,
+        title="Leave Ransom Note",
         description="If enabled, Infection Monkey will leave a ransomware note in the target "
         "directory.",
     )
     change_wallpaper: bool = Field(
         default=False,
+        title="Change Desktop Wallpaper",
         description=(
             "If enabled, Infection Monkey will change the desktop wallpaper on Windows systems"
         ),
