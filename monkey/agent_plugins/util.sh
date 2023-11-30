@@ -33,23 +33,32 @@ lower() {
 get_plugin_filename() {
     _plugin_path=${1:-"."}
 
-    manifest_filename=$(get_plugin_manifest_filename "$_plugin_path")
+    _manifest_filename=$(get_plugin_manifest_filename "$_plugin_path")
 
-    _name=$(get_plugin_name "${_plugin_path}")
-    _type=$(get_value_from_key "${_plugin_path}/${manifest_filename}" plugin_type) || fail "Failed to get plugin type"
-    _type=$(ltrim "$(lower "$_type")")
+    _name=$(get_plugin_name "${_plugin_path}" "${_manifest_filename}")
+    _type=$(get_plugin_type "${_plugin_path}" "${_manifest_filename}")
+
     echo "${_name}-${_type}.tar"
 }
 
 get_plugin_name() {
     _plugin_path=${1:-"."}
+    _manifest_filename=$2
 
-    manifest_filename=$(get_plugin_manifest_filename "$_plugin_path")
-
-    _name=$(get_value_from_key "${_plugin_path}/${manifest_filename}" name) || fail "Failed to get plugin name"
+    _name=$(get_value_from_key "${_plugin_path}/${_manifest_filename}" name) || fail "Failed to get plugin name"
     _name=$(ltrim "$_name")
 
     echo ${_name}
+}
+
+get_plugin_type() {
+    _plugin_path=${1:-"."}
+    _manifest_filename=$2
+
+    _type=$(get_value_from_key "${_plugin_path}/${_manifest_filename}" plugin_type) || fail "Failed to get plugin type"
+    _type=$(ltrim "$_type")
+
+    echo ${_type}
 }
 
 get_plugin_manifest_filename() {
