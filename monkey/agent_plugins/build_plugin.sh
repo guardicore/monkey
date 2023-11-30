@@ -31,6 +31,10 @@ pipenv requirements >> requirements.txt
 pip install -r requirements.txt -t src/$VENDOR_DIR
 rm requirements.txt
 
+# `monkey-types` and `monkeyevents` are required for the script generating `config-schema.json`.
+pip install monkey-types
+pip install monkeyevents
+
 # Package everything up
 pushd "$PLUGIN_PATH/src" || fail "$PLUGIN_PATH/src does not exist"
 
