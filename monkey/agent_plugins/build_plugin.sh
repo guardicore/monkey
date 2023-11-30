@@ -43,7 +43,7 @@ pushd "$PLUGIN_PATH/src" || fail "$PLUGIN_PATH/src does not exist"
 source_archive=$PLUGIN_PATH/$SOURCE_FILENAME
 plugin_manifest_filename=$(get_plugin_manifest_filename "$PLUGIN_PATH")
 
-plugin_name=$(get_plugin_name "$PLUGIN_PATH" "$plugin_manifest_filename")
+plugin_name=$(get_plugin_name "${PLUGIN_PATH}/${plugin_manifest_filename}")
 
 plugin_name_lowercase=$(lower "$plugin_name")
 plugin_options_filename="${plugin_name_lowercase}_options"
