@@ -41,6 +41,17 @@ get_plugin_filename() {
     echo "${_name}-${_type}.tar"
 }
 
+get_plugin_manifest_filename() {
+    manifest_filename=manifest.yaml
+    _plugin_path=${1:-"."}
+
+    if [ ! -f "${_plugin_path}/${manifest_filename}" ]; then
+        manifest_filename=manifest.yml
+    fi
+
+    echo $manifest_filename
+}
+
 get_plugin_name() {
     _plugin_path=${1:-"."}
     _manifest_filename=$2
@@ -59,15 +70,4 @@ get_plugin_type() {
     _type=$(ltrim "$_type")
 
     echo ${_type}
-}
-
-get_plugin_manifest_filename() {
-    manifest_filename=manifest.yaml
-    _plugin_path=${1:-"."}
-
-    if [ ! -f "${_plugin_path}/${manifest_filename}" ]; then
-        manifest_filename=manifest.yml
-    fi
-
-    echo $manifest_filename
 }
