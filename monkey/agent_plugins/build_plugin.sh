@@ -32,6 +32,8 @@ pip install -r requirements.txt -t src/$VENDOR_DIR
 rm requirements.txt
 
 # `monkey-types` and `monkeyevents` are required for the script generating `config-schema.json`.
+# TODO: When plugins are in their own repositories, this should be handled by
+# activating the plugin's virtualenv.
 pip install monkey-types
 pip install monkeyevents
 
