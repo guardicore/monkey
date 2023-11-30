@@ -9,5 +9,5 @@ class MimikatzOptions(InfectionMonkeyBaseModel):
         default=[],
         title="Excluded Username Prefixes",
         description="Mimikatz will not collect credentials for any user whose username"
-        " starts with one of theses prefixes.",
+        " starts with one of these prefixes.",
     )
