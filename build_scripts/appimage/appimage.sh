@@ -50,7 +50,7 @@ setup_build_dir() {
   generate_ssl_cert "$BUILD_DIR"
   if [[ $FEATURE_FLAGS == *"NEXT_JS_UI"* ]]; then
     log_message "Building Next.js frontend"
-    build_next_frontend "$BUILD_DIR" "$is_release_build"
+    build_nextjs_frontend "$BUILD_DIR" "$is_release_build"
   else
     log_message "Building legacy frontend"
     build_frontend "$BUILD_DIR" "$is_release_build"
