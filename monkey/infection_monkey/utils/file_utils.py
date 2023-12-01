@@ -39,10 +39,10 @@ def mark_file_for_deletion_on_windows(file_path: WindowsPath):
     )
 
     if mark_file_response == 0:
-        logger.debug(
-            f"Error marking file {file_path} for deletion on next boot:"
-            f"{ctypes.windll.kernel32.GetLastError()}"  # type: ignore [attr-defined]
-        )
+        error_message = ctypes.FormatError(
+            ctypes.windll.kernel32.GetLastError()
+        )  # type: ingore [attr-defined]
+        logger.debug(f"Error marking file {file_path} for deletion on next boot: {error_message}")
         return
 
     logger.debug(f"File {file_path} is marked for deletion on next boot")
