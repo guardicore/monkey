@@ -25,7 +25,11 @@ setup_build_dir() {
 
   generate_ssl_cert "$build_dir"
 
-  build_frontend "$build_dir" "$is_release_build"
+  if [[ $FEATURE_FLAGS == *"NEXT_JS_UI"* ]]; then
+    build_next_frontend "$BUILD_DIR" "$is_release_build"
+  else
+    build_frontend "$BUILD_DIR" "$is_release_build"
+  fi
 }
 
 copy_entrypoint_to_build_dir() {
