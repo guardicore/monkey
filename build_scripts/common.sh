@@ -77,7 +77,7 @@ generate_ssl_cert() {
   "$island_path"/linux/create_certificate.sh "$island_path"/cc
 }
 
-build_frontend() {
+build_nextjs_frontend() {
   local ui_dir="$1/monkey_island/cc/next_ui"
   local is_release_build=$2
   pushd "$ui_dir" || handle_error
@@ -104,6 +104,26 @@ build_frontend() {
   mv "${ui_dir}_standalone" "$ui_dir"
 
   popd || handle_error
+}
+
+build_frontend() {
+  local ui_dir="$1/monkey_island/cc/ui"
+  local is_release_build=$2
+  pushd "$ui_dir" || handle_error
+
+  log_message "Generating front end"
+  npm ci
+  if [ "$is_release_build" == true ]; then
+    log_message "Running production front end build"
+    npm run dist
+  else
+    log_message "Running development front end build"
+    npm run dev
+  fi
+
+  popd || handle_error
+
+  remove_node_modules "$ui_dir"
 }
 
 get_commit_id() {
