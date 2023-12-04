@@ -4,6 +4,7 @@
 self="$(readlink -f -- $0)"
 here="${self%/*}"
 APPDIR="${APPDIR:-${here}}"
+FEATURE_FLAGS="${FEATURE_FLAGS}"
 
 # Export SSL certificate
 export SSL_CERT_FILE="${APPDIR}/opt/_internal/certs.pem"
@@ -39,7 +40,7 @@ if [[ -z ${MONKEY_APPIMAGE_SERVICE_RUN+x} ]]; then
     export HOME_ORIGINAL=$HOME
     export USER_ORIGINAL=$USER
 
-    (PYTHONHOME="${APPDIR}/opt/python3.11" sudo capsh --keep=1 --user=${USER_ORIGINAL} --inh=cap_net_bind_service --addamb=cap_net_bind_service -- -c "env HOME=${HOME_ORIGINAL} USER=${USER_ORIGINAL} ${run_island}" "$@")
+    (PYTHONHOME="${APPDIR}/opt/python3.11" sudo capsh --keep=1 --user=${USER_ORIGINAL} --inh=cap_net_bind_service --addamb=cap_net_bind_service -- -c "env HOME=${HOME_ORIGINAL} USER=${USER_ORIGINAL} FEATURE_FLAGS=${FEATURE_FLAGS} ${run_island}" "$@")
 else
     (PYTHONHOME="${APPDIR}/opt/python3.11" ${run_island})
 fi
