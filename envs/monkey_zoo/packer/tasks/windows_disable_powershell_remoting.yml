@@ -1,0 +1,4 @@
+---
+- name: Disable WinRM on startup
+  win_shell: |
+    Set-Service -Name "winrm" -StartupType Disabled
