@@ -14,6 +14,7 @@ from .utils import (
     add_tcp_ports,
     replace_agent_configuration,
     replace_propagation_credentials,
+    set_keep_tunnel_open_time,
     set_maximum_depth,
 )
 
@@ -63,6 +64,7 @@ def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguratio
 
 
 test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 2)
+test_agent_configuration = set_keep_tunnel_open_time(test_agent_configuration, 20)
 test_agent_configuration = _add_exploiters(test_agent_configuration)
 test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_fingerprinters(test_agent_configuration)
