@@ -71,6 +71,8 @@
       ansible.windows.win_reboot:
       when: res.reboot_required
 
+    - import_tasks: tasks/windows_disable_powershell_remoting.yml
+
     - name: Delete packer_user
       win_user:
         name: packer_user

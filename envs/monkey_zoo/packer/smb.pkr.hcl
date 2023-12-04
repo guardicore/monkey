@@ -27,9 +27,9 @@ build {
         playbook_file = "${path.root}/setup_mimikatz_15.yml"
         ansible_env_vars = ["ANSIBLE_HOST_KEY_CHECKING=False"]
         extra_arguments = [
-                "-e", "ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore",
-                "-e", "ansible_password=${var.packer_user_password}",
-                "-vvv"
+            "-e", "ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore",
+            "-e", "ansible_password=${var.packer_user_password}",
+            "-vvv"
         ]
     }
 }
