@@ -16,6 +16,7 @@ from infection_monkey.i_puppet import (
     PortScanDataDict,
     TargetHost,
 )
+from infection_monkey.local_machine_info import LocalMachineInfo
 from infection_monkey.puppet import PluginCompatibilityVerifier
 
 from . import PluginRegistry
@@ -32,11 +33,13 @@ class Puppet(IPuppet):
         plugin_registry: PluginRegistry,
         plugin_compatibility_verifier: PluginCompatibilityVerifier,
         agent_id: AgentID,
+        local_machine_info: LocalMachineInfo,
     ) -> None:
         self._plugin_registry = plugin_registry
         self._agent_event_queue = agent_event_queue
         self._plugin_compatibility_verifier = plugin_compatibility_verifier
         self._agent_id = agent_id
+        self._local_machine_info = local_machine_info
 
     def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
         self._plugin_registry.load_plugin(plugin_type, plugin_name, plugin)
