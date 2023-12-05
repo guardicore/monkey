@@ -1,6 +1,5 @@
 import classes from './mainLayout.module.scss';
 import MonkeyAppBar from '@/_components/app-bar/AppBar';
-// import MonkeyAppBar from '@/_components/app-bar/AppBar';
 
 export default function MainLayout({
     children
