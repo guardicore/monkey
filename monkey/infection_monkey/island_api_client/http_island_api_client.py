@@ -101,10 +101,10 @@ class HTTPIslandAPIClient(IIslandAPIClient):
                 "/agent-otp-login", {"agent_id": str(self._agent_id), "otp": otp.get_secret_value()}
             )
             self._update_token_from_response(response)
-        except Exception:
+        except Exception as err:
             # We need to catch all exceptions here because we don't want to leak the OTP
             raise IslandAPIAuthenticationError(
-                "HTTPIslandAPIClient failed to authenticate to the Island."
+                f"HTTPIslandAPIClient failed to authenticate to the Island: {err}"
             )
 
     def _update_token_from_response(self, response: Response):
