@@ -122,7 +122,7 @@ class Puppet(IPuppet):
                 f'The exploiter, "{name}", is not compatible with the operating system on {host.ip}'
             )
 
-        self._local_machine_info.set_interface_to_target(get_interface_to_target(host.ip))
+        self._local_machine_info.set_interface_to_target(get_interface_to_target(str(host.ip)))
 
         exploiter = self._plugin_registry.get_plugin(AgentPluginType.EXPLOITER, name)
         exploiter_result = exploiter.run(
