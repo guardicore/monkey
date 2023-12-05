@@ -63,6 +63,7 @@ from infection_monkey.island_api_client import (
     IslandAPIAuthenticationError,
     IslandAPIError,
 )
+from infection_monkey.local_machine_info import LocalMachineInfo
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
@@ -443,8 +444,15 @@ class InfectionMonkey:
             self._island_api_client,
             self._operating_system,
         )
+
+        local_machine_info = LocalMachineInfo(operating_system=self._operating_system)
+
         puppet = Puppet(
-            self._agent_event_queue, plugin_registry, plugin_compatibility_verifier, self._agent_id
+            agent_event_queue=self._agent_event_queue,
+            plugin_registry=plugin_registry,
+            plugin_compatibility_verifier=plugin_compatibility_verifier,
+            agent_id=self._agent_id,
+            local_machine_info=local_machine_info,
         )
 
         puppet.load_plugin(
