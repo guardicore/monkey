@@ -53,6 +53,7 @@ def puppet(
         plugin_registry=mock_plugin_registry,
         plugin_compatibility_verifier=mock_plugin_compatibility_verifier,
         agent_id=AgentID("4277aa81-660b-4673-b96c-443ed525b4d0"),
+        local_machine_info=MagicMock(),
     )
 
 
