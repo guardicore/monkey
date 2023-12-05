@@ -61,7 +61,9 @@ class Puppet(IPuppet):
         credentials_collector = self._plugin_registry.get_plugin(
             AgentPluginType.CREDENTIALS_COLLECTOR, name
         )
-        return credentials_collector.run(options=options, interrupt=interrupt)
+        return credentials_collector.run(
+            options=options, interrupt=interrupt, local_machine_info=self._local_machine_info
+        )
 
     def ping(self, host: str, timeout: float = CONNECTION_TIMEOUT) -> PingScanData:
         return network_scanning.ping(host, timeout, self._agent_event_queue, self._agent_id)
