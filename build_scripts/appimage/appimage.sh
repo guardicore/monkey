@@ -69,7 +69,8 @@ setup_python_appdir() {
 
   chmod u+x "$PYTHON_APPIMAGE"
 
-  "./$PYTHON_APPIMAGE" --appimage-extract
+  log_message "extracting Python Appimage"
+  "./$PYTHON_APPIMAGE" --appimage-extract 1>/dev/null
   rm "$PYTHON_APPIMAGE"
 }
 
