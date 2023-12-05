@@ -322,7 +322,7 @@ resource "google_compute_instance" "rdp-65" {
 resource "google_compute_instance" "mimikatz-14" {
   name              = "${local.resource_prefix}mimikatz-14"
   machine_type      = "n1-standard-1"
-  tags              = ["test-machine", "windowsserver2016", "windows"]
+  tags              = ["mimikatz-14", "test-machine", "windowsserver2016", "windows"]
   resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
@@ -343,7 +343,7 @@ resource "google_compute_instance" "mimikatz-14" {
 resource "google_compute_instance" "mimikatz-15" {
   name              = "${local.resource_prefix}mimikatz-15"
   machine_type      = "n1-standard-1"
-  tags              = ["test-machine", "windowsserver2016", "windows"]
+  tags              = ["mimikatz-15", "test-machine", "windowsserver2016", "windows"]
   resource_policies = var.resource_policies
   boot_disk {
     initialize_params {
