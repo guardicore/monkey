@@ -95,7 +95,11 @@ from infection_monkey.utils import agent_process, environment
 from infection_monkey.utils.argparse_types import positive_int
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
-from infection_monkey.utils.monkey_dir import create_monkey_dir, remove_monkey_dir
+from infection_monkey.utils.monkey_dir import (
+    create_monkey_dir,
+    get_monkey_dir_path,
+    remove_monkey_dir,
+)
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
 
@@ -445,7 +449,9 @@ class InfectionMonkey:
             self._operating_system,
         )
 
-        local_machine_info = LocalMachineInfo(operating_system=self._operating_system)
+        local_machine_info = LocalMachineInfo(
+            operating_system=self._operating_system, temporary_directory=get_monkey_dir_path()
+        )
 
         puppet = Puppet(
             agent_event_queue=self._agent_event_queue,
