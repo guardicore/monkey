@@ -6,7 +6,6 @@ copy_monkey_island_to_build_dir() {
   local src=$1
   local build_dir=$2
 
-  cp "$src"/__init__.py "$build_dir"
   cp "$src"/monkey_island.py "$build_dir"
   cp -r "$src"/common "$build_dir/"
 
@@ -80,6 +79,7 @@ generate_ssl_cert() {
 build_nextjs_frontend() {
   local ui_dir="$1/monkey_island/cc/next_ui"
   local is_release_build=$2
+  mkdir -p "$ui_dir"
   pushd "$ui_dir" || handle_error
 
   log_message "Generating front end"
