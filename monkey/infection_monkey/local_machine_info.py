@@ -2,10 +2,6 @@ from pathlib import Path
 from typing import Optional
 
 from monkeytypes import MutableInfectionMonkeyBaseModel, OperatingSystem
-from pydantic import Field
-
-from common.utils.environment import get_os
-from infection_monkey.utils.monkey_dir import get_monkey_dir_path
 
 
 class LocalMachineInfo(MutableInfectionMonkeyBaseModel):
@@ -19,8 +15,8 @@ class LocalMachineInfo(MutableInfectionMonkeyBaseModel):
                                 by the target machine
     """
 
-    operating_system: OperatingSystem = Field(default_factory=get_os)
-    temporary_directory: Path = Field(default_factory=get_monkey_dir_path)
+    operating_system: OperatingSystem
+    temporary_directory: Path
     interface_to_target: Optional[str] = None
 
     def set_interface_to_target(self, interface_to_target: str):
