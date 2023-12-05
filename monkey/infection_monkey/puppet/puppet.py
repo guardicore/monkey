@@ -17,7 +17,6 @@ from infection_monkey.i_puppet import (
     TargetHost,
 )
 from infection_monkey.local_machine_info import LocalMachineInfo
-from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.puppet import PluginCompatibilityVerifier
 
 from . import PluginRegistry
@@ -122,8 +121,6 @@ class Puppet(IPuppet):
                 f'The exploiter, "{name}", is not compatible with the operating system on {host.ip}'
             )
 
-        self._local_machine_info.set_interface_to_target(get_interface_to_target(str(host.ip)))
-
         exploiter = self._plugin_registry.get_plugin(AgentPluginType.EXPLOITER, name)
         exploiter_result = exploiter.run(
             host=host,
@@ -133,8 +130,6 @@ class Puppet(IPuppet):
             interrupt=interrupt,
             local_machine_info=self._local_machine_info,
         )
-
-        self._local_machine_info.reset_interface_to_target()
 
         if exploiter_result is None:
             exploiter_result = ExploiterResult(
