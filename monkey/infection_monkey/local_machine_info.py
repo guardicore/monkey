@@ -26,5 +26,5 @@ class LocalMachineInfo(InfectionMonkeyBaseModel):
         Gets an interface on the local machine that can be reached by the target machine
         """
         # TODO: Use `network_interfaces` to get the interface
-        interface = get_interface_to_target(target)
+        interface = get_interface_to_target(str(target))
         return IPv4Interface(interface) if interface else None
