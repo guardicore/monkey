@@ -21,9 +21,10 @@ class LocalMachineInfo(InfectionMonkeyBaseModel):
     temporary_directory: Path
     network_interfaces: frozenset[IPv4Interface]
 
-    def get_interface_to_target(self, target_host_ip: IPv4Address) -> Optional[str]:
+    def get_interface_to_target(self, target_host_ip: IPv4Address) -> Optional[IPv4Interface]:
         """
         Gets an interface on the local machine that can be reached by the target machine
         """
         # TODO: Use `network_interfaces` to get the interface
-        return get_interface_to_target(target_host_ip)
+        interface = get_interface_to_target(target_host_ip)
+        return IPv4Interface(interface) if interface else None
