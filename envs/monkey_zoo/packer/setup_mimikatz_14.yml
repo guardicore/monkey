@@ -3,20 +3,18 @@
   hosts: all
   become_method: runas
   vars:
+    user_name: m0nk3y
+    user_password: Ivrrw5zEzs
     ansible_remote_tmp: C:\Windows\Temp
     ansible_become_password: Ivrrw5zEzs
   tasks:
-    - name: Create user
-      win_user:
-        name: m0nk3y
-        password: Ivrrw5zEzs
-        password_never_expires: yes
-        state: present
-        update_password: on_create
-        groups_action: add
-        groups:
-          - Administrators
-          - "Remote Desktop Users"
+    - import_tasks: tasks/windows_create_user.yml
+      vars:
+        username: "{{ user_name }}"
+        password: "{{ user_password }}"
+        user_groups: [Administrators, "Remote Desktop Users"]
+    - import_tasks: tasks/windows_disable_automatic_updates.yml
+    - import_tasks: tasks/windows_disable_windows_defender.yml
 
     - name: Allow port 445 SMB
       win_command:
@@ -36,26 +34,8 @@
         state: present
         enabled: yes
 
-    - name: Disable Windows Defender using registry
-      win_regedit:
-        path: HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender
-        name: DisableAntiSpyware
-        data: 1
-        type: dword
-        state: present
-
-    - name: Disable Windows Defender
-      win_shell: Set-MpPreference -DisableIntrusionPreventionSystem $true -DisableIOAVProtection $true -DisableRealtimeMonitoring $true -EnableNetworkProtection AuditMode -Force
-      become: yes
-      become_user: m0nk3y
-
     - name: Create a generic credential for mimikatz-15
-      win_credential:
-        name: 10.2.2.15
-        type: generic_password
-        username: m0nk3y
-        secret: pAJfG56JX><
-        state: present
+      win_command: "cmdkey /add:10.2.2.5 /user:{{ user_name }} /pass:{{ user_password }}"
       become: yes
       become_user: m0nk3y
 
