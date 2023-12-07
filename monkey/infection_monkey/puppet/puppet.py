@@ -16,7 +16,6 @@ from infection_monkey.i_puppet import (
     PortScanDataDict,
     TargetHost,
 )
-from infection_monkey.local_machine_info import LocalMachineInfo
 from infection_monkey.puppet import PluginCompatibilityVerifier
 
 from . import PluginRegistry
@@ -33,13 +32,11 @@ class Puppet(IPuppet):
         plugin_registry: PluginRegistry,
         plugin_compatibility_verifier: PluginCompatibilityVerifier,
         agent_id: AgentID,
-        local_machine_info: LocalMachineInfo,
     ) -> None:
         self._plugin_registry = plugin_registry
         self._agent_event_queue = agent_event_queue
         self._plugin_compatibility_verifier = plugin_compatibility_verifier
         self._agent_id = agent_id
-        self._local_machine_info = local_machine_info
 
     def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
         self._plugin_registry.load_plugin(plugin_type, plugin_name, plugin)
@@ -61,9 +58,7 @@ class Puppet(IPuppet):
         credentials_collector = self._plugin_registry.get_plugin(
             AgentPluginType.CREDENTIALS_COLLECTOR, name
         )
-        return credentials_collector.run(
-            options=options, local_machine_info=self._local_machine_info, interrupt=interrupt
-        )
+        return credentials_collector.run(options=options, interrupt=interrupt)
 
     def ping(self, host: str, timeout: float = CONNECTION_TIMEOUT) -> PingScanData:
         return network_scanning.ping(host, timeout, self._agent_event_queue, self._agent_id)
@@ -127,7 +122,6 @@ class Puppet(IPuppet):
             servers=servers,
             current_depth=current_depth,
             options=options,
-            local_machine_info=self._local_machine_info,
             interrupt=interrupt,
         )
 
@@ -155,9 +149,7 @@ class Puppet(IPuppet):
             )
 
         payload = self._plugin_registry.get_plugin(AgentPluginType.PAYLOAD, name)
-        payload.run(
-            options=options, local_machine_info=self._local_machine_info, interrupt=interrupt
-        )
+        payload.run(options=options, interrupt=interrupt)
 
     def cleanup(self) -> None:
         pass

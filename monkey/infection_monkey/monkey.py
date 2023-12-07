@@ -419,9 +419,15 @@ class InfectionMonkey:
             http_agent_binary_server
         )
 
+        local_machine_info = LocalMachineInfo(
+            operating_system=self._operating_system,
+            temporary_directory=get_monkey_dir_path(),
+            network_interfaces=self._local_network_interfaces,
+        )
+
         plugin_factories = {
             AgentPluginType.CREDENTIALS_COLLECTOR: CredentialsCollectorPluginFactory(
-                self._agent_id, self._agent_event_publisher, create_plugin
+                self._agent_id, self._agent_event_publisher, local_machine_info, create_plugin
             ),
             AgentPluginType.EXPLOITER: ExploiterPluginFactory(
                 self._agent_id,
@@ -432,10 +438,15 @@ class InfectionMonkey:
                 self._tcp_port_selector,
                 otp_provider,
                 AGENT_OTP_ENVIRONMENT_VARIABLE,
+                local_machine_info,
                 create_plugin,
             ),
             AgentPluginType.PAYLOAD: PayloadPluginFactory(
-                self._agent_id, self._agent_event_publisher, self._island_address, create_plugin
+                self._agent_id,
+                self._agent_event_publisher,
+                self._island_address,
+                local_machine_info,
+                create_plugin,
             ),
         }
         plugin_registry = PluginRegistry(
@@ -449,18 +460,11 @@ class InfectionMonkey:
             self._operating_system,
         )
 
-        local_machine_info = LocalMachineInfo(
-            operating_system=self._operating_system,
-            temporary_directory=get_monkey_dir_path(),
-            network_interfaces=self._local_network_interfaces,
-        )
-
         puppet = Puppet(
             agent_event_queue=self._agent_event_queue,
             plugin_registry=plugin_registry,
             plugin_compatibility_verifier=plugin_compatibility_verifier,
             agent_id=self._agent_id,
-            local_machine_info=local_machine_info,
         )
 
         puppet.load_plugin(
