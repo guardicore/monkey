@@ -71,6 +71,7 @@ def plugin(monkeypatch, agent_otp_environment_variable) -> Plugin:
         tcp_port_selector=MagicMock(),
         otp_provider=MagicMock(),
         agent_otp_environment_variable=agent_otp_environment_variable,
+        local_machine_info=MagicMock(),
     )
 
 
@@ -116,6 +117,7 @@ def test_run__exploit_host_raises_exception(
         tcp_port_selector=MagicMock(),
         otp_provider=MagicMock(),
         agent_otp_environment_variable=agent_otp_environment_variable,
+        local_machine_info=MagicMock(),
     )
     result = plugin.run(
         host=TARGET_HOST,

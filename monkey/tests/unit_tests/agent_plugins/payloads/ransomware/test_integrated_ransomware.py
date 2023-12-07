@@ -46,7 +46,7 @@ def test_uses_correct_extension(
     ransomware_file_extension: str,
 ):
     ransomware = ransomware_builder.build_ransomware(
-        AGENT_ID, MagicMock(spec=IAgentEventPublisher), ransomware_options_dict
+        AGENT_ID, MagicMock(spec=IAgentEventPublisher), ransomware_options_dict, MagicMock()
     )
 
     ransomware.run(threading.Event())
