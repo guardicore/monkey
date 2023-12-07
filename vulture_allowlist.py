@@ -181,3 +181,9 @@ RDPIOSettings.video_out_format
 RDPIOSettings.clipboard_use_pyperclip
 
 AgentPluginService.install_agent_plugin_from_repository
+
+
+# can probably remove after #3751
+from infection_monkey.local_machine_info import LocalMachineInfo
+
+LocalMachineInfo.temporary_directory
