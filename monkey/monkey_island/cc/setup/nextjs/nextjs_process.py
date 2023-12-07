@@ -12,11 +12,11 @@ TERMINATE_TIMEOUT = 10
 logger = logging.getLogger(__name__)
 
 
-UI_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "next_ui")
+UI_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "next_ui", ".next", "standalone")
 _NODE_EXECUTABLE_PATH_WIN = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "node", "node.exe")
 _NODE_EXECUTABLE_PATH_LINUX = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "node", "node")
 NODE_EXECUTABLE_PATH = _NODE_EXECUTABLE_PATH_WIN if is_windows_os() else _NODE_EXECUTABLE_PATH_LINUX
-NEXTJS_EXECUTION_COMMAND = [NODE_EXECUTABLE_PATH, "server.js"]
+NEXTJS_EXECUTION_COMMAND = [NODE_EXECUTABLE_PATH, "server_prod.js"]
 
 
 class NextJsProcess:
