@@ -62,7 +62,7 @@ class Puppet(IPuppet):
             AgentPluginType.CREDENTIALS_COLLECTOR, name
         )
         return credentials_collector.run(
-            options=options, interrupt=interrupt, local_machine_info=self._local_machine_info
+            options=options, local_machine_info=self._local_machine_info, interrupt=interrupt
         )
 
     def ping(self, host: str, timeout: float = CONNECTION_TIMEOUT) -> PingScanData:
@@ -127,8 +127,8 @@ class Puppet(IPuppet):
             servers=servers,
             current_depth=current_depth,
             options=options,
-            interrupt=interrupt,
             local_machine_info=self._local_machine_info,
+            interrupt=interrupt,
         )
 
         if exploiter_result is None:
@@ -156,7 +156,7 @@ class Puppet(IPuppet):
 
         payload = self._plugin_registry.get_plugin(AgentPluginType.PAYLOAD, name)
         payload.run(
-            options=options, interrupt=interrupt, local_machine_info=self._local_machine_info
+            options=options, local_machine_info=self._local_machine_info, interrupt=interrupt
         )
 
     def cleanup(self) -> None:
