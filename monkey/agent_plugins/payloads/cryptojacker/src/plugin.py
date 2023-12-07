@@ -6,6 +6,7 @@ from monkeytypes import AgentID, Event, SocketAddress
 
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.i_puppet import PayloadResult
+from infection_monkey.local_machine_info import LocalMachineInfo
 
 from .cryptojacker_builder import build_cryptojacker
 from .cryptojacker_options import CryptojackerOptions
@@ -21,11 +22,13 @@ class Plugin:
         agent_id: AgentID,
         agent_event_publisher: IAgentEventPublisher,
         island_server_address: SocketAddress,
+        local_machine_info: LocalMachineInfo,
         **kwargs,
     ):
         self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
         self._island_server_address = island_server_address
+        self._local_machine_info = local_machine_info
 
     def run(
         self,
@@ -48,6 +51,7 @@ class Plugin:
                 agent_id=self._agent_id,
                 agent_event_publisher=self._agent_event_publisher,
                 island_server_address=self._island_server_address,
+                local_machine_info=self._local_machine_info,
             )
         except Exception as err:
             msg = f"An unexpected error occurred while building the cryptojacker payload: {err}"
