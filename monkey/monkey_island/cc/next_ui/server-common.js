@@ -10,7 +10,7 @@ const runServer = () => {
     const port = process.env.NEXT_PUBLIC_JAVASCRIPT_RUNTIME_PORT;
     const ssl_cert_path = process.env.SSL_CERT_PATH;
     const ssl_key_path = process.env.SSL_KEY_PATH;
-    const dev = Boolean(process.env.DEV);
+    const dev = process.env.NODE_ENV !== 'production';
 
     const sslOptions = {
         key: fs.readFileSync(ssl_key_path),
