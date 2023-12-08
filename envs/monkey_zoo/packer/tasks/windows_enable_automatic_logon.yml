@@ -1,0 +1,10 @@
+---
+- name: Enable automatic logon
+  win_command:
+    cmd: reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon /t REG_SZ /d 1 /f
+- name: Set default user
+  win_command:
+    cmd: reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v DefaultUserName /t REG_SZ /d "{{ username }}" /f
+- name: Set default password
+  win_command:
+    cmd: reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v DefaultPassword /t REG_SZ /d "{{ password }}" /f

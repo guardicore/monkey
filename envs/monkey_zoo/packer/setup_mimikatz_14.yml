@@ -35,9 +35,17 @@
         enabled: yes
 
     - name: Create a generic credential for mimikatz-15
-      win_command: "cmdkey /add:10.2.2.5 /user:{{ user_name }} /pass:{{ user_password }}"
+      win_command: "cmdkey /add:10.2.2.5 /user:{{ user_name }} /pass:\"pAJfG56JX><\""
       become: yes
       become_user: m0nk3y
+
+    - import_tasks: tasks/windows_disable_rdp_for_user.yml
+      vars:
+        username: "{{ user_name }}"
+    - import_tasks: tasks/windows_enable_automatic_logon.yml
+      vars:
+        username: "{{ user_name }}"
+        password: "{{ user_password }}"
 
     - name: Change the hostname to mimikatz-14
       ansible.windows.win_hostname:
