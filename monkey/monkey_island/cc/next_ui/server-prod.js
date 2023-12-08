@@ -2,8 +2,8 @@
 process.env.NODE_ENV = 'production';
 process.chdir(__dirname);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const nextConfig = require('./generated_next_config');
+const nextConfig = require('./generated-next-config');
 process.env.__NEXT_PRIVATE_STANDALONE_CONFIG = JSON.stringify(nextConfig);
 
-const runServer = require('./server_common');
+const runServer = require('./server-common');
 runServer();
