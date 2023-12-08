@@ -50,6 +50,7 @@ class TCPRelay(Thread, InterruptableThreadMixin):
         self._interrupted.wait()
         self._wait_for_users_to_disconnect()
 
+        logger.info("All users disconnected. Closing TCP Relay...")
         self._connection_handler.stop()
         self._connection_handler.join()
         self._wait_for_pipes_to_close()

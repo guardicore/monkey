@@ -94,6 +94,7 @@ class RelayUserHandler:
         """
         with self._lock:
             self._potential_users = RelayUserHandler._remove_expired_users(self._potential_users)
+            logger.debug(f"Potential relay users: {len(self._potential_users)}")
 
             return len(self._potential_users) > 0
 
@@ -103,6 +104,7 @@ class RelayUserHandler:
         """
         with self._lock:
             self._relay_users = RelayUserHandler._remove_expired_users(self._relay_users)
+            logger.debug(f"Connected relay users: {len(self._relay_users)}")
 
             return len(self._relay_users) > 0
 
@@ -110,4 +112,6 @@ class RelayUserHandler:
     def _remove_expired_users(
         user_list: Dict[IPv4Address, RelayUser]
     ) -> Dict[IPv4Address, RelayUser]:
+        expired_users = [ru[0] for ru in filter(lambda ru: ru[1].timer.is_expired(), user_list.items())]
+        logger.debug(f"Removing expired users: {expired_users}")
         return dict(filter(lambda ru: not ru[1].timer.is_expired(), user_list.items()))
