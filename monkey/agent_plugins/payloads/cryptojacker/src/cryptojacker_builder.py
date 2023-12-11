@@ -49,9 +49,9 @@ def _build_cpu_utilizer(
     cpu_utilization: PercentLimited,
     agent_id: AgentID,
     agent_event_publisher: IAgentEventPublisher,
-    local_operating_system: OperatingSystem,
+    operating_system: OperatingSystem,
 ) -> CPUUtilizer:
-    return CPUUtilizer(cpu_utilization, agent_id, agent_event_publisher, local_operating_system)
+    return CPUUtilizer(cpu_utilization, agent_id, agent_event_publisher, operating_system)
 
 
 def _build_memory_utilizer(

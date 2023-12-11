@@ -36,7 +36,7 @@ class CPUUtilizer:
         target_cpu_utilization_percent: PercentLimited,
         agent_id: AgentID,
         agent_event_publisher: IAgentEventPublisher,
-        local_operating_system: OperatingSystem,
+        operating_system: OperatingSystem,
     ):
         # Target CPU utilization can never be zero, otherwise divide by zero errors could occur or
         # sleeps could become so large that this process will hang indefinitely.
@@ -45,7 +45,7 @@ class CPUUtilizer:
         )
         self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
-        self._local_operating_system = local_operating_system
+        self._operating_system = operating_system
 
         self._should_stop_cpu_utilization = threading.Event()
         self._cpu_utilizer_thread = create_daemon_thread(
@@ -70,9 +70,9 @@ class CPUUtilizer:
         # https://psutil.readthedocs.io/en/latest/#psutil.cpu_percent
         process.cpu_percent()
 
-        if self._local_operating_system == OperatingSystem.LINUX:
+        if self._operating_system == OperatingSystem.LINUX:
             get_current_process_cpu_number = process.cpu_num
-        elif self._local_operating_system == OperatingSystem.WINDOWS:
+        elif self._operating_system == OperatingSystem.WINDOWS:
             get_current_process_cpu_number = self._get_windows_process_cpu_number
 
         while not self._should_stop_cpu_utilization.is_set():
