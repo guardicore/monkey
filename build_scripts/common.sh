@@ -84,13 +84,15 @@ build_nextjs_frontend() {
 
   log_message "Generating front end"
   npm ci
-  if [ "$is_release_build" == true ]; then
-    log_message "Running production front end build"
-    npm run build
-  else
-    log_message "Running development front end build"
-    npm run build # Same as production build?
-  fi
+  log_message "Running production front end build"
+  npm run build
+
+  log_message "Removing development artifacts"
+  mv "${ui_dir}/.next/standalone" "${ui_dir}/standalone"
+  rm -rf "${ui_dir}/.next"
+  mkdir "${ui_dir}/.next"
+  mv "${ui_dir}/standalone" "${ui_dir}/.next"
+  log_message "Next.js standalone deployment built successfully"
 
   popd || handle_error
 }
