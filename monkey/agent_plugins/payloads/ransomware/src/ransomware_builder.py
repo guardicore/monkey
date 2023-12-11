@@ -62,9 +62,9 @@ def _build_file_selector(file_extension: str):
     return ProductionSafeTargetFileSelector(targeted_file_extensions)
 
 
-def _build_leave_readme(local_operating_system: OperatingSystem):
-    return ReadmeDropper(local_operating_system).leave_readme
+def _build_leave_readme(operating_system: OperatingSystem):
+    return ReadmeDropper(operating_system).leave_readme
 
 
-def _build_change_wallpaper(local_operating_system: OperatingSystem):
-    return WallpaperChanger(local_operating_system).change_wallpaper
+def _build_change_wallpaper(operating_system: OperatingSystem):
+    return WallpaperChanger(operating_system).change_wallpaper

@@ -12,21 +12,21 @@ logger = logging.getLogger(__name__)
 
 
 class InternalRansomwareOptions:
-    def __init__(self, options: RansomwareOptions, local_operating_system: OperatingSystem):
+    def __init__(self, options: RansomwareOptions, operating_system: OperatingSystem):
         self.file_extension: Optional[str] = options.file_extension
         self.leave_readme: bool = options.leave_readme
         self.change_wallpaper: bool = options.change_wallpaper
         self.target_directory: Optional[Path] = InternalRansomwareOptions._choose_target_directory(
-            options, local_operating_system
+            options, operating_system
         )
 
     @staticmethod
     def _choose_target_directory(
-        options: RansomwareOptions, local_operating_system: OperatingSystem
+        options: RansomwareOptions, operating_system: OperatingSystem
     ) -> Optional[Path]:
         target_directory: str = (
             options.linux_target_dir
-            if local_operating_system == OperatingSystem.LINUX
+            if operating_system == OperatingSystem.LINUX
             else options.windows_target_dir
         )
 
