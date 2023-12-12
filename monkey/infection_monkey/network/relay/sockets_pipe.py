@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import select
+import socket
 from logging import getLogger
 from threading import Thread
 from typing import Callable
@@ -22,6 +23,7 @@ class SocketsPipe(Thread):
         source,
         dest,
         pipe_closed: Callable[[SocketsPipe], None],
+        pipe_received_data: Callable[[socket.socket, bytes], None],
         timeout=SOCKET_TIMEOUT,
     ):
         self.source = source
@@ -29,6 +31,7 @@ class SocketsPipe(Thread):
         self.timeout = timeout
         super().__init__(name=f"SocketsPipeThread-{self._next_thread_num()}", daemon=True)
         self._pipe_closed = pipe_closed
+        self._pipe_received_data = pipe_received_data
 
     @classmethod
     def _next_thread_num(cls):
@@ -52,6 +55,7 @@ class SocketsPipe(Thread):
                 data = r.recv(READ_BUFFER_SIZE)
                 if data:
                     other.sendall(data)
+                    self._pipe_received_data(r, data)
                 else:
                     socket_closed = True
                     break

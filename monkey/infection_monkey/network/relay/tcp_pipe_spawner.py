@@ -1,7 +1,7 @@
 import socket
 from logging import getLogger
 from threading import Lock
-from typing import Set
+from typing import Callable, Set
 
 from monkeytypes import SocketAddress
 
@@ -22,7 +22,9 @@ class TCPPipeSpawner:
         self._pipes: Set[SocketsPipe] = set()
         self._lock = Lock()
 
-    def spawn_pipe(self, source: socket.socket):
+    def spawn_pipe(
+        self, source: socket.socket, handle_pipe_data: Callable[[socket.socket, bytes], None]
+    ):
         """
         Attempt to create a pipe on between the configured client and the provided socket
 
@@ -38,7 +40,12 @@ class TCPPipeSpawner:
             dest.close()
             raise err
 
-        pipe = SocketsPipe(source, dest, self._handle_pipe_closed)
+        pipe = SocketsPipe(
+            source,
+            dest,
+            self._handle_pipe_closed,
+            handle_pipe_data,
+        )
         with self._lock:
             self._pipes.add(pipe)
 
