@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import Callable, Optional
-from unittest.mock import MagicMock
 
 import pytest
 from agent_plugins.payloads.ransomware.src import internal_ransomware_options
@@ -25,19 +24,24 @@ RANSOMWARE_OPTIONS_OBJECT = RansomwareOptions(
 )
 
 
+@pytest.fixture(scope="session")
+def operating_system():
+    return get_os()
+
+
 @pytest.mark.parametrize("file_extension", (".xyz", ".m0nk3y"))
-def test_file_extension(file_extension: str):
+def test_file_extension(file_extension: str, operating_system: OperatingSystem):
     internal_options = InternalRansomwareOptions(
-        RansomwareOptions(file_extension=file_extension), MagicMock()
+        RansomwareOptions(file_extension=file_extension), operating_system
     )
 
     assert internal_options.file_extension == file_extension
 
 
 @pytest.mark.parametrize("leave_readme", (True, False))
-def test_leave_readme(leave_readme: bool):
+def test_leave_readme(leave_readme: bool, operating_system: OperatingSystem):
     internal_options = InternalRansomwareOptions(
-        RansomwareOptions(leave_readme=leave_readme), MagicMock()
+        RansomwareOptions(leave_readme=leave_readme), operating_system
     )
 
     assert internal_options.leave_readme == leave_readme
@@ -53,14 +57,16 @@ def test_windows_target_dir(monkeypatch: Callable):
     assert internal_options.target_directory == Path(WINDOWS_DIR)
 
 
-def test_env_variables_in_target_dir_resolved(home_env_variable: str, patched_home_env: str):
+def test_env_variables_in_target_dir_resolved(
+    home_env_variable: str, patched_home_env: str, operating_system: OperatingSystem
+):
     path_with_env_variable = f"{home_env_variable}/ransomware_target"
-    if get_os() == OperatingSystem.LINUX:
+    if operating_system == OperatingSystem.LINUX:
         options = RansomwareOptions(linux_target_dir=path_with_env_variable)
     else:
         options = RansomwareOptions(windows_target_dir=path_with_env_variable)
 
-    internal_options = InternalRansomwareOptions(options, MagicMock())
+    internal_options = InternalRansomwareOptions(options, operating_system)
 
     assert internal_options.target_directory == patched_home_env / "ransomware_target"
 
@@ -69,7 +75,7 @@ def test_env_variables_in_target_dir_resolved(home_env_variable: str, patched_ho
 def test_empty_target_dir(target_dir: Optional[str]):
     options = RansomwareOptions(linux_target_dir=target_dir, windows_target_dir=target_dir)
 
-    internal_options = InternalRansomwareOptions(options, MagicMock())
+    internal_options = InternalRansomwareOptions(options, OperatingSystem.LINUX)
 
     assert internal_options.target_directory is None
 
@@ -79,6 +85,6 @@ def test_invalid_target_dir(monkeypatch: Callable):
         internal_ransomware_options, "expand_path", lambda _: raise_(InvalidPath("invalid"))
     )
 
-    internal_options = InternalRansomwareOptions(RANSOMWARE_OPTIONS_OBJECT, MagicMock())
+    internal_options = InternalRansomwareOptions(RANSOMWARE_OPTIONS_OBJECT, OperatingSystem.LINUX)
 
     assert internal_options.target_directory is None
