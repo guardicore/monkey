@@ -3,20 +3,19 @@
   hosts: all
   become_method: runas
   vars:
+    host_name: mimikatz-15
+    user_name: m0nk3y
+    user_password: pAJfG56JX><
     ansible_remote_tmp: C:\Windows\Temp
     ansible_become_password: pAJfG56JX><
   tasks:
-    - name: Create user
-      win_user:
-        name: m0nk3y
-        password: pAJfG56JX><
-        password_never_expires: yes
-        state: present
-        update_password: on_create
-        groups_action: add
-        groups:
-          - Administrators
-          - "Remote Desktop Users"
+    - import_tasks: tasks/windows_create_user.yml
+      vars:
+        username: "{{ user_name }}"
+        password: "{{ user_password }}"
+        user_groups: [Administrators, "Remote Desktop Users"]
+    - import_tasks: tasks/windows_disable_automatic_updates.yml
+    - import_tasks: tasks/windows_disable_windows_defender.yml
 
     - name: Enable SMBv1
       ansible.windows.win_optional_feature:
@@ -49,22 +48,13 @@
         state: present
         enabled: yes
 
-    - name: Disable Windows Defender using registry
-      win_regedit:
-        path: HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender
-        name: DisableAntiSpyware
-        data: 1
-        type: dword
-        state: present
+    - import_tasks: tasks/windows_disallow_rdp_for_subnet.yml
+      vars:
+        subnet_ip: "10.2.2.0/24"
 
-    - name: Disable Windows Defender
-      win_shell: Set-MpPreference -DisableIntrusionPreventionSystem $true -DisableIOAVProtection $true -DisableRealtimeMonitoring $true -EnableNetworkProtection AuditMode -Force
-      become: yes
-      become_user: m0nk3y
-
-    - name: Change the hostname to mimikatz-15
+    - name: Change the hostname to {{ host_name }}
       ansible.windows.win_hostname:
-        name: mimikatz-15
+        name: "{{ host_name }}"
       register: res
 
     - name: Reboot

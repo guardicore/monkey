@@ -3,6 +3,7 @@
   hosts: all
   become_method: runas
   vars:
+    host_name: mimikatz-14
     user_name: m0nk3y
     user_password: Ivrrw5zEzs
     ansible_remote_tmp: C:\Windows\Temp
@@ -35,21 +36,22 @@
         enabled: yes
 
     - name: Create a generic credential for mimikatz-15
-      win_command: "cmdkey /add:10.2.2.5 /user:{{ user_name }} /pass:\"pAJfG56JX><\""
+      win_command: "cmdkey /add:10.2.2.15 /user:{{ user_name }} /pass:\"pAJfG56JX><\""
       become: yes
       become_user: m0nk3y
 
-    - import_tasks: tasks/windows_disable_rdp_for_user.yml
+    - import_tasks: tasks/windows_disallow_rdp_for_subnet.yml
       vars:
-        username: "{{ user_name }}"
+        subnet_ip: "10.2.2.0/24"
+
     - import_tasks: tasks/windows_enable_automatic_logon.yml
       vars:
         username: "{{ user_name }}"
         password: "{{ user_password }}"
 
-    - name: Change the hostname to mimikatz-14
+    - name: Change the hostname to {{ host_name }}
       ansible.windows.win_hostname:
-        name: mimikatz-14
+        name: "{{ host_name }}"
       register: res
 
     - name: Reboot

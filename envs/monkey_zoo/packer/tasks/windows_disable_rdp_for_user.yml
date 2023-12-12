@@ -1,9 +1,0 @@
----
-- name: Disable RDP for user {{ username }}
-  win_shell: |
-    $policy_file = "C:\Users\{{ username }}\Desktop\local_security_policies.inf"
-    secedit.exe /export /cfg $policy_file
-    $sid = gwmi win32_useraccount -Filter "name='{{ username }}'" | select -ExpandProperty sid
-    (Get-Content $policy_file).Replace('[Privilege Rights]', "[Privilege Rights]$([Environment]::NewLine)SeDenyRemoteInteractiveLogonRight = *$sid") | Set-Content $policy_file
-    secedit.exe /import /db C:\Windows\security\local.sdb /cfg $policy_file
-    secedit.exe /configure /db C:\Windows\security\local.sdb /cfg $policy_file
