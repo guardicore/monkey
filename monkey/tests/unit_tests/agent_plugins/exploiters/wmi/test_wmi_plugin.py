@@ -85,6 +85,7 @@ def plugin(
         propagation_credentials_repository=propagation_credentials_repository,
         otp_provider=MagicMock(),
         agent_otp_environment_variable=agent_otp_environment_variable,
+        local_machine_info=MagicMock(),
     )
 
 
@@ -206,6 +207,7 @@ def test_run__exploit_host_raises_exception(
         propagation_credentials_repository=propagation_credentials_repository,
         otp_provider=MagicMock(),
         agent_otp_environment_variable=agent_otp_environment_variable,
+        local_machine_info=MagicMock(),
     )
     result = plugin.run(
         host=target_host,
