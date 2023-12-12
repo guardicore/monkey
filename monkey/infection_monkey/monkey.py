@@ -157,11 +157,10 @@ class InfectionMonkey:
         )
 
         self._operating_system = get_os()
-        self._local_network_interfaces = get_network_interfaces()
         self._local_machine_info = LocalMachineInfo(
             operating_system=self._operating_system,
             temporary_directory=get_monkey_dir_path(),
-            network_interfaces=self._local_network_interfaces,
+            network_interfaces=get_network_interfaces(),
         )
 
         self._island_address, self._island_api_client = self._connect_to_island_api()
@@ -275,7 +274,7 @@ class InfectionMonkey:
             start_time=agent_process.get_start_time(),
             parent_id=self._opts.parent,
             cc_server=self._island_address,
-            network_interfaces=self._local_network_interfaces,
+            network_interfaces=self._local_machine_info.network_interfaces,
             sha256=self._sha256,
         )
         self._island_api_client.register_agent(agent_registration_data)
@@ -387,7 +386,7 @@ class InfectionMonkey:
             servers,
             puppet,
             self._island_api_client,
-            self._local_network_interfaces,
+            self._local_machine_info.network_interfaces,
         )
 
     def _build_server_list(self, relay_port: Optional[NetworkPort]) -> Sequence[str]:
