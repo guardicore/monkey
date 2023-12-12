@@ -33,7 +33,9 @@ def test_chrome_plugin__build_exception(monkeypatch):
         get_reference_to_exception_raising_function(Exception),
     )
     chrome_plugin = Plugin(
-        agent_id=AGENT_ID, agent_event_publisher=MagicMock(spec=IAgentEventPublisher)
+        agent_id=AGENT_ID,
+        agent_event_publisher=MagicMock(spec=IAgentEventPublisher),
+        local_machine_info=MagicMock(),
     )
 
     actual_credentials = chrome_plugin.run(options={}, interrupt=threading.Event())
@@ -47,7 +49,9 @@ def test_chrome_plugin__run_exception(monkeypatch):
         lambda *_: ExceptionCallable,
     )
     chrome_plugin = Plugin(
-        agent_id=AGENT_ID, agent_event_publisher=MagicMock(spec=IAgentEventPublisher)
+        agent_id=AGENT_ID,
+        agent_event_publisher=MagicMock(spec=IAgentEventPublisher),
+        local_machine_info=MagicMock(),
     )
 
     actual_credentials = chrome_plugin.run(options={}, interrupt=threading.Event())
@@ -61,7 +65,9 @@ def test_chrome_plugin__credential_collector(monkeypatch):
         lambda *_: MockCallable,
     )
     chrome_plugin = Plugin(
-        agent_id=AGENT_ID, agent_event_publisher=MagicMock(spec=IAgentEventPublisher)
+        agent_id=AGENT_ID,
+        agent_event_publisher=MagicMock(spec=IAgentEventPublisher),
+        local_machine_info=MagicMock(),
     )
 
     actual_credentials = chrome_plugin.run(options={}, interrupt=threading.Event())

@@ -7,6 +7,7 @@ from monkeyevents.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DU
 from monkeytypes import AgentID, Credentials, Event, LMHash, NTHash, Password, Username
 
 from common.event_queue import IAgentEventPublisher
+from infection_monkey.local_machine_info import LocalMachineInfo
 
 from .mimikatz_options import MimikatzOptions
 from .pypykatz_handler import get_windows_creds
@@ -33,6 +34,7 @@ class Plugin:
         plugin_name: str,
         agent_id: AgentID,
         agent_event_publisher: IAgentEventPublisher,
+        local_machine_info: LocalMachineInfo,
         **kwargs,
     ):
         self._agent_event_publisher = agent_event_publisher
