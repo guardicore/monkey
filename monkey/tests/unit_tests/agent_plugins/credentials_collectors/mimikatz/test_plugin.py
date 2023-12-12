@@ -25,7 +25,10 @@ def patch_pypykatz(win_creds: Sequence[WindowsCredentials], monkeypatch):
 def collect_credentials(options: Dict[str, Any] = {}) -> Sequence[Credentials]:
     mock_event_publisher = MagicMock(spec=IAgentEventPublisher)
     return Plugin(
-        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+        plugin_name=PLUGIN_NAME,
+        agent_id=AGENT_ID,
+        agent_event_publisher=mock_event_publisher,
+        local_machine_info=MagicMock(),
     ).run(options=options, interrupt=threading.Event())
 
 
@@ -131,7 +134,10 @@ def test_mimikatz_credentials_stolen_event_published(monkeypatch):
     patch_pypykatz([], monkeypatch)
 
     mimikatz_credential_collector = Plugin(
-        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+        plugin_name=PLUGIN_NAME,
+        agent_id=AGENT_ID,
+        agent_event_publisher=mock_event_publisher,
+        local_machine_info=MagicMock(),
     )
     mimikatz_credential_collector.run(options={}, interrupt=threading.Event())
 
@@ -147,7 +153,10 @@ def test_mimikatz_credentials_stolen_event_tags(monkeypatch):
     patch_pypykatz([], monkeypatch)
 
     mimikatz_credential_collector = Plugin(
-        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+        plugin_name=PLUGIN_NAME,
+        agent_id=AGENT_ID,
+        agent_event_publisher=mock_event_publisher,
+        local_machine_info=MagicMock(),
     )
     mimikatz_credential_collector.run(options={}, interrupt=threading.Event())
 
@@ -166,7 +175,10 @@ def test_mimikatz_credentials_stolen_event_stolen_credentials(monkeypatch):
     patch_pypykatz(win_creds, monkeypatch)
 
     mimikatz_credential_collector = Plugin(
-        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+        plugin_name=PLUGIN_NAME,
+        agent_id=AGENT_ID,
+        agent_event_publisher=mock_event_publisher,
+        local_machine_info=MagicMock(),
     )
     collected_credentials = mimikatz_credential_collector.run(
         options={}, interrupt=threading.Event()
