@@ -155,11 +155,15 @@ class InfectionMonkey:
             Path(gettempdir())
             / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
         )
-        self._island_address, self._island_api_client = self._connect_to_island_api()
-        self._local_network_interfaces = get_network_interfaces()
-        self._register_agent()
 
-        self._operating_system = get_os()
+        self._local_machine_info = LocalMachineInfo(
+            operating_system=get_os(),
+            temporary_directory=get_monkey_dir_path(),
+            network_interfaces=get_network_interfaces(),
+        )
+
+        self._island_address, self._island_api_client = self._connect_to_island_api()
+        self._register_agent()
 
         self._propagation_credentials_repository = PropagationCredentialsRepository(
             self._island_api_client, self._manager
@@ -269,7 +273,7 @@ class InfectionMonkey:
             start_time=agent_process.get_start_time(),
             parent_id=self._opts.parent,
             cc_server=self._island_address,
-            network_interfaces=self._local_network_interfaces,
+            network_interfaces=self._local_machine_info.network_interfaces,
             sha256=self._sha256,
         )
         self._island_api_client.register_agent(agent_registration_data)
@@ -381,7 +385,7 @@ class InfectionMonkey:
             servers,
             puppet,
             self._island_api_client,
-            self._local_network_interfaces,
+            self._local_machine_info.network_interfaces,
         )
 
     def _build_server_list(self, relay_port: Optional[NetworkPort]) -> Sequence[str]:
@@ -419,15 +423,9 @@ class InfectionMonkey:
             http_agent_binary_server
         )
 
-        local_machine_info = LocalMachineInfo(
-            operating_system=self._operating_system,
-            temporary_directory=get_monkey_dir_path(),
-            network_interfaces=self._local_network_interfaces,
-        )
-
         plugin_factories = {
             AgentPluginType.CREDENTIALS_COLLECTOR: CredentialsCollectorPluginFactory(
-                self._agent_id, self._agent_event_publisher, local_machine_info, create_plugin
+                self._agent_id, self._agent_event_publisher, self._local_machine_info, create_plugin
             ),
             AgentPluginType.EXPLOITER: ExploiterPluginFactory(
                 self._agent_id,
@@ -438,14 +436,14 @@ class InfectionMonkey:
                 self._tcp_port_selector,
                 otp_provider,
                 AGENT_OTP_ENVIRONMENT_VARIABLE,
-                local_machine_info,
+                self._local_machine_info,
                 create_plugin,
             ),
             AgentPluginType.PAYLOAD: PayloadPluginFactory(
                 self._agent_id,
                 self._agent_event_publisher,
                 self._island_address,
-                local_machine_info,
+                self._local_machine_info,
                 create_plugin,
             ),
         }
@@ -457,7 +455,7 @@ class InfectionMonkey:
         )
         plugin_compatibility_verifier = PluginCompatibilityVerifier(
             self._island_api_client,
-            self._operating_system,
+            self._local_machine_info.operating_system,
         )
 
         puppet = Puppet(
@@ -508,6 +506,7 @@ class InfectionMonkey:
         self, agent_binary_repository: IAgentBinaryRepository
     ) -> HTTPAgentBinaryServer:
         server_factory = self._manager.HTTPAgentBinaryServerFactory(  # type: ignore[attr-defined]
+            self._local_machine_info,
             self._tcp_port_selector,
             agent_binary_repository,
             ThreadingHTTPHandlerFactory,
