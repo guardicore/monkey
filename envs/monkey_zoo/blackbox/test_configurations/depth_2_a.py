@@ -76,7 +76,7 @@ def _add_fingerprinters(agent_configuration: AgentConfiguration) -> AgentConfigu
 
 
 def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    ports = [22, 3389, 5985, 5986, 8080]
+    ports = [22, 135, 445, 3389, 5985, 5986, 8080]
     return add_tcp_ports(agent_configuration, ports)
 
 
