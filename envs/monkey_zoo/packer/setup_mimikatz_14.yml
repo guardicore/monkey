@@ -44,6 +44,10 @@
       vars:
         subnet_ip: "10.2.2.0/24"
 
+    - import_tasks: tasks/windows_disallow_rdp_for_subnet.yml
+      vars:
+        subnet_ip: "10.2.3.0/24"
+
     - import_tasks: tasks/windows_enable_automatic_logon.yml
       vars:
         username: "{{ user_name }}"
@@ -58,7 +62,13 @@
       ansible.windows.win_reboot:
       when: res.reboot_required
 
-    - import_tasks: tasks/windows_disable_powershell_remoting.yml
+    - import_tasks: tasks/windows_disallow_powershell_remoting_on_subnet.yml
+      vars:
+        subnet_ip: "10.2.2.0/24"
+
+    - import_tasks: tasks/windows_disallow_powershell_remoting_on_subnet.yml
+      vars:
+        subnet_ip: "10.2.3.0/24"
 
     - name: Delete packer_user
       win_user:
