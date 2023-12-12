@@ -4,7 +4,6 @@ from pprint import pformat
 from monkeytypes import AgentID, OperatingSystem
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.local_machine_info import LocalMachineInfo
 
 from .bit_manipulators import flip_bits
 from .file_selectors import ProductionSafeTargetFileSelector
@@ -25,17 +24,15 @@ def build_ransomware(
     agent_id: AgentID,
     agent_event_publisher: IAgentEventPublisher,
     options: RansomwareOptions,
-    local_machine_info: LocalMachineInfo,
+    operating_system: OperatingSystem,
 ):
     logger.debug(f"Ransomware configuration:\n{pformat(options)}")
-    internal_ransomware_options = InternalRansomwareOptions(
-        options, local_machine_info.operating_system
-    )
+    internal_ransomware_options = InternalRansomwareOptions(options, operating_system)
 
     file_encryptor = _build_file_encryptor(internal_ransomware_options.file_extension)
     file_selector = _build_file_selector(internal_ransomware_options.file_extension)
-    leave_readme = _build_leave_readme(local_machine_info.operating_system)
-    change_wallpaper = _build_change_wallpaper(local_machine_info.operating_system)
+    leave_readme = _build_leave_readme(operating_system)
+    change_wallpaper = _build_change_wallpaper(operating_system)
 
     return Ransomware(
         internal_ransomware_options,

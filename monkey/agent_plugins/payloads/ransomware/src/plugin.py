@@ -48,7 +48,7 @@ class Plugin:
                 self._agent_id,
                 self._agent_event_publisher,
                 ransomware_options,
-                self._local_machine_info,
+                self._local_machine_info.operating_system,
             )
         except Exception as err:
             msg = f"An unexpected error occurred while building the ransomware payload: {err}"
