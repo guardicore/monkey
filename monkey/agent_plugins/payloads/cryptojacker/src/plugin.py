@@ -51,7 +51,7 @@ class Plugin:
                 agent_id=self._agent_id,
                 agent_event_publisher=self._agent_event_publisher,
                 island_server_address=self._island_server_address,
-                local_machine_info=self._local_machine_info,
+                operating_system=self._local_machine_info.operating_system,
             )
         except Exception as err:
             msg = f"An unexpected error occurred while building the cryptojacker payload: {err}"

@@ -4,7 +4,6 @@ from pprint import pformat
 from monkeytypes import AgentID, OperatingSystem, PercentLimited, SocketAddress
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.local_machine_info import LocalMachineInfo
 
 from .bitcoin_mining_network_traffic_simulator import BitcoinMiningNetworkTrafficSimulator
 from .cpu_utilizer import CPUUtilizer
@@ -20,7 +19,7 @@ def build_cryptojacker(
     agent_id: AgentID,
     agent_event_publisher: IAgentEventPublisher,
     island_server_address: SocketAddress,
-    local_machine_info: LocalMachineInfo,
+    operating_system: OperatingSystem,
 ):
     logger.debug(f"Cryptojacker configuration:\n{pformat(options)}")
 
@@ -28,7 +27,7 @@ def build_cryptojacker(
         options.cpu_utilization,
         agent_id,
         agent_event_publisher,
-        local_machine_info.operating_system,
+        operating_system,
     )
     memory_utilizer = _build_memory_utilizer(
         options.memory_utilization, agent_id, agent_event_publisher
