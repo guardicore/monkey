@@ -156,9 +156,8 @@ class InfectionMonkey:
             / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
         )
 
-        self._operating_system = get_os()
         self._local_machine_info = LocalMachineInfo(
-            operating_system=self._operating_system,
+            operating_system=get_os(),
             temporary_directory=get_monkey_dir_path(),
             network_interfaces=get_network_interfaces(),
         )
@@ -456,7 +455,7 @@ class InfectionMonkey:
         )
         plugin_compatibility_verifier = PluginCompatibilityVerifier(
             self._island_api_client,
-            self._operating_system,
+            self._local_machine_info.operating_system,
         )
 
         puppet = Puppet(
