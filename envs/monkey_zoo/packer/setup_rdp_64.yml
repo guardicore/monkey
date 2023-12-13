@@ -21,6 +21,11 @@
       win_command:
         cmd: netsh advfirewall firewall add rule name="Allow Port 8080" dir=in action=allow protocol=TCP localport=8080
 
+    # Disallow PowerShell to this machine from internal ips
+    - import_tasks: tasks/windows_disallow_powershell_remoting_on_subnet.yml
+      vars:
+        subnet_ip: "10.2.0.0/16"
+
     - name: Change the hostname to {{ host_name }}
       ansible.windows.win_hostname:
         name: "{{ host_name }}"
