@@ -1,10 +1,10 @@
-import styles from './page.module.scss';
-import Test from '@/_components/Test';
+import classes from './page.module.scss';
+import GettingStarted from '@/_components/getting-started/GettingStarted';
 
-export default function Home() {
+export default function AppHome() {
     return (
-        <div className={styles.test}>
-            <Test />
+        <div id={classes['app-root-page']}>
+            <GettingStarted />
         </div>
     );
 }
