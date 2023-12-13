@@ -23,12 +23,13 @@ class TCPPipeSpawner:
         self._lock = Lock()
 
     def spawn_pipe(
-        self, source: socket.socket, handle_pipe_data: Callable[[socket.socket, bytes], None]
+        self, source: socket.socket, on_data_received: Callable[[socket.socket, bytes], None]
     ):
         """
         Attempt to create a pipe on between the configured client and the provided socket
 
         :param source: A socket to the connecting client.
+        :param on_data_received: A callback to handle data received on the pipe.
         :raises OSError: If a socket to the configured client could not be created.
         """
         dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -44,7 +45,7 @@ class TCPPipeSpawner:
             source,
             dest,
             self._handle_pipe_closed,
-            handle_pipe_data,
+            on_data_received,
         )
         with self._lock:
             self._pipes.add(pipe)
