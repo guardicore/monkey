@@ -34,8 +34,8 @@ class RelayConnectionHandler:
             self._relay_user_handler.disconnect_user(addr)
         else:
             try:
-                self._pipe_spawner.spawn_pipe(sock, self._handle_pipe_data)
                 self._relay_user_handler.add_relay_user(addr)
+                self._pipe_spawner.spawn_pipe(sock, self._handle_pipe_data)
             except OSError as err:
                 logger.debug(f"Failed to spawn pipe: {err}")
 
