@@ -1,0 +1,4 @@
+---
+  - name: Disable RDP using netsh
+    win_command:
+      cmd: netsh advfirewall firewall add rule name="Block RDP on .2 subnet" dir=in action=block protocol=TCP localport=3389 remoteip="{{ subnet_ip }}"

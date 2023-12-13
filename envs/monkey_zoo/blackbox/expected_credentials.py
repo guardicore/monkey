@@ -46,7 +46,6 @@ expected_credentials_depth_2_a = {
         secret=NTHash(nt_hash="5da0889ea2081aa79f6852294cba4a5e"),
     ),
     Credentials(identity=Username(username="m0nk3y"), secret=Password(password="pAJfG56JX><")),
-    Credentials(identity=Username(username="m0nk3y"), secret=Password(password="Ivrrw5zEzs")),
     # SSH keypair from tunneling-11
     Credentials(
         identity=Username(username="m0nk3y"),
