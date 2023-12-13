@@ -41,6 +41,7 @@ from envs.monkey_zoo.blackbox.test_configurations import (
     credentials_reuse_ssh_key_test_configuration,
     depth_1_a_test_configuration,
     depth_2_a_test_configuration,
+    depth_2_b_test_configuration,
     depth_3_a_test_configuration,
     depth_4_a_test_configuration,
     smb_pth_test_configuration,
@@ -633,6 +634,36 @@ class TestMonkeyBlackbox:
         TestMonkeyBlackbox.assert_depth_restriction(
             agents=exploitation_test.agents,
             configured_depth=depth_2_a_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
+        )
+
+    def test_depth_2_b(self, island_client):
+        test_name = "Depth2B test suite"
+
+        communication_analyzer = CommunicationAnalyzer(
+            island_client,
+            get_target_ips(depth_2_b_test_configuration),
+        )
+        log_handler = TestLogsHandler(
+            test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
+        )
+
+        exploitation_test = ExploitationTest(
+            name=test_name,
+            island_client=island_client,
+            test_configuration=depth_2_b_test_configuration,
+            masque=None,
+            analyzers=[communication_analyzer],
+            timeout=DEFAULT_TIMEOUT_SECONDS + 30,
+            log_handler=log_handler,
+        )
+        exploitation_test.run()
+
+        # asserting that Agent hashes are not unique
+        assert len({a.sha256 for a in exploitation_test.agents}) == 2
+
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=depth_2_b_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
         )
 
     def test_depth_1_a(self, island_client):

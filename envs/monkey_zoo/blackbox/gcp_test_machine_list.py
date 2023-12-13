@@ -39,6 +39,9 @@ GCP_TEST_MACHINE_LIST = {
 
 DEPTH_2_A = {
     "europe-west1-c": ["sshkeys-11", "sshkeys-12", "mimikatz-14", "mimikatz-15"],
+}
+
+DEPTH_2_B = {
     "europe-west1-b": [
         "powershell-3-46",
         "powershell-3-44",
@@ -102,6 +105,7 @@ SMB_PTH = {"europe-west1-c": ["mimikatz-15"]}
 
 GCP_SINGLE_TEST_LIST = {
     "test_depth_2_a": DEPTH_2_A,
+    "test_depth_2_b": DEPTH_2_B,
     "test_depth_1_a": DEPTH_1_A,
     "test_depth_3_a": DEPTH_3_A,
     "test_depth_4_a": DEPTH_4_A,
