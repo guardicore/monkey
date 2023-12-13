@@ -43,3 +43,8 @@
     - name: Reboot
       ansible.windows.win_reboot:
       when: res.reboot_required
+
+    - name: Delete packer_user
+      win_user:
+        name: packer_user
+        state: absent
