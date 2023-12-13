@@ -36,7 +36,8 @@ export const ThemeMode = () => {
         <div id={classes['theme-mode']}>
             <IconButton
                 className={`theme-mode-button ${getClassNames()}`}
-                onClick={changeThemeAppearance}>
+                onClick={changeThemeAppearance}
+                size="small">
                 {isThemeInDarkMode ? (
                     <DarkModeOutlinedIcon />
                 ) : (
