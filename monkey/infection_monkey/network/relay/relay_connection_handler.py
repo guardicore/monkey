@@ -35,16 +35,15 @@ class RelayConnectionHandler:
         else:
             try:
                 self._relay_user_handler.add_relay_user(addr)
-                self._pipe_spawner.spawn_pipe(sock, self._handle_pipe_data)
+                self._pipe_spawner.spawn_pipe(sock, self._renew_relay_user_membership_for_socket)
             except OSError as err:
                 logger.debug(f"Failed to spawn pipe: {err}")
 
-    def _handle_pipe_data(self, sock: socket.socket, _: bytes):
+    def _renew_relay_user_membership_for_socket(self, sock: socket.socket, _: bytes):
         """
-        Handle data received on a pipe.
+        Renew the membership of a relay user, if the provided socket is associated with one.
 
-        :param sock: The socket the data was received on.
-        :param data: The data received.
+        :param sock: The socket from which to determine the relay user.
         """
         addr_str, _ = sock.getpeername()
         addr = IPv4Address(addr_str)
