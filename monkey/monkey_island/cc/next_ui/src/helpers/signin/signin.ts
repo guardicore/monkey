@@ -1,5 +1,5 @@
 import { signIn } from 'next-auth/react';
-import { AUTHENTICATED_PATHS } from '@/constants/paths.constants';
+import { AUTHENTICATED_ROOT_PATH } from '@/constants/paths.constants';
 
 type LoginValues = {
     username: string;
@@ -9,7 +9,7 @@ type LoginValues = {
 export const login = async (loginValues: LoginValues) => {
     await signIn('credentials', {
         redirect: true,
-        callbackUrl: AUTHENTICATED_PATHS.ROOT,
+        callbackUrl: AUTHENTICATED_ROOT_PATH,
         username: loginValues.username,
         password: loginValues.password
     });
