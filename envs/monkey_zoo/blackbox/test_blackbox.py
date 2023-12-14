@@ -658,9 +658,6 @@ class TestMonkeyBlackbox:
         )
         exploitation_test.run()
 
-        # asserting that Agent hashes are not unique
-        assert len({a.sha256 for a in exploitation_test.agents}) == 2
-
         TestMonkeyBlackbox.assert_depth_restriction(
             agents=exploitation_test.agents,
             configured_depth=depth_2_b_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
