@@ -36,7 +36,7 @@ class TCPRelay(Thread, InterruptableThreadMixin):
         self._connection_handler = TCPConnectionHandler(
             bind_host="",
             bind_port=relay_port,
-            client_connected=[
+            client_connected_listeners=[
                 relay_filter.handle_new_connection,
             ],
         )
