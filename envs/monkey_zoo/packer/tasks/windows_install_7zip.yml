@@ -1,0 +1,19 @@
+---
+- name: Download 7zip
+  win_get_url:
+    url: https://www.7-zip.org/a/7z2301-x64.exe
+    dest: C:\Windows\Temp\7zip.exe
+    force: true
+- name: Install 7zip
+  win_package:
+    path: C:\Windows\Temp\7zip.exe
+    creates_path: C:\Program Files\7-Zip\7z.exe
+    creates_version: 23.01
+    arguments: /S
+    state: present
+- name: Add 7zip to PATH
+  win_path:
+    elements:
+      - C:\Program Files\7-Zip
+- name: Reboot
+  win_reboot:

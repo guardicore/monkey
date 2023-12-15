@@ -18,6 +18,10 @@
     src: /tmp/jdk1.8.0_181
     dest: C:\
     force: yes
+- name: Add java to PATH
+  win_path:
+    elements:
+      - C:\jdk1.8.0_181\bin
 - name: Set JAVA_HOME
   win_environment:
     name: JAVA_HOME

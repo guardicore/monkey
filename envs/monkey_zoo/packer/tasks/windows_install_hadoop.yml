@@ -1,0 +1,69 @@
+---
+# Requires 7-Zip to be installed
+# Sets environment variables HADOOP_HOME and adds Hadoop to PATH,
+# but does not reboot to reload the environment variables
+- name: Download Hadoop
+  win_get_url:
+    url: https://archive.apache.org/dist/hadoop/common/hadoop-2.9.1/hadoop-2.9.1.tar.gz
+    dest: C:\Windows\Temp\hadoop-2.9.1.tar.gz
+    force: true
+- name: Extract Hadoop
+  win_shell: "& cmd.exe '/C 7z x C:\\Windows\\Temp\\hadoop-2.9.1.tar.gz -so | 7z x -si -ttar -o\"C:\\\"'"
+- name: Add Hadoop to PATH
+  win_path:
+    elements:
+      - C:\hadoop-2.9.1\bin
+- name: Add HADOOP_HOME
+  win_environment:
+    name: HADOOP_HOME
+    value: C:\hadoop-2.9.1
+    level: machine
+    state: present
+- name: Copy Hadoop config files
+  win_copy:
+    src: files/hadoop/config/
+    dest: C:\hadoop-2.9.1\etc\hadoop\
+  # with_items:
+  #   - files/core-site.xml
+  #   - files/hdfs-site.xml
+  #   - files/mapred-site.xml
+  #   - files/yarn-site.xml
+- name: Copy Hadoop start scripts
+  win_copy:
+    src: files/hadoop/scripts/
+    dest: C:\hadoop-2.9.1\sbin\
+    force: true
+  # with_items:
+  #   - files/start-dfs.cmd
+  #   - files/start-yarn.cmd
+- name: Download Hadoop executables
+  win_shell: |
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $WebClient = New-Object System.Net.WebClient
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hadoop", "C:\hadoop-2.9.1\bin\hadoop")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hadoop.cmd", "C:\hadoop-2.9.1\bin\hadoop.cmd")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hadoop.dll", "C:\hadoop-2.9.1\bin\hadoop.dll")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hadoop.exp", "C:\hadoop-2.9.1\bin\hadoop.exp")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hadoop.lib", "C:\hadoop-2.9.1\bin\hadoop.lib")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hadoop.pdb", "C:\hadoop-2.9.1\bin\hadoop.pdb")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hdfs", "C:\hadoop-2.9.1\bin\hdfs")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hdfs.cmd", "C:\hadoop-2.9.1\bin\hdfs.cmd")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hdfs.dll", "C:\hadoop-2.9.1\bin\hdfs.dll")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hdfs.exp", "C:\hadoop-2.9.1\bin\hdfs.exp")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hdfs.lib", "C:\hadoop-2.9.1\bin\hdfs.lib")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/hdfs.pdb", "C:\hadoop-2.9.1\bin\hdfs.pdb")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/libwinutils.lib", "C:\hadoop-2.9.1\bin\libwinutils.lib")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/mapred", "C:\hadoop-2.9.1\bin\mapred")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/mapred.cmd", "C:\hadoop-2.9.1\bin\mapred.cmd")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/rcc", "C:\hadoop-2.9.1\bin\rcc")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/winutils.exe", "C:\hadoop-2.9.1\bin\winutils.exe")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/winutils.pdb", "C:\hadoop-2.9.1\bin\winutils.pdb")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/yarn", "C:\hadoop-2.9.1\bin\yarn")
+    $WebClient.DownloadFile("https://github.com/cdarlint/winutils/raw/master/hadoop-2.9.1/bin/yarn.cmd", "C:\hadoop-2.9.1\bin\yarn.cmd")
+- name: Format namenode
+  win_shell: |
+    C:\hadoop-2.9.1\bin\hdfs namenode -format
+- name: Start hadoop on boot
+  win_shell: |
+    schtasks /create /tn "LaunchDFS" /sc onstart /tr "C:\hadoop-2.9.1\sbin\start-dfs.cmd" /ru SYSTEM
+    schtasks /create /tn "LaunchYARN" /sc onstart /tr "C:\hadoop-2.9.1\sbin\start-yarn.cmd" /ru SYSTEM
