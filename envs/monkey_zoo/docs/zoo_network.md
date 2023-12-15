@@ -19,6 +19,7 @@ This document describes Infection Monkey’s test network.
 [Nr. 21 Scan](#_Toc526517196)<br>
 [Nr. 22 Scan](#_Toc526517197)<br>
 [Nr. 25 Zerologon](#_Toc536021478)<br>
+[Nr. 3-44 Powershell](#_Toc536021579)<br>
 [Nr. 3-45 Powershell](#_Toc536021479)<br>
 [Nr. 3-46 Powershell](#_Toc536021480)<br>
 [Nr. 3-47 Powershell](#_Toc536021481)<br>
@@ -594,7 +595,7 @@ We decided to keep it this way to ensure that plugins run even if the OS of a ta
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021479" class="anchor"></span>Nr. <strong>3-44 Powershell</strong></p>
+<th><p><span id="_Toc536021579" class="anchor"></span>Nr. <strong>3-44 Powershell</strong></p>
 <p>(10.2.3.44)</p></th>
 <th>(Vulnerable)</th>
 </tr>
@@ -666,8 +667,7 @@ the same credentials on both machines</td>
 </tr>
 <tr class="even">
 <td>Software:</td>
-<td>WinRM service</td>
-<td>Tomcat 8.0.36</td>
+<td>WinRM service and Tomcat 8.0.36</td>
 </tr>
 <tr class="odd">
 <td>Default server’s port:8080</td>
@@ -1016,8 +1016,7 @@ setting:
 </tr>
 <tr class="even">
 <td>Software:</td>
-<td>Logstash 5.5.0</td>
-<td>Java 1.8.0</td>
+<td>Logstash 5.5.0 and Java 1.8.0</td>
 </tr>
 <tr class="odd">
 <td>Default server’s port:</td>
@@ -1046,8 +1045,7 @@ setting:
 </tr>
 <tr class="even">
 <td>Software:</td>
-<td>Logstash 5.5.0</td>
-<td>Java 1.8.0</td>
+<td>Logstash 5.5.0 and Java 1.8.0</td>
 </tr>
 <tr class="odd">
 <td>Default server’s port:</td>
@@ -1132,8 +1130,7 @@ setting:
 </tr>
 <tr class="even">
 <td>Software:</td>
-<td>Remote Desktop Protocol</td>
-<td>Google Chrome</td>
+<td>Remote Desktop Protocol and Google Chrome</td>
 </tr>
 <tr class="odd">
 <td>Default RDP port:</td>
@@ -1302,7 +1299,3 @@ Password: blahblahblah
 </tr>
 </tbody>
 </table>
-
-# Network topography:
-
-<img src="/envs/monkey_zoo/docs/images/networkTopography.jpg" >
