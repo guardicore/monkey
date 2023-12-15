@@ -114,7 +114,8 @@ build_frontend() {
 
   popd || handle_error
 
-  remove_node_modules "$ui_dir"
+  rm -rf "$1/node_modules"
+  rm -rf "$1/.npm"
 }
 
 get_commit_id() {
