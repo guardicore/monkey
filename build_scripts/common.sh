@@ -1,6 +1,4 @@
 CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
-NODE_VERSION="v20.7.0"
-NODE_URL="https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz"
 
 copy_monkey_island_to_build_dir() {
   local src=$1
