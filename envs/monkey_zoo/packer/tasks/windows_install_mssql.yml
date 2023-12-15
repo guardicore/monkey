@@ -1,0 +1,37 @@
+---
+- name: Copy SQL Server installer configuration file
+  win_copy:
+    src: files/mssql/ConfigurationFile.ini
+    dest: C:\Windows\Temp\ConfigurationFile.ini
+- name: Download MSSQL
+  win_get_url:
+    url: https://download.microsoft.com/download/5/A/7/5A7065A2-C81C-4A31-9972-8A31AC9388C1/SQLServer2017-SSEI-Dev.exe
+    dest: C:\Windows\Temp\SQLServer2017-SSEI-Dev.exe
+- name: Install MSSQL
+  win_shell: |
+    C:\Windows\Temp\SQLServer2017-SSEI-Dev.exe /Q /IAcceptSQLServerLicenseTerms
+    C:\SQLServer2017Media\Developer_ENU\SETUP.EXE /Q /CONFIGURATIONFILE="C:\Windows\Temp\ConfigurationFile.ini" /IACCEPTROPENLICENSETERMS /SAPWD="pass123!"
+# - name: Download SSMS
+#   win_get_url:
+#     url: https://download.microsoft.com/download/1/7/1/171A7955-3B5F-4A50-8F3A-D1FA078DB0E6/SSMS-Setup-ENU.exe
+#     dest: C:\Windows\Temp\SSMS-Setup-ENU.exe
+# - name: Install SSMS
+#   win_shell: |
+#     $media_path = "C:\Windows\Temp\SSMS-Setup-ENU.exe"
+#     $install_path = "$env:SystemDrive\ManagementStudio"
+#     $params = "/Install /Quiet SSMSInstallRoot=`"$install_path`""
+#
+#     Start-Process -FilePath $media_path -ArgumentList $params -Wait
+- name: Add MSSQL admin login
+  win_shell: |
+    sqlcmd -Q "CREATE LOGIN {{ mssql_admin_username }} WITH PASSWORD = '{{ mssql_admin_password }}', CHECK_POLICY = OFF"
+    sqlcmd -Q "sp_addsrvrolemember '{{ mssql_admin_username }}', 'sysadmin'"
+- name: Enable xp_cmdshell
+  win_shell: |
+    sqlcmd -Q "sp_configure 'show advanced options', '1'; RECONFIGURE"
+    sqlcmd -Q "sp_configure 'xp_cmdshell', '1'; RECONFIGURE"
+# Stop the SQL Server service
+# C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\Binn
+# $server_job = Start-Job -ScriptBlock { sqlservr.exe –m }
+# Do stuff
+# $server_job | Stop-Job
