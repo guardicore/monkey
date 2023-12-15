@@ -12,7 +12,6 @@
       user_groups: [Administrators, "Remote Desktop Users"]
   - import_tasks: tasks/windows_disable_automatic_updates.yml
   - import_tasks: tasks/windows_disable_windows_defender.yml
-  - import_tasks: tasks/windows_disable_firewall.yml
   - import_tasks: tasks/windows_install_java.yml
   - import_tasks: tasks/windows_install_apache_solr.yml
     become: yes
@@ -20,6 +19,17 @@
     vars:
       ansible_become_method: runas
       ansible_become_password: "{{ user_password }}"
+  - name: Allow port 8983 Solr
+    win_command:
+      cmd: netsh advfirewall firewall add rule name="Allow Solr" dir=in action=allow protocol=TCP localport=8983
+  # Disallow RDP to this machine from internal ips
+  - import_tasks: tasks/windows_disallow_rdp_for_subnet.yml
+    vars:
+      subnet_ip: "10.2.0.0/16"
+  # Disallow PowerShell to this machine from internal ips
+  - import_tasks: tasks/windows_disallow_powershell_remoting_on_subnet.yml
+    vars:
+      subnet_ip: "10.2.0.0/16"
   - name: Change the hostname to log4j-solr-50
     ansible.windows.win_hostname:
       name: log4j-solr-50
