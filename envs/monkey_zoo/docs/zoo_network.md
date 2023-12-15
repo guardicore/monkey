@@ -1138,7 +1138,7 @@ setting:
 <tbody>
 <tr class="odd">
 <td>OS:</td>
-<td><strong>Windows Server 2016 x64</strong></td>
+<td><strong>Windows Server 2012 R2 (custom image)</strong></td>
 </tr>
 <tr class="even">
 <td>Software:</td>
