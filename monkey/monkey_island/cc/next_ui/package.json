@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "node server-dev.js",
     "build": "node build-standalone.js",
-    "start": "node server.js",
     "lint": "next lint"
   },
   "dependencies": {
