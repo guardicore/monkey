@@ -242,7 +242,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     Print-Status "Updating npm"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\cc\ui")
     & npm update
-    & npm run dev
+    & npm run build
     Pop-Location
 
     # Create infection_monkey/bin directory if not already present
