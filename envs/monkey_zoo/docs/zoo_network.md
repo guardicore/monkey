@@ -12,7 +12,6 @@ This document describes Infection Monkey’s test network.
 [Nr. 13 Tunneling M2](#_Toc536021466)<br>
 [Nr. 11 SSH key steal](#_Toc526517190)<br>
 [Nr. 12 SSH key steal](#_Toc526517191)<br>
-[Nr. 13 RDP grinder](#_Toc526517192)<br>
 [Nr. 14 Mimikatz](#_Toc536021467)<br>
 [Nr. 15 Mimikatz](#_Toc536021468)<br>
 [Nr. 16 MsSQL](#_Toc536021469)<br>
@@ -364,44 +363,6 @@ We decided to keep it this way to ensure that plugins run even if the OS of a ta
 <tr class="even">
 <td>Notes:</td>
 <td>Don’t add this machine’s credentials to exploit configuration.</td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc526517192" class="anchor"></span>Nr. <strong>13</strong> RDP grinder</p>
-<p>(10.2.2.13)</p></th>
-<th>(Not implemented)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Windows 10 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td>-</td>
-</tr>
-<tr class="odd">
-<td>Default connection port:</td>
-<td>3389</td>
-</tr>
-<tr class="even">
-<td>Root password:</td>
-<td>2}p}aR]&amp;=M</td>
-</tr>
-<tr class="odd">
-<td>Server’s config:</td>
-<td><p>Remote desktop enabled</p>
-<p>Admin user’s credentials:</p>
-<p>m0nk3y, 2}p}aR]&amp;=M</p></td>
-</tr>
-<tr class="even">
-<td>Notes:</td>
-<td></td>
 </tr>
 </tbody>
 </table>
