@@ -115,8 +115,6 @@ const nextConfig = {
         esmExternals: true,
         isrMemoryCacheSize: 52428800,
         fullySpecified: false,
-        outputFileTracingRoot:
-            'C:\\Users\\vzilius\\Desktop\\infection_monkey\\monkey\\monkey_island\\cc\\next_ui',
         swcTraceProfiling: false,
         forceSwcTransforms: false,
         largePageDataBytes: 128000,
