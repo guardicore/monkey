@@ -3,10 +3,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import classes from './appDrawerOpener.module.scss';
 import useResponsive from '@/hooks/useResponsive';
 
-const AppDrawerOpener = ({ onClick }) => {
+const AppDrawerOpener = ({ onClick }: { onClick: object }) => {
     const { matches } = useResponsive();
 
     const handleClick = () => {
+        // @ts-ignore
         onClick();
     };
 
