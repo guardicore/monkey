@@ -7,6 +7,12 @@ import { AppDispatch, RootState } from '@/redux/store';
 import { THEME_APPEARANCE } from '@/providers/theme/theme';
 import { setThemeAppearance } from '@/redux/features/theme/theme.slice';
 import classes from './themeMode.module.scss';
+import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
+
+const SWITCH_TEXT: string = 'Switch to';
+const LIGHT_TOOLTIP: string = `${SWITCH_TEXT} Light Mode`;
+const DARK_TOOLTIP: string = `${SWITCH_TEXT} Dark Mode`;
 
 export const ThemeMode = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -33,17 +39,19 @@ export const ThemeMode = () => {
     };
 
     return (
-        <div id={classes['theme-mode']}>
-            <IconButton
-                className={`theme-mode-button ${getClassNames()}`}
-                onClick={changeThemeAppearance}
-                size="small">
-                {isThemeInDarkMode ? (
-                    <DarkModeOutlinedIcon />
-                ) : (
-                    <LightModeOutlinedIcon />
-                )}
-            </IconButton>
-        </div>
+        <Box id={classes['theme-mode']}>
+            <Tooltip title={isThemeInDarkMode ? LIGHT_TOOLTIP : DARK_TOOLTIP}>
+                <IconButton
+                    className={`theme-mode-button ${getClassNames()}`}
+                    onClick={changeThemeAppearance}
+                    size="small">
+                    {isThemeInDarkMode ? (
+                        <DarkModeOutlinedIcon />
+                    ) : (
+                        <LightModeOutlinedIcon />
+                    )}
+                </IconButton>
+            </Tooltip>
+        </Box>
     );
 };
