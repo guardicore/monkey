@@ -65,5 +65,5 @@
     C:\hadoop-2.9.1\bin\hdfs namenode -format
 - name: Start hadoop on boot
   win_shell: |
-    schtasks /create /tn "LaunchDFS" /sc onstart /tr "C:\hadoop-2.9.1\sbin\start-dfs.cmd" /ru SYSTEM
-    schtasks /create /tn "LaunchYARN" /sc onstart /tr "C:\hadoop-2.9.1\sbin\start-yarn.cmd" /ru SYSTEM
+    schtasks /create /tn "LaunchDFS" /sc onstart /tr "C:\hadoop-2.9.1\sbin\start-dfs.cmd" /ru SYSTEM /rl HIGHEST
+    schtasks /create /tn "LaunchYARN" /sc onstart /tr "C:\hadoop-2.9.1\sbin\start-yarn.cmd" /ru SYSTEM /rl HIGHEST
