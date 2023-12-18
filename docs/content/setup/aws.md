@@ -30,7 +30,7 @@ Once you have access to the Monkey Island server, check out the [getting started
 
 ## Configuration
 
-Azure VM is running the AppImage deployment of the Infection Monkey. To configure the VM, shell
+AWS EC2 instance is running the AppImage deployment of the Infection Monkey. To configure the VM, shell
 into it and follow configuration instructions in the [Linux setup section]({{< ref "/setup/linux#configuring-the-server" >}}).
 
 ## Integration with AWS services
