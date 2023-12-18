@@ -26,9 +26,9 @@ setup_build_dir() {
   generate_ssl_cert "$build_dir"
 
   if [[ $FEATURE_FLAGS == *"NEXT_JS_UI"* ]]; then
-    build_nextjs_frontend "$BUILD_DIR" "$is_release_build"
+    build_nextjs_frontend "$build_dir" "$is_release_build"
   else
-    build_frontend "$BUILD_DIR" "$is_release_build"
+    build_frontend "$build_dir" "$is_release_build"
   fi
 }
 
