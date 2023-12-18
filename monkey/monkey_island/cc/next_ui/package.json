@@ -3,9 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node server.js",
-    "build": "next build",
-    "start": "node server.js",
+    "dev": "node server-dev.js",
+    "build": "node build-standalone.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -18,6 +17,7 @@
     "@types/node": "^20.9.0",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "dotenv": "^16.3.1",
     "eslint-config-next": "^14.0.2",
     "http-proxy-middleware": "^2.0.6",
     "nanoid": "^5.0.3",

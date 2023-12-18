@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+from pathlib import Path
 from typing import Optional
 
 from monkeytypes import NetworkPort
@@ -12,11 +13,11 @@ TERMINATE_TIMEOUT = 10
 logger = logging.getLogger(__name__)
 
 
-UI_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "next_ui")
+UI_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "next_ui", ".next", "standalone")
 _NODE_EXECUTABLE_PATH_WIN = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "node", "node.exe")
 _NODE_EXECUTABLE_PATH_LINUX = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "node", "node")
 NODE_EXECUTABLE_PATH = _NODE_EXECUTABLE_PATH_WIN if is_windows_os() else _NODE_EXECUTABLE_PATH_LINUX
-NEXTJS_EXECUTION_COMMAND = [NODE_EXECUTABLE_PATH, "server.js"]
+NEXTJS_EXECUTION_COMMAND = [NODE_EXECUTABLE_PATH, "server-prod.js"]
 
 
 class NextJsProcess:
@@ -37,6 +38,12 @@ class NextJsProcess:
             f"Next.js server will be launched with command: {' '.join(self._next_js_run_cmd)}"
         )
         logger.info(f"UI log will be available at {self._log_file}.")
+
+        if not Path(UI_DIR).is_dir():
+            raise FileNotFoundError(
+                f"Next.js UI directory {UI_DIR} does not exist!"
+                f"Run `npm run build` to build the front-end."
+            )
 
         with open(self._log_file, "w") as log:
             node_env = os.environ.copy()

@@ -48,7 +48,13 @@ setup_build_dir() {
   install_mongodb
 
   generate_ssl_cert "$BUILD_DIR"
-  build_frontend "$BUILD_DIR" "$is_release_build"
+  if [[ $FEATURE_FLAGS == *"NEXT_JS_UI"* ]]; then
+    log_message "Building Next.js frontend"
+    build_nextjs_frontend "$BUILD_DIR" "$is_release_build"
+  else
+    log_message "Building legacy frontend"
+    build_frontend "$BUILD_DIR" "$is_release_build"
+  fi
 
   remove_python_appdir_artifacts
 
@@ -63,7 +69,8 @@ setup_python_appdir() {
 
   chmod u+x "$PYTHON_APPIMAGE"
 
-  "./$PYTHON_APPIMAGE" --appimage-extract
+  log_message "extracting Python Appimage"
+  "./$PYTHON_APPIMAGE" --appimage-extract 1>/dev/null
   rm "$PYTHON_APPIMAGE"
 }
 

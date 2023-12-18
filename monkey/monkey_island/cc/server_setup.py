@@ -263,7 +263,11 @@ def _log_init_info(ip_addresses: Sequence[IPv4Address]):
 
 
 def _log_web_interface_access_urls(ip_addresses: Sequence[IPv4Address]):
-    web_interface_urls = ", ".join([f"https://{ip}" for ip in ip_addresses])
+    if NEXT_JS_UI_FEATURE:
+        web_interface_urls = ", ".join([f"https://{ip}" for ip in ip_addresses])
+    else:
+        web_interface_urls = ", ".join([f"https://{ip}:{FLASK_PORT}" for ip in ip_addresses])
+
     logger.info(
         "To access the web interface, navigate to one of the the following URLs using your "
         f"browser: {web_interface_urls}"

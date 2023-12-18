@@ -15,6 +15,7 @@ function Extract-SingleFile([String] $archivePath, [String] $fileToExtract, [Str
     $archive = [IO.Compression.ZipFile]::OpenRead( $archivePath )
     try {
         if( $foundFile = $archive.GetEntry($fileToExtract) ) {
+            New-Item -ItemType Directory -Force -Path $destinationDir
             $destinationFile = Join-Path $destinationDir $foundFile.Name
             [IO.Compression.ZipFileExtensions]::ExtractToFile( $foundFile, $destinationFile )
         }
@@ -37,7 +38,6 @@ $NODE_URL = "https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-win-x64.zi
 if (!(Test-Path -Path (Join-Path $destinationDir "node.exe") -PathType Leaf))
 {
     "Downloading node server ..."
-    md -Force $destinationDir | Out-Null
     $tempDir = Create-TempDir
     $archivePath = Join-Path $tempDir $NODE_ZIP_FILENAME
     try {

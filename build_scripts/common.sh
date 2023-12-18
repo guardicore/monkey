@@ -1,12 +1,9 @@
 CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
-NODE_VERSION="v20.7.0"
-NODE_URL="https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz"
 
 copy_monkey_island_to_build_dir() {
   local src=$1
   local build_dir=$2
 
-  cp "$src"/__init__.py "$build_dir"
   cp "$src"/monkey_island.py "$build_dir"
   cp -r "$src"/common "$build_dir/"
 
@@ -77,8 +74,29 @@ generate_ssl_cert() {
   "$island_path"/linux/create_certificate.sh "$island_path"/cc
 }
 
-build_frontend() {
+build_nextjs_frontend() {
   local ui_dir="$1/monkey_island/cc/next_ui"
+  local is_release_build=$2
+  mkdir -p "$ui_dir"
+  pushd "$ui_dir" || handle_error
+
+  log_message "Generating front end"
+  npm ci
+  log_message "Running production front end build"
+  npm run build
+
+  log_message "Removing development artifacts"
+  mv "${ui_dir}/.next/standalone" "${ui_dir}/standalone"
+  rm -rf "${ui_dir}/.next"
+  mkdir "${ui_dir}/.next"
+  mv "${ui_dir}/standalone" "${ui_dir}/.next"
+  log_message "Next.js standalone deployment built successfully"
+
+  popd || handle_error
+}
+
+build_frontend() {
+  local ui_dir="$1/monkey_island/cc/ui"
   local is_release_build=$2
   pushd "$ui_dir" || handle_error
 
@@ -86,24 +104,16 @@ build_frontend() {
   npm ci
   if [ "$is_release_build" == true ]; then
     log_message "Running production front end build"
-    npm run build
+    npm run dist
   else
     log_message "Running development front end build"
-    npm run build # Same as production build?
+    npm run dev
   fi
 
-  log_message "Deploying standalone build"
-  cp -r "$ui_dir/public" "$ui_dir/.next/standalone/"
-  cp -r "$ui_dir/.next/static" "$ui_dir/.next/standalone/.next/"
-  # Since we use a custom server.js, we need all of next.js, not just the traced files
-  cp -r "$ui_dir/node_modules/next" "$ui_dir/.next/standalone/node_modules/"
-  cp "$ui_dir/server.js" "$ui_dir/.next/standalone/"
-  # Use standalone folder only
-  mv "$ui_dir/.next/standalone" "${ui_dir}_standalone"
-  rm -rf "$ui_dir"
-  mv "${ui_dir}_standalone" "$ui_dir"
-
   popd || handle_error
+
+  rm -rf "$1/node_modules"
+  rm -rf "$1/.npm"
 }
 
 get_commit_id() {
