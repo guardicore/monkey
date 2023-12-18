@@ -1,4 +1,4 @@
-import { AUTHENTICATED_ROOT_PATH } from '@/constants/paths.constants';
+import { ROUTES } from '@/constants/paths.constants';
 import Box from '@mui/material/Box';
 import React from 'react';
 import { useRouter } from 'next/navigation';
@@ -17,7 +17,7 @@ const AppLogo = () => {
     return (
         <Box
             id={classes['app-logo']}
-            onClick={() => handleLogoClick(AUTHENTICATED_ROOT_PATH)}>
+            onClick={() => handleLogoClick(ROUTES.ROOT)}>
             <SvgIcon inheritViewBox={true} className={'logo-icon'}>
                 <MonkeyHeadSvg />
             </SvgIcon>
