@@ -27,6 +27,12 @@ On Windows, AppImage can be run in WSL 2.
 
 ## Deployment
 
+{{% notice info %}}
+You need to have **root permissions** to run the Infection Monkey AppImage package.
+By default, the Infection Monkey server is configured to listen on **port 443**,
+which requires setting the `CAP_NET_BIND_SERVICE` capability on the AppImage package.
+{{% /notice %}}
+
 1. Make the AppImage package executable:
     ```bash
     chmod u+x InfectionMonkey-v2.3.0.AppImage
