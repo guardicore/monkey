@@ -1,5 +1,5 @@
-source "googlecompute" "mssql-16-1" {
-  image_name     = "mssql-16-1"
+source "googlecompute" "mssql-16" {
+  image_name     = "mssql-16"
   project_id     = "${var.project_id}"
   source_image   = "${var.windows_source_image}"
   zone           = "${var.zone}"
@@ -29,10 +29,10 @@ source "googlecompute" "mssql-16-1" {
 
 build {
   sources = [
-    "source.googlecompute.mssql-16-1",
+    "source.googlecompute.mssql-16",
   ]
   provisioner "ansible" {
-    only             = ["googlecompute.mssql-16-1"]
+    only             = ["googlecompute.mssql-16"]
     use_proxy        = false
     user             = "${var.packer_username}"
     playbook_file    = "${path.root}/setup_mssql_16.yml"
