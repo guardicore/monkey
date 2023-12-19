@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
-import { AUTHENTICATION_PATHS, ROUTES } from '@/constants/paths.constants';
+import { AUTHENTICATION_PATHS, PATHS } from '@/constants/paths.constants';
 
 const UNAUTHENTICATED: string = 'unauthenticated';
 
@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             (status === UNAUTHENTICATED || isSessionHasError(data)) &&
             !isPathInAuthPaths(currentPathName)
         ) {
-            signOut({ callbackUrl: ROUTES.SIGN_IN });
+            signOut({ callbackUrl: PATHS.SIGN_IN });
         }
     }, [status]);
 

@@ -1,4 +1,4 @@
-import { ROUTES } from '@/constants/paths.constants';
+import { PATHS } from '@/constants/paths.constants';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import React from 'react';
@@ -9,9 +9,9 @@ import HubIcon from '@mui/icons-material/Hub';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 
 const MenuLinks = [
-    { path: ROUTES.HOME, label: 'Home', icon: <HomeIcon /> },
-    { path: ROUTES.MAP, label: 'Map', icon: <HubIcon /> },
-    { path: ROUTES.EVENTS, label: 'Events', icon: <EventNoteIcon /> }
+    { path: PATHS.HOME, label: 'Home', icon: <HomeIcon /> },
+    { path: PATHS.MAP, label: 'Map', icon: <HubIcon /> },
+    { path: PATHS.EVENTS, label: 'Events', icon: <EventNoteIcon /> }
 ];
 
 const AppMenu = ({ onClose }: { onClose?: object }) => {
