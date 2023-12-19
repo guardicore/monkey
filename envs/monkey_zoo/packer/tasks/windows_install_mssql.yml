@@ -7,10 +7,18 @@
   win_get_url:
     url: https://download.microsoft.com/download/5/A/7/5A7065A2-C81C-4A31-9972-8A31AC9388C1/SQLServer2017-SSEI-Dev.exe
     dest: C:\Windows\Temp\SQLServer2017-SSEI-Dev.exe
-- name: Install MSSQL
+- name: Install MSSQL Media
   win_shell: |
     C:\Windows\Temp\SQLServer2017-SSEI-Dev.exe /Q /IAcceptSQLServerLicenseTerms
-    C:\SQLServer2017Media\Developer_ENU\SETUP.EXE /Q /CONFIGURATIONFILE="C:\Windows\Temp\ConfigurationFile.ini" /IACCEPTROPENLICENSETERMS /SAPWD="pass123!"
+# - name: Get setup log
+#   win_shell: |
+#     Get-Content -Path "C:\Program Files\Microsoft SQL Server\140\Setup Bootstrap\Log\Summary.txt" -Tail 100
+#   register: sqlresult
+# - debug:
+#     var: sqlresult.stdout_lines
+- name: Install MSSQL
+  win_shell: |
+    C:\SQLServer2017Media\Developer_ENU\SETUP.EXE /CONFIGURATIONFILE="C:\Windows\Temp\ConfigurationFile.ini" /SAPWD="pass123!"
 # - name: Download SSMS
 #   win_get_url:
 #     url: https://download.microsoft.com/download/1/7/1/171A7955-3B5F-4A50-8F3A-D1FA078DB0E6/SSMS-Setup-ENU.exe
