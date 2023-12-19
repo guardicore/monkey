@@ -1,4 +1,5 @@
-import Drawer from '@mui/material/Drawer';
+import Drawer, { DrawerProps } from '@mui/material/Drawer';
+import React from 'react';
 
 export enum DrawerVariant {
     PERMANENT = 'permanent',
@@ -13,7 +14,16 @@ export enum DrawerAnchor {
     BOTTOM = 'bottom'
 }
 
-const MonkeyDrawer = (props) => {
+export interface MonkeyDrawerProps extends DrawerProps {
+    children?: React.ReactNode;
+    variant?: DrawerVariant;
+    anchor?: DrawerAnchor;
+    hideBackdrop?: boolean;
+    open?: boolean;
+    onClose?: () => void;
+}
+
+const MonkeyDrawer = (props: MonkeyDrawerProps) => {
     const {
         children = null,
         variant = DrawerVariant.TEMPORARY,
@@ -21,7 +31,6 @@ const MonkeyDrawer = (props) => {
         hideBackdrop = false,
         open = false,
         onClose = null,
-        classes = null,
         ...rest
     } = props;
 
@@ -30,7 +39,6 @@ const MonkeyDrawer = (props) => {
             anchor={anchor}
             open={open}
             onClose={onClose}
-            classes={classes}
             hideBackdrop={hideBackdrop}
             variant={variant}
             {...rest}>
