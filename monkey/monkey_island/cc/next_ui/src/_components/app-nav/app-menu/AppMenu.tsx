@@ -14,12 +14,15 @@ const MenuLinks = [
     { path: PATHS.EVENTS, label: 'Events', icon: <EventNoteIcon /> }
 ];
 
-const AppMenu = ({ onClose }: { onClose?: object }) => {
+export interface MenuProps {
+    onClose?: () => void;
+}
+
+const AppMenu = ({ onClose }: MenuProps) => {
     const router = useRouter();
 
     const handleRouteClick = (path: string) => {
         router.push(path);
-        // @ts-ignore
         onClose && onClose();
     };
 

@@ -6,9 +6,12 @@ import MonkeyHeadSvg from '@/assets/svg-components/MonkeyHead.svg';
 import SvgIcon from '@mui/material/SvgIcon';
 import React from 'react';
 
-const DrawerHeader = ({ onClose }: { onClose: object }) => {
+export interface DrawerHeaderProps {
+    onClose?: () => void;
+}
+
+const DrawerHeader = ({ onClose }: DrawerHeaderProps) => {
     const handleDrawerClose = () => {
-        // @ts-ignore
         onClose && onClose();
     };
 
