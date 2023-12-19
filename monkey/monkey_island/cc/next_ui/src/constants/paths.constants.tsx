@@ -1,4 +1,4 @@
-export enum ROUTES {
+export enum PATHS {
     HOME = '/home',
     MAP = '/map',
     EVENTS = '/events',
@@ -7,4 +7,4 @@ export enum ROUTES {
     ROOT = '/'
 }
 
-export const AUTHENTICATION_PATHS = [ROUTES.SIGN_IN, ROUTES.SIGN_UP];
+export const AUTHENTICATION_PATHS= [PATHS.SIGN_IN, PATHS.SIGN_UP];

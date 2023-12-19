@@ -1,7 +1,7 @@
-import { ROUTES } from '@/constants/paths.constants';
+import { PATHS } from '@/constants/paths.constants';
 
 const authPages = {
-    signIn: ROUTES.SIGN_IN
+    signIn: PATHS.SIGN_IN
 };
 
 export default authPages;

@@ -2,7 +2,7 @@ import { internalApiSlice } from '@/redux/features/api/internalApiSlice';
 import { API_AUTH_ENDPOINTS } from '@/redux/features/api/authentication/constants/auth.constants';
 import { signOut } from 'next-auth/react';
 import { HTTP_METHODS } from '@/constants/http.constants';
-import { ROUTES } from '@/constants/paths.constants';
+import { PATHS } from '@/constants/paths.constants';
 
 const customExtraOptions = {
     isInternalRequest: true
@@ -44,7 +44,7 @@ export const internalAuthApi = internalApiSlice.injectEndpoints({
                     const { data } = await queryFulfilled;
 
                     if (data) {
-                        await signOut({ callbackUrl: ROUTES.SIGN_IN });
+                        await signOut({ callbackUrl: PATHS.SIGN_IN });
                     }
                 } catch (error) {
                     console.log('An error occurred while logging out');
