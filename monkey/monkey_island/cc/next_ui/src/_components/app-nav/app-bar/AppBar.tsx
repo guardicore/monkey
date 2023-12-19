@@ -9,11 +9,11 @@ import AppLogo from '@/_components/app-nav/app-logo/AppLogo';
 import AppAvatar from '@/_components/app-nav/app-avatar/AppAvatar';
 import Box from '@mui/material/Box';
 import AppDrawerOpener from '@/_components/app-nav/app-drawer-opener/AppDrawerOpener';
-import useResponsive from '@/hooks/useResponsive';
+import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
 import { ThemeMode } from '@/_components/theme-mode/ThemeMode';
 
 const MonkeyAppBar = ({ setIsDrawerOpen = null }: { setIsDrawerOpen: any }) => {
-    const { matches } = useResponsive();
+    const { screenIsSmall } = useSmallScreenCheck();
 
     return (
         <AppBar
@@ -28,7 +28,7 @@ const MonkeyAppBar = ({ setIsDrawerOpen = null }: { setIsDrawerOpen: any }) => {
                             onClick={() => setIsDrawerOpen(true)}
                         />
                         <AppLogo />
-                        {!matches && <AppMenu />}
+                        {!screenIsSmall && <AppMenu />}
                     </Box>
                     <Box className="etc-container">
                         <ThemeMode />

@@ -1,6 +1,6 @@
 import MonkeyDrawer, { DrawerVariant } from '@/_components/drawer/Drawer';
 import AppMenu from '@/_components/app-nav/app-menu/AppMenu';
-import useResponsive from '@/hooks/useResponsive';
+import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
 import DrawerHeader from '@/_components/app-nav/app-drawer/drawer-header/DrawerHeader';
 
 export interface AppDrawerProps {
@@ -9,9 +9,9 @@ export interface AppDrawerProps {
 }
 
 const AppDrawer = ({ open, onClose }: AppDrawerProps) => {
-    const { matches } = useResponsive();
+    const { screenIsSmall } = useSmallScreenCheck();
 
-    if (!matches) {
+    if (!screenIsSmall) {
         return null;
     }
 

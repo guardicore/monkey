@@ -1,17 +1,17 @@
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import classes from './appDrawerOpener.module.scss';
-import useResponsive from '@/hooks/useResponsive';
+import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
 
 const AppDrawerOpener = ({ onClick }: { onClick: object }) => {
-    const { matches } = useResponsive();
+    const { screenIsSmall } = useSmallScreenCheck();
 
     const handleClick = () => {
         // @ts-ignore
         onClick();
     };
 
-    if (!matches) {
+    if (!screenIsSmall) {
         return null;
     }
 
