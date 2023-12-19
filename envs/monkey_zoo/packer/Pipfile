@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pywinrm = {extras = ["credssp"], version = "*"}
 
 [dev-packages]
 ansible = "==7.4.0"
