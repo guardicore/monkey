@@ -3,7 +3,12 @@ import AppMenu from '@/_components/app-nav/app-menu/AppMenu';
 import useResponsive from '@/hooks/useResponsive';
 import DrawerHeader from '@/_components/app-nav/app-drawer/drawer-header/DrawerHeader';
 
-const AppDrawer = ({ open, onClose }: { open: boolean; onClose: object }) => {
+export interface AppDrawerProps {
+    open: boolean;
+    onClose?: () => void;
+}
+
+const AppDrawer = ({ open, onClose }: AppDrawerProps) => {
     const { matches } = useResponsive();
 
     if (!matches) {
