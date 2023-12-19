@@ -34,6 +34,7 @@
   win_shell: |
     sqlcmd -Q "CREATE LOGIN {{ mssql_admin_username }} WITH PASSWORD = '{{ mssql_admin_password }}', CHECK_POLICY = OFF"
     sqlcmd -Q "sp_addsrvrolemember '{{ mssql_admin_username }}', 'sysadmin'"
+    sqlcmd -Q "xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'LoginMode', REG_DWORD, 2"
 - name: Enable xp_cmdshell
   win_shell: |
     sqlcmd -Q "sp_configure 'show advanced options', '1'; RECONFIGURE"
