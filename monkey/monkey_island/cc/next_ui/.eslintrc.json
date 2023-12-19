@@ -30,18 +30,9 @@
     // react rules
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
-    // prettier rules
+    // prettier errors results in eslint errors
     "prettier/prettier":[
-      "error",
-      {
-        "tabWidth": 4,
-        "printWidth": 80,
-        "singleQuote": true,
-        "trailingComma": "none",
-        "bracketSameLine": true,
-        "endOfLine": "auto",
-        "singleAttributePerLine": false
-      }
+      "error"
     ],
     // custom rules
     "no-restricted-imports": [
