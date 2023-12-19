@@ -7,4 +7,4 @@ export enum PATHS {
     ROOT = '/'
 }
 
-export const AUTHENTICATION_PATHS= [PATHS.SIGN_IN, PATHS.SIGN_UP];
+export const AUTHENTICATION_PATHS = [PATHS.SIGN_IN, PATHS.SIGN_UP];
