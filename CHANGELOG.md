@@ -12,6 +12,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   #1247
 
 ### Changed
+- Response from `PUT /api/propagation-credentials/configured-credentials`
+  in the case of invalid credentials. #3971
 
 ### Fixed
 - Ports in Hadoop exploiter configuration can no longer be floating-point numbers. #3734
