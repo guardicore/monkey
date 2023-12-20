@@ -33,6 +33,7 @@ repos:
       - id: detect-private-key
         exclude: "envs/monkey_zoo/blackbox/expected_credentials.py"
       - id: end-of-file-fixer
+        exclude: "envs/monkey_zoo/packer/files/mssql/ConfigurationFile.ini"
       - id: trailing-whitespace
   - repo: https://github.com/eslint/eslint
     rev: v8.35.0
