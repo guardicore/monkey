@@ -1,0 +1,36 @@
+---
+- name: Create a mssql-16 machine image
+  hosts: all
+  vars:
+    host_name: mssql-16
+    mssql_user_name: m0nk3y
+    mssql_user_password: Xk8VDTsC
+  tasks:
+    - import_tasks: tasks/windows_disable_automatic_updates.yml
+    - import_tasks: tasks/windows_disable_windows_defender.yml
+    - import_tasks: tasks/windows_install_mssql.yml
+      vars:
+        mssql_admin_username: "{{ mssql_user_name }}"
+        mssql_admin_password: "{{ mssql_user_password }}"
+    - name: Allow port 1433 MSSQL
+      win_command:
+        cmd: netsh advfirewall firewall add rule name="Allow Port 1433" dir=in action=allow protocol=TCP localport=1433
+    # Disallow RDP to this machine from internal ips
+    - import_tasks: tasks/windows_disallow_rdp_for_subnet.yml
+      vars:
+        subnet_ip: "10.2.0.0/16"
+    # Disallow PowerShell to this machine from internal ips
+    - import_tasks: tasks/windows_disallow_powershell_remoting_on_subnet.yml
+      vars:
+        subnet_ip: "10.2.0.0/16"
+    - name: Change the hostname to {{ host_name }}
+      ansible.windows.win_hostname:
+        name: "{{ host_name }}"
+      register: res
+    - name: Reboot
+      ansible.windows.win_reboot:
+      when: res.reboot_required
+    - name: Delete packer_user
+      win_user:
+        name: packer_user
+        state: absent
