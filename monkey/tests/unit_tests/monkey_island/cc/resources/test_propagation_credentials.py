@@ -100,6 +100,29 @@ def test_all_propagation_credentials_endpoint__put_not_allowed(flask_client):
     assert resp.status_code == HTTPStatus.METHOD_NOT_ALLOWED
 
 
+@pytest.mark.parametrize(
+    "input_, expected_errors_index",
+    [
+        (
+            [
+                {"identity": {"email_address": "invalid input"}, "secret": {"password": "pwd"}},
+                {"identity": None, "secret": {"password": "pass"}},
+                {"identity": None, "secret": {"ntlm_hash": "invalid input"}},
+            ],
+            [0, 2],
+        ),
+        ([{"identity": {"username": "user1"}, "secret": {"lm_hash": "invalid input"}}], [0]),
+    ],
+)
+def test_propagation_credentials_endpoint__invalid_credentials(
+    flask_client, input_, expected_errors_index
+):
+    resp = flask_client.put(CONFIGURED_CREDENTIALS_URL, json=input_)
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
+    actual_errors_index = [error["index"] for error in json.loads(resp.text).get("errors", [])]
+    assert actual_errors_index == expected_errors_index
+
+
 NON_EXISTENT_COLLECTION_URL = urljoin(ALL_CREDENTIALS_URL + "/", "bogus-credentials")
 
 
