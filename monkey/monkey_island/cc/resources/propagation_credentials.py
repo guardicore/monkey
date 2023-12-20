@@ -37,15 +37,15 @@ class PropagationCredentials(AbstractResource):
     def put(self, collection=None):
         try:
             credentials = []
-            for credential_pair in request.json:
+            for index, credential_pair in enumerate(request.json):
                 credentials.append(Credentials(**credential_pair))
         except (TypeError, ValueError) as err:
             return {
                 "error": {
                     "message": f"{str(err)}",
-                    "bad_input": f"{credential_pair}"
-                    }
-                }, HTTPStatus.BAD_REQUEST
+                    "bad_index": index,
+                }
+            }, HTTPStatus.BAD_REQUEST
 
         if collection == _configured_collection:
             self._credentials_repository.remove_configured_credentials()

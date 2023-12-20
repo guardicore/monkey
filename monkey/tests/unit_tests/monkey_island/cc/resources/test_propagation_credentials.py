@@ -101,15 +101,24 @@ def test_all_propagation_credentials_endpoint__put_not_allowed(flask_client):
 
 
 @pytest.mark.parametrize(
-    "input_",
+    "input_, expected_bad_index",
     [
-        '{"identity": {"email_address": "invalid input"}, "secret": {"password": "pwd"}}',
-        '{"identity": {"username": "user1"}, "secret": {"lm_hash": "invalid input"}}',
+        (
+            [
+                {"identity": None, "secret": {"password": "pass"}},
+                {"identity": {"email_address": "invalid input"}, "secret": {"password": "pwd"}},
+            ],
+            1,
+        ),
+        ([{"identity": {"username": "user1"}, "secret": {"lm_hash": "invalid input"}}], 0),
     ],
 )
-def test_propagation_credentials_endpoint__invalid_credentials(flask_client, input_):
+def test_propagation_credentials_endpoint__invalid_credentials(
+    flask_client, input_, expected_bad_index
+):
     resp = flask_client.put(CONFIGURED_CREDENTIALS_URL, json=input_)
     assert resp.status_code == HTTPStatus.BAD_REQUEST
+    assert json.loads(resp.text)["error"]["bad_index"] == expected_bad_index
 
 
 NON_EXISTENT_COLLECTION_URL = urljoin(ALL_CREDENTIALS_URL + "/", "bogus-credentials")
