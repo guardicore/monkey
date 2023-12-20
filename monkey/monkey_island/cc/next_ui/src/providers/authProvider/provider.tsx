@@ -12,10 +12,7 @@ const isPathInAuthPaths = (path: string) => {
 };
 
 const isSessionHasError = (data: any) => {
-    if (data && data?.error) {
-        return true;
-    }
-    return false;
+    return !!(data && data?.error);
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -30,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         ) {
             signOut({ callbackUrl: PATHS.SIGN_IN });
         }
-    }, [status]);
+    }, [status, data]);
 
     return <>{children}</>;
 }
