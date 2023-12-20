@@ -40,8 +40,12 @@ class PropagationCredentials(AbstractResource):
             for credential_pair in request.json:
                 credentials.append(Credentials(**credential_pair))
         except (TypeError, ValueError) as err:
-            error = f"{credential_pair} -> {str(err)}"
-            return {"error": error}, HTTPStatus.BAD_REQUEST
+            return {
+                "error": {
+                    "message": f"{str(err)}",
+                    "bad_input": f"{credential_pair}"
+                    }
+                }, HTTPStatus.BAD_REQUEST
 
         if collection == _configured_collection:
             self._credentials_repository.remove_configured_credentials()
