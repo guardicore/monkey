@@ -35,7 +35,14 @@ class PropagationCredentials(AbstractResource):
     @auth_token_required
     @roles_accepted(AccountRole.ISLAND_INTERFACE.name)
     def put(self, collection=None):
-        credentials = [Credentials(**c) for c in request.json]
+        try:
+            credentials = []
+            for credential_pair in request.json:
+                credentials.append(Credentials(**credential_pair))
+        except (TypeError, ValueError) as err:
+            error = f"{credential_pair} -> {str(err)}"
+            return {"error": error}, HTTPStatus.BAD_REQUEST
+
         if collection == _configured_collection:
             self._credentials_repository.remove_configured_credentials()
             self._credentials_repository.save_configured_credentials(credentials)
