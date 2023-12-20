@@ -35,17 +35,21 @@ class PropagationCredentials(AbstractResource):
     @auth_token_required
     @roles_accepted(AccountRole.ISLAND_INTERFACE.name)
     def put(self, collection=None):
-        try:
-            credentials = []
-            for index, credential_pair in enumerate(request.json):
+        credentials = []
+        errors = []
+        for index, credential_pair in enumerate(request.json):
+            try:
                 credentials.append(Credentials(**credential_pair))
-        except (TypeError, ValueError) as err:
-            return {
-                "error": {
-                    "message": f"{str(err)}",
-                    "bad_index": index,
-                }
-            }, HTTPStatus.BAD_REQUEST
+            except (TypeError, ValueError) as err:
+                errors.append(
+                    {
+                        "message": f"{str(err)}",
+                        "index": index,
+                    }
+                )
+
+        if errors:
+            return {"errors": errors}, HTTPStatus.BAD_REQUEST
 
         if collection == _configured_collection:
             self._credentials_repository.remove_configured_credentials()
