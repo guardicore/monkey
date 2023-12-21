@@ -23,7 +23,7 @@ const getMiddlewares = (getDefaultMiddleware: CurriedGetDefaultMiddleware) => {
     }
 
     // @ts-ignore
-    return getDefaultMiddleware(middlewares);
+    return getDefaultMiddleware().concat(middlewares);
 };
 
 export const store = configureStore({
