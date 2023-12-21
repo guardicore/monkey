@@ -22,12 +22,6 @@ import NewCredentialPair from './NewCredentialPair';
 import {useStateCallback} from '../utils/useStateCallback';
 import {nanoid} from 'nanoid';
 
-const initialState = {
-  sorting: {
-    sortModel: [{field: 'identity', sort: 'asc'}]
-  }
-};
-
 const CredentialPairs = (props) => {
   const {onCredentialChange, credentials} = {...props};
   const [rowModesModel, setRowModesModel] = useStateCallback({});
@@ -217,7 +211,7 @@ const CredentialPairs = (props) => {
         </AccordionDetails>
       </Accordion>
       <Typography variant="h5" component="h5">Saved Credentials</Typography>
-      <XDataGrid columns={getDataColumns(getRowActions, false, setErrorForRow, rowActionsHeaderComponent, showSecrets)}
+      <XDataGrid columns={getDataColumns(getRowActions, true, setErrorForRow, rowActionsHeaderComponent, showSecrets)}
                  rows={[...rows]}
                  rowHeight={'25px'}
                  showToolbar={false}
@@ -231,7 +225,6 @@ const CredentialPairs = (props) => {
                  onProcessRowUpdateError={()=>void(0)}
                  getRowClassName={() => X_DATA_GRID_CLASSES.HIDDEN_LAST_EMPTY_CELL}
                  className="configured-credentials"
-                 initialState={initialState}
                  setFlex={false}
       />
     </div>
