@@ -401,6 +401,12 @@ class ConfigurePageComponent extends AuthComponent {
   sendCredentials() {
     let islandCredentials = formatCredentialsForIsland(this.state.credentials.credentialsData);
     let formattedCredentials = JSON.stringify(islandCredentials);
+    let formCredentialsIsland = {};
+    let credentialsDataId = {};
+    this.state.credentials.credentialsData.forEach((stateCredentials, stateCredentialsIndex) => {
+        formCredentialsIsland[stateCredentials.id] = formatCredentialsForIsland([stateCredentials]);
+        credentialsDataId[stateCredentials.id] = stateCredentialsIndex;
+    });
     return (
       this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL,
         {
@@ -414,19 +420,17 @@ class ConfigurePageComponent extends AuthComponent {
           if (!res.ok) {
             res.json().then((result) => {
               let errorsId = {};
-              let credentialsDataId = {};
-              this.state.credentials.credentialsData.forEach((stateCredentials, stateCredentialsIndex) => {
-                errorsId[stateCredentials.id] = [];
-                credentialsDataId[stateCredentials.id] = stateCredentialsIndex;
-                formatCredentialsForIsland([stateCredentials]).forEach((formattedCredentials, _)=> {
-                  let indexes = islandCredentials.map((islandCredentialsItem, islandCredentialsIndex) => JSON.stringify(formattedCredentials) === JSON.stringify(islandCredentialsItem) ? islandCredentialsIndex : -1)
-                    .filter(islandCredentialsIndex => islandCredentialsIndex !== -1);
-                    errorsId[stateCredentials.id].push(indexes[0]);
-                })
-              });
+              for(var credentialsId in formCredentialsIsland){
+                errorsId[credentialsId] = [];
+                formCredentialsIsland[credentialsId].forEach((formCredentials, _) => {
+                  let indexes = islandCredentials.map((islandCredentialsItem, islandCredentialsIndex) => JSON.stringify(formCredentials) === JSON.stringify(islandCredentialsItem) ? islandCredentialsIndex : -1)
+                  .filter(islandCredentialsIndex => islandCredentialsIndex !== -1);
+                  errorsId[credentialsId].push(indexes[0]);
+                });
+              }
               this.setState({
                 credentialsErrors: result.errors.map(error => {
-                  let credentialsErrorId = Object.entries(errorsId).find(([_, credentialsId]) => credentialsId.includes(error.stateCredentialsIndex));
+                  let credentialsErrorId = Object.entries(errorsId).find(([_, credentialsId]) => credentialsId.includes(error.index));
                   let actualRowIndex = credentialsDataId[credentialsErrorId[0]] + 1;
                   return `Credentials Row #${actualRowIndex}: ${error.message.split(', ').pop()}`;
                 })
