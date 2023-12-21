@@ -59,6 +59,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.state = {
       configuration: {},
       credentials: {credentialsData: [], errors: [], id: null},
+      credentialsErrors: [],
       masqueStrings: {},
       currentFormData: {},
       importCandidateConfig: null,
@@ -398,17 +399,39 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   sendCredentials() {
+    let islandCredentials = formatCredentialsForIsland(this.state.credentials.credentialsData);
+    let formattedCredentials = JSON.stringify(islandCredentials);
     return (
       this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL,
         {
           method: 'PUT',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(formatCredentialsForIsland(this.state.credentials.credentialsData))
+          body: formattedCredentials
         },
         true
       )
         .then(res => {
           if (!res.ok) {
+            res.json().then((result) => {
+              let errorsId = {};
+              let credentialsDataId = {};
+              this.state.credentials.credentialsData.forEach((stateCredentials, stateCredentialsIndex) => {
+                errorsId[stateCredentials.id] = [];
+                credentialsDataId[stateCredentials.id] = stateCredentialsIndex;
+                formatCredentialsForIsland([stateCredentials]).forEach((formattedCredentials, _)=> {
+                  let indexes = islandCredentials.map((islandCredentialsItem, islandCredentialsIndex) => JSON.stringify(formattedCredentials) === JSON.stringify(islandCredentialsItem) ? islandCredentialsIndex : -1)
+                    .filter(islandCredentialsIndex => islandCredentialsIndex !== -1);
+                    errorsId[stateCredentials.id].push(indexes[0]);
+                })
+              });
+              this.setState({
+                credentialsErrors: result.errors.map(error => {
+                  let credentialsErrorId = Object.entries(errorsId).find(([_, credentialsId]) => credentialsId.includes(error.stateCredentialsIndex));
+                  let actualRowIndex = credentialsDataId[credentialsErrorId[0]] + 1;
+                  return `Credentials Row #${actualRowIndex}: ${error.message.split(', ').pop()}`;
+                })
+              })
+            })
             throw Error()
           }
           return res;
@@ -572,7 +595,12 @@ class ConfigurePageComponent extends AuthComponent {
           {this.state.lastAction === 'invalid_credentials_configuration' ?
             <div className='alert alert-danger'>
               <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
-              An invalid configuration file was imported or submitted. One or more of the credentials are invalid.
+              An invalid configuration file was imported or submitted. The following credentials are invalid:
+                  { this.state.credentialsErrors.length !== 0 ?
+                    <ul>
+                      {this.state.credentialsErrors.map(error => <li key={nanoid()}>{error}</li>)}
+                    </ul> : ''
+                  }
             </div>
             : ''}
           {this.state.lastAction === 'invalid_configuration' ?
