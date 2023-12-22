@@ -83,6 +83,14 @@ jobs:
         - JS_WARNINGS_AMOUNT_UPPER_LIMIT=0
         - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # test for max warnings
 
+        # check NextJS code.
+        - cd ../next_ui
+        - npm ci  # see https://docs.npmjs.com/cli/ci.html
+        - eslint ./src --quiet  # test for errors
+        - JS_WARNINGS_AMOUNT_UPPER_LIMIT=0
+        - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # test for max warnings
+
+
         # build documentation
         - cd $TRAVIS_BUILD_DIR/docs
         - ../hugo --verbose --environment staging

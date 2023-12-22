@@ -70,6 +70,7 @@ fi
 # We can set main paths after we know the home dir
 ISLAND_PATH="$monkey_home/monkey/monkey_island"
 MONGO_PATH="$ISLAND_PATH/bin/mongodb"
+NODE_SERVER_PATH="$ISLAND_PATH/bin/node"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
 MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
@@ -191,6 +192,9 @@ log_message "Generating certificate"
 chmod u+x "${ISLAND_PATH}"/linux/create_certificate.sh
 "${ISLAND_PATH}"/linux/create_certificate.sh ${ISLAND_PATH}/cc
 
+# Install node server
+"${ISLAND_PATH}"/linux/install_node.sh "${NODE_SERVER_PATH}" || handle_error
+
 # Update node
 if ! exists npm; then
   log_message "Installing nodejs"
@@ -235,7 +239,7 @@ pushd "$ISLAND_PATH/cc/ui" || handle_error
 npm ci
 
 log_message "Generating front end"
-npm run dev
+npm run build
 popd || handle_error
 
 # Making dir for binaries

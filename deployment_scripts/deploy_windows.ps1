@@ -201,6 +201,10 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     $install_mongo_script = (Join-Path -Path $monkey_home -ChildPath "$MONKEY_ISLAND_DIR\windows\install_mongo.ps1")
     Invoke-Expression "$install_mongo_script -binDir $binDir"
 
+    $install_node_script = (Join-Path -Path $monkey_home -ChildPath "$MONKEY_ISLAND_DIR\windows\install_node.ps1")
+    $node_server_dir = (Join-Path -Path $binDir -ChildPath "node")
+    Invoke-Expression "$install_node_script -destinationDir $node_server_dir"
+
     # Download OpenSSL
     Print-Status "Downloading OpenSSL ..."
     $webClient.DownloadFile($OPEN_SSL_URL, $TEMP_OPEN_SSL_ZIP)
@@ -238,7 +242,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     Print-Status "Updating npm"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\cc\ui")
     & npm update
-    & npm run dev
+    & npm run build
     Pop-Location
 
     # Create infection_monkey/bin directory if not already present

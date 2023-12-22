@@ -37,6 +37,23 @@ file](../../reference/server_configuration) located in installation directory.
 The default path is
 `C:\Program Files\Infection Monkey\monkey_island\cc\server_config.json`.
 
+### Change listening port
+
+The Island server can be accessed on port 443(HTTPS) by default.
+
+This port can be changed by modifying the `server_config.json` file:
+
+1. Stop the Monkey Island process.
+1. Modify the `server_config.json` by adding the following lines:
+    ```json
+    {
+      ...
+      "island_port": 8080,
+      ...
+    }
+    ```
+1. Run the Monkey Island again, it will be accessible on `https://localhost:8080`.
+
 ### Start Monkey Island with user-provided certificate
 
 By default, Infection Monkey comes with a [self-signed SSL certificate](https://aboutssl.org/what-is-self-sign-certificate/). In
@@ -59,7 +76,7 @@ private certificate authority.
     ```
 1. Run the Monkey Island by clicking on the desktop shortcut.
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost`.
 
 ### Change logging level
 
@@ -74,7 +91,7 @@ private certificate authority.
     ```
 1. Run the Monkey Island by clicking on the desktop shortcut.
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost`.
 
 ## Troubleshooting
 

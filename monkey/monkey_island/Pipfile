@@ -41,6 +41,7 @@ email-validator = "*"
 monkey-types = ">=0.4.0"
 ophidian = "*"
 monkeyevents = "*"
+psutil = "*"
 
 [dev-packages]
 virtualenv = "==20.16.2" # Pinned to 20.16.2 due to importlib-metadat/flake8 issue

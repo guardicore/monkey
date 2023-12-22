@@ -24,7 +24,7 @@ Hub Logo")
 
 ## How it works
 
-Architecturally, Infection Monkey is comprised of two components:
+Architecturally, Infection Monkey comprises two components:
 
 * Monkey Agent (Monkey for short) - a safe, worm-like binary program which
   scans, propagates and simulates attack techniques on the **local network**.
@@ -34,7 +34,7 @@ Architecturally, Infection Monkey is comprised of two components:
 The user can run the Monkey Agent on the Island Server machine or distribute
 Monkey Agent binaries on the network manually. Based on the configuration
 parameters, Monkey Agents scan, propagate and simulate an attacker's behavior
-on the local network. All of the information gathered about the network is
+on the local network. All the information gathered about the network is
 aggregated in the Island Server and displayed once all Monkey Agents are
 finished.
 

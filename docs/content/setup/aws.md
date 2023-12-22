@@ -22,11 +22,16 @@ At this point, AWS will instance and deploy the new machine.
 
 When ready, you can browse to the Infection Monkey running on the fresh deployment at:
 
-`https://{public-ip}:5000`
+`https://{public-ip}`
 
 To login to the machine, use *ubuntu* username.
 
 Once you have access to the Monkey Island server, check out the [getting started page]({{< ref "/usage/getting-started" >}}).
+
+## Configuration
+
+AWS EC2 instance is running the AppImage deployment of the Infection Monkey. To configure the VM, shell
+into it and follow configuration instructions in the [Linux setup section]({{< ref "/setup/linux#configuring-the-server" >}}).
 
 ## Integration with AWS services
 
