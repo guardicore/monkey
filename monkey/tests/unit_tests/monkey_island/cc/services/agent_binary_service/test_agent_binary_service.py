@@ -1,4 +1,5 @@
 import pytest
+from monkeytypes import OperatingSystem
 from tests.monkey_island.in_memory_agent_binary_repository import (
     LINUX_AGENT_BINARY,
     WINDOWS_AGENT_BINARY,
@@ -6,7 +7,6 @@ from tests.monkey_island.in_memory_agent_binary_repository import (
 )
 from tests.monkey_island.in_memory_masquerade_repository import InMemoryMasqueradeRepository
 
-from common import OperatingSystem
 from monkey_island.cc.services import IAgentBinaryService
 from monkey_island.cc.services.agent_binary_service.agent_binary_service import AgentBinaryService
 

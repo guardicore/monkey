@@ -12,17 +12,16 @@ from itertools import chain, product
 from threading import Lock
 from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
 
-from common.agent_events import (
+from monkeyevents import (
     AbstractAgentEvent,
     ExploitationEvent,
     PasswordRestorationEvent,
     PingScanEvent,
     TCPScanEvent,
 )
-from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from monkeytypes import AgentPluginManifest, AgentPluginType, PortStatus
+
 from common.network.network_range import NetworkRange
-from common.network.segmentation_utils import get_ip_if_in_subnet
-from common.types import PortStatus
 from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repositories import (
     IAgentEventRepository,
@@ -37,6 +36,7 @@ from monkey_island.cc.services.reporting.exploitations.monkey_exploitation impor
 )
 
 from .issue_processing.exploit_processing.exploiter_report_info import ExploiterReportInfo
+from .segmentation_utils import get_ip_if_in_subnet
 
 logger = logging.getLogger(__name__)
 
@@ -144,7 +144,7 @@ class ReportService:
                     {
                         "hostname": machine.hostname,
                         "ip_addresses": [str(iface.ip) for iface in machine.network_interfaces],
-                        "accessible_from_nodes": [m.dict(simplify=True) for m in accessible_from],
+                        "accessible_from_nodes": [m.to_json_dict() for m in accessible_from],
                         "domain_name": "",
                         # TODO add services
                         "services": [],

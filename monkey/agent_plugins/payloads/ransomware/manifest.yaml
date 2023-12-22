@@ -7,7 +7,7 @@ target_operating_systems:
   - linux
   - windows
 title: Ransomware
-version: 1.0.0
+version: 2.0.0
 description: >-
   Simulates a ransomware attack on your network using a set of configurable behaviors.
 

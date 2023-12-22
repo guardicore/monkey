@@ -5,10 +5,10 @@ from threading import Event, current_thread
 from typing import Any, Dict
 
 import mock_dependency
+from monkeyevents import AgentEventTag, FileEncryptionEvent
+from monkeytypes import AgentID
 
-from common.agent_events import AgentEventTag, FileEncryptionEvent
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 from infection_monkey.i_puppet import PayloadResult
 from infection_monkey.utils.threading import interruptible_iter
 

@@ -2,13 +2,13 @@ import copy
 from base64 import b64encode
 from typing import Any, Dict
 
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
+from monkeytypes import OperatingSystem
+from tests.common.fake_manifests import (
     FAKE_AGENT_MANIFEST_DICT_IN,
     FAKE_AGENT_MANIFEST_DICT_OUT,
     FAKE_MANIFEST_OBJECT,
 )
 
-from common import OperatingSystem
 from common.agent_plugins.agent_plugin import AgentPlugin
 
 FAKE_ZEROLOGON_PLUGIN_CONFIG_SCHEMA = {
@@ -70,11 +70,12 @@ FAKE_AGENT_PLUGIN_OBJECT = AgentPlugin(
 
 
 def test_agent_plugin__serialization():
-    assert FAKE_AGENT_PLUGIN_OBJECT.dict(simplify=True) == FAKE_AGENT_PLUGIN_DICT_OUT
+    assert FAKE_AGENT_PLUGIN_OBJECT.to_json_dict() == FAKE_AGENT_PLUGIN_DICT_OUT
 
 
 def test_agent_plugin__full_serialization():
-    assert AgentPlugin(**FAKE_AGENT_PLUGIN_OBJECT.dict(simplify=True)) == FAKE_AGENT_PLUGIN_OBJECT
+    model = AgentPlugin(**FAKE_AGENT_PLUGIN_OBJECT.to_json_dict())
+    assert model == FAKE_AGENT_PLUGIN_OBJECT
 
 
 def test_agent_plugin__deserialization():

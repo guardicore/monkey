@@ -5,9 +5,9 @@ from enum import Enum, auto
 
 import botocore
 from egg_timer import EggTimer
+from monkeytypes import OTP
 
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
-from common.types import OTP
 
 STATUS_CHECK_SLEEP_TIME = 1
 LINUX_DOCUMENT_NAME = "AWS-RunShellScript"
@@ -46,53 +46,55 @@ def start_infection_monkey_agent(
     target_os: str,
     otp: OTP,
     island_ip: str,
+    island_port: int,
     timeout: float,
 ) -> AWSCommandResults:
     """
     Run a command on a remote AWS instance
     """
-    command = _get_run_agent_command(target_os, island_ip, otp)
+    command = _get_run_agent_command(target_os, island_ip, island_port, otp)
     command_id = _run_command_async(aws_client, target_instance_id, target_os, command)
 
     _wait_for_command_to_complete(aws_client, target_instance_id, command_id, timeout)
     return _fetch_command_results(aws_client, target_instance_id, command_id)
 
 
-def _get_run_agent_command(target_os: str, island_ip: str, otp: OTP):
+def _get_run_agent_command(target_os: str, island_ip: str, island_port: int, otp: OTP):
     if target_os == "linux":
-        return _get_run_monkey_cmd_linux_line(island_ip, otp)
+        return _get_run_monkey_cmd_linux_line(island_ip, island_port, otp)
 
-    return _get_run_monkey_cmd_windows_line(island_ip, otp)
+    return _get_run_monkey_cmd_windows_line(island_ip, island_port, otp)
 
 
-def _get_run_monkey_cmd_linux_line(island_ip: str, otp: OTP):
+def _get_run_monkey_cmd_linux_line(island_ip: str, island_port: int, otp: OTP):
     binary_name = "monkey-linux-64"
 
-    download_url = f"https://{island_ip}:5000/api/agent-binaries/linux"
+    download_url = f"https://{island_ip}:{island_port}/api/agent-binaries/linux"
     download_cmd = f"wget --no-check-certificate {download_url} -O {binary_name}"
 
     chmod_cmd = f"chmod +x {binary_name}"
     run_agent_cmd = (
         f"{AGENT_OTP_ENVIRONMENT_VARIABLE}={otp.get_secret_value()} "
-        f"./{binary_name} m0nk3y -s {island_ip}:5000"
+        f"./{binary_name} m0nk3y -s {island_ip}:{island_port}"
     )
     return f"{download_cmd}; {chmod_cmd}; {run_agent_cmd}"
 
 
-def _get_run_monkey_cmd_windows_line(island_ip: str, otp: OTP):
+def _get_run_monkey_cmd_windows_line(island_ip: str, island_port: int, otp: OTP):
     agent_exe_path = r".\\monkey.exe"
 
     ignore_ssl_errors_cmd = (
         "[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}"
     )
 
-    download_url = f"https://{island_ip}:5000/api/agent-binaries/windows"
+    download_url = f"https://{island_ip}:{island_port}/api/agent-binaries/windows"
     download_cmd = (
         f"(New-Object System.Net.WebClient).DownloadFile('{download_url}', '{agent_exe_path}')"
     )
     set_otp = f"$env:{AGENT_OTP_ENVIRONMENT_VARIABLE}='{otp.get_secret_value()}'"
     run_agent_cmd = (
-        f"Start-Process -FilePath '{agent_exe_path}' -ArgumentList 'm0nk3y -s {island_ip}:5000'"
+        f"Start-Process -FilePath '{agent_exe_path}' "
+        + "-ArgumentList 'm0nk3y -s {island_ip}:{island_port}'"
     )
 
     return f"{ignore_ssl_errors_cmd}; {download_cmd}; {set_otp}; {run_agent_cmd};"

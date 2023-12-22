@@ -16,14 +16,14 @@ class FileSimulationRepository(ISimulationRepository):
             with self._file_repository.open_file(SIMULATION_STATE_FILE_NAME) as f:
                 simulation_json = f.read().decode()
 
-            return Simulation.parse_raw(simulation_json)
+            return Simulation.model_validate_json(simulation_json)
         except repositories.FileNotFoundError:
             return Simulation()
         except Exception as err:
             raise RetrievalError(f"Error retrieving the simulation state: {err}")
 
     def save_simulation(self, simulation: Simulation):
-        simulation_json = simulation.json()
+        simulation_json = simulation.to_json()
 
         self._file_repository.save_file(
             SIMULATION_STATE_FILE_NAME, io.BytesIO(simulation_json.encode())

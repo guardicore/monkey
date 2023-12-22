@@ -2,7 +2,8 @@ import logging
 import string
 from pathlib import PurePath, PurePosixPath, PureWindowsPath
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from common.utils.code_utils import insecure_generate_random_string
 from infection_monkey.i_puppet import TargetHost
 

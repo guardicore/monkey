@@ -1,12 +1,12 @@
 from typing import Any, Dict, Sequence
 
 from jsonschema import validate
+from monkeyevents import AbstractAgentEvent
+from monkeytypes import AgentPluginManifest, AgentPluginType, Credentials, OperatingSystem
 
-from common import AgentRegistrationData, AgentSignals, OperatingSystem
+from common import AgentRegistrationData, AgentSignals
 from common.agent_configuration import AgentConfiguration
-from common.agent_events import AbstractAgentEvent
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
-from common.credentials import Credentials
+from common.agent_plugins import AgentPlugin
 
 from . import IIslandAPIClient, IslandAPIError
 
@@ -59,7 +59,8 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
             agent_configuration = self._island_api_client.get_config()
             agent_configuration_schema = self._island_api_client.get_agent_configuration_schema()
             validate(
-                instance=agent_configuration.dict(simplify=True), schema=agent_configuration_schema
+                instance=agent_configuration.to_json_dict(),
+                schema=agent_configuration_schema,
             )
             return agent_configuration
         except Exception as err:

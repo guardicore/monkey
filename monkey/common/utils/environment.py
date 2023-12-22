@@ -2,9 +2,7 @@ import platform
 import uuid
 from contextlib import suppress
 
-from common.types import HardwareID
-
-from ..operating_system import OperatingSystem
+from monkeytypes import HardwareID, OperatingSystem
 
 
 # DEPRECATED: Use get_os() instead

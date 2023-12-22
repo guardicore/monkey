@@ -1,7 +1,8 @@
-from typing import Dict, Mapping, Optional, Sequence, Tuple
+from typing import Any, Dict, Mapping, Optional, Sequence, Tuple
 
-from common.agent_configuration import AgentConfiguration, PluginConfiguration
-from common.credentials import Credentials
+from monkeytypes import Credentials
+
+from common.agent_configuration import AgentConfiguration
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 
 
@@ -9,7 +10,7 @@ def add_exploiters(
     agent_configuration: AgentConfiguration,
     exploiters: Optional[Dict[str, Mapping]],
 ) -> AgentConfiguration:
-    agent_configuration_copy = agent_configuration.copy(deep=True)
+    agent_configuration_copy = agent_configuration.deep_copy()
     if not exploiters:
         exploiters = {}
     agent_configuration_copy.propagation.exploitation.exploiters = exploiters
@@ -18,9 +19,9 @@ def add_exploiters(
 
 
 def add_fingerprinters(
-    agent_configuration: AgentConfiguration, fingerprinters: Sequence[PluginConfiguration]
+    agent_configuration: AgentConfiguration, fingerprinters: Dict[str, Dict[str, Any]]
 ) -> AgentConfiguration:
-    agent_configuration_copy = agent_configuration.copy(deep=True)
+    agent_configuration_copy = agent_configuration.deep_copy()
     agent_configuration_copy.propagation.network_scan.fingerprinters = fingerprinters
 
     return agent_configuration_copy
@@ -29,7 +30,7 @@ def add_fingerprinters(
 def add_tcp_ports(
     agent_configuration: AgentConfiguration, tcp_ports: Sequence[int]
 ) -> AgentConfiguration:
-    agent_configuration_copy = agent_configuration.copy(deep=True)
+    agent_configuration_copy = agent_configuration.deep_copy()
     agent_configuration_copy.propagation.network_scan.tcp.ports = tuple(tcp_ports)
 
     return agent_configuration_copy
@@ -38,7 +39,7 @@ def add_tcp_ports(
 def add_subnets(
     agent_configuration: AgentConfiguration, subnets: Sequence[str]
 ) -> AgentConfiguration:
-    agent_configuration_copy = agent_configuration.copy(deep=True)
+    agent_configuration_copy = agent_configuration.deep_copy()
     agent_configuration_copy.propagation.network_scan.targets.subnets = subnets
 
     return agent_configuration_copy
@@ -47,17 +48,8 @@ def add_subnets(
 def add_credentials_collectors(
     agent_configuration: AgentConfiguration, credentials_collectors: Dict[str, Mapping]
 ) -> AgentConfiguration:
-    agent_configuration_copy = agent_configuration.copy(deep=True)
+    agent_configuration_copy = agent_configuration.deep_copy()
     agent_configuration_copy.credentials_collectors = credentials_collectors
-
-    return agent_configuration_copy
-
-
-def add_http_ports(
-    agent_configuration: AgentConfiguration, http_ports: Sequence[int]
-) -> AgentConfiguration:
-    agent_configuration_copy = agent_configuration.copy(deep=True)
-    agent_configuration_copy.propagation.exploitation.options.http_ports = http_ports
 
     return agent_configuration_copy
 
@@ -65,7 +57,7 @@ def add_http_ports(
 def set_keep_tunnel_open_time(
     agent_configuration: AgentConfiguration, keep_tunnel_open_time: int
 ) -> AgentConfiguration:
-    agent_configuration_copy = agent_configuration.copy(deep=True)
+    agent_configuration_copy = agent_configuration.deep_copy()
     agent_configuration_copy.keep_tunnel_open_time = keep_tunnel_open_time
 
     return agent_configuration_copy
@@ -74,7 +66,7 @@ def set_keep_tunnel_open_time(
 def set_maximum_depth(
     agent_configuration: AgentConfiguration, maximum_depth: int
 ) -> AgentConfiguration:
-    agent_configuration_copy = agent_configuration.copy(deep=True)
+    agent_configuration_copy = agent_configuration.deep_copy()
     agent_configuration_copy.propagation.maximum_depth = maximum_depth
 
     return agent_configuration_copy

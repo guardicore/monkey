@@ -44,7 +44,7 @@ def test_agent_signals_get(flask_client, mock_agent_signals_service, url, signal
     mock_agent_signals_service.get_signals.return_value = signals
     resp = flask_client.get(url, follow_redirects=True)
     assert resp.status_code == HTTPStatus.OK
-    assert resp.json == signals.dict(simplify=True)
+    assert resp.json == signals.to_json_dict()
 
 
 @pytest.mark.parametrize(

@@ -5,7 +5,6 @@ from pathlib import Path
 
 from common.utils.file_utils import create_secure_directory
 from common.version import get_version
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, PLUGIN_DIR_NAME
 from monkey_island.cc.setup.env_utils import is_running_on_docker
 from monkey_island.cc.setup.version_file_setup import get_version_from_dir, write_version
 
@@ -23,7 +22,6 @@ def setup_data_dir(data_dir_path: Path):
         _handle_old_data_directory(data_dir_path)
     create_secure_directory(data_dir_path)
     write_version(data_dir_path)
-    _copy_plugins_into_data_dir(data_dir_path)
     logger.info(f"Data directory set up in {data_dir_path}.")
 
 
@@ -92,42 +90,3 @@ def _data_dir_version_mismatch_exists(data_dir_path: Path) -> bool:
     island_version = get_version()
 
     return island_version != data_dir_version
-
-
-def _copy_plugins_into_data_dir(data_dir_path: Path):
-    plugin_source_dir = Path(MONKEY_ISLAND_ABS_PATH) / PLUGIN_DIR_NAME
-    try:
-        plugins_dir = _create_plugins_dir(data_dir_path)
-        plugin_tar_files = list(plugin_source_dir.glob("*.tar"))
-    except Exception:
-        logger.exception(
-            f"An error occured while creating plugins data directory: {plugin_source_dir}"
-        )
-        return
-
-    for plugin_tar_file in plugin_tar_files:
-        plugin_dest_path = plugins_dir / plugin_tar_file.name
-        if plugin_dest_path.exists():
-            logger.info(
-                "Skipping plugin tar file copy: "
-                f"destination file {plugin_dest_path} already exists."
-            )
-            continue
-
-        try:
-            logger.info(f"Copying plugin tar file: {plugin_tar_file} -> {plugin_dest_path}")
-            shutil.copy2(plugin_tar_file, plugin_dest_path)
-        except FileNotFoundError:
-            logger.exception(
-                f"An error occured while copying plugin {plugin_tar_file} "
-                f"to the data directory: {data_dir_path}"
-            )
-
-
-def _create_plugins_dir(plugins_dir_parent_dir: Path) -> Path:
-    plugins_dir = plugins_dir_parent_dir / PLUGIN_DIR_NAME
-    logger.info(f"Plugins directory: {plugins_dir}")
-
-    if not plugins_dir.exists():
-        create_secure_directory(plugins_dir)
-    return plugins_dir

@@ -1,6 +1,7 @@
 from typing import BinaryIO
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
+
 from monkey_island.cc.repositories import IFileRepository, RetrievalError
 
 from .i_agent_binary_repository import IAgentBinaryRepository

@@ -34,7 +34,7 @@ def test_get_config__invalid_config(fake_island_api_client):
     invalid_config = deepcopy(AGENT_CONFIGURATION)
     invalid_config["keep_tunnel_open_time"] = "not a number"
 
-    fake_island_api_client.get_config = lambda: AgentConfiguration.construct(**invalid_config)
+    fake_island_api_client.get_config = lambda: AgentConfiguration.model_construct(**invalid_config)
     decorated_island_api_client = ConfigurationValidatorDecorator(fake_island_api_client)
 
     with pytest.raises(IslandAPIError):

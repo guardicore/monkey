@@ -1,6 +1,7 @@
 from typing import Sequence, Set
 
-from common.types import NetworkPort, NetworkService
+from monkeytypes import NetworkPort, NetworkService
+
 from infection_monkey.i_puppet import TargetHost
 
 # NOTE: Don't migrate these functions to a user-facing interface

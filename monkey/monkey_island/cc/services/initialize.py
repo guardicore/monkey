@@ -2,23 +2,23 @@ import logging
 import threading
 from pathlib import Path
 
+from monkeytypes import BasicLock, RLock
+from ophidian import DIContainer
 from pubsub.core import Publisher
 from pymongo import MongoClient
 
-from common import DIContainer
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration
-from common.agent_event_serializers import (
+from common.agent_events import (
+    AgentEventRegistry,
     AgentEventSerializerRegistry,
-    register_common_agent_event_serializers,
+    register_builtin_agent_event_serializers,
+    register_builtin_agent_events,
 )
-from common.agent_events import AgentEventRegistry, register_common_agent_events
-from common.aws import AWSInstance
 from common.event_queue import (
     IAgentEventQueue,
     LockingAgentEventQueueDecorator,
     PyPubSubAgentEventQueue,
 )
-from common.types.concurrency import BasicLock, RLock
 from monkey_island.cc.event_queue import (
     IIslandEventQueue,
     LockingIslandEventQueueDecorator,
@@ -46,7 +46,7 @@ from monkey_island.cc.repositories import (
     NetworkModelUpdateFacade,
     initialize_machine_repository,
 )
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, PLUGIN_DIR_NAME
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import (
     AgentSignalsService,
@@ -57,6 +57,7 @@ from monkey_island.cc.services import (
     build_agent_binary_service,
     build_agent_configuration_service,
     build_agent_plugin_service,
+    build_aws_service,
 )
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
@@ -72,7 +73,6 @@ REPOSITORY_KEY_FILE_NAME = "repository_key.bin"
 def initialize_services(container: DIContainer, data_dir: Path):
     _register_conventions(container)
 
-    container.register_instance(AWSInstance, AWSInstance())
     container.register_instance(MongoClient, MongoClient(MONGO_URL, serverSelectionTimeoutMS=100))
     container.register_instance(
         ILockableEncryptor, RepositoryEncryptor(data_dir / REPOSITORY_KEY_FILE_NAME)
@@ -133,13 +133,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
         IFileRepository,
         _decorate_file_repository(LocalStorageFileRepository(data_dir / "runtime_data")),
     )
-    container.register_convention(
-        IFileRepository,
-        "plugin_file_repository",
-        FileRepositoryLockingDecorator(
-            FileRepositoryLoggingDecorator(LocalStorageFileRepository(data_dir / PLUGIN_DIR_NAME))
-        ),
-    )
 
     container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))
     container.register_instance(
@@ -171,20 +164,20 @@ def _build_machine_repository(container: DIContainer) -> IMachineRepository:
 
 def _setup_agent_event_registry(container: DIContainer):
     agent_event_registry = AgentEventRegistry()
-    register_common_agent_events(agent_event_registry)
+    register_builtin_agent_events(agent_event_registry)
 
     container.register_instance(AgentEventRegistry, agent_event_registry)
 
 
 def _setup_agent_event_serializers(container: DIContainer):
     agent_event_serializer_registry = AgentEventSerializerRegistry()
-    register_common_agent_event_serializers(agent_event_serializer_registry)
+    register_builtin_agent_event_serializers(agent_event_serializer_registry)
 
     container.register_instance(AgentEventSerializerRegistry, agent_event_serializer_registry)
 
 
 def _register_services(container: DIContainer):
-    container.register_instance(AWSService, container.resolve(AWSService))
+    container.register_instance(AWSService, build_aws_service(container))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
     container.register_instance(IAgentBinaryService, build_agent_binary_service(container))
     container.register_instance(IAgentPluginService, build_agent_plugin_service(container))

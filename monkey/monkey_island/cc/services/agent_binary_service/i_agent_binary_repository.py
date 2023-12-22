@@ -1,7 +1,7 @@
 import abc
 from typing import BinaryIO
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
 
 
 class IAgentBinaryRepository(metaclass=abc.ABCMeta):

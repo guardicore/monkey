@@ -23,7 +23,7 @@ expected_tcp_schema = {
 
 
 def test_sub_config_to_json_schema():
-    tcp_schema = TCPScanConfiguration.schema()
+    tcp_schema = TCPScanConfiguration.model_json_schema()
     # Title and description is irrelevant in this case, because in full schema the parent
     # schema will define these
     del tcp_schema["title"]
@@ -41,7 +41,6 @@ raw_exploitation_configuration = {
         "Exploiter1": {},
         "Exploiter6": {},
     },
-    "options": {"http_ports": []},
 }
 
 

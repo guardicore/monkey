@@ -6,7 +6,7 @@ supported_operating_systems:
 target_operating_systems:
   - linux
 title: SNMP Exploiter
-version: 2.0.0
+version: 3.0.0
 description: Attempts remote command execution over SNMP using known credentials.
 safe: true
 remediation_suggestion: >-

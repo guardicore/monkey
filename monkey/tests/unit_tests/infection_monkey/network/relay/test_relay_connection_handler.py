@@ -53,7 +53,8 @@ def test_connection_spawns_pipe(pipe_spawner, relay_user_handler, data_socket):
 
     connection_handler.handle_new_connection(data_socket)
 
-    pipe_spawner.spawn_pipe.assert_called_once_with(data_socket)
+    pipe_spawner.spawn_pipe.assert_called_once()
+    assert pipe_spawner.spawn_pipe.call_args[0][0] == data_socket
 
 
 def test_connection_adds_user(pipe_spawner, relay_user_handler, data_socket):

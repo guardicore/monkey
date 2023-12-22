@@ -2,8 +2,8 @@
 
 # Changes: python version
 LINUXDEPLOY_URL="https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
-PYTHON_VERSION="3.11.4"
-PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.11/python${PYTHON_VERSION}-cp311-cp311-manylinux2014_x86_64.AppImage"
+PYTHON_VERSION="3.11.7"
+PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.11/python${PYTHON_VERSION}-cp311-cp311-manylinux_2_28_x86_64.AppImage"
 APPIMAGE_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 APPDIR="$APPIMAGE_DIR/squashfs-root"
 BUILD_DIR="$APPDIR/usr/src"
@@ -42,12 +42,19 @@ setup_build_dir() {
   copy_infection_monkey_service_to_build_dir
   modify_deployment "$deployment_type" "$BUILD_DIR"
   add_agent_binaries_to_build_dir "$agent_binary_dir" "$BUILD_DIR"
+  add_node_to_build_dir "$BUILD_DIR" || handle_error
 
   install_monkey_island_python_dependencies
   install_mongodb
 
   generate_ssl_cert "$BUILD_DIR"
-  build_frontend "$BUILD_DIR" "$is_release_build"
+  if [[ $FEATURE_FLAGS == *"NEXT_JS_UI"* ]]; then
+    log_message "Building Next.js frontend"
+    build_nextjs_frontend "$BUILD_DIR" "$is_release_build"
+  else
+    log_message "Building legacy frontend"
+    build_frontend "$BUILD_DIR" "$is_release_build"
+  fi
 
   remove_python_appdir_artifacts
 
@@ -62,7 +69,8 @@ setup_python_appdir() {
 
   chmod u+x "$PYTHON_APPIMAGE"
 
-  "./$PYTHON_APPIMAGE" --appimage-extract
+  log_message "extracting Python Appimage"
+  "./$PYTHON_APPIMAGE" --appimage-extract 1>/dev/null
   rm "$PYTHON_APPIMAGE"
 }
 

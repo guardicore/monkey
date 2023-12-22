@@ -1,15 +1,18 @@
-from common import DIContainer
-from common.agent_events import (
+from monkeyevents import (
     AgentShutdownEvent,
     CredentialsStolenEvent,
     ExploitationEvent,
+    FingerprintingEvent,
     HostnameDiscoveryEvent,
     OSDiscoveryEvent,
     PingScanEvent,
     TCPScanEvent,
 )
+from ophidian import DIContainer
+
 from common.event_queue import IAgentEventQueue
 from monkey_island.cc.agent_event_handlers import (
+    FingerprintingEventHandler,
     ScanEventHandler,
     save_event_to_event_repository,
     save_stolen_credentials_to_repository,
@@ -25,6 +28,7 @@ def setup_agent_event_handlers(container: DIContainer):
 
     _subscribe_and_store_to_event_repository(container, agent_event_queue)
     _subscribe_scan_events(container, agent_event_queue)
+    _subscribe_fingerprinting_events(container, agent_event_queue)
     _subscribe_exploitation_events(container, agent_event_queue)
     _subscribe_os_discovery_events(container, agent_event_queue)
     _subscribe_hostname_discovery_events(container, agent_event_queue)
@@ -48,6 +52,14 @@ def _subscribe_scan_events(container: DIContainer, agent_event_queue: IAgentEven
 
     agent_event_queue.subscribe_type(PingScanEvent, scan_event_handler.handle_ping_scan_event)
     agent_event_queue.subscribe_type(TCPScanEvent, scan_event_handler.handle_tcp_scan_event)
+
+
+def _subscribe_fingerprinting_events(container: DIContainer, agent_event_queue: IAgentEventQueue):
+    fingerprinting_event_handler = container.resolve(FingerprintingEventHandler)
+
+    agent_event_queue.subscribe_type(
+        FingerprintingEvent, fingerprinting_event_handler.handle_fingerprinting_event
+    )
 
 
 def _subscribe_exploitation_events(container: DIContainer, agent_event_queue: IAgentEventQueue):

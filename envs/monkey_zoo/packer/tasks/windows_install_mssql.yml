@@ -1,0 +1,34 @@
+---
+- name: Copy SQL Server installer configuration file
+  win_copy:
+    src: files/mssql/ConfigurationFile.ini
+    dest: C:\Windows\Temp\ConfigurationFile.ini
+- name: Download MSSQL
+  win_get_url:
+    url: https://download.microsoft.com/download/5/A/7/5A7065A2-C81C-4A31-9972-8A31AC9388C1/SQLServer2017-SSEI-Dev.exe
+    dest: C:\Windows\Temp\SQLServer2017-SSEI-Dev.exe
+- name: Install MSSQL Media
+  win_shell: |
+    C:\Windows\Temp\SQLServer2017-SSEI-Dev.exe /Q /IAcceptSQLServerLicenseTerms
+- name: Install MSSQL
+  win_shell: |
+    C:\SQLServer2017Media\Developer_ENU\SETUP.EXE /CONFIGURATIONFILE="C:\Windows\Temp\ConfigurationFile.ini" /SAPWD="pass123!"
+- name: Add MSSQL admin login
+  win_shell: |
+    sqlcmd -Q "CREATE LOGIN {{ mssql_admin_username }} WITH PASSWORD = '{{ mssql_admin_password }}', CHECK_POLICY = OFF"
+    sqlcmd -Q "sp_addsrvrolemember '{{ mssql_admin_username }}', 'sysadmin'"
+    sqlcmd -Q "xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'LoginMode', REG_DWORD, 2"
+- name: Enable xp_cmdshell
+  win_shell: |
+    sqlcmd -Q "sp_configure 'show advanced options', '1'; RECONFIGURE"
+    sqlcmd -Q "sp_configure 'xp_cmdshell', '1'; RECONFIGURE"
+- name: Enable TCP/IP
+  win_shell: |
+    Import-Module sqlps
+    $uri = "ManagedComputer[@Name='" + (get-item env:\computername).Value + "']/ServerInstance[@Name='MSSQLSERVER']/ServerProtocol[@Name='Tcp']"
+    $smo = 'Microsoft.SqlServer.Management.Smo.'
+    $wmi = new-object ($smo + 'Wmi.ManagedComputer').
+    $Tcp = $wmi.GetSmoObject($uri)
+    $Tcp.IsEnabled = $true
+    $Tcp.Alter()
+    $Tcp

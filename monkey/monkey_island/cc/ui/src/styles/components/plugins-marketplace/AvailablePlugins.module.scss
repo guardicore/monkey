@@ -1,0 +1,10 @@
+#available-plugins {
+  :global {
+    .grid-tools {
+      .actions {
+          display: flex;
+          justify-content: flex-end;
+      }
+    }
+  }
+}

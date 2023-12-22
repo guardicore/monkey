@@ -1,9 +1,9 @@
 import socket
 from logging import getLogger
 from threading import Lock
-from typing import Set
+from typing import Callable, Set
 
-from common.types import SocketAddress
+from monkeytypes import SocketAddress
 
 from .consts import SOCKET_TIMEOUT
 from .sockets_pipe import SocketsPipe
@@ -22,11 +22,14 @@ class TCPPipeSpawner:
         self._pipes: Set[SocketsPipe] = set()
         self._lock = Lock()
 
-    def spawn_pipe(self, source: socket.socket):
+    def spawn_pipe(
+        self, source: socket.socket, on_data_received: Callable[[socket.socket, bytes], None]
+    ):
         """
         Attempt to create a pipe on between the configured client and the provided socket
 
         :param source: A socket to the connecting client.
+        :param on_data_received: A callback to handle data received on the pipe.
         :raises OSError: If a socket to the configured client could not be created.
         """
         dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -38,7 +41,12 @@ class TCPPipeSpawner:
             dest.close()
             raise err
 
-        pipe = SocketsPipe(source, dest, self._handle_pipe_closed)
+        pipe = SocketsPipe(
+            source,
+            dest,
+            self._handle_pipe_closed,
+            on_data_received,
+        )
         with self._lock:
             self._pipes.add(pipe)
 

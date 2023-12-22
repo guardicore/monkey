@@ -4,8 +4,8 @@ from typing import FrozenSet, Union
 from uuid import UUID
 
 import pytest
+from monkeyevents import AbstractAgentEvent
 
-from common.agent_events import AbstractAgentEvent
 from common.event_queue import QueuedAgentEventPublisher
 
 

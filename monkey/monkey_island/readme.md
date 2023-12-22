@@ -113,8 +113,9 @@
 
 1. Install npm and node by running:
     - `sudo apt-get install curl`
-    - `curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -`
-    - `sudo apt-get install -y nodejs`
+    - `sudo mkdir -p /usr/local/lib/nodejs`
+    - `curl -sL https://nodejs.org/dist/v20.7.0/node-v20.7.0-linux-x64.tar.xz | sudo tar xJf - -C /usr/local/lib/nodejs`
+    - `echo -e "# Nodejs\nexport PATH=/usr/local/lib/nodejs/node-v20.7.0-linux-x64/bin:\$PATH" >> ~/.profile && source ~/.profile`
 
 1. Build Monkey Island frontend
     - cd to 'monkey_island/cc/ui'

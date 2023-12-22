@@ -7,27 +7,23 @@ from uuid import UUID
 
 import pytest
 import requests
+from monkeyevents import AbstractAgentEvent, PydanticAgentEventSerializer
+from monkeytypes import (
+    AgentPluginType,
+    Credentials,
+    InfectionMonkeyBaseModel,
+    OperatingSystem,
+    SocketAddress,
+)
 from tests.common.example_agent_configuration import AGENT_CONFIGURATION
+from tests.common.fake_manifests import FAKE_AGENT_MANIFEST_DICT, FAKE_MANIFEST_OBJECT, FAKE_NAME
 from tests.data_for_tests.otp import TEST_OTP
 from tests.data_for_tests.propagation_credentials import CREDENTIALS_DICTS
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
-    FAKE_AGENT_MANIFEST_DICT,
-    FAKE_MANIFEST_OBJECT,
-    FAKE_NAME,
-)
 
-from common import AgentRegistrationData, AgentSignals, OperatingSystem
+from common import AgentRegistrationData, AgentSignals
 from common.agent_configuration import AgentConfiguration
-from common.agent_event_serializers import (
-    AgentEventSerializerRegistry,
-    PydanticAgentEventSerializer,
-)
-from common.agent_events import AbstractAgentEvent
-from common.agent_plugins import AgentPluginType
-from common.base_models import InfectionMonkeyBaseModel
+from common.agent_events import AgentEventSerializerRegistry
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
-from common.credentials import Credentials
-from common.types import SocketAddress
 from infection_monkey.island_api_client import (
     HTTPIslandAPIClient,
     IslandAPIError,
@@ -395,7 +391,7 @@ def test_island_api_client_get_agent_configuration_schema():
         "required": ["some_field", "other_field"],
         "additionalProperties": False,
     }
-    api_client = _build_client_with_json_response(AgentConfigurationSchema.schema())
+    api_client = _build_client_with_json_response(AgentConfigurationSchema.model_json_schema())
 
     actual_agent_configuration_schema = api_client.get_agent_configuration_schema()
     assert actual_agent_configuration_schema == expected_agent_configuration_schema
@@ -448,7 +444,7 @@ def test_island_api_client_get_credentials_for_propagation():
 
 
 def test_island_api_client_get_config():
-    agent_config_dict = AgentConfiguration(**AGENT_CONFIGURATION).dict(simplify=True)
+    agent_config_dict = AgentConfiguration(**AGENT_CONFIGURATION).to_json_dict()
     api_client = _build_client_with_json_response(agent_config_dict)
 
     assert api_client.get_config() == AgentConfiguration(**AGENT_CONFIGURATION)

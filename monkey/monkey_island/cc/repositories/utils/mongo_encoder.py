@@ -1,7 +1,8 @@
 import json
 from typing import Any, Mapping
 
-from common.types import JSONSerializable
+from monkeytypes import JSONSerializable
+
 from monkey_island.cc.repositories import StorageError
 
 DOT_REPLACEMENT = "_D0T_"

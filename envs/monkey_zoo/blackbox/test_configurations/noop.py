@@ -1,9 +1,10 @@
 from typing import Tuple
 
+from monkeytypes import Credentials
+
 from common.agent_configuration import (
     AgentConfiguration,
     ExploitationConfiguration,
-    ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
     PolymorphismConfiguration,
@@ -11,7 +12,6 @@ from common.agent_configuration import (
     ScanTargetConfiguration,
     TCPScanConfiguration,
 )
-from common.credentials import Credentials
 
 from . import TestConfiguration
 
@@ -23,14 +23,11 @@ _scan_target_configuration = ScanTargetConfiguration(
 _network_scan_configuration = NetworkScanConfiguration(
     tcp=_tcp_scan_configuration,
     icmp=_icmp_scan_configuration,
-    fingerprinters=[],
+    fingerprinters={},
     targets=_scan_target_configuration,
 )
 
-_exploitation_options_configuration = ExploitationOptionsConfiguration(http_ports=[])
-_exploitation_configuration = ExploitationConfiguration(
-    options=_exploitation_options_configuration, exploiters=[]
-)
+_exploitation_configuration = ExploitationConfiguration(exploiters={})
 
 _propagation_configuration = PropagationConfiguration(
     maximum_depth=0,

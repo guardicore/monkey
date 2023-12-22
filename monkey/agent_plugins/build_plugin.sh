@@ -31,17 +31,47 @@ pipenv requirements >> requirements.txt
 pip install -r requirements.txt -t src/$VENDOR_DIR
 rm requirements.txt
 
+# `monkey-types` and `monkeyevents` are required for the script generating `config-schema.json`.
+# TODO: When plugins are in their own repositories, this should be handled by
+# activating the plugin's virtualenv.
+pip install monkey-types
+pip install monkeyevents
+
 # Package everything up
 pushd "$PLUGIN_PATH/src" || fail "$PLUGIN_PATH/src does not exist"
 
 source_archive=$PLUGIN_PATH/$SOURCE_FILENAME
+plugin_manifest_filename=$(get_plugin_manifest_filename "$PLUGIN_PATH")
+
+plugin_name=$(get_plugin_name "${PLUGIN_PATH}/${plugin_manifest_filename}")
+
+plugin_name_lowercase=$(lower "$plugin_name")
+plugin_options_filename="${plugin_name_lowercase}_options"
+plugin_options_filepath="${PLUGIN_PATH}/src/${plugin_options_filename}.py"
+plugin_options_model_name="${plugin_name}Options"
+
+python3.11 << EOF
+
+import json
+from pathlib import Path
+
+config_schema = {"type": "object"}
+
+if Path("${plugin_options_filepath}").exists():
+  from $plugin_options_filename import $plugin_options_model_name
+  config_schema = {"properties": $plugin_options_model_name.model_json_schema()["properties"]}
+
+with open("${PLUGIN_PATH}/config-schema.json", "w") as f:
+  f.write(json.dumps(config_schema))
+
+EOF
+
 tar -zcf "$source_archive" --exclude __pycache__ --exclude .mypy_cache --exclude .pytest_cache --exclude .git --exclude .gitignore --exclude .DS_Store -- *
 
 rm -rf vendor*
 popd || exit 1
 
 plugin_filename=$(get_plugin_filename "$PLUGIN_PATH") || fail "Failed to get plugin filename: $plugin_filename"
-plugin_manifest_filename=$(get_plugin_manifest_filename "$PLUGIN_PATH")
 tar -cf "$PLUGIN_PATH/$plugin_filename" "$plugin_manifest_filename" "$SCHEMA_FILENAME" "$SOURCE_FILENAME"
 rm "$source_archive"
 popd || exit 1

@@ -1,8 +1,7 @@
 import logging
 
 from egg_timer import EggTimer
-
-from common.types import Event
+from monkeytypes import Event
 
 from .bitcoin_mining_network_traffic_simulator import BitcoinMiningNetworkTrafficSimulator
 from .cpu_utilizer import CPUUtilizer

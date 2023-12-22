@@ -3,9 +3,9 @@ from http import HTTPStatus
 
 from flask import make_response
 from flask_security import auth_token_required, roles_accepted
+from monkeytypes import AgentPluginType, OperatingSystem
 
-from common import OperatingSystem
-from common.agent_plugins import AgentPluginType
+from common.agent_plugins import PluginName
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.services.authentication_service import AccountRole
@@ -49,9 +49,9 @@ class AgentPlugins(AbstractResource):
             agent_plugin = self._agent_plugin_service.get_plugin(
                 host_operating_system=host_operating_system,
                 plugin_type=agent_plugin_type,
-                name=name,
+                plugin_name=PluginName(name),
             )
-            return make_response(agent_plugin.dict(simplify=True), HTTPStatus.OK)
+            return make_response(agent_plugin.to_json_dict(), HTTPStatus.OK)
         except UnknownRecordError:
             message = f"Plugin '{name}' of type '{plugin_type}' not found for os '{host_os}'."
             logger.warning(message)

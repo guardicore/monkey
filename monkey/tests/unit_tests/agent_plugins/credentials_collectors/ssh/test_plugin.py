@@ -3,10 +3,9 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import AgentID, Credentials, SSHKeypair, Username
 
-from common.credentials import Credentials, SSHKeypair, Username
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 
 pwd = pytest.importorskip("pwd")
 # we need to check if `pwd` can be imported before importing `Plugin`
@@ -26,7 +25,9 @@ def test_pwd_exception(monkeypatch, mock_agent_event_publisher: IAgentEventPubli
     monkeypatch.setattr("agent_plugins.credentials_collectors.ssh.src.plugin.pwd", mock_pwd)
 
     stolen_credentials = Plugin(
-        agent_id=AGENT_ID, agent_event_publisher=mock_agent_event_publisher
+        agent_id=AGENT_ID,
+        agent_event_publisher=mock_agent_event_publisher,
+        local_machine_info=MagicMock(),
     ).run(options={}, interrupt=threading.Event())
 
     assert len(stolen_credentials) == 0
@@ -142,7 +143,11 @@ def patch_pwd_getpwall(monkeypatch, place_key_files, tmp_path: Path):
 
 
 def test_stolen_credentials(patch_pwd_getpwall, mock_agent_event_publisher):
-    plugin = Plugin(agent_id=AGENT_ID, agent_event_publisher=mock_agent_event_publisher)
+    plugin = Plugin(
+        agent_id=AGENT_ID,
+        agent_event_publisher=mock_agent_event_publisher,
+        local_machine_info=MagicMock(),
+    )
     stolen_credentials = plugin.run(options={}, interrupt=threading.Event())
 
     assert set(stolen_credentials) == CREDENTIALS

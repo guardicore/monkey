@@ -1,4 +1,5 @@
 from aardwolf.commons.iosettings import RDPIOSettings
+from agent_plugins.credentials_collectors.chrome.utils import BrowserCredentialsDatabasePath
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
 from agent_plugins.exploiters.rdp.in_memory_file_provider import InMemoryFileProvider
 from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
@@ -12,35 +13,33 @@ from agent_plugins.payloads.ransomware.src.ransomware_options import (
     linux_target_dir,
     windows_target_dir,
 )
-from asyauth.common.credentials import UniCredential
+from asyauth.monkeytypes import UniCredential
 from flask_security import Security
 
-from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
-from common.agent_events import AbstractAgentEvent, CPUConsumptionEvent, FileEncryptionEvent
 from common.agent_plugins import (
     AgentPlugin,
     AgentPluginManifest,
     AgentPluginMetadata,
     AgentPluginRepositoryIndex,
 )
-from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
-from common.concurrency import BasicLock
-from common.credentials import LMHash, NTHash, SecretEncodingConfig
-from common.types import Lock, NetworkPort, PluginName
+from common.decorators import request_cache
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
+from infection_monkey.i_puppet import TargetHost
 from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFirewall
 from infection_monkey.utils import commands
-from infection_monkey.utils.decorators import request_cache
-from monkey.common.types import Percent
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
+from monkey_island.cc.services.agent_plugin_service import AgentPluginService
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
+
+TargetHost.model_config
+TargetHost.dump_ports
 
 # Pydantic configurations are not picked up
 ScanTargetConfiguration.blocked_ips_valid
@@ -48,31 +47,10 @@ ScanTargetConfiguration.inaccessible_subnets
 ScanTargetConfiguration.subnets_valid
 ScanTargetConfiguration.inaccessible_subnets_valid
 
-InfectionMonkeyModelConfig.allow_mutation
-InfectionMonkeyModelConfig.underscore_attrs_are_private
-InfectionMonkeyModelConfig.extra
-
-MutableInfectionMonkeyModelConfig.allow_mutation
-MutableInfectionMonkeyModelConfig.validate_assignment
-
-BasicLock.acquire
-BasicLock.release
-
-PluginName.strip_whitespace
-PluginName.regex
-
-SecretEncodingConfig.json_encoders
 
 LMHash.validate_hash_format
 NTHash.validate_hash_format
 
-NetworkPort.ge
-NetworkPort.le
-
-FileEncryptionEvent.arbitrary_types_allowed
-FileEncryptionEvent._file_path_to_pure_path
-
-AbstractAgentEvent.smart_union
 
 AgentPluginManifest.title
 AgentPluginManifest.description
@@ -81,10 +59,6 @@ AgentPluginManifest.safe
 AgentPluginManifest.remediation_suggestion
 AgentPluginManifest.target_operating_systems
 AgentPluginManifest.supported_operating_systems
-
-# Unused, but kept for future potential
-DIContainer.release_convention
-DIContainer.release
 
 # Used by third party library
 LDAPServerFactory.buildProtocol
@@ -124,8 +98,8 @@ Deployment.APPIMAGE
 Deployment.DOCKER
 
 # Pydantic models
-Machine.Config.json_dumps
 Machine._socketaddress_from_string
+Machine.dump_network_services
 # Unused, but potentially useful
 Machine.island
 
@@ -139,13 +113,10 @@ AWSCommandResults.response_code  # monkey_island/cc/services/aws/aws_command_run
 
 MonkeyExploitation.label
 
-Lock.exc_type
-Lock.exc_val
-Lock.exc_tb
-Lock.blocking
-Lock.locked
-
+AgentPlugin.dump_source_archive
 AgentPlugin.supported_operating_systems
+
+BrowserCredentialsDatabasePath.database_file_path
 
 HadoopPlugin
 SMBPlugin
@@ -188,13 +159,16 @@ request_cache
 # Remove after the plugin interface is in place
 AgentPluginMetadata.resource_path
 AgentPluginMetadata._str_to_pure_posix_path
+AgentPluginMetadata.model_config
+AgentPluginMetadata.dump_string
 AgentPluginRepositoryIndex
+AgentPluginRepositoryIndex.model_config
+AgentPluginRepositoryIndex.dump_compatible_infection_monkey_version
 AgentPluginRepositoryIndex.compatible_infection_monkey_version
 AgentPluginRepositoryIndex._infection_monkey_version_parser
 AgentPluginRepositoryIndex._sort_plugins_by_version
 AgentPluginRepositoryIndex.use_enum_values
-
-CPUConsumptionEvent.cpu_number
+AgentPluginRepositoryIndex._convert_str_type_to_enum
 
 # RDP
 InMemoryFileProvider.get_file_data
@@ -205,3 +179,11 @@ RDPIOSettings.video_height
 RDPIOSettings.video_bpp_max
 RDPIOSettings.video_out_format
 RDPIOSettings.clipboard_use_pyperclip
+
+AgentPluginService.install_agent_plugin_from_repository
+
+
+# can probably remove after #3751
+from infection_monkey.local_machine_info import LocalMachineInfo
+
+LocalMachineInfo.temporary_directory

@@ -7,18 +7,25 @@ from typing import Any, Dict, List, Sequence
 
 import requests
 from egg_timer import EggTimer
+from monkeyevents import AbstractAgentEvent
+from monkeytypes import (
+    OTP,
+    AgentID,
+    AgentPluginManifest,
+    AgentPluginType,
+    BasicLock,
+    Credentials,
+    JSONSerializable,
+    OperatingSystem,
+)
 from requests import Response
 
-from common import AgentHeartbeat, AgentRegistrationData, AgentSignals, OperatingSystem
+from common import AgentHeartbeat, AgentRegistrationData, AgentSignals
 from common.agent_configuration import AgentConfiguration
-from common.agent_event_serializers import AgentEventSerializerRegistry
-from common.agent_events import AbstractAgentEvent
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.agent_events import AgentEventSerializerRegistry
+from common.agent_plugins import AgentPlugin
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
-from common.credentials import Credentials
-from common.types import OTP, AgentID, JSONSerializable
-from common.types.concurrency import BasicLock
 
 from . import IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient
@@ -197,7 +204,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     def register_agent(self, agent_registration_data: AgentRegistrationData):
         self._http_client.post(
             "/agents",
-            agent_registration_data.dict(simplify=True),
+            agent_registration_data.to_json_dict(),
             SHORT_REQUEST_TIMEOUT,
         )
 
@@ -219,7 +226,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_authentication_token_expiration
     def send_heartbeat(self, timestamp: float):
-        data = AgentHeartbeat(timestamp=timestamp).dict(simplify=True)
+        data = AgentHeartbeat(timestamp=timestamp).to_json_dict()  # type: ignore [arg-type]
         self._http_client.post(f"/agent/{self._agent_id}/heartbeat", data)
 
     @handle_authentication_token_expiration

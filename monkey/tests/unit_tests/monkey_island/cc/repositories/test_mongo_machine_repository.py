@@ -4,9 +4,8 @@ from unittest.mock import MagicMock
 
 import mongomock
 import pytest
+from monkeytypes import NetworkService, OperatingSystem, SocketAddress
 
-from common import OperatingSystem
-from common.types import NetworkService, SocketAddress
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import (
     IMachineRepository,
@@ -77,7 +76,7 @@ EXPECTED_SERVICES_2 = {
 def mongo_client() -> mongomock.MongoClient:
     client = mongomock.MongoClient()
     client.monkey_island.machines.insert_many(
-        (mongo_dot_encoder(m.dict(simplify=True)) for m in MACHINES)
+        (mongo_dot_encoder(m.to_json_dict()) for m in MACHINES)
     )
     return client
 

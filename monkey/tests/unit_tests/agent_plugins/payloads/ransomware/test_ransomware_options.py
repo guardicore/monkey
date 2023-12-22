@@ -6,6 +6,7 @@ RANSOMWARE_OPTIONS_DICT = {
     "linux_target_dir": "/tmp",
     "windows_target_dir": "C:/temp/",
     "leave_readme": True,
+    "change_wallpaper": False,
 }
 
 RANSOMWARE_OPTIONS_OBJECT = RansomwareOptions(
@@ -13,17 +14,17 @@ RANSOMWARE_OPTIONS_OBJECT = RansomwareOptions(
     linux_target_dir="/tmp",
     windows_target_dir="C:/temp/",
     leave_readme=True,
+    change_wallpaper=False,
 )
 
 
 def test_ransomware_options__serialization():
-    assert RANSOMWARE_OPTIONS_OBJECT.dict(simplify=True) == RANSOMWARE_OPTIONS_DICT
+    assert RANSOMWARE_OPTIONS_OBJECT.to_json_dict() == RANSOMWARE_OPTIONS_DICT
 
 
 def test_ransomware_options__full_serialization():
     assert (
-        RansomwareOptions(**RANSOMWARE_OPTIONS_OBJECT.dict(simplify=True))
-        == RANSOMWARE_OPTIONS_OBJECT
+        RansomwareOptions(**RANSOMWARE_OPTIONS_OBJECT.to_json_dict()) == RANSOMWARE_OPTIONS_OBJECT
     )
 
 

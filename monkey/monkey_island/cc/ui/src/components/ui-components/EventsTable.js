@@ -9,12 +9,19 @@ import _ from 'lodash';
 import {nanoid} from 'nanoid';
 import XDataGrid from './XDataGrid';
 
+
+const renderTime = (val) => parseTimeToDateString(val * 1000);
+
 const columns = [
-  {headerName: 'Time', field: 'timestamp'},
-  {headerName: 'Source', field: 'source'},
-  {headerName: 'Target', field: 'target'},
-  {headerName: 'Type', field: 'type'},
-  {headerName: 'Tags', field: 'tags'},
+  {headerName: 'Time', field: 'timestamp', minWdith: 150, flex: 1,
+    sortComparator: (_, __, param1, param2) =>
+      param1.api.getCellValue(param1.id, 'timestamp') * 1000 -
+      param2.api.getCellValue(param2.id, 'timestamp') * 1000,
+    valueFormatter: (params) => { return renderTime(params.value);}},
+  {headerName: 'Source', field: 'source', minWdith: 100, flex: 1},
+  {headerName: 'Target', field: 'target', minWidth: 150, flex: 1},
+  {headerName: 'Type', field: 'type', minWidth: 150, flex: 1},
+  {headerName: 'Tags', field: 'tags', minWidth: 150, flex: 1},
   {headerName: 'Fields', field: 'fields', renderCell: ({value})=>{return value;}, filterable: false, sortable: false, flexValue: 1, minWidth: 250}
 ];
 
@@ -24,7 +31,6 @@ const gridInitialState = {
   }
 };
 
-const renderTime = (val) => parseTimeToDateString(val * 1000);
 
 const renderTarget = (event_target, machines) => {
   // event_target is null
@@ -107,7 +113,7 @@ const EventsTable = () => {
     return events.map(item => {
       return {
         id: nanoid(),
-        timestamp: renderTime(item.timestamp),
+        timestamp: item.timestamp,
         source: getEventSourceHostname(item.source, agents, machines),
         target: renderTarget(item.target, machines),
         type: item.type,
@@ -145,7 +151,6 @@ const EventsTable = () => {
               rows={[...data]}
               initialState={{...gridInitialState}}
               maxHeight={'800px'}
-              columnWidth={{min: 150, max: -1}}
             />
         }
       </div>

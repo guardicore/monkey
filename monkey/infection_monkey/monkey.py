@@ -13,30 +13,28 @@ from pathlib import Path, WindowsPath
 from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
 
-from pubsub.core import Publisher
-from serpentarium import PluginLoader, PluginThreadName
-from serpentarium.logging import configure_child_process_logger
-
-from common import OperatingSystem
-from common.agent_event_serializers import (
-    AgentEventSerializerRegistry,
-    register_common_agent_event_serializers,
-)
-from common.agent_events import (
+from monkeyevents import (
+    AgentEventTag,
     AgentShutdownEvent,
     CredentialsStolenEvent,
     HostnameDiscoveryEvent,
     OSDiscoveryEvent,
     PropagationEvent,
 )
-from common.agent_plugins import AgentPluginType
+from monkeyevents.tags.attack import SYSTEM_INFORMATION_DISCOVERY_T1082_TAG
+from monkeytypes import OTP, AgentPluginType, NetworkPort, OperatingSystem, SocketAddress
+from pubsub.core import Publisher
+from serpentarium import PluginLoader, PluginThreadName
+from serpentarium.logging import configure_child_process_logger
+
+from common.agent_events import (
+    AgentEventSerializerRegistry,
+    register_builtin_agent_event_serializers,
+)
 from common.agent_registration_data import AgentRegistrationData
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
-from common.tags.attack import SYSTEM_INFORMATION_DISCOVERY_T1082_TAG
-from common.types import OTP, NetworkPort, SocketAddress
-from common.utils.argparse_types import positive_int
 from common.utils.code_utils import del_key, secure_generate_random_string
 from common.utils.environment import get_os
 from common.utils.file_utils import create_secure_directory, get_binary_io_sha256_hash
@@ -65,6 +63,7 @@ from infection_monkey.island_api_client import (
     IslandAPIAuthenticationError,
     IslandAPIError,
 )
+from infection_monkey.local_machine_info import LocalMachineInfo
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
@@ -93,9 +92,14 @@ from infection_monkey.puppet import (
 )
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.utils import agent_process, environment
+from infection_monkey.utils.argparse_types import positive_int
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
-from infection_monkey.utils.monkey_dir import create_monkey_dir, remove_monkey_dir
+from infection_monkey.utils.monkey_dir import (
+    create_monkey_dir,
+    get_monkey_dir_path,
+    remove_monkey_dir,
+)
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
 
@@ -151,10 +155,15 @@ class InfectionMonkey:
             Path(gettempdir())
             / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
         )
+
+        self._local_machine_info = LocalMachineInfo(
+            operating_system=get_os(),
+            temporary_directory=get_monkey_dir_path(),
+            network_interfaces=get_network_interfaces(),
+        )
+
         self._island_address, self._island_api_client = self._connect_to_island_api()
         self._register_agent()
-
-        self._operating_system = get_os()
 
         self._propagation_credentials_repository = PropagationCredentialsRepository(
             self._island_api_client, self._manager
@@ -264,7 +273,7 @@ class InfectionMonkey:
             start_time=agent_process.get_start_time(),
             parent_id=self._opts.parent,
             cc_server=self._island_address,
-            network_interfaces=get_network_interfaces(),
+            network_interfaces=self._local_machine_info.network_interfaces,
             sha256=self._sha256,
         )
         self._island_api_client.register_agent(agent_registration_data)
@@ -304,7 +313,7 @@ class InfectionMonkey:
         event = OSDiscoveryEvent(
             source=self._agent_id,
             timestamp=timestamp,
-            tags={SYSTEM_INFORMATION_DISCOVERY_T1082_TAG},
+            tags=frozenset({AgentEventTag(SYSTEM_INFORMATION_DISCOVERY_T1082_TAG)}),
             os=operating_system,
             version=operating_system_version,
         )
@@ -364,12 +373,11 @@ class InfectionMonkey:
     # TODO: This is just a placeholder for now. We will modify/integrate it with PR #2279.
     def _setup_agent_event_serializers(self) -> AgentEventSerializerRegistry:
         agent_event_serializer_registry = AgentEventSerializerRegistry()
-        register_common_agent_event_serializers(agent_event_serializer_registry)
+        register_builtin_agent_event_serializers(agent_event_serializer_registry)
 
         return agent_event_serializer_registry
 
     def _build_master(self, servers: Sequence[str], operating_system: OperatingSystem) -> IMaster:
-        local_network_interfaces = get_network_interfaces()
         puppet = self._build_puppet(operating_system)
 
         return AutomatedMaster(
@@ -377,7 +385,7 @@ class InfectionMonkey:
             servers,
             puppet,
             self._island_api_client,
-            local_network_interfaces,
+            self._local_machine_info.network_interfaces,
         )
 
     def _build_server_list(self, relay_port: Optional[NetworkPort]) -> Sequence[str]:
@@ -417,7 +425,7 @@ class InfectionMonkey:
 
         plugin_factories = {
             AgentPluginType.CREDENTIALS_COLLECTOR: CredentialsCollectorPluginFactory(
-                self._agent_id, self._agent_event_publisher, create_plugin
+                self._agent_id, self._agent_event_publisher, self._local_machine_info, create_plugin
             ),
             AgentPluginType.EXPLOITER: ExploiterPluginFactory(
                 self._agent_id,
@@ -427,10 +435,16 @@ class InfectionMonkey:
                 self._propagation_credentials_repository,
                 self._tcp_port_selector,
                 otp_provider,
+                AGENT_OTP_ENVIRONMENT_VARIABLE,
+                self._local_machine_info,
                 create_plugin,
             ),
             AgentPluginType.PAYLOAD: PayloadPluginFactory(
-                self._agent_id, self._agent_event_publisher, self._island_address, create_plugin
+                self._agent_id,
+                self._agent_event_publisher,
+                self._island_address,
+                self._local_machine_info,
+                create_plugin,
             ),
         }
         plugin_registry = PluginRegistry(
@@ -441,16 +455,36 @@ class InfectionMonkey:
         )
         plugin_compatibility_verifier = PluginCompatibilityVerifier(
             self._island_api_client,
-            self._operating_system,
-        )
-        puppet = Puppet(
-            self._agent_event_queue, plugin_registry, plugin_compatibility_verifier, self._agent_id
+            self._local_machine_info.operating_system,
         )
 
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "http", HTTPFingerprinter())
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "mssql", MSSQLFingerprinter())
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "smb", SMBFingerprinter())
-        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "ssh", SSHFingerprinter())
+        puppet = Puppet(
+            agent_event_queue=self._agent_event_queue,
+            plugin_registry=plugin_registry,
+            plugin_compatibility_verifier=plugin_compatibility_verifier,
+            agent_id=self._agent_id,
+        )
+
+        puppet.load_plugin(
+            AgentPluginType.FINGERPRINTER,
+            "http",
+            HTTPFingerprinter(self._agent_id, self._agent_event_publisher),
+        )
+        puppet.load_plugin(
+            AgentPluginType.FINGERPRINTER,
+            "mssql",
+            MSSQLFingerprinter(self._agent_id, self._agent_event_publisher),
+        )
+        puppet.load_plugin(
+            AgentPluginType.FINGERPRINTER,
+            "smb",
+            SMBFingerprinter(self._agent_id, self._agent_event_publisher),
+        )
+        puppet.load_plugin(
+            AgentPluginType.FINGERPRINTER,
+            "ssh",
+            SSHFingerprinter(self._agent_id, self._agent_event_publisher),
+        )
 
         return puppet
 
@@ -472,6 +506,7 @@ class InfectionMonkey:
         self, agent_binary_repository: IAgentBinaryRepository
     ) -> HTTPAgentBinaryServer:
         server_factory = self._manager.HTTPAgentBinaryServerFactory(  # type: ignore[attr-defined]
+            self._local_machine_info,
             self._tcp_port_selector,
             agent_binary_repository,
             ThreadingHTTPHandlerFactory,

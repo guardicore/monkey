@@ -59,6 +59,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.state = {
       configuration: {},
       credentials: {credentialsData: [], errors: [], id: null},
+      credentialsErrors: [],
       masqueStrings: {},
       currentFormData: {},
       importCandidateConfig: null,
@@ -409,6 +410,20 @@ class ConfigurePageComponent extends AuthComponent {
       )
         .then(res => {
           if (!res.ok) {
+            res.json().then((result)=>{
+              let errorMessages = result.errors.map(error => {
+                  return `${error.message.split(', ').pop()}`;
+              });
+              const messageCountMap = {};
+              errorMessages.map((message) => {
+                  messageCountMap[message] = (messageCountMap[message] || 0) + 1;
+              });
+              this.setState({
+                credentialsErrors: Object.entries(messageCountMap)
+                .map(([errorMessage, count]) =>
+                  (count > 1 ? `${count} ${_.lowerFirst(errorMessage)}` : `${errorMessage}`))
+              });
+            });
             throw Error()
           }
           return res;
@@ -573,6 +588,11 @@ class ConfigurePageComponent extends AuthComponent {
             <div className='alert alert-danger'>
               <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
               An invalid configuration file was imported or submitted. One or more of the credentials are invalid.
+                { this.state.credentialsErrors.length !== 0 ?
+                  <ul>
+                    {this.state.credentialsErrors.map(error => <li key={nanoid()}>{error}</li>)}
+                  </ul> : ''
+                }
             </div>
             : ''}
           {this.state.lastAction === 'invalid_configuration' ?

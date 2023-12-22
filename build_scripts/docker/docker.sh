@@ -21,10 +21,15 @@ setup_build_dir() {
   copy_server_config_to_build_dir "$build_dir"
   modify_deployment "$deployment_type" "$build_dir"
   add_agent_binaries_to_build_dir "$agent_binary_dir" "$build_dir"
+  add_node_to_build_dir "$build_dir" || handle_error
 
   generate_ssl_cert "$build_dir"
 
-  build_frontend "$build_dir" "$is_release_build"
+  if [[ $FEATURE_FLAGS == *"NEXT_JS_UI"* ]]; then
+    build_nextjs_frontend "$build_dir" "$is_release_build"
+  else
+    build_frontend "$build_dir" "$is_release_build"
+  fi
 }
 
 copy_entrypoint_to_build_dir() {

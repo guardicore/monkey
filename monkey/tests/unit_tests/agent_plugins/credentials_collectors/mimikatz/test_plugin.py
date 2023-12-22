@@ -6,11 +6,10 @@ import pytest
 from agent_plugins.credentials_collectors.mimikatz.src.mimikatz_options import MimikatzOptions
 from agent_plugins.credentials_collectors.mimikatz.src.plugin import MIMIKATZ_EVENT_TAGS, Plugin
 from agent_plugins.credentials_collectors.mimikatz.src.windows_credentials import WindowsCredentials
+from monkeyevents import CredentialsStolenEvent
+from monkeytypes import AgentID, Credentials, LMHash, NTHash, Password, Username
 
-from common.agent_events import CredentialsStolenEvent
-from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 
 PLUGIN_NAME = "TEST_MIMIKATZ"
 AGENT_ID = AgentID("be11ad56-995d-45fd-be03-e7806a47b56b")
@@ -26,7 +25,10 @@ def patch_pypykatz(win_creds: Sequence[WindowsCredentials], monkeypatch):
 def collect_credentials(options: Dict[str, Any] = {}) -> Sequence[Credentials]:
     mock_event_publisher = MagicMock(spec=IAgentEventPublisher)
     return Plugin(
-        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+        plugin_name=PLUGIN_NAME,
+        agent_id=AGENT_ID,
+        agent_event_publisher=mock_event_publisher,
+        local_machine_info=MagicMock(),
     ).run(options=options, interrupt=threading.Event())
 
 
@@ -132,7 +134,10 @@ def test_mimikatz_credentials_stolen_event_published(monkeypatch):
     patch_pypykatz([], monkeypatch)
 
     mimikatz_credential_collector = Plugin(
-        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+        plugin_name=PLUGIN_NAME,
+        agent_id=AGENT_ID,
+        agent_event_publisher=mock_event_publisher,
+        local_machine_info=MagicMock(),
     )
     mimikatz_credential_collector.run(options={}, interrupt=threading.Event())
 
@@ -148,7 +153,10 @@ def test_mimikatz_credentials_stolen_event_tags(monkeypatch):
     patch_pypykatz([], monkeypatch)
 
     mimikatz_credential_collector = Plugin(
-        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+        plugin_name=PLUGIN_NAME,
+        agent_id=AGENT_ID,
+        agent_event_publisher=mock_event_publisher,
+        local_machine_info=MagicMock(),
     )
     mimikatz_credential_collector.run(options={}, interrupt=threading.Event())
 
@@ -167,7 +175,10 @@ def test_mimikatz_credentials_stolen_event_stolen_credentials(monkeypatch):
     patch_pypykatz(win_creds, monkeypatch)
 
     mimikatz_credential_collector = Plugin(
-        plugin_name=PLUGIN_NAME, agent_id=AGENT_ID, agent_event_publisher=mock_event_publisher
+        plugin_name=PLUGIN_NAME,
+        agent_id=AGENT_ID,
+        agent_event_publisher=mock_event_publisher,
+        local_machine_info=MagicMock(),
     )
     collected_credentials = mimikatz_credential_collector.run(
         options={}, interrupt=threading.Event()
@@ -203,6 +214,6 @@ def test_exclude_username_prefixes(monkeypatch):
     }
     options = MimikatzOptions(excluded_username_prefixes=["sensitive-", "admin"])
 
-    collected_credentials = collect_credentials(options.dict(simplify=True))
+    collected_credentials = collect_credentials(options.to_json_dict())
     assert len(collected_credentials) == len(expected_credentials)
     assert set(collected_credentials) == expected_credentials

@@ -29,17 +29,6 @@ SCHEMA = {
     "required": ["credentials_collectors", "payloads", "propagation"],
     "additionalProperties": False,
     "definitions": {
-        "PluginConfiguration": {
-            "title": "PluginConfiguration",
-            "description": 'A configuration for plugins\n\nAttributes:\n    :param name: Name of the plugin\n                 Example: "ransomware"\n    :param options: Any other information/configuration fields relevant to the plugin\n                    Example: {\n                        "encryption": {\n                            "enabled": True,\n                            "directories": {\n                                "linux_target_dir": "~/this_dir",\n                                "windows_target_dir": "C:   hat_dir"\n                            },\n                        },\n                        "other_behaviors": {\n                            "readme": True\n                        },\n                    }',
-            "type": "object",
-            "properties": {
-                "name": {"title": "Name", "type": "string"},
-                "options": {"title": "Options", "type": "object"},
-            },
-            "required": ["name", "options"],
-            "additionalProperties": False,
-        },
         "TCPScanConfiguration": {
             "title": "TCPScanConfiguration",
             "description": "A configuration for TCP scanning\n\nAttributes:\n    :param timeout: Maximum time in seconds to wait for a response from the target\n    :param ports: Ports to scan",
@@ -142,7 +131,7 @@ SCHEMA = {
                 "fingerprinters": {
                     "title": "Fingerprinters",
                     "description": "Fingerprint modules collect info about external services",
-                    "type": "array",
+                    "type": "object",
                     "items": {"$ref": "#/definitions/PluginConfiguration"},
                 },
                 "targets": {
@@ -154,30 +143,11 @@ SCHEMA = {
             "required": ["tcp", "icmp", "fingerprinters", "targets"],
             "additionalProperties": False,
         },
-        "ExploitationOptionsConfiguration": {
-            "title": "ExploitationOptionsConfiguration",
-            "description": "A configuration for exploitation options\n\nAttributes:\n    :param http_ports: HTTP ports to exploit",
-            "type": "object",
-            "properties": {
-                "http_ports": {
-                    "title": "HTTP Ports",
-                    "description": "List of ports the monkey will check if are being used for HTTP",
-                    "default": [80, 8080, 443, 8008, 7001, 8983, 9600],
-                    "type": "array",
-                    "items": {"type": "integer", "minimum": 0, "maximum": 65535},
-                }
-            },
-            "additionalProperties": False,
-        },
         "ExploitationConfiguration": {
             "title": "ExploitationConfiguration",
             "description": "A configuration for exploitation\n\nAttributes:\n    :param options: Exploitation options shared by all exploiters\n    :param exploiters: Configuration enabled exploiters",
             "type": "object",
             "properties": {
-                "options": {
-                    "title": "Exploiters Options",
-                    "allOf": [{"$ref": "#/definitions/ExploitationOptionsConfiguration"}],
-                },
                 "exploiters": {
                     "title": "Enabled exploiters",
                     "type": "object",
@@ -271,7 +241,7 @@ SCHEMA = {
                     "additionalProperties": False,
                 },
             },
-            "required": ["options", "exploiters"],
+            "required": ["exploiters"],
             "additionalProperties": False,
         },
         "PropagationConfiguration": {

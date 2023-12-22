@@ -1,7 +1,8 @@
 import pytest
+from monkeyevents import AbstractAgentEvent
 from pydantic import Field
 
-from common.agent_events import AbstractAgentEvent, AgentEventRegistry
+from common.agent_events import AgentEventRegistry
 
 
 def test_reject_invalid_classes():

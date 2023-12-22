@@ -1,75 +1,72 @@
-import re
-from typing import Optional
+from typing import Annotated, Optional
 
-from pydantic import ConstrainedStr, Field
+from monkeytypes import InfectionMonkeyBaseModel
+from pydantic import Field, StringConstraints
 
-from common.base_models import InfectionMonkeyBaseModel
+valid_file_extension_pattern = r"^(\.[A-Za-z0-9_]+)?$"
 
-valid_file_extension_regex = re.compile(r"^(\.[A-Za-z0-9_]+)?$")
+_empty_pattern = "^$"
 
-_empty_regex = re.compile("^$")
-
-_linux_absolute_path_regex = re.compile("^/")  # path starts with `/`
-_linux_path_starts_with_env_variable_regex = re.compile(r"^\$")  # path starts with `$`
-_linux_path_starts_with_tilde_regex = re.compile("^~")  # path starts with `~`
-valid_ransomware_path_linux_regex = re.compile(
-    "|".join(
-        [
-            _empty_regex.pattern,
-            _linux_absolute_path_regex.pattern,
-            _linux_path_starts_with_env_variable_regex.pattern,
-            _linux_path_starts_with_tilde_regex.pattern,
-        ]
-    )
-)
-
-_windows_absolute_path_regex = re.compile("^([A-Za-z]:(\\\\|/))")  # path starts like `C:\` OR `C:/`
-_windows_env_var_non_numeric_regex = re.compile(r"[A-Za-z#$'()*+,\-\.?@[\]_`\{\}~ ]")
-_windows_path_starts_with_env_variable_regex = re.compile(
-    rf"^%({_windows_env_var_non_numeric_regex.pattern}+({_windows_env_var_non_numeric_regex.pattern}|\d)*)%"  # noqa: E501
-)  # path starts like `$` OR `%abc%`
-_windows_unc_path_regex = re.compile("^\\\\{2}")  # path starts like `\\`
-valid_ransomware_path_windows_regex = re.compile(
-    "|".join(
-        [
-            _empty_regex.pattern,
-            _windows_absolute_path_regex.pattern,
-            _windows_path_starts_with_env_variable_regex.pattern,
-            _windows_unc_path_regex.pattern,
-        ]
-    )
+_linux_absolute_path_pattern = "^/"  # path starts with `/`
+_linux_path_starts_with_env_variable_pattern = r"^\$"  # path starts with `$`
+_linux_path_starts_with_tilde_pattern = "^~"  # path starts with `~`
+valid_ransomware_path_linux_pattern = "|".join(
+    [
+        _empty_pattern,
+        _linux_absolute_path_pattern,
+        _linux_path_starts_with_env_variable_pattern,
+        _linux_path_starts_with_tilde_pattern,
+    ]
 )
 
 
-class FileExtension(ConstrainedStr):
-    regex = valid_file_extension_regex
+_windows_absolute_path_pattern = "^([A-Za-z]:(\\\\|/))"  # path starts like `C:\` OR `C:/`
+_windows_env_var_non_numeric_pattern = r"[A-Za-z#$'()*+,\-\.?@\[\]_`\{\}~ ]"
+_windows_path_starts_with_env_variable_pattern = rf"^%({_windows_env_var_non_numeric_pattern}+({_windows_env_var_non_numeric_pattern}|\d)*)%"  # noqa: E501  # path starts like `$` OR `%abc%`
+_windows_unc_path_pattern = "^\\\\{2}"  # path starts like `\\`
+valid_ransomware_path_windows_pattern = "|".join(
+    [
+        _empty_pattern,
+        _windows_absolute_path_pattern,
+        _windows_path_starts_with_env_variable_pattern,
+        _windows_unc_path_pattern,
+    ]
+)
 
 
-class LinuxDirectory(ConstrainedStr):
-    regex = valid_ransomware_path_linux_regex
-
-
-class WindowsDirectory(ConstrainedStr):
-    regex = valid_ransomware_path_windows_regex
+FileExtension = Annotated[str, StringConstraints(pattern=valid_file_extension_pattern)]
+LinuxDirectory = Annotated[str, StringConstraints(pattern=valid_ransomware_path_linux_pattern)]
+WindowsDirectory = Annotated[str, StringConstraints(pattern=valid_ransomware_path_windows_pattern)]
 
 
 class RansomwareOptions(InfectionMonkeyBaseModel):
     file_extension: FileExtension = Field(
         default=".m0nk3y",
+        title="File Extension",
         description="The file extension that the Infection Monkey will use for the encrypted file.",
     )
     linux_target_dir: Optional[LinuxDirectory] = Field(
         default=None,
+        title="Linux Target Directory",
         description="A path to a directory on Linux systems that contains files you will allow "
         "Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
     )
     windows_target_dir: Optional[WindowsDirectory] = Field(
         default=None,
+        title="Windows Target Directory",
         description="A path to a directory on Windows systems that contains files you will allow "
         "Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
     )
     leave_readme: bool = Field(
         default=True,
+        title="Leave Ransom Note",
         description="If enabled, Infection Monkey will leave a ransomware note in the target "
         "directory.",
+    )
+    change_wallpaper: bool = Field(
+        default=False,
+        title="Change Desktop Wallpaper",
+        description=(
+            "If enabled, Infection Monkey will change the desktop wallpaper on Windows systems"
+        ),
     )

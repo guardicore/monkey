@@ -1,9 +1,10 @@
 from typing import Callable
 
+from monkeytypes import AgentID
 from serpentarium import SingleUsePlugin
 
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
+from infection_monkey.local_machine_info import LocalMachineInfo
 
 from .i_plugin_factory import IPluginFactory
 
@@ -13,10 +14,12 @@ class CredentialsCollectorPluginFactory(IPluginFactory):
         self,
         agent_id: AgentID,
         agent_event_publisher: IAgentEventPublisher,
+        local_machine_info: LocalMachineInfo,
         create_plugin: Callable[..., SingleUsePlugin],
     ):
         self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
+        self._local_machine_info = local_machine_info
         self._create_plugin = create_plugin
 
     def create(self, plugin_name: str) -> SingleUsePlugin:
@@ -24,4 +27,5 @@ class CredentialsCollectorPluginFactory(IPluginFactory):
             plugin_name=plugin_name,
             agent_id=self._agent_id,
             agent_event_publisher=self._agent_event_publisher,
+            local_machine_info=self._local_machine_info,
         )

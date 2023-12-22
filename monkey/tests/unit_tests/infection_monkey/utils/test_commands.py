@@ -3,8 +3,8 @@ from typing import Callable
 from uuid import UUID
 
 import pytest
+from monkeytypes import OperatingSystem
 
-from common import OperatingSystem
 from infection_monkey.i_puppet import TargetHost
 from infection_monkey.utils.commands import (
     build_agent_download_command,

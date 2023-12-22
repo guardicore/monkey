@@ -60,7 +60,9 @@ been signed by a private certificate authority.
 
 ## Step 4: accessing Monkey Island
 
-After the Monkey Island docker container starts, you can access Monkey Island by pointing your browser at `https://localhost:5000`.
+After the Monkey Island docker container starts, you can access Monkey Island by pointing your browser at `https://localhost`.
+
+Once you have access to the Monkey Island server, check out the [getting started page]({{< ref "/usage/getting-started" >}}).
 
 # Configuring the server
 
@@ -101,6 +103,23 @@ You can configure the server by mounting a volume and specifying a
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
         infectionmonkey/monkey-island:latest --server-config="/monkey_island_data/server_config.json"
     ```
+
+### Change listening port
+
+The Island server can be accessed on port 443(HTTPS) by default.
+
+This port can be changed by modifying the `server_config.json` file:
+
+1. Stop the Monkey Island process.
+1. Modify the `server_config.json` by adding the following lines:
+    ```json
+    {
+      ...
+      "island_port": 8080,
+      ...
+    }
+    ```
+1. Run the Monkey Island again, it will be accessible on `https://localhost:8080`.
 
 ### Start Monkey Island with user-provided certificate
 
@@ -143,7 +162,7 @@ private certificate authority.
         infectionmonkey/monkey-island:latest --server-config="/monkey_island_data/server_config.json"
     ```
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost`.
 
 ### Change logging level
 
@@ -165,7 +184,7 @@ private certificate authority.
         infectionmonkey/monkey-island:latest --setup-only --server-config="/monkey_island_data/server_config.json"
     ```
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost`.
 
 ## Upgrading
 
@@ -188,7 +207,7 @@ using a different secret key to encrypt sensitive data than was initially used
 to store data in the `monkey-mongo` container.
 
 ```
-UnicodeDecodeError: 'utf-8' codec can't decode byte 0xee in position 0: invalid continuation byte
+UnicodeDecodeError: 'utf-8' codec cannot decode byte 0xee in position 0: invalid continuation byte
 ```
 
 Starting a new container from the `infectionmonkey/monkey-island:VERSION` image

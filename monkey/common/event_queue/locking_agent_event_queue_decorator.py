@@ -1,7 +1,7 @@
 from typing import Type
 
-from common.agent_events import AbstractAgentEvent
-from common.types.concurrency import BasicLock
+from monkeyevents import AbstractAgentEvent
+from monkeytypes import BasicLock
 
 from . import AgentEventSubscriber, IAgentEventQueue
 

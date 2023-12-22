@@ -52,6 +52,13 @@ class Version:
         self._initialization_complete.wait()
         return self._download_url
 
+    @property
+    def deployment(self):
+        """
+        The deployment of the current Island
+        """
+        return self._deployment
+
     def _set_version_metadata(self):
         self._latest_version, self._download_url = self._get_version_info()
         self._initialization_complete.set()

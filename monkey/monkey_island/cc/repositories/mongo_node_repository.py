@@ -1,9 +1,10 @@
 from copy import deepcopy
 from typing import Sequence
 
+from monkeytypes import MachineID
 from pymongo import MongoClient
 
-from monkey_island.cc.models import CommunicationType, MachineID, Node
+from monkey_island.cc.models import CommunicationType, Node
 
 from ..models.node import TCPConnections
 from . import INodeRepository, RemovalError, RetrievalError, StorageError, UnknownRecordError
@@ -62,7 +63,7 @@ class MongoNodeRepository(INodeRepository):
     def upsert_node(self, node: Node):
         try:
             result = self._nodes_collection.replace_one(
-                {SRC_FIELD_NAME: node.machine_id}, node.dict(simplify=True), upsert=True
+                {SRC_FIELD_NAME: node.machine_id}, node.to_json_dict(), upsert=True
             )
         except Exception as err:
             raise StorageError(f"{UPSERT_ERROR_MESSAGE}: {err}")

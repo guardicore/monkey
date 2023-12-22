@@ -13,8 +13,13 @@ from gevent.pywsgi import WSGIServer
 
 from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment
-from monkey_island.cc.server_utils.consts import ISLAND_PORT
+from monkey_island.cc.feature_flags import NEXT_JS_UI_FEATURE
+from monkey_island.cc.server_utils.consts import FLASK_PORT
 from monkey_island.cc.setup.config_setup import get_server_config
+from monkey_island.cc.setup.nextjs.nextjs_setup import (
+    register_nextjs_shutdown_callback,
+    start_nextjs,
+)
 
 # Add the monkey_island directory to the path, to make sure imports that don't start with
 # "monkey_island." work.
@@ -22,8 +27,9 @@ MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
-from common import DIContainer  # noqa: E402
-from common.network.network_utils import get_my_ip_addresses  # noqa: E402
+from ophidian import DIContainer  # noqa: E402
+
+from common.network.network_utils import get_my_ip_addresses, port_is_used  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
@@ -62,9 +68,17 @@ def run_monkey_island():
 
     _send_analytics(deployment, version)
 
-    _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
+    _initialize_mongodb_connection(config_options.mongodb.start_mongodb, config_options.data_dir)
+    if NEXT_JS_UI_FEATURE:
+        _start_nextjs_server(ip_addresses, config_options)
+    else:
+        new_options = config_options.to_dict()
+        new_options["island_port"] = FLASK_PORT
+        config_options = IslandConfigOptions(**new_options)
 
-    container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
+    container = _initialize_di_container(
+        ip_addresses, config_options.island_port, version, config_options.data_dir
+    )
     setup_island_event_handlers(container)
     setup_agent_event_handlers(container)
 
@@ -102,7 +116,11 @@ def _configure_logging(config_options):
 
 def _collect_system_info() -> Tuple[Sequence[IPv4Address], Deployment, Version]:
     deployment = _get_deployment()
+    logger.info(f"Monkey Island deployment: {deployment}")
+
     version = Version(get_version(), deployment)
+    logger.info(f"Monkey Island version: {version.version_number}")
+
     return (get_my_ip_addresses(), deployment, version)
 
 
@@ -122,13 +140,15 @@ def _get_deployment() -> Deployment:
 
 
 def _initialize_di_container(
-    ip_addresses: Sequence[IPv4Address],
+    island_ip_addresses: Sequence[IPv4Address],
+    island_port: int,
     version: Version,
     data_dir: Path,
 ) -> DIContainer:
     container = DIContainer()
 
-    container.register_convention(Sequence[IPv4Address], "ip_addresses", ip_addresses)
+    container.register_convention(Sequence[IPv4Address], "island_ip_addresses", island_ip_addresses)
+    container.register_convention(int, "island_port", island_port)
     container.register_instance(Version, version)
     container.register_convention(Path, "data_dir", data_dir)
 
@@ -168,6 +188,23 @@ def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
         sys.exit(1)
 
 
+def _start_nextjs_server(ip_addresses: Sequence[IPv4Address], config_options: IslandConfigOptions):
+    nextjs_port = config_options.island_port
+    if port_is_used(nextjs_port, ip_addresses):
+        logger.error(
+            f"Node server port {nextjs_port} is already in use. "
+            f"Specify another port in the server configuration file and try again."
+        )
+        sys.exit(1)
+    nextjs_process = start_nextjs(
+        config_options.data_dir,
+        nextjs_port,
+        config_options.ssl_certificate.ssl_certificate_file,
+        config_options.ssl_certificate.ssl_certificate_key_file,
+    )
+    register_nextjs_shutdown_callback(nextjs_process)
+
+
 def _start_island_server(
     ip_addresses: Sequence[IPv4Address],
     should_setup_only: bool,
@@ -183,15 +220,15 @@ def _start_island_server(
         return
 
     logger.info(
-        f"Using certificate path: {config_options.crt_path}, and key path: "
-        f"{config_options.key_path}."
+        f"Using certificate path: {config_options.ssl_certificate.ssl_certificate_file}, "
+        f"and key path: {config_options.ssl_certificate.ssl_certificate_key_file}."
     )
 
     http_server = WSGIServer(
-        ("0.0.0.0", ISLAND_PORT),
+        ("0.0.0.0", FLASK_PORT),
         app,
-        certfile=config_options.crt_path,
-        keyfile=config_options.key_path,
+        certfile=config_options.ssl_certificate.ssl_certificate_file,
+        keyfile=config_options.ssl_certificate.ssl_certificate_key_file,
         log=_get_wsgi_server_logger(),
         error_log=logger,
     )
@@ -226,7 +263,11 @@ def _log_init_info(ip_addresses: Sequence[IPv4Address]):
 
 
 def _log_web_interface_access_urls(ip_addresses: Sequence[IPv4Address]):
-    web_interface_urls = ", ".join([f"https://{ip}:{ISLAND_PORT}" for ip in ip_addresses])
+    if NEXT_JS_UI_FEATURE:
+        web_interface_urls = ", ".join([f"https://{ip}" for ip in ip_addresses])
+    else:
+        web_interface_urls = ", ".join([f"https://{ip}:{FLASK_PORT}" for ip in ip_addresses])
+
     logger.info(
         "To access the web interface, navigate to one of the the following URLs using your "
         f"browser: {web_interface_urls}"
@@ -248,7 +289,8 @@ def _send_analytics(deployment: Deployment, version: Version):
             )
         except requests.exceptions.ConnectionError as err:
             logger.info(
-                f"Failed to send deployment type and version number to the analytics server: {err}"
+                f"Failed to send deployment type and version number to the analytics server: "
+                f"{err}"
             )
 
     Thread(target=_inner, args=(deployment, version), daemon=True).start()

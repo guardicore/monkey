@@ -4,9 +4,9 @@ from contextlib import suppress
 from typing import Dict, Iterable, Iterator
 
 import requests
+from monkeytypes import SocketAddress
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
-from common.types import SocketAddress
 from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST
 from infection_monkey.utils.threading import (
     ThreadSafeIterator,

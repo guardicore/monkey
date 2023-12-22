@@ -1,13 +1,14 @@
 from http import HTTPStatus
+from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OperatingSystem
 from tests.common import StubDIContainer
+from tests.common.fake_manifests import FAKE_TYPE
 from tests.monkey_island import InMemoryAgentPluginRepository
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_TYPE
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from common import OperatingSystem
 from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
 from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import AgentPluginService
@@ -21,7 +22,7 @@ def agent_plugin_repository():
 
 @pytest.fixture
 def agent_plugin_service(agent_plugin_repository):
-    return AgentPluginService(agent_plugin_repository)
+    return AgentPluginService(agent_plugin_repository, MagicMock())
 
 
 @pytest.fixture
@@ -38,7 +39,7 @@ def test_get_plugin_manifest(flask_client, agent_plugin_repository):
 
     expected_response = {
         "description": None,
-        "link_to_documentation": "http://www.beefface.com",
+        "link_to_documentation": "http://www.beefface.com/",
         "name": "rdp_exploiter",
         "plugin_type": "Exploiter",
         "safe": False,

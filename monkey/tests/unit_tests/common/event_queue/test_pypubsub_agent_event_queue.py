@@ -3,9 +3,9 @@ from typing import Callable, FrozenSet, Union
 from uuid import UUID
 
 import pytest
+from monkeyevents import AbstractAgentEvent, AgentEventTag
 from pubsub.core import Publisher
 
-from common.agent_events import AbstractAgentEvent, AgentEventTag
 from common.event_queue import AgentEventSubscriber, IAgentEventQueue, PyPubSubAgentEventQueue
 
 EVENT_TAG_1 = "event-tag-1"

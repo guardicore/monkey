@@ -1,0 +1,43 @@
+@use 'src/styles/variables' as *;
+
+#app-bar {
+  display: flex;
+  justify-content: space-between;
+
+  :global {
+    .MuiContainer-root {
+      width: 100%;
+      max-width: 100%;
+
+      .MuiToolbar-root {
+        display: flex;
+        min-height: $app-bar-height;
+        height: $app-bar-height;
+        justify-content: space-between;
+
+
+        .logo-and-menu-container {
+          display: flex;
+          gap: 2rem;
+          align-items: center;
+
+          :hover {
+            cursor: pointer;
+          }
+
+          .app-links {
+            width: 100%;
+            display: flex;
+            justify-content: space-evenly;
+          }
+        }
+
+        .etc-container {
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+        }
+      }
+    }
+  }
+}

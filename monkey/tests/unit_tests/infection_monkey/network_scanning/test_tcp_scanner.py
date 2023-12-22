@@ -1,9 +1,9 @@
 from unittest.mock import MagicMock
 
 import pytest
+from monkeyevents import TCPScanEvent
+from monkeytypes import AgentID, PortStatus
 
-from common.agent_events import TCPScanEvent
-from common.types import AgentID, PortStatus
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning import scan_tcp_ports
 from infection_monkey.network_scanning.tcp_scanner import EMPTY_PORT_SCAN

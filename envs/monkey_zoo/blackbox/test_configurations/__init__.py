@@ -1,6 +1,7 @@
 from .test_configuration import TestConfiguration
 from .depth_1_a import depth_1_a_test_configuration
 from .depth_2_a import depth_2_a_test_configuration
+from .depth_2_b import depth_2_b_test_configuration
 from .depth_3_a import depth_3_a_test_configuration
 from .depth_4_a import depth_4_a_test_configuration
 from .smb_pth import smb_pth_test_configuration

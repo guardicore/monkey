@@ -4,11 +4,11 @@ from typing import Sequence
 from urllib.parse import urljoin
 
 import pytest
+from monkeytypes import Credentials, LMHash, NTHash, Password
 from tests.common import StubDIContainer
 from tests.data_for_tests.propagation_credentials import LM_HASH, NT_HASH, PASSWORD_1, PASSWORD_2
 from tests.monkey_island import InMemoryCredentialsRepository
 
-from common.credentials import Credentials, LMHash, NTHash, Password
 from monkey_island.cc.repositories import ICredentialsRepository
 from monkey_island.cc.resources import PropagationCredentials
 from monkey_island.cc.resources.propagation_credentials import (
@@ -98,6 +98,29 @@ def test_stolen_propagation_credentials_endpoint__put_not_allowed(flask_client):
 def test_all_propagation_credentials_endpoint__put_not_allowed(flask_client):
     resp = flask_client.put(ALL_CREDENTIALS_URL, json=[])
     assert resp.status_code == HTTPStatus.METHOD_NOT_ALLOWED
+
+
+@pytest.mark.parametrize(
+    "input_, expected_errors_index",
+    [
+        (
+            [
+                {"identity": {"email_address": "invalid input"}, "secret": {"password": "pwd"}},
+                {"identity": None, "secret": {"password": "pass"}},
+                {"identity": None, "secret": {"ntlm_hash": "invalid input"}},
+            ],
+            [0, 2],
+        ),
+        ([{"identity": {"username": "user1"}, "secret": {"lm_hash": "invalid input"}}], [0]),
+    ],
+)
+def test_propagation_credentials_endpoint__invalid_credentials(
+    flask_client, input_, expected_errors_index
+):
+    resp = flask_client.put(CONFIGURED_CREDENTIALS_URL, json=input_)
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
+    actual_errors_index = [error["index"] for error in json.loads(resp.text).get("errors", [])]
+    assert actual_errors_index == expected_errors_index
 
 
 NON_EXISTENT_COLLECTION_URL = urljoin(ALL_CREDENTIALS_URL + "/", "bogus-credentials")

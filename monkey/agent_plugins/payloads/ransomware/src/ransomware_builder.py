@@ -1,8 +1,9 @@
 import logging
 from pprint import pformat
 
+from monkeytypes import AgentID, OperatingSystem
+
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 
 from .bit_manipulators import flip_bits
 from .file_selectors import ProductionSafeTargetFileSelector
@@ -10,8 +11,9 @@ from .in_place_file_encryptor import InPlaceFileEncryptor
 from .internal_ransomware_options import InternalRansomwareOptions
 from .ransomware import Ransomware
 from .ransomware_options import RansomwareOptions
-from .readme_dropper import leave_readme
+from .readme_dropper import ReadmeDropper
 from .targeted_file_extensions import TARGETED_FILE_EXTENSIONS
+from .wallpaper_changer import WallpaperChanger
 
 CHUNK_SIZE = 4096 * 24
 
@@ -22,19 +24,22 @@ def build_ransomware(
     agent_id: AgentID,
     agent_event_publisher: IAgentEventPublisher,
     options: RansomwareOptions,
+    operating_system: OperatingSystem,
 ):
     logger.debug(f"Ransomware configuration:\n{pformat(options)}")
-    internal_ransomware_options = InternalRansomwareOptions(options)
+    internal_ransomware_options = InternalRansomwareOptions(options, operating_system)
 
     file_encryptor = _build_file_encryptor(internal_ransomware_options.file_extension)
     file_selector = _build_file_selector(internal_ransomware_options.file_extension)
-    leave_readme = _build_leave_readme()
+    leave_readme = _build_leave_readme(operating_system)
+    change_wallpaper = _build_change_wallpaper(operating_system)
 
     return Ransomware(
         internal_ransomware_options,
         file_encryptor,
         file_selector,
         leave_readme,
+        change_wallpaper,
         agent_event_publisher,
         agent_id,
     )
@@ -54,5 +59,9 @@ def _build_file_selector(file_extension: str):
     return ProductionSafeTargetFileSelector(targeted_file_extensions)
 
 
-def _build_leave_readme():
-    return leave_readme
+def _build_leave_readme(operating_system: OperatingSystem):
+    return ReadmeDropper(operating_system).leave_readme
+
+
+def _build_change_wallpaper(operating_system: OperatingSystem):
+    return WallpaperChanger(operating_system).change_wallpaper

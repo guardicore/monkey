@@ -1,9 +1,9 @@
 from http import HTTPStatus
 
 import pytest
+from monkeytypes import Token
 
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
-from common.types import Token
 from monkey_island.cc.services.authentication_service.authentication_facade import (
     AuthenticationFacade,
 )

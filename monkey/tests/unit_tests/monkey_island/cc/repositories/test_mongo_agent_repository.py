@@ -5,8 +5,8 @@ from uuid import uuid4
 
 import mongomock
 import pytest
+from monkeytypes import SocketAddress
 
-from common.types import SocketAddress
 from monkey_island.cc.models import Agent
 from monkey_island.cc.repositories import (
     IAgentRepository,
@@ -68,7 +68,7 @@ CC_SERVER = SocketAddress(ip="127.0.0.1", port=1984)
 @pytest.fixture
 def agent_repository() -> IAgentRepository:
     mongo_client = mongomock.MongoClient()
-    mongo_client.monkey_island.agents.insert_many((a.dict(simplify=True) for a in AGENTS))
+    mongo_client.monkey_island.agents.insert_many((a.to_json_dict() for a in AGENTS))
     return MongoAgentRepository(mongo_client)
 
 

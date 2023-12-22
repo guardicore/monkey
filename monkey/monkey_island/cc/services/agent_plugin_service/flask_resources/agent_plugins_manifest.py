@@ -3,8 +3,9 @@ from http import HTTPStatus
 
 from flask import make_response
 from flask_security import auth_token_required, roles_accepted
+from monkeytypes import AgentPluginManifest, AgentPluginType
 
-from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from common.agent_plugins import PluginName
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )
@@ -39,15 +40,17 @@ class AgentPluginsManifest(AbstractResource):
             return make_response({"message": message}, HTTPStatus.NOT_FOUND)
 
         try:
-            plugin_manifest = self._get_plugin_manifest(plugin_type_, name)
+            plugin_manifest = self._get_plugin_manifest(plugin_type_, PluginName(name))
         except KeyError:
             message = f"Plugin '{name}' of type '{plugin_type_}' not found."
             logger.warning(message)
             return make_response({"message": message}, HTTPStatus.NOT_FOUND)
 
-        return make_response(plugin_manifest.dict(simplify=True), HTTPStatus.OK)
+        return make_response(plugin_manifest.to_json_dict(), HTTPStatus.OK)
 
-    def _get_plugin_manifest(self, plugin_type: AgentPluginType, name: str) -> AgentPluginManifest:
+    def _get_plugin_manifest(
+        self, plugin_type: AgentPluginType, name: PluginName
+    ) -> AgentPluginManifest:
         plugin_manifests = self._agent_plugin_service.get_all_plugin_manifests()
         try:
             return plugin_manifests[plugin_type][name]

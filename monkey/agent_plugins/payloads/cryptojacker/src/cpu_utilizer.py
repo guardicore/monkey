@@ -6,13 +6,11 @@ from random import randbytes  # noqa: DUO102 (this isn't for cryptographic use)
 from typing import Optional
 
 import psutil
+from monkeyevents import CPUConsumptionEvent
+from monkeyevents.tags import RESOURCE_HIJACKING_T1496_TAG
+from monkeytypes import AgentID, NonNegativeFloat, OperatingSystem, PercentLimited
 
-from common import OperatingSystem
-from common.agent_events import CPUConsumptionEvent
 from common.event_queue import IAgentEventPublisher
-from common.tags import RESOURCE_HIJACKING_T1496_TAG
-from common.types import AgentID, NonNegativeFloat, PercentLimited
-from common.utils.environment import get_os
 from infection_monkey.utils.threading import create_daemon_thread
 
 from .consts import CRYPTOJACKER_PAYLOAD_TAG
@@ -38,6 +36,7 @@ class CPUUtilizer:
         target_cpu_utilization_percent: PercentLimited,
         agent_id: AgentID,
         agent_event_publisher: IAgentEventPublisher,
+        operating_system: OperatingSystem,
     ):
         # Target CPU utilization can never be zero, otherwise divide by zero errors could occur or
         # sleeps could become so large that this process will hang indefinitely.
@@ -46,6 +45,7 @@ class CPUUtilizer:
         )
         self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
+        self._operating_system = operating_system
 
         self._should_stop_cpu_utilization = threading.Event()
         self._cpu_utilizer_thread = create_daemon_thread(
@@ -70,10 +70,9 @@ class CPUUtilizer:
         # https://psutil.readthedocs.io/en/latest/#psutil.cpu_percent
         process.cpu_percent()
 
-        os = get_os()
-        if os == OperatingSystem.LINUX:
+        if self._operating_system == OperatingSystem.LINUX:
             get_current_process_cpu_number = process.cpu_num
-        elif os == OperatingSystem.WINDOWS:
+        elif self._operating_system == OperatingSystem.WINDOWS:
             get_current_process_cpu_number = self._get_windows_process_cpu_number
 
         while not self._should_stop_cpu_utilization.is_set():

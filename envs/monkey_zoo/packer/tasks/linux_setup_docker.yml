@@ -1,0 +1,5 @@
+---
+- name: Install docker
+  apt:
+    name: docker.io
+    update_cache: yes

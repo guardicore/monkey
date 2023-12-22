@@ -1,0 +1,12 @@
+name: Chrome
+plugin_type: Credentials_Collector
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - linux
+  - windows
+title: Chrome Credentials Collector
+version: 2.0.0
+description: Collects credentials from Chrome-based browsers.
+safe: true

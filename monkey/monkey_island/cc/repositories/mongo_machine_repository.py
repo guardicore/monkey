@@ -3,10 +3,10 @@ from itertools import count
 from threading import Lock
 from typing import Any, Sequence
 
+from monkeytypes import HardwareID, MachineID
 from pymongo import MongoClient
 
-from common.types import HardwareID
-from monkey_island.cc.models import Machine, MachineID, NetworkServices
+from monkey_island.cc.models import Machine, NetworkServices
 
 from . import IMachineRepository, RemovalError, RetrievalError, StorageError, UnknownRecordError
 from .consts import MONGO_OBJECT_ID_KEY
@@ -33,7 +33,7 @@ class MongoMachineRepository(IMachineRepository):
 
     def upsert_machine(self, machine: Machine):
         try:
-            machine_dict = mongo_dot_encoder(machine.dict(simplify=True))
+            machine_dict = mongo_dot_encoder(machine.to_json_dict())
             result = self._machines_collection.replace_one(
                 {"id": machine.id}, machine_dict, upsert=True
             )

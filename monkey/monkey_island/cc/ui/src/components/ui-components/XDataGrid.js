@@ -3,12 +3,15 @@ import {DataGrid, gridFilteredTopLevelRowCountSelector, GridToolbar, GridToolbar
 import CustomNoRowsOverlay from './utils/GridNoRowsOverlay';
 import _ from 'lodash';
 import '../../styles/components/XDataGrid.scss';
+import MonkeyTooltip from './MonkeyTooltip';
 
 const X_DATA_GRID_CLASS = 'x-data-grid';
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 const DEFAULT_MIN_WIDTH = 150;
 const DEFAULT_MAX_WIDTH = DEFAULT_MIN_WIDTH;
+const IS_TEXTUAL = 'isTextual';
+const RENDER_CELL = 'renderCell';
 const WIDTH = 'width';
 const MIN_WIDTH = 'minWidth';
 const MAX_WIDTH = 'maxWidth';
@@ -36,12 +39,12 @@ const setColumnClass = (column, classToAppend) => {
 const prepareColsClasses = (columns, setFlex) => {
   let updatedColumns = _.cloneDeep(columns) || [];
   updatedColumns?.forEach((col) => {
-    if(col[MAX_WIDTH] === Infinity) {
+    if (col[MAX_WIDTH] === Infinity) {
       setColumnClass(col, X_DATA_GRID_CLASSES.MAX_WIDTH_NONE);
     }
 
-    if(setFlex) {
-      if(col?.flexValue >= 0) {
+    if (setFlex) {
+      if (col?.flexValue >= 0) {
         setColumnClass(col, FLEX_VALUES[col.flexValue] || FLEX_VALUES[1]);
       } else {
         setColumnClass(col, FLEX_VALUES[1]);
@@ -55,7 +58,7 @@ const prepareColsClasses = (columns, setFlex) => {
 const prepareColsWidth = (columns, columnWidth, setColWidth) => {
   const colWidth = getColumnWidth(columnWidth);
   let updatedColumns = _.cloneDeep(columns) || [];
-  if(setColWidth) {
+  if (setColWidth) {
     updatedColumns?.forEach((col) => {
       if (!(WIDTH in col)) {
         if (!(MIN_WIDTH in col)) {
@@ -72,10 +75,29 @@ const prepareColsWidth = (columns, columnWidth, setColWidth) => {
   return updatedColumns;
 }
 
+const prepareColsCustomTooltip = (columns) => {
+   let updatedColumns = _.cloneDeep(columns) || [];
+   updatedColumns?.forEach((col)=>{
+     if(col[IS_TEXTUAL]) {
+       // eslint-disable-next-line react/display-name
+       col[RENDER_CELL] = (params) => (
+       params?.value ? (
+         <MonkeyTooltip isOverflow={true}
+                      title={params?.value?.toString()}>
+          {params?.value?.toString()}
+        </MonkeyTooltip>
+       ) : undefined
+      )
+     }
+   });
+   return updatedColumns;
+}
+
 const prepareSlots = (toolbar, showToolbar) => {
   let slotsObj = {
     noRowsOverlay: CustomNoRowsOverlay,
-    noResultsOverlay: CustomNoRowsOverlay
+    noResultsOverlay: CustomNoRowsOverlay,
+    baseTooltip: MonkeyTooltip
   };
 
   if (showToolbar) {
@@ -87,9 +109,9 @@ const prepareSlots = (toolbar, showToolbar) => {
 
 const getColumnWidth = (columnWidth) => {
   const colWidth = {...COLUMN_WIDTH, ...columnWidth};
-  if(colWidth?.max < colWidth?.min && colWidth?.max >= 0) {
+  if (colWidth?.max < colWidth?.min && colWidth?.max >= 0) {
     colWidth.max = colWidth.min;
-  } else if(colWidth?.min > colWidth?.max && colWidth?.max >= 0) {
+  } else if (colWidth?.min > colWidth?.max && colWidth?.max >= 0) {
     colWidth.min = colWidth.max;
   }
 
@@ -110,11 +132,14 @@ const XDataGrid = (props) => {
     hideHeaders = false,
     setColWidth = true,
     setFlex = true,
+    sortingOrder = ['asc', 'desc'],
     height,
     maxHeight,
     rowHeight,
     columnWidth,
     className,
+    needCustomWorkaround = true,
+    noRowsOverlayMessage,
     ...rest
   } = {...props}
 
@@ -128,7 +153,8 @@ const XDataGrid = (props) => {
   const sx = {maxHeight: maxHeight || height || 'auto'};
 
   const updatedColumns = useMemo(() => {
-      return prepareColsClasses(prepareColsWidth(columns, columnWidth, setColWidth), setFlex);
+    const mutatedColumns = prepareColsCustomTooltip(columns);
+    return needCustomWorkaround ? prepareColsClasses(prepareColsWidth(mutatedColumns, columnWidth, setColWidth), setFlex) : mutatedColumns;
   }, [columns]);
 
   useEffect(() => {
@@ -162,14 +188,18 @@ const XDataGrid = (props) => {
         getRowHeight={() => rowHeight || 'auto'}
         density={density}
         slots={slots}
+        sortingOrder={sortingOrder}
         disableRowSelectionOnClick
         disableColumnFilter={disableColumnFilter}
         disableDensitySelector={disableDensitySelector}
         disableColumnMenu={disableColumnMenu}
         hideFooter={hidePagination}
         hideFooterPagination={hidePagination}
-        classes={{columnHeaders: isDataEmpty || hideHeaders ? HIDDEN : '', toolbarContainer: isDataEmpty ? HIDE_TOOLBAR_ACTIONS : ''}}
-        slotProps={{toolbar: {printOptions: {disableToolbarButton: true}}}}
+        classes={{
+          columnHeaders: isDataEmpty || hideHeaders ? HIDDEN : '',
+          toolbarContainer: isDataEmpty ? HIDE_TOOLBAR_ACTIONS : ''
+        }}
+        slotProps={{toolbar: {printOptions: {disableToolbarButton: true}}, noRowsOverlay: {message: noRowsOverlayMessage}}}
         sx={sx}
         {...rest}
       />

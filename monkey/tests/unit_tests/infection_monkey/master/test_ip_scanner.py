@@ -3,17 +3,15 @@ from typing import Set
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import NetworkProtocol, NetworkService, OperatingSystem, PortStatus
 from tests.unit_tests.infection_monkey.master.mock_puppet import MockPuppet
 from tests.utils import ThreadSafeMagicMock
 
-from common import OperatingSystem
 from common.agent_configuration.agent_sub_configurations import (
     ICMPScanConfiguration,
     NetworkScanConfiguration,
-    PluginConfiguration,
     TCPScanConfiguration,
 )
-from common.types import NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData
 from infection_monkey.master import IPScanner
 from infection_monkey.network import NetworkAddress
@@ -36,11 +34,11 @@ def scan_config(default_agent_configuration):
         ],
     )
     icmp_config = ICMPScanConfiguration(timeout=1)
-    fingerprinter_config = [
-        PluginConfiguration(name="HTTPFinger", options={}),
-        PluginConfiguration(name="SMBFinger", options={}),
-        PluginConfiguration(name="SSHFinger", options={}),
-    ]
+    fingerprinter_config = {
+        "HTTPFinger": {},
+        "SMBFinger": {},
+        "SSHFinger": {},
+    }
     scan_config = NetworkScanConfiguration(
         tcp=tcp_config,
         icmp=icmp_config,

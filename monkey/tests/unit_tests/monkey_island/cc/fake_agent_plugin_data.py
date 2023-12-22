@@ -1,10 +1,7 @@
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
-    FAKE_MANIFEST_OBJECT,
-    FAKE_NAME2,
-)
+from monkeytypes import AgentPluginManifest, OperatingSystem
+from tests.common.fake_manifests import FAKE_MANIFEST_OBJECT, FAKE_NAME2
 
-from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest
+from common.agent_plugins import AgentPlugin
 
 FAKE_PLUGIN_CONFIG_SCHEMA_1 = {
     "title": "Mock exploiter",
@@ -60,7 +57,7 @@ FAKE_PLUGIN_CONFIG_SCHEMA_2 = {
 
 FAKE_PLUGIN_ARCHIVE_2 = b"other random bytes"
 
-_manifest_params = FAKE_MANIFEST_OBJECT.dict(simplify=True)
+_manifest_params = FAKE_MANIFEST_OBJECT.to_json_dict()
 _manifest_params["name"] = FAKE_NAME2
 
 FAKE_AGENT_PLUGIN_2 = AgentPlugin(

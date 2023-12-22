@@ -3,10 +3,10 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeytypes import SocketAddress
 from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from common.types import SocketAddress
 from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.models import Agent
 from monkey_island.cc.repositories import IAgentRepository

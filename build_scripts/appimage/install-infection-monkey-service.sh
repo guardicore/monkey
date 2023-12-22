@@ -8,6 +8,7 @@ TMP_SYSTEMD_UNIT="${PWD}/${SYSTEMD_UNIT_FILENAME}"
 SYSTEMD_DIR="/lib/systemd/system"
 MONKEY_BIN="/opt/infection-monkey/bin"
 APPIMAGE_NAME="InfectionMonkey.AppImage"
+MONKEY_DATA_DIR="$HOME/.monkey_island"
 
 die() {
     echo "$1" >&2
@@ -31,11 +32,20 @@ echo_help() {
 }
 
 install_service() {
+  exit_if_service_installed
   copy_appimage
   install_systemd_unit "$1"
 
   echo "The Infection Monkey service has been installed and will start on boot."
-  echo "Run 'systemctl start infection-monkey' to start the service now."
+  echo "Run 'sudo systemctl start infection-monkey' to start the service now."
+}
+
+exit_if_service_installed() {
+  if sudo systemctl list-units --full --all | grep -Fq "${SYSTEMD_UNIT_FILENAME}"; then
+    echo "Error: Service ${SYSTEMD_UNIT_FILENAME} is already installed."
+    echo -e "Please uninstall it with \033[1msudo ${SCRIPT_NAME} service --uninstall\033[0m before proceeding."
+    die
+  fi
 }
 
 copy_appimage() {
@@ -58,7 +68,9 @@ After=network.target
 [Service]
 User=$1
 Type=simple
+Environment="MONKEY_APPIMAGE_SERVICE_RUN=1"
 ExecStart="${MONKEY_BIN}/${APPIMAGE_NAME}"
+AmbientCapabilities=CAP_NET_BIND_SERVICE
 
 [Install]
 WantedBy=multi-user.target
@@ -69,6 +81,23 @@ EOF
 }
 
 uninstall_service() {
+  if [ -d "${MONKEY_DATA_DIR}" ] ; then
+    read -r -p "Existing data directory (${MONKEY_DATA_DIR}) needs to be deleted. All data from previous runs will be lost. Proceed to delete? (y/n) " choice
+
+    case "$choice" in
+      y|Y )
+        username=$(systemctl show -p User ${SYSTEMD_UNIT_FILENAME} | cut -d'=' -f2)
+        sudo -u "${username}" rm -rf "${MONKEY_DATA_DIR}"
+        ;;
+      n|N )
+        die "Unable to uninstall ${SYSTEMD_UNIT_FILENAME}. Please backup and delete the existing data directory (${MONKEY_DATA_DIR}). Then, try again. To learn how to restore and use a backup, please refer to the documentation."
+        ;;
+      * )
+        die "Invalid input. Please enter 'y' or 'n'."
+        ;;
+    esac
+  fi
+
   if [ -f "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
     sudo rm -f "${MONKEY_BIN}/${APPIMAGE_NAME}"
   fi
@@ -80,7 +109,7 @@ uninstall_service() {
     sudo systemctl daemon-reload
   fi
 
-  echo "The Infection Monkey service has been uninstalled"
+  echo "The Infection Monkey service has been uninstalled. Data directory ${MONKEY_DATA_DIR} has been removed."
 }
 
 exit_if_user_doesnt_exist() {
@@ -149,7 +178,7 @@ if $do_install && $do_uninstall ; then
 fi
 
 if $do_uninstall ; then
-  uninstall_service
+  uninstall_service "$username"
   exit 0
 fi
 

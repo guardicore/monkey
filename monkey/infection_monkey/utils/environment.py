@@ -1,7 +1,7 @@
 import platform
 import socket
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
 
 
 def get_os() -> OperatingSystem:

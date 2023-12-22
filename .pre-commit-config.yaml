@@ -1,4 +1,7 @@
 default_stages: [commit]
+default_language_version:
+  python: python3.11
+
 repos:
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
@@ -12,14 +15,14 @@ repos:
         name: isort (pyi)
         types: [pyi]
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.9.1
     hooks:
       - id: black
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
-        additional_dependencies: [dlint]
+        additional_dependencies: [dlint==0.14.1]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -30,6 +33,7 @@ repos:
       - id: detect-private-key
         exclude: "envs/monkey_zoo/blackbox/expected_credentials.py"
       - id: end-of-file-fixer
+        exclude: "envs/monkey_zoo/packer/files/mssql/ConfigurationFile.ini"
       - id: trailing-whitespace
   - repo: https://github.com/eslint/eslint
     rev: v8.35.0

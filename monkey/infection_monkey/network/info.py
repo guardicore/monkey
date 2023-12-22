@@ -8,8 +8,8 @@ from typing import Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tupl
 
 import psutil
 from egg_timer import EggTimer
+from monkeytypes import IntRange, NetworkPort
 
-from common.types import IntRange, NetworkPort
 from common.utils.environment import is_windows_os
 
 if not is_windows_os():

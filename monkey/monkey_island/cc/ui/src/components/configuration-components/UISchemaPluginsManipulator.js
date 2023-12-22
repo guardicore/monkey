@@ -1,4 +1,5 @@
 import MarkdownDescriptionTemplate from './MarkdownDescriptionTemplate';
+import {isEmpty} from 'lodash';
 
 const DEFAULT_VALUE_FIELD = 'default';
 const UI_SCHEMA_PLACEHOLDER_FIELD = 'ui:placeholder';
@@ -8,7 +9,7 @@ const pluginsManipulator = (uiSchema, JSONSchema = {}) => {
     uiSchema[pluginName] = {'ui:DescriptionFieldTemplate': MarkdownDescriptionTemplate, 'ui:readonly': false};
   }
 
-  if(JSONSchema !== {}) {
+  if(!isEmpty(JSONSchema)) {
     traversePlugins(uiSchema, JSONSchema);
   }
 }

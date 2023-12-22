@@ -2,8 +2,7 @@ import re
 from typing import Iterable, Set, Type
 
 import flask_restful
-
-from common import DIContainer
+from ophidian import DIContainer
 
 from . import AbstractResource
 

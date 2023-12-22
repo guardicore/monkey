@@ -1,13 +1,14 @@
 from http import HTTPStatus
+from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OperatingSystem
 from tests.common import StubDIContainer
+from tests.common.fake_manifests import FAKE_NAME, FAKE_TYPE
 from tests.monkey_island import InMemoryAgentPluginRepository
-from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_NAME, FAKE_TYPE
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from common import OperatingSystem
 from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
 from monkey_island.cc.services.agent_plugin_service.agent_plugin_service import AgentPluginService
@@ -23,7 +24,7 @@ def agent_plugin_repository():
 
 @pytest.fixture
 def agent_plugin_service(agent_plugin_repository):
-    return AgentPluginService(agent_plugin_repository)
+    return AgentPluginService(agent_plugin_repository, MagicMock())
 
 
 @pytest.fixture
@@ -42,7 +43,7 @@ def test_get_plugin(flask_client, agent_plugin_repository):
         "config_schema": FAKE_AGENT_PLUGIN_1.config_schema,
         "plugin_manifest": {
             "description": None,
-            "link_to_documentation": "http://www.beefface.com",
+            "link_to_documentation": "http://www.beefface.com/",
             "name": FAKE_NAME,
             "plugin_type": FAKE_TYPE,
             "version": "1.0.0",
@@ -90,7 +91,7 @@ def test_get_plugins__not_found_if_type_is_invalid(flask_client, type_):
 
 
 def test_get_plugins__server_error(flask_client, agent_plugin_repository):
-    def raise_retrieval_error(host_os, plugin_type, name):
+    def raise_retrieval_error(host_os, plugin_type, plugin_name):
         raise RetrievalError
 
     agent_plugin_repository.get_plugin = raise_retrieval_error

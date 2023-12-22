@@ -1,11 +1,9 @@
 from typing import Dict, FrozenSet, Mapping, Tuple, TypeAlias
 
+from monkeytypes import MachineID, MutableInfectionMonkeyBaseModel, SocketAddress
 from pydantic import Field
 
-from common.base_models import MutableInfectionMonkeyBaseModel
-from common.types import SocketAddress
-
-from . import CommunicationType, MachineID
+from . import CommunicationType
 
 NodeConnections: TypeAlias = Mapping[MachineID, FrozenSet[CommunicationType]]
 TCPConnections: TypeAlias = Dict[MachineID, Tuple[SocketAddress, ...]]
@@ -20,7 +18,7 @@ class Node(MutableInfectionMonkeyBaseModel):
     throughout the network.
     """
 
-    machine_id: MachineID = Field(..., allow_mutation=False)
+    machine_id: MachineID = Field(..., frozen=True)
     """The MachineID of the node (source)"""
 
     connections: NodeConnections = {}

@@ -4,14 +4,10 @@ copy_monkey_island_to_build_dir() {
   local src=$1
   local build_dir=$2
 
-  cp "$src"/__init__.py "$build_dir"
   cp "$src"/monkey_island.py "$build_dir"
   cp -r "$src"/common "$build_dir/"
 
-  rsync \
-      -ar \
-      --exclude=monkey_island/cc/ui/node_modules \
-      --exclude=monkey_island/cc/ui/.npm \
+  rsync -ar \
       "$src"/monkey_island "$build_dir/"
 }
 
@@ -20,6 +16,12 @@ modify_deployment() {
     local deployment_file_path="$2/monkey_island/cc/deployment.json"
     echo -e "{\n    \"deployment\": \"$1\"\n}" > $deployment_file_path
   fi
+}
+
+add_node_to_build_dir() {
+  local build_dir="$1"
+  local node_dir="$build_dir/monkey_island/bin/node"
+  "$build_dir/monkey_island/linux/install_node.sh" "${node_dir}"
 }
 
 add_agent_binaries_to_build_dir() {
@@ -72,6 +74,27 @@ generate_ssl_cert() {
   "$island_path"/linux/create_certificate.sh "$island_path"/cc
 }
 
+build_nextjs_frontend() {
+  local ui_dir="$1/monkey_island/cc/next_ui"
+  local is_release_build=$2
+  mkdir -p "$ui_dir"
+  pushd "$ui_dir" || handle_error
+
+  log_message "Generating front end"
+  npm ci
+  log_message "Running production front end build"
+  npm run build
+
+  log_message "Removing development artifacts"
+  mv "${ui_dir}/.next/standalone" "${ui_dir}/standalone"
+  rm -rf "${ui_dir}/.next"
+  mkdir "${ui_dir}/.next"
+  mv "${ui_dir}/standalone" "${ui_dir}/.next"
+  log_message "Next.js standalone deployment built successfully"
+
+  popd || handle_error
+}
+
 build_frontend() {
   local ui_dir="$1/monkey_island/cc/ui"
   local is_release_build=$2
@@ -89,12 +112,6 @@ build_frontend() {
 
   popd || handle_error
 
-  remove_node_modules "$ui_dir"
-}
-
-remove_node_modules() {
-  # Node has served its purpose. We don't need to deliver the node modules with
-  # the package.
   rm -rf "$1/node_modules"
   rm -rf "$1/.npm"
 }

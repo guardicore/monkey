@@ -20,6 +20,14 @@ After deploying the Monkey Island in your environment, navigate to `https://<ser
 
 On your first login, you'll be asked to create a username and password for the Monkey Island Server. [See this page for more details](../../setup/accounts-and-security).
 
+### Installing plugins
+
+Infection Monkey's various features are provided by plugins. No plugins are installed out of the box. To install plugins, click on **Plugins** in the navigation bar and install the plugins you want to use. Clicking on "Download All Safe Plugins" will download all plugins that are considered safe to use in production environments.
+
+Read more about plugins [here]({{< ref "/usage/plugins" >}}).
+
+![Plugin Installation Screen](/images/island/plugins_page/plugin_installation.PNG "Plugin Installation")
+
 ### Running the Infection Monkey
 
 To get the Infection Monkey running as fast as possible, click **Run Monkey**. Optionally, you can configure the Infection Monkey before you continue by clicking on **Configuration** (see [how to configure the Infection Monkey](../configuration)).

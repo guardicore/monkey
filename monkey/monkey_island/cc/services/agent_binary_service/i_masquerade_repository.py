@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
 
 
 class IMasqueradeRepository(ABC):

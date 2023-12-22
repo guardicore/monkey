@@ -8,11 +8,10 @@ from pathlib import Path
 from shutil import copyfileobj
 from typing import Sequence
 
-from common import OperatingSystem
+from monkeytypes import OTP, OperatingSystem
+
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
-from common.types import OTP
 from monkey_island.cc.repositories import RetrievalError
-from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.services import IAgentBinaryService
 
 logger = logging.getLogger(__name__)
@@ -28,11 +27,13 @@ class LocalMonkeyRunService:
         self,
         data_dir: Path,
         agent_binary_service: IAgentBinaryService,
-        ip_addresses: Sequence[IPv4Address],
+        island_ip_addresses: Sequence[IPv4Address],
+        island_port: int,
     ):
         self._data_dir = data_dir
         self._agent_binary_service = agent_binary_service
-        self._ips = ip_addresses
+        self._ips = island_ip_addresses
+        self._island_port = island_port
 
     def run_local_monkey(self, otp: OTP):
         # get the monkey executable suitable to run on the server
@@ -70,7 +71,7 @@ class LocalMonkeyRunService:
         # run the monkey
         try:
             ip = self._ips[0]
-            port = ISLAND_PORT
+            port = self._island_port
 
             process_env = os.environ.copy()
             process_env[AGENT_OTP_ENVIRONMENT_VARIABLE] = otp.get_secret_value()

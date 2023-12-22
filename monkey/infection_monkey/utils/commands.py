@@ -1,28 +1,37 @@
 from pathlib import PurePath
 from typing import List, Optional, Sequence, Union
 
-from common import OperatingSystem
-from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
-from common.types import OTP, AgentID
+from monkeytypes import OTP, AgentID, OperatingSystem
+
 from infection_monkey.exploit.tools.helpers import get_agent_dst_path, get_dropper_script_dst_path
 from infection_monkey.i_puppet import TargetHost
 from infection_monkey.model import CMD_CARRY_OUT, CMD_EXE, MONKEY_ARG
 
 
 def build_agent_deploy_command(
-    target_host: TargetHost, url: str, otp: OTP, args: Sequence[str]
+    target_host: TargetHost,
+    url: str,
+    agent_otp_environment_variable: str,
+    otp: OTP,
+    args: Sequence[str],
 ) -> str:
     agent_dst_path = get_agent_dst_path(target_host)
     download_command = build_download_command(target_host, url, agent_dst_path)
-    run_command = build_run_command(target_host, otp, agent_dst_path, args)
+    run_command = build_run_command(
+        target_host, agent_otp_environment_variable, otp, agent_dst_path, args
+    )
 
     return " ; ".join([download_command, run_command])
 
 
-def build_dropper_script_deploy_command(target_host: TargetHost, url: str, otp: OTP) -> str:
+def build_dropper_script_deploy_command(
+    target_host: TargetHost, url: str, agent_otp_environment_variable: str, otp: OTP
+) -> str:
     dropper_script_dst_path = get_dropper_script_dst_path(target_host)
     download_command = build_download_command(target_host, url, dropper_script_dst_path)
-    run_command = build_run_command(target_host, otp, dropper_script_dst_path, [])
+    run_command = build_run_command(
+        target_host, agent_otp_environment_variable, otp, dropper_script_dst_path, []
+    )
 
     return " ; ".join([download_command, run_command])
 
@@ -64,19 +73,29 @@ def set_permissions_command_linux(destination_path: PurePath) -> str:
     return f"chmod +x {destination_path}"
 
 
-def build_run_command(target_host: TargetHost, otp: OTP, dst: PurePath, args: Sequence[str]) -> str:
+def build_run_command(
+    target_host: TargetHost,
+    agent_otp_environment_variable: str,
+    otp: OTP,
+    dst: PurePath,
+    args: Sequence[str],
+) -> str:
     if target_host.operating_system == OperatingSystem.WINDOWS:
-        return build_run_command_windows(otp, dst, args)
+        return build_run_command_windows(agent_otp_environment_variable, otp, dst, args)
 
-    return build_run_command_linux(otp, dst, args)
-
-
-def build_run_command_linux(otp: OTP, destination_path: PurePath, args: Sequence[str]) -> str:
-    return f"{AGENT_OTP_ENVIRONMENT_VARIABLE}={otp} {destination_path} {' '.join(args)}"
+    return build_run_command_linux(agent_otp_environment_variable, otp, dst, args)
 
 
-def build_run_command_windows(otp: OTP, destination_path: PurePath, args: Sequence[str]) -> str:
-    return f"$env:{AGENT_OTP_ENVIRONMENT_VARIABLE}='{otp}' ; {destination_path} {' '.join(args)}"
+def build_run_command_linux(
+    agent_otp_environment_variable: str, otp: OTP, destination_path: PurePath, args: Sequence[str]
+) -> str:
+    return f"{agent_otp_environment_variable}={otp} {destination_path} {' '.join(args)}"
+
+
+def build_run_command_windows(
+    agent_otp_environment_variable: str, otp: OTP, destination_path: PurePath, args: Sequence[str]
+) -> str:
+    return f"$env:{agent_otp_environment_variable}='{otp}' ; {destination_path} {' '.join(args)}"
 
 
 def build_monkey_commandline(

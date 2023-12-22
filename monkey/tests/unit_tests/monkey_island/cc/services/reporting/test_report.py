@@ -6,6 +6,13 @@ from uuid import UUID
 
 import pytest
 import pytz
+from monkeyevents import (
+    AgentShutdownEvent,
+    ExploitationEvent,
+    PasswordRestorationEvent,
+    PropagationEvent,
+)
+from monkeytypes import AgentPluginType, SocketAddress
 from tests.data_for_tests.agent_plugin.manifests import (
     EXPLOITER_INCOMPLETE_MANIFEST,
     EXPLOITER_NAME_1,
@@ -20,14 +27,6 @@ from tests.monkey_island import (
     InMemoryAgentRepository,
 )
 
-from common.agent_events import (
-    AgentShutdownEvent,
-    ExploitationEvent,
-    PasswordRestorationEvent,
-    PropagationEvent,
-)
-from common.agent_plugins import AgentPluginType
-from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
 from monkey_island.cc.repositories import IAgentEventRepository, IAgentRepository
 from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
@@ -161,14 +160,14 @@ EXPECTED_SCANNED_MACHINES = [
     {
         "hostname": MACHINE_1.hostname,
         "ip_addresses": [str(iface.ip) for iface in MACHINE_1.network_interfaces],
-        "accessible_from_nodes": [ISLAND_MACHINE.dict(simplify=True)],
+        "accessible_from_nodes": [ISLAND_MACHINE.to_json_dict()],
         "services": [],
         "domain_name": "",
     },
     {
         "hostname": MACHINE_2.hostname,
         "ip_addresses": [str(iface.ip) for iface in MACHINE_2.network_interfaces],
-        "accessible_from_nodes": [MACHINE_1.dict(simplify=True)],
+        "accessible_from_nodes": [MACHINE_1.to_json_dict()],
         "services": [],
         "domain_name": "",
     },

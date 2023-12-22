@@ -4,6 +4,7 @@ from time import sleep
 from typing import Sequence
 
 import pytest
+from monkeytypes import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
 from pydantic import SecretStr
 from tests.data_for_tests.propagation_credentials import (
     CREDENTIALS,
@@ -13,7 +14,6 @@ from tests.data_for_tests.propagation_credentials import (
 )
 from tests.unit_tests.infection_monkey.base_island_api_client import BaseIslandAPIClient
 
-from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
 from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.propagation_credentials_repository import PropagationCredentialsRepository
 

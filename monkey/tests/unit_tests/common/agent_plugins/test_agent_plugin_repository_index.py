@@ -1,10 +1,12 @@
 import random
+from enum import Enum
 from pathlib import PurePosixPath
 
 import pytest
+from monkeytypes import AgentPluginType
 from semver import VersionInfo
 
-from common.agent_plugins import AgentPluginMetadata, AgentPluginRepositoryIndex, AgentPluginType
+from common.agent_plugins import AgentPluginMetadata, AgentPluginRepositoryIndex
 from common.agent_plugins.agent_plugin_repository_index import (  # type: ignore[attr-defined]
     DEVELOPMENT,
 )
@@ -15,7 +17,7 @@ PAYLOAD_PLUGIN_NAME = "awesome_payload"
 def get_plugin_metadata_with_given_version(version: str) -> AgentPluginMetadata:
     return AgentPluginMetadata(
         name=PAYLOAD_PLUGIN_NAME,
-        type_=AgentPluginType.PAYLOAD,
+        plugin_type=AgentPluginType.PAYLOAD,
         resource_path=PurePosixPath("/tmp"),
         sha256="7ac0f5c62a9bcb81af3e9d67a764d7bbd3cce9af7cd26c211f136400ebe703c4",
         description="an awesome payload plugin",
@@ -32,7 +34,7 @@ PLUGIN_VERSION_2_0_0 = get_plugin_metadata_with_given_version("2.0.0")
 PLUGIN_VERSION_3_0_1 = get_plugin_metadata_with_given_version("3.0.1")
 PLUGIN_VERSION_3_0_1_SERIALIZED = {
     "name": PAYLOAD_PLUGIN_NAME,
-    "type_": AgentPluginType.PAYLOAD.value,
+    "plugin_type": str(AgentPluginType.PAYLOAD),
     "resource_path": "/tmp",
     "sha256": "7ac0f5c62a9bcb81af3e9d67a764d7bbd3cce9af7cd26c211f136400ebe703c4",
     "description": "an awesome payload plugin",
@@ -51,7 +53,7 @@ SORTED_PLUGIN_VERSIONS = [
 
 REPOSITORY_INDEX_PLUGINS = {AgentPluginType.PAYLOAD: {PAYLOAD_PLUGIN_NAME: [PLUGIN_VERSION_3_0_1]}}
 REPOSITORY_INDEX_PLUGINS_SERIALIZED = {
-    AgentPluginType.PAYLOAD.value: {PAYLOAD_PLUGIN_NAME: [PLUGIN_VERSION_3_0_1_SERIALIZED]}
+    str(AgentPluginType.PAYLOAD): {PAYLOAD_PLUGIN_NAME: [PLUGIN_VERSION_3_0_1_SERIALIZED]}
 }
 
 
@@ -87,7 +89,7 @@ REPOSITORY_INDEX_VERSION_SERIALIZED = {
     ],
 )
 def test_agent_plugin_repository_index_serialization(object_, expected_serialization):
-    assert object_.dict(simplify=True) == expected_serialization
+    assert object_.to_json_dict() == expected_serialization
 
 
 @pytest.mark.parametrize(
@@ -99,7 +101,11 @@ def test_agent_plugin_repository_index_serialization(object_, expected_serializa
     ],
 )
 def test_agent_plugin_repository_index_deserialization(expected_object, serialized):
-    assert AgentPluginRepositoryIndex(**serialized) == expected_object
+    repository_index = AgentPluginRepositoryIndex(**serialized)
+
+    assert repository_index == expected_object
+    for agent_plugin_type in repository_index.plugins.keys():
+        assert isinstance(agent_plugin_type, Enum)
 
 
 def test_plugins_sorted_by_version():
@@ -111,16 +117,14 @@ def test_plugins_sorted_by_version():
     repository_index = AgentPluginRepositoryIndex(
         compatible_infection_monkey_version="development",
         plugins={
-            AgentPluginType.PAYLOAD.value: {PAYLOAD_PLUGIN_NAME: UNSORTED_PLUGIN_VERSIONS},
-            AgentPluginType.EXPLOITER.value: {},
-            AgentPluginType.CREDENTIALS_COLLECTOR.value: {
-                PAYLOAD_PLUGIN_NAME: [PLUGIN_VERSION_1_0_0]
-            },
+            AgentPluginType.PAYLOAD: {PAYLOAD_PLUGIN_NAME: UNSORTED_PLUGIN_VERSIONS},
+            AgentPluginType.EXPLOITER: {},
+            AgentPluginType.CREDENTIALS_COLLECTOR: {PAYLOAD_PLUGIN_NAME: [PLUGIN_VERSION_1_0_0]},
         },
     )
 
     assert repository_index.plugins == {
-        AgentPluginType.PAYLOAD.value: {PAYLOAD_PLUGIN_NAME: SORTED_PLUGIN_VERSIONS},
-        AgentPluginType.EXPLOITER.value: {},
-        AgentPluginType.CREDENTIALS_COLLECTOR.value: {PAYLOAD_PLUGIN_NAME: [PLUGIN_VERSION_1_0_0]},
+        AgentPluginType.PAYLOAD: {PAYLOAD_PLUGIN_NAME: SORTED_PLUGIN_VERSIONS},
+        AgentPluginType.EXPLOITER: {},
+        AgentPluginType.CREDENTIALS_COLLECTOR: {PAYLOAD_PLUGIN_NAME: [PLUGIN_VERSION_1_0_0]},
     }

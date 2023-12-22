@@ -6,7 +6,7 @@ supported_operating_systems:
 target_operating_systems:
   - windows
 title: Zerologon Exploiter
-version: 1.0.2
+version: 2.0.0
 description: >-
     Exploits a privilege escalation vulnerability (CVE-2020-1472) in a Windows
     server domain controller (DC) by using the Netlogon Remote Protocol (MS-NRPC).

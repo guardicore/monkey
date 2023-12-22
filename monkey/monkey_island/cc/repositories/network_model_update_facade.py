@@ -1,8 +1,9 @@
 from functools import lru_cache
 from ipaddress import IPv4Address, IPv4Interface
 
-from common.agent_events import AbstractAgentEvent
-from common.types import AgentID, MachineID
+from monkeyevents import AbstractAgentEvent
+from monkeytypes import AgentID, MachineID
+
 from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repositories import (
     AgentMachineFacade,
@@ -27,7 +28,7 @@ class NetworkModelUpdateFacade:
         self._machine_repository = machine_repository
         self._node_repository = node_repository
 
-    def get_or_create_target_machine(self, target: IPv4Address):
+    def get_or_create_target_machine(self, target: IPv4Address) -> Machine:
         """
         Gets or creates a target machine from an IP address
 

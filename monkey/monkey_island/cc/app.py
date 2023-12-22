@@ -5,9 +5,9 @@ import flask_restful
 from flask import Flask, Response, send_from_directory
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from ophidian import DIContainer
 from werkzeug.exceptions import NotFound
 
-from common import DIContainer
 from monkey_island.cc.flask_utils import FlaskDIWrapper
 from monkey_island.cc.mongo_consts import MONGO_URL
 from monkey_island.cc.resources import (

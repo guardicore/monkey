@@ -2,7 +2,8 @@ import logging
 import queue
 import threading
 
-from common.agent_events import AbstractAgentEvent
+from monkeyevents import AbstractAgentEvent
+
 from common.utils.code_utils import PeriodicCaller
 from infection_monkey.island_api_client import IIslandAPIClient
 

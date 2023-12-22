@@ -1,6 +1,6 @@
 import pytest
+from monkeytypes import NetworkPort, PortStatus
 
-from common.types import NetworkPort, PortStatus
 from infection_monkey.i_puppet import PortScanData, PortScanDataDict
 
 

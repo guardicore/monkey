@@ -6,9 +6,9 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeytypes import SocketAddress
 
 from common import AgentRegistrationData
-from common.types import SocketAddress
 from monkey_island.cc.island_event_handlers import handle_agent_registration
 from monkey_island.cc.models import Agent, CommunicationType, Machine
 from monkey_island.cc.repositories import (

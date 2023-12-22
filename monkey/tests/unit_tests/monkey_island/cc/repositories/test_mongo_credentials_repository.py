@@ -3,11 +3,11 @@ from unittest.mock import MagicMock
 
 import mongomock
 import pytest
+from monkeytypes import Credentials
 from pymongo import MongoClient
 from tests.data_for_tests.propagation_credentials import CREDENTIALS
 from tests.unit_tests.monkey_island.cc.repositories.mongo import get_all_collections_in_mongo
 
-from common.credentials import Credentials
 from monkey_island.cc.repositories import (
     ICredentialsRepository,
     MongoCredentialsRepository,
@@ -149,7 +149,7 @@ def test_stolen_secrets_encrypted(mongo_repository, mongo_client, credentials: C
 
 
 def check_if_stored_credentials_encrypted(mongo_client: MongoClient, original_credentials):
-    original_credentials_mapping = original_credentials.dict(simplify=True)
+    original_credentials_mapping = original_credentials.to_json_dict()
     raw_credentials = get_all_credentials_in_mongo(mongo_client)
 
     for rc in raw_credentials:

@@ -1,0 +1,4 @@
+---
+- name: Disable Windows Firewall
+  win_command: netsh advfirewall set allprofiles state off
+  # win_shell: Set-NetFirewallProfile -All -Enabled False

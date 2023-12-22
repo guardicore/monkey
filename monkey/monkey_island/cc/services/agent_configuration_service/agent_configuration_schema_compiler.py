@@ -2,9 +2,9 @@ from copy import deepcopy
 from typing import Any, Dict
 
 import dpath
+from monkeytypes import AgentPluginManifest, AgentPluginType
 
 from common.agent_configuration import AgentConfiguration
-from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )
@@ -13,9 +13,9 @@ from monkey_island.cc.services.agent_plugin_service import IAgentPluginService
 from .hard_coded_schemas import HARD_CODED_FINGERPRINTER_SCHEMAS
 
 PLUGIN_PATH_IN_SCHEMA = {
-    AgentPluginType.EXPLOITER: "definitions.ExploitationConfiguration.properties.exploiters",
+    AgentPluginType.EXPLOITER: "$defs.ExploitationConfiguration.properties.exploiters",
     AgentPluginType.CREDENTIALS_COLLECTOR: "properties.credentials_collectors",
-    AgentPluginType.FINGERPRINTER: "definitions.NetworkScanConfiguration.properties.fingerprinters",
+    AgentPluginType.FINGERPRINTER: "$defs.NetworkScanConfiguration.properties.fingerprinters",
     AgentPluginType.PAYLOAD: "properties.payloads",
 }
 
@@ -26,7 +26,7 @@ class AgentConfigurationSchemaCompiler:
 
     def get_schema(self) -> Dict[str, Any]:
         try:
-            agent_config_schema = AgentConfiguration.schema()
+            agent_config_schema = AgentConfiguration.model_json_schema()
             agent_config_schema = self._add_plugins(agent_config_schema)
 
             return agent_config_schema
@@ -41,14 +41,13 @@ class AgentConfigurationSchemaCompiler:
         schema = self._add_hard_coded_plugins(schema)
 
         config_schemas = deepcopy(self._agent_plugin_service.get_all_plugin_configuration_schemas())
+        all_plugin_manifests = self._agent_plugin_service.get_all_plugin_manifests()
 
         for plugin_type in config_schemas.keys():
             for plugin_name in config_schemas[plugin_type].keys():
                 config_schema = config_schemas[plugin_type][plugin_name]
-                plugin_manifest = self._agent_plugin_service.get_all_plugin_manifests()[
-                    plugin_type
-                ][plugin_name]
-                config_schema.update(plugin_manifest.dict(simplify=True))
+                plugin_manifest = all_plugin_manifests[plugin_type][plugin_name]
+                config_schema.update(plugin_manifest.to_json_dict())
                 schema = self._add_plugin_to_schema(schema, plugin_type, plugin_name, config_schema)
         return schema
 
@@ -67,7 +66,7 @@ class AgentConfigurationSchemaCompiler:
         self, schema: Dict[str, Any], manifests: Dict[str, AgentPluginManifest]
     ) -> Dict[str, Any]:
         for plugin_name, manifest in manifests.items():
-            schema[plugin_name].update(manifest.dict(simplify=True))
+            schema[plugin_name].update(manifest.to_json_dict())
         return schema
 
     def _add_non_plugin_fingerprinters(self, schema: Dict[str, Any]) -> Dict[str, Any]:

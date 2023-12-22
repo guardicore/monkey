@@ -171,11 +171,14 @@ export default class AuthService {
     }
 
     if (Object.prototype.hasOwnProperty.call(options, 'headers')) {
+      if(this.loggedIn()){
+        options['headers']['Authentication-Token'] = token;
+      }
+    } else {
+      options['headers'] = {};
       for (let header in headers) {
         options['headers'][header] = headers[header];
       }
-    } else {
-      options['headers'] = headers;
     }
 
     return fetch(url, options)

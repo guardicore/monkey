@@ -1,37 +1,23 @@
-from typing import Dict, Tuple
+from typing import Annotated, Dict, Tuple
 
-from pydantic import Field, PositiveFloat, conint, validator
-
-from common.base_models import MutableInfectionMonkeyBaseModel
-from common.types import NetworkPort
+from monkeytypes import MutableInfectionMonkeyBaseModel, NetworkPort
+from pydantic import BeforeValidator, Field, PositiveFloat
 
 from .validators import validate_ip, validate_subnet_range
 
 
-class PluginConfiguration(MutableInfectionMonkeyBaseModel):
-    """
-    A configuration for plugins
+def _subnet_validator(subnet_range: str):
+    validate_subnet_range(subnet_range)
+    return subnet_range
 
-    Attributes:
-        :param name: Name of the plugin
-                     Example: "ransomware"
-        :param options: Any other information/configuration fields relevant to the plugin
-                        Example: {
-                            "encryption": {
-                                "enabled": True,
-                                "directories": {
-                                    "linux_target_dir": "~/this_dir",
-                                    "windows_target_dir": "C:\that_dir"
-                                },
-                            },
-                            "other_behaviors": {
-                                "readme": True
-                            },
-                        }
-    """
 
-    name: str
-    options: Dict
+def _ip_validator(ip: str):
+    validate_ip(ip)
+    return ip
+
+
+Subnet = Annotated[str, BeforeValidator(_subnet_validator)]
+BlockedIP = Annotated[str, BeforeValidator(_ip_validator)]
 
 
 class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
@@ -57,7 +43,7 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
         "interface, this setting could cause scanning and exploitation of systems outside your "
         "organization.",
     )
-    subnets: Tuple[str, ...] = Field(
+    subnets: Tuple[Subnet, ...] = Field(
         title="Scan target list",
         description="List of targets the Monkey will try to scan. Targets can be "
         "IPs, subnets or hosts. "
@@ -69,10 +55,12 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
         '\tTarget a specific host: "printer.example"',
         default=[],
     )
-    blocked_ips: Tuple[str, ...] = Field(
-        title="Blocked IPs", description="List of IPs that the monkey will not scan.", default=[]
+    blocked_ips: Tuple[BlockedIP, ...] = Field(
+        title="Blocked IPs",
+        description="List of IPs that the monkey will not scan.",
+        default=[],
     )
-    inaccessible_subnets: Tuple[str, ...] = Field(
+    inaccessible_subnets: Tuple[Subnet, ...] = Field(
         title="Network segmentation testing",
         description="Test for network segmentation by providing a list of network segments "
         "that should not be accessible to each other.\n\n "
@@ -93,21 +81,6 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
         "ping sweep.",
         default=[],
     )
-
-    @validator("subnets", each_item=True)
-    def subnets_valid(cls, subnet_range):
-        validate_subnet_range(subnet_range)
-        return subnet_range
-
-    @validator("blocked_ips", each_item=True)
-    def blocked_ips_valid(cls, ip):
-        validate_ip(ip)
-        return ip
-
-    @validator("inaccessible_subnets", each_item=True)
-    def inaccessible_subnets_valid(cls, subnet_range):
-        validate_subnet_range(subnet_range)
-        return subnet_range
 
 
 class ICMPScanConfiguration(MutableInfectionMonkeyBaseModel):
@@ -171,25 +144,10 @@ class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
     tcp: TCPScanConfiguration = Field(
         title="TCP scanner", description="Configure TCP scanning options"
     )
-    fingerprinters: Tuple[PluginConfiguration, ...] = Field(
+    fingerprinters: Dict[str, Dict] = Field(
         title="Fingerprinters",
         description="Fingerprint modules collect info about external "
         "services that Infection Monkey scans.",
-    )
-
-
-class ExploitationOptionsConfiguration(MutableInfectionMonkeyBaseModel):
-    """
-    A configuration for exploitation options
-
-    Attributes:
-        :param http_ports: HTTP ports to exploit
-    """
-
-    http_ports: Tuple[NetworkPort, ...] = Field(
-        title="HTTP ports",
-        description="List of ports the Agent will check for using an HTTP protocol",
-        default=[80, 8080, 443, 8008, 7001, 8983, 9600],
     )
 
 
@@ -199,7 +157,6 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
 
     Attributes:
         :param exploiters: Configuration enabled exploiters
-        :param options: Exploitation options shared by all exploiters
     """
 
     exploiters: Dict[str, Dict] = Field(
@@ -207,10 +164,6 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
         description="Click on an exploiter to get more information"
         " about it. \n \u26A0 Note that using unsafe exploits may"
         " cause crashes of the exploited machine/service.",
-    )
-    options: ExploitationOptionsConfiguration = Field(
-        title="Exploiters options",
-        description="Configure exploitation options shared by all exploiters",
     )
 
 
@@ -226,15 +179,19 @@ class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
         :param exploitation: Configuration for exploitation
     """
 
-    maximum_depth: conint(ge=0) = Field(  # type: ignore[valid-type]
-        title="Maximum scan depth",
-        description="Amount of hops allowed for the monkey to spread from the "
-        "Island server. \n \u26A0"
-        " Note that setting this value too high may result in the "
-        'Monkey propagating too far, if "Scan Agent\'s networks" is enabled.\n'
-        "Setting this to 0 will disable all scanning and exploitation.",
-        default=2,
-    )
+    maximum_depth: Annotated[
+        int,
+        Field(
+            ge=0,
+            title="Maximum scan depth",
+            description="Amount of hops allowed for the monkey to spread from the "
+            "Island server. \n \u26A0"
+            " Note that setting this value too high may result in the "
+            'Monkey propagating too far, if "Scan Agent\'s networks" is enabled.\n'
+            "Setting this to 0 will disable all scanning and exploitation.",
+            default=2,
+        ),
+    ]
     network_scan: NetworkScanConfiguration = Field(
         title="Network analysis",
         description="Configure the network analysis that the Agents will perform",

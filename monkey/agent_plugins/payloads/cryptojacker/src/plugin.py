@@ -1,12 +1,12 @@
 import logging
 from pprint import pformat
-from threading import Event
 from typing import Any, Dict
 
+from monkeytypes import AgentID, Event, SocketAddress
+
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID, SocketAddress
-from common.utils.code_utils import del_key
 from infection_monkey.i_puppet import PayloadResult
+from infection_monkey.local_machine_info import LocalMachineInfo
 
 from .cryptojacker_builder import build_cryptojacker
 from .cryptojacker_options import CryptojackerOptions
@@ -22,11 +22,13 @@ class Plugin:
         agent_id: AgentID,
         agent_event_publisher: IAgentEventPublisher,
         island_server_address: SocketAddress,
+        local_machine_info: LocalMachineInfo,
         **kwargs,
     ):
         self._agent_id = agent_id
         self._agent_event_publisher = agent_event_publisher
         self._island_server_address = island_server_address
+        self._local_machine_info = local_machine_info
 
     def run(
         self,
@@ -35,9 +37,6 @@ class Plugin:
         interrupt: Event,
         **kwargs,
     ) -> PayloadResult:
-        # HTTP ports options are hack because they are needed in fingerprinters
-        del_key(options, "http_ports")
-
         try:
             logger.debug(f"Parsing options: {pformat(options)}")
             cryptojacker_options = CryptojackerOptions(**options)
@@ -52,6 +51,7 @@ class Plugin:
                 agent_id=self._agent_id,
                 agent_event_publisher=self._agent_event_publisher,
                 island_server_address=self._island_server_address,
+                operating_system=self._local_machine_info.operating_system,
             )
         except Exception as err:
             msg = f"An unexpected error occurred while building the cryptojacker payload: {err}"

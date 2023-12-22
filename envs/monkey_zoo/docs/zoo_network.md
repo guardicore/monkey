@@ -12,7 +12,6 @@ This document describes Infection Monkey’s test network.
 [Nr. 13 Tunneling M2](#_Toc536021466)<br>
 [Nr. 11 SSH key steal](#_Toc526517190)<br>
 [Nr. 12 SSH key steal](#_Toc526517191)<br>
-[Nr. 13 RDP grinder](#_Toc526517192)<br>
 [Nr. 14 Mimikatz](#_Toc536021467)<br>
 [Nr. 15 Mimikatz](#_Toc536021468)<br>
 [Nr. 16 MsSQL](#_Toc536021469)<br>
@@ -20,6 +19,7 @@ This document describes Infection Monkey’s test network.
 [Nr. 21 Scan](#_Toc526517196)<br>
 [Nr. 22 Scan](#_Toc526517197)<br>
 [Nr. 25 Zerologon](#_Toc536021478)<br>
+[Nr. 3-44 Powershell](#_Toc536021579)<br>
 [Nr. 3-45 Powershell](#_Toc536021479)<br>
 [Nr. 3-46 Powershell](#_Toc536021480)<br>
 [Nr. 3-47 Powershell](#_Toc536021481)<br>
@@ -35,8 +35,10 @@ This document describes Infection Monkey’s test network.
 [Nr. 3-56 Log4j Logstash](#_Toc536021488)<br>
 [Nr. 3-64 RDP](#_Toc536021489)<br>
 [Nr. 3-65 RDP](#_Toc536021490)<br>
-[Nr. 250 MonkeyIsland](#_Toc536021491)<br>
-[Nr. 251 MonkeyIsland](#_Toc536021492)<br>
+[Nr. 3-66 Browser Credentials](#_Toc536021492)<br>
+[Nr. 3-67 Browser Credentials](#_Toc536021491)<br>
+[Nr. 250 MonkeyIsland](#_Toc536021492)<br>
+[Nr. 251 MonkeyIsland](#_Toc536021493)<br>
 [Network topography](#network-topography)<br>
 
 
@@ -369,44 +371,6 @@ We decided to keep it this way to ensure that plugins run even if the OS of a ta
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc526517192" class="anchor"></span>Nr. <strong>13</strong> RDP grinder</p>
-<p>(10.2.2.13)</p></th>
-<th>(Not implemented)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Windows 10 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td>-</td>
-</tr>
-<tr class="odd">
-<td>Default connection port:</td>
-<td>3389</td>
-</tr>
-<tr class="even">
-<td>Root password:</td>
-<td>2}p}aR]&amp;=M</td>
-</tr>
-<tr class="odd">
-<td>Server’s config:</td>
-<td><p>Remote desktop enabled</p>
-<p>Admin user’s credentials:</p>
-<p>m0nk3y, 2}p}aR]&amp;=M</p></td>
-</tr>
-<tr class="even">
-<td>Notes:</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
 <th><p><span id="_Toc536021467" class="anchor"></span>Nr. <strong>14</strong> Mimikatz</p>
 <p>(10.2.2.14)</p></th>
 <th>(Vulnerable)</th>
@@ -631,7 +595,7 @@ We decided to keep it this way to ensure that plugins run even if the OS of a ta
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021479" class="anchor"></span>Nr. <strong>3-44 Powershell</strong></p>
+<th><p><span id="_Toc536021579" class="anchor"></span>Nr. <strong>3-44 Powershell</strong></p>
 <p>(10.2.3.44)</p></th>
 <th>(Vulnerable)</th>
 </tr>
@@ -703,8 +667,7 @@ the same credentials on both machines</td>
 </tr>
 <tr class="even">
 <td>Software:</td>
-<td>WinRM service</td>
-<td>Tomcat 8.0.36</td>
+<td>WinRM service and Tomcat 8.0.36</td>
 </tr>
 <tr class="odd">
 <td>Default server’s port:8080</td>
@@ -1053,8 +1016,7 @@ setting:
 </tr>
 <tr class="even">
 <td>Software:</td>
-<td>Logstash 5.5.0</td>
-<td>Java 1.8.0</td>
+<td>Logstash 5.5.0 and Java 1.8.0</td>
 </tr>
 <tr class="odd">
 <td>Default server’s port:</td>
@@ -1083,8 +1045,7 @@ setting:
 </tr>
 <tr class="even">
 <td>Software:</td>
-<td>Logstash 5.5.0</td>
-<td>Java 1.8.0</td>
+<td>Logstash 5.5.0 and Java 1.8.0</td>
 </tr>
 <tr class="odd">
 <td>Default server’s port:</td>
@@ -1130,13 +1091,13 @@ setting:
 <tr class="header">
 <th><p><span id="_Toc536021490" class="anchor"></span>Nr. <strong>3-65 RDP</strong></p>
 <p>(10.2.3.65)</p></th>
-<th>(Vulnerable)</th>
+<th>(Exploitable)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>OS:</td>
-<td><strong>Windows Server 2016 x64</strong></td>
+<td><strong>Windows Server 2012 R2 (custom image)</strong></td>
 </tr>
 <tr class="even">
 <td>Software:</td>
@@ -1153,10 +1114,132 @@ setting:
 </tbody>
 </table>
 
+
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021491" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021492" class="anchor"></span>Nr. <strong>3-66 Browser Credentials</strong></p>
+<p>(10.2.3.66)</p></th>
+<th>(Exploitable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Remote Desktop Protocol and Google Chrome</td>
+</tr>
+<tr class="odd">
+<td>Default RDP port:</td>
+<td>3389</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>
+
+**RDP user:**
+
+---
+
+Username: m0nk3y, Password: P@ssw0rd!
+
+---
+
+**Stored Chrome credentials**:
+
+----
+
+Website: forBBtests.com
+
+Username: forBBtests
+
+Password: supersecret
+
+----
+
+Website: https://www.w3schools.com/howto/howto_css_login_form.asp
+
+Username: usernameFromForm
+
+Password: passwordFromForm
+</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021491" class="anchor"></span>Nr. <strong>3-67 Browser Credentials</strong></p>
+<p>(10.2.3.70)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 20.04LTS</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>SSH</td>
+<td>Port: 22</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>
+Chromium is not installed on this machine, but it has chromium files with credentials.
+
+**SSH user:**
+
+---
+
+Username: m0nk3y, Password: password
+
+---
+
+**Stored Chromium credentials**:
+
+----
+
+Website: https://akamai.com/
+
+Username: my@email.com
+
+Password: mysecretpass
+
+----
+
+Website: https://test.com/
+
+Username: test
+
+Password: password123
+
+----
+
+Website: https://password.com/
+
+Username: m0nk3y
+
+Password: blahblahblah
+
+----
+</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021492" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
 <p>(10.2.2.250)</p></th>
 <th></th>
 </tr>
@@ -1188,7 +1271,7 @@ setting:
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021492" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021493" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
 <p>(10.2.2.251)</p></th>
 <th></th>
 </tr>
@@ -1216,7 +1299,3 @@ setting:
 </tr>
 </tbody>
 </table>
-
-# Network topography:
-
-<img src="/envs/monkey_zoo/docs/images/networkTopography.jpg" >

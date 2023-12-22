@@ -2,11 +2,12 @@ import logging
 from pprint import pformat
 from typing import Any, Collection, Mapping, Sequence
 
-from common.agent_events import CredentialsStolenEvent
-from common.credentials import Credentials, LMHash, NTHash, Password, Username
+from monkeyevents import CredentialsStolenEvent
+from monkeyevents.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DUMPING_T1003_TAG
+from monkeytypes import AgentID, Credentials, Event, LMHash, NTHash, Password, Username
+
 from common.event_queue import IAgentEventPublisher
-from common.tags import DATA_FROM_LOCAL_SYSTEM_T1005_TAG, OS_CREDENTIAL_DUMPING_T1003_TAG
-from common.types import AgentID, Event
+from infection_monkey.local_machine_info import LocalMachineInfo
 
 from .mimikatz_options import MimikatzOptions
 from .pypykatz_handler import get_windows_creds
@@ -33,6 +34,7 @@ class Plugin:
         plugin_name: str,
         agent_id: AgentID,
         agent_event_publisher: IAgentEventPublisher,
+        local_machine_info: LocalMachineInfo,
         **kwargs,
     ):
         self._agent_event_publisher = agent_event_publisher

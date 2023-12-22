@@ -7,9 +7,6 @@ from tests.common.example_agent_configuration import (
     ICMP_CONFIGURATION,
     INACCESSIBLE_SUBNETS,
     NETWORK_SCAN_CONFIGURATION,
-    PLUGIN_CONFIGURATION,
-    PLUGIN_NAME,
-    PLUGIN_OPTIONS,
     PORTS,
     PROPAGATION_CONFIGURATION,
     SCAN_MY_NETWORKS,
@@ -22,23 +19,14 @@ from tests.common.example_agent_configuration import (
 from common.agent_configuration.agent_configuration import AgentConfiguration
 from common.agent_configuration.agent_sub_configurations import (
     ExploitationConfiguration,
-    ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
-    PluginConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
     TCPScanConfiguration,
 )
 
 INVALID_PORTS = [[-1, 1, 2], [1, 2, 99999]]
-
-
-def test_build_plugin_configuration():
-    config = PluginConfiguration(**PLUGIN_CONFIGURATION)
-
-    assert config.name == PLUGIN_NAME
-    assert config.options == PLUGIN_OPTIONS
 
 
 def test_scan_target_configuration():
@@ -50,12 +38,14 @@ def test_scan_target_configuration():
     assert config.subnets == tuple(SUBNETS)
 
 
-@pytest.mark.parametrize("invalid_blocked_ip_list", [["abc"], [1]])
-def test_scan_target_configuration__invalid_blocked_ips(invalid_blocked_ip_list):
+@pytest.mark.parametrize(
+    "invalid_blocked_ip_list, error", [(["abc"], ValueError), ([1], TypeError)]
+)
+def test_scan_target_configuration__invalid_blocked_ips(invalid_blocked_ip_list, error):
     invalid_blocked_ips = SCAN_TARGET_CONFIGURATION.copy()
     invalid_blocked_ips["blocked_ips"] = invalid_blocked_ip_list
 
-    with pytest.raises(ValueError):
+    with pytest.raises(error):
         ScanTargetConfiguration(**invalid_blocked_ips)
 
 
@@ -123,41 +113,16 @@ def test_network_scan_configuration():
     assert config.tcp.ports == tuple(TCP_SCAN_CONFIGURATION["ports"])
     assert config.tcp.timeout == TCP_SCAN_CONFIGURATION["timeout"]
     assert config.icmp.timeout == ICMP_CONFIGURATION["timeout"]
-    assert config.fingerprinters[0].name == FINGERPRINTERS[0]["name"]
-    assert config.fingerprinters[0].options == FINGERPRINTERS[0]["options"]
+    assert config.fingerprinters == FINGERPRINTERS
     assert config.targets.blocked_ips == tuple(BLOCKED_IPS)
     assert config.targets.inaccessible_subnets == tuple(INACCESSIBLE_SUBNETS)
     assert config.targets.scan_my_networks == SCAN_MY_NETWORKS
     assert config.targets.subnets == tuple(SUBNETS)
 
 
-def test_exploitation_options_configuration_schema():
-    ports = [0, 1, 2, 3]
-
-    config = ExploitationOptionsConfiguration(http_ports=ports)
-
-    assert config.http_ports == tuple(ports)
-
-
-@pytest.mark.parametrize("ports", INVALID_PORTS)
-def test_exploitation_options_configuration_schema__ports_out_of_range(ports):
-    with pytest.raises(ValueError):
-        ExploitationOptionsConfiguration(http_ports=ports)
-
-
-def test_exploiter_configuration_schema():
-    name = "bond"
-    options = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
-
-    config = PluginConfiguration(name=name, options=options)
-
-    assert config.name == name
-    assert config.options == options
-
-
 def test_exploitation_configuration():
     config = ExploitationConfiguration(**EXPLOITATION_CONFIGURATION)
-    config_dict = config.dict(simplify=True)
+    config_dict = config.to_json_dict()
 
     assert isinstance(config, ExploitationConfiguration)
     assert config_dict == EXPLOITATION_CONFIGURATION
@@ -165,7 +130,7 @@ def test_exploitation_configuration():
 
 def test_propagation_configuration():
     config = PropagationConfiguration(**PROPAGATION_CONFIGURATION)
-    config_dict = config.dict(simplify=True)
+    config_dict = config.to_json_dict()
 
     assert isinstance(config, PropagationConfiguration)
     assert isinstance(config.network_scan, NetworkScanConfiguration)
@@ -193,7 +158,7 @@ def test_propagation_configuration__maximum_depth_zero():
 
 def test_agent_configuration():
     config = AgentConfiguration(**AGENT_CONFIGURATION)
-    config_dict = config.dict(simplify=True)
+    config_dict = config.to_json_dict()
 
     assert isinstance(config, AgentConfiguration)
     assert config.keep_tunnel_open_time == 30
@@ -220,9 +185,9 @@ def test_agent_configuration__keep_tunnel_open_time():
         AgentConfiguration(**negative_keep_tunnel_open_time_configuration)
 
 
-def test_incorrect_type():
+def test_incorrect_value():
     valid_config = AgentConfiguration(**AGENT_CONFIGURATION)
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         valid_config_dict = valid_config.__dict__
         valid_config_dict["keep_tunnel_open_time"] = "not_a_float"
         AgentConfiguration(**valid_config_dict)

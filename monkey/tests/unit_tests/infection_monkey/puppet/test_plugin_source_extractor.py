@@ -2,10 +2,10 @@ import gzip
 from pathlib import Path
 
 import pytest
+from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
 from tests.utils import assert_directories_equal
 
-from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPlugin
 from common.utils.environment import is_windows_os
 from infection_monkey.puppet import PluginSourceExtractor
 
@@ -13,8 +13,10 @@ from infection_monkey.puppet import PluginSourceExtractor
 def build_agent_plugin(source_tar_path: Path, name="test_plugin") -> AgentPlugin:
     # We're using construct() here because we want to be able to construct plugins with invalid
     # names. Specifically, this is used for in test_plugin_name_directory_traversal()
-    manifest = AgentPluginManifest.construct(name=name, plugin_type=AgentPluginType.EXPLOITER)
-    return AgentPlugin.construct(
+    manifest = AgentPluginManifest.model_construct(
+        name=name, plugin_type=AgentPluginType.EXPLOITER, title=None
+    )
+    return AgentPlugin.model_construct(
         plugin_manifest=manifest,
         config_schema={},
         source_archive=gzip.compress(read_file_to_bytes(source_tar_path), compresslevel=1),
@@ -98,8 +100,10 @@ def test_plugin_name_directory_traversal(
 
 def test_extract_nongzip_raises_value_error(dircmp_path: Path, extractor: PluginSourceExtractor):
     source_tar_path = dircmp_path / "dir1.tar"
-    manifest = AgentPluginManifest.construct(name="test", plugin_type=AgentPluginType.EXPLOITER)
-    agent_plugin = AgentPlugin.construct(
+    manifest = AgentPluginManifest.model_construct(
+        name="test", plugin_type=AgentPluginType.EXPLOITER, title=None
+    )
+    agent_plugin = AgentPlugin.model_construct(
         plugin_manifest=manifest,
         config_schema={},
         source_archive=read_file_to_bytes(source_tar_path),  # Not gzipped

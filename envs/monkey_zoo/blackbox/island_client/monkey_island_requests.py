@@ -2,8 +2,7 @@ import logging
 from http import HTTPStatus
 
 import requests
-
-from common.types import JSONSerializable
+from monkeytypes import JSONSerializable
 
 from .i_monkey_island_requests import IMonkeyIslandRequests
 

@@ -3,7 +3,8 @@ from logging import getLogger
 from threading import Lock, Thread
 from time import sleep
 
-from common.types import NetworkPort, SocketAddress
+from monkeytypes import NetworkPort, SocketAddress
+
 from infection_monkey.network.relay import (
     RelayConnectionHandler,
     RelayUserHandler,
@@ -35,7 +36,7 @@ class TCPRelay(Thread, InterruptableThreadMixin):
         self._connection_handler = TCPConnectionHandler(
             bind_host="",
             bind_port=relay_port,
-            client_connected=[
+            client_connected_listeners=[
                 relay_filter.handle_new_connection,
             ],
         )

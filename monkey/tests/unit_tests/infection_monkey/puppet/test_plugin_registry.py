@@ -2,12 +2,11 @@ from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import AgentID, AgentPluginManifest, AgentPluginType, OperatingSystem
 from serpentarium import MultiprocessingPlugin, PluginLoader, SingleUsePlugin
 
-from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPlugin
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 from infection_monkey.exploit import IAgentBinaryRepository, IAgentOTPProvider
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import (
@@ -87,7 +86,9 @@ PLUGIN_NAME = "test_plugin"
 
 
 def agent_plugin_of_type(plugin_type: AgentPluginType) -> AgentPlugin:
-    manifest = AgentPluginManifest(name=PLUGIN_NAME, version="1.0.0", plugin_type=plugin_type)
+    manifest = AgentPluginManifest(
+        name=PLUGIN_NAME, version="1.0.0", plugin_type=plugin_type, title=None
+    )
     return AgentPlugin(
         plugin_manifest=manifest,
         config_schema={},

@@ -9,23 +9,16 @@ import sys
 import time
 from pathlib import PosixPath, WindowsPath
 
-from common import OperatingSystem
-from common.utils.argparse_types import positive_int
+from monkeytypes import OperatingSystem
+
 from common.utils.environment import get_os
+from infection_monkey.utils.argparse_types import positive_int
 from infection_monkey.utils.commands import (
     build_monkey_commandline_parameters,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
-
-# Linux doesn't have WindowsError
-try:
-    WindowsError
-except NameError:
-    # noinspection PyShadowingBuiltins
-    WindowsError = IOError
-
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +87,7 @@ class MonkeyDrops(object):
         try:
             shutil.move(source_path, destination_path)
             logger.info(f"Moved source file '{source_path}' into '{destination_path}'")
-        except (WindowsError, IOError, OSError) as exc:
+        except (IOError, OSError) as exc:
             logger.debug(
                 f"Error moving source file '{source_path}' into '{destination_path}': {exc}"
             )
@@ -107,7 +100,7 @@ class MonkeyDrops(object):
         try:
             shutil.copy(source_path, destination_path)
             logger.info(f"Copied source file '{source_path}' into '{destination_path}'")
-        except (WindowsError, IOError, OSError) as exc:
+        except (IOError, OSError) as exc:
             logger.debug(
                 f"Error copying source file '{source_path}' into '{destination_path}': {exc}"
             )

@@ -1,0 +1,25 @@
+---
+  - name: Disable windows update service
+    win_command:
+      cmd: sc config wuauserv start= disabled
+  - name: Check if windows update service is running
+    win_command:
+      cmd: net start | find "wuauserv" > nul
+    ignore_errors: yes
+    register: wuauserv_query
+  - name: Stop windows update service
+    win_command:
+      cmd: net stop wuauserv
+    when: wuauserv_query.rc == 0
+  - name: Disable bits service
+    win_command:
+      cmd: sc config bits start= disabled
+  - name: Check if bits service is running
+    win_command:
+      cmd: net start | find "bits" > nul
+    ignore_errors: yes
+    register: bits_query
+  - name: Stop bits service
+    win_command:
+      cmd: net stop bits
+    when: bits_query.rc == 0

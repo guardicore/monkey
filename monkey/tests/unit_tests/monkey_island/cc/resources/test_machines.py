@@ -3,10 +3,10 @@ from ipaddress import IPv4Interface
 from unittest.mock import MagicMock
 
 import pytest
+from monkeytypes import OperatingSystem
 from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from common import OperatingSystem
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IMachineRepository, RetrievalError
 from monkey_island.cc.resources import Machines

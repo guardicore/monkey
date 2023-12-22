@@ -1,0 +1,70 @@
+---
+- name: Create a mimikatz-14 machine image
+  hosts: all
+  become_method: runas
+  vars:
+    host_name: mimikatz-14
+    user_name: m0nk3y
+    user_password: Ivrrw5zEzs
+    ansible_remote_tmp: C:\Windows\Temp
+    ansible_become_password: Ivrrw5zEzs
+  tasks:
+    - import_tasks: tasks/windows_create_user.yml
+      vars:
+        username: "{{ user_name }}"
+        password: "{{ user_password }}"
+        user_groups: [Administrators, "Remote Desktop Users"]
+    - import_tasks: tasks/windows_disable_automatic_updates.yml
+    - import_tasks: tasks/windows_disable_windows_defender.yml
+
+    - name: Allow port 445 SMB
+      win_command:
+        cmd: netsh advfirewall firewall add rule name="Allow Port 445" dir=in action=allow protocol=TCP localport=445
+
+    - name: Allow port 135 DCOM
+      win_command:
+        cmd: netsh advfirewall firewall add rule name="Allow Port 135" dir=in action=allow protocol=TCP localport=135
+
+    - name: Allow DCOM Connection
+      win_firewall_rule:
+        name: Allow DCOM Connection
+        localport: any
+        direction: in
+        program: C:\Windows\System32\svchost.exe
+        action: allow
+        state: present
+        enabled: yes
+
+    - name: Create a generic credential for mimikatz-15
+      win_command: "cmdkey /add:10.2.2.15 /user:{{ user_name }} /pass:\"pAJfG56JX><\""
+      become: yes
+      become_user: m0nk3y
+
+    # Disallow RDP to this machine from internal ips
+    - import_tasks: tasks/windows_disallow_rdp_for_subnet.yml
+      vars:
+        subnet_ip: "10.2.0.0/16"
+
+    # Disallow PowerShell to this machine from internal ips
+    - import_tasks: tasks/windows_disallow_powershell_remoting_on_subnet.yml
+      vars:
+        subnet_ip: "10.2.0.0/16"
+
+    - import_tasks: tasks/windows_enable_automatic_logon.yml
+      vars:
+        username: "{{ user_name }}"
+        password: "{{ user_password }}"
+
+    - name: Change the hostname to {{ host_name }}
+      ansible.windows.win_hostname:
+        name: "{{ host_name }}"
+      register: res
+
+    - name: Reboot
+      ansible.windows.win_reboot:
+      when: res.reboot_required
+
+    - name: Delete packer_user
+      win_user:
+        name: packer_user
+        state: absent

@@ -6,3 +6,20 @@ export const reverseObject = (obj) => {
   }
   return reversedObj;
 }
+
+export const shallowAdditionOfUniqueValueToArray = (arr, value) => {
+  const tempArr = [...arr];
+  if(!tempArr.includes(value)) {
+    tempArr.push(value);
+  }
+  return tempArr;
+}
+
+export const shallowRemovalOfUniqueValueFromArray = (arr, value) => {
+  const tempArr = [...arr];
+  const indexOfValue = tempArr.indexOf(value);
+  if(indexOfValue > -1) {
+    tempArr.splice(indexOfValue, 1);
+  }
+  return tempArr;
+}

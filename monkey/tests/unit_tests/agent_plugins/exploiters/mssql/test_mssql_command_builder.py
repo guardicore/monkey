@@ -24,12 +24,13 @@ def otp_provider() -> IAgentOTPProvider:
     return provider
 
 
-def test_launch_command(otp_provider: IAgentOTPProvider):
+def test_launch_command(otp_provider: IAgentOTPProvider, agent_otp_environment_variable):
     command = build_mssql_agent_launch_command(
         AGENT_ID,
         SERVERS,
         2,
         AGENT_EXE_PATH,
+        agent_otp_environment_variable,
         otp_provider,
     )
 

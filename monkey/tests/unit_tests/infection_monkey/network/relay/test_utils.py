@@ -1,8 +1,8 @@
 import pytest
 import requests
 import requests_mock
+from monkeytypes import SocketAddress
 
-from common.types import SocketAddress
 from infection_monkey.network.relay.utils import find_available_island_apis
 
 SERVER_1 = SocketAddress(ip="1.1.1.1", port=12312)

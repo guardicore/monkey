@@ -7,6 +7,8 @@ name = "pypi"
 psutil = "*"
 
 [dev-packages]
+monkey-types = "*"
+monkeyevents = "*"
 
 [requires]
 python_version = "3.11"

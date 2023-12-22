@@ -2,11 +2,13 @@ import filecmp
 from pathlib import Path
 
 import pytest
-from agent_plugins.payloads.ransomware.src.readme_dropper import leave_readme
+from agent_plugins.payloads.ransomware.src.readme_dropper import ReadmeDropper
+from monkeytypes import OperatingSystem
 from tests.utils import get_file_sha256_hash
 
 DEST_FILE = "README.TXT"
 EMPTY_FILE_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+WINDOWS_README_FILE_HASH = "4231329e0212592178f9d590cdc0cfcf4dc691b135e2cb4fc49227b17d32ca8c"
 
 
 @pytest.fixture(scope="module")
@@ -20,12 +22,25 @@ def dest_readme(tmp_path: Path) -> Path:
 
 
 def test_readme_already_exists(src_readme: Path, dest_readme: Path):
+    readme_dropper = ReadmeDropper(OperatingSystem.LINUX)
     dest_readme.touch()
 
-    leave_readme(src_readme, dest_readme)
+    readme_dropper.leave_readme(src_readme, dest_readme)
+
     assert get_file_sha256_hash(dest_readme) == EMPTY_FILE_HASH
 
 
 def test_leave_readme_linux(src_readme: Path, dest_readme: Path):
-    leave_readme(src_readme, dest_readme)
+    readme_dropper = ReadmeDropper(OperatingSystem.LINUX)
+
+    readme_dropper.leave_readme(src_readme, dest_readme)
+
     assert filecmp.cmp(src_readme, dest_readme)
+
+
+def test_leave_readme_windows(src_readme: Path, dest_readme: Path):
+    readme_dropper = ReadmeDropper(OperatingSystem.WINDOWS)
+
+    readme_dropper.leave_readme(src_readme, dest_readme)
+
+    assert get_file_sha256_hash(dest_readme) == WINDOWS_README_FILE_HASH

@@ -70,6 +70,7 @@ fi
 # We can set main paths after we know the home dir
 ISLAND_PATH="$monkey_home/monkey/monkey_island"
 MONGO_PATH="$ISLAND_PATH/bin/mongodb"
+NODE_SERVER_PATH="$ISLAND_PATH/bin/node"
 ISLAND_BINARIES_PATH="$ISLAND_PATH/cc/binaries"
 INFECTION_MONKEY_DIR="$monkey_home/monkey/infection_monkey"
 MONKEY_BIN_DIR="$INFECTION_MONKEY_DIR/bin"
@@ -191,23 +192,54 @@ log_message "Generating certificate"
 chmod u+x "${ISLAND_PATH}"/linux/create_certificate.sh
 "${ISLAND_PATH}"/linux/create_certificate.sh ${ISLAND_PATH}/cc
 
+# Install node server
+"${ISLAND_PATH}"/linux/install_node.sh "${NODE_SERVER_PATH}" || handle_error
+
 # Update node
 if ! exists npm; then
   log_message "Installing nodejs"
-  node_src=https://deb.nodesource.com/setup_16.x
+  version=v20.7.0
+  distro=linux-x64
+  sig_src=https://nodejs.org/dist/$version/SHASUMS256.txt.sig
+  checksum_src=https://nodejs.org/dist/$version/SHASUMS256.txt.sig
+  node_src=https://nodejs.org/dist/$version/node-$version-$distro.tar.xz
+  start_dir=$(pwd)
+  temp_dir=$(mktemp -d)
+  cd "$temp_dir"
   if exists curl; then
-    curl -sL $node_src | sudo -E bash -
+    curl -sLO $sig_src
+    curl -sLO $checksum_src
+    curl -sLO $node_src
   else
-    wget -q -O - $node_src | sudo -E bash -
+    wget -q -O - $sig_src
+    wget -q -O - $checksum_src
+    wget -q -O - $node_src
   fi
-  sudo apt-get install -y nodejs
+
+  if exists gpg; then
+    gpg --keyserver hkps://keys.openpgp.org --recv-keys 4ED778F539E3634C779C87C6D7062848A1AB005C
+    gpg --verify SHASUMS256.txt.sig SHASUMS256.txt
+  fi
+
+  grep node-$version-$distro.tar.xz SHASUMS256.txt | sha256sum -c -
+  sudo tar -xJf node-$version-$distro.tar.xz -C /usr/local/lib/nodejs
+
+  cat << EOF >> ~/.profile
+# Nodejs
+VERSION=$version
+DISTRO=$distro
+export PATH=/usr/local/lib/nodejs/node-\$VERSION-\$DISTRO/bin:\$PATH
+EOF
+
+  source ~/.profile
+  cd "$start_dir"
 fi
 
 pushd "$ISLAND_PATH/cc/ui" || handle_error
 npm ci
 
 log_message "Generating front end"
-npm run dev
+npm run build
 popd || handle_error
 
 # Making dir for binaries

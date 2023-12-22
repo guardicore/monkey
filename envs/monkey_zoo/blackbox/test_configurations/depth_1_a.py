@@ -1,11 +1,13 @@
 import dataclasses
-from typing import Dict, Mapping
+from typing import Any, Dict, Mapping
 
-from common.agent_configuration import AgentConfiguration, PluginConfiguration
-from common.credentials import Credentials, NTHash, Password, Username
+from monkeytypes import Credentials, NTHash, Password, Username
+
+from common.agent_configuration import AgentConfiguration
 
 from .noop import noop_test_configuration
 from .utils import (
+    add_credentials_collectors,
     add_exploiters,
     add_fingerprinters,
     add_subnets,
@@ -22,10 +24,14 @@ from .utils import (
 #     MSSQL (10.2.2.16)
 #     SNMP (10.2.3.20)
 #     WMI pass the hash (10.2.2.15)
+#     Chrome credentials stealing (10.2.3.66 - Windows exploited by RDP, Chrome browser
+#                                  10.2.3.67 - Linux exploited by SSH, Chromium browser files)
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
+        "WMI": {"agent_binary_upload_timeout": 30, "smb_connect_timeout": 5},
+        "RDP": {},
         "Hadoop": {
             "target_ports": [8088],
             "request_timeout": 15,
@@ -44,16 +50,26 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
             "snmp_request_timeout": 0.5,
             "snmp_retries": 1,
         },
-        "WMI": {"agent_binary_upload_timeout": 30},
+        "SSH": {},
     }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
 
 
 def _add_fingerprinters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    fingerprinters = [PluginConfiguration(name="http", options={})]
+    fingerprinters: Dict[str, Dict[str, Any]] = {
+        "http": {},
+        "mssql": {},
+    }
 
     return add_fingerprinters(agent_configuration, fingerprinters)
+
+
+def _add_credentials_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
+    credentials_collectors: Dict[str, Mapping] = {"Chrome": {}}
+    return add_credentials_collectors(
+        agent_configuration, credentials_collectors=credentials_collectors
+    )
 
 
 def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
@@ -69,18 +85,21 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
         "10.2.2.15",
         "10.2.2.16",
         "10.2.3.20",
+        "10.2.3.66",
+        "10.2.3.67",
     ]
     return add_subnets(agent_configuration, subnets)
 
 
 def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    ports = [22, 445]
+    ports = [22, 135, 445, 1433, 3389, 8080, 8088, 8983, 9600]
     return add_tcp_ports(agent_configuration, ports)
 
 
 test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
 test_agent_configuration = _add_exploiters(test_agent_configuration)
 test_agent_configuration = _add_fingerprinters(test_agent_configuration)
+test_agent_configuration = _add_credentials_collectors(test_agent_configuration)
 test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 test_agent_configuration = set_randomize_agent_hash(test_agent_configuration, True)
@@ -91,6 +110,8 @@ CREDENTIALS = (
     Credentials(identity=None, secret=Password(password="Xk8VDTsC")),
     # Hash for Mimikatz-15
     Credentials(identity=None, secret=NTHash(nt_hash="F7E457346F7743DAECE17258667C936D")),
+    Credentials(identity=Username(username="m0nk3y"), secret=Password(password="P@ssw0rd!")),
+    Credentials(identity=Username(username="m0nk3y"), secret=Password(password="password")),
 )
 
 depth_1_a_test_configuration = dataclasses.replace(noop_test_configuration)

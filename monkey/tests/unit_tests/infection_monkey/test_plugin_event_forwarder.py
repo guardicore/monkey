@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeyevents import AbstractAgentEvent
 
-from common.agent_events import AbstractAgentEvent
 from common.event_queue import IAgentEventQueue
 from infection_monkey.plugin_event_forwarder import PluginEventForwarder
 
@@ -66,7 +66,6 @@ def test_multiple_events_in_queue_published(
 def test_plugin_event_forwarder_flush(
     plugin_event_forwarder, multiprocessing_queue, mock_agent_event_queue
 ):
-
     for timestamp in range(5):
         multiprocessing_queue.put(MyEvent(timestamp=timestamp))
 

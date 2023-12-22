@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from monkeyevents import PropagationEvent
 
-from common.agent_events import PropagationEvent
 from infection_monkey.agent_event_handlers import notify_relay_on_propagation
 from infection_monkey.network.relay import TCPRelay
 

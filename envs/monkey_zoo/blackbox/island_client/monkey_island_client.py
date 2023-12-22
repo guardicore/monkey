@@ -2,11 +2,12 @@ import json
 import logging
 import time
 from http import HTTPStatus
-from typing import List, Mapping, Optional, Sequence
+from threading import Thread
+from typing import Any, Dict, List, Mapping, Optional, Sequence
 
-from common import OperatingSystem
-from common.credentials import Credentials
-from common.types import AgentID, MachineID
+from monkeytypes import AgentID, AgentPluginType, Credentials, MachineID, OperatingSystem
+
+from common.agent_plugins import AgentPluginRepositoryIndex
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 from monkey_island.cc.models import Agent, Machine, TerminateAllAgents
@@ -19,6 +20,7 @@ GET_MACHINES_ENDPOINT = "api/machines"
 GET_AGENT_EVENTS_ENDPOINT = "api/agent-events"
 LOGOUT_ENDPOINT = "api/logout"
 GET_AGENT_OTP_ENDPOINT = "/api/agent-otp"
+INSTALL_PLUGIN_URL = "api/install-agent-plugin"
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +36,86 @@ class MonkeyIslandClient(object):
 
     def get_api_status(self):
         return self.requests.get("api")
+
+    def install_agent_plugins(self):
+        available_plugins_index_url = "api/agent-plugins/available/index"
+        installed_plugins_manifests_url = "api/agent-plugins/installed/manifests"
+
+        response = self.requests.get(available_plugins_index_url)
+        plugin_repository_index = AgentPluginRepositoryIndex(**response.json())
+
+        response = self.requests.get(installed_plugins_manifests_url)
+        installed_plugins = response.json()
+
+        install_threads: List[Thread] = []
+
+        # all of the responses from the API endpoints are serialized
+        # so we don't need to worry about type conversion
+        for plugin_type in plugin_repository_index.plugins:
+            install_threads.extend(
+                self._install_all_agent_plugins_of_type(
+                    plugin_type, plugin_repository_index, installed_plugins
+                )
+            )
+
+        for t in install_threads:
+            t.join()
+
+    def _install_all_agent_plugins_of_type(
+        self,
+        plugin_type: AgentPluginType,
+        plugin_repository_index: AgentPluginRepositoryIndex,
+        installed_plugins: Dict[str, Any],
+    ) -> Sequence[Thread]:
+        logger.info(f"Installing {plugin_type} plugins")
+        install_threads: List[Thread] = []
+        for plugin_name in plugin_repository_index.plugins[plugin_type]:
+            plugin_versions = plugin_repository_index.plugins[plugin_type][plugin_name]
+            latest_version = str(plugin_versions[-1].version)
+
+            if self._latest_version_already_installed(
+                installed_plugins, plugin_type, plugin_name, latest_version
+            ):
+                logger.info(f"{plugin_type}-{plugin_name}-v{latest_version} is already installed")
+                continue
+
+            t = Thread(
+                target=self._install_single_agent_plugin,
+                args=(plugin_name, plugin_type, latest_version),
+                daemon=True,
+            )
+            t.start()
+            install_threads.append(t)
+
+        return install_threads
+
+    def _latest_version_already_installed(
+        self,
+        installed_plugins: Dict[str, Any],
+        plugin_type: AgentPluginType,
+        plugin_name: str,
+        latest_version: str,
+    ) -> bool:
+        installed_plugin = installed_plugins.get(plugin_type, {}).get(plugin_name, {})
+        return installed_plugin and installed_plugin.get("version", "") == latest_version
+
+    def _install_single_agent_plugin(
+        self,
+        plugin_name: str,
+        plugin_type: AgentPluginType,
+        latest_version: str,
+    ):
+        install_plugin_request = {
+            "plugin_type": plugin_type,
+            "name": plugin_name,
+            "version": latest_version,
+        }
+        if self.requests.put_json(url=INSTALL_PLUGIN_URL, json=install_plugin_request).ok:
+            logger.info(f"Installed {plugin_name} {plugin_type} v{latest_version} to Island")
+        else:
+            logger.error(
+                f"Could not install {plugin_name} {plugin_type} " f"v{latest_version} to Island"
+            )
 
     @avoid_race_condition
     def set_masque(self, masque):
@@ -67,7 +149,7 @@ class MonkeyIslandClient(object):
     def _import_config(self, test_configuration: TestConfiguration):
         response = self.requests.put_json(
             "api/agent-configuration",
-            json=test_configuration.agent_configuration.dict(simplify=True),
+            json=test_configuration.agent_configuration.to_json_dict(),
         )
         if response.ok:
             logger.info("Configuration is imported.")
@@ -78,7 +160,7 @@ class MonkeyIslandClient(object):
     @avoid_race_condition
     def _import_credentials(self, propagation_credentials: List[Credentials]):
         serialized_propagation_credentials = [
-            credentials.dict(simplify=True) for credentials in propagation_credentials
+            credentials.to_json_dict() for credentials in propagation_credentials
         ]
         response = self.requests.put_json(
             "/api/propagation-credentials/configured-credentials",
@@ -108,7 +190,7 @@ class MonkeyIslandClient(object):
         # TODO change this request, because monkey-control resource got removed
         response = self.requests.post_json(
             "api/agent-signals/terminate-all-agents",
-            json=TerminateAllAgents(timestamp=time.time()).dict(simplify=True),
+            json=TerminateAllAgents(timestamp=time.time()).to_json_dict(),
         )
         if response.ok:
             logger.info("Killing all monkeys after the test.")

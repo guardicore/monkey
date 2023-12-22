@@ -9,7 +9,7 @@ tags: ["contribute"]
 The `/docs` folder contains the Infection Monkey Documentation site.
 
 The site is based on [Hugo](https://gohugo.io/) and the [learn](https://themes.gohugo.io/theme/hugo-theme-learn/en) theme.
-The Hugo version being used is 0.92.0.
+The Hugo version being used is [v0.92.0](https://github.com/gohugoio/hugo/releases/tag/v0.92.0).
 
 - [Directory structure](#directory-structure)
   - [content](#content)

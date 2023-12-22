@@ -7,10 +7,10 @@ from time import sleep, time
 from typing import Collection, Dict, Iterable, Mapping, Tuple
 
 from egg_timer import EggTimer
+from monkeyevents import TCPScanEvent
+from monkeytypes import AgentID, NetworkPort, PortStatus
 
-from common.agent_events import TCPScanEvent
 from common.event_queue import IAgentEventQueue
-from common.types import AgentID, NetworkPort, PortStatus
 from infection_monkey.i_puppet import PortScanData, PortScanDataDict
 from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT
 
@@ -59,6 +59,7 @@ def _generate_tcp_scan_event(
 ):
     port_statuses = {port: psd.status for port, psd in port_scan_data_dict.items()}
 
+    # TODO: Tag with the appropriate MITRE ATT&CK tags
     return TCPScanEvent(
         source=agent_id,
         target=IPv4Address(host),

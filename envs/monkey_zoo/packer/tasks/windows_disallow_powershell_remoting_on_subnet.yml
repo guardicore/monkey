@@ -1,0 +1,8 @@
+---
+  - name: Disable HTTP PSRemoting using netsh
+    win_command:
+      cmd: netsh advfirewall firewall add rule name="Block HTTP PSRemoting on subnet" dir=in action=block protocol=TCP localport=5985 remoteip="{{ subnet_ip }}"
+
+  - name: Disable HTTPS PSRemoting using netsh
+    win_command:
+      cmd: netsh advfirewall firewall add rule name="Block HTTPS PSRemoting on subnet" dir=in action=block protocol=TCP localport=5986 remoteip="{{ subnet_ip }}"

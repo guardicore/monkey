@@ -7,10 +7,10 @@ from ipaddress import IPv4Address
 from time import time
 from typing import Tuple
 
-from common import OperatingSystem
-from common.agent_events import PingScanEvent
+from monkeyevents import PingScanEvent
+from monkeytypes import AgentID, OperatingSystem
+
 from common.event_queue import IAgentEventQueue
-from common.types import AgentID
 from common.utils.environment import is_windows_os
 from infection_monkey.i_puppet import PingScanData
 
@@ -109,6 +109,7 @@ def _build_ping_command(host: str, timeout: float):
 def _generate_ping_scan_event(
     host: str, ping_scan_data: PingScanData, event_timestamp: float, agent_id: AgentID
 ) -> PingScanEvent:
+    # TODO: Tag with the appropriate MITRE ATT&CK tags
     return PingScanEvent(
         source=agent_id,
         target=IPv4Address(host),

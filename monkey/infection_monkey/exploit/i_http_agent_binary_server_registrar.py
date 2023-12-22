@@ -1,7 +1,7 @@
 import abc
 from ipaddress import IPv4Address
 
-from common import OperatingSystem
+from monkeytypes import OperatingSystem
 
 from .agent_binary_request import AgentBinaryDownloadTicket, AgentBinaryTransform, ReservationID
 

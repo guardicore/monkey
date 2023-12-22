@@ -1,7 +1,8 @@
 import copy
 from typing import Sequence
 
-from common.types import AgentID
+from monkeytypes import AgentID
+
 from monkey_island.cc.models import Agent
 from monkey_island.cc.repositories import IAgentRepository, UnknownRecordError
 

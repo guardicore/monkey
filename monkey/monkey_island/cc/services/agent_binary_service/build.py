@@ -1,9 +1,10 @@
 import logging
 from pathlib import Path
 
+from monkeytypes import OperatingSystem
+from ophidian import DIContainer
 from pymongo import MongoClient
 
-from common import DIContainer, OperatingSystem
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repositories import (
     FileRepositoryCachingDecorator,

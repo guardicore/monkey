@@ -3,7 +3,8 @@ import socket
 from threading import Thread
 from typing import Callable, List
 
-from common.types import NetworkPort
+from monkeytypes import NetworkPort
+
 from infection_monkey.utils.threading import InterruptableThreadMixin
 
 PROXY_TIMEOUT = 2.5
@@ -18,11 +19,11 @@ class TCPConnectionHandler(Thread, InterruptableThreadMixin):
         self,
         bind_host: str,
         bind_port: NetworkPort,
-        client_connected: List[Callable[[socket.socket], None]] = [],
+        client_connected_listeners: List[Callable[[socket.socket], None]] = [],
     ):
         self.bind_host = bind_host
         self.bind_port = int(bind_port)
-        self._client_connected = client_connected
+        self._client_connected_listeners = client_connected_listeners
 
         Thread.__init__(self, name="TCPConnectionHandler", daemon=True)
         InterruptableThreadMixin.__init__(self)
@@ -41,7 +42,7 @@ class TCPConnectionHandler(Thread, InterruptableThreadMixin):
                     continue
 
                 logging.debug(f"New connection received from: {source.getpeername()}")
-                for notify_client_connected in self._client_connected:
+                for notify_client_connected in self._client_connected_listeners:
                     notify_client_connected(source)
         except OSError:
             logging.exception("Uncaught error in TCPConnectionHandler thread")

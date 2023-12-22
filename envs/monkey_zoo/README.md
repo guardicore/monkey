@@ -20,14 +20,30 @@ scanning times in a real-world scenario and many more.
 ### Requirements
 - [Packer](https://developer.hashicorp.com/packer/downloads)
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible)
+- An S3 bucket for storing terraform state
 - A [GCP Service Account](https://developers.google.com/identity/protocols/oauth2/service-account#creatinganaccount) for the project in which to create the images
   - This account should have `Service Account User` and `Compute Instance Admin` permissions
 - A GCP key file for the service account
 
-Run envs/monkey_zoo/build_images.sh to build the images for the MonkeyZoo. These are the images from which the zoo will be deployed.
+The following commands assume that packer is run from the envs/monkey_zoo/packer directory.
+
+To install the requirements run `packer init`, e.g.:
+```bash
+packer init .
+```
+
+Make sure that the values in `variables.pkr.hcl` and `variables.auto.pkrvars.hcl` are correct for your environment.
+Then, run the `packer build` to build the images for the MonkeyZoo. These are the images from which the zoo will be deployed.
 
 Example:
-  ./build_images.sh --project-id my-gcp-project --account-file /path/to/gcp_key.json packer/tunneling.pkr.hcl
+  `packer build .`
+
+Example:
+  `packer build -only googlecompute.mimikatz-15,googlecompute.snmp-20 .`
+
+If you want to disable parallelization and output debugging info, add `-debug` flag to the command.
+If you want to allow editing and retrying of a failed script, use the `-on-error=ask` flag.
+If you want to override an already existing image add `-force` flag to the command.
 
 ## MonkeyZoo network
 

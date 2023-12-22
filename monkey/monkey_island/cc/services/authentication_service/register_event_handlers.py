@@ -1,7 +1,8 @@
-from common import DIContainer
-from common.agent_events import AbstractAgentEvent, AgentShutdownEvent
+from monkeyevents import AbstractAgentEvent, AgentShutdownEvent
+from monkeytypes import AgentID
+from ophidian import DIContainer
+
 from common.event_queue import IAgentEventQueue
-from common.types import AgentID
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 
 from .authentication_facade import AuthenticationFacade

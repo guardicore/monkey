@@ -10,14 +10,16 @@ from uuid import uuid4
 
 import pytest
 import requests
+from monkeytypes import OTP, OperatingSystem, SocketAddress
 from treelib import Tree
 
-from common import OperatingSystem
-from common.types import OTP, SocketAddress
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.stolen_credentials_analyzer import StolenCredentialsAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
-from envs.monkey_zoo.blackbox.expected_credentials import expected_credentials_depth_2_a
+from envs.monkey_zoo.blackbox.expected_credentials import (
+    expected_credentials_depth_1_a,
+    expected_credentials_depth_2_a,
+)
 from envs.monkey_zoo.blackbox.island_client.agent_requests import AgentRequests
 from envs.monkey_zoo.blackbox.island_client.i_monkey_island_requests import IMonkeyIslandRequests
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import (
@@ -39,6 +41,7 @@ from envs.monkey_zoo.blackbox.test_configurations import (
     credentials_reuse_ssh_key_test_configuration,
     depth_1_a_test_configuration,
     depth_2_a_test_configuration,
+    depth_2_b_test_configuration,
     depth_3_a_test_configuration,
     depth_4_a_test_configuration,
     smb_pth_test_configuration,
@@ -118,9 +121,12 @@ def island_client(monkey_island_requests):
 
 
 @pytest.fixture(autouse=True, scope="session")
-def register(island_client):
+def setup_island(island_client):
     logging.info("Registering a new user")
     island_client.register()
+
+    logging.info("Installing all available plugins")
+    island_client.install_agent_plugins()
 
 
 @pytest.mark.parametrize(
@@ -337,6 +343,9 @@ RESET_AGENT_CONFIG_ENDPOINT = "/api/reset-agent-configuration"
 GET_SECURITY_REPORT_ENDPOINT = "/api/report/security"
 GET_ISLAND_VERSION_ENDPOINT = "/api/island/version"
 PUT_AGENT_CONFIG_ENDPOINT = "/api/agent-configuration"
+INSTALL_AGENT_PLUGIN_ENDPOINT = "/api/install-agent-plugin"
+AVAILABLE_AGENT_PLUGIN_INDEX_ENDPOINT = "/api/agent-plugins/available/index?force_refresh=true"
+UNINSTALL_AGENT_PLUGIN_ENDPOINT = "/api/uninstall-agent-plugin"
 
 
 def test_agent__cannot_access_nonagent_endpoints(island):
@@ -380,6 +389,18 @@ def test_agent__cannot_access_nonagent_endpoints(island):
     assert agent_requests.get(GET_ISLAND_VERSION_ENDPOINT).status_code == HTTPStatus.FORBIDDEN
     assert (
         agent_requests.put(PUT_AGENT_CONFIG_ENDPOINT, data=None).status_code == HTTPStatus.FORBIDDEN
+    )
+    assert (
+        agent_requests.put(INSTALL_AGENT_PLUGIN_ENDPOINT, data=None).status_code
+        == HTTPStatus.FORBIDDEN
+    )
+    assert (
+        agent_requests.get(AVAILABLE_AGENT_PLUGIN_INDEX_ENDPOINT).status_code
+        == HTTPStatus.FORBIDDEN
+    )
+    assert (
+        agent_requests.post(UNINSTALL_AGENT_PLUGIN_ENDPOINT, data=None).status_code
+        == HTTPStatus.FORBIDDEN
     )
 
 
@@ -447,6 +468,18 @@ def test_unauthenticated_user_cannot_access_API(island):
         island_requests.put(PUT_AGENT_CONFIG_ENDPOINT, data=None).status_code
         == HTTPStatus.UNAUTHORIZED
     )
+    assert (
+        island_requests.put(INSTALL_AGENT_PLUGIN_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert (
+        island_requests.get(AVAILABLE_AGENT_PLUGIN_INDEX_ENDPOINT).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
+    assert (
+        island_requests.post(UNINSTALL_AGENT_PLUGIN_ENDPOINT, data=None).status_code
+        == HTTPStatus.UNAUTHORIZED
+    )
 
 
 LOGOUT_AGENT_ID = uuid4()
@@ -465,7 +498,7 @@ def test_agent_logout(island):
         "id": LOGOUT_AGENT_ID,
         "machine_hardware_id": 2,
         "start_time": "2022-08-18T18:46:48+00:00",
-        "cc_server": SocketAddress.from_string(island).dict(simplify=True),
+        "cc_server": SocketAddress.from_string(island).to_json_dict(),
         "network_interfaces": [],
     }
 
@@ -572,6 +605,7 @@ class TestMonkeyBlackbox:
 
     def test_depth_2_a(self, island_client):
         test_name = "Depth2A test suite"
+
         communication_analyzer = CommunicationAnalyzer(
             island_client,
             get_target_ips(depth_2_a_test_configuration),
@@ -602,6 +636,33 @@ class TestMonkeyBlackbox:
             configured_depth=depth_2_a_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
         )
 
+    def test_depth_2_b(self, island_client):
+        test_name = "Depth2B test suite"
+
+        communication_analyzer = CommunicationAnalyzer(
+            island_client,
+            get_target_ips(depth_2_b_test_configuration),
+        )
+        log_handler = TestLogsHandler(
+            test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
+        )
+
+        exploitation_test = ExploitationTest(
+            name=test_name,
+            island_client=island_client,
+            test_configuration=depth_2_b_test_configuration,
+            masque=None,
+            analyzers=[communication_analyzer],
+            timeout=DEFAULT_TIMEOUT_SECONDS + 30,
+            log_handler=log_handler,
+        )
+        exploitation_test.run()
+
+        TestMonkeyBlackbox.assert_depth_restriction(
+            agents=exploitation_test.agents,
+            configured_depth=depth_2_b_test_configuration.agent_configuration.propagation.maximum_depth,  # noqa: E501
+        )
+
     def test_depth_1_a(self, island_client):
         test_name = "Depth1A test suite"
         masque = b"m0nk3y"
@@ -613,12 +674,15 @@ class TestMonkeyBlackbox:
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
+        stolen_credentials_analyzer = StolenCredentialsAnalyzer(
+            island_client, expected_credentials_depth_1_a
+        )
         exploitation_test = ExploitationTest(
             name=test_name,
             island_client=island_client,
             test_configuration=depth_1_a_test_configuration,
             masque=masque,
-            analyzers=[communication_analyzer],
+            analyzers=[communication_analyzer, stolen_credentials_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         )
@@ -632,6 +696,7 @@ class TestMonkeyBlackbox:
 
     def test_depth_3_a(self, island_client):
         test_name = "Depth3A test suite"
+
         communication_analyzer = CommunicationAnalyzer(
             island_client,
             get_target_ips(depth_3_a_test_configuration),

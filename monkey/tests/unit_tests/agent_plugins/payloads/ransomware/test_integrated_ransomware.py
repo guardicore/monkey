@@ -5,10 +5,9 @@ from unittest.mock import MagicMock
 import agent_plugins.payloads.ransomware.src.ransomware_builder as ransomware_builder
 import pytest
 from agent_plugins.payloads.ransomware.src.ransomware_options import RansomwareOptions
+from monkeytypes import AgentID, OperatingSystem
 
-from common import OperatingSystem
 from common.event_queue import IAgentEventPublisher
-from common.types import AgentID
 from common.utils.environment import get_os
 
 AGENT_ID = AgentID("0442ca83-10ce-495f-9c1c-92b4e1f5c39c")
@@ -47,7 +46,7 @@ def test_uses_correct_extension(
     ransomware_file_extension: str,
 ):
     ransomware = ransomware_builder.build_ransomware(
-        AGENT_ID, MagicMock(spec=IAgentEventPublisher), ransomware_options_dict
+        AGENT_ID, MagicMock(spec=IAgentEventPublisher), ransomware_options_dict, get_os()
     )
 
     ransomware.run(threading.Event())

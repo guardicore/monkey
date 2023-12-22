@@ -18,12 +18,7 @@ After running the installer, the following prompt should appear on the screen:
 ![Windows installer screenshot](https://github.com/guardicore/monkey/blob/develop/docs/static/images/island/others/windows_installer.png)
 
 1. Follow the steps to complete the installation.
-1. Run the Infection Monkey by clicking on the desktop shortcut. **Note**: If you want Agents to
-collect more data on the current machine, consider running as Administrator.
-
-> 📘 Infection Monkey flagged as malware
->
-> Don't worry if the Infection Monkey gets [flagged as malware during the installation](doc:frequently-asked-questions#is-infection-monkey-a-malwarevirus).
+1. Run the Infection Monkey by clicking on the desktop shortcut. 
 
 *Notes*:
 
@@ -32,10 +27,29 @@ collect more data on the current machine, consider running as Administrator.
 
 # Configuring the server
 
+Once you have access to the Monkey Island server, check out the [getting started page]({{< ref "/usage/getting-started" >}}).
+
 You can configure the server by editing [the configuration
 file](../../reference/server_configuration) located in installation directory.
 The default path is
 `C:\Program Files\Infection Monkey\monkey_island\cc\server_config.json`.
+
+## Change listening port
+
+The Island server can be accessed on port 443(HTTPS) by default.
+
+This port can be changed by modifying the `server_config.json` file:
+
+1. Stop the Monkey Island process.
+1. Modify the `server_config.json` by adding the following lines:
+    ```json
+    {
+      ...
+      "island_port": 8080,
+      ...
+    }
+    ```
+1. Run the Monkey Island again, it will be accessible on `https://localhost:8080`.
 
 ## Start Monkey Island with user-provided certificate
 
@@ -59,7 +73,7 @@ private certificate authority.
     ```
 1. Run the Monkey Island by clicking on the desktop shortcut.
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost`.
 
 ## Change logging level
 
@@ -74,7 +88,7 @@ private certificate authority.
     ```
 1. Run the Monkey Island by clicking on the desktop shortcut.
 1. Access the Monkey Island web UI by pointing your browser at
-   `https://localhost:5000`.
+   `https://localhost`.
 
 # Troubleshooting
 

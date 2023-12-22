@@ -88,6 +88,16 @@ class RelayUserHandler:
                 logger.debug(f"Disconnected user {user_address}")
                 del_key(self._relay_users, user_address)
 
+    def renew_relay_user_membership(self, user_address: IPv4Address):
+        """
+        Renew the membership of a relay user.
+
+        :param user_address: The address of the user to renew.
+        """
+        with self._lock:
+            if user_address in self._relay_users:
+                self._relay_users[user_address].timer.reset()
+
     def has_potential_users(self) -> bool:
         """
         Return whether or not we have any potential users.
