@@ -7,7 +7,7 @@ name = "pypi"
 pywinrm = {extras = ["credssp"], version = "*"}
 
 [dev-packages]
-ansible = "==7.4.0"
+ansible = "==8.5.0"
 pywinrm = "==0.4.3"
 
 [requires]
