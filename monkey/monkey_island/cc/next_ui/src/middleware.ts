@@ -22,6 +22,15 @@ export default async function middleware(req: any) {
         return NextResponse.redirect(new URL(PATHS.ROOT, req.url));
     }
 
+    if (!isAuthenticated && pathname.startsWith(PATHS.SIGN_IN)) {
+        const res = await fetch(`${process.env.BASE_API}/registration-status`);
+        const body = await res.json();
+        const needsRegistration = body.needs_registration;
+        if (needsRegistration) {
+            return NextResponse.redirect(new URL(PATHS.SIGN_UP, req.url));
+        }
+    }
+
     if (!isAuthenticated && pathname.startsWith(PATHS.SIGN_UP)) {
         // https://nextjs.org/docs/app/api-reference/functions/next-response#next
         return NextResponse.next();
