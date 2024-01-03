@@ -10,12 +10,13 @@ NEXTJS_LOG_FILENAME = "nextjs.log"
 
 
 def start_nextjs(
-    data_dir: Path, port: NetworkPort, ssl_cert_path: Path, ssl_key_path: Path
+    data_dir: Path, domain: str, port: NetworkPort, ssl_cert_path: Path, ssl_key_path: Path
 ) -> NextJsProcess:
     log_file = os.path.join(data_dir, NEXTJS_LOG_FILENAME)
 
     nextjs_process = NextJsProcess(
         log_file=log_file,
+        domain=domain,
         port=port,
         ssl_cert_path=str(ssl_cert_path),
         ssl_key_path=str(ssl_key_path),

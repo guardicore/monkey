@@ -21,12 +21,15 @@ NEXTJS_EXECUTION_COMMAND = [NODE_EXECUTABLE_PATH, "server-prod.js"]
 
 
 class NextJsProcess:
-    def __init__(self, log_file: str, port: NetworkPort, ssl_cert_path: str, ssl_key_path: str):
+    def __init__(
+        self, log_file: str, domain: str, port: NetworkPort, ssl_cert_path: str, ssl_key_path: str
+    ):
         """
         @param log_file: Path to the file that will contain nextjs logs
         """
         self._next_js_run_cmd = NEXTJS_EXECUTION_COMMAND
         self._log_file = log_file
+        self._domain = domain
         self._port = port
         self._ssl_cert_path = ssl_cert_path
         self._ssl_key_path = ssl_key_path
@@ -47,6 +50,7 @@ class NextJsProcess:
 
         with open(self._log_file, "w") as log:
             node_env = os.environ.copy()
+            node_env["NEXTAUTH_URL"] = f"https://{self._domain}:{self._port}"
             node_env["NEXT_PUBLIC_JAVASCRIPT_RUNTIME_PORT"] = str(self._port)
             node_env["SSL_CERT_PATH"] = self._ssl_cert_path
             node_env["SSL_KEY_PATH"] = self._ssl_key_path

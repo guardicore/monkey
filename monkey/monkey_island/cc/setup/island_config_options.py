@@ -15,6 +15,7 @@ from monkey_island.cc.server_utils.consts import (
     DEFAULT_START_MONGO_DB,
 )
 
+DEFAULT_ISLAND_UI_DOMAIN = "localhost"
 DEFAULT_ISLAND_PORT = 443
 
 
@@ -37,4 +38,5 @@ class IslandConfigOptions(InfectionMonkeyBaseModel):
     log_level: str = DEFAULT_LOG_LEVEL
     mongodb: MongoDBConfig = MongoDBConfig()
     ssl_certificate: SSLCertificatesConfig = SSLCertificatesConfig()
+    island_ui_domain: str = DEFAULT_ISLAND_UI_DOMAIN
     island_port: int = DEFAULT_ISLAND_PORT

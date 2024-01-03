@@ -3,6 +3,31 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import authPages from './authPages';
 import { nanoid } from 'nanoid';
 import { HTTP_METHODS } from '@/constants/http.constants';
+import { JWT } from 'next-auth/jwt';
+
+const TOKEN_REFRESH_THRESHOLD_PERCENT = 15;
+
+function currentTimeSeconds() {
+    return Math.floor(Date.now() / 1000);
+}
+
+function tokenNeedsToRefresh(token: JWT) {
+    const tokenExpireTime = token.expires_at;
+    const tokenRefreshThreshold =
+        token.ttl * (TOKEN_REFRESH_THRESHOLD_PERCENT / 100);
+    return currentTimeSeconds() < tokenExpireTime - tokenRefreshThreshold;
+}
+
+function createToken(data: any) {
+    const expirationTime = currentTimeSeconds() + data.token_ttl_sec;
+    return {
+        access_token: data.authentication_token,
+        expires_at: expirationTime,
+        exp: expirationTime,
+        ttl: data.token_ttl_sec,
+        refresh_token: data.authentication_token
+    };
+}
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -53,18 +78,8 @@ export const authOptions: NextAuthOptions = {
         async jwt({ token, user, account, profile, isNewUser }: any) {
             // Add access_token to the token right after signin
             if (user) {
-                const secondsToExpire = Math.floor(
-                    Date.now() / 1000 + user.token_ttl_sec
-                );
-                return {
-                    access_token: user.authentication_token,
-                    expires_at: Math.floor(
-                        Date.now() / 1000 + user.token_ttl_sec
-                    ),
-                    exp: secondsToExpire,
-                    refresh_token: user.authentication_token
-                };
-            } else if (Date.now() < token.expires_at * 1000 - 200) {
+                return createToken(user);
+            } else if (tokenNeedsToRefresh(token)) {
                 return token;
             } else {
                 try {
@@ -110,17 +125,9 @@ export const authOptions: NextAuthOptions = {
                         throw new Error('RefreshAccessTokenError');
                     }
 
-                    const secondsToExpire = Math.floor(
-                        Date.now() / 1000 + newData.token_ttl_sec
-                    );
-
                     return {
                         ...token, // Keep the previous token properties
-                        access_token: newData.authentication_token,
-                        expires_at: secondsToExpire,
-                        exp: secondsToExpire,
-                        // Fall back to old refresh token
-                        refresh_token: newData.authentication_token
+                        ...createToken(newData)
                     };
                 } catch (error) {
                     console.error('Error refreshing access token', error);

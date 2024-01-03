@@ -189,6 +189,7 @@ def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
 
 
 def _start_nextjs_server(ip_addresses: Sequence[IPv4Address], config_options: IslandConfigOptions):
+    nextjs_ip = config_options.island_ui_domain
     nextjs_port = config_options.island_port
     if port_is_used(nextjs_port, ip_addresses):
         logger.error(
@@ -198,6 +199,7 @@ def _start_nextjs_server(ip_addresses: Sequence[IPv4Address], config_options: Is
         sys.exit(1)
     nextjs_process = start_nextjs(
         config_options.data_dir,
+        nextjs_ip,
         nextjs_port,
         config_options.ssl_certificate.ssl_certificate_file,
         config_options.ssl_certificate.ssl_certificate_key_file,
@@ -232,7 +234,8 @@ def _start_island_server(
         log=_get_wsgi_server_logger(),
         error_log=logger,
     )
-    _log_init_info(ip_addresses)
+
+    _log_init_info(config_options.island_ui_domain, config_options.island_port)
     http_server.serve_forever()
 
 
@@ -255,23 +258,26 @@ def _get_wsgi_server_logger() -> logging.Logger:
     return wsgi_server_logger
 
 
-def _log_init_info(ip_addresses: Sequence[IPv4Address]):
+def _log_init_info(server_domain: str, server_port: int):
     logger.info("Monkey Island Server is running!")
     logger.info(f"version: {get_version()}")
 
-    _log_web_interface_access_urls(ip_addresses)
+    _log_web_interface_access_urls(server_domain, server_port)
 
 
-def _log_web_interface_access_urls(ip_addresses: Sequence[IPv4Address]):
+def _log_web_interface_access_urls(server_domain: str, server_port: int):
     if NEXT_JS_UI_FEATURE:
-        web_interface_urls = ", ".join([f"https://{ip}" for ip in ip_addresses])
+        web_interface_url = _create_url(server_domain, server_port)
     else:
-        web_interface_urls = ", ".join([f"https://{ip}:{FLASK_PORT}" for ip in ip_addresses])
+        web_interface_url = _create_url(server_domain, FLASK_PORT)
 
-    logger.info(
-        "To access the web interface, navigate to one of the the following URLs using your "
-        f"browser: {web_interface_urls}"
-    )
+    logger.info(f"To access the web interface, navigate to {web_interface_url} using your browser")
+
+
+def _create_url(domain: str, port: int):
+    if port == 443:
+        return f"https://{domain}"
+    return f"https://{domain}:{port}"
 
 
 def _send_analytics(deployment: Deployment, version: Version):
