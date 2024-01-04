@@ -3,7 +3,8 @@ import os
 import shutil
 from pathlib import Path
 
-from common.utils.file_utils import create_secure_directory
+from monkeytoolbox import create_secure_directory
+
 from common.version import get_version
 from monkey_island.cc.setup.env_utils import is_running_on_docker
 from monkey_island.cc.setup.version_file_setup import get_version_from_dir, write_version
