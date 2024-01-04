@@ -12,10 +12,13 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { login } from '@/helpers/signin/signin';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { PATHS } from '@/constants/paths.constants';
+import { login } from '@/app/(auth)/_lib/login';
 
 const SignInPage = () => {
+    const router = useRouter();
     const [loginFormValues, setLoginFormValues] = useState({
         username: '',
         password: ''
@@ -23,7 +26,11 @@ const SignInPage = () => {
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        await login(loginFormValues);
+        const success = await login(loginFormValues);
+
+        if (success) {
+            router.push(PATHS.ROOT);
+        }
     };
 
     const handleLoginFormValueChange = (e: any) => {
