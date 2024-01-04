@@ -23,7 +23,6 @@ from common.agent_plugins import (
     AgentPluginMetadata,
     AgentPluginRepositoryIndex,
 )
-from common.decorators import request_cache
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
@@ -153,8 +152,6 @@ commands.build_download_command_linux_curl
 commands.build_dropper_script_download_command
 commands.build_download_command_windows_powershell_webclient
 commands.build_download_command_windows_powershell_webrequest
-
-request_cache
 
 # Remove after the plugin interface is in place
 AgentPluginMetadata.resource_path
