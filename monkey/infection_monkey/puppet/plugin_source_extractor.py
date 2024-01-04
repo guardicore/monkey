@@ -3,8 +3,9 @@ import io
 from pathlib import Path
 from tarfile import TarFile, TarInfo
 
+from monkeytoolbox import create_secure_directory
+
 from common.agent_plugins import AgentPlugin
-from common.utils.file_utils import create_secure_directory
 
 
 class PluginSourceExtractor:
