@@ -17,7 +17,7 @@ from common.utils.file_utils.secure_directory import FailedDirectoryCreationErro
 
 
 def is_windows_os():
-    return get_os == OperatingSystem.WINDOWS
+    return get_os() == OperatingSystem.WINDOWS
 
 
 @pytest.fixture

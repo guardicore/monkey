@@ -14,7 +14,7 @@ from monkey_island.cc.repositories import LocalStorageFileRepository
 
 
 def is_windows_os():
-    return get_os == OperatingSystem.WINDOWS
+    return get_os() == OperatingSystem.WINDOWS
 
 
 def test_error_if_storage_directory_is_file(tmp_path):
