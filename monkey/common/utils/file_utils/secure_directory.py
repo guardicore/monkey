@@ -3,9 +3,10 @@ import stat
 from pathlib import Path
 from typing import Callable
 
-from ..environment import is_windows_os
+from monkeytoolbox import get_os
+from monkeytypes import OperatingSystem
 
-if is_windows_os():
+if get_os() == OperatingSystem.WINDOWS:
     import win32file
     import win32security
 
@@ -19,7 +20,7 @@ class FailedDirectoryCreationError(Exception):
 
 
 def create_secure_directory(path: Path):
-    if is_windows_os():
+    if get_os() == OperatingSystem.WINDOWS:
         make_existing_directory_secure_for_os = _make_existing_directory_secure_windows
         create_secure_directory_for_os = _create_secure_directory_windows
     else:

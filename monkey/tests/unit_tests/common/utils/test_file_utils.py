@@ -3,9 +3,10 @@ import os
 import stat
 
 import pytest
+from monkeytoolbox import get_os
+from monkeytypes import OperatingSystem
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
 
-from common.utils.environment import is_windows_os
 from common.utils.file_utils import (
     append_bytes,
     create_secure_directory,
@@ -13,6 +14,10 @@ from common.utils.file_utils import (
     open_new_securely_permissioned_file,
 )
 from common.utils.file_utils.secure_directory import FailedDirectoryCreationError
+
+
+def is_windows_os():
+    return get_os == OperatingSystem.WINDOWS
 
 
 @pytest.fixture
