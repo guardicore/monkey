@@ -4,9 +4,9 @@ import subprocess
 from pathlib import Path
 from typing import Optional
 
-from monkeytypes import NetworkPort
+from monkeytoolbox import get_os
+from monkeytypes import NetworkPort, OperatingSystem
 
-from common.utils.environment import is_windows_os
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 TERMINATE_TIMEOUT = 10
@@ -16,7 +16,11 @@ logger = logging.getLogger(__name__)
 UI_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "next_ui", ".next", "standalone")
 _NODE_EXECUTABLE_PATH_WIN = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "node", "node.exe")
 _NODE_EXECUTABLE_PATH_LINUX = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "node", "node")
-NODE_EXECUTABLE_PATH = _NODE_EXECUTABLE_PATH_WIN if is_windows_os() else _NODE_EXECUTABLE_PATH_LINUX
+NODE_EXECUTABLE_PATH = (
+    _NODE_EXECUTABLE_PATH_WIN
+    if (get_os() == OperatingSystem.WINDOWS)
+    else _NODE_EXECUTABLE_PATH_LINUX
+)
 NEXTJS_EXECUTION_COMMAND = [NODE_EXECUTABLE_PATH, "server-prod.js"]
 
 

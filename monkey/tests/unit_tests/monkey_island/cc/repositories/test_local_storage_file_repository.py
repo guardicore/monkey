@@ -4,12 +4,17 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
+from monkeytoolbox import get_os
+from monkeytypes import OperatingSystem
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
 from tests.utils import raise_
 
-from common.utils.environment import is_windows_os
 from monkey_island.cc import repositories
 from monkey_island.cc.repositories import LocalStorageFileRepository
+
+
+def is_windows_os():
+    return get_os == OperatingSystem.WINDOWS
 
 
 def test_error_if_storage_directory_is_file(tmp_path):

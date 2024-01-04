@@ -1,8 +1,9 @@
 from pathlib import PosixPath, WindowsPath
 
-from common.utils.environment import is_windows_os
+from monkeytoolbox import get_os
+from monkeytypes import OperatingSystem
 
-if is_windows_os():
+if get_os() == OperatingSystem.WINDOWS:
     import win32api
     import win32security
 
