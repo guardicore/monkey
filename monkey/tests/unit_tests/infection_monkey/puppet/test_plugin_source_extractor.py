@@ -2,11 +2,11 @@ import gzip
 from pathlib import Path
 
 import pytest
+from monkeytoolbox import get_os
 from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
 from tests.utils import assert_directories_equal
 
 from common.agent_plugins import AgentPlugin
-from common.utils.environment import is_windows_os
 from infection_monkey.puppet import PluginSourceExtractor
 
 
@@ -44,7 +44,7 @@ def test_plugin_destination_directory_property(tmp_path: Path, extractor: Plugin
 
 
 def test_extract_plugin_source(tmp_path: Path, dircmp_path: Path, extractor: PluginSourceExtractor):
-    if is_windows_os():
+    if get_os() == OperatingSystem.WINDOWS:
         agent_plugin = build_agent_plugin(dircmp_path / "dir1_win.tar")
     else:
         agent_plugin = build_agent_plugin(dircmp_path / "dir1.tar")

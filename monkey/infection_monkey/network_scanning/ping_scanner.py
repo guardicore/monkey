@@ -8,10 +8,10 @@ from time import time
 from typing import Tuple
 
 from monkeyevents import PingScanEvent
+from monkeytoolbox import get_os
 from monkeytypes import AgentID, OperatingSystem
 
 from common.event_queue import IAgentEventQueue
-from common.utils.environment import is_windows_os
 from infection_monkey.i_puppet import PingScanData
 
 TTL_REGEX = re.compile(r"TTL=([0-9]+)\b", re.IGNORECASE)
@@ -35,7 +35,7 @@ def ping(
 def _ping(
     host: str, timeout: float, agent_event_queue: IAgentEventQueue, agent_id: AgentID
 ) -> PingScanData:
-    if is_windows_os():
+    if get_os() == OperatingSystem.WINDOWS:
         timeout = math.floor(timeout * 1000)
 
     event_timestamp, ping_command_output = _run_ping_command(host, timeout)
@@ -99,8 +99,8 @@ def _process_ping_command_output(ping_command_output: str) -> PingScanData:
 
 
 def _build_ping_command(host: str, timeout: float):
-    ping_count_flag = "-n" if is_windows_os() else "-c"
-    ping_timeout_flag = "-w" if is_windows_os() else "-W"
+    ping_count_flag = "-n" if (get_os() == OperatingSystem.WINDOWS) else "-c"
+    ping_timeout_flag = "-w" if (get_os() == OperatingSystem.WINDOWS) else "-W"
 
     # on older version of ping the timeout must be an integer, thus we use ceil
     return ["ping", ping_count_flag, "1", ping_timeout_flag, str(math.ceil(timeout)), host]

@@ -8,11 +8,10 @@ from typing import Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tupl
 
 import psutil
 from egg_timer import EggTimer
-from monkeytypes import IntRange, NetworkPort
+from monkeytoolbox import get_os
+from monkeytypes import IntRange, NetworkPort, OperatingSystem
 
-from common.utils.environment import is_windows_os
-
-if not is_windows_os():
+if get_os() == OperatingSystem.LINUX:
     from fcntl import ioctl
 
 from .ports import COMMON_PORTS
@@ -39,7 +38,7 @@ class NetworkAddress:
 
 
 def get_routes() -> List[Tuple[int, int, str, bytes, str]]:
-    if is_windows_os():
+    if get_os() == OperatingSystem.WINDOWS:
         raise NotImplementedError()
 
     routes = []
