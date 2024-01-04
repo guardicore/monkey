@@ -7,5 +7,4 @@ from .file_utils import (
     make_fileobj_copy,
     append_bytes,
 )
-from .secure_directory import create_secure_directory
 from .secure_file import open_new_securely_permissioned_file
