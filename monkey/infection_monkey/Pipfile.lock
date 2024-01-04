@@ -318,12 +318,12 @@
         },
         "monkeytoolbox": {
             "hashes": [
-                "sha256:72d4950e4887eea7d0b00ca6cfe0a860bd4b7806bbbf9ed33e6d1c199f5bda0d",
-                "sha256:981cd4288c4687bbc63e69e8d6c028766f99df60dac92059bce5fde5d7b4c457"
+                "sha256:4de28b203a2d268e1b436a6b23b6eabe44537c0b2fc281428cf435e0d10c86bb",
+                "sha256:7f29dd776b159da5393b170c37d1c8df7b7f1053e684282a852bbe75bdeba9a0"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.11' and python_version < '4.0'",
-            "version": "==0.1.0"
+            "version": "==0.2.0"
         },
         "odict": {
             "hashes": [
