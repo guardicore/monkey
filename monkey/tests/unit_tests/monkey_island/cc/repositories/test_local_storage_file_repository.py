@@ -13,7 +13,7 @@ from monkey_island.cc import repositories
 from monkey_island.cc.repositories import LocalStorageFileRepository
 
 
-def is_windows_os():
+def os_is_windows():
     return get_os() == OperatingSystem.WINDOWS
 
 
@@ -33,7 +33,7 @@ def test_directory_created(tmp_path):
     assert new_dir.exists() and new_dir.is_dir()
 
 
-@pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
+@pytest.mark.skipif(os_is_windows(), reason="Tests Posix (not Windows) permissions.")
 def test_directory_permissions__linux(tmp_path):
     new_dir = tmp_path / "new_dir"
 
@@ -42,7 +42,7 @@ def test_directory_permissions__linux(tmp_path):
     assert_linux_permissions(new_dir)
 
 
-@pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
+@pytest.mark.skipif(not os_is_windows(), reason="Tests Windows (not Posix) permissions.")
 def test_directory_permissions__windows(tmp_path):
     new_dir = tmp_path / "new_dir"
 
@@ -100,7 +100,7 @@ def test_fn__ignore_relative_path(tmp_path, fn):
 
 @pytest.mark.parametrize("fn", [save_file, open_file, delete_file])
 def test_fn__ignore_absolute_path(tmp_path, fn):
-    if is_windows_os():
+    if os_is_windows():
         fn(tmp_path, "C:\\Windows")
     else:
         fn(tmp_path, "/home/")
