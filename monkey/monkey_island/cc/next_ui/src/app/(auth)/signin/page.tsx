@@ -15,7 +15,30 @@ import Container from '@mui/material/Container';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
-import { login } from '@/app/(auth)/_lib/login';
+import { HTTP_METHODS } from '@/constants/http.constants';
+import handleAuthToken from '@/app/(auth)/_lib/handleAuthToken';
+
+type LoginParams = {
+    username: string;
+    password: string;
+};
+
+const sendLoginRequest = async (loginValues: LoginParams) => {
+    const response = await fetch(`/api/login`, {
+        method: HTTP_METHODS.POST,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        // @ts-ignore
+        body: JSON.stringify(loginValues)
+    });
+
+    if (response.status !== 200) {
+        return null;
+    }
+
+    return await handleAuthToken(response);
+};
 
 const SignInPage = () => {
     const router = useRouter();
@@ -26,7 +49,7 @@ const SignInPage = () => {
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        const success = await login(loginFormValues);
+        const success = await sendLoginRequest(loginFormValues);
 
         if (success) {
             router.push(PATHS.ROOT);
