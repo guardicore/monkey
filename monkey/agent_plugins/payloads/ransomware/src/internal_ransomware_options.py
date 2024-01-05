@@ -2,9 +2,8 @@ import logging
 from pathlib import Path
 from typing import Optional
 
+from monkeytoolbox import InvalidPath, expand_path
 from monkeytypes import OperatingSystem
-
-from common.utils.file_utils import InvalidPath, expand_path
 
 from .ransomware_options import RansomwareOptions
 
