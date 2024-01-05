@@ -39,7 +39,10 @@ repos:
     rev: v8.35.0
     hooks:
       - id: eslint
-        args: ["monkey/monkey_island/cc/ui/src/", "--fix", "--max-warnings=0"]
+        files: \.[jt]sx?$  # *.js, *.jsx, *.ts and *.tsx
+        types: [file]
+        additional_dependencies: [typescript]
+        args: ["monkey/monkey_island/cc/ui/src/", "monkey/monkey_island/cc/next_ui/src/", "--fix", "--max-warnings=0"]
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.0.1
     hooks:
