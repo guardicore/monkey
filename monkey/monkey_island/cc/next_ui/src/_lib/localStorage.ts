@@ -15,7 +15,7 @@ export const localStorageGetItem = (key: string): string | null => {
     return value || null;
 };
 
-export const localStorageSetItem = (key: string, value: string): void => {
+export const localStorageSetItem = (key: string, value: any): void => {
     executeIfWindowDefined(() => localStorage.setItem(key, value));
 };
 
