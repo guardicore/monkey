@@ -1,10 +1,9 @@
 import platform
 
 from _socket import gethostname
-from monkeytoolbox import get_hardware_id
+from monkeytoolbox import get_hardware_id, get_network_interfaces
 from monkeytypes import OperatingSystem
 
-from common.network.network_utils import get_network_interfaces
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repositories import IMachineRepository, UnknownRecordError
 
