@@ -2,13 +2,9 @@ import io
 import logging
 import shutil
 from pathlib import Path
-from typing import BinaryIO, Iterable
+from typing import BinaryIO
 
 logger = logging.getLogger(__name__)
-
-
-def get_all_regular_files_in_directory(dir_path: Path) -> Iterable[Path]:
-    return filter(lambda f: f.is_file(), dir_path.iterdir())
 
 
 def get_text_file_contents(file_path: Path) -> str:
