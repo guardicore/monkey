@@ -3,7 +3,9 @@ import logging
 from pathlib import Path
 from typing import Iterable, Set
 
-from common.utils.file_utils import get_all_regular_files_in_directory
+from monkeytoolbox import get_all_regular_files_in_directory
+
+# These will go to the AgentPluginUtils repo
 from infection_monkey.utils.file_utils import (
     file_extension_filter,
     filter_files,
