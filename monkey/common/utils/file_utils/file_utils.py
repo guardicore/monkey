@@ -1,16 +1,9 @@
 import io
 import logging
 import shutil
-from pathlib import Path
 from typing import BinaryIO
 
 logger = logging.getLogger(__name__)
-
-
-def get_text_file_contents(file_path: Path) -> str:
-    with open(file_path, "rt") as f:
-        file_contents = f.read()
-    return file_contents
 
 
 def make_fileobj_copy(src: BinaryIO) -> BinaryIO:
