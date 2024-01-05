@@ -1,32 +1,6 @@
 import io
 
-from common.utils.file_utils import (
-    append_bytes,
-    make_fileobj_copy,
-)
-
-
-def test_make_fileobj_copy():
-    TEST_STR = b"Hello World"
-    with io.BytesIO(TEST_STR) as src:
-        dst = make_fileobj_copy(src)
-
-        # Writing the assertion this way verifies that both src and dest file handles have had
-        # their positions reset to 0.
-        assert src.read() == TEST_STR
-        assert dst.read() == TEST_STR
-
-
-def test_make_fileobj_copy_seek_src_to_0():
-    TEST_STR = b"Hello World"
-    with io.BytesIO(TEST_STR) as src:
-        src.seek(int(len(TEST_STR) / 2))
-        dst = make_fileobj_copy(src)
-
-        # Writing the assertion this way verifies that both src and dest file handles have had
-        # their positions reset to 0.
-        assert src.read() == TEST_STR
-        assert dst.read() == TEST_STR
+from common.utils.file_utils import append_bytes
 
 
 def test_append_bytes__pos_0():

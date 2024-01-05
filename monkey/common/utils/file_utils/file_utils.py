@@ -1,30 +1,5 @@
 import io
-import logging
-import shutil
 from typing import BinaryIO
-
-logger = logging.getLogger(__name__)
-
-
-def make_fileobj_copy(src: BinaryIO) -> BinaryIO:
-    """
-    Creates a file-like object that is a copy of the provided file-like object
-
-    The source file-like object is reset to position 0 and a copy is made. Both the source file and
-    the copy are reset to position 0 before returning.
-
-    :param src: A file-like object to copy
-    :return: A file-like object that is a copy of the provided file-like object
-    """
-    dst = io.BytesIO()
-
-    src.seek(0)
-    shutil.copyfileobj(src, dst)
-
-    src.seek(0)
-    dst.seek(0)
-
-    return dst
 
 
 def append_bytes(file: BinaryIO, bytes_to_append: bytes) -> BinaryIO:
