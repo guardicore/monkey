@@ -22,7 +22,7 @@ from monkeyevents import (
     PropagationEvent,
 )
 from monkeyevents.tags.attack import SYSTEM_INFORMATION_DISCOVERY_T1082_TAG
-from monkeytoolbox import get_os
+from monkeytoolbox import create_secure_directory, get_os
 from monkeytypes import OTP, AgentPluginType, NetworkPort, OperatingSystem, SocketAddress
 from pubsub.core import Publisher
 from serpentarium import PluginLoader, PluginThreadName
@@ -37,7 +37,7 @@ from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.utils.code_utils import del_key, secure_generate_random_string
-from common.utils.file_utils import create_secure_directory, get_binary_io_sha256_hash
+from common.utils.file_utils import get_binary_io_sha256_hash
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
     add_stolen_credentials_to_propagation_credentials_repository,

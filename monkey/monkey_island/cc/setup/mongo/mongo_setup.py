@@ -4,10 +4,10 @@ import os
 import time
 from pathlib import Path
 
+from monkeytoolbox import create_secure_directory
 from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError
 
-from common.utils.file_utils import create_secure_directory
 from monkey_island.cc.mongo_consts import MONGO_URL
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess
 
