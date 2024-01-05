@@ -2,7 +2,7 @@ import re
 from functools import lru_cache
 from typing import BinaryIO, Optional, Sequence
 
-from common.utils.file_utils import make_fileobj_copy
+from monkeytoolbox import make_fileobj_copy
 
 from . import IFileRepository
 
