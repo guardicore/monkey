@@ -8,13 +8,16 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useRegisterMutation } from '@/redux/features/api/authentication/internalAuthApi';
-import { login } from '@/helpers/signin/signin';
+import { useRegisterMutation } from '@/redux/features/api/authentication/islandApi';
 import { useState } from 'react';
+import { login } from '@/app/(auth)/_lib/login';
+import { useRouter } from 'next/navigation';
+import { PATHS } from '@/constants/paths.constants';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [register, { isLoading }] = useRegisterMutation();
+    const router = useRouter();
 
     const [registerFormValues, setRegisterFormValues] = useState({
         username: '',
@@ -31,7 +34,10 @@ const RegisterPage = () => {
                 registerData?.status === 400
             )
         ) {
-            await login(registerFormValues);
+            const success = await login(registerFormValues);
+            if (success) {
+                router.push(PATHS.ROOT);
+            }
         } else {
             // TODO: something with error
             console.log(registerData?.error?.data);
