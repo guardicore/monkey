@@ -11,32 +11,7 @@ import Container from '@mui/material/Container';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
-import { HTTP_METHODS } from '@/constants/http.constants';
-import handleAuthToken from '@/app/(auth)/_lib/handleAuthToken';
-
-type RegistrationParams = {
-    username: string;
-    password: string;
-};
-
-const sendRegistrationRequest = async (
-    registrationParams: RegistrationParams
-) => {
-    const response = await fetch(`/api/register`, {
-        method: HTTP_METHODS.POST,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        // @ts-ignore
-        body: JSON.stringify(registrationParams)
-    });
-
-    if (response.status !== 200) {
-        return null;
-    }
-
-    return await handleAuthToken(response);
-};
+import { useRegisterMutation } from '@/redux/features/api/authentication/islandApi';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -46,13 +21,13 @@ const RegisterPage = () => {
         username: '',
         password: ''
     });
+    const [register, { isError, error }] = useRegisterMutation();
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        const success = await sendRegistrationRequest(registerFormValues);
-        if (success) {
-            router.push(PATHS.ROOT);
-        }
+        register(registerFormValues)
+            .unwrap()
+            .then(() => router.push(PATHS.ROOT));
     };
 
     const handleRegisterFormValueChange = (e: any) => {
@@ -115,6 +90,8 @@ const RegisterPage = () => {
                                 sx={{ mt: 3, mb: 2 }}>
                                 Sign Up
                             </Button>
+                            {/* @ts-ignore */}
+                            {isError && <p>{JSON.stringify(error)}</p>}
                         </Box>
                     </Box>
                 </Container>
