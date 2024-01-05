@@ -29,5 +29,6 @@ export const login = async (loginValues: LoginValues) => {
         return null;
     } else {
         setToken(token, ttl);
+        return true;
     }
 };
