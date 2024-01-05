@@ -2,11 +2,15 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { removeToken } from '@/_lib/authentication';
+import { useRouter } from 'next/navigation';
+import { PATHS } from '@/constants/paths.constants';
 
 const LogoutButton = () => {
+    const router = useRouter();
     const handleButtonClick = async () => {
-        // @ts-ignore
-        logout();
+        removeToken();
+        router.push(PATHS.SIGN_IN);
     };
 
     return (
@@ -14,7 +18,9 @@ const LogoutButton = () => {
             onClick={handleButtonClick}
             variant="outlined"
             startIcon={<LogoutIcon />}
-            color="error"></Button>
+            color="error">
+            Logout
+        </Button>
     );
 };
 
