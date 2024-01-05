@@ -15,30 +15,8 @@ import Container from '@mui/material/Container';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
-import { HTTP_METHODS } from '@/constants/http.constants';
-import handleAuthToken from '@/app/(auth)/_lib/handleAuthToken';
+import { useLoginMutation } from '@/redux/features/api/authentication/islandApi';
 
-type LoginParams = {
-    username: string;
-    password: string;
-};
-
-const sendLoginRequest = async (loginValues: LoginParams) => {
-    const response = await fetch(`/api/login`, {
-        method: HTTP_METHODS.POST,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        // @ts-ignore
-        body: JSON.stringify(loginValues)
-    });
-
-    if (response.status !== 200) {
-        return null;
-    }
-
-    return await handleAuthToken(response);
-};
 
 const SignInPage = () => {
     const router = useRouter();
@@ -46,14 +24,13 @@ const SignInPage = () => {
         username: '',
         password: ''
     });
+    const [login, { isError, error }] = useLoginMutation();
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        const success = await sendLoginRequest(loginFormValues);
-
-        if (success) {
-            router.push(PATHS.ROOT);
-        }
+        login(loginFormValues)
+            .unwrap()
+            .then(() => router.push(PATHS.ROOT));
     };
 
     const handleLoginFormValueChange = (e: any) => {
@@ -127,7 +104,7 @@ const SignInPage = () => {
                             </Button>
 
                             {/* @ts-ignore */}
-                            {/*{isError && <p>{error.message}</p>}*/}
+                            {isError && <p>{JSON.stringify(error)}</p>}
 
                             <Grid container>
                                 <Grid item xs>
