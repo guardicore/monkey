@@ -12,7 +12,31 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
 import { HTTP_METHODS } from '@/constants/http.constants';
-import { setToken } from '@/_lib/authentication';
+import handleAuthToken from '@/app/(auth)/_lib/handleAuthToken';
+
+type RegistrationParams = {
+    username: string;
+    password: string;
+};
+
+const sendRegistrationRequest = async (
+    registrationParams: RegistrationParams
+) => {
+    const response = await fetch(`/api/register`, {
+        method: HTTP_METHODS.POST,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        // @ts-ignore
+        body: JSON.stringify(registrationParams)
+    });
+
+    if (response.status !== 200) {
+        return null;
+    }
+
+    return await handleAuthToken(response);
+};
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -99,40 +123,6 @@ const RegisterPage = () => {
     };
 
     return renderRegisterForm();
-};
-
-type RegistrationParams = {
-    username: string;
-    password: string;
-};
-
-const sendRegistrationRequest = async (
-    registrationParams: RegistrationParams
-) => {
-    const response = await fetch(`/api/register`, {
-        method: HTTP_METHODS.POST,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        // @ts-ignore
-        body: JSON.stringify(registrationParams)
-    });
-
-    if (response.status !== 200) {
-        return null;
-    }
-
-    const resBody = await response.json();
-
-    const token = resBody?.response?.user?.authentication_token;
-    const ttl = resBody?.response?.user?.token_ttl_sec * 1000;
-
-    if (!token) {
-        return null;
-    } else {
-        setToken(token, ttl);
-        return true;
-    }
 };
 
 export default RegisterPage;
