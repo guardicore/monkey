@@ -6,10 +6,6 @@ import ifaddr
 import psutil
 
 
-def get_my_ip_addresses() -> Sequence[IPv4Address]:
-    return [interface.ip for interface in get_network_interfaces()]
-
-
 def get_network_interfaces() -> List[IPv4Interface]:
     local_interfaces = []
     for adapter in ifaddr.get_adapters():
