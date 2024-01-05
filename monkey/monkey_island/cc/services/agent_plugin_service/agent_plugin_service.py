@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 
 import requests
 import yaml
-from monkeytoolbox import request_cache
+from monkeytoolbox import get_binary_io_sha256_hash, request_cache
 from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
 
 from common.agent_plugins import (
@@ -15,7 +15,6 @@ from common.agent_plugins import (
     PluginName,
     PluginVersion,
 )
-from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.repositories import RetrievalError
