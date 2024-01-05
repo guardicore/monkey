@@ -2,7 +2,8 @@ import json
 from logging import getLogger
 from pathlib import Path
 
-from common.utils.file_utils import expand_path
+from monkeytoolbox import expand_path
+
 from monkey_island.cc.arg_parser import IslandCmdArgs
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, SERVER_CONFIG_FILENAME
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions

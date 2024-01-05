@@ -3,10 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Annotated
 
+from monkeytoolbox import expand_path
 from monkeytypes import InfectionMonkeyBaseModel
 from pydantic import BeforeValidator, Field
 
-from common.utils.file_utils import expand_path
 from monkey_island.cc.server_utils.consts import (
     DEFAULT_CRT_PATH,
     DEFAULT_DATA_DIR,
