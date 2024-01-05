@@ -1,34 +1,8 @@
-import os
 from io import BytesIO
 
-import pytest
 from tests.utils import add_files_to_dir, add_subdirs_to_dir
 
-from common.utils.file_utils import (
-    InvalidPath,
-    expand_path,
-    get_all_regular_files_in_directory,
-    get_binary_io_sha256_hash,
-)
-
-
-def test_expand_user(patched_home_env):
-    input_path = os.path.join("~", "test")
-    expected_path = patched_home_env / "test"
-
-    assert expand_path(input_path) == expected_path
-
-
-def test_expand_vars(home_env_variable, patched_home_env):
-    input_path = os.path.join(home_env_variable, "test")
-    expected_path = patched_home_env / "test"
-
-    assert expand_path(input_path) == expected_path
-
-
-def test_expand_path__empty_path_provided():
-    with pytest.raises(InvalidPath):
-        expand_path("")
+from common.utils.file_utils import get_all_regular_files_in_directory, get_binary_io_sha256_hash
 
 
 def test_get_binary_sha256_hash():

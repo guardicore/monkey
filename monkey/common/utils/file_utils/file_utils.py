@@ -1,7 +1,6 @@
 import hashlib
 import io
 import logging
-import os
 import shutil
 from pathlib import Path
 from typing import BinaryIO, Iterable
@@ -10,17 +9,6 @@ logger = logging.getLogger(__name__)
 
 
 MAX_BLOCK_SIZE = 65536
-
-
-class InvalidPath(Exception):
-    pass
-
-
-def expand_path(path: str) -> Path:
-    if not path:
-        raise InvalidPath("Empty path provided")
-
-    return Path(os.path.expandvars(os.path.expanduser(path)))
 
 
 def get_binary_io_sha256_hash(binary: BinaryIO) -> str:
