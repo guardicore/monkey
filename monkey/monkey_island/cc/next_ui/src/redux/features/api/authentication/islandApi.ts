@@ -1,15 +1,24 @@
-import { internalApiSlice } from '@/redux/features/api/internalApiSlice';
 import { API_AUTH_ENDPOINTS } from '@/redux/features/api/authentication/constants/auth.constants';
 import { signOut } from 'next-auth/react';
 import { HTTP_METHODS } from '@/constants/http.constants';
-import { PATHS } from '@/constants/paths.constants';
+import { islandApiSlice } from '@/redux/features/api/islandApiSlice';
 
 const customExtraOptions = {
     isInternalRequest: true
 };
 
-export const internalAuthApi = internalApiSlice.injectEndpoints({
+export enum IslandEndpoints {
+    MACHINES = '/machines'
+}
+
+export const islandApi = islandApiSlice.injectEndpoints({
     endpoints: (builder: any) => ({
+        getAllMachines: builder.query({
+            query: () => ({
+                url: IslandEndpoints.MACHINES,
+                method: HTTP_METHODS.GET
+            })
+        }),
         register: builder.mutation({
             query: (data: any) => ({
                 url: API_AUTH_ENDPOINTS.REGISTER,
@@ -44,7 +53,7 @@ export const internalAuthApi = internalApiSlice.injectEndpoints({
                     const { data } = await queryFulfilled;
 
                     if (data) {
-                        await signOut({ callbackUrl: PATHS.SIGN_IN });
+                        await signOut({ redirect: false });
                     }
                 } catch (error) {
                     console.log('An error occurred while logging out');
@@ -56,4 +65,8 @@ export const internalAuthApi = internalApiSlice.injectEndpoints({
     })
 });
 
-export const { useLogoutMutation, useRegisterMutation } = internalAuthApi;
+export const {
+    useGetAllMachinesQuery,
+    useRegisterMutation,
+    useLogoutMutation
+} = islandApi;

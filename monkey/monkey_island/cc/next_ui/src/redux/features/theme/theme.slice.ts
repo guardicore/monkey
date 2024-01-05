@@ -3,7 +3,7 @@ import { THEME_APPEARANCE } from '@/providers/theme/theme';
 import {
     executeIfWindowDefined,
     localStorageGetItem
-} from '@/utils/common/localStorage.utils';
+} from '@/_lib/localStorage.utils';
 
 const THEME_APPEARANCE_KEY = 'theme_appearance';
 const getThemeAppearance = () => {
