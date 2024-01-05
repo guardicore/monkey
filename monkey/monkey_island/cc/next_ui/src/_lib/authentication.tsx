@@ -8,22 +8,22 @@ const keyOfAuthenticationToken = 'AuthenticationToken';
 const keyOfLastRefreshTimestamp = 'LastRefreshTimestamp';
 const keyOfTTL = 'TokenTTL';
 
-export const isAuthenticated(): boolean {
+export const isAuthenticated = (): boolean => {
     return !!getToken();
-}
+};
 
-export const getToken(): string {
+export const getToken = (): string | null => {
     return localStorageGetItem(keyOfAuthenticationToken);
-}
+};
 
-export const setToken(tokenValue: string, ttl: number) {
+export const setToken = (tokenValue: string, ttl: number) => {
     localStorageSetItem(keyOfTTL, ttl);
     localStorageSetItem(keyOfLastRefreshTimestamp, Date.now());
     return localStorageSetItem(keyOfAuthenticationToken, tokenValue);
-}
+};
 
-export const removeToken() {
+export const removeToken = () => {
     localStorageRemoveItem(keyOfLastRefreshTimestamp);
     localStorageRemoveItem(keyOfTTL);
     return localStorageRemoveItem(keyOfAuthenticationToken);
-}
+};
