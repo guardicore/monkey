@@ -1,11 +1,19 @@
 'use client';
 import { useGetAllMachinesQuery } from '@/redux/features/api/authentication/islandApi';
+import { useRouter } from 'next/navigation';
 
 const HomePage = () => {
-    const { data, isLoading } = useGetAllMachinesQuery();
+    const router = useRouter();
+    const { data, error, isLoading, isError, isSuccess } = useGetAllMachinesQuery();
 
+    if (isSuccess) return <div>{MachineList(data)}</div>;
     if (isLoading) return <div>loading...</div>;
-    else return <div>{MachineList(data)}</div>;
+    if (isError && error.status === 401) {
+        router.push('/signin'); // redirect to login page
+    }
+    else if (isError) {
+        return <div>Error: {error.data.response.errors}</div>;
+    }
 };
 
 const MachineList = (machines) => {
