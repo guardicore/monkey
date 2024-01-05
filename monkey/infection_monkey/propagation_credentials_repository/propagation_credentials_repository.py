@@ -46,7 +46,7 @@ class PropagationCredentialsRepository(IPropagationCredentialsRepository):
         #       implementation of EggTimer to clean this up.
         #
         #       If we can use a proxy object, we should use
-        #       common.decorators.request_cache to decorate this method.
+        #       request_cache from monkeytoolbox to decorate this method.
         try:
             with self._lock:
                 now = time.monotonic()
