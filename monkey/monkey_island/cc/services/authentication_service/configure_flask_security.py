@@ -6,9 +6,9 @@ from typing import Any, Dict
 from flask.sessions import SecureCookieSessionInterface
 from flask_mongoengine import MongoEngine
 from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security, UserDatastore
+from monkeytoolbox import open_new_securely_permissioned_file
 from wtforms import StringField
 
-from common.utils.file_utils import open_new_securely_permissioned_file
 from monkey_island.cc.mongo_consts import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT, MONGO_URL
 
 from . import AccountRole
