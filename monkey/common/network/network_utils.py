@@ -4,14 +4,6 @@ from typing import List, Optional, Sequence
 import psutil
 
 
-def port_is_used(
-    port: int,
-    ip_addresses: Optional[Sequence[IPv4Address]],
-) -> bool:
-    connections = get_connections([port], ip_addresses)
-    return len(connections) > 0
-
-
 def get_connections(
     ports: Optional[Sequence[int]] = None,
     ip_addresses: Optional[Sequence[IPv4Address]] = None,
