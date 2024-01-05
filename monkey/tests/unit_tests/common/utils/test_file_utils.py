@@ -3,9 +3,10 @@ import os
 import stat
 
 import pytest
+from monkeytoolbox import get_os
+from monkeytypes import OperatingSystem
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
 
-from common.utils.environment import is_windows_os
 from common.utils.file_utils import (
     append_bytes,
     create_secure_directory,
@@ -13,6 +14,10 @@ from common.utils.file_utils import (
     open_new_securely_permissioned_file,
 )
 from common.utils.file_utils.secure_directory import FailedDirectoryCreationError
+
+
+def os_is_windows():
+    return get_os() == OperatingSystem.WINDOWS
 
 
 @pytest.fixture
@@ -67,7 +72,7 @@ def test_create_secure_directory__path_exists_as_file(test_path):
 # Linux-only tests
 
 
-@pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
+@pytest.mark.skipif(os_is_windows(), reason="Tests Posix (not Windows) permissions.")
 def test_create_secure_directory__already_exists_secure_linux(test_path):
     test_path.mkdir(mode=stat.S_IRWXU)
     create_secure_directory(test_path)
@@ -75,7 +80,7 @@ def test_create_secure_directory__already_exists_secure_linux(test_path):
     assert_linux_permissions(test_path)
 
 
-@pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
+@pytest.mark.skipif(os_is_windows(), reason="Tests Posix (not Windows) permissions.")
 def test_create_secure_directory__already_exists_insecure_linux(test_path):
     test_path.mkdir(mode=0o777)
     create_secure_directory(test_path)
@@ -83,14 +88,14 @@ def test_create_secure_directory__already_exists_insecure_linux(test_path):
     assert_linux_permissions(test_path)
 
 
-@pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
+@pytest.mark.skipif(os_is_windows(), reason="Tests Posix (not Windows) permissions.")
 def test_create_secure_directory__perm_linux(test_path):
     create_secure_directory(test_path)
 
     assert_linux_permissions(test_path)
 
 
-@pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
+@pytest.mark.skipif(os_is_windows(), reason="Tests Posix (not Windows) permissions.")
 def test_open_new_securely_permissioned_file__perm_linux(test_path):
     with open_new_securely_permissioned_file(test_path):
         pass
@@ -106,7 +111,7 @@ def test_open_new_securely_permissioned_file__perm_linux(test_path):
 # Windows-only tests
 
 
-@pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
+@pytest.mark.skipif(not os_is_windows(), reason="Tests Windows (not Posix) permissions.")
 def test_create_secure_directory__already_exists_secure_windows(test_path):
     # creates a new secure directory
     create_secure_directory(test_path)
@@ -116,7 +121,7 @@ def test_create_secure_directory__already_exists_secure_windows(test_path):
     assert_windows_permissions(test_path)
 
 
-@pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
+@pytest.mark.skipif(not os_is_windows(), reason="Tests Windows (not Posix) permissions.")
 def test_create_secure_directory__already_exists_insecure_windows(test_path):
     test_path.mkdir()
     create_secure_directory(test_path)
@@ -124,14 +129,14 @@ def test_create_secure_directory__already_exists_insecure_windows(test_path):
     assert_windows_permissions(test_path)
 
 
-@pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
+@pytest.mark.skipif(not os_is_windows(), reason="Tests Windows (not Posix) permissions.")
 def test_create_secure_directory__perm_windows(test_path):
     create_secure_directory(test_path)
 
     assert_windows_permissions(test_path)
 
 
-@pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
+@pytest.mark.skipif(not os_is_windows(), reason="Tests Windows (not Posix) permissions.")
 def test_open_new_securely_permissioned_file__perm_windows(test_path):
     with open_new_securely_permissioned_file(test_path):
         pass

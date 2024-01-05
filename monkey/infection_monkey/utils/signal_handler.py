@@ -2,7 +2,9 @@ import logging
 import signal
 from typing import Optional
 
-from common.utils.environment import is_windows_os
+from monkeytoolbox import get_os
+from monkeytypes import OperatingSystem
+
 from infection_monkey.i_master import IMaster
 
 logger = logging.getLogger(__name__)
@@ -17,7 +19,7 @@ class StopSignalHandler:
 
     # Windows won't let us correctly deregister a method, but Callables and closures work.
     def __call__(self, signum: int, *args) -> Optional[bool]:
-        if is_windows_os():
+        if get_os() == OperatingSystem.WINDOWS:
             return self._handle_windows_signals(signum)
 
         self._handle_posix_signals(signum, args)
@@ -52,7 +54,7 @@ def register_signal_handlers(master: IMaster):
     global _signal_handler
     _signal_handler = StopSignalHandler(master)
 
-    if is_windows_os():
+    if get_os() == OperatingSystem.WINDOWS:
         import win32api
 
         # CTRL_CLOSE_EVENT signal has a timeout of 5000ms,
@@ -69,7 +71,7 @@ def reset_signal_handlers():
     """
     global _signal_handler
 
-    if is_windows_os():
+    if get_os() == OperatingSystem.WINDOWS:
         import win32api
 
         if _signal_handler:

@@ -1,24 +1,12 @@
-import platform
 import uuid
 from contextlib import suppress
 
+from monkeytoolbox import get_os
 from monkeytypes import HardwareID, OperatingSystem
 
 
-# DEPRECATED: Use get_os() instead
-def is_windows_os() -> bool:
-    return platform.system() == "Windows"
-
-
-def get_os() -> OperatingSystem:
-    if is_windows_os():
-        return OperatingSystem.WINDOWS
-
-    return OperatingSystem.LINUX
-
-
 def get_hardware_id() -> HardwareID:
-    if is_windows_os():
+    if get_os() == OperatingSystem.WINDOWS:
         return _get_hardware_id_windows()
 
     return _get_hardware_id_linux()

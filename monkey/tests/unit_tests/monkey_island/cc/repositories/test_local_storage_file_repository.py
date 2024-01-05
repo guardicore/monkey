@@ -4,12 +4,17 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
+from monkeytoolbox import get_os
+from monkeytypes import OperatingSystem
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
 from tests.utils import raise_
 
-from common.utils.environment import is_windows_os
 from monkey_island.cc import repositories
 from monkey_island.cc.repositories import LocalStorageFileRepository
+
+
+def os_is_windows():
+    return get_os() == OperatingSystem.WINDOWS
 
 
 def test_error_if_storage_directory_is_file(tmp_path):
@@ -28,7 +33,7 @@ def test_directory_created(tmp_path):
     assert new_dir.exists() and new_dir.is_dir()
 
 
-@pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
+@pytest.mark.skipif(os_is_windows(), reason="Tests Posix (not Windows) permissions.")
 def test_directory_permissions__linux(tmp_path):
     new_dir = tmp_path / "new_dir"
 
@@ -37,7 +42,7 @@ def test_directory_permissions__linux(tmp_path):
     assert_linux_permissions(new_dir)
 
 
-@pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
+@pytest.mark.skipif(not os_is_windows(), reason="Tests Windows (not Posix) permissions.")
 def test_directory_permissions__windows(tmp_path):
     new_dir = tmp_path / "new_dir"
 
@@ -95,7 +100,7 @@ def test_fn__ignore_relative_path(tmp_path, fn):
 
 @pytest.mark.parametrize("fn", [save_file, open_file, delete_file])
 def test_fn__ignore_absolute_path(tmp_path, fn):
-    if is_windows_os():
+    if os_is_windows():
         fn(tmp_path, "C:\\Windows")
     else:
         fn(tmp_path, "/home/")

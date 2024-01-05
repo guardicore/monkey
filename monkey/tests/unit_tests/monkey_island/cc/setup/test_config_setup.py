@@ -3,9 +3,10 @@ from json import dumps
 from pathlib import Path
 
 import pytest
+from monkeytoolbox import get_os
+from monkeytypes import OperatingSystem
 
 import monkey_island.cc.setup.config_setup  # noqa: F401
-from common.utils.environment import is_windows_os
 from monkey_island.cc.arg_parser import IslandCmdArgs
 from monkey_island.cc.setup.config_setup import get_server_config
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions
@@ -78,7 +79,7 @@ def test_not_overriding_unspecified_values(
 
 
 def test_paths_get_expanded(deployment_server_config_path, empty_cmd_args):
-    if is_windows_os():
+    if get_os() == OperatingSystem.WINDOWS:
         path = "%temp%/path"
     else:
         path = "$HOME/path"
