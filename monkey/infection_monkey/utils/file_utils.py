@@ -3,7 +3,7 @@ import logging
 from pathlib import Path, WindowsPath
 from typing import Callable, Iterable, Set
 
-from common.utils.code_utils import apply_filters
+from monkeytoolbox import apply_filters
 
 logger = logging.getLogger(__name__)
 

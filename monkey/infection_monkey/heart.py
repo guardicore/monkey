@@ -1,8 +1,9 @@
 import logging
 import time
 
+from monkeytoolbox import PeriodicCaller
+
 from common.common_consts import HEARTBEAT_INTERVAL
-from common.utils.code_utils import PeriodicCaller
 from infection_monkey.island_api_client import IIslandAPIClient
 
 logger = logging.getLogger(__name__)

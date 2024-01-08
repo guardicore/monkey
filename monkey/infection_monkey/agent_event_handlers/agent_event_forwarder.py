@@ -3,8 +3,8 @@ import queue
 import threading
 
 from monkeyevents import AbstractAgentEvent
+from monkeytoolbox import PeriodicCaller
 
-from common.utils.code_utils import PeriodicCaller
 from infection_monkey.island_api_client import IIslandAPIClient
 
 logger = logging.getLogger(__name__)
