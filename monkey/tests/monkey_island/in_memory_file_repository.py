@@ -2,7 +2,8 @@ import io
 import re
 from typing import BinaryIO, Dict, Sequence
 
-from common.utils.code_utils import del_key
+from monkeytoolbox import del_key
+
 from monkey_island.cc.repositories import IFileRepository, UnknownRecordError
 
 
