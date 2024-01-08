@@ -1,7 +1,7 @@
+from monkeytoolbox import PeriodicCaller
 from ophidian import DIContainer
 
 from common.common_consts import HEARTBEAT_INTERVAL
-from common.utils.code_utils import PeriodicCaller
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.island_event_handlers import (
     AgentHeartbeatMonitor,

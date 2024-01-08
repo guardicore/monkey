@@ -4,9 +4,9 @@ from threading import Lock
 from typing import Sequence, Tuple
 
 from flask_security import UserDatastore
+from monkeytoolbox import secure_generate_random_string
 from monkeytypes import OTP, Token
 
-from common.utils.code_utils import secure_generate_random_string
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.repositories import UnknownRecordError
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
