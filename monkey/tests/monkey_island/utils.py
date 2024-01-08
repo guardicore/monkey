@@ -4,10 +4,9 @@ from monkeytoolbox import get_os
 from monkeytypes import OperatingSystem
 
 if get_os() == OperatingSystem.WINDOWS:
+    import monkeytoolbox.windows_permissions as windows_permissions
     import win32api
     import win32security
-
-    import common.utils.windows_permissions as windows_permissions
 else:
     import os
     import stat
