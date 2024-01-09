@@ -5,9 +5,8 @@ from hashlib import pbkdf2_hmac
 from itertools import chain
 from typing import Optional
 
+from monkeytoolbox import interruptible_iter
 from monkeytypes import Credentials, EmailAddress, Event, Password, Username
-
-from infection_monkey.utils.threading import interruptible_iter
 
 from .browser_credentials_database_path import BrowserCredentialsDatabasePath
 from .database_reader import DatabaseReader
