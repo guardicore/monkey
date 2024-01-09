@@ -1,8 +1,7 @@
 from typing import BinaryIO
 
+from monkeytoolbox import append_bytes, make_fileobj_copy
 from monkeytypes import OperatingSystem
-
-from common.utils.file_utils import append_bytes, make_fileobj_copy
 
 from .i_agent_binary_repository import IAgentBinaryRepository
 from .i_masquerade_repository import IMasqueradeRepository

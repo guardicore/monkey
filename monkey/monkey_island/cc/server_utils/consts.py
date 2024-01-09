@@ -1,10 +1,8 @@
 import os
 from pathlib import Path
 
-from monkeytoolbox import get_os
+from monkeytoolbox import expand_path, get_os
 from monkeytypes import OperatingSystem
-
-from common.utils.file_utils import expand_path
 
 
 def get_default_data_dir() -> str:

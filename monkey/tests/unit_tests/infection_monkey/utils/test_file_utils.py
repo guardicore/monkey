@@ -1,9 +1,9 @@
 import os
 
 import pytest
+from monkeytoolbox import get_all_regular_files_in_directory
 from tests.utils import add_files_to_dir, is_user_admin
 
-from common.utils.file_utils import get_all_regular_files_in_directory
 from infection_monkey.utils.file_utils import (
     file_extension_filter,
     filter_files,

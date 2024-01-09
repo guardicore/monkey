@@ -3,8 +3,8 @@ from http import HTTPStatus
 from pathlib import Path
 
 from flask_security import auth_token_required, roles_accepted
+from monkeytoolbox import get_text_file_contents
 
-from common.utils.file_utils import get_text_file_contents
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 

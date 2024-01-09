@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Iterable
 from unittest.mock import MagicMock
 
-from common.utils.file_utils import get_binary_io_sha256_hash
+from monkeytoolbox import get_binary_io_sha256_hash
 
 
 def is_user_admin():
