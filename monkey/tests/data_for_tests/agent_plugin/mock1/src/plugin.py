@@ -6,13 +6,13 @@ from typing import Any, Dict, Sequence
 
 import mock_dependency
 from monkeyevents import ExploitationEvent, PropagationEvent
+from monkeytoolbox import interruptible_iter
 from monkeytypes import AgentID
 
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.exploit import IAgentBinaryRepository
 from infection_monkey.i_puppet import ExploiterResult, TargetHost
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
-from infection_monkey.utils.threading import interruptible_iter
 
 logger = logging.getLogger(__name__)
 

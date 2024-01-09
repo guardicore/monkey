@@ -8,10 +8,10 @@ from typing import Optional
 import psutil
 from monkeyevents import CPUConsumptionEvent
 from monkeyevents.tags import RESOURCE_HIJACKING_T1496_TAG
+from monkeytoolbox import create_daemon_thread
 from monkeytypes import AgentID, NonNegativeFloat, OperatingSystem, PercentLimited
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.utils.threading import create_daemon_thread
 
 from .consts import CRYPTOJACKER_PAYLOAD_TAG
 

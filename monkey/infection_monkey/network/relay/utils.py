@@ -4,15 +4,11 @@ from contextlib import suppress
 from typing import Dict, Iterable, Iterator
 
 import requests
+from monkeytoolbox import ThreadSafeIterator, create_daemon_thread, run_worker_threads
 from monkeytypes import SocketAddress
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST
-from infection_monkey.utils.threading import (
-    ThreadSafeIterator,
-    create_daemon_thread,
-    run_worker_threads,
-)
 
 logger = logging.getLogger(__name__)
 

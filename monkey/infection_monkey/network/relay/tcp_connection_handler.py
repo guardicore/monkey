@@ -3,9 +3,8 @@ import socket
 from threading import Thread
 from typing import Callable, List
 
+from monkeytoolbox import InterruptableThreadMixin
 from monkeytypes import NetworkPort
-
-from infection_monkey.utils.threading import InterruptableThreadMixin
 
 PROXY_TIMEOUT = 2.5
 

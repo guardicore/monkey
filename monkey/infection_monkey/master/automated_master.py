@@ -5,12 +5,12 @@ from ipaddress import IPv4Interface
 from typing import Any, Callable, Dict, List, Optional, Sequence
 
 from egg_timer import EggTimer
+from monkeytoolbox import create_daemon_thread, interruptible_iter
 
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet, RejectedRequestError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 from infection_monkey.utils.propagation import maximum_depth_reached
-from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
 from . import Exploiter, IPScanner, Propagator
 
