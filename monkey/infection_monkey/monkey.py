@@ -26,9 +26,11 @@ from monkeytoolbox import (
     create_secure_directory,
     del_key,
     get_binary_io_sha256_hash,
+    get_hostname,
     get_my_ip_addresses,
     get_network_interfaces,
     get_os,
+    get_os_version,
     secure_generate_random_string,
 )
 from monkeytypes import OTP, AgentPluginType, NetworkPort, OperatingSystem, SocketAddress
@@ -96,7 +98,7 @@ from infection_monkey.puppet import (
     PluginSourceExtractor,
 )
 from infection_monkey.puppet.puppet import Puppet
-from infection_monkey.utils import agent_process, environment
+from infection_monkey.utils import agent_process
 from infection_monkey.utils.argparse_types import positive_int
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
@@ -312,8 +314,8 @@ class InfectionMonkey:
 
     def _discover_os(self) -> OperatingSystem:
         timestamp = time.time()
-        operating_system = environment.get_os()
-        operating_system_version = environment.get_os_version()
+        operating_system = get_os()
+        operating_system_version = get_os_version()
 
         event = OSDiscoveryEvent(
             source=self._agent_id,
@@ -328,7 +330,7 @@ class InfectionMonkey:
 
     def _discover_hostname(self):
         timestamp = time.time()
-        hostname = environment.get_hostname()
+        hostname = get_hostname()
 
         event = HostnameDiscoveryEvent(
             source=self._agent_id,
