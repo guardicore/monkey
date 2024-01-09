@@ -4,8 +4,9 @@ from contextlib import suppress
 from queue import Queue
 from threading import Event
 
+from monkeytoolbox import create_daemon_thread
+
 from common.event_queue import IAgentEventQueue
-from infection_monkey.utils.threading import create_daemon_thread
 
 logger = logging.getLogger(__name__)
 
