@@ -46,7 +46,7 @@ class RansomwareOptions(InfectionMonkeyBaseModel):
         description="The file extension that the Infection Monkey will use for the encrypted file.",
     )
     linux_target_dir: Optional[LinuxDirectory] = Field(
-        default=None,
+        default="/tmp/",
         title="Linux Target Directory",
         description="A path to a directory on Linux systems that contains files you will allow "
         "Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
