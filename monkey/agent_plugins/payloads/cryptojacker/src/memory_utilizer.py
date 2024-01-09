@@ -5,10 +5,10 @@ from typing import Optional
 import psutil
 from monkeyevents import RAMConsumptionEvent
 from monkeyevents.tags import RESOURCE_HIJACKING_T1496_TAG
+from monkeytoolbox import PeriodicCaller
 from monkeytypes import AgentID, PercentLimited
 
 from common.event_queue import IAgentEventPublisher
-from common.utils.code_utils import PeriodicCaller
 
 from .consts import CRYPTOJACKER_PAYLOAD_TAG
 

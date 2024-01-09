@@ -9,9 +9,9 @@ import pytest
 from flask import Flask
 from flask_mongoengine import MongoEngine
 from flask_security import MongoEngineUserDatastore, Security
+from monkeytoolbox import insecure_generate_random_string
 
 import monkey_island
-from common.utils.code_utils import insecure_generate_random_string
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 from monkey_island.cc.services.authentication_service.flask_resources.login import Login

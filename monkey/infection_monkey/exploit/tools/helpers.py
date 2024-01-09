@@ -2,9 +2,9 @@ import logging
 import string
 from pathlib import PurePath, PurePosixPath, PureWindowsPath
 
+from monkeytoolbox import insecure_generate_random_string
 from monkeytypes import OperatingSystem
 
-from common.utils.code_utils import insecure_generate_random_string
 from infection_monkey.i_puppet import TargetHost
 
 logger = logging.getLogger(__name__)

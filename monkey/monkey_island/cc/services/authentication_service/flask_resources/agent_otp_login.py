@@ -6,10 +6,10 @@ from typing import Tuple
 from flask import make_response, request
 from flask_limiter import Limiter, RateLimitExceeded
 from flask_limiter.util import get_remote_address
+from monkeytoolbox import secure_generate_random_string
 from monkeytypes import OTP, AgentID
 
 from common.common_consts.token_keys import ACCESS_TOKEN_KEY_NAME, TOKEN_TTL_KEY_NAME
-from common.utils.code_utils import secure_generate_random_string
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.authentication_service import AccountRole
 
