@@ -6,11 +6,11 @@ from typing import Any, Dict
 
 import mock_dependency
 from monkeyevents import AgentEventTag, FileEncryptionEvent
+from monkeytoolbox import interruptible_iter
 from monkeytypes import AgentID
 
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.i_puppet import PayloadResult
-from infection_monkey.utils.threading import interruptible_iter
 
 logger = logging.getLogger(__name__)
 

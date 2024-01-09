@@ -5,10 +5,10 @@ from typing import Any, Dict, Sequence
 
 import mock_dependency
 from monkeyevents import CredentialsStolenEvent
+from monkeytoolbox import interruptible_iter
 from monkeytypes import AgentID, Credentials, Password, Username
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.utils.threading import interruptible_iter
 
 logger = logging.getLogger(__name__)
 
