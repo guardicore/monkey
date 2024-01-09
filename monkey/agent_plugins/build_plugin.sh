@@ -55,14 +55,20 @@ python3.11 << EOF
 import json
 from pathlib import Path
 
-config_schema = {"type": "object"}
+def construct_config_schema():
+  config_schema = {"type": "object"}
+  print("Generating config-schema.json from ${plugin_options_filepath}.")
+  if Path("${plugin_options_filepath}").exists():
+    from $plugin_options_filename import $plugin_options_model_name
+    config_schema = {"properties": $plugin_options_model_name.model_json_schema()["properties"]}
 
-if Path("${plugin_options_filepath}").exists():
-  from $plugin_options_filename import $plugin_options_model_name
-  config_schema = {"properties": $plugin_options_model_name.model_json_schema()["properties"]}
+  with open("${PLUGIN_PATH}/config-schema.json", "w") as f:
+    f.write(json.dumps(config_schema))
 
-with open("${PLUGIN_PATH}/config-schema.json", "w") as f:
-  f.write(json.dumps(config_schema))
+if Path("${PLUGIN_PATH}/config-schema.json").exists():
+  print("\033[0m\033[91mSkipping generating config-schema. Reason: config_schema.json already exists \033[0m")
+else:
+  construct_config_schema()
 
 EOF
 
