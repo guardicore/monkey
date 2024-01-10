@@ -55,16 +55,26 @@ python3.11 << EOF
 import json
 from pathlib import Path
 
-config_schema = {"type": "object"}
+def construct_config_schema():
+  config_schema = {"type": "object"}
+  print("Generating config-schema.json from ${plugin_options_filepath}.")
+  if Path("${plugin_options_filepath}").exists():
+    from $plugin_options_filename import $plugin_options_model_name
+    config_schema = {"properties": $plugin_options_model_name.model_json_schema()["properties"]}
 
-if Path("${plugin_options_filepath}").exists():
-  from $plugin_options_filename import $plugin_options_model_name
-  config_schema = {"properties": $plugin_options_model_name.model_json_schema()["properties"]}
+  with open("${PLUGIN_PATH}/${SCHEMA_FILENAME}", "w") as f:
+    f.write(json.dumps(config_schema))
 
-with open("${PLUGIN_PATH}/config-schema.json", "w") as f:
-  f.write(json.dumps(config_schema))
+if Path("${PLUGIN_PATH}/${SCHEMA_FILENAME}").exists():
+  print("\033[0m\033[91mSkipping generating config-schema. Reason: config_schema.json already exists \033[0m")
+  exit(1)
+else:
+  construct_config_schema()
+  exit(0)
 
 EOF
+
+config_schema_generated=$?
 
 tar -zcf "$source_archive" --exclude __pycache__ --exclude .mypy_cache --exclude .pytest_cache --exclude .git --exclude .gitignore --exclude .DS_Store -- *
 
@@ -74,4 +84,8 @@ popd || exit 1
 plugin_filename=$(get_plugin_filename "$PLUGIN_PATH") || fail "Failed to get plugin filename: $plugin_filename"
 tar -cf "$PLUGIN_PATH/$plugin_filename" "$plugin_manifest_filename" "$SCHEMA_FILENAME" "$SOURCE_FILENAME"
 rm "$source_archive"
+if [ "$config_schema_generated" -eq 0  ]; then
+    echo -e "\033[0;33mRemoving generated $SCHEMA_FILENAME.\033[0m"
+    rm "$PLUGIN_PATH/$SCHEMA_FILENAME"
+fi
 popd || exit 1
