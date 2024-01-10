@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import {Button, Image, Modal} from 'react-bootstrap';
+import {Button, Modal} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSearchPlus} from '@fortawesome/free-solid-svg-icons';
 
