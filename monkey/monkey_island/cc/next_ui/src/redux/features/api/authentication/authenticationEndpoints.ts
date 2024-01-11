@@ -3,33 +3,16 @@ import { islandApiSlice } from '@/redux/features/api/islandApiSlice';
 import { LoginParams } from '@/redux/features/api/types/islandApi';
 import handleAuthToken from '@/app/(auth)/_lib/handleAuthToken';
 
-export enum IslandEndpoints {
+enum BackendEndpoints {
     LOGIN = '/login',
-    MACHINES = '/machines',
     REGISTER = '/register'
 }
 
-function provideUnauthorizedTag(result, error) {
-    return result
-        ? []
-        : error?.status === 401
-          ? ['UNAUTHORIZED']
-          : ['UNKNOWN_ERROR'];
-}
-
-export const islandApi = islandApiSlice.injectEndpoints({
+export const authenticationEndpoints = islandApiSlice.injectEndpoints({
     endpoints: (builder: any) => ({
-        getAllMachines: builder.query({
-            query: () => ({
-                url: IslandEndpoints.MACHINES,
-                method: HTTP_METHODS.GET
-            }),
-            providesTags: (result, error, _) =>
-                provideUnauthorizedTag(result, error)
-        }),
         login: builder.mutation({
             query: (loginValues: LoginParams) => ({
-                url: IslandEndpoints.LOGIN,
+                url: BackendEndpoints.LOGIN,
                 method: HTTP_METHODS.POST,
                 headers: {
                     'Content-Type': 'application/json'
@@ -46,7 +29,7 @@ export const islandApi = islandApiSlice.injectEndpoints({
         }),
         register: builder.mutation({
             query: (loginValues) => ({
-                url: IslandEndpoints.REGISTER,
+                url: BackendEndpoints.REGISTER,
                 method: HTTP_METHODS.POST,
                 headers: {
                     'Content-Type': 'application/json'
@@ -64,5 +47,5 @@ export const islandApi = islandApiSlice.injectEndpoints({
     })
 });
 
-export const { useGetAllMachinesQuery, useLoginMutation, useRegisterMutation } =
-    islandApi;
+export const { useLoginMutation, useRegisterMutation } =
+    authenticationEndpoints;

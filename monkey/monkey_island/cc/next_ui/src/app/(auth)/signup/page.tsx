@@ -11,7 +11,7 @@ import Container from '@mui/material/Container';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
-import { useRegisterMutation } from '@/redux/features/api/authentication/islandApi';
+import { useRegisterMutation } from '@/redux/features/api/authentication/authenticationEndpoints';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
