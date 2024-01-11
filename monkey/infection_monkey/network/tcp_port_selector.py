@@ -10,13 +10,6 @@ from monkeytypes import IntRange, NetworkPort
 from .info import ITCPPortSelector
 from .ports import COMMON_PORTS
 
-# Timeout for monkey connections
-LOOPBACK_NAME = b"lo"
-SIOCGIFADDR = 0x8915  # get PA address
-SIOCGIFNETMASK = 0x891B  # get network PA mask
-RTF_UP = 0x0001  # Route usable
-RTF_REJECT = 0x0200
-
 
 def port_range(int_range: IntRange) -> Iterator[NetworkPort]:
     """Yields port values in the provided range, bounded by [0, 65535]."""
