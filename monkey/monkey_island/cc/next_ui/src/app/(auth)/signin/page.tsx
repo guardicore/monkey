@@ -15,8 +15,7 @@ import Container from '@mui/material/Container';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
-import { useLoginMutation } from '@/redux/features/api/authentication/islandApi';
-
+import { useLoginMutation } from '@/redux/features/api/authentication/authenticationEndpoints';
 
 const SignInPage = () => {
     const router = useRouter();
