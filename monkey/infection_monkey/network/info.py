@@ -2,7 +2,7 @@ import abc
 import socket
 import struct
 from dataclasses import dataclass
-from typing import List, Optional, Tuple
+from typing import List, Optional, Sequence, Tuple
 
 from monkeytoolbox import get_os
 from monkeytypes import NetworkPort, OperatingSystem
@@ -103,10 +103,10 @@ class ITCPPortSelector(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def get_free_tcp_port(
         self,
-        min_range,
-        max_range,
-        lease_time_sec,
-        preferred_ports,
+        min_range: int = 1024,
+        max_range: int = 65535,
+        lease_time_sec: float = 30,
+        preferred_ports: Sequence[NetworkPort] = [],
     ) -> Optional[NetworkPort]:
         """
         Get a free TCP port that a new server can listen on
