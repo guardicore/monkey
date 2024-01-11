@@ -12,7 +12,7 @@ from monkeytoolbox import get_os  # noqa: E402
 from monkeytypes import OperatingSystem  # noqa: E402
 
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration  # noqa: E402
-from infection_monkey.network import TCPPortSelector  # noqa: E402
+from infection_monkey.network import ITCPPortSelector, TCPPortSelector  # noqa: E402
 
 
 @pytest.fixture(scope="session")
@@ -81,5 +81,5 @@ def default_agent_configuration() -> AgentConfiguration:
 
 
 @pytest.fixture(scope="session")
-def tcp_port_selector() -> TCPPortSelector:
+def tcp_port_selector() -> ITCPPortSelector:
     return TCPPortSelector()

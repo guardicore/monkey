@@ -14,7 +14,7 @@ from infection_monkey.island_api_client import (
     IslandAPIError,
     IslandAPIRequestError,
 )
-from infection_monkey.network import TCPPortSelector
+from infection_monkey.network import ITCPPortSelector
 from infection_monkey.plugin.i_plugin_factory import IPluginFactory
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor
@@ -48,8 +48,8 @@ def dummy_propagation_credentials_repository() -> IPropagationCredentialsReposit
 
 
 @pytest.fixture
-def dummy_tcp_port_selector() -> TCPPortSelector:
-    return MagicMock(spec=TCPPortSelector)
+def dummy_tcp_port_selector() -> ITCPPortSelector:
+    return MagicMock(spec=ITCPPortSelector)
 
 
 @pytest.fixture
