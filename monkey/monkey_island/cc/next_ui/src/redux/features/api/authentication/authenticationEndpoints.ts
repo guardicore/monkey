@@ -19,9 +19,6 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 },
                 body: JSON.stringify(loginValues)
             }),
-            // on successful login, will refetch all currently
-            // 'UNAUTHORIZED' queries
-            invalidatesTags: (result) => (result ? ['UNAUTHORIZED'] : []),
             async onQueryStarted(_, { queryFulfilled }) {
                 const { data } = await queryFulfilled;
                 handleAuthToken(data);
@@ -36,9 +33,6 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 },
                 body: JSON.stringify(loginValues)
             }),
-            // on successful login, will refetch all currently
-            // 'UNAUTHORIZED' queries
-            invalidatesTags: (result) => (result ? ['UNAUTHORIZED'] : []),
             async onQueryStarted(_, { queryFulfilled }) {
                 const response = await queryFulfilled;
                 handleAuthToken(response);
