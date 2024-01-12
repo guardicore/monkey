@@ -17,7 +17,6 @@ import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
 import { useLoginMutation } from '@/redux/features/api/authentication/islandApi';
 
-
 const SignInPage = () => {
     const router = useRouter();
     const [loginFormValues, setLoginFormValues] = useState({

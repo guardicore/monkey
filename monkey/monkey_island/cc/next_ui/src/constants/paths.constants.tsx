@@ -2,6 +2,7 @@ export enum PATHS {
     HOME = '/home',
     MAP = '/map',
     EVENTS = '/events',
+    CONFIGURATION = '/configuration',
     SIGN_IN = '/signin',
     SIGN_UP = '/signup',
     ROOT = '/'

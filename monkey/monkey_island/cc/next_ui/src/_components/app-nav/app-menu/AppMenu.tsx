@@ -7,11 +7,17 @@ import classes from './appMenu.module.scss';
 import HomeIcon from '@mui/icons-material/Home';
 import HubIcon from '@mui/icons-material/Hub';
 import EventNoteIcon from '@mui/icons-material/EventNote';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const MenuLinks = [
     { path: PATHS.HOME, label: 'Home', icon: <HomeIcon /> },
     { path: PATHS.MAP, label: 'Map', icon: <HubIcon /> },
-    { path: PATHS.EVENTS, label: 'Events', icon: <EventNoteIcon /> }
+    { path: PATHS.EVENTS, label: 'Events', icon: <EventNoteIcon /> },
+    {
+        path: PATHS.CONFIGURATION,
+        label: 'Configuration',
+        icon: <SettingsIcon />
+    }
 ];
 
 export interface MenuProps {

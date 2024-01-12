@@ -17,6 +17,15 @@ function provideUnauthorizedTag(result, error) {
           : ['UNKNOWN_ERROR'];
 }
 
+// API:
+// - Authentication
+//   - (POST) /api/agent-otp-login
+//   - GET /api/agent-otp
+//   - POST /api/login
+//   - POST /api/logout
+//   - POST /api/refresh-authentication-token
+//   - POST /api/register
+//   - GET /api/registration-status
 export const islandApi = islandApiSlice.injectEndpoints({
     endpoints: (builder: any) => ({
         getAllMachines: builder.query({
