@@ -7,6 +7,7 @@ import { islandApiSlice } from '@/redux/features/api/islandApiSlice';
 import { LoginParams } from '@/redux/features/api/types/islandApi';
 import handleAuthToken from '@/app/(auth)/_lib/handleAuthToken';
 import { PromiseWithKnownReason } from '@reduxjs/toolkit/dist/query/core/buildMiddleware/types';
+import { Actions } from '@/redux/features/actions';
 
 enum BackendEndpoints {
     LOGIN = '/login',
@@ -67,7 +68,7 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
             async onQueryStarted(_, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
-                    dispatch({ type: 'LOGOUT' });
+                    dispatch({ type: Actions.LOGOUT });
                 } catch (error) {
                     // dispatch();
                 }
