@@ -8,8 +8,9 @@ const keyOfAuthenticationToken = 'AuthenticationToken';
 const keyOfLastRefreshTimestamp = 'LastRefreshTimestamp';
 const keyOfTTL = 'TokenTTL';
 
-export const isAuthenticated = (): boolean => {
-    return !!getToken();
+export const tokenStored = (): boolean => {
+    const token = getToken();
+    return token !== null;
 };
 
 export const getToken = (): string | null => {

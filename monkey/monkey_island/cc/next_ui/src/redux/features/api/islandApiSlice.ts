@@ -10,7 +10,7 @@ import {
     DEFAULT_QUERY_TIMEOUT
 } from '@/redux/features/api/authentication/constants/auth.constants';
 import { getApiPath } from '@/constants/paths.constants';
-import { getToken } from '@/_lib/authentication';
+import { getToken, tokenStored } from '@/_lib/authentication';
 
 const baseQuery: BaseQueryFn = fetchBaseQuery({
     baseUrl: getApiPath(),
@@ -25,12 +25,24 @@ const baseQuery: BaseQueryFn = fetchBaseQuery({
     timeout: DEFAULT_QUERY_TIMEOUT
 });
 
+const baseQueryWrapper = async (
+    args: any,
+    api: BaseQueryApi,
+    extraOptions: object
+): Promise<any> => {
+    const result = await baseQuery(args, api, extraOptions);
+    if (result.error?.status === 401 && tokenStored()) {
+        api.dispatch({ type: 'LOGOUT' });
+    }
+    return result;
+};
+
 const getIslandBaseQuery = async (
     args: any,
     api: BaseQueryApi,
     extraOptions: object
 ): Promise<any> => {
-    return baseQuery(args, api, extraOptions);
+    return baseQueryWrapper(args, api, extraOptions);
 };
 
 export const islandApiSlice = createApi({
