@@ -4,6 +4,7 @@ import MainLayout from '@/layouts/main-layout/MainLayout';
 import { useRouter } from 'next/navigation';
 import { tokenStored } from '@/_lib/authentication';
 import { PATHS } from '@/constants/paths.constants';
+import { Events } from '@/constants/events.constants';
 import { useEffect } from 'react';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -16,10 +17,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             }
         }
 
-        window.addEventListener('LOGOUT', checkToken);
+        window.addEventListener(Events.LOGOUT, checkToken);
 
         return () => {
-            window.removeEventListener('LOGOUT', checkToken);
+            window.removeEventListener(Events.LOGOUT, checkToken);
         };
     }, [router]);
 
