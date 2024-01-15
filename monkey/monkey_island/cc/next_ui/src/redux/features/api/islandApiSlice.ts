@@ -11,7 +11,7 @@ import {
 } from '@/redux/features/api/authentication/authenticationConstants';
 import { getApiPath } from '@/constants/paths.constants';
 import { getToken, tokenStored } from '@/_lib/authentication';
-import { Actions } from '@/redux/features/actions';
+import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
 
 const baseQuery: BaseQueryFn = fetchBaseQuery({
     baseUrl: getApiPath(),
@@ -33,7 +33,7 @@ const baseQueryWrapper = async (
 ): Promise<any> => {
     const result = await baseQuery(args, api, extraOptions);
     if (result.error?.status === 401 && tokenStored()) {
-        api.dispatch({ type: Actions.LOGOUT });
+        api.dispatch(AuthenticationActions.logout);
     }
     return result;
 };
