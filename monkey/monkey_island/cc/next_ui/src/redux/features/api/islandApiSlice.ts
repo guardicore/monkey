@@ -8,7 +8,7 @@ import {
     AUTHENTICATION_TOKEN_HEADER,
     AUTHORIZATION_HEADER,
     DEFAULT_QUERY_TIMEOUT
-} from '@/redux/features/api/authentication/constants/auth.constants';
+} from '@/redux/features/api/authentication/authenticationConstants';
 import { getApiPath } from '@/constants/paths.constants';
 import { getToken, tokenStored } from '@/_lib/authentication';
 import { Actions } from '@/redux/features/actions';
