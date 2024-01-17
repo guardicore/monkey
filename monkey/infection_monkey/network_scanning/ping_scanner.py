@@ -7,12 +7,12 @@ from ipaddress import IPv4Address
 from time import time
 from typing import Tuple
 
+from agentpluginapi import PingScanData
 from monkeyevents import PingScanEvent
 from monkeytoolbox import get_os
 from monkeytypes import AgentID, OperatingSystem
 
 from common.event_queue import IAgentEventQueue
-from infection_monkey.i_puppet import PingScanData
 
 TTL_REGEX = re.compile(r"TTL=([0-9]+)\b", re.IGNORECASE)
 LINUX_TTL = 64  # Windows TTL is 128

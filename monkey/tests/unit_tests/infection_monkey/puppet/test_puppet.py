@@ -3,7 +3,7 @@ from typing import Optional
 from unittest.mock import MagicMock
 
 import pytest
-from agentpluginapi import TargetHost
+from agentpluginapi import PingScanData, TargetHost
 from monkeytypes import AgentID, AgentPluginType, OperatingSystem
 from tests.common.fake_manifests import FAKE_NAME, FAKE_NAME2
 from tests.data_for_tests.propagation_credentials import CREDENTIALS
@@ -12,7 +12,6 @@ from common.event_queue import IAgentEventQueue
 from infection_monkey.i_puppet import (
     IncompatibleLocalOperatingSystemError,
     IncompatibleTargetOperatingSystemError,
-    PingScanData,
 )
 from infection_monkey.puppet import PluginCompatibilityVerifier, PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet

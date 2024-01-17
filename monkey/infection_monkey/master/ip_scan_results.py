@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import Dict
 
-from agentpluginapi import PortScanDataDict
+from agentpluginapi import PingScanData, PortScanDataDict
 
-from infection_monkey.i_puppet import FingerprintData, PingScanData
+from infection_monkey.i_puppet import FingerprintData
 
 FingerprinterName = str
 
