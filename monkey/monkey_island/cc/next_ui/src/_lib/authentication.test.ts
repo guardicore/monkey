@@ -1,4 +1,3 @@
-import { describe, expect, it, jest } from '@jest/globals';
 import {
     localStorageGetItem,
     localStorageSetItem,
@@ -6,10 +5,11 @@ import {
 } from '@/_lib/localStorage';
 import {
     getToken,
-    getTokenTTL,
+    getTokenExpirationTime,
     setToken,
     removeToken,
-    tokenStored
+    tokenStored,
+    StorageKeys
 } from './authentication';
 
 const NOW = new Date('2020-01-01');
@@ -36,16 +36,23 @@ describe('authentication', () => {
             expect(token).toBe(null);
         });
     });
-    describe('getTokenTTL', () => {
+    describe('getTokenExpirationTime', () => {
         it('should get the token ttl from local storage', () => {
             mockedLocalStorageGetItem.mockReturnValue('12345');
-            const ttl = getTokenTTL();
+            mockedLocalStorageGetItem.mockImplementation((key: string) => {
+                const values = {
+                    [StorageKeys.TTL]: '12345',
+                    [StorageKeys.LAST_REFRESH_TIMESTAMP]: NOW.getTime()
+                };
+                return values[key];
+            });
+            const ttl = getTokenExpirationTime();
             expect(mockedLocalStorageGetItem).toHaveBeenCalled();
-            expect(ttl).toBe(12345);
+            expect(ttl).toBe(NOW.getTime() + 12345);
         });
         it('should return null if there is no token ttl in local storage', () => {
             mockedLocalStorageGetItem.mockReturnValue(null);
-            const ttl = getTokenTTL();
+            const ttl = getTokenExpirationTime();
             expect(mockedLocalStorageGetItem).toHaveBeenCalled();
             expect(ttl).toBe(null);
         });
@@ -54,15 +61,15 @@ describe('authentication', () => {
         it('should set the token in local storage', () => {
             setToken('token', 12345);
             expect(mockedLocalStorageSetItem).toHaveBeenCalledWith(
-                expect.anything(),
+                StorageKeys.TOKEN,
                 'token'
             );
             expect(mockedLocalStorageSetItem).toHaveBeenCalledWith(
-                expect.anything(),
+                StorageKeys.TTL,
                 12345
             );
             expect(mockedLocalStorageSetItem).toHaveBeenCalledWith(
-                expect.anything(),
+                StorageKeys.LAST_REFRESH_TIMESTAMP,
                 NOW.getTime()
             );
         });
@@ -71,13 +78,13 @@ describe('authentication', () => {
         it('should remove the token from local storage', () => {
             removeToken();
             expect(mockedLocalStorageRemoveItem).toHaveBeenCalledWith(
-                expect.anything()
+                StorageKeys.TOKEN
             );
             expect(mockedLocalStorageRemoveItem).toHaveBeenCalledWith(
-                expect.anything()
+                StorageKeys.TTL
             );
             expect(mockedLocalStorageRemoveItem).toHaveBeenCalledWith(
-                expect.anything()
+                StorageKeys.LAST_REFRESH_TIMESTAMP
             );
         });
     });

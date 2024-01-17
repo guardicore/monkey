@@ -4,7 +4,7 @@ import {
     localStorageSetItem
 } from '@/_lib/localStorage';
 
-enum StorageKeys {
+export enum StorageKeys {
     TOKEN = 'AuthenticationToken',
     LAST_REFRESH_TIMESTAMP = 'LastRefreshTimestamp',
     TTL = 'TokenTTL'
@@ -19,9 +19,18 @@ export const getToken = (): string | null => {
     return localStorageGetItem(StorageKeys.TOKEN);
 };
 
-export const getTokenTTL = (): number | null => {
+/**
+ * @returns The time in milliseconds when the token will expire.
+ */
+export const getTokenExpirationTime = (): number | null => {
     const ttl = localStorageGetItem(StorageKeys.TTL);
-    return ttl ? Number(ttl) : null;
+    const lastRefreshTimestamp = localStorageGetItem(
+        StorageKeys.LAST_REFRESH_TIMESTAMP
+    );
+    if (!ttl || !lastRefreshTimestamp) {
+        return null;
+    }
+    return Number(lastRefreshTimestamp) + Number(ttl);
 };
 
 export const setToken = (tokenValue: string, ttl: number) => {
