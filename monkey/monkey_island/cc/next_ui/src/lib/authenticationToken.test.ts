@@ -1,4 +1,3 @@
-import { describe, expect, it, jest } from '@jest/globals';
 import {
     localStorageGetItem,
     localStorageSetItem,
@@ -9,7 +8,8 @@ import {
     getTTL,
     setToken,
     removeToken,
-    tokenIsStored
+    tokenIsStored,
+    StorageKeys
 } from './authenticationToken';
 
 const NOW = new Date('2020-01-01');
@@ -56,15 +56,15 @@ describe('authentication', () => {
         it('should set the token in local storage', () => {
             setToken('token', 12345);
             expect(mockedLocalStorageSetItem).toHaveBeenCalledWith(
-                expect.anything(),
+                StorageKeys.TOKEN,
                 'token'
             );
             expect(mockedLocalStorageSetItem).toHaveBeenCalledWith(
-                expect.anything(),
+                StorageKeys.EXPIRATION_TIMESTAMP,
                 NOW.getTime() + 12345
             );
             expect(mockedLocalStorageSetItem).toHaveBeenCalledWith(
-                expect.anything(),
+                StorageKeys.LAST_REFRESH_TIMESTAMP,
                 NOW.getTime()
             );
         });
@@ -73,13 +73,13 @@ describe('authentication', () => {
         it('should remove the token from local storage', () => {
             removeToken();
             expect(mockedLocalStorageRemoveItem).toHaveBeenCalledWith(
-                expect.anything()
+                StorageKeys.TOKEN
             );
             expect(mockedLocalStorageRemoveItem).toHaveBeenCalledWith(
-                expect.anything()
+                StorageKeys.EXPIRATION_TIMESTAMP
             );
             expect(mockedLocalStorageRemoveItem).toHaveBeenCalledWith(
-                expect.anything()
+                StorageKeys.LAST_REFRESH_TIMESTAMP
             );
         });
     });

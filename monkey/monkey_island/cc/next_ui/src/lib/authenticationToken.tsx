@@ -4,7 +4,7 @@ import {
     localStorageSetItem
 } from '@/lib/localStorage';
 
-enum StorageKeys {
+export enum StorageKeys {
     TOKEN = 'AuthenticationToken',
     LAST_REFRESH_TIMESTAMP = 'LastRefreshTimestamp',
     EXPIRATION_TIMESTAMP = 'ExpirationTimestamp'

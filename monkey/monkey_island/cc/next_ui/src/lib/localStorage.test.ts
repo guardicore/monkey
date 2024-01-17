@@ -1,13 +1,4 @@
 import {
-    afterAll,
-    beforeAll,
-    beforeEach,
-    describe,
-    expect,
-    it,
-    jest
-} from '@jest/globals';
-import {
     isWindowDefined,
     executeIfWindowDefined,
     localStorageGetItem,
