@@ -13,6 +13,7 @@ from pathlib import Path, WindowsPath
 from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
 
+from agentpluginapi import LocalMachineInfo
 from monkeyevents import (
     AgentEventTag,
     AgentShutdownEvent,
@@ -68,7 +69,6 @@ from infection_monkey.island_api_client import (
     IslandAPIAuthenticationError,
     IslandAPIError,
 )
-from infection_monkey.local_machine_info import LocalMachineInfo
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
