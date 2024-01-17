@@ -2,11 +2,11 @@ import logging
 from pprint import pformat
 from typing import Any, Dict
 
+from agentpluginapi import LocalMachineInfo
 from monkeytypes import AgentID, Event, SocketAddress
 
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.i_puppet import PayloadResult
-from agentpluginapi import LocalMachineInfo
 
 from .cryptojacker_builder import build_cryptojacker
 from .cryptojacker_options import CryptojackerOptions
