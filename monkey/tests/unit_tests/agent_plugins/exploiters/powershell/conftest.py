@@ -1,9 +1,8 @@
 from unittest.mock import MagicMock
 
 import pytest
+from agentpluginapi import PortScanData, TargetHostPorts
 from monkeytypes import NetworkPort, NetworkProtocol, OperatingSystem, PortStatus
-
-from infection_monkey.i_puppet import PortScanData, TargetHostPorts
 
 
 def _create_windows_host(http_enabled, https_enabled):
