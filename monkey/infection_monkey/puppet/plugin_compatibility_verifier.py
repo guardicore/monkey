@@ -2,9 +2,9 @@ import logging
 import threading
 from typing import Dict, Optional
 
+from agentpluginapi import TargetHost
 from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
 
-from infection_monkey.i_puppet import TargetHost
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 
 logger = logging.getLogger(__name__)

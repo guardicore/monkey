@@ -6,12 +6,12 @@ from pprint import pformat
 from time import sleep, time
 from typing import Collection, Dict, Iterable, Mapping, Tuple
 
+from agentpluginapi import PortScanData, PortScanDataDict
 from egg_timer import EggTimer
 from monkeyevents import TCPScanEvent
 from monkeytypes import AgentID, NetworkPort, PortStatus
 
 from common.event_queue import IAgentEventQueue
-from infection_monkey.i_puppet import PortScanData, PortScanDataDict
 from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT
 
 logger = logging.getLogger(__name__)

@@ -3,9 +3,9 @@ from typing import Callable
 from uuid import UUID
 
 import pytest
+from agentpluginapi import TargetHost
 from monkeytypes import OperatingSystem
 
-from infection_monkey.i_puppet import TargetHost
 from infection_monkey.utils.commands import (
     build_agent_download_command,
     build_dropper_script_download_command,

@@ -2,11 +2,11 @@ from http import HTTPMethod
 from unittest.mock import MagicMock
 
 import pytest
+from agentpluginapi import PortScanData
 from monkeytypes import DiscoveredService, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from tests.unit_tests.monkey_island.cc.models.test_agent import AGENT_ID
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 
 OPTIONS = {"http_ports": [81, 444, 1080, 8080, 9200]}

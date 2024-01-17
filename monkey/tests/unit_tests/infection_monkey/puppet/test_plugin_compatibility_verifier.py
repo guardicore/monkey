@@ -2,10 +2,10 @@ from ipaddress import IPv4Address
 from unittest.mock import MagicMock
 
 import pytest
+from agentpluginapi import TargetHost
 from monkeytypes import AgentPluginManifest, AgentPluginType, OperatingSystem
 from tests.common.fake_manifests import FAKE_MANIFEST_OBJECT, FAKE_NAME, FAKE_NAME2, URL
 
-from infection_monkey.i_puppet import TargetHost
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 from infection_monkey.puppet import PluginCompatibilityVerifier
 

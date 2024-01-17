@@ -1,6 +1,7 @@
 import logging
 from typing import Any, Dict, Mapping, Sequence
 
+from agentpluginapi import PortScanData, PortScanDataDict, TargetHost
 from monkeytypes import (
     AgentPluginType,
     Credentials,
@@ -23,9 +24,6 @@ from infection_monkey.i_puppet import (
     IncompatibleTargetOperatingSystemError,
     IPuppet,
     PingScanData,
-    PortScanData,
-    PortScanDataDict,
-    TargetHost,
 )
 
 DOT_1 = "10.0.0.1"

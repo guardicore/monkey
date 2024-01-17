@@ -1,8 +1,7 @@
 from typing import Sequence, Set
 
+from agentpluginapi import TargetHost
 from monkeytypes import NetworkPort, NetworkService
-
-from infection_monkey.i_puppet import TargetHost
 
 # NOTE: Don't migrate these functions to a user-facing interface
 #       without properly thinking about it. Are these functions stable enough?
