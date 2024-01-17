@@ -1,29 +1,11 @@
 # Serpentarium resets the import state to a default state each
 # time a plugin is run.
-# The following objects are used for communication between the Agent and plugins,
+# The following import has objects that are used for communication between the Agent and plugins,
 # and need to be imported before serpentarium so that they are added to the default
 # import state. This prevents pickling errors. Without this, when a plugin is run,
 # we'll get errors like
 # "_pickle.PicklingError: Can't pickle <class 'xyz': it's not the same object as xyz".
-from infection_monkey.agent_plugin_api_imports import (  # noqa: F401
-    AgentBinaryDownloadReservation,
-    AgentBinaryDownloadTicket,
-    ExploiterResult,
-    FingerprintData,
-    IAgentBinaryRepository,
-    IAgentOTPProvider,
-    IHTTPAgentBinaryServerRegistrar,
-    IPropagationCredentialsRepository,
-    ITCPPortSelector,
-    LocalMachineInfo,
-    PayloadResult,
-    PingScanData,
-    PortScanData,
-    PortScanDataDict,
-    RetrievalError,
-    TargetHost,
-    TargetHostPorts,
-)
+import infection_monkey.agent_plugin_api_imports  # noqa: F401
 
 # serpentarium must be the first import, as it needs to save the state of the
 # import system prior to any imports
