@@ -5,13 +5,14 @@ from threading import Event, current_thread
 from typing import Any, Dict, Sequence
 
 import mock_dependency
+from agentpluginapi import TargetHost
 from monkeyevents import ExploitationEvent, PropagationEvent
 from monkeytoolbox import interruptible_iter
 from monkeytypes import AgentID
 
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.exploit import IAgentBinaryRepository
-from infection_monkey.i_puppet import ExploiterResult, TargetHost
+from infection_monkey.i_puppet import ExploiterResult
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 
 logger = logging.getLogger(__name__)
