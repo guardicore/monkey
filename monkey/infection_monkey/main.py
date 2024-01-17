@@ -1,3 +1,4 @@
+# isort: off
 # Serpentarium resets the import state to a default state each
 # time a plugin is run.
 # The following import has objects that are used for communication between the Agent and plugins,
@@ -10,7 +11,6 @@ import infection_monkey.agent_plugin_api_imports  # noqa: F401
 # UPDATE: It's the second import now; read comment above
 # serpentarium must be the first import, as it needs to save the state of the
 # import system prior to any imports
-# isort: off
 import serpentarium  # noqa: F401
 from serpentarium.logging import configure_host_process_logger
 
