@@ -23,9 +23,9 @@ jobs:
         - pip: true
         - npm: true
         - directories:
-           - "$HOME/.npm"
-           - $PIP_CACHE_DIR
-           - $PIPENV_CACHE_DIR
+            - "$HOME/.npm"
+            - $PIP_CACHE_DIR
+            - $PIPENV_CACHE_DIR
 
       install:
         # Python
@@ -37,10 +37,10 @@ jobs:
         - find . -name 'Pipfile' -execdir pipenv sync --dev \;
         - popd
         - pushd monkey/monkey_island
-        - pipenv sync --dev  # This installs dependencies from lock
+        - pipenv sync --dev # This installs dependencies from lock
         - popd
         - pushd monkey/infection_monkey
-        - pipenv sync --dev  # This installs dependencies from lock
+        - pipenv sync --dev # This installs dependencies from lock
         - popd
 
         # node + npm + eslint
@@ -73,24 +73,23 @@ jobs:
         - python -m vulture .
 
         ## run unit tests and generate coverage data
-        - cd monkey  # this is our source dir
+        - cd monkey # this is our source dir
         - python -m pytest -n auto --dist worksteal --cov=. # have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
         # check js code. the npm install must happen after the flake8 because the node_modules folder will cause a lot of errors.
         - cd monkey_island/cc/ui
-        - npm ci  # see https://docs.npmjs.com/cli/ci.html
-        - eslint ./src --quiet  # test for errors
+        - npm ci # see https://docs.npmjs.com/cli/ci.html
+        - eslint ./src --quiet # test for errors
         - JS_WARNINGS_AMOUNT_UPPER_LIMIT=0
-        - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # test for max warnings
+        - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT # test for max warnings
 
         # check NextJS code.
         - cd ../next_ui
-        - npm ci  # see https://docs.npmjs.com/cli/ci.html
-        - npx prettier --check ./src  # test for errors
-        - eslint ./src --quiet  # test for errors
+        - npm ci # see https://docs.npmjs.com/cli/ci.html
+        - npx prettier --check ./src # test for errors
+        - eslint ./src --quiet # test for errors
         - JS_WARNINGS_AMOUNT_UPPER_LIMIT=0
-        - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # test for max warnings
-
+        - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT # test for max warnings
 
         # build documentation
         - cd $TRAVIS_BUILD_DIR/docs
@@ -108,8 +107,7 @@ jobs:
         - python -m pip install -U pip setuptools virtualenv
         - python -m virtualenv $HOME/venv
         - source $HOME/venv/Scripts/activate
-      env:
-        PATH=/c/Python311:/c/Python311/Scripts:$PATH
+      env: PATH=/c/Python311:/c/Python311/Scripts:$PATH
       cache:
         pip: true
         directories:
@@ -124,24 +122,23 @@ jobs:
         - find . -name 'Pipfile' -execdir pipenv sync --dev \;
         - popd
         - pushd monkey/monkey_island
-        - pipenv sync --dev  # This installs dependencies from lock
+        - pipenv sync --dev # This installs dependencies from lock
         - popd
         - pushd monkey/infection_monkey
-        - pipenv sync --dev  # This installs dependencies from lock
+        - pipenv sync --dev # This installs dependencies from lock
         - popd
 
       script:
         ## run unit tests and generate coverage data
-        - cd monkey  # this is our source dir
+        - cd monkey # this is our source dir
         - python -m pytest -n auto --dist worksteal
 
-
 notifications:
-  slack:  # Notify to slack
-      rooms:
+  slack: # Notify to slack
+    rooms:
       - secure: "Qd3uu9YiaLXnZJsBWEyt/n0jLKuC8ULjllY8i09ZejQ2mR9XWWu+lqMNUd6h+T2ukSao0+Hgvuz2CKmTJtKla0HFMsc3r/V65XXAaMINVoek7+rZFzuqTC0jcUYX0jyxjExaJoFfz1ue2JZTHJLPNvLcnuwP3xxXscxrgppki8MO28T17aIbnxNA/hUpb5byW1BTF30z9raUe/Z/Z02cUrqNFkrEHKnsg7QRJkO5wp8eh8ZYYytd7vtZoiZjlTPLh5yTmUTL4MW2Fet2+x6UBCYqcVSG2rOlh69aVtVpg4YAB7YJABb28ZXu1VG7W+1qiCZA1Ol8G2GzU3dNB+pG8Zvk0dfQ56QdK6LX55tW3biTB6dyknyMp1ZCqbsh4GeOQ3RW8O24PZ/jwIV8Y2fSzSylgWnZd58gMnhDgmQFZbGJSWUvkUFoAFdf/E/XyXS4cKe0RyQfdRGVCHdQ2HfeGqSHt2D905KjQb/Sc2y199hRFZJ3eq6bSeOt4sKJpD0eMQKQMO9NSxNP59lHAMlFfQSNx1qPr/zQ3n2NvXPjhS7aEcnkhSgT5FmeUTB3vWILGyHYS1OdASDBGCsG/bxtUmgVUers7XSltwnjjAqbew7aER9b/flX6SAsbSowKXNDVL85HbWwvzQ0XC9I0aBBdzKESXfUktCzxyLiF/Ddb1s="
-      on_success: change
-      on_failure: always
+    on_success: change
+    on_failure: always
   email:
-      on_success: change
-      on_failure: always
+    on_success: change
+    on_failure: always
