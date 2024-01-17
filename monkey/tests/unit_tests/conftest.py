@@ -8,11 +8,12 @@ from _pytest.monkeypatch import MonkeyPatch
 MONKEY_BASE_PATH = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, MONKEY_BASE_PATH)
 
+from agentpluginapi import ITCPPortSelector  # noqa: E402
 from monkeytoolbox import get_os  # noqa: E402
 from monkeytypes import OperatingSystem  # noqa: E402
 
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration  # noqa: E402
-from infection_monkey.network import ITCPPortSelector, TCPPortSelector  # noqa: E402
+from infection_monkey.network import TCPPortSelector  # noqa: E402
 
 
 @pytest.fixture(scope="session")
