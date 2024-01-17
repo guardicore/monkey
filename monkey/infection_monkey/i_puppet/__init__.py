@@ -1,4 +1,3 @@
-from .fingerprint_data import FingerprintData
 from .i_puppet import (
     IPuppet,
     UnknownPluginError,
