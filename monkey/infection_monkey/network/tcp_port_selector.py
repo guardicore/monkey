@@ -4,10 +4,10 @@ from random import shuffle  # noqa: DUO102
 from typing import Dict, Iterable, Iterator, Optional, Sequence, Set
 
 import psutil
+from agentpluginapi import ITCPPortSelector
 from egg_timer import EggTimer
 from monkeytypes import IntRange, NetworkPort
 
-from .info import ITCPPortSelector
 from .ports import COMMON_PORTS
 
 

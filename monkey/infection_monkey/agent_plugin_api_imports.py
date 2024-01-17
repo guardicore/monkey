@@ -1,5 +1,6 @@
 from agentpluginapi import (  # noqa: F401
     ExploiterResult,
+    ITCPPortSelector,
     LocalMachineInfo,
     PingScanData,
     PortScanData,
@@ -17,5 +18,4 @@ from .exploit import (  # noqa: F401
     RetrievalError,
 )
 from .i_puppet import FingerprintData, PayloadResult  # noqa: F401
-from .network import ITCPPortSelector  # noqa: F401
 from .propagation_credentials_repository import IPropagationCredentialsRepository  # noqa: F401
