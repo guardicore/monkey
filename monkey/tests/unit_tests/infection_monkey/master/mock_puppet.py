@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Dict, Mapping, Sequence
 
-from agentpluginapi import PortScanData, PortScanDataDict, TargetHost
+from agentpluginapi import ExploiterResult, PortScanData, PortScanDataDict, TargetHost
 from monkeytypes import (
     AgentPluginType,
     Credentials,
@@ -19,7 +19,6 @@ from monkeytypes import (
 )
 
 from infection_monkey.i_puppet import (
-    ExploiterResult,
     FingerprintData,
     IncompatibleTargetOperatingSystemError,
     IPuppet,
