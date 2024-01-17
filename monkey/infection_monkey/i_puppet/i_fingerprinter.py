@@ -1,9 +1,11 @@
 from abc import abstractmethod
 from typing import Dict
 
+from agentpluginapi import PortScanData
+
 from infection_monkey.i_puppet import PingScanData
 
-from . import FingerprintData, PortScanData
+from . import FingerprintData
 
 
 class IFingerprinter:

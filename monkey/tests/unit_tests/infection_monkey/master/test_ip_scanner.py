@@ -3,6 +3,7 @@ from typing import Set
 from unittest.mock import MagicMock
 
 import pytest
+from agentpluginapi import PortScanData
 from monkeytypes import NetworkProtocol, NetworkService, OperatingSystem, PortStatus
 from tests.unit_tests.infection_monkey.master.mock_puppet import MockPuppet
 from tests.utils import ThreadSafeMagicMock
@@ -12,7 +13,7 @@ from common.agent_configuration.agent_sub_configurations import (
     NetworkScanConfiguration,
     TCPScanConfiguration,
 )
-from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData
+from infection_monkey.i_puppet import FingerprintData, PingScanData
 from infection_monkey.master import IPScanner
 from infection_monkey.network import NetworkAddress
 

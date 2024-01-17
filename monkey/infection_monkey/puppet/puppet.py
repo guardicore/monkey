@@ -1,6 +1,7 @@
 import logging
 from typing import Any, Dict, Mapping, Sequence
 
+from agentpluginapi import PortScanDataDict, TargetHost
 from monkeytypes import AgentID, AgentPluginType, Credentials, Event, NetworkPort
 
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
@@ -13,8 +14,6 @@ from infection_monkey.i_puppet import (
     IncompatibleTargetOperatingSystemError,
     IPuppet,
     PingScanData,
-    PortScanDataDict,
-    TargetHost,
 )
 from infection_monkey.puppet import PluginCompatibilityVerifier
 

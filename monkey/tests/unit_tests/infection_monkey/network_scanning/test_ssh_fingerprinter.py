@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
+from agentpluginapi import PortScanData
 from monkeytypes import (
     DiscoveredService,
     NetworkPort,
@@ -12,7 +13,7 @@ from monkeytypes import (
 from tests.unit_tests.monkey_island.cc.models.test_agent import AGENT_ID
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.i_puppet import FingerprintData, PortScanData
+from infection_monkey.i_puppet import FingerprintData
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 
 SSH_SERVICE_22 = DiscoveredService(
