@@ -2,6 +2,7 @@ import '../styles/globals.scss';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { RootProvider } from '@/providers/RootProvider';
+import { AuthRefresh } from '@/_components/auth-refresh/AuthRefresh';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,7 +20,9 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={inter.className}>
-                <RootProvider>{children}</RootProvider>
+                <RootProvider>
+                    <AuthRefresh>{children}</AuthRefresh>
+                </RootProvider>
             </body>
         </html>
     );
