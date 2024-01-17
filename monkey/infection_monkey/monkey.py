@@ -419,7 +419,6 @@ class InfectionMonkey:
         create_plugin = partial(
             MultiprocessingPluginWrapper,
             plugin_loader=plugin_loader,
-            reset_modules_cache=False,
             main_thread_name=PluginThreadName.CALLING_THREAD,
         )
 
