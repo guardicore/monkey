@@ -1,5 +1,4 @@
 from .ping_scan_data import PingScanData
-from .exploiter_result import ExploiterResult
 from .fingerprint_data import FingerprintData
 from .i_puppet import (
     IPuppet,
