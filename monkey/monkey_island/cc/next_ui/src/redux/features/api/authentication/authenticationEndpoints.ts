@@ -12,6 +12,7 @@ import { Actions } from '@/redux/features/actions';
 enum BackendEndpoints {
     LOGIN = '/login',
     REGISTER = '/register',
+    REFRESH_TOKEN = '/refresh-authentication-token',
     LOGOUT = '/logout'
 }
 
@@ -23,8 +24,10 @@ async function handleTokenResponse(
 ) {
     try {
         const { data } = await queryFulfilled;
+        console.log('Authenticated with: ', JSON.stringify(data));
         handleAuthToken(data);
     } catch (error) {
+        console.log('Authentication error: ', error);
         // dispatch();
     }
 }
@@ -57,6 +60,18 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 await handleTokenResponse(queryFulfilled);
             }
         }),
+        refreshToken: builder.mutation<void, void>({
+            query: () => ({
+                url: BackendEndpoints.REFRESH_TOKEN,
+                method: HTTP_METHODS.POST,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            async onQueryStarted(_, { queryFulfilled }) {
+                await handleTokenResponse(queryFulfilled);
+            }
+        }),
         logout: builder.mutation<void, void>({
             query: () => ({
                 url: BackendEndpoints.LOGOUT,
@@ -77,5 +92,9 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
     })
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation } =
-    authenticationEndpoints;
+export const {
+    useLoginMutation,
+    useRegisterMutation,
+    useRefreshTokenMutation,
+    useLogoutMutation
+} = authenticationEndpoints;
