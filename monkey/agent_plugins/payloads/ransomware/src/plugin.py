@@ -6,7 +6,7 @@ from monkeytypes import AgentID, Event
 
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.i_puppet import PayloadResult
-from infection_monkey.local_machine_info import LocalMachineInfo
+from agentpluginapi import LocalMachineInfo
 
 from .ransomware_builder import build_ransomware
 from .ransomware_options import RansomwareOptions
