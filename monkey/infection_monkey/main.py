@@ -7,9 +7,9 @@
 # "_pickle.PicklingError: Can't pickle <class 'xyz': it's not the same object as xyz".
 import infection_monkey.agent_plugin_api_imports  # noqa: F401
 
+# UPDATE: It's the second import now; read comment above
 # serpentarium must be the first import, as it needs to save the state of the
 # import system prior to any imports
-# UPDATE: It's the second import now; read comment at the top of the file
 # isort: off
 import serpentarium  # noqa: F401
 from serpentarium.logging import configure_host_process_logger
