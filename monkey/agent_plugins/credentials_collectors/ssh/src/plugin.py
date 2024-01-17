@@ -13,7 +13,7 @@ from monkeyevents.tags import (
 from monkeytypes import AgentID, Credentials, Event, SSHKeypair, Username
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.local_machine_info import LocalMachineInfo
+from agentpluginapi import LocalMachineInfo
 
 # The maximum RSA keysize is 2048 bytes. Our maximum supported key file size is 4x to future proof
 # our detection algorithm.

@@ -1,10 +1,10 @@
 from typing import Callable
 
+from agentpluginapi import LocalMachineInfo
 from monkeytypes import AgentID, SocketAddress
 from serpentarium import SingleUsePlugin
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.local_machine_info import LocalMachineInfo
 
 from .i_plugin_factory import IPluginFactory
 

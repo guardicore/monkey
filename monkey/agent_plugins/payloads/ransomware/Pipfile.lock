@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "18750fd2daa30a1a24008e44945d6569204a9f151bc9bedadb0df378e8a23b24"
+            "sha256": "562fa15290d4e7383be2e67831d100fe5e10d3bda33a8b5fe496ea3616acecc8"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -35,11 +35,11 @@
         },
         "egg-timer": {
             "hashes": [
-                "sha256:8e4155914ceb82c8b7248a0fdcdd0268fa841db5fd8666629dabed7fb937ab76",
-                "sha256:e476d57cca2ae85d502279ca0b8e84d1b47e241a56b888e18c944d780baf48db"
+                "sha256:44f43ef398da83484ee715159e8849e6982877ac1ffd7465057ee140bc21dd6e",
+                "sha256:8f0d8eebd3ef08054cc2251d04cc19105baaffb4792b2f88c56f40d680dd242a"
             ],
             "markers": "python_version >= '3.7' and python_version < '4.0'",
-            "version": "==1.2.0"
+            "version": "==1.3.0"
         },
         "email-validator": {
             "hashes": [
@@ -63,13 +63,20 @@
             ],
             "version": "==0.2.0"
         },
+        "monkey-agentpluginapi": {
+            "hashes": [
+                "sha256:6a55610afe7dc97ec5e3a14c7ef9117b519c69ed39dc0735239594153854a0e5",
+                "sha256:9d77e88ab3d97291d4f1ec118f7e3468f002774118750f4b36fc4cf111a06075"
+            ],
+            "index": "pypi",
+            "version": "==0.1.0"
+        },
         "monkey-types": {
             "hashes": [
                 "sha256:d05cbc997fb4b3f81c710caa53e386de94397ee1d97691e88e6fd9c50c81e13f",
                 "sha256:e7745dcbb40664053cd495f1e6adc9baed76c0e2464bd7939d6b20d6e8a20e81"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.11' and python_version < '4.0'",
             "version": "==0.4.0"
         },
         "monkeyevents": {
@@ -78,17 +85,15 @@
                 "sha256:ddd957d8b3da19aefcc1aaea3ad73995282a035372e6637eeed25bbd096168a1"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.11' and python_version < '4.0'",
             "version": "==0.3.0"
         },
         "monkeytoolbox": {
             "hashes": [
-                "sha256:4de28b203a2d268e1b436a6b23b6eabe44537c0b2fc281428cf435e0d10c86bb",
-                "sha256:7f29dd776b159da5393b170c37d1c8df7b7f1053e684282a852bbe75bdeba9a0"
+                "sha256:40e0316ff4b9ec82703fe99774b4552ed0dd33e87306abef11b40ab0211c541a",
+                "sha256:ed00885331e938879330badf0ad6ad17cbfcc26d78eef1ccae0155282397a673"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.11' and python_version < '4.0'",
-            "version": "==0.2.0"
+            "version": "==0.3.0"
         },
         "psutil": {
             "hashes": [

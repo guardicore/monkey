@@ -1,9 +1,8 @@
 from ipaddress import IPv4Interface
 from pathlib import Path
 
+from agentpluginapi import LocalMachineInfo
 from monkeytypes import OperatingSystem
-
-from infection_monkey.local_machine_info import LocalMachineInfo
 
 LOCAL_MACHINE_INFO_OBJECT = LocalMachineInfo(
     operating_system=OperatingSystem.WINDOWS,
