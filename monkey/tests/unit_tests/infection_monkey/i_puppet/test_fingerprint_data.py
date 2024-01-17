@@ -1,9 +1,8 @@
 from typing import Any, Dict
 
 import pytest
+from agentpluginapi import FingerprintData
 from monkeytypes import DiscoveredService, NetworkProtocol, NetworkService, OperatingSystem
-
-from infection_monkey.i_puppet import FingerprintData
 
 LINUX_VERSION = "xenial"
 

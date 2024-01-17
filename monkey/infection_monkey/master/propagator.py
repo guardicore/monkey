@@ -4,7 +4,7 @@ from ipaddress import IPv4Address, IPv4Interface
 from queue import Queue
 from typing import List, Mapping, MutableMapping, Sequence
 
-from agentpluginapi import ExploiterResult, PingScanData, PortScanData, TargetHost
+from agentpluginapi import ExploiterResult, FingerprintData, PingScanData, PortScanData, TargetHost
 from monkeytoolbox import create_daemon_thread
 from monkeytypes import (
     DiscoveredService,
@@ -21,7 +21,6 @@ from common.agent_configuration import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from infection_monkey.i_puppet import FingerprintData
 from infection_monkey.network import NetworkAddress
 from infection_monkey.network_scanning.scan_target_generator import compile_scan_target_list
 

@@ -1,5 +1,6 @@
 from agentpluginapi import (  # noqa: F401
     ExploiterResult,
+    FingerprintData,
     ITCPPortSelector,
     LocalMachineInfo,
     PingScanData,
@@ -17,5 +18,5 @@ from .exploit import (  # noqa: F401
     IHTTPAgentBinaryServerRegistrar,
     RetrievalError,
 )
-from .i_puppet import FingerprintData, PayloadResult  # noqa: F401
+from .i_puppet import PayloadResult  # noqa: F401
 from .propagation_credentials_repository import IPropagationCredentialsRepository  # noqa: F401

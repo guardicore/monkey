@@ -3,7 +3,7 @@ from threading import Event
 from unittest.mock import MagicMock
 
 import pytest
-from agentpluginapi import PingScanData, PortScanData, TargetHost
+from agentpluginapi import FingerprintData, PingScanData, PortScanData, TargetHost
 from monkeytypes import (
     DiscoveredService,
     NetworkProtocol,
@@ -17,7 +17,6 @@ from common.agent_configuration.agent_sub_configurations import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from infection_monkey.i_puppet import FingerprintData
 from infection_monkey.master import Exploiter, IPScanResults, Propagator
 
 empty_fingerprint_data = FingerprintData(os_type=None, os_version=None, services=[])

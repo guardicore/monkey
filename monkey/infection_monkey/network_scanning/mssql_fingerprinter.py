@@ -5,13 +5,13 @@ import time
 from ipaddress import IPv4Address
 from typing import Dict, Optional, Sequence, Set
 
-from agentpluginapi import PingScanData, PortScanData
+from agentpluginapi import FingerprintData, PingScanData, PortScanData
 from monkeyevents import FingerprintingEvent
 from monkeyevents.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
 from monkeytypes import AgentID, DiscoveredService, NetworkPort, NetworkProtocol, NetworkService
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.i_puppet import FingerprintData, IFingerprinter
+from infection_monkey.i_puppet import IFingerprinter
 
 SQL_BROWSER_DEFAULT_PORT = NetworkPort(1434)
 _BUFFER_SIZE = 4096
