@@ -1,11 +1,11 @@
 .app-drawer {
-  :global {
-    .MuiDrawer-paper {
-      min-width: 10rem;
+    :global {
+        .MuiDrawer-paper {
+            min-width: 10rem;
 
-      .menu-links {
-        flex-direction: column;
-      }
+            .menu-links {
+                flex-direction: column;
+            }
+        }
     }
-  }
 }

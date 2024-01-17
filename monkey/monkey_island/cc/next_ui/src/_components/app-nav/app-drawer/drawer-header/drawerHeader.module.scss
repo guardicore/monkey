@@ -3,24 +3,27 @@
 $logo-size: 2rem;
 
 #app-drawer-header {
-  display: flex;
-  justify-content: space-between;
-  background: #6e9ecf;
-  height: $app-bar-height;
-  align-items: center;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    display: flex;
+    justify-content: space-between;
+    background: #6e9ecf;
+    height: $app-bar-height;
+    align-items: center;
+    margin-bottom: 1rem;
+    box-shadow:
+        0 2px 4px -1px rgba(0, 0, 0, 0.2),
+        0 4px 5px 0 rgba(0, 0, 0, 0.14),
+        0 1px 10px 0 rgba(0, 0, 0, 0.12);
 
-  :global {
-    .logo-icon-wrapper {
-      display: flex;
-      flex: 1;
-      justify-content: center;
+    :global {
+        .logo-icon-wrapper {
+            display: flex;
+            flex: 1;
+            justify-content: center;
 
-      .logo-icon {
-        font-size: $logo-size;
-        margin-left: $logo-size;
-      }
+            .logo-icon {
+                font-size: $logo-size;
+                margin-left: $logo-size;
+            }
+        }
     }
-  }
 }

@@ -1,14 +1,14 @@
 .app-menu {
-  :global {
-    .menu-links {
-      width: 100%;
-      display: flex;
-      justify-content: space-evenly;
-      gap: 1rem;
+    :global {
+        .menu-links {
+            width: 100%;
+            display: flex;
+            justify-content: space-evenly;
+            gap: 1rem;
 
-      :hover {
-        cursor: pointer;
-      }
+            :hover {
+                cursor: pointer;
+            }
+        }
     }
-  }
 }
