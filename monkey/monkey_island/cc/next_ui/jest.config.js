@@ -3,9 +3,10 @@
  * https://jestjs.io/docs/configuration
  */
 
-import type { Config } from 'jest';
+// import type { Config } from 'jest';
 
-const config: Config = {
+/** @type {import('jest').Config} */
+const config = {
     // All imported modules in your tests should be mocked automatically
     // automock: false,
 
@@ -40,7 +41,7 @@ const config: Config = {
     },
 
     // A preset that is used as a base for Jest's configuration
-    preset: 'ts-jest',
+    // preset: 'ts-jest',
 
     // A list of paths to directories that Jest should use to search for files in
     roots: ['<rootDir>/src'],
@@ -56,8 +57,9 @@ const config: Config = {
 
     // A map from regular expressions to paths to transformers
     transform: {
-        '.+\\.(j|t)sx?$': 'ts-jest'
+        '.+\\.(j|t)sx?$': '@swc/jest'
     }
 };
 
-export default config;
+// eslint-disable-next-line no-undef
+module.exports = config;
