@@ -1,4 +1,3 @@
-from .ping_scan_data import PingScanData
 from .fingerprint_data import FingerprintData
 from .i_puppet import (
     IPuppet,
