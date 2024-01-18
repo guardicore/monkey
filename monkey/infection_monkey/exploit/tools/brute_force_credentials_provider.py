@@ -1,8 +1,7 @@
 from typing import Callable, Iterable
 
+from agentpluginapi import IPropagationCredentialsRepository
 from monkeytypes import Credentials
-
-from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 
 
 class BruteForceCredentialsProvider:

@@ -2,7 +2,11 @@ from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
-from agentpluginapi import IAgentBinaryRepository, ITCPPortSelector
+from agentpluginapi import (
+    IAgentBinaryRepository,
+    IPropagationCredentialsRepository,
+    ITCPPortSelector,
+)
 from monkeytypes import AgentID, AgentPluginManifest, AgentPluginType, OperatingSystem
 from serpentarium import MultiprocessingPlugin, PluginLoader, SingleUsePlugin
 
@@ -16,7 +20,6 @@ from infection_monkey.island_api_client import (
     IslandAPIRequestError,
 )
 from infection_monkey.plugin.i_plugin_factory import IPluginFactory
-from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor
 
 AGENT_ID = AgentID("707d801b-68cf-44d1-8a4e-7e1a89c412f8")

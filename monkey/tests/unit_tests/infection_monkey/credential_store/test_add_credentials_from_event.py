@@ -1,13 +1,13 @@
 from unittest.mock import MagicMock
 from uuid import UUID
 
+from agentpluginapi import IPropagationCredentialsRepository
 from monkeyevents import CredentialsStolenEvent
 from monkeytypes import Credentials, Password, Username
 
 from infection_monkey.agent_event_handlers import (
     add_stolen_credentials_to_propagation_credentials_repository,
 )
-from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 
 credentials = [
     Credentials(
