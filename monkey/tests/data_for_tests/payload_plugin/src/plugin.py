@@ -5,12 +5,12 @@ from threading import Event, current_thread
 from typing import Any, Dict
 
 import mock_dependency
+from agentpluginapi import PayloadResult
 from monkeyevents import AgentEventTag, FileEncryptionEvent
 from monkeytoolbox import interruptible_iter
 from monkeytypes import AgentID
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.i_puppet import PayloadResult
 
 logger = logging.getLogger(__name__)
 
