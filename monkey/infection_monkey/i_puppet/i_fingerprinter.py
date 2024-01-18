@@ -1,9 +1,7 @@
 from abc import abstractmethod
 from typing import Dict
 
-from agentpluginapi import PingScanData, PortScanData
-
-from . import FingerprintData
+from agentpluginapi import FingerprintData, PingScanData, PortScanData
 
 
 class IFingerprinter:
