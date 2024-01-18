@@ -2,11 +2,10 @@ import logging
 from pprint import pformat
 from typing import Any, Dict
 
-from agentpluginapi import LocalMachineInfo
+from agentpluginapi import LocalMachineInfo, PayloadResult
 from monkeytypes import AgentID, Event
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.i_puppet import PayloadResult
 
 from .ransomware_builder import build_ransomware
 from .ransomware_options import RansomwareOptions

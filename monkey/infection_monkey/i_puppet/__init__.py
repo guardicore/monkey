@@ -6,4 +6,3 @@ from .i_puppet import (
     IncompatibleTargetOperatingSystemError,
 )
 from .i_fingerprinter import IFingerprinter
-from .payload_result import PayloadResult
