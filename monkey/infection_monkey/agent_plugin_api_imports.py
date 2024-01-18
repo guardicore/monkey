@@ -2,6 +2,7 @@ from agentpluginapi import (  # noqa: F401
     ExploiterResult,
     FingerprintData,
     IAgentBinaryRepository,
+    IAgentOTPProvider,
     IPropagationCredentialsRepository,
     ITCPPortSelector,
     LocalMachineInfo,
@@ -17,6 +18,5 @@ from agentpluginapi import (  # noqa: F401
 from .exploit import (  # noqa: F401
     AgentBinaryDownloadReservation,
     AgentBinaryDownloadTicket,
-    IAgentOTPProvider,
     IHTTPAgentBinaryServerRegistrar,
 )
