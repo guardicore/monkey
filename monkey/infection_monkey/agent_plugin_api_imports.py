@@ -4,6 +4,7 @@ from agentpluginapi import (  # noqa: F401
     IAgentBinaryRepository,
     ITCPPortSelector,
     LocalMachineInfo,
+    PayloadResult,
     PingScanData,
     PortScanData,
     PortScanDataDict,
@@ -18,5 +19,4 @@ from .exploit import (  # noqa: F401
     IAgentOTPProvider,
     IHTTPAgentBinaryServerRegistrar,
 )
-from .i_puppet import PayloadResult  # noqa: F401
 from .propagation_credentials_repository import IPropagationCredentialsRepository  # noqa: F401
