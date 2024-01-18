@@ -3,12 +3,16 @@ from threading import Event, current_thread
 from typing import Any, Dict, Sequence
 
 import mock_dependency
-from agentpluginapi import ExploiterResult, IAgentBinaryRepository, TargetHost
+from agentpluginapi import (
+    ExploiterResult,
+    IAgentBinaryRepository,
+    IPropagationCredentialsRepository,
+    TargetHost,
+)
 from monkeyevents import ExploitationEvent, PropagationEvent
 from monkeytypes import AgentID
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 
 logger = logging.getLogger(__name__)
 
