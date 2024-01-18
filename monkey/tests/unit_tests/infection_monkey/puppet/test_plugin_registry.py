@@ -2,6 +2,7 @@ from typing import Dict
 from unittest.mock import MagicMock
 
 import pytest
+from agentpluginapi import ITCPPortSelector
 from monkeytypes import AgentID, AgentPluginManifest, AgentPluginType, OperatingSystem
 from serpentarium import MultiprocessingPlugin, PluginLoader, SingleUsePlugin
 
@@ -14,7 +15,6 @@ from infection_monkey.island_api_client import (
     IslandAPIError,
     IslandAPIRequestError,
 )
-from infection_monkey.network import ITCPPortSelector
 from infection_monkey.plugin.i_plugin_factory import IPluginFactory
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor

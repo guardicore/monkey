@@ -7,9 +7,10 @@ from time import sleep
 from typing import Tuple
 
 import pytest
+from agentpluginapi import ITCPPortSelector
 from monkeytypes import NetworkPort
 
-from infection_monkey.network import ITCPPortSelector, TCPPortSelector
+from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.ports import COMMON_PORTS
 
 MULTIPROCESSING_PORT = 2222
