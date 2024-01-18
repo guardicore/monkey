@@ -1,8 +1,7 @@
 import logging
 
+from agentpluginapi import IPropagationCredentialsRepository
 from monkeyevents import CredentialsStolenEvent
-
-from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 
 logger = logging.getLogger(__name__)
 

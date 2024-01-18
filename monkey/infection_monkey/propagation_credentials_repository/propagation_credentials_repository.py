@@ -5,11 +5,10 @@ from multiprocessing import get_context
 from multiprocessing.managers import SyncManager
 from typing import Iterable
 
+from agentpluginapi import IPropagationCredentialsRepository
 from monkeytypes import Credentials
 
 from infection_monkey.island_api_client import IIslandAPIClient
-
-from .i_propagation_credentials_repository import IPropagationCredentialsRepository
 
 logger = logging.getLogger(__name__)
 
