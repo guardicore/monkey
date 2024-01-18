@@ -6,7 +6,11 @@
     "dev": "node server-dev.js",
     "build": "node build-standalone.js",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "e2e": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test dev https://localhost:8443 cypress:run_e2e",
+    "component": "cypress run --component",
+    "cypress:open": "DEBUG=cypress:webpack cypress open",
+    "cypress:run_e2e": "cypress run --e2e"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
