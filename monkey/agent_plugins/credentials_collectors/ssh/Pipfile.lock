@@ -65,11 +65,11 @@
         },
         "monkey-agentpluginapi": {
             "hashes": [
-                "sha256:6a55610afe7dc97ec5e3a14c7ef9117b519c69ed39dc0735239594153854a0e5",
-                "sha256:9d77e88ab3d97291d4f1ec118f7e3468f002774118750f4b36fc4cf111a06075"
+                "sha256:25747b5093e8192f135d7bfc9909b8411897e878c7c5ebefcef1e4fff091ed10",
+                "sha256:bb326045db9e1c4ddd705d7b59bdb38274a22914f34145f68c6a7dd645009ae2"
             ],
             "index": "pypi",
-            "version": "==0.1.0"
+            "version": "==0.2.0"
         },
         "monkey-types": {
             "hashes": [
