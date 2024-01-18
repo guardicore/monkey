@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { THEME_APPEARANCE } from '@/providers/theme/theme';
 import { setThemeAppearance } from '@/redux/features/theme/theme.slice';
-import classes from './themeMode.module.scss';
+// import classes from './themeMode.module.scss';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 
@@ -39,7 +39,8 @@ export const ThemeMode = () => {
     };
 
     return (
-        <Box id={classes['theme-mode']}>
+        // <Box id={classes['theme-mode']}>
+        <Box>
             <Tooltip title={isThemeInDarkMode ? LIGHT_TOOLTIP : DARK_TOOLTIP}>
                 <IconButton
                     className={`theme-mode-button ${getClassNames()}`}
