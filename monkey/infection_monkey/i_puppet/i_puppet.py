@@ -1,10 +1,10 @@
 import abc
 from typing import Any, Dict, Mapping, Sequence
 
-from agentpluginapi import ExploiterResult, PortScanDataDict, TargetHost
+from agentpluginapi import ExploiterResult, PingScanData, PortScanDataDict, TargetHost
 from monkeytypes import AgentPluginType, Credentials, Event, NetworkPort
 
-from . import FingerprintData, PingScanData
+from . import FingerprintData
 
 
 class UnknownPluginError(Exception):

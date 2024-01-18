@@ -3,13 +3,13 @@ import time
 from ipaddress import IPv4Address
 from typing import Dict, Optional, Sequence, Tuple
 
-from agentpluginapi import PortScanData
+from agentpluginapi import PingScanData, PortScanData
 from monkeyevents import FingerprintingEvent
 from monkeyevents.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
 from monkeytypes import AgentID, DiscoveredService, NetworkProtocol, NetworkService, OperatingSystem
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData
+from infection_monkey.i_puppet import FingerprintData, IFingerprinter
 
 SSH_REGEX = r"SSH-\d\.\d-OpenSSH"
 LINUX_DIST_SSH = ["ubuntu", "debian"]

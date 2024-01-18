@@ -5,7 +5,7 @@ from http import HTTPMethod
 from ipaddress import IPv4Address
 from typing import Dict, Optional, Sequence, Set
 
-from agentpluginapi import PortScanData
+from agentpluginapi import PingScanData, PortScanData
 from monkeyevents import FingerprintingEvent, HTTPRequestEvent
 from monkeyevents.tags import ACTIVE_SCANNING_T1595_TAG, GATHER_VICTIM_HOST_INFORMATION_T1592_TAG
 from monkeytypes import (
@@ -21,7 +21,7 @@ from requests.exceptions import ConnectionError, Timeout
 from requests.structures import CaseInsensitiveDict
 
 from common.event_queue import IAgentEventPublisher
-from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData
+from infection_monkey.i_puppet import FingerprintData, IFingerprinter
 
 logger = logging.getLogger(__name__)
 
