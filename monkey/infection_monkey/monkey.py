@@ -13,7 +13,7 @@ from pathlib import Path, WindowsPath
 from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
 
-from agentpluginapi import LocalMachineInfo
+from agentpluginapi import IAgentBinaryRepository, LocalMachineInfo
 from monkeyevents import (
     AgentEventTag,
     AgentShutdownEvent,
@@ -51,7 +51,6 @@ from infection_monkey.agent_event_handlers import (
 )
 from infection_monkey.exploit import (
     CachingAgentBinaryRepository,
-    IAgentBinaryRepository,
     IslandAPIAgentOTPProvider,
     PolymorphicAgentBinaryRepositoryDecorator,
 )
