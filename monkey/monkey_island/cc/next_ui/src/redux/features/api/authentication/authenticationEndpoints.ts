@@ -23,7 +23,7 @@ async function handleTokenResponse(
 ) {
     try {
         const { data } = await queryFulfilled;
-        handleAuthToken(data);
+        await handleAuthToken(data);
     } catch (error) {
         // dispatch();
     }

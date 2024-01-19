@@ -7,7 +7,7 @@ const handleAuthToken = async (response) => {
     if (!token) {
         return null;
     } else {
-        setToken(token, ttl);
+        await setToken(token, ttl);
         return true;
     }
 };
