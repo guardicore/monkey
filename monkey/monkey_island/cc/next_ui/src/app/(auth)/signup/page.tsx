@@ -1,6 +1,7 @@
 'use client';
 import { Button } from '@mui/material';
 import * as React from 'react';
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -8,10 +9,10 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
 import { useRegisterMutation } from '@/redux/features/api/authentication/authenticationEndpoints';
+import setAuthenticationTimer from '@/app/(auth)/_lib/setAuthenticationTimer';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,6 +28,7 @@ const RegisterPage = () => {
         event.preventDefault();
         register(registerFormValues)
             .unwrap()
+            .then(setAuthenticationTimer)
             .then(() => router.push(PATHS.ROOT));
     };
 
