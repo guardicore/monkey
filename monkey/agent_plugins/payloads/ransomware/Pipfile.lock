@@ -69,6 +69,7 @@
                 "sha256:bb326045db9e1c4ddd705d7b59bdb38274a22914f34145f68c6a7dd645009ae2"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.11' and python_version < '4.0'",
             "version": "==0.2.0"
         },
         "monkey-types": {
@@ -77,6 +78,7 @@
                 "sha256:e7745dcbb40664053cd495f1e6adc9baed76c0e2464bd7939d6b20d6e8a20e81"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.11' and python_version < '4.0'",
             "version": "==0.4.0"
         },
         "monkeyevents": {
@@ -85,6 +87,7 @@
                 "sha256:ddd957d8b3da19aefcc1aaea3ad73995282a035372e6637eeed25bbd096168a1"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.11' and python_version < '4.0'",
             "version": "==0.3.0"
         },
         "monkeytoolbox": {
@@ -93,6 +96,7 @@
                 "sha256:ed00885331e938879330badf0ad6ad17cbfcc26d78eef1ccae0155282397a673"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.11' and python_version < '4.0'",
             "version": "==0.3.0"
         },
         "psutil": {
