@@ -1,7 +1,6 @@
 'use client';
 
 import { createSlice } from '@reduxjs/toolkit';
-import { clearTimeout } from 'timers';
 
 interface AuthenticationTimerState {
     timer: NodeJS.Timeout | null;
@@ -20,7 +19,7 @@ const authenticationTimerSlice = createSlice({
     reducers: {
         clearTimer(state: AuthenticationTimerState) {
             if (state.timer) {
-                clearTimeout(state.timer);
+                state.timer = null;
             }
         },
         setTimer(state: AuthenticationTimerState, action: TimerActionType) {
