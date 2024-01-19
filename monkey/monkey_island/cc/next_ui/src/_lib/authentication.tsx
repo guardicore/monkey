@@ -17,6 +17,10 @@ export const getToken = (): string | null => {
     return localStorageGetItem(keyOfAuthenticationToken);
 };
 
+export const getTTL = (): number | null => {
+    return localStorageGetItem(keyOfTTL);
+};
+
 export const setToken = (tokenValue: string, ttl: number) => {
     localStorageSetItem(keyOfTTL, ttl);
     localStorageSetItem(keyOfLastRefreshTimestamp, Date.now());

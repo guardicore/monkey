@@ -1,16 +1,9 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { useDispatch } from 'react-redux';
-import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
-import { setTimer } from '@/redux/features/api/authenticationTimerSlice';
+import setAuthenticationTimer from '@/app/(auth)/_lib/setAuthenticationTimer';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const dispatch = useDispatch();
-    const authenticationTimer = setTimeout(() => {
-        dispatch(AuthenticationActions.logout);
-    }, 1000 * 8);
-    setTimer(authenticationTimer);
-
+    setAuthenticationTimer();
     return children;
 }

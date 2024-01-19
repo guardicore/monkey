@@ -7,22 +7,24 @@ interface AuthenticationTimerState {
     timer: NodeJS.Timeout | null;
 }
 
+interface TimerActionType {
+    payload: NodeJS.Timeout;
+    type: string;
+}
+
 const initialState = { timer: null } as AuthenticationTimerState;
 
 const authenticationTimerSlice = createSlice({
     name: 'authenticationTimeout',
     initialState,
     reducers: {
-        setTimer(state, timer) {
-            if (state.timer) {
-                this.clearTimer(state);
-            }
-            state.timer = timer;
-        },
         clearTimer(state: AuthenticationTimerState) {
             if (state.timer) {
                 clearTimeout(state.timer);
             }
+        },
+        setTimer(state: AuthenticationTimerState, action: TimerActionType) {
+            state.timer = action.payload;
         }
     }
 });
