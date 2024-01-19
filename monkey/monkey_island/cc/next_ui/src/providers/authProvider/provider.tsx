@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 import { useDispatch } from 'react-redux';
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
-import { setTimer } from '@/redux/features/api/authenticationTimeoutSlice';
+import { setTimer } from '@/redux/features/api/authenticationTimerSlice';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const dispatch = useDispatch();
