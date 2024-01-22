@@ -36,6 +36,7 @@
                 "sha256:fe8b7f07948f1304497ce4f4684881250cd859b16d06a1dc4d7941eeb6233bfe"
             ],
             "index": "pypi",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
             "version": "==5.9.7"
         },
         "pycryptodomex": {
@@ -74,6 +75,7 @@
                 "sha256:ff5c9a67f8a4fba4aed887216e32cbc48f2a6fb2673bb10a99e43be463e15913"
             ],
             "index": "pypi",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
             "version": "==3.20.0"
         }
     },
@@ -126,11 +128,12 @@
         },
         "monkey-agentpluginapi": {
             "hashes": [
-                "sha256:6a55610afe7dc97ec5e3a14c7ef9117b519c69ed39dc0735239594153854a0e5",
-                "sha256:9d77e88ab3d97291d4f1ec118f7e3468f002774118750f4b36fc4cf111a06075"
+                "sha256:25747b5093e8192f135d7bfc9909b8411897e878c7c5ebefcef1e4fff091ed10",
+                "sha256:bb326045db9e1c4ddd705d7b59bdb38274a22914f34145f68c6a7dd645009ae2"
             ],
             "index": "pypi",
-            "version": "==0.1.0"
+            "markers": "python_version >= '3.11' and python_version < '4.0'",
+            "version": "==0.2.0"
         },
         "monkey-types": {
             "hashes": [
@@ -138,6 +141,7 @@
                 "sha256:e7745dcbb40664053cd495f1e6adc9baed76c0e2464bd7939d6b20d6e8a20e81"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.11' and python_version < '4.0'",
             "version": "==0.4.0"
         },
         "monkeyevents": {
@@ -146,6 +150,7 @@
                 "sha256:ddd957d8b3da19aefcc1aaea3ad73995282a035372e6637eeed25bbd096168a1"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.11' and python_version < '4.0'",
             "version": "==0.3.0"
         },
         "monkeytoolbox": {
@@ -154,6 +159,7 @@
                 "sha256:ed00885331e938879330badf0ad6ad17cbfcc26d78eef1ccae0155282397a673"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.11' and python_version < '4.0'",
             "version": "==0.3.0"
         },
         "psutil": {
@@ -176,6 +182,7 @@
                 "sha256:fe8b7f07948f1304497ce4f4684881250cd859b16d06a1dc4d7941eeb6233bfe"
             ],
             "index": "pypi",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
             "version": "==5.9.7"
         },
         "pydantic": {

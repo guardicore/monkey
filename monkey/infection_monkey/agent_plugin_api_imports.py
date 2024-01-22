@@ -1,4 +1,6 @@
 from agentpluginapi import (  # noqa: F401
+    AgentBinaryDownloadReservation,
+    AgentBinaryDownloadTicket,
     ExploiterResult,
     FingerprintData,
     IAgentBinaryRepository,
@@ -15,5 +17,3 @@ from agentpluginapi import (  # noqa: F401
     TargetHost,
     TargetHostPorts,
 )
-
-from .exploit import AgentBinaryDownloadReservation, AgentBinaryDownloadTicket  # noqa: F401
