@@ -6,7 +6,6 @@ import {
 } from '@reduxjs/toolkit/query/react';
 import {
     AUTHENTICATION_TOKEN_HEADER,
-    AUTHORIZATION_HEADER,
     DEFAULT_QUERY_TIMEOUT
 } from '@/redux/features/api/authentication/authenticationConstants';
 import { getApiPath } from '@/constants/paths.constants';
@@ -18,7 +17,6 @@ const baseQuery: BaseQueryFn = fetchBaseQuery({
     prepareHeaders: async (headers: any) => {
         const token = getToken();
         if (token) {
-            headers.set(AUTHORIZATION_HEADER, `Bearer ${token}`);
             headers.set(AUTHENTICATION_TOKEN_HEADER, token);
         }
         return headers;
