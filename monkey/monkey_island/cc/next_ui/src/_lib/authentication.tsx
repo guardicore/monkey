@@ -6,7 +6,7 @@ import {
 
 const keyOfAuthenticationToken = 'AuthenticationToken';
 const keyOfLastRefreshTimestamp = 'LastRefreshTimestamp';
-const keyOfTTL = 'TokenTTL';
+const keyOfExpirationTimestamp = 'ExpirationTimestamp';
 
 export const tokenStored = (): boolean => {
     const token = getToken();
@@ -18,17 +18,27 @@ export const getToken = (): string | null => {
 };
 
 export const getTTL = (): number | null => {
-    return localStorageGetItem(keyOfTTL);
+    const now = Date.now();
+    const expirationTimestamp = localStorageGetItem(keyOfExpirationTimestamp);
+    if (expirationTimestamp === null) {
+        return null;
+    }
+    return Number(expirationTimestamp) - now;
+};
+
+const TTLToTimestamp = (ttl: number): number => {
+    const now = Date.now();
+    return now + ttl;
 };
 
 export const setToken = (tokenValue: string, ttl: number) => {
-    localStorageSetItem(keyOfTTL, ttl);
+    localStorageSetItem(keyOfExpirationTimestamp, TTLToTimestamp(ttl));
     localStorageSetItem(keyOfLastRefreshTimestamp, Date.now());
     return localStorageSetItem(keyOfAuthenticationToken, tokenValue);
 };
 
 export const removeToken = () => {
     localStorageRemoveItem(keyOfLastRefreshTimestamp);
-    localStorageRemoveItem(keyOfTTL);
+    localStorageRemoveItem(keyOfExpirationTimestamp);
     return localStorageRemoveItem(keyOfAuthenticationToken);
 };
