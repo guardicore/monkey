@@ -5,12 +5,11 @@ import { store } from '@/redux/store';
 import clearAuthenticationTimer from '@/app/(auth)/_lib/clearAuthenticationTimer';
 
 const setAuthenticationTimer = () => {
-    const tokenTTL = getTTL();
-
     if (!tokenStored()) {
         return;
     }
 
+    const tokenTTL = getTTL();
     if (tokenTTL === null) {
         store.dispatch(AuthenticationActions.logout);
         throw Error("Token TTL is not defined, can't start logout timer");
