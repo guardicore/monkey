@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { tokenStored } from '@/_lib/authentication';
+import { tokenStored } from '@/lib/authentication';
 import { PATHS } from '@/constants/paths.constants';
 import { Events } from '@/constants/events.constants';
 import { useEffect } from 'react';

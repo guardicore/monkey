@@ -1,4 +1,4 @@
-import { setToken } from '@/_lib/authentication';
+import { setToken } from '@/lib/authentication';
 
 // This coefficient is meant to reduce the TTL to account for network latency.
 // Should be below 1

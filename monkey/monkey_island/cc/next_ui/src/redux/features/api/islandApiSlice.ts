@@ -10,7 +10,7 @@ import {
     DEFAULT_QUERY_TIMEOUT
 } from '@/redux/features/api/authentication/authenticationConstants';
 import { getApiPath } from '@/constants/paths.constants';
-import { getToken, tokenStored } from '@/_lib/authentication';
+import { getToken, tokenStored } from '@/lib/authentication';
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
 
 const baseQuery: BaseQueryFn = fetchBaseQuery({
