@@ -5,7 +5,7 @@ import {
 } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
 import { islandApiSlice } from '@/redux/features/api/islandApiSlice';
 import { LoginParams } from '@/redux/features/api/types/islandApi';
-import handleAuthToken from '@/app/(auth)/_lib/handleAuthToken';
+import handleAuthToken from '@/redux/features/api/authentication/_lib/handleAuthToken';
 import { PromiseWithKnownReason } from '@reduxjs/toolkit/dist/query/core/buildMiddleware/types';
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
 
