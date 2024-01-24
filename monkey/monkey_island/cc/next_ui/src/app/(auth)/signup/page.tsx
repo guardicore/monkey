@@ -12,7 +12,7 @@ import Container from '@mui/material/Container';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
 import { useRegisterMutation } from '@/redux/features/api/authentication/authenticationEndpoints';
-import setAuthenticationTimer from '@/app/(auth)/_lib/setAuthenticationTimer';
+import setAuthenticationTimer from '@/redux/features/api/authentication/_lib/setAuthenticationTimer';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

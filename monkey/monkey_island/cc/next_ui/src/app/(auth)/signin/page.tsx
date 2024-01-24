@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
 import { useLoginMutation } from '@/redux/features/api/authentication/authenticationEndpoints';
-import setAuthenticationTimer from '@/app/(auth)/_lib/setAuthenticationTimer';
+import setAuthenticationTimer from '@/redux/features/api/authentication/_lib/setAuthenticationTimer';
 
 const SignInPage = () => {
     const router = useRouter();
