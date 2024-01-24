@@ -5,7 +5,7 @@ import {
     fetchBaseQuery
 } from '@reduxjs/toolkit/query/react';
 import { getApiPath } from '@/constants/paths.constants';
-import { getToken, isTokenStored } from '@/_lib/authentication';
+import { getToken, isTokenStored } from '@/_lib/authenticationToken';
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
 
 export const DEFAULT_QUERY_TIMEOUT: number = 10000;
