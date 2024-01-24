@@ -2,7 +2,7 @@ import { AuthenticationActions } from '@/redux/features/api/authentication/authe
 import { getTTL, isTokenStored } from '@/_lib/authentication';
 import { setTimer } from '@/redux/features/api/authenticationTimerSlice';
 import { store } from '@/redux/store';
-import clearAuthenticationTimer from '@/app/(auth)/_lib/clearAuthenticationTimer';
+import clearAuthenticationTimer from '@/redux/features/api/authentication/_lib/clearAuthenticationTimer';
 
 const setAuthenticationTimer = () => {
     if (!isTokenStored()) {
