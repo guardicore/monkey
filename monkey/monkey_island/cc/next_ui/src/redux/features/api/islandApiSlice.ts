@@ -9,7 +9,7 @@ import {
     DEFAULT_QUERY_TIMEOUT
 } from '@/redux/features/api/authentication/authenticationConstants';
 import { getApiPath } from '@/constants/paths.constants';
-import { getToken, tokenStored } from '@/_lib/authentication';
+import { getToken, isTokenStored } from '@/_lib/authentication';
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
 
 const baseQuery: BaseQueryFn = fetchBaseQuery({
@@ -30,7 +30,7 @@ const baseQueryWrapper = async (
     extraOptions: object
 ): Promise<any> => {
     const result = await baseQuery(args, api, extraOptions);
-    if (result.error?.status === 401 && tokenStored()) {
+    if (result.error?.status === 401 && isTokenStored()) {
         api.dispatch(AuthenticationActions.logout);
     }
     return result;

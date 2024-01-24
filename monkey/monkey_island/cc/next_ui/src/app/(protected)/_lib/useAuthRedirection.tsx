@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { tokenStored } from '@/_lib/authentication';
+import { isTokenStored } from '@/_lib/authentication';
 import { PATHS } from '@/constants/paths.constants';
 import { Events } from '@/constants/events.constants';
 import { useEffect } from 'react';
@@ -9,7 +9,7 @@ export default function useAuthRedirection() {
     const router = useRouter();
 
     function checkToken() {
-        if (!tokenStored()) {
+        if (!isTokenStored()) {
             router.push(PATHS.SIGN_IN);
         }
     }

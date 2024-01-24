@@ -8,7 +8,7 @@ const keyOfAuthenticationToken = 'AuthenticationToken';
 const keyOfLastRefreshTimestamp = 'LastRefreshTimestamp';
 const keyOfExpirationTimestamp = 'ExpirationTimestamp';
 
-export const tokenStored = (): boolean => {
+export const isTokenStored = (): boolean => {
     const token = getToken();
     return token !== null;
 };
