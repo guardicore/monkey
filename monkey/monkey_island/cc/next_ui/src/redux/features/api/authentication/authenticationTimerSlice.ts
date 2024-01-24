@@ -14,7 +14,7 @@ interface TimerActionType {
 const initialState = { timer: null } as AuthenticationTimerState;
 
 const authenticationTimerSlice = createSlice({
-    name: 'authenticationTimeout',
+    name: 'authenticationTimer',
     initialState,
     reducers: {
         clearTimer(state: AuthenticationTimerState) {

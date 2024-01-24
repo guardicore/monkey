@@ -1,6 +1,6 @@
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
 import { getTTL, isTokenStored } from '@/_lib/authentication';
-import { setTimer } from '@/redux/features/api/authenticationTimerSlice';
+import { setTimer } from '@/redux/features/api/authentication/authenticationTimerSlice';
 import { store } from '@/redux/store';
 import clearAuthenticationTimer from '@/redux/features/api/authentication/_lib/clearAuthenticationTimer';
 
