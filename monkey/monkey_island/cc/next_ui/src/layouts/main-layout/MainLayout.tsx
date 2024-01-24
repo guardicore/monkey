@@ -1,8 +1,8 @@
 'use client';
 
 import classes from './mainLayout.module.scss';
-import MonkeyAppBar from '@/_components/app-nav/app-bar/AppBar';
-import AppDrawer from '@/_components/app-nav/app-drawer/appDrawer';
+import MonkeyAppBar from '@/components/app-nav/app-bar/AppBar';
+import AppDrawer from '@/components/app-nav/app-drawer/appDrawer';
 import React, { useState } from 'react';
 
 export default function MainLayout({

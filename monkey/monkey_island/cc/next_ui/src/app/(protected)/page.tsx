@@ -1,5 +1,5 @@
 import classes from './page.module.scss';
-import GettingStarted from '@/_components/getting-started/GettingStarted';
+import GettingStarted from '@/components/getting-started/GettingStarted';
 
 export default function AppHome() {
     return (

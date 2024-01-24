@@ -4,7 +4,7 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
-import AvatarMenu from '@/_components/app-nav/app-avatar/avatar-menu/AvatarMenu';
+import AvatarMenu from '@/components/app-nav/app-avatar/avatar-menu/AvatarMenu';
 
 const AVATAR_INITIALS = 'M';
 

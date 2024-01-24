@@ -1,5 +1,5 @@
 import MenuItem from '@mui/material/MenuItem';
-import LogoutButton from '@/_components/logout-button/LogoutButton';
+import LogoutButton from '@/components/logout-button/LogoutButton';
 
 const AvatarMenu = () => {
     return (

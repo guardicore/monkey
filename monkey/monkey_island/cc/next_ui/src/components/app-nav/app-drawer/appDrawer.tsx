@@ -1,7 +1,7 @@
-import MonkeyDrawer, { DrawerVariant } from '@/_components/drawer/Drawer';
-import AppMenu from '@/_components/app-nav/app-menu/AppMenu';
+import MonkeyDrawer, { DrawerVariant } from '@/components/drawer/Drawer';
+import AppMenu from '@/components/app-nav/app-menu/AppMenu';
 import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
-import DrawerHeader from '@/_components/app-nav/app-drawer/drawer-header/DrawerHeader';
+import DrawerHeader from '@/components/app-nav/app-drawer/drawer-header/DrawerHeader';
 
 export interface AppDrawerProps {
     open: boolean;
