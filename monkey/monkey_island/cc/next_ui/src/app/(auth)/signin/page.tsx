@@ -12,26 +12,34 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
-import { useLoginMutation } from '@/redux/features/api/authentication/authenticationEndpoints';
 import setAuthenticationTimer from '@/app/(auth)/_lib/setAuthenticationTimer';
+import { RepositoryContext } from '@/providers/repositoryProvider/provider';
 
 const SignInPage = () => {
+    const { authenticationRepository } = useContext(RepositoryContext);
     const router = useRouter();
     const [loginFormValues, setLoginFormValues] = useState({
         username: '',
         password: ''
     });
-    const [login, { isError, error }] = useLoginMutation();
+    const [error, setError] = useState(null);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        login(loginFormValues)
-            .unwrap()
-            .then(setAuthenticationTimer)
-            .then(() => router.push(PATHS.ROOT));
+        const { isError, error: err } = await authenticationRepository.login(
+            loginFormValues.username,
+            loginFormValues.password
+        );
+        if (isError) {
+            setError(err);
+        } else {
+            setError(null);
+            setAuthenticationTimer();
+            router.push(PATHS.ROOT);
+        }
     };
 
     const handleLoginFormValueChange = (e: any) => {
@@ -105,7 +113,7 @@ const SignInPage = () => {
                             </Button>
 
                             {/* @ts-ignore */}
-                            {isError && <p>{JSON.stringify(error)}</p>}
+                            {error && <p>{JSON.stringify(error)}</p>}
 
                             <Grid container>
                                 <Grid item xs>

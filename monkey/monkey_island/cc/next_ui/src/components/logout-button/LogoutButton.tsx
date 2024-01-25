@@ -2,14 +2,14 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useLogoutMutation } from '@/redux/features/api/authentication/authenticationEndpoints';
+import { RepositoryContext } from '@/providers/repositoryProvider/provider';
 
 const LogoutButton = () => {
-    const [logout] = useLogoutMutation();
+    const { authenticationRepository } = React.useContext(RepositoryContext);
 
     return (
         <Button
-            onClick={() => logout()}
+            onClick={() => authenticationRepository.logout()}
             variant="outlined"
             startIcon={<LogoutIcon />}
             color="error">
