@@ -3,7 +3,7 @@ import {
     BaseQueryFn,
     createApi,
     fetchBaseQuery
-} from '@reduxjs/toolkit/query/react';
+} from '@reduxjs/toolkit/query';
 import {
     AUTHENTICATION_TOKEN_HEADER,
     AUTHORIZATION_HEADER,
