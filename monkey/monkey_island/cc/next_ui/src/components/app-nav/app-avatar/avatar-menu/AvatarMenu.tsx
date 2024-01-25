@@ -1,7 +1,7 @@
 import MenuItem from '@mui/material/MenuItem';
-import LogoutButton from '@/components/logout-button/LogoutButton';
 
-const AvatarMenu = () => {
+// eslint-disable-next-line react/display-name
+export const buildAvatarMenu = (LogoutButton) => () => {
     return (
         <MenuItem>
             <LogoutButton />
@@ -9,4 +9,4 @@ const AvatarMenu = () => {
     );
 };
 
-export default AvatarMenu;
+export default buildAvatarMenu;

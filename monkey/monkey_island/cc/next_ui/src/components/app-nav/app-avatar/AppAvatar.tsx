@@ -4,11 +4,11 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
-import AvatarMenu from '@/components/app-nav/app-avatar/avatar-menu/AvatarMenu';
 
 const AVATAR_INITIALS = 'M';
 
-const AppAvatar = () => {
+// eslint-disable-next-line react/display-name
+const buildAppAvatar = (AvatarMenu: React.ComponentType) => () => {
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -46,4 +46,4 @@ const AppAvatar = () => {
     );
 };
 
-export default AppAvatar;
+export default buildAppAvatar;

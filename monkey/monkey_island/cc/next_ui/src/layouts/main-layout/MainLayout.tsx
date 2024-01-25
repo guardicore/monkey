@@ -1,9 +1,11 @@
 'use client';
 
 import classes from './mainLayout.module.scss';
-import MonkeyAppBar from '@/components/app-nav/app-bar/AppBar';
+import container from '@/lib/container';
 import AppDrawer from '@/components/app-nav/app-drawer/appDrawer';
 import React, { useState } from 'react';
+
+const MonkeyAppBar = container.cradle.AppBar;
 
 export default function MainLayout({
     children
