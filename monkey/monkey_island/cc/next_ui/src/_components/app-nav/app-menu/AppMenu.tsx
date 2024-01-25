@@ -6,12 +6,12 @@ import { useRouter } from 'next/navigation';
 import classes from './appMenu.module.scss';
 import HomeIcon from '@mui/icons-material/Home';
 import HubIcon from '@mui/icons-material/Hub';
-import EventNoteIcon from '@mui/icons-material/EventNote';
 
 const MenuLinks = [
-    { path: PATHS.HOME, label: 'Home', icon: <HomeIcon /> },
-    { path: PATHS.MAP, label: 'Map', icon: <HubIcon /> },
-    { path: PATHS.EVENTS, label: 'Events', icon: <EventNoteIcon /> }
+    { path: PATHS.CONFIGURE, label: 'Configure', icon: <HomeIcon /> },
+    { path: PATHS.RUN, label: 'Run', icon: <HomeIcon /> },
+    { path: PATHS.NETWORK_MAP, label: 'Network Map', icon: <HubIcon /> },
+    { path: PATHS.REPORT, label: 'Report', icon: <HomeIcon /> },
 ];
 
 export interface MenuProps {
