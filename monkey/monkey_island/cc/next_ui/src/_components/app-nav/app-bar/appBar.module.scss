@@ -3,6 +3,7 @@
 #app-bar {
   display: flex;
   justify-content: space-between;
+  background-color: $monkey-yellow;
 
   :global {
     .MuiContainer-root {
@@ -20,6 +21,7 @@
           display: flex;
           gap: 2rem;
           align-items: center;
+          color: $monkey-black;
 
           :hover {
             cursor: pointer;
@@ -36,6 +38,7 @@
           display: flex;
           gap: 1rem;
           align-items: center;
+          color: $monkey-black;
         }
       }
     }
