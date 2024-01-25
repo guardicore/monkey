@@ -11,9 +11,27 @@ import Box from '@mui/material/Box';
 import AppDrawerOpener from '@/_components/app-nav/app-drawer-opener/AppDrawerOpener';
 import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
 import { ThemeMode } from '@/_components/theme-mode/ThemeMode';
+import { PATHS } from '@/constants/paths.constants';
+import HomeIcon from '@mui/icons-material/Home';
+import { useRouter } from 'next/navigation';
+import Typography from '@mui/material/Typography';
 
-const MonkeyAppBar = ({ setIsDrawerOpen = null }: { setIsDrawerOpen: any }) => {
+
+const AboutLink = { path: PATHS.ABOUT, label: 'About', icon: <HomeIcon /> }
+
+export interface MenuProps {
+    onClose?: () => void;
+}
+
+const MonkeyAppBar = ({ setIsDrawerOpen = null }: { setIsDrawerOpen: any }, { onClose }: MenuProps) => {
     const { screenIsSmall } = useSmallScreenCheck();
+
+    const router = useRouter();
+
+    const handleRouteClick = (path: string) => {
+        router.push(path);
+        onClose && onClose();
+    };
 
     return (
         <AppBar
@@ -31,8 +49,14 @@ const MonkeyAppBar = ({ setIsDrawerOpen = null }: { setIsDrawerOpen: any }) => {
                         {!screenIsSmall && <AppMenu />}
                     </Box>
                     <Box className="etc-container">
-                        <ThemeMode />
+                        <div
+                            key={AboutLink.label}
+                            className={'app-route-link'}
+                            onClick={() => handleRouteClick(AboutLink.path)}>
+                            <Typography>{AboutLink.label}</Typography>
+                        </div>
                         <AppAvatar />
+                        {/* <ThemeMode /> */}
                     </Box>
                 </Toolbar>
             </Container>
