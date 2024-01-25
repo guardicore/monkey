@@ -1,10 +1,12 @@
 export enum PATHS {
-    HOME = '/home',
-    MAP = '/map',
-    EVENTS = '/events',
-    REGISTRATION = '/registration',
+    ABOUT = '/about',
+    CONFIGURE = '/configure',
     LOGIN = '/login',
-    ROOT = '/'
+    NETWORK_MAP = '/network-map',
+    REGISTRATION = '/registration',
+    REPORT = '/report',
+    ROOT = '/',
+    RUN = '/run'
 }
 
 export const getApiPath = () => {
