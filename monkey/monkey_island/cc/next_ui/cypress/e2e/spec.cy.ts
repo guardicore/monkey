@@ -3,31 +3,30 @@ const PASSWORD = 'testtest';
 
 enum Endpoint {
     HOME = '/',
-    LOGIN = '/signin',
-    REGISTER = '/signup'
+    LOGIN = '/login',
+    REGISTER = '/registration'
 }
-
-describe('template spec', () => {
-    it('passes', () => {
-        cy.visit('https://example.cypress.io');
-    });
-});
 
 describe('Register Process', () => {
     // Because we don't have a way to unregister a user
     // other than deleting the data dir this test will
     // fail if you run a second time
 
-    it('Register', () => {
-        cy.visit('https://localhost:8443');
-        cy.location('pathname').should('eq', Endpoint.REGISTER);
+    describe('on successful registration', () => {
+        it('brings the user to home page', () => {
+            cy.visit('https://localhost:8443');
+            cy.location('pathname', { timeout: 10000 }).should(
+                'eq',
+                Endpoint.REGISTER
+            );
 
-        cy.get('input[placeholder="username"]').type(USERNAME);
-        cy.get('input[placeholder="Password"]').type(PASSWORD);
+            cy.get('input[name="username"]').type(USERNAME);
+            cy.get('input[name="password"]').type(PASSWORD);
 
-        cy.get('button[text="Sign Up"]').click();
+            cy.get('button').contains('Register').click();
 
-        cy.location('pathname').should('eq', Endpoint.HOME);
+            cy.location('pathname').should('eq', Endpoint.HOME);
+        });
     });
 });
 
@@ -37,23 +36,29 @@ describe('Login', () => {
     });
 
     it('prevents unregistered user from logging in', () => {
-        cy.location('pathname').should('eq', Endpoint.LOGIN);
+        cy.location('pathname', { timeout: 10000 }).should(
+            'eq',
+            Endpoint.LOGIN
+        );
 
-        cy.get('input[placeholder="username"]').type('unregistered');
-        cy.get('input[placeholder="Password"]').type(PASSWORD);
+        cy.get('input[name="username"]').type('unregistered');
+        cy.get('input[name="password"]').type(PASSWORD);
 
-        cy.get('button[text="Sign In"]').click();
+        cy.get('button').contains('Login').click();
 
         cy.location('pathname').should('eq', Endpoint.LOGIN);
     });
 
     it('allows registered user to login', () => {
-        cy.location('pathname').should('eq', Endpoint.LOGIN);
+        cy.location('pathname', { timeout: 10000 }).should(
+            'eq',
+            Endpoint.LOGIN
+        );
 
-        cy.get('input[placeholder="username"]').type(USERNAME);
-        cy.get('input[placeholder="Password"]').type(PASSWORD);
+        cy.get('input[name="username"]').type(USERNAME);
+        cy.get('input[name="password"]').type(PASSWORD);
 
-        cy.get('button[text="Sign In"]').click();
+        cy.get('button').contains('Login').click();
 
         cy.location('pathname').should('eq', Endpoint.HOME);
     });
