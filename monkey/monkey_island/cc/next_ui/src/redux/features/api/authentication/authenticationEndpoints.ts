@@ -65,13 +65,8 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                     'Content-Type': 'application/json'
                 }
             }),
-            async onQueryStarted(_, { dispatch, queryFulfilled }) {
-                try {
-                    await queryFulfilled;
-                    dispatch(AuthenticationActions.logout);
-                } catch (error) {
-                    // dispatch();
-                }
+            async onQueryStarted(_, { dispatch }) {
+                dispatch(AuthenticationActions.logout);
             }
         })
     })
