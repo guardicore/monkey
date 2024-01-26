@@ -33,7 +33,9 @@ class Register(AbstractResource):
         """
         if not self._authentication_facade.needs_registration():
             return {
-                "errors": ["A user already exists. Only a single user can be registered."]
+                "response": {
+                    "errors": ["A user already exists. Only a single user can be registered."]
+                }
             }, HTTPStatus.CONFLICT
 
         try:
