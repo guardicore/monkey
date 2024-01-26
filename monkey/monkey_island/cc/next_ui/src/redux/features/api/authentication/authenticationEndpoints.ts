@@ -1,12 +1,7 @@
 import { HTTP_METHODS } from '@/constants/http.constants';
-import {
-    EndpointBuilder,
-    QueryFulfilledRejectionReason
-} from '@reduxjs/toolkit/dist/query/endpointDefinitions';
+import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
 import { islandApiSlice } from '@/redux/features/api/islandApiSlice';
 import { LoginParams } from '@/redux/features/api/types/islandApi';
-import handleAuthToken from '@/redux/features/api/authentication/_lib/handleAuthToken';
-import { PromiseWithKnownReason } from '@reduxjs/toolkit/dist/query/core/buildMiddleware/types';
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
 
 enum BackendEndpoints {
@@ -15,18 +10,10 @@ enum BackendEndpoints {
     LOGOUT = '/logout'
 }
 
-async function handleTokenResponse(
-    queryFulfilled: PromiseWithKnownReason<
-        { data: any; meta: any },
-        QueryFulfilledRejectionReason<any>
-    >
-) {
-    try {
-        const { data } = await queryFulfilled;
-        await handleAuthToken(data);
-    } catch (error) {
-        // dispatch();
-    }
+export type ErrorResponse = string[];
+export interface SuccessfulAuthenticationResponse {
+    authenticationToken: string;
+    tokenTTLSeconds: number;
 }
 
 export const authenticationEndpoints = islandApiSlice.injectEndpoints({
@@ -40,8 +27,20 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 },
                 body: JSON.stringify(loginValues)
             }),
-            async onQueryStarted(_, { queryFulfilled }) {
-                await handleTokenResponse(queryFulfilled);
+            transformResponse: (response): SuccessfulAuthenticationResponse => {
+                const authData = response.response?.user;
+                if (!authData) {
+                    throw new Error(
+                        "Can't find authentication data in server's response"
+                    );
+                }
+                return {
+                    authenticationToken: authData.authentication_token,
+                    tokenTTLSeconds: authData.token_ttl_sec
+                };
+            },
+            transformErrorResponse: (response): ErrorResponse => {
+                return response.data.response.errors;
             }
         }),
         register: builder.mutation<void, LoginParams>({
@@ -53,8 +52,20 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 },
                 body: JSON.stringify(loginValues)
             }),
-            async onQueryStarted(_, { queryFulfilled }) {
-                await handleTokenResponse(queryFulfilled);
+            transformResponse: (response): SuccessfulAuthenticationResponse => {
+                const authData = response.response?.user;
+                if (!authData) {
+                    throw new Error(
+                        "Registration was successful, but can't find authentication data in server's response"
+                    );
+                }
+                return {
+                    authenticationToken: authData.authentication_token,
+                    tokenTTLSeconds: authData.token_ttl_sec
+                };
+            },
+            transformErrorResponse: (response): ErrorResponse => {
+                return response.data.response.errors;
             }
         }),
         logout: builder.mutation<void, void>({

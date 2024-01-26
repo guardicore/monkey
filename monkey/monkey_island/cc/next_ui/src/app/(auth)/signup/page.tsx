@@ -11,8 +11,14 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
-import { useRegisterMutation } from '@/redux/features/api/authentication/authenticationEndpoints';
+import {
+    ErrorResponse,
+    SuccessfulAuthenticationResponse,
+    useRegisterMutation
+} from '@/redux/features/api/authentication/authenticationEndpoints';
 import setAuthenticationTimer from '@/redux/features/api/authentication/_lib/setAuthenticationTimer';
+import handleAuthToken from '@/redux/features/api/authentication/_lib/handleAuthToken';
+import { instanceOfError } from '@/_lib/typeChecks';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,13 +29,22 @@ const RegisterPage = () => {
         password: ''
     });
     const [register, { isError, error }] = useRegisterMutation();
+    const [serverError, setServerError] = useState(null);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        register(registerFormValues)
-            .unwrap()
-            .then(setAuthenticationTimer)
-            .then(() => router.push(PATHS.ROOT));
+        const registrationResponse:
+            | { data: SuccessfulAuthenticationResponse }
+            | { error: ErrorResponse | Error } =
+            await register(registerFormValues);
+
+        if ('data' in registrationResponse) {
+            handleAuthToken(registrationResponse.data);
+            setAuthenticationTimer();
+            router.push(PATHS.ROOT);
+        } else if (instanceOfError(registrationResponse.error)) {
+            setServerError(registrationResponse.error);
+        }
     };
 
     const handleRegisterFormValueChange = (e: any) => {
@@ -40,6 +55,9 @@ const RegisterPage = () => {
     };
 
     const renderRegisterForm = () => {
+        if (serverError) {
+            throw serverError;
+        }
         return (
             <>
                 <Container component="main" maxWidth="xs">
@@ -93,7 +111,13 @@ const RegisterPage = () => {
                                 Sign Up
                             </Button>
                             {/* @ts-ignore */}
-                            {isError && <p>{JSON.stringify(error)}</p>}
+                            {isError &&
+                                Array.isArray(error) &&
+                                error.map((item, index) => (
+                                    <div key={index} style={{ color: 'red' }}>
+                                        {item}
+                                    </div>
+                                ))}
                         </Box>
                     </Box>
                 </Container>

@@ -1,26 +1,21 @@
 import { setToken } from '@/_lib/authenticationToken';
+import { SuccessfulAuthenticationResponse } from '@/redux/features/api/authentication/authenticationEndpoints';
 
 // This coefficient is meant to reduce the TTL to account for network latency.
 // Should be below 1
 const networkLatencyCoefficient = 0.9;
 
-const parseTTLFromResponse = (response): number => {
-    const ttlSeconds = response?.response?.user?.token_ttl_sec;
+const parseTTLFromResponse = (ttlSeconds: number): number => {
     // Default timescale in javascript is milliseconds
     const ttl = ttlSeconds * 1000;
     return ttl * networkLatencyCoefficient;
 };
 
-const handleAuthToken = async (response) => {
-    const token = response?.response?.user?.authentication_token;
-    const ttl = parseTTLFromResponse(response);
+const handleAuthToken = (response: SuccessfulAuthenticationResponse) => {
+    const token = response.authenticationToken;
 
-    if (!token) {
-        return null;
-    } else {
-        await setToken(token, ttl);
-        return true;
-    }
+    const ttl = parseTTLFromResponse(response.tokenTTLSeconds);
+    return setToken(token, ttl);
 };
 
 export default handleAuthToken;
