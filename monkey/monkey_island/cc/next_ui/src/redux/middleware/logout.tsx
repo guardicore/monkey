@@ -2,7 +2,8 @@ import { removeToken } from '@/lib/authenticationToken';
 import { islandApiSlice } from '@/redux/features/api/islandApiSlice';
 import { Events } from '@/constants/events.constants';
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
-import clearAuthenticationTimer from '@/redux/features/api/authentication/_lib/clearAuthenticationTimer';
+
+import { clearAuthenticationTimer } from '@/redux/features/api/authentication/_lib/authenticationTimer';
 
 const logoutMiddleware = (store) => (next) => (action) => {
     if (action.type === AuthenticationActions.logout.type) {

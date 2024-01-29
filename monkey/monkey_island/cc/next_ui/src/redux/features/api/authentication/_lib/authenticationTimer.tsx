@@ -1,10 +1,21 @@
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
 import { getTTL, tokenIsStored } from '@/lib/authenticationToken';
-import { setTimer } from '@/redux/features/api/authentication/authenticationTimerSlice';
+import {
+    clearTimer,
+    setTimer
+} from '@/redux/features/api/authentication/authenticationTimerSlice';
 import { store } from '@/redux/store';
-import clearAuthenticationTimer from '@/redux/features/api/authentication/_lib/clearAuthenticationTimer';
+import _ from 'lodash';
 
-const setAuthenticationTimer = () => {
+export const clearAuthenticationTimer = () => {
+    const storedTimer = _.cloneDeep(store.getState().authenticationTimer.timer);
+    if (storedTimer !== null) {
+        clearTimeout(storedTimer);
+    }
+    store.dispatch(clearTimer());
+};
+
+export const setAuthenticationTimer = () => {
     if (!tokenIsStored()) {
         return;
     }
@@ -22,5 +33,3 @@ const setAuthenticationTimer = () => {
     clearAuthenticationTimer();
     store.dispatch(setTimer(authenticationTimer));
 };
-
-export default setAuthenticationTimer;
