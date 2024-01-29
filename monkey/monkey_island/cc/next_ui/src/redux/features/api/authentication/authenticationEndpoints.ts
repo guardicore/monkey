@@ -7,13 +7,18 @@ import { AuthenticationActions } from '@/redux/features/api/authentication/authe
 enum BackendEndpoints {
     LOGIN = '/login',
     REGISTER = '/register',
-    LOGOUT = '/logout'
+    LOGOUT = '/logout',
+    REGISTRATION_STATUS = '/registration-status'
 }
 
 export type ErrorResponse = string[];
 export interface SuccessfulAuthenticationResponse {
     authenticationToken: string;
     tokenTTLSeconds: number;
+}
+
+export interface RegistrationStatusResponse {
+    registrationNeeded: boolean;
 }
 
 export const authenticationEndpoints = islandApiSlice.injectEndpoints({
@@ -79,9 +84,25 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
             async onQueryStarted(_, { dispatch }) {
                 dispatch(AuthenticationActions.logout);
             }
+        }),
+        registrationStatus: builder.query({
+            query: () => ({
+                url: BackendEndpoints.REGISTRATION_STATUS,
+                method: HTTP_METHODS.GET,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }),
+            transformResponse: (response): RegistrationStatusResponse => {
+                return { registrationNeeded: response.needs_registration };
+            }
         })
     })
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation } =
-    authenticationEndpoints;
+export const {
+    useLoginMutation,
+    useRegisterMutation,
+    useLogoutMutation,
+    useRegistrationStatusQuery
+} = authenticationEndpoints;
