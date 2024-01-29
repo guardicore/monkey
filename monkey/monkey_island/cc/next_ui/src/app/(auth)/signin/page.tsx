@@ -20,8 +20,8 @@ import {
     SuccessfulAuthenticationResponse,
     useLoginMutation
 } from '@/redux/features/api/authentication/authenticationEndpoints';
-import { setAuthenticationTimer } from '@/redux/features/api/authentication/_lib/authenticationTimer';
-import handleAuthToken from '@/redux/features/api/authentication/_lib/handleAuthToken';
+import { setAuthenticationTimer } from '@/redux/features/api/authentication/lib/authenticationTimer';
+import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthToken';
 import { instanceOfError } from '@/lib/typeChecks';
 
 const SignInPage = () => {
