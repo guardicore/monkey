@@ -12,13 +12,14 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
 import {
     ErrorResponse,
     SuccessfulAuthenticationResponse,
-    useLoginMutation
+    useLoginMutation,
+    useRegistrationStatusQuery
 } from '@/redux/features/api/authentication/authenticationEndpoints';
 import { setAuthenticationTimer } from '@/redux/features/api/authentication/lib/authenticationTimer';
 import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthToken';
@@ -31,7 +32,18 @@ const SignInPage = () => {
         password: ''
     });
     const [login, { isError, error }] = useLoginMutation();
+    const { data: registrationStatus, isLoading: isRegistrationStatusLoading } =
+        useRegistrationStatusQuery();
     const [serverError, setServerError] = useState(null);
+
+    useEffect(() => {
+        if (
+            !isRegistrationStatusLoading &&
+            registrationStatus?.noUserAccounts
+        ) {
+            router.push(PATHS.SIGN_UP);
+        }
+    }, [isRegistrationStatusLoading, registrationStatus, router]);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
