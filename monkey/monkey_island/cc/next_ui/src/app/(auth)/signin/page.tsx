@@ -1,6 +1,7 @@
 'use client';
 import { Button } from '@mui/material';
 import * as React from 'react';
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -12,18 +13,17 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
 import {
     ErrorResponse,
     SuccessfulAuthenticationResponse,
-    useLoginMutation,
-    useRegistrationStatusQuery
+    useLoginMutation
 } from '@/redux/features/api/authentication/authenticationEndpoints';
 import { setAuthenticationTimer } from '@/redux/features/api/authentication/lib/authenticationTimer';
 import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthToken';
 import { instanceOfError } from '@/lib/typeChecks';
+import useRedirectToRegistration from '@/app/(auth)/signin/useRedirectToRegistration';
 
 const SignInPage = () => {
     const router = useRouter();
@@ -32,18 +32,9 @@ const SignInPage = () => {
         password: ''
     });
     const [login, { isError, error }] = useLoginMutation();
-    const { data: registrationStatus, isLoading: isRegistrationStatusLoading } =
-        useRegistrationStatusQuery();
     const [serverError, setServerError] = useState(null);
 
-    useEffect(() => {
-        if (
-            !isRegistrationStatusLoading &&
-            registrationStatus?.noUserAccounts
-        ) {
-            router.push(PATHS.SIGN_UP);
-        }
-    }, [isRegistrationStatusLoading, registrationStatus, router]);
+    useRedirectToRegistration();
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
