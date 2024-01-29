@@ -5,7 +5,7 @@ import {
     fetchBaseQuery
 } from '@reduxjs/toolkit/query/react';
 import { getApiPath } from '@/constants/paths.constants';
-import { getToken, isTokenStored } from '@/_lib/authenticationToken';
+import { getToken, tokenIsStored } from '@/_lib/authenticationToken';
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
 
 export const DEFAULT_QUERY_TIMEOUT: number = 10000;
@@ -29,7 +29,7 @@ const baseQueryWrapper = async (
     extraOptions: object
 ): Promise<any> => {
     const result = await baseQuery(args, api, extraOptions);
-    if (result.error?.status === 401 && isTokenStored()) {
+    if (result.error?.status === 401 && tokenIsStored()) {
         api.dispatch(AuthenticationActions.logout);
     }
     return result;
