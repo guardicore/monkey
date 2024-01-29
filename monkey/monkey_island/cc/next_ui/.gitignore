@@ -1,5 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Allow items in the lib folder
+# This negates the top-level ignore pattern
+!lib/
+
 # dependencies
 /node_modules
 /.pnp
