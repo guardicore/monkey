@@ -1,4 +1,4 @@
-import { removeToken } from '@/_lib/authenticationToken';
+import { removeToken } from '@/lib/authenticationToken';
 import { islandApiSlice } from '@/redux/features/api/islandApiSlice';
 import { Events } from '@/constants/events.constants';
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';

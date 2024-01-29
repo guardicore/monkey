@@ -2,7 +2,7 @@ import {
     localStorageGetItem,
     localStorageRemoveItem,
     localStorageSetItem
-} from '@/_lib/localStorage';
+} from '@/lib/localStorage';
 
 const keyOfAuthenticationToken = 'AuthenticationToken';
 const keyOfLastRefreshTimestamp = 'LastRefreshTimestamp';

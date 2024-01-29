@@ -1,4 +1,4 @@
-import { setToken } from '@/_lib/authenticationToken';
+import { setToken } from '@/lib/authenticationToken';
 import { SuccessfulAuthenticationResponse } from '@/redux/features/api/authentication/authenticationEndpoints';
 
 // This coefficient is meant to reduce the TTL to account for network latency.

@@ -18,7 +18,7 @@ import {
 } from '@/redux/features/api/authentication/authenticationEndpoints';
 import setAuthenticationTimer from '@/redux/features/api/authentication/_lib/setAuthenticationTimer';
 import handleAuthToken from '@/redux/features/api/authentication/_lib/handleAuthToken';
-import { instanceOfError } from '@/_lib/typeChecks';
+import { instanceOfError } from '@/lib/typeChecks';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
