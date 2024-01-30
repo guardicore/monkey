@@ -2,8 +2,9 @@ import { useRouter } from 'next/navigation';
 import { useRegistrationStatusQuery } from '@/redux/features/api/authentication/authenticationEndpoints';
 import { useEffect } from 'react';
 import { PATHS } from '@/constants/paths.constants';
+import { tokenIsStored } from '@/lib/authenticationToken';
 
-const useRedirectToRegistration = () => {
+const useRedirectToLogin = () => {
     const router = useRouter();
     const { data: registrationStatus, isLoading: isRegistrationStatusLoading } =
         useRegistrationStatusQuery();
@@ -11,11 +12,12 @@ const useRedirectToRegistration = () => {
     useEffect(() => {
         if (
             !isRegistrationStatusLoading &&
-            registrationStatus?.registrationNeeded
+            !registrationStatus?.registrationNeeded &&
+            !tokenIsStored()
         ) {
-            router.push(PATHS.SIGN_UP);
+            router.push(PATHS.LOGIN);
         }
     }, [isRegistrationStatusLoading, registrationStatus, router]);
 };
 
-export default useRedirectToRegistration;
+export default useRedirectToLogin;

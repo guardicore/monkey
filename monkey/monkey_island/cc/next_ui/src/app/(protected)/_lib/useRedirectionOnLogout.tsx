@@ -9,7 +9,7 @@ export default function useRedirectionOnLogout() {
     const router = useRouter();
     const checkToken = () => {
         if (!tokenIsStored()) {
-            router.push(PATHS.SIGN_IN);
+            router.push(PATHS.REGISTRATION);
         }
     };
 
