@@ -15,9 +15,9 @@ export default function useRedirectionWhenUnauthenticated() {
             return;
         }
         if (registrationStatus?.registrationNeeded) {
-            router.push(PATHS.SIGN_UP);
+            router.push(PATHS.REGISTRATION);
         } else if (!tokenIsStored()) {
-            router.push(PATHS.SIGN_IN);
+            router.push(PATHS.LOGIN);
         }
     }, [router, isLoading, registrationStatus]);
 }
