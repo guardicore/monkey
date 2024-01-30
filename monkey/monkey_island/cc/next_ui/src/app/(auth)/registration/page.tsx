@@ -21,6 +21,7 @@ import { setAuthenticationTimer } from '@/redux/features/api/authentication/lib/
 import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthToken';
 import { instanceOfError } from '@/lib/typeChecks';
 import useRedirectToLogin from '@/app/(auth)/registration/useRedirectToLogin';
+import ErrorAlerts from '@/_components/alerts/ErrorAlerts';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -117,13 +118,9 @@ const RegisterPage = () => {
                                 Register
                             </Button>
                             {/* @ts-ignore */}
-                            {isError &&
-                                Array.isArray(error) &&
-                                error.map((item, index) => (
-                                    <div key={index} style={{ color: 'red' }}>
-                                        {item}
-                                    </div>
-                                ))}
+                            {isError && Array.isArray(error) && (
+                                <ErrorAlerts errors={error} />
+                            )}
                         </Box>
                     </Box>
                 </Container>
