@@ -1,11 +1,21 @@
-const MonkeyNameSvg = () => (
+interface SvgProps {
+    className?: string;
+    color?: string;
+    height?: string;
+}
+
+const MonkeyNameSvg = (props: SvgProps) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         id="Layer_1"
         data-name="Layer 1"
-        viewBox="0 0 97.577 11.46">
+        viewBox="0 0 97.577 11.46"
+        className={props.className}
+        color={props.color}
+        height={props.height}
+        fill="currentColor">
         <defs>
-            <style>{'.cls-1{fill:#fff}'}</style>
+            <style>{'.cls-1{fill:currentColor}'}</style>
         </defs>
         <title>{'14cbedff-3eed-4f8f-abb7-fffe92867ded'}</title>
         <path

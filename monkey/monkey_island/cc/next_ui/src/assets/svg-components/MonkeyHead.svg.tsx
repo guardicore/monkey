@@ -1,11 +1,21 @@
-const MonkeyHeadSvg = () => (
+interface SvgProps {
+    className?: string;
+    color?: string;
+    height?: string;
+}
+
+const MonkeyHeadSvg = (props: SvgProps) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         id="Layer_1"
         data-name="Layer 1"
-        viewBox="0 0 22.468 24.614">
+        viewBox="0 0 22.468 24.614"
+        className={props.className}
+        color={props.color}
+        height={props.height}
+        fill="currentColor">
         <defs>
-            <style>{'.cls-1{fill:#fff}'}</style>
+            <style>{'.cls-1{fill:currentColor}'}</style>
         </defs>
         <title>{'f16be487-8c04-4779-b803-3b42f7cb3e8c'}</title>
         <circle cx={10.515} cy={14.064} r={0.526} className="cls-1" />
