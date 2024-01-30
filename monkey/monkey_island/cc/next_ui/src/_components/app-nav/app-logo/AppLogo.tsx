@@ -1,10 +1,7 @@
 import { PATHS } from '@/constants/paths.constants';
-import Box from '@mui/material/Box';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import SvgIcon from '@mui/material/SvgIcon';
-import MonkeyHeadSvg from '@/assets/svg-components/MonkeyHead.svg';
-import MonkeyNameSvg from '@/assets/svg-components/MonkeyName.svg';
+import MonkeyLogo from '@/_components/icons/MonkeyLogo';
 import classes from './appLogo.module.scss';
 
 const AppLogo = () => {
@@ -15,16 +12,10 @@ const AppLogo = () => {
     };
 
     return (
-        <Box
+        <MonkeyLogo
             id={classes['app-logo']}
-            onClick={() => handleLogoClick(PATHS.ROOT)}>
-            <SvgIcon inheritViewBox={true} className={'logo-icon'}>
-                <MonkeyHeadSvg />
-            </SvgIcon>
-            <SvgIcon inheritViewBox={true} className={'logo-text'}>
-                <MonkeyNameSvg />
-            </SvgIcon>
-        </Box>
+            onClick={() => handleLogoClick(PATHS.ROOT)}
+        />
     );
 };
 

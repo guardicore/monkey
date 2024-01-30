@@ -1,22 +1,10 @@
 @use 'src/styles/variables' as *;
 
 #app-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  color: black;
+  height: calc($app-bar-height * 0.65);
 
   :hover {
     cursor: pointer;
-  }
-
-  :global {
-    .logo-icon {
-      font-size: 2rem;
-    }
-    
-    .logo-text {
-      font-size: 10rem;
-      height: $app-bar-height;
-    }
   }
 }
