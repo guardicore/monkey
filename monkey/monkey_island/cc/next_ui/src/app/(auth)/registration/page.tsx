@@ -20,7 +20,7 @@ import {
 import { setAuthenticationTimer } from '@/redux/features/api/authentication/lib/authenticationTimer';
 import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthToken';
 import { instanceOfError } from '@/lib/typeChecks';
-import useRedirectToLogin from '@/app/(auth)/signup/useRedirectToLogin';
+import useRedirectToLogin from '@/app/(auth)/registration/useRedirectToLogin';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -114,7 +114,7 @@ const RegisterPage = () => {
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}>
-                                Sign Up
+                                Register
                             </Button>
                             {/* @ts-ignore */}
                             {isError &&

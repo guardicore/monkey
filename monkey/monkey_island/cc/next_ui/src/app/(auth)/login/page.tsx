@@ -23,9 +23,9 @@ import {
 import { setAuthenticationTimer } from '@/redux/features/api/authentication/lib/authenticationTimer';
 import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthToken';
 import { instanceOfError } from '@/lib/typeChecks';
-import useRedirectToRegistration from '@/app/(auth)/signin/useRedirectToRegistration';
+import useRedirectToRegistration from '@/app/(auth)/login/useRedirectToRegistration';
 
-const SignInPage = () => {
+const LoginPage = () => {
     const router = useRouter();
     const [loginFormValues, setLoginFormValues] = useState({
         username: '',
@@ -77,7 +77,7 @@ const SignInPage = () => {
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Sign in
+                            Login
                         </Typography>
                         <Box
                             component="form"
@@ -121,7 +121,7 @@ const SignInPage = () => {
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}>
-                                Sign In
+                                Login
                             </Button>
 
                             {isError &&
@@ -138,11 +138,6 @@ const SignInPage = () => {
                                         Forgot password?
                                     </Link>
                                 </Grid>
-                                <Grid item>
-                                    <Link href="#" variant="body2">
-                                        {"Don't have an account? Sign Up"}
-                                    </Link>
-                                </Grid>
                             </Grid>
                         </Box>
                     </Box>
@@ -153,4 +148,4 @@ const SignInPage = () => {
 
     return renderLoginForm();
 };
-export default SignInPage;
+export default LoginPage;

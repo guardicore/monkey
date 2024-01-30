@@ -2,12 +2,10 @@ export enum PATHS {
     HOME = '/home',
     MAP = '/map',
     EVENTS = '/events',
-    SIGN_IN = '/signin',
-    SIGN_UP = '/signup',
+    REGISTRATION = '/registration',
+    LOGIN = '/login',
     ROOT = '/'
 }
-
-export const AUTHENTICATION_PATHS = [PATHS.SIGN_IN, PATHS.SIGN_UP];
 
 export const getApiPath = () => {
     if (typeof window !== 'undefined') {
