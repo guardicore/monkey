@@ -11,6 +11,19 @@ enum BackendEndpoints {
     REGISTRATION_STATUS = '/registration-status'
 }
 
+interface apiLoginResponse {
+    response?: {
+        user: {
+            authentication_token: string;
+            token_ttl_sec: number;
+        };
+    };
+    data?: {
+        response: {
+            errors: string[];
+        };
+    };
+}
 export type ErrorResponse = string[];
 export interface SuccessfulAuthenticationResponse {
     authenticationToken: string;
@@ -23,7 +36,7 @@ export interface RegistrationStatusResponse {
 
 export const authenticationEndpoints = islandApiSlice.injectEndpoints({
     endpoints: (builder: EndpointBuilder<any, any, any>) => ({
-        login: builder.mutation<void, LoginParams>({
+        login: builder.mutation<SuccessfulAuthenticationResponse, LoginParams>({
             query: (loginValues) => ({
                 url: BackendEndpoints.LOGIN,
                 method: HTTP_METHODS.POST,
@@ -32,7 +45,9 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 },
                 body: JSON.stringify(loginValues)
             }),
-            transformResponse: (response): SuccessfulAuthenticationResponse => {
+            transformResponse: (
+                response: apiLoginResponse
+            ): SuccessfulAuthenticationResponse => {
                 const authData = response.response?.user;
                 if (!authData) {
                     throw new Error(
@@ -48,7 +63,10 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 return response.data.response.errors;
             }
         }),
-        register: builder.mutation<void, LoginParams>({
+        register: builder.mutation<
+            SuccessfulAuthenticationResponse,
+            LoginParams
+        >({
             query: (loginValues) => ({
                 url: BackendEndpoints.REGISTER,
                 method: HTTP_METHODS.POST,
