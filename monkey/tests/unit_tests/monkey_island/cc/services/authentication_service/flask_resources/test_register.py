@@ -53,7 +53,7 @@ def test_register__already_registered(
     response = make_registration_request("{}")
 
     assert response.status_code == HTTPStatus.CONFLICT
-    assert response.json["errors"]
+    assert response.json["response"]["errors"]
 
 
 def test_register_successful(
