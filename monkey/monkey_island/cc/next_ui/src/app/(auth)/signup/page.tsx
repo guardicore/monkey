@@ -14,11 +14,13 @@ import { PATHS } from '@/constants/paths.constants';
 import {
     ErrorResponse,
     SuccessfulAuthenticationResponse,
-    useRegisterMutation
+    useRegisterMutation,
+    useRegistrationStatusQuery
 } from '@/redux/features/api/authentication/authenticationEndpoints';
 import { setAuthenticationTimer } from '@/redux/features/api/authentication/lib/authenticationTimer';
 import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthToken';
 import { instanceOfError } from '@/lib/typeChecks';
+import useRedirectToLogin from '@/app/(auth)/signup/useRedirectToLogin';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -30,6 +32,9 @@ const RegisterPage = () => {
     });
     const [register, { isError, error }] = useRegisterMutation();
     const [serverError, setServerError] = useState(null);
+    const { refetch: refetchRegistrationNeeded } = useRegistrationStatusQuery();
+
+    useRedirectToLogin();
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -39,8 +44,9 @@ const RegisterPage = () => {
             await register(registerFormValues);
 
         if ('data' in registrationResponse) {
-            handleAuthToken(registrationResponse.data);
-            setAuthenticationTimer();
+            await handleAuthToken(registrationResponse.data);
+            await setAuthenticationTimer();
+            await refetchRegistrationNeeded();
             router.push(PATHS.ROOT);
         } else if (instanceOfError(registrationResponse.error)) {
             setServerError(registrationResponse.error);
