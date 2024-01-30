@@ -1,18 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './rootReducer';
 import { CurriedGetDefaultMiddleware } from '@reduxjs/toolkit/src/getDefaultMiddleware';
-import { externalApiSlice } from '@/redux/features/api/externalApiSlice';
-import { internalApiSlice } from '@/redux/features/api/internalApiSlice';
+import { islandApiSlice } from '@/redux/features/api/islandApiSlice';
+import logoutMiddleware from '@/redux/middleware/logout';
 
 const REDUX_LOGGER_ENABLED =
     process.env.NEXT_PUBLIC_REDUX_LOGGER_ENABLED ===
     process.env.NEXT_PUBLIC_TRUE_VALUE;
 
 const getMiddlewares = (getDefaultMiddleware: CurriedGetDefaultMiddleware) => {
-    const middlewares: any[] = [
-        externalApiSlice.middleware,
-        internalApiSlice.middleware
-    ];
+    const middlewares: any[] = [islandApiSlice.middleware, logoutMiddleware];
 
     if (REDUX_LOGGER_ENABLED) {
         // eslint-disable-next-line @typescript-eslint/no-var-requires

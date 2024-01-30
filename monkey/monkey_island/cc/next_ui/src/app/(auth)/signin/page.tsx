@@ -12,18 +12,40 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { login } from '@/helpers/signin/signin';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { PATHS } from '@/constants/paths.constants';
+import {
+    ErrorResponse,
+    SuccessfulAuthenticationResponse,
+    useLoginMutation
+} from '@/redux/features/api/authentication/authenticationEndpoints';
+import { setAuthenticationTimer } from '@/redux/features/api/authentication/lib/authenticationTimer';
+import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthToken';
+import { instanceOfError } from '@/lib/typeChecks';
 
 const SignInPage = () => {
+    const router = useRouter();
     const [loginFormValues, setLoginFormValues] = useState({
         username: '',
         password: ''
     });
+    const [login, { isError, error }] = useLoginMutation();
+    const [serverError, setServerError] = useState(null);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        await login(loginFormValues);
+        const loginResponse:
+            | { data: SuccessfulAuthenticationResponse }
+            | { error: ErrorResponse | Error } = await login(loginFormValues);
+
+        if ('data' in loginResponse) {
+            handleAuthToken(loginResponse.data);
+            setAuthenticationTimer();
+            router.push(PATHS.ROOT);
+        } else if (instanceOfError(loginResponse.error)) {
+            setServerError(loginResponse.error);
+        }
     };
 
     const handleLoginFormValueChange = (e: any) => {
@@ -34,6 +56,9 @@ const SignInPage = () => {
     };
 
     const renderLoginForm = () => {
+        if (serverError) {
+            throw serverError;
+        }
         return (
             <>
                 <Container component="main" maxWidth="xs">
@@ -96,8 +121,13 @@ const SignInPage = () => {
                                 Sign In
                             </Button>
 
-                            {/* @ts-ignore */}
-                            {/*{isError && <p>{error.message}</p>}*/}
+                            {isError &&
+                                Array.isArray(error) &&
+                                error.map((item, index) => (
+                                    <div key={index} style={{ color: 'red' }}>
+                                        {item}
+                                    </div>
+                                ))}
 
                             <Grid container>
                                 <Grid item xs>

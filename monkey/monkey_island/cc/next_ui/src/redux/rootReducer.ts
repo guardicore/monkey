@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
-import { externalApiSlice } from '@/redux/features/api/externalApiSlice';
-import { internalApiSlice } from '@/redux/features/api/internalApiSlice';
+import { islandApiSlice } from '@/redux/features/api/islandApiSlice';
 import themeSliceReducer from './features/theme/theme.slice';
+import authenticationTimerSlice from '@/redux/features/api/authentication/authenticationTimerSlice';
 
 const rootReducer = combineReducers({
-    [externalApiSlice.reducerPath]: externalApiSlice.reducer,
-    [internalApiSlice.reducerPath]: internalApiSlice.reducer,
+    [islandApiSlice.reducerPath]: islandApiSlice.reducer,
+    authenticationTimer: authenticationTimerSlice,
     theme: themeSliceReducer
 });
 

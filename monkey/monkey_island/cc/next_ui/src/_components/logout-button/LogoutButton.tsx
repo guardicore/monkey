@@ -2,24 +2,18 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useLogoutMutation } from '@/redux/features/api/authentication/internalAuthApi';
+import { useLogoutMutation } from '@/redux/features/api/authentication/authenticationEndpoints';
 
 const LogoutButton = () => {
-    const [logout, { isLoading }] = useLogoutMutation();
-
-    const handleButtonClick = async () => {
-        // @ts-ignore
-        logout();
-    };
+    const [logout] = useLogoutMutation();
 
     return (
         <Button
-            disabled={isLoading}
-            onClick={handleButtonClick}
+            onClick={() => logout()}
             variant="outlined"
             startIcon={<LogoutIcon />}
             color="error">
-            {isLoading ? 'Logging Out..' : 'Logout'}
+            Logout
         </Button>
     );
 };

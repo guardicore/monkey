@@ -1,6 +1,7 @@
 'use client';
 import { Button } from '@mui/material';
 import * as React from 'react';
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -8,33 +9,41 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useRegisterMutation } from '@/redux/features/api/authentication/internalAuthApi';
-import { login } from '@/helpers/signin/signin';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { PATHS } from '@/constants/paths.constants';
+import {
+    ErrorResponse,
+    SuccessfulAuthenticationResponse,
+    useRegisterMutation
+} from '@/redux/features/api/authentication/authenticationEndpoints';
+import { setAuthenticationTimer } from '@/redux/features/api/authentication/lib/authenticationTimer';
+import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthToken';
+import { instanceOfError } from '@/lib/typeChecks';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [register, { isLoading }] = useRegisterMutation();
+    const router = useRouter();
 
     const [registerFormValues, setRegisterFormValues] = useState({
         username: '',
         password: ''
     });
+    const [register, { isError, error }] = useRegisterMutation();
+    const [serverError, setServerError] = useState(null);
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        const registerData: any = await register(registerFormValues);
-        console.log('registerData', registerData);
-        if (
-            !(
-                registerData?.error?.status === 400 ||
-                registerData?.status === 400
-            )
-        ) {
-            await login(registerFormValues);
-        } else {
-            // TODO: something with error
-            console.log(registerData?.error?.data);
+        const registrationResponse:
+            | { data: SuccessfulAuthenticationResponse }
+            | { error: ErrorResponse | Error } =
+            await register(registerFormValues);
+
+        if ('data' in registrationResponse) {
+            handleAuthToken(registrationResponse.data);
+            setAuthenticationTimer();
+            router.push(PATHS.ROOT);
+        } else if (instanceOfError(registrationResponse.error)) {
+            setServerError(registrationResponse.error);
         }
     };
 
@@ -46,6 +55,9 @@ const RegisterPage = () => {
     };
 
     const renderRegisterForm = () => {
+        if (serverError) {
+            throw serverError;
+        }
         return (
             <>
                 <Container component="main" maxWidth="xs">
@@ -98,9 +110,14 @@ const RegisterPage = () => {
                                 sx={{ mt: 3, mb: 2 }}>
                                 Sign Up
                             </Button>
-
                             {/* @ts-ignore */}
-                            {/*{isError && <p>{error.message}</p>}*/}
+                            {isError &&
+                                Array.isArray(error) &&
+                                error.map((item, index) => (
+                                    <div key={index} style={{ color: 'red' }}>
+                                        {item}
+                                    </div>
+                                ))}
                         </Box>
                     </Box>
                 </Container>
@@ -110,4 +127,5 @@ const RegisterPage = () => {
 
     return renderRegisterForm();
 };
+
 export default RegisterPage;

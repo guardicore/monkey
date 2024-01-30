@@ -8,3 +8,9 @@ export enum PATHS {
 }
 
 export const AUTHENTICATION_PATHS = [PATHS.SIGN_IN, PATHS.SIGN_UP];
+
+export const getApiPath = () => {
+    if (typeof window !== 'undefined') {
+        return location.protocol + '//' + location.host + '/api';
+    }
+};
