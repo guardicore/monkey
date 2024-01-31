@@ -22,9 +22,9 @@ const themeOptions = {
             contrastText: '#000'
         },
         secondary: {
-            main: '#F50057',
-            light: '#F73378',
-            dark: '#AB003C',
+            main: '#0F63A4',
+            light: '#3F82B6',
+            dark: '#0A4572',
             contrastText: '#FFF'
         }
     },
