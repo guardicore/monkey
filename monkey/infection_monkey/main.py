@@ -8,6 +8,15 @@
 # "_pickle.PicklingError: Can't pickle <class 'xyz': it's not the same object as xyz".
 import infection_monkey.agent_plugin_api_imports  # noqa: F401
 import infection_monkey.monkey_events_imports  # noqa: F401
+from common.command_builder import (  # noqa: F401
+    DownloadMethod,
+    DownloadOptions,
+    RunOptions,
+    MonkeyArgs,
+    Shell,
+    IAgentCommandBuilder,
+    IAgentCommandBuilderFactory,
+)
 
 # UPDATE: It's the second import now; read comment above
 # serpentarium must be the first import, as it needs to save the state of the
