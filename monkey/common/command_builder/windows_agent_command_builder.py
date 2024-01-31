@@ -76,12 +76,13 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
             agent_arg = DROPPER_ARG
             destination_path = run_options.agent_destination_path
 
+        set_otp = self._set_otp_cmd
         if run_options.shell == Shell.POWERSHELL:
-            command += "powershell "
+            set_otp = self._set_otp_powershell
 
         agent_arguments = self.build_agent_command_line_arguments(destination_path)
         command = (
-            f"$env:{self._agent_otp_environment_variable}='{self._otp_provider.get_otp()}' ; "
+            f"{set_otp()}"
             f"{str(run_options.agent_destination_path)} {agent_arg} {' '.join(agent_arguments)}"
         )
 
@@ -89,6 +90,12 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
             command += " " + run_options.postfix
 
         return command
+
+    def _set_otp_powershell(self) -> str:
+        return f"$env:{self._agent_otp_environment_variable}='{self._otp_provider.get_otp()}' ; "
+
+    def _set_otp_cmd(self) -> str:
+        return f"set {self._agent_otp_environment_variable}={self._otp_provider.get_otp()}&"
 
     def build_agent_command_line_arguments(self, destination_path: Optional[PurePath]) -> list[str]:
         commandline = []
