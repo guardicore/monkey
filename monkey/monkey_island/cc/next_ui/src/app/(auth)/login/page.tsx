@@ -26,6 +26,9 @@ import LoadingIcon from '@/_components/icons/LoadingIcon';
 import MonkeyLogo from '@/_components/icons/MonkeyLogo';
 import classes from './page.module.scss';
 
+const FORGOT_PASSWORD_LINK =
+    'https://techdocs.akamai.com/infection-monkey/docs/accounts-and-security#resetting-your-account-credentials';
+
 const LoginPage = () => {
     const router = useRouter();
     const [loginFormValues, setLoginFormValues] = useState({
@@ -119,12 +122,12 @@ const LoginPage = () => {
 
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#" variant="body2">
+                            <Link href={FORGOT_PASSWORD_LINK} variant="body2">
                                 Forgot password?
                             </Link>
                         </Grid>
                         <Grid item>
-                            <Link href="#" variant="body2">
+                            <Link href={PATHS.REGISTRATION} variant="body2">
                                 {"Don't have an account? Sign Up"}
                             </Link>
                         </Grid>
