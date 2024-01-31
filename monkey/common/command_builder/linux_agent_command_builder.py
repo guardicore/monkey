@@ -70,7 +70,7 @@ class LinuxAgentCommandBuilder(IAgentCommandBuilder):
         )
         command = (
             f"{self._agent_otp_environment_variable}={self._otp_provider.get_otp()} "
-            f"{run_options.agent_destination_path} {agent_arg} {' '.join(agent_arguments)}"
+            f"{str(run_options.agent_destination_path)} {agent_arg} {' '.join(agent_arguments)}"
         )
         if run_options.postfix:
             command += " " + run_options.postfix
@@ -82,7 +82,7 @@ class LinuxAgentCommandBuilder(IAgentCommandBuilder):
 
         if self._agent_id is not None:
             commandline.append("-p")
-            commandline.append(self._agent_id)
+            commandline.append(str(self._agent_id))
         if self._servers:
             commandline.append("-s")
             commandline.append(",".join(self._servers))
