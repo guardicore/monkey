@@ -90,6 +90,8 @@ jobs:
         - JS_WARNINGS_AMOUNT_UPPER_LIMIT=0
         - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # test for max warnings
 
+        # Run unit tests
+        - npm test
 
         # build documentation
         - cd $TRAVIS_BUILD_DIR/docs

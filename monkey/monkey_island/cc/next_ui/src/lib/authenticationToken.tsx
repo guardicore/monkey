@@ -4,9 +4,11 @@ import {
     localStorageSetItem
 } from '@/lib/localStorage';
 
-const keyOfAuthenticationToken = 'AuthenticationToken';
-const keyOfLastRefreshTimestamp = 'LastRefreshTimestamp';
-const keyOfExpirationTimestamp = 'ExpirationTimestamp';
+export enum StorageKeys {
+    TOKEN = 'AuthenticationToken',
+    LAST_REFRESH_TIMESTAMP = 'LastRefreshTimestamp',
+    EXPIRATION_TIMESTAMP = 'ExpirationTimestamp'
+}
 
 export const tokenIsStored = (): boolean => {
     const token = getToken();
@@ -14,12 +16,14 @@ export const tokenIsStored = (): boolean => {
 };
 
 export const getToken = (): string | null => {
-    return localStorageGetItem(keyOfAuthenticationToken);
+    return localStorageGetItem(StorageKeys.TOKEN);
 };
 
 export const getTTL = (): number | null => {
     const now = Date.now();
-    const expirationTimestamp = localStorageGetItem(keyOfExpirationTimestamp);
+    const expirationTimestamp = localStorageGetItem(
+        StorageKeys.EXPIRATION_TIMESTAMP
+    );
     if (expirationTimestamp === null) {
         return null;
     }
@@ -32,13 +36,13 @@ const TTLToTimestamp = (ttl: number): number => {
 };
 
 export const setToken = (tokenValue: string, ttl: number) => {
-    localStorageSetItem(keyOfExpirationTimestamp, TTLToTimestamp(ttl));
-    localStorageSetItem(keyOfLastRefreshTimestamp, Date.now());
-    return localStorageSetItem(keyOfAuthenticationToken, tokenValue);
+    localStorageSetItem(StorageKeys.EXPIRATION_TIMESTAMP, TTLToTimestamp(ttl));
+    localStorageSetItem(StorageKeys.LAST_REFRESH_TIMESTAMP, Date.now());
+    return localStorageSetItem(StorageKeys.TOKEN, tokenValue);
 };
 
 export const removeToken = () => {
-    localStorageRemoveItem(keyOfLastRefreshTimestamp);
-    localStorageRemoveItem(keyOfExpirationTimestamp);
-    return localStorageRemoveItem(keyOfAuthenticationToken);
+    localStorageRemoveItem(StorageKeys.LAST_REFRESH_TIMESTAMP);
+    localStorageRemoveItem(StorageKeys.EXPIRATION_TIMESTAMP);
+    return localStorageRemoveItem(StorageKeys.TOKEN);
 };
