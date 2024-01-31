@@ -70,23 +70,28 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
 
     def build_run_command(self, run_options: RunOptions):
         agent_arg = MONKEY_ARG
+        destination_path = None
         if run_options.monkey_args == MonkeyArgs.DROPPER:
             agent_arg = DROPPER_ARG
+            destination_path = run_options.agent_destination_path
 
-        agent_arguments = self.build_agent_command_line_arguments(
-            run_options.agent_destination_path
-        )
-        return (
+        agent_arguments = self.build_agent_command_line_arguments(destination_path)
+        command = (
             f"$env:{self._agent_otp_environment_variable}='{self._otp_provider.get_otp()}' ; "
-            f"{run_options.agent_destination_path} {agent_arg} {' '.join(agent_arguments)}"
+            f"{str(run_options.agent_destination_path)} {agent_arg} {' '.join(agent_arguments)}"
         )
+
+        if run_options.postfix:
+            command += " " + run_options.postfix
+
+        return command
 
     def build_agent_command_line_arguments(self, destination_path: Optional[PurePath]) -> list[str]:
         commandline = []
 
         if self._agent_id is not None:
             commandline.append("-p")
-            commandline.append(self._agent_id)
+            commandline.append(str(self._agent_id))
         if self._servers:
             commandline.append("-s")
             commandline.append(",".join(self._servers))
