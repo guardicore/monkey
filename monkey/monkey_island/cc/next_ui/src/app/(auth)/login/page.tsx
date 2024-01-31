@@ -152,7 +152,7 @@ const LoginPage = () => {
         } else if (isSuccess) {
             return 'Success!';
         }
-        return 'Sign In';
+        return 'Login';
     };
 
     return renderLoginForm();
