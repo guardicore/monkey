@@ -79,7 +79,7 @@ const LoginPage = () => {
 
     const renderFormCard = () => {
         return (
-            <Card id={classes.card} variant="outlined">
+            <Card id={classes.card} variant="outlined" color="secondary">
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <Typography component="h1" variant="h5">
                         Login
@@ -95,6 +95,7 @@ const LoginPage = () => {
                         value={loginFormValues.username}
                         onChange={handleLoginFormValueChange}
                         autoFocus
+                        color="secondary"
                     />
                     <TextField
                         margin="normal"
@@ -107,11 +108,13 @@ const LoginPage = () => {
                         autoComplete="current-password"
                         value={loginFormValues.password}
                         onChange={handleLoginFormValueChange}
+                        color="secondary"
                     />
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
+                        color="secondary"
                         sx={{ mt: 3, mb: 2 }}>
                         {renderSubmitButtonContent()}
                     </Button>
@@ -122,12 +125,18 @@ const LoginPage = () => {
 
                     <Grid container>
                         <Grid item xs>
-                            <Link href={FORGOT_PASSWORD_LINK} variant="body2">
+                            <Link
+                                href={FORGOT_PASSWORD_LINK}
+                                variant="body2"
+                                color="secondary">
                                 Forgot password?
                             </Link>
                         </Grid>
                         <Grid item>
-                            <Link href={PATHS.REGISTRATION} variant="body2">
+                            <Link
+                                href={PATHS.REGISTRATION}
+                                variant="body2"
+                                color="secondary">
                                 {"Don't have an account? Sign Up"}
                             </Link>
                         </Grid>
