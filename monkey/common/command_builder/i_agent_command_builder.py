@@ -1,6 +1,6 @@
 import abc
 from enum import Enum, auto
-from pathlib import Path, PurePath
+from pathlib import PurePath
 from typing import Optional
 
 from monkeytypes import InfectionMonkeyBaseModel
@@ -25,7 +25,7 @@ class MonkeyArgs(Enum):
 
 
 class AbstractCommandModel(InfectionMonkeyBaseModel):
-    agent_destination_path: Path
+    agent_destination_path: PurePath
     shell: Optional[Shell] = None
     prefix: Optional[str] = None
 
