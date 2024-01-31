@@ -42,6 +42,7 @@ from common.agent_events import (
     register_builtin_agent_event_serializers,
 )
 from common.agent_registration_data import AgentRegistrationData
+from common.command_builder import AgentCommandBuilderFactory
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from infection_monkey.agent_event_handlers import (
@@ -426,6 +427,10 @@ class InfectionMonkey:
             http_agent_binary_server
         )
 
+        agent_command_builder_factory = AgentCommandBuilderFactory(
+            self._agent_id, otp_provider, AGENT_OTP_ENVIRONMENT_VARIABLE
+        )
+
         plugin_factories = {
             AgentPluginType.CREDENTIALS_COLLECTOR: CredentialsCollectorPluginFactory(
                 self._agent_id, self._agent_event_publisher, self._local_machine_info, create_plugin
@@ -440,6 +445,7 @@ class InfectionMonkey:
                 otp_provider,
                 AGENT_OTP_ENVIRONMENT_VARIABLE,
                 self._local_machine_info,
+                agent_command_builder_factory,
                 create_plugin,
             ),
             AgentPluginType.PAYLOAD: PayloadPluginFactory(
