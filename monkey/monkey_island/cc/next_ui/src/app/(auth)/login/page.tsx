@@ -24,7 +24,7 @@ import { setAuthenticationTimer } from '@/redux/features/api/authentication/lib/
 import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthToken';
 import { instanceOfError } from '@/lib/typeChecks';
 import useRedirectToRegistration from '@/app/(auth)/login/useRedirectToRegistration';
-import ErrorAlerts from '@/_components/alerts/ErrorAlerts';
+import ErrorList from '@/_components/errors/ErrorList';
 
 const LoginPage = () => {
     const router = useRouter();
@@ -126,7 +126,7 @@ const LoginPage = () => {
                             </Button>
 
                             {isError && Array.isArray(error) && (
-                                <ErrorAlerts errors={error} />
+                                <ErrorList errors={error} />
                             )}
 
                             <Grid container>
