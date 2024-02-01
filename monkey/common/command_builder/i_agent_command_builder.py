@@ -38,6 +38,7 @@ class DownloadOptions(AbstractCommandModel):
 class RunOptions(AbstractCommandModel):
     monkey_args: Optional[MonkeyArgs]
     postfix: Optional[str] = None
+    dropper_destination_path: Optional[PurePath] = None
 
 
 class IAgentCommandBuilder(metaclass=abc.ABCMeta):

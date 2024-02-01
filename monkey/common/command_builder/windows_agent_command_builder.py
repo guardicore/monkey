@@ -99,7 +99,11 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
         destination_path = None
         if run_options.monkey_args == MonkeyArgs.DROPPER:
             agent_arg = DROPPER_ARG
-            destination_path = run_options.agent_destination_path
+            destination_path = (
+                run_options.dropper_destination_path
+                if run_options.dropper_destination_path
+                else run_options.agent_destination_path
+            )
 
         agent_arguments = self.build_agent_command_line_arguments(destination_path)
         return f"{agent_arg} {' '.join(agent_arguments)}"
