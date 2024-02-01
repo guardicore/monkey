@@ -10,20 +10,21 @@ import AppAvatar from '@/_components/app-nav/app-avatar/AppAvatar';
 import Box from '@mui/material/Box';
 import AppDrawerOpener from '@/_components/app-nav/app-drawer-opener/AppDrawerOpener';
 import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
-import { ThemeMode } from '@/_components/theme-mode/ThemeMode';
 import { PATHS } from '@/constants/paths.constants';
 import HomeIcon from '@mui/icons-material/Home';
 import { useRouter } from 'next/navigation';
 import Typography from '@mui/material/Typography';
 
-
-const AboutLink = { path: PATHS.ABOUT, label: 'About', icon: <HomeIcon /> }
+const AboutLink = { path: PATHS.ABOUT, label: 'About', icon: <HomeIcon /> };
 
 export interface MenuProps {
     onClose?: () => void;
 }
 
-const MonkeyAppBar = ({ setIsDrawerOpen = null }: { setIsDrawerOpen: any }, { onClose }: MenuProps) => {
+const MonkeyAppBar = (
+    { setIsDrawerOpen = null }: { setIsDrawerOpen: any },
+    { onClose }: MenuProps
+) => {
     const { screenIsSmall } = useSmallScreenCheck();
 
     const router = useRouter();
@@ -56,7 +57,6 @@ const MonkeyAppBar = ({ setIsDrawerOpen = null }: { setIsDrawerOpen: any }, { on
                             <Typography>{AboutLink.label}</Typography>
                         </div>
                         <AppAvatar />
-                        {/* <ThemeMode /> */}
                     </Box>
                 </Toolbar>
             </Container>

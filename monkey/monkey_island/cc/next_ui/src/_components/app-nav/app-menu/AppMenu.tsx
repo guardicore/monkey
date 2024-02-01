@@ -11,7 +11,7 @@ const MenuLinks = [
     { path: PATHS.CONFIGURE, label: 'Configure', icon: <HomeIcon /> },
     { path: PATHS.RUN, label: 'Run', icon: <HomeIcon /> },
     { path: PATHS.NETWORK_MAP, label: 'Network Map', icon: <HubIcon /> },
-    { path: PATHS.REPORT, label: 'Report', icon: <HomeIcon /> },
+    { path: PATHS.REPORT, label: 'Report', icon: <HomeIcon /> }
 ];
 
 export interface MenuProps {
