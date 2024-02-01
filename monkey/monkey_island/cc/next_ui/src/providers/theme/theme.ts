@@ -6,7 +6,7 @@ export enum THEME_APPEARANCE {
     SYSTEM_MODE = 'system'
 }
 
-const roboto = Roboto({
+export const roboto = Roboto({
     weight: ['300', '400', '500', '700'],
     subsets: ['latin'],
     display: 'swap'
@@ -16,7 +16,7 @@ const themeOptions = {
     palette: {
         mode: THEME_APPEARANCE.LIGHT_MODE,
         primary: {
-            main: '#FFC107',
+            main: '#FFCC00',
             light: '#FFCD38',
             dark: '#B28704',
             contrastText: '#000'
