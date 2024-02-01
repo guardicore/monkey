@@ -79,17 +79,24 @@ class LinuxAgentCommandBuilder(IAgentCommandBuilder):
         return command
 
     def _build_agent_run_arguments(self, run_options: RunOptions):
+        # NOTE: this is duplicated both in Windows and linux
         agent_arg = MONKEY_ARG
         destination_path = None
         if run_options.monkey_args == MonkeyArgs.DROPPER:
             agent_arg = DROPPER_ARG
-            destination_path = run_options.agent_destination_path
+            destination_path = (
+                run_options.dropper_destination_path
+                if run_options.dropper_destination_path
+                else run_options.agent_destination_path
+            )
 
         agent_arguments = self.build_agent_command_line_arguments(destination_path)
         return f"{agent_arg} {' '.join(agent_arguments)}"
 
     def build_agent_command_line_arguments(self, destination_path: Optional[PurePath]) -> list[str]:
         commandline = []
+
+        # NOTE: We might want to add the argument here.
 
         if self._agent_id is not None:
             commandline.append("-p")
