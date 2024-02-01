@@ -69,7 +69,6 @@ const LoginPage = () => {
         return (
             <Container id={classes.container} component="main" maxWidth="xs">
                 <Stack direction="column" alignItems={'center'} spacing={2}>
-                    <MonkeyLogo id={classes.logo} />
                     {renderFormCard()}
                 </Stack>
             </Container>
@@ -78,7 +77,8 @@ const LoginPage = () => {
 
     const renderFormCard = () => {
         return (
-            <Card id={classes.card} variant="outlined">
+            <Card id={classes.card} variant="outlined" style={{ zIndex: 100 }}>
+                <MonkeyLogo id={classes.logo} />
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
@@ -117,7 +117,7 @@ const LoginPage = () => {
                     {renderErrors()}
 
                     <Grid container>
-                        <Grid item xs style={{ zIndex: 100 }}>
+                        <Grid item xs>
                             <Link href="#">Forgot password?</Link>
                         </Grid>
                     </Grid>
