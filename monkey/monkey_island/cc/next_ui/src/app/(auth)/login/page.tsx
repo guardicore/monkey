@@ -26,9 +26,6 @@ import LoadingIcon from '@/_components/icons/LoadingIcon';
 import MonkeyLogo from '@/_components/icons/MonkeyLogo';
 import classes from './page.module.scss';
 
-const FORGOT_PASSWORD_LINK =
-    'https://techdocs.akamai.com/infection-monkey/docs/accounts-and-security#resetting-your-account-credentials';
-
 const LoginPage = () => {
     const router = useRouter();
     const [loginFormValues, setLoginFormValues] = useState({
@@ -79,23 +76,20 @@ const LoginPage = () => {
 
     const renderFormCard = () => {
         return (
-            <Card id={classes.card} variant="outlined" color="secondary">
+            <Card id={classes.card} variant="outlined">
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-                    <Typography component="h1" variant="h5">
-                        Login
-                    </Typography>
                     <TextField
                         margin="normal"
                         required
                         fullWidth
                         id="username"
-                        label="username"
+                        label="Username"
                         name="username"
                         autoComplete="username"
                         value={loginFormValues.username}
                         onChange={handleLoginFormValueChange}
                         autoFocus
-                        color="secondary"
+                        style={{ background: 'black' }}
                     />
                     <TextField
                         margin="normal"
@@ -108,13 +102,12 @@ const LoginPage = () => {
                         autoComplete="current-password"
                         value={loginFormValues.password}
                         onChange={handleLoginFormValueChange}
-                        color="secondary"
+                        style={{ background: 'black' }}
                     />
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
-                        color="secondary"
                         sx={{ mt: 3, mb: 2 }}>
                         {renderSubmitButtonContent()}
                     </Button>
@@ -122,21 +115,8 @@ const LoginPage = () => {
                     {renderErrors()}
 
                     <Grid container>
-                        <Grid item xs>
-                            <Link
-                                href={FORGOT_PASSWORD_LINK}
-                                variant="body2"
-                                color="secondary">
-                                Forgot password?
-                            </Link>
-                        </Grid>
-                        <Grid item>
-                            <Link
-                                href={PATHS.REGISTRATION}
-                                variant="body2"
-                                color="secondary">
-                                {"Don't have an account? Sign Up"}
-                            </Link>
+                        <Grid item xs style={{ zIndex: 100 }}>
+                            <Link href="#">Forgot password?</Link>
                         </Grid>
                     </Grid>
                 </Box>
