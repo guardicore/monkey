@@ -69,12 +69,7 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
         )
 
     def build_run_command(self, run_options: RunOptions):
-        agent_arg = MONKEY_ARG
-        destination_path = None
         command = ""
-        if run_options.monkey_args == MonkeyArgs.DROPPER:
-            agent_arg = DROPPER_ARG
-            destination_path = run_options.agent_destination_path
 
         if run_options.prefix:
             command += run_options.prefix + " "
@@ -83,11 +78,10 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
         if run_options.shell == Shell.CMD:
             set_otp = self._set_otp_cmd
 
-        agent_arguments = self.build_agent_command_line_arguments(destination_path)
-        command += (
-            f"{set_otp()}"
-            f"{str(run_options.agent_destination_path)} {agent_arg} {' '.join(agent_arguments)}"
-        )
+        command += f"{set_otp()} {str(run_options.agent_destination_path)} "
+
+        if run_options.monkey_args is not None:
+            command += self._build_agent_run_arguments(run_options)
 
         if run_options.postfix:
             command += " " + run_options.postfix
@@ -99,6 +93,16 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
 
     def _set_otp_cmd(self) -> str:
         return f"set {self._agent_otp_environment_variable}={self._otp_provider.get_otp()}&"
+
+    def _build_agent_run_arguments(self, run_options: RunOptions):
+        agent_arg = MONKEY_ARG
+        destination_path = None
+        if run_options.monkey_args == MonkeyArgs.DROPPER:
+            agent_arg = DROPPER_ARG
+            destination_path = run_options.agent_destination_path
+
+        agent_arguments = self.build_agent_command_line_arguments(destination_path)
+        return f"{agent_arg} {' '.join(agent_arguments)}"
 
     def build_agent_command_line_arguments(self, destination_path: Optional[PurePath]) -> list[str]:
         commandline = []
