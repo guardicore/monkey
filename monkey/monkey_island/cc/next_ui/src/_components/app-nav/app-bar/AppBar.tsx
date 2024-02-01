@@ -14,6 +14,7 @@ import { PATHS } from '@/constants/paths.constants';
 import HomeIcon from '@mui/icons-material/Home';
 import { useRouter } from 'next/navigation';
 import Typography from '@mui/material/Typography';
+import MenuItem from '@mui/material/MenuItem';
 
 const AboutLink = { path: PATHS.ABOUT, label: 'About', icon: <HomeIcon /> };
 
@@ -50,12 +51,12 @@ const MonkeyAppBar = (
                         {!screenIsSmall && <AppMenu />}
                     </Box>
                     <Box className="etc-container">
-                        <div
+                        <MenuItem
                             key={AboutLink.label}
                             className={'app-route-link'}
                             onClick={() => handleRouteClick(AboutLink.path)}>
                             <Typography>{AboutLink.label}</Typography>
-                        </div>
+                        </MenuItem>
                         <AppAvatar />
                     </Box>
                 </Toolbar>

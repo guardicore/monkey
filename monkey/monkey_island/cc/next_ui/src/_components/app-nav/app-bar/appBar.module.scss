@@ -26,12 +26,10 @@
           :hover {
             cursor: pointer;
           }
+        }
 
-          .app-links {
-            width: 100%;
-            display: flex;
-            justify-content: space-evenly;
-          }
+        .app-route-link {
+          height: $app-bar-height;
         }
 
         .etc-container {
@@ -39,7 +37,6 @@
           gap: 1rem;
           align-items: center;
           color: $monkey-black;
-          margin-left: 1rem;
         }
       }
     }

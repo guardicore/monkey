@@ -2,10 +2,11 @@ import { PATHS } from '@/constants/paths.constants';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import classes from './appMenu.module.scss';
 import HomeIcon from '@mui/icons-material/Home';
 import HubIcon from '@mui/icons-material/Hub';
+import MenuItem from '@mui/material/MenuItem';
 
 const MenuLinks = [
     { path: PATHS.CONFIGURE, label: 'Configure', icon: <HomeIcon /> },
@@ -20,6 +21,7 @@ export interface MenuProps {
 
 const AppMenu = ({ onClose }: MenuProps) => {
     const router = useRouter();
+    const path = usePathname();
 
     const handleRouteClick = (path: string) => {
         router.push(path);
@@ -30,12 +32,13 @@ const AppMenu = ({ onClose }: MenuProps) => {
         <Box className={classes['app-menu']}>
             <Box className="menu-links">
                 {MenuLinks.map((link) => (
-                    <div
+                    <MenuItem
+                        selected={path === link.path}
                         key={link.label}
                         className={'app-route-link'}
                         onClick={() => handleRouteClick(link.path)}>
                         <Typography>{link.label}</Typography>
-                    </div>
+                    </MenuItem>
                 ))}
             </Box>
         </Box>

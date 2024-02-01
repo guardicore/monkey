@@ -1,14 +1,15 @@
 .app-menu {
+  :global(.Mui-selected) {
+    :first-child {
+      font-weight: 500;
+      font-size: 110%;
+    }
+  }
+
   :global {
     .menu-links {
-      width: 100%;
       display: flex;
-      justify-content: space-evenly;
-      gap: 1rem;
 
-      :hover {
-        cursor: pointer;
-      }
     }
   }
 }
