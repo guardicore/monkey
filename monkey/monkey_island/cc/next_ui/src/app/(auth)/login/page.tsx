@@ -80,20 +80,18 @@ const LoginPage = () => {
         return (
             <Card id={classes.card} variant="outlined">
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-                    <Typography component="h1" variant="h5">
-                        Login
-                    </Typography>
                     <TextField
                         margin="normal"
                         required
                         fullWidth
                         id="username"
-                        label="username"
+                        label="Username"
                         name="username"
                         autoComplete="username"
                         value={loginFormValues.username}
                         onChange={handleLoginFormValueChange}
                         autoFocus
+                        style={{ background: 'black' }}
                     />
                     <TextField
                         margin="normal"
@@ -106,10 +104,7 @@ const LoginPage = () => {
                         autoComplete="current-password"
                         value={loginFormValues.password}
                         onChange={handleLoginFormValueChange}
-                    />
-                    <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Remember me"
+                        style={{ background: 'black' }}
                     />
                     <Button
                         type="submit"
@@ -122,15 +117,8 @@ const LoginPage = () => {
                     {renderErrors()}
 
                     <Grid container>
-                        <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Forgot password?
-                            </Link>
-                        </Grid>
-                        <Grid item>
-                            <Link href="#" variant="body2">
-                                {"Don't have an account? Sign Up"}
-                            </Link>
+                        <Grid item xs style={{ zIndex: 100 }}>
+                            <Link href="#">Forgot password?</Link>
                         </Grid>
                     </Grid>
                 </Box>
@@ -144,7 +132,7 @@ const LoginPage = () => {
         } else if (isSuccess) {
             return 'Success!';
         }
-        return 'Sign In';
+        return 'Login';
     };
 
     const renderErrors = () => {

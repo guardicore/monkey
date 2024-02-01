@@ -1,20 +1,10 @@
-import { Roboto } from 'next/font/google';
+import { deepmerge } from '@mui/utils';
+import { createTheme } from '@mui/material/styles';
+import { roboto, THEME_APPEARANCE } from '@/providers/theme/theme';
 
-export enum THEME_APPEARANCE {
-    DARK_MODE = 'dark',
-    LIGHT_MODE = 'light',
-    SYSTEM_MODE = 'system'
-}
-
-export const roboto = Roboto({
-    weight: ['300', '400', '500', '700'],
-    subsets: ['latin'],
-    display: 'swap'
-});
-
-const themeOptions = {
+export const themeOptions = {
     palette: {
-        mode: THEME_APPEARANCE.LIGHT_MODE,
+        mode: THEME_APPEARANCE.DARK_MODE,
         primary: {
             main: '#FFCC00',
             light: '#FFCD38',
@@ -34,4 +24,7 @@ const themeOptions = {
     components: {}
 };
 
-export default themeOptions;
+const createAuthenticationTheme = (theme) =>
+    createTheme({ ...theme, ...themeOptions });
+
+export default createAuthenticationTheme;
