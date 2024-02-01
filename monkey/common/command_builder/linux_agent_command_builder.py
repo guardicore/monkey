@@ -61,25 +61,32 @@ class LinuxAgentCommandBuilder(IAgentCommandBuilder):
         return f"chmod +x {destination_path}"
 
     def build_run_command(self, run_options: RunOptions):
-        agent_arg = MONKEY_ARG
-        destination_path = None
         command = ""
-        if run_options.monkey_args == MonkeyArgs.DROPPER:
-            agent_arg = DROPPER_ARG
-            destination_path = run_options.agent_destination_path
-
         if run_options.prefix:
             command += run_options.prefix + " "
 
-        agent_arguments = self.build_agent_command_line_arguments(destination_path)
         command += (
             f"{self._agent_otp_environment_variable}={self._otp_provider.get_otp()} "
-            f"{str(run_options.agent_destination_path)} {agent_arg} {' '.join(agent_arguments)}"
+            f"{str(run_options.agent_destination_path)} "
         )
+
+        if run_options.monkey_args is not None:
+            command += self._build_agent_run_arguments(run_options)
+
         if run_options.postfix:
             command += " " + run_options.postfix
 
         return command
+
+    def _build_agent_run_arguments(self, run_options: RunOptions):
+        agent_arg = MONKEY_ARG
+        destination_path = None
+        if run_options.monkey_args == MonkeyArgs.DROPPER:
+            agent_arg = DROPPER_ARG
+            destination_path = run_options.agent_destination_path
+
+        agent_arguments = self.build_agent_command_line_arguments(destination_path)
+        return f"{agent_arg} {' '.join(agent_arguments)}"
 
     def build_agent_command_line_arguments(self, destination_path: Optional[PurePath]) -> list[str]:
         commandline = []

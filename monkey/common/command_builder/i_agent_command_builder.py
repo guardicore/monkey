@@ -36,7 +36,7 @@ class DownloadOptions(AbstractCommandModel):
 
 
 class RunOptions(AbstractCommandModel):
-    monkey_args: MonkeyArgs
+    monkey_args: Optional[MonkeyArgs]
     postfix: Optional[str] = None
 
 
