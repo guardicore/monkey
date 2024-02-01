@@ -14,10 +14,8 @@ const MonkeyLogo = (props) => {
             direction="row"
             useFlexGap
             style={{
-                zIndex: 100,
-                background: 'black',
-                boxShadow: '0 0 20px 20px black',
-                marginBottom: '-30px'
+                zIndex: 200,
+                marginBottom: '25px'
             }}
             {...props}>
             <MonkeyHeadSvg
