@@ -63,12 +63,16 @@ class LinuxAgentCommandBuilder(IAgentCommandBuilder):
     def build_run_command(self, run_options: RunOptions):
         agent_arg = MONKEY_ARG
         destination_path = None
+        command = ""
         if run_options.monkey_args == MonkeyArgs.DROPPER:
             agent_arg = DROPPER_ARG
             destination_path = run_options.agent_destination_path
 
+        if run_options.prefix:
+            command += run_options.prefix + " "
+
         agent_arguments = self.build_agent_command_line_arguments(destination_path)
-        command = (
+        command += (
             f"{self._agent_otp_environment_variable}={self._otp_provider.get_otp()} "
             f"{str(run_options.agent_destination_path)} {agent_arg} {' '.join(agent_arguments)}"
         )

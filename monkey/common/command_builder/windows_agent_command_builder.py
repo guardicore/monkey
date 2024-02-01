@@ -76,9 +76,12 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
             agent_arg = DROPPER_ARG
             destination_path = run_options.agent_destination_path
 
-        set_otp = self._set_otp_cmd
-        if run_options.shell == Shell.POWERSHELL:
-            set_otp = self._set_otp_powershell
+        if run_options.prefix:
+            command += run_options.prefix + " "
+
+        set_otp = self._set_otp_powershell
+        if run_options.shell == Shell.CMD:
+            set_otp = self._set_otp_cmd
 
         agent_arguments = self.build_agent_command_line_arguments(destination_path)
         command = (
