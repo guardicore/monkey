@@ -84,7 +84,7 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
             set_otp = self._set_otp_cmd
 
         agent_arguments = self.build_agent_command_line_arguments(destination_path)
-        command = (
+        command += (
             f"{set_otp()}"
             f"{str(run_options.agent_destination_path)} {agent_arg} {' '.join(agent_arguments)}"
         )
