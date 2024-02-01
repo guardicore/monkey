@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "node server-dev.js",
+    "prod": "SSL_CERT_PATH=../server.crt SSL_KEY_PATH=../server.key NEXT_PUBLIC_JAVASCRIPT_RUNTIME_PORT=8443 node server-prod.js",
     "build": "node build-standalone.js",
     "lint": "next lint",
     "test": "jest",
-    "e2e": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test dev https://localhost:8443 cypress:run_e2e",
+    "prod:e2e": "npm run build && npm run prod",
+    "e2e": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test prod:e2e https://localhost:8443 cypress:run_e2e",
     "component": "cypress run --component",
     "cypress:open": "DEBUG=cypress:webpack cypress open",
     "cypress:run_e2e": "cypress run --e2e"
