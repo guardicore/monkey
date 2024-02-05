@@ -3,7 +3,6 @@
 #app-bar {
   display: flex;
   justify-content: space-between;
-  background-color: $monkey-yellow;
 
   :global {
     .MuiContainer-root {
@@ -21,7 +20,6 @@
           display: flex;
           gap: 1rem;
           align-items: center;
-          color: $monkey-black;
 
           .logo-and-drawer-container {
             align-items: center;
@@ -46,7 +44,6 @@
           display: flex;
           gap: 1rem;
           align-items: center;
-          color: $monkey-black;
         }
       }
     }

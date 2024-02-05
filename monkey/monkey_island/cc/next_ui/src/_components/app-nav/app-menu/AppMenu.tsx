@@ -1,8 +1,6 @@
 import { PATHS } from '@/constants/paths.constants';
-import Box from '@mui/material/Box';
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import classes from './appMenu.module.scss';
 import HomeIcon from '@mui/icons-material/Home';
 import HubIcon from '@mui/icons-material/Hub';
 import Tab from '@mui/material/Tab';
@@ -30,22 +28,22 @@ const AppMenu = ({ orientation, onClose }: MenuProps) => {
     };
 
     return (
-        <Box className={classes['app-menu']}>
-            <Tabs
-                orientation={orientation}
-                value={path}
-                className="menu-links"
-                onChange={handleRouteClick}>
-                {MenuLinks.map((link) => (
-                    <Tab
-                        key={link.label}
-                        className={'app-route-link'}
-                        label={link.label}
-                        value={link.path}
-                    />
-                ))}
-            </Tabs>
-        </Box>
+        <Tabs
+            orientation={orientation}
+            value={path}
+            className="menu-links"
+            onChange={handleRouteClick}
+            textColor="inherit"
+            indicatorColor="secondary">
+            {MenuLinks.map((link) => (
+                <Tab
+                    key={link.label}
+                    className={'app-route-link'}
+                    label={link.label}
+                    value={link.path}
+                />
+            ))}
+        </Tabs>
     );
 };
 
