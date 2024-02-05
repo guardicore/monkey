@@ -2,11 +2,15 @@ import Box from '@mui/material/Box';
 import React, { useState } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import Menu from '@mui/material/Menu';
 import AvatarMenu from '@/_components/app-nav/app-avatar/avatar-menu/AvatarMenu';
+import { styled } from '@mui/material/styles';
+import classes from './appAvatar.module.scss';
 
-const AVATAR_INITIALS = 'M';
+const ThemedIcon = styled(AccountCircle)(({ theme }) => ({
+    color: theme.palette.primary.contrastText
+}));
 
 const AppAvatar = () => {
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -20,10 +24,10 @@ const AppAvatar = () => {
     };
 
     return (
-        <Box id={'app-avatar'}>
+        <Box id={classes['app-avatar']}>
             <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Monkey Head">{AVATAR_INITIALS}</Avatar>
+                <IconButton onClick={handleOpenUserMenu}>
+                    <ThemedIcon className="profile-avatar" />
                 </IconButton>
             </Tooltip>
             <Menu
