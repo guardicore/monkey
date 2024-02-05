@@ -1,20 +1,21 @@
 'use client';
-import AppBar from '@mui/material/AppBar';
-import Container from '@mui/material/Container';
-import Toolbar from '@mui/material/Toolbar';
-import classes from './appBar.module.scss';
 import React from 'react';
-import AppMenu from '@/_components/app-nav/app-menu/AppMenu';
-import AppLogo from '@/_components/app-nav/app-logo/AppLogo';
-import AppAvatar from '@/_components/app-nav/app-avatar/AppAvatar';
+import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import HomeIcon from '@mui/icons-material/Home';
+import MenuItem from '@mui/material/MenuItem';
+import SvgIcon from '@mui/material/SvgIcon';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import AppAvatar from '@/_components/app-nav/app-avatar/AppAvatar';
 import AppDrawerOpener from '@/_components/app-nav/app-drawer-opener/AppDrawerOpener';
+import AppMenu from '@/_components/app-nav/app-menu/AppMenu';
+import MonkeyHeadSvg from '@/assets/svg-components/MonkeyHead.svg';
 import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
 import { PATHS } from '@/constants/paths.constants';
-import HomeIcon from '@mui/icons-material/Home';
 import { useRouter } from 'next/navigation';
-import Typography from '@mui/material/Typography';
-import MenuItem from '@mui/material/MenuItem';
+import classes from './appBar.module.scss';
 
 const AboutLink = { path: PATHS.ABOUT, label: 'About', icon: <HomeIcon /> };
 
@@ -44,10 +45,16 @@ const MonkeyAppBar = (
             <Container>
                 <Toolbar disableGutters>
                     <Box className="logo-and-menu-container">
-                        <AppDrawerOpener
-                            onClick={() => setIsDrawerOpen(true)}
-                        />
-                        <AppLogo />
+                        <Box className="logo-and-drawer-container">
+                            <AppDrawerOpener
+                                onClick={() => setIsDrawerOpen(true)}
+                            />
+                            <SvgIcon
+                                className={'logo-icon'}
+                                onClick={() => handleRouteClick(PATHS.ROOT)}>
+                                <MonkeyHeadSvg />
+                            </SvgIcon>
+                        </Box>
                         {!screenIsSmall && <AppMenu orientation="horizontal" />}
                     </Box>
                     <Box className="etc-container">

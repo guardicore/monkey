@@ -19,9 +19,19 @@
 
         .logo-and-menu-container {
           display: flex;
-          gap: 2rem;
+          gap: 1rem;
           align-items: center;
           color: $monkey-black;
+
+          .logo-and-drawer-container {
+            align-items: center;
+            display: flex;
+            gap: 2rem;
+          }
+
+          .logo-icon {
+            font-size: 2.5rem;
+          }
 
           :hover {
             cursor: pointer;
