@@ -22,7 +22,7 @@ const AppDrawer = ({ open, onClose }: AppDrawerProps) => {
             variant={DrawerVariant.TEMPORARY}
             PaperProps={{ className: 'app-drawer-paper' }}>
             <DrawerHeader onClose={onClose} />
-            <AppMenu onClose={onClose} />
+            <AppMenu orientation="vertical" onClose={onClose} />
         </MonkeyDrawer>
     );
 };

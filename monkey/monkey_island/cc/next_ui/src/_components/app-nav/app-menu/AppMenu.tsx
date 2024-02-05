@@ -1,12 +1,12 @@
 import { PATHS } from '@/constants/paths.constants';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import classes from './appMenu.module.scss';
 import HomeIcon from '@mui/icons-material/Home';
 import HubIcon from '@mui/icons-material/Hub';
-import MenuItem from '@mui/material/MenuItem';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 
 const MenuLinks = [
     { path: PATHS.CONFIGURE, label: 'Configure', icon: <HomeIcon /> },
@@ -17,30 +17,34 @@ const MenuLinks = [
 
 export interface MenuProps {
     onClose?: () => void;
+    orientation?: 'vertical' | 'horizontal';
 }
 
-const AppMenu = ({ onClose }: MenuProps) => {
+const AppMenu = ({ orientation, onClose }: MenuProps) => {
     const router = useRouter();
     const path = usePathname();
 
-    const handleRouteClick = (path: string) => {
-        router.push(path);
+    const handleRouteClick = (event: React.SyntheticEvent, value: any) => {
+        router.push(value);
         onClose && onClose();
     };
 
     return (
         <Box className={classes['app-menu']}>
-            <Box className="menu-links">
+            <Tabs
+                orientation={orientation}
+                value={path}
+                className="menu-links"
+                onChange={handleRouteClick}>
                 {MenuLinks.map((link) => (
-                    <MenuItem
-                        selected={path === link.path}
+                    <Tab
                         key={link.label}
                         className={'app-route-link'}
-                        onClick={() => handleRouteClick(link.path)}>
-                        <Typography>{link.label}</Typography>
-                    </MenuItem>
+                        label={link.label}
+                        value={link.path}
+                    />
                 ))}
-            </Box>
+            </Tabs>
         </Box>
     );
 };

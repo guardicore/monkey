@@ -48,7 +48,7 @@ const MonkeyAppBar = (
                             onClick={() => setIsDrawerOpen(true)}
                         />
                         <AppLogo />
-                        {!screenIsSmall && <AppMenu />}
+                        {!screenIsSmall && <AppMenu orientation="horizontal" />}
                     </Box>
                     <Box className="etc-container">
                         <MenuItem
