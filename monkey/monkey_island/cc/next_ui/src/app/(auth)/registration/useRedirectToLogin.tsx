@@ -7,7 +7,7 @@ import { tokenIsStored } from '@/lib/authenticationToken';
 const useRedirectToLogin = () => {
     const router = useRouter();
     const { data: registrationStatus, isLoading: isRegistrationStatusLoading } =
-        useRegistrationStatusQuery();
+        useRegistrationStatusQuery(null);
 
     useEffect(() => {
         if (

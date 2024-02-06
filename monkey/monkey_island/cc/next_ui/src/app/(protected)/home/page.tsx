@@ -3,11 +3,12 @@ import { useGetAllMachinesQuery } from '@/redux/features/api/machinesEndpoints';
 
 const HomePage = () => {
     const { data, error, isLoading, isError, isSuccess } =
-        useGetAllMachinesQuery();
+        useGetAllMachinesQuery(null);
 
     if (isSuccess) return <div>{MachineList(data)}</div>;
     if (isLoading) return <div>loading...</div>;
     if (isError) {
+        // @ts-ignore
         return <div>Error: {error.data.response.errors}</div>;
     }
 };

@@ -32,6 +32,7 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 },
                 body: JSON.stringify(loginValues)
             }),
+            // @ts-ignore
             transformResponse: (response): SuccessfulAuthenticationResponse => {
                 const authData = response.response?.user;
                 if (!authData) {
@@ -57,6 +58,7 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 },
                 body: JSON.stringify(loginValues)
             }),
+            // @ts-ignore
             transformResponse: (response): SuccessfulAuthenticationResponse => {
                 const authData = response.response?.user;
                 if (!authData) {

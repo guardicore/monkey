@@ -7,7 +7,7 @@ import {
 
 const THEME_APPEARANCE_KEY = 'theme_appearance';
 const getThemeAppearance = () => {
-    let savedThemeAppearance = null,
+    let savedThemeAppearance: null | string = null,
         userPrefersDark = false;
 
     savedThemeAppearance = localStorageGetItem(THEME_APPEARANCE_KEY);

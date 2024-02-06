@@ -30,7 +30,7 @@ const MonkeyDrawer = (props: MonkeyDrawerProps) => {
         anchor = DrawerAnchor.LEFT,
         hideBackdrop = false,
         open = false,
-        onClose = null,
+        onClose = undefined,
         ...rest
     } = props;
 
