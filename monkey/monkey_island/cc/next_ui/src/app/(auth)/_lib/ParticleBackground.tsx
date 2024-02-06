@@ -26,30 +26,7 @@ const ParticleBackground = () => {
 
     const options: ISourceOptions = useMemo(
         () => ({
-            preset: 'links',
-            background: {
-                color: '#ffffff'
-            },
-            particles: {
-                color: { value: '#eeb818' },
-                links: {
-                    color: '#eeb818',
-                    distance: 150,
-                    enable: true,
-                    opacity: 0.7,
-                    width: 2
-                },
-                move: {
-                    bounce: false,
-                    direction: 'none',
-                    enable: true,
-                    outMode: 'out',
-                    random: false,
-                    speed: 2,
-                    straight: false
-                }
-            },
-            detectRetina: true
+            preset: 'links'
         }),
         []
     );
