@@ -20,11 +20,11 @@ const MonkeyLogo = (props) => {
             {...props}>
             <MonkeyHeadSvg
                 className={classes.logo}
-                color={theme.palette.primary.dark}
+                color={theme.palette.primary.main}
             />
             <MonkeNameSvg
                 className={classes.name}
-                color={theme.palette.primary.dark}
+                color={theme.palette.primary.main}
             />
         </Stack>
     );

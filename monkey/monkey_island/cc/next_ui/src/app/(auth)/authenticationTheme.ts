@@ -4,11 +4,11 @@ import { roboto, THEME_APPEARANCE } from '@/providers/theme/theme';
 
 export const themeOptions = {
     palette: {
-        mode: THEME_APPEARANCE.LIGHT_MODE,
+        mode: THEME_APPEARANCE.DARK_MODE,
         primary: {
-            main: '#6556ff',
-            light: '#8377ff',
-            dark: '#463cb2',
+            main: '#FFCC00',
+            light: '#FFCD38',
+            dark: '#B28704',
             contrastText: '#000'
         },
         secondary: {
