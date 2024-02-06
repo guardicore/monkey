@@ -9,12 +9,16 @@
 import infection_monkey.agent_plugin_api_imports  # noqa: F401
 import infection_monkey.monkey_events_imports  # noqa: F401
 from common.command_builder import (  # noqa: F401
-    DownloadMethod,
-    DownloadOptions,
-    RunOptions,
-    MonkeyArgs,
-    Shell,
-    IAgentCommandBuilder,
+    LinuxDownloadMethod,
+    LinuxDownloadOptions,
+    LinuxRunOptions,
+    AgentMode,
+    WindowsDownloadMethod,
+    WindowsDownloadOptions,
+    WindowsRunOptions,
+    WindowsShell,
+    ILinuxAgentCommandBuilder,
+    IWindowsAgentCommandBuilder,
     IAgentCommandBuilderFactory,
 )
 
