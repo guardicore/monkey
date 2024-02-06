@@ -27,7 +27,6 @@ class MonkeyArgs(Enum):
 class AbstractCommandModel(InfectionMonkeyBaseModel):
     agent_destination_path: PurePath
     shell: Optional[Shell] = None
-    prefix: Optional[str] = None
 
 
 class DownloadOptions(AbstractCommandModel):
@@ -37,7 +36,6 @@ class DownloadOptions(AbstractCommandModel):
 
 class RunOptions(AbstractCommandModel):
     monkey_args: Optional[MonkeyArgs]
-    postfix: Optional[str] = None
     dropper_destination_path: Optional[PurePath] = None
 
 

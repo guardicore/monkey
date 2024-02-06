@@ -37,9 +37,6 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
         if download_options.download_method == DownloadMethod.WEB_CLIENT:
             download_command_func = self._build_download_command_webclient
 
-        if download_options.prefix:
-            command += download_options.prefix + " "
-
         if download_options.shell == Shell.CMD:
             command += "cmd.exe /c "
 
@@ -71,9 +68,6 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
     def build_run_command(self, run_options: RunOptions):
         command = ""
 
-        if run_options.prefix:
-            command += run_options.prefix + " "
-
         set_otp = self._set_otp_powershell
         if run_options.shell == Shell.CMD:
             set_otp = self._set_otp_cmd
@@ -82,9 +76,6 @@ class WindowsAgentCommandBuilder(IAgentCommandBuilder):
 
         if run_options.monkey_args is not None:
             command += self._build_agent_run_arguments(run_options)
-
-        if run_options.postfix:
-            command += " " + run_options.postfix
 
         return command
 

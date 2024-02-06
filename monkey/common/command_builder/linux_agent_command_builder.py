@@ -36,9 +36,6 @@ class LinuxAgentCommandBuilder(IAgentCommandBuilder):
         if download_options.download_method == DownloadMethod.CURL:
             download_command_func = self._build_download_command_curl
 
-        if download_options.prefix:
-            command += download_options.prefix + " "
-
         command += download_command_func(
             download_options.download_url, download_options.agent_destination_path
         )
@@ -62,9 +59,6 @@ class LinuxAgentCommandBuilder(IAgentCommandBuilder):
 
     def build_run_command(self, run_options: RunOptions):
         command = ""
-        if run_options.prefix:
-            command += run_options.prefix + " "
-
         command += (
             f"{self._agent_otp_environment_variable}={self._otp_provider.get_otp()} "
             f"{str(run_options.agent_destination_path)} "
@@ -72,9 +66,6 @@ class LinuxAgentCommandBuilder(IAgentCommandBuilder):
 
         if run_options.monkey_args is not None:
             command += self._build_agent_run_arguments(run_options)
-
-        if run_options.postfix:
-            command += " " + run_options.postfix
 
         return command
 
