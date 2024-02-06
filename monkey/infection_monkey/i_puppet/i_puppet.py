@@ -102,7 +102,6 @@ class IPuppet(metaclass=abc.ABCMeta):
         self,
         name: str,
         host: TargetHost,
-        current_depth: int,
         options: Mapping,
         interrupt: Event,
     ) -> ExploiterResult:
@@ -111,7 +110,6 @@ class IPuppet(metaclass=abc.ABCMeta):
 
         :param name: The name of the exploiter to run
         :param host: A TargetHost object representing the target to exploit
-        :param current_depth: The current propagation depth
         :param options: A dictionary containing options that modify the behavior of the exploiter
         :param interrupt: An `Event` object that signals the exploit to stop executing and clean
                           itself up.

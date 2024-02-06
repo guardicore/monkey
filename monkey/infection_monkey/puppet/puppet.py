@@ -93,7 +93,6 @@ class Puppet(IPuppet):
         self,
         name: str,
         host: TargetHost,
-        current_depth: int,
         options: Mapping,
         interrupt: Event,
     ) -> ExploiterResult:
@@ -120,7 +119,6 @@ class Puppet(IPuppet):
         exploiter = self._plugin_registry.get_plugin(AgentPluginType.EXPLOITER, name)
         exploiter_result = exploiter.run(
             host=host,
-            current_depth=current_depth,
             options=options,
             interrupt=interrupt,
         )
