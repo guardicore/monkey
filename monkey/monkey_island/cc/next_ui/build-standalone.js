@@ -65,6 +65,8 @@ exec('next build', (error, stdout, stderr) => {
         throw new Error(`Build error/warning: ${stderr}`);
     }
     console.log('Build successful:', stdout);
-    prepareStandaloneDir();
-    console.log('Build complete.');
+    console.log('Preparing standalone dir');
+    prepareStandaloneDir().then(() => {
+        console.log('Build complete.');
+    });
 });
