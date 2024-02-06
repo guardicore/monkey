@@ -2,7 +2,7 @@ import logging
 import multiprocessing
 import time
 from ipaddress import IPv4Interface
-from typing import Any, Callable, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, List, Optional
 
 from egg_timer import EggTimer
 from monkeytoolbox import create_daemon_thread, interruptible_iter
@@ -27,13 +27,11 @@ class AutomatedMaster(IMaster):
     def __init__(
         self,
         current_depth: Optional[int],
-        servers: Sequence[str],
         puppet: IPuppet,
         island_api_client: IIslandAPIClient,
         local_network_interfaces: List[IPv4Interface],
     ):
         self._current_depth = current_depth
-        self._servers = servers
         self._puppet = puppet
         self._island_api_client = island_api_client
 
@@ -139,7 +137,7 @@ class AutomatedMaster(IMaster):
         logger.info(f"Current depth is {current_depth}")
 
         if not maximum_depth_reached(config.propagation.maximum_depth, current_depth):
-            self._propagator.propagate(config.propagation, current_depth, self._servers, self._stop)
+            self._propagator.propagate(config.propagation, self._stop)
         else:
             logger.info("Skipping propagation: maximum depth reached")
 

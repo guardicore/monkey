@@ -178,6 +178,7 @@ class InfectionMonkey:
         self._heart.start()
 
         self._current_depth = self._opts.depth
+        self._servers: list[str] = None
         self._master: Optional[IMaster] = None
         self._relay: Optional[TCPRelay] = None
         self._tcp_port_selector = self._manager.TCPPortSelector()  # type: ignore[attr-defined]
@@ -361,8 +362,8 @@ class InfectionMonkey:
             if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
                 self._relay.start()
 
-        servers = self._build_server_list(relay_port)
-        self._master = self._build_master(servers, operating_system)
+        self._servers = self._build_server_list(relay_port)
+        self._master = self._build_master(operating_system)
 
         register_signal_handlers(self._master)
 
@@ -382,12 +383,11 @@ class InfectionMonkey:
 
         return agent_event_serializer_registry
 
-    def _build_master(self, servers: Sequence[str], operating_system: OperatingSystem) -> IMaster:
+    def _build_master(self, operating_system: OperatingSystem) -> IMaster:
         puppet = self._build_puppet(operating_system)
 
         return AutomatedMaster(
             self._current_depth,
-            servers,
             puppet,
             self._island_api_client,
             self._local_machine_info.network_interfaces,
@@ -428,7 +428,11 @@ class InfectionMonkey:
         )
 
         agent_command_builder_factory = AgentCommandBuilderFactory(
-            self._agent_id, otp_provider, AGENT_OTP_ENVIRONMENT_VARIABLE
+            self._agent_id,
+            self._servers,
+            otp_provider,
+            AGENT_OTP_ENVIRONMENT_VARIABLE,
+            self._current_depth + 1,
         )
 
         plugin_factories = {
@@ -442,8 +446,6 @@ class InfectionMonkey:
                 self._agent_event_publisher,
                 self._propagation_credentials_repository,
                 self._tcp_port_selector,
-                otp_provider,
-                AGENT_OTP_ENVIRONMENT_VARIABLE,
                 self._local_machine_info,
                 agent_command_builder_factory,
                 create_plugin,

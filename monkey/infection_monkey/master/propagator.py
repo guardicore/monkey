@@ -2,7 +2,7 @@ import logging
 import threading
 from ipaddress import IPv4Address, IPv4Interface
 from queue import Queue
-from typing import List, Mapping, MutableMapping, Sequence
+from typing import List, Mapping, MutableMapping
 
 from agentpluginapi import ExploiterResult, FingerprintData, PingScanData, PortScanData, TargetHost
 from monkeytoolbox import create_daemon_thread
@@ -45,8 +45,6 @@ class Propagator:
     def propagate(
         self,
         propagation_config: PropagationConfiguration,
-        current_depth: int,
-        servers: Sequence[str],
         stop: Event,
     ):
         logger.info("Attempting to propagate")
@@ -64,8 +62,6 @@ class Propagator:
             name="PropagatorExploitThread",
             args=(
                 propagation_config.exploitation,
-                current_depth,
-                servers,
                 network_scan_completed,
                 stop,
             ),
@@ -181,8 +177,6 @@ class Propagator:
     def _exploit_hosts(
         self,
         exploitation_config: ExploitationConfiguration,
-        current_depth: int,
-        servers: Sequence[str],
         network_scan_completed: threading.Event,
         stop: Event,
     ):
@@ -191,8 +185,6 @@ class Propagator:
         self._exploiter.exploit_hosts(
             exploitation_config,
             self._hosts_to_exploit,
-            current_depth,
-            servers,
             self._process_exploit_attempts,
             network_scan_completed,
             stop,
