@@ -5,16 +5,13 @@ import ParticleBackground from '@/app/(auth)/_lib/ParticleBackground';
 import * as React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import createAuthenticationTheme from '@/app/(auth)/authenticationTheme';
-import SVGBackgroundHexagons from '@/app/(auth)/_lib/SVGBackgroundHexagons';
-import SVGBackgroundCurves from '@/app/(auth)/_lib/SVGBackgroundCurves';
-import SVGBackgroundPolygons from '@/app/(auth)/_lib/SVGBackgroundPolygons';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     useAuthenticatedRedirect();
 
     return (
         <ThemeProvider theme={(theme) => createAuthenticationTheme(theme)}>
-            <SVGBackgroundPolygons />
+            <ParticleBackground />
             {children};
         </ThemeProvider>
     );

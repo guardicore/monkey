@@ -106,8 +106,7 @@ const LoginPage = () => {
                         type="submit"
                         fullWidth
                         variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
-                        style={{ color: 'white' }}>
+                        sx={{ mt: 3, mb: 2 }}>
                         {renderSubmitButtonContent()}
                     </Button>
 
