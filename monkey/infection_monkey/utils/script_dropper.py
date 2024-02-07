@@ -13,7 +13,7 @@ chmod u+x "$AGENT_DST_PATH"
 
 rm "$DROPPER_SCRIPT_PATH"
 
-nohup %(run_command)s &>/dev/null &
+nohup env %(run_command)s &>/dev/null &
 
 exit 0
 __PAYLOAD_BEGINS__
