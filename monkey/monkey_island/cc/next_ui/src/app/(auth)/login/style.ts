@@ -12,3 +12,9 @@ export const cardStyle = (theme: Theme) => {
         )
     };
 };
+
+export const containerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    minHeight: '100vh'
+};
