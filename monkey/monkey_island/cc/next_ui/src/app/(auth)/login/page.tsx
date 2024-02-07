@@ -9,7 +9,6 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
 import {
@@ -121,7 +120,11 @@ const LoginPage = () => {
 
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#">Forgot password?</Link>
+                            <Link
+                                href="https://techdocs.akamai.com/infection-monkey/docs/frequently-asked-questions#reset-the-monkey-island-password"
+                                target={'_blank'}>
+                                Forgot password?
+                            </Link>
                         </Grid>
                     </Grid>
                 </Box>
