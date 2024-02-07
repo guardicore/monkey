@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material/styles';
 
 const MonkeyLogo = (props) => {
     const theme = useTheme();
+    const color = props.color || theme.palette.primary.main;
 
     return (
         <Stack
@@ -14,18 +15,11 @@ const MonkeyLogo = (props) => {
             direction="row"
             useFlexGap
             style={{
-                zIndex: 200,
                 marginBottom: '25px'
             }}
             {...props}>
-            <MonkeyHeadSvg
-                className={classes.logo}
-                color={theme.palette.primary.main}
-            />
-            <MonkeNameSvg
-                className={classes.name}
-                color={theme.palette.primary.main}
-            />
+            <MonkeyHeadSvg className={classes.logo} color={color} />
+            <MonkeNameSvg className={classes.name} color={color} />
         </Stack>
     );
 };
