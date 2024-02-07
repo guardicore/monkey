@@ -28,6 +28,7 @@ class WindowsDownloadOptions(InfectionMonkeyBaseModel):
 class WindowsRunOptions(InfectionMonkeyBaseModel):
     agent_destination_path: PureWindowsPath
     agent_mode: AgentMode
+    shell: Optional[WindowsShell] = None
     dropper_destination_path: Optional[PureWindowsPath] = None
 
 
