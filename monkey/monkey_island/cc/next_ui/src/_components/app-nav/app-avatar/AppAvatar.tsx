@@ -6,7 +6,6 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import Menu from '@mui/material/Menu';
 import AvatarMenu from '@/_components/app-nav/app-avatar/avatar-menu/AvatarMenu';
 import { styled } from '@mui/material/styles';
-import classes from './appAvatar.module.scss';
 
 const ThemedIcon = styled(AccountCircle)(({ theme }) => ({
     color: theme.palette.primary.contrastText
@@ -24,10 +23,13 @@ const AppAvatar = () => {
     };
 
     return (
-        <Box id={classes['app-avatar']}>
+        <Box>
             <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu}>
-                    <ThemedIcon className="profile-avatar" />
+                    <ThemedIcon
+                        className="profile-avatar"
+                        sx={{ fontSize: '2rem' }}
+                    />
                 </IconButton>
             </Tooltip>
             <Menu
