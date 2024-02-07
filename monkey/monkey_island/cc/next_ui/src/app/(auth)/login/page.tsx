@@ -23,9 +23,8 @@ import useRedirectToRegistration from '@/app/(auth)/login/useRedirectToRegistrat
 import ErrorList from '@/_components/errors/ErrorList';
 import LoadingIcon from '@/_components/icons/LoadingIcon';
 import MonkeyLogo from '@/_components/icons/MonkeyLogo';
-import classes from './page.module.scss';
 import { useTheme } from '@mui/material/styles';
-import { cardStyle } from '@/app/(auth)/login/style';
+import { cardStyle, containerStyle } from '@/app/(auth)/login/style';
 
 const LoginPage = () => {
     const router = useRouter();
@@ -67,7 +66,7 @@ const LoginPage = () => {
             throw serverError;
         }
         return (
-            <Container id={classes.container} component="main" maxWidth="xs">
+            <Container component="main" maxWidth="xs" sx={containerStyle}>
                 <Stack direction="column" alignItems={'center'} spacing={2}>
                     {renderFormCard()}
                 </Stack>
@@ -78,7 +77,7 @@ const LoginPage = () => {
     const renderFormCard = () => {
         return (
             <Card variant="outlined" sx={cardStyle(theme)}>
-                <MonkeyLogo id={classes.logo} />
+                <MonkeyLogo sx={{ height: '50px' }} />
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
