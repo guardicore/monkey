@@ -25,9 +25,12 @@ import ErrorList from '@/_components/errors/ErrorList';
 import LoadingIcon from '@/_components/icons/LoadingIcon';
 import MonkeyLogo from '@/_components/icons/MonkeyLogo';
 import classes from './page.module.scss';
+import { useTheme } from '@mui/material/styles';
+import { cardStyle } from '@/app/(auth)/login/style';
 
 const LoginPage = () => {
     const router = useRouter();
+    const theme = useTheme();
     const [loginFormValues, setLoginFormValues] = useState({
         username: '',
         password: ''
@@ -75,7 +78,7 @@ const LoginPage = () => {
 
     const renderFormCard = () => {
         return (
-            <Card id={classes.card} variant="outlined" style={{ zIndex: 100 }}>
+            <Card variant="outlined" sx={cardStyle(theme)}>
                 <MonkeyLogo id={classes.logo} />
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <TextField
@@ -89,7 +92,7 @@ const LoginPage = () => {
                         value={loginFormValues.username}
                         onChange={handleLoginFormValueChange}
                         autoFocus
-                        style={{ background: 'black' }}
+                        style={{ background: theme.palette.background.default }}
                     />
                     <TextField
                         margin="normal"
@@ -102,7 +105,7 @@ const LoginPage = () => {
                         autoComplete="current-password"
                         value={loginFormValues.password}
                         onChange={handleLoginFormValueChange}
-                        style={{ background: 'black' }}
+                        style={{ background: theme.palette.background.default }}
                     />
                     <Button
                         type="submit"
