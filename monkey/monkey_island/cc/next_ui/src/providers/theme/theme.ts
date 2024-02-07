@@ -2,6 +2,7 @@ import { Roboto } from 'next/font/google';
 
 export enum THEME_APPEARANCE {
     DARK_MODE = 'dark',
+    KEKOA_MODE = 'light',
     LIGHT_MODE = 'light',
     SYSTEM_MODE = 'system'
 }
