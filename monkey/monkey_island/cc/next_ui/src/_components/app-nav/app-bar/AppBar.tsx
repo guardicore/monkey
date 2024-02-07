@@ -15,7 +15,15 @@ import MonkeyHeadSvg from '@/assets/svg-components/MonkeyHead.svg';
 import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
 import { PATHS } from '@/constants/paths.constants';
 import { useRouter } from 'next/navigation';
-import classes from './appBar.module.scss';
+import {
+    appBar,
+    appRouterLink,
+    etcContainer,
+    logoAndDrawerContainer,
+    logoAndMenuContainer,
+    muiContainerRoot,
+    muiToolbarRoot
+} from '@/_components/app-nav/app-bar/style';
 
 const AboutLink = { path: PATHS.ABOUT, label: 'About', icon: <HomeIcon /> };
 
@@ -37,30 +45,26 @@ const MonkeyAppBar = (
     };
 
     return (
-        <AppBar
-            id={classes['app-bar']}
-            position="static"
-            color="primary"
-            enableColorOnDark>
-            <Container>
-                <Toolbar disableGutters>
-                    <Box className="logo-and-menu-container">
-                        <Box className="logo-and-drawer-container">
+        <AppBar position="static" color="primary" enableColorOnDark sx={appBar}>
+            <Container sx={muiContainerRoot}>
+                <Toolbar disableGutters sx={muiToolbarRoot}>
+                    <Box sx={logoAndMenuContainer}>
+                        <Box sx={logoAndDrawerContainer}>
                             <AppDrawerOpener
                                 onClick={() => setIsDrawerOpen(true)}
                             />
                             <SvgIcon
-                                className={'logo-icon'}
+                                sx={{ fontSize: '2.5rem' }}
                                 onClick={() => handleRouteClick(PATHS.ROOT)}>
                                 <MonkeyHeadSvg />
                             </SvgIcon>
                         </Box>
                         {!screenIsSmall && <AppMenu orientation="horizontal" />}
                     </Box>
-                    <Box className="etc-container">
+                    <Box sx={etcContainer}>
                         <MenuItem
                             key={AboutLink.label}
-                            className={'app-route-link'}
+                            sx={appRouterLink}
                             onClick={() => handleRouteClick(AboutLink.path)}>
                             <Typography>{AboutLink.label}</Typography>
                         </MenuItem>
