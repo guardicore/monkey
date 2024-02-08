@@ -151,8 +151,6 @@ def test_exploit_host(
     puppet.exploit_host(
         name=exploiter_name,
         host=TargetHost(ip="1.1.1.1", operating_system=target_host_os),
-        current_depth=1,
-        servers=[],
         options={},
         interrupt=threading.Event(),
     )
@@ -178,8 +176,6 @@ def test_exploit_host__incompatible(
         puppet.exploit_host(
             name=exploiter_name,
             host=TargetHost(ip="1.1.1.1", operating_system=target_host_os),
-            current_depth=1,
-            servers=[],
             options={},
             interrupt=threading.Event(),
         )
@@ -193,8 +189,6 @@ def test_malfunctioning_plugin__exploiter(puppet: Puppet):
     exploiter_result = puppet.exploit_host(
         name=FAKE_NAME,
         host=TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.WINDOWS),
-        current_depth=1,
-        servers=[],
         options={},
         interrupt=threading.Event(),
     )
@@ -216,8 +210,6 @@ def test_exploit_host__incompatible_local_operating_system(
         puppet.exploit_host(
             name=FAKE_NAME,
             host=TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.WINDOWS),
-            current_depth=1,
-            servers=[],
             options={},
             interrupt=threading.Event(),
         )

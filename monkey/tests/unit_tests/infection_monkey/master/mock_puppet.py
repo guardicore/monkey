@@ -176,8 +176,6 @@ class MockPuppet(IPuppet):
         self,
         name: str,
         host: TargetHost,
-        current_depth: int,
-        servers: Sequence[str],
         options: Mapping,
         interrupt: Event,
     ) -> ExploiterResult:
