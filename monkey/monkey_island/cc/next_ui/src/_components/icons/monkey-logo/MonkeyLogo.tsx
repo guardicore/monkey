@@ -2,7 +2,7 @@ import MonkeyHeadSvg from '@/assets/svg-components/MonkeyHead.svg';
 import MonkeNameSvg from '@/assets/svg-components/MonkeyName.svg';
 import Stack from '@mui/material/Stack';
 
-import classes from './MonkeyLogo.module.scss';
+import { monkeyLogo } from '@/_components/icons/monkey-logo/style';
 import { useTheme } from '@mui/material/styles';
 
 const MonkeyLogo = (props) => {
@@ -10,13 +10,9 @@ const MonkeyLogo = (props) => {
     const color = props.color || theme.palette.primary.main;
 
     return (
-        <Stack
-            className={classes.monkeyLogo}
-            direction="row"
-            useFlexGap
-            {...props}>
-            <MonkeyHeadSvg className={classes.logo} color={color} />
-            <MonkeNameSvg className={classes.name} color={color} />
+        <Stack direction="row" useFlexGap sx={monkeyLogo} {...props}>
+            <MonkeyHeadSvg className={'logo'} color={color} />
+            <MonkeNameSvg className={'name'} color={color} />
         </Stack>
     );
 };

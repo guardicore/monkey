@@ -21,8 +21,8 @@ import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthT
 import { instanceOfError } from '@/lib/typeChecks';
 import useRedirectToRegistration from '@/app/(auth)/login/useRedirectToRegistration';
 import ErrorList from '@/_components/errors/ErrorList';
-import LoadingIcon from '@/_components/icons/LoadingIcon';
-import MonkeyLogo from '@/_components/icons/MonkeyLogo';
+import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
+import MonkeyLogo from '@/_components/icons/monkey-logo/MonkeyLogo';
 import { useTheme } from '@mui/material/styles';
 import { cardStyle, containerStyle } from '@/app/(auth)/login/style';
 
@@ -77,7 +77,7 @@ const LoginPage = () => {
     const renderFormCard = () => {
         return (
             <Card variant="outlined" sx={cardStyle(theme)}>
-                <MonkeyLogo sx={{ height: '50px' }} />
+                <MonkeyLogo className={'logo'} />
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
