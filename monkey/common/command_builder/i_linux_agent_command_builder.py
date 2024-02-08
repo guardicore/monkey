@@ -7,6 +7,8 @@ from monkeytypes import InfectionMonkeyBaseModel
 
 from .environment import DropperExecutionMode
 
+# from pydantic import model_validator
+
 
 class LinuxDownloadMethod(Enum):
     WGET = auto()
@@ -26,6 +28,13 @@ class LinuxRunOptions(InfectionMonkeyBaseModel):
 
     # TODO: Validation rule that
     # If dropper_destination_path is None then DropperExecutionMode must be DROPPER
+    # @model_validator(mode='after')
+    # def check_dropper_execution(self) -> 'LinuxRunOptions':
+    #    if self.dropper_destination_path is None and self.dropper_execution_mode
+    # != DropperExecutionMode.DROPPER:
+    #        raise ValueError('Dropper execution mode should be DropperExecutionMode.DROPPER
+    # if dropper_destination_path is None')
+    #    return self
 
 
 class ILinuxAgentCommandBuilder(metaclass=abc.ABCMeta):
