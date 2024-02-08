@@ -11,7 +11,7 @@ const ThemedIcon = styled(AccountCircle)(({ theme }) => ({
     color: theme.palette.primary.contrastText
 }));
 
-const AppAvatar = () => {
+const AppAvatar = (props) => {
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -23,27 +23,15 @@ const AppAvatar = () => {
     };
 
     return (
-        <Box>
+        <Box {...props}>
             <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu}>
-                    <ThemedIcon
-                        className="profile-avatar"
-                        sx={{ fontSize: '2rem' }}
-                    />
+                    <ThemedIcon className="profile-avatar" />
                 </IconButton>
             </Tooltip>
             <Menu
-                sx={{ mt: '40px' }}
                 anchorEl={anchorElUser}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                }}
                 keepMounted
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right'
-                }}
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}>
                 <AvatarMenu />

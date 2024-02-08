@@ -38,7 +38,10 @@ export const logoWrapper = {
 export const etcContainer = {
     display: 'flex',
     gap: '1rem',
-    alignItems: 'center'
+    alignItems: 'center',
+    '& .profile-avatar': {
+        fontSize: '2.5rem'
+    }
 };
 
 export const appRouterLink = {
