@@ -10,6 +10,8 @@ import {
     logoIcon,
     logoWrapper
 } from '@/_components/app-nav/app-drawer/drawer-header/style';
+import { useRouter } from 'next/navigation';
+import { PATHS } from '@/constants/paths.constants';
 
 export interface DrawerHeaderProps {
     onClose?: () => void;
@@ -18,6 +20,7 @@ export interface DrawerHeaderProps {
 const DrawerHeaderStyled = styled('div')(({ theme }) => drawerHeader(theme));
 
 const DrawerHeader = ({ onClose }: DrawerHeaderProps) => {
+    const router = useRouter();
     const handleDrawerClose = () => {
         onClose && onClose();
     };
@@ -25,7 +28,13 @@ const DrawerHeader = ({ onClose }: DrawerHeaderProps) => {
     return (
         <DrawerHeaderStyled>
             <Box sx={logoWrapper}>
-                <SvgIcon inheritViewBox={true} sx={logoIcon}>
+                <SvgIcon
+                    inheritViewBox={true}
+                    sx={logoIcon}
+                    onClick={() => {
+                        router.push(PATHS.ROOT);
+                        handleDrawerClose();
+                    }}>
                     <MonkeyIconSvg />
                 </SvgIcon>
             </Box>

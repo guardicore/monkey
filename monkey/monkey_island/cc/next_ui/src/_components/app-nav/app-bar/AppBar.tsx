@@ -19,6 +19,7 @@ import {
     appBar,
     appRouterLink,
     etcContainer,
+    logoWrapper,
     logoAndDrawerContainer,
     logoAndMenuContainer,
     muiContainerRoot,
@@ -54,7 +55,7 @@ const MonkeyAppBar = (
                                 onClick={() => setIsDrawerOpen(true)}
                             />
                             <SvgIcon
-                                sx={{ fontSize: '2.5rem' }}
+                                sx={logoWrapper}
                                 onClick={() => handleRouteClick(PATHS.ROOT)}>
                                 <MonkeyIconSvg />
                             </SvgIcon>

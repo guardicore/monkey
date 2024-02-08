@@ -19,7 +19,7 @@ export const logoWrapper = {
     display: 'flex',
     flex: 1,
     justifyContent: 'center',
-    hover: {
+    '&:hover': {
         cursor: 'pointer'
     }
 };

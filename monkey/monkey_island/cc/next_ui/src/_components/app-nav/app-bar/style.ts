@@ -19,16 +19,20 @@ export const muiToolbarRoot = {
 export const logoAndMenuContainer = {
     display: 'flex',
     gap: '1rem',
-    alignItems: 'center',
-    hover: {
-        cursor: 'pointer'
-    }
+    alignItems: 'center'
 };
 
 export const logoAndDrawerContainer = {
     display: 'flex',
-    gap: '2rem',
+    gap: '0',
     alignItems: 'center'
+};
+
+export const logoWrapper = {
+    fontSize: '2.5rem',
+    '&:hover': {
+        cursor: 'pointer'
+    }
 };
 
 export const etcContainer = {
