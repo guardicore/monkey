@@ -32,7 +32,7 @@ const RegisterPage = () => {
         password: ''
     });
     const [register, { isError, error }] = useRegisterMutation();
-    const [serverError, setServerError] = useState(null);
+    const [serverError, setServerError] = useState<Error | null>(null);
     const { refetch: refetchRegistrationNeeded } = useRegistrationStatusQuery();
 
     useRedirectToLogin();

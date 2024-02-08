@@ -1,13 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-const proxyMiddleware = createProxyMiddleware<NextApiRequest, NextApiResponse>({
+const proxyMiddleware = createProxyMiddleware({
     target: 'https://localhost:5000',
     secure: false,
     changeOrigin: true
 });
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
+    // @ts-ignore
     proxyMiddleware(req, res, (result: unknown) => {
         if (result instanceof Error) {
             throw result;

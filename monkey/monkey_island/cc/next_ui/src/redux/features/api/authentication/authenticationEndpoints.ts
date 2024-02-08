@@ -23,7 +23,7 @@ export interface RegistrationStatusResponse {
 
 export const authenticationEndpoints = islandApiSlice.injectEndpoints({
     endpoints: (builder: EndpointBuilder<any, any, any>) => ({
-        login: builder.mutation<void, LoginParams>({
+        login: builder.mutation<SuccessfulAuthenticationResponse, LoginParams>({
             query: (loginValues) => ({
                 url: BackendEndpoints.LOGIN,
                 method: HTTP_METHODS.POST,
@@ -48,7 +48,10 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 return response.data.response.errors;
             }
         }),
-        register: builder.mutation<void, LoginParams>({
+        register: builder.mutation<
+            SuccessfulAuthenticationResponse,
+            LoginParams
+        >({
             query: (loginValues) => ({
                 url: BackendEndpoints.REGISTER,
                 method: HTTP_METHODS.POST,
@@ -85,7 +88,7 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 dispatch(AuthenticationActions.logout);
             }
         }),
-        registrationStatus: builder.query({
+        registrationStatus: builder.query<RegistrationStatusResponse, void>({
             query: () => ({
                 url: BackendEndpoints.REGISTRATION_STATUS,
                 method: HTTP_METHODS.GET,

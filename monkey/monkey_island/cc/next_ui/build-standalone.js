@@ -58,12 +58,15 @@ async function prepareStandaloneDir() {
 exec('next build', (error, stdout, stderr) => {
     if (error) {
         console.error(`Error during build: ${error.message}`);
-        return;
+        throw error;
     }
     if (stderr) {
         console.error(`Build error/warning: ${stderr}`);
+        throw new Error(`Build error/warning: ${stderr}`);
     }
     console.log('Build successful:', stdout);
-    prepareStandaloneDir();
-    console.log('Build complete.');
+    console.log('Preparing standalone dir');
+    prepareStandaloneDir().then(() => {
+        console.log('Build complete.');
+    });
 });

@@ -33,7 +33,7 @@ const LoginPage = () => {
         password: ''
     });
     const [login, { isError, error }] = useLoginMutation();
-    const [serverError, setServerError] = useState(null);
+    const [serverError, setServerError] = useState<Error | null>(null);
 
     useRedirectToRegistration();
 

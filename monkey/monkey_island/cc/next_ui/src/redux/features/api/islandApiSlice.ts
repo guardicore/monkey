@@ -29,6 +29,7 @@ const baseQueryWrapper = async (
     extraOptions: object
 ): Promise<any> => {
     const result = await baseQuery(args, api, extraOptions);
+    // @ts-ignore
     if (result.error?.status === 401 && tokenIsStored()) {
         api.dispatch(AuthenticationActions.logout);
     }
