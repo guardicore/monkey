@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
-import { type ISourceOptions } from '@tsparticles/engine';
 import { loadLinksPreset } from '@tsparticles/preset-links';
-import { useTheme } from '@mui/material/styles'; // if you are going to use `loadLinksPreset`, install the "@tsparticles/presets" package too.
+import { useTheme } from '@mui/material/styles';
+import { ISourceOptions } from '@tsparticles/engine';
 
 const ParticleBackground = () => {
     const [init, setInit] = useState(false);
@@ -17,6 +17,7 @@ const ParticleBackground = () => {
         });
     }, []);
 
+    //@ts-ignore
     const options: ISourceOptions = useMemo(
         () => ({
             preset: 'links',
@@ -49,6 +50,7 @@ const ParticleBackground = () => {
     );
 
     if (init) {
+        // @ts-ignore
         return (
             <Particles
                 id="tsparticles"
