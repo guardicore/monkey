@@ -1,5 +1,5 @@
 from pathlib import PurePath
-from typing import Optional, Union
+from typing import Optional, Sequence, Union
 
 from monkeytypes import AgentID
 
@@ -8,7 +8,7 @@ from infection_monkey.model import CMD_CARRY_OUT, CMD_EXE, MONKEY_ARG
 
 def build_monkey_commandline_parameters(
     parent: Optional[AgentID] = None,
-    servers: Optional[list[str]] = None,
+    servers: Optional[Sequence[str]] = None,
     depth: Optional[int] = None,
     location: Union[str, PurePath, None] = None,
 ) -> list[str]:
