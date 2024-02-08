@@ -1,22 +1,28 @@
 import { PATHS } from '@/constants/paths.constants';
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import HomeIcon from '@mui/icons-material/Home';
-import HubIcon from '@mui/icons-material/Hub';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 
 const MenuLinks = [
-    { path: PATHS.CONFIGURE, label: 'Configure', icon: <HomeIcon /> },
-    { path: PATHS.RUN, label: 'Run', icon: <HomeIcon /> },
-    { path: PATHS.NETWORK_MAP, label: 'Network Map', icon: <HubIcon /> },
-    { path: PATHS.REPORT, label: 'Report', icon: <HomeIcon /> }
+    { path: PATHS.CONFIGURE, label: 'Configure' },
+    { path: PATHS.RUN, label: 'Run' },
+    { path: PATHS.NETWORK_MAP, label: 'Network Map' },
+    { path: PATHS.REPORT, label: 'Report' }
 ];
 
 export interface MenuProps {
     onClose?: () => void;
     orientation?: 'vertical' | 'horizontal';
 }
+
+const getTabValue = (path) => {
+    if (path === PATHS.ROOT) {
+        return false;
+    } else {
+        return path;
+    }
+};
 
 const AppMenu = ({ orientation, onClose }: MenuProps) => {
     const router = useRouter();
@@ -30,7 +36,7 @@ const AppMenu = ({ orientation, onClose }: MenuProps) => {
     return (
         <Tabs
             orientation={orientation}
-            value={path}
+            value={getTabValue(path)}
             className="menu-links"
             onChange={handleRouteClick}
             textColor="inherit"
