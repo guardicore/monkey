@@ -15,7 +15,6 @@ class IAgentCommandBuilderFactory(ABC):
     def create_linux_agent_command_builder(
         self,
     ) -> ILinuxAgentCommandBuilder:
-        # TODO: Add return type
         """
         Builds an ILinuxAgentCommandBuilder that construct the Agent command
 

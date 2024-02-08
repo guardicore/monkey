@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 
-class AgentMode(Enum):
+class DropperExecutionMode(Enum):
     DROPPER = auto()
     NONE = auto()
     SCRIPT = auto()

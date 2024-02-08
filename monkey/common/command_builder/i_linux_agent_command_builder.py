@@ -5,7 +5,7 @@ from typing import Optional
 
 from monkeytypes import InfectionMonkeyBaseModel
 
-from .environment import AgentMode
+from .environment import DropperExecutionMode
 
 
 class LinuxDownloadMethod(Enum):
@@ -21,8 +21,11 @@ class LinuxDownloadOptions(InfectionMonkeyBaseModel):
 
 class LinuxRunOptions(InfectionMonkeyBaseModel):
     agent_destination_path: PurePosixPath
-    agent_mode: AgentMode
+    dropper_execution_mode: DropperExecutionMode
     dropper_destination_path: Optional[PurePosixPath] = None
+
+    # TODO: Validation rule that
+    # If dropper_destination_path is None then DropperExecutionMode must be DROPPER
 
 
 class ILinuxAgentCommandBuilder(metaclass=abc.ABCMeta):

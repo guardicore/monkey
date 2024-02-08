@@ -5,7 +5,7 @@ from typing import Optional
 
 from monkeytypes import InfectionMonkeyBaseModel
 
-from .environment import AgentMode
+from .environment import DropperExecutionMode
 
 
 class WindowsDownloadMethod(Enum):
@@ -22,14 +22,17 @@ class WindowsDownloadOptions(InfectionMonkeyBaseModel):
     agent_destination_path: PureWindowsPath
     download_method: WindowsDownloadMethod
     download_url: str
-    shell: WindowsShell
+    shell: WindowsShell  # TODO: Remove this
 
 
 class WindowsRunOptions(InfectionMonkeyBaseModel):
     agent_destination_path: PureWindowsPath
-    agent_mode: AgentMode
-    shell: Optional[WindowsShell] = None
+    dropper_execution_mode: DropperExecutionMode
+    shell: WindowsShell  # TODO: Make this to not OPTIONAL
     dropper_destination_path: Optional[PureWindowsPath] = None
+
+    # TODO: Validation rule that
+    # If dropper_destination_path is None then DropperExecutionMode must be DROPPER
 
 
 class IWindowsAgentCommandBuilder(metaclass=abc.ABCMeta):

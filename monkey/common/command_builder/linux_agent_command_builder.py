@@ -1,12 +1,12 @@
 from pathlib import PurePath
-from typing import Optional
+from typing import Optional, Sequence
 
 from agentpluginapi import IAgentOTPProvider
 from monkeytypes import AgentID
 
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 
-from .environment import AgentMode
+from .environment import DropperExecutionMode
 from .i_linux_agent_command_builder import (
     ILinuxAgentCommandBuilder,
     LinuxDownloadMethod,
@@ -19,7 +19,7 @@ class LinuxAgentCommandBuilder(ILinuxAgentCommandBuilder):
     def __init__(
         self,
         agent_id: AgentID,
-        servers: list[str],
+        servers: Sequence[str],
         otp_provider: IAgentOTPProvider,
         agent_otp_environment_variable: str,
         current_depth: int = 0,
@@ -61,14 +61,14 @@ class LinuxAgentCommandBuilder(ILinuxAgentCommandBuilder):
             f"{str(run_options.agent_destination_path)} "
         )
 
-        if run_options.agent_mode != AgentMode.SCRIPT:
+        if run_options.dropper_execution_mode != DropperExecutionMode.SCRIPT:
             self._command += self._build_agent_run_arguments(run_options)
 
     def _build_agent_run_arguments(self, run_options: LinuxRunOptions) -> str:
         # NOTE: this is duplicated both in Windows and linux
         agent_arg = MONKEY_ARG
         destination_path = None
-        if run_options.agent_mode == AgentMode.DROPPER:
+        if run_options.dropper_execution_mode == DropperExecutionMode.DROPPER:
             agent_arg = DROPPER_ARG
             destination_path = (
                 run_options.dropper_destination_path

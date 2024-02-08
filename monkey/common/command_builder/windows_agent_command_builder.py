@@ -1,12 +1,12 @@
 from pathlib import PureWindowsPath
-from typing import Optional
+from typing import Optional, Sequence
 
 from agentpluginapi import IAgentOTPProvider
 from monkeytypes import AgentID
 
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 
-from .environment import AgentMode
+from .environment import DropperExecutionMode
 from .i_windows_agent_command_builder import (
     IWindowsAgentCommandBuilder,
     WindowsDownloadMethod,
@@ -20,7 +20,7 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
     def __init__(
         self,
         agent_id: AgentID,
-        servers: list[str],
+        servers: Sequence[str],
         otp_provider: IAgentOTPProvider,
         agent_otp_environment_variable: str,
         current_depth: int = 0,
@@ -64,13 +64,17 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
         )
 
     def build_run_command(self, run_options: WindowsRunOptions):
+        if self._command != "":
+            if run_options.shell == WindowsShell.CMD:
+                self._command += "cmd.exe /c"
         set_otp = self._set_otp_powershell
+        # TODO: Make this explicit
         if run_options.shell == WindowsShell.CMD:
             set_otp = self._set_otp_cmd
 
         self._command += f"{set_otp()} {str(run_options.agent_destination_path)} "
 
-        if run_options.agent_mode != AgentMode.SCRIPT:
+        if run_options.dropper_execution_mode != DropperExecutionMode.SCRIPT:
             self._command += self._build_agent_run_arguments(run_options)
 
     def _set_otp_powershell(self) -> str:
@@ -82,7 +86,7 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
     def _build_agent_run_arguments(self, run_options: WindowsRunOptions) -> str:
         agent_arg = MONKEY_ARG
         destination_path = None
-        if run_options.agent_mode == AgentMode.DROPPER:
+        if run_options.dropper_execution_mode == DropperExecutionMode.DROPPER:
             agent_arg = DROPPER_ARG
             destination_path = (
                 run_options.dropper_destination_path

@@ -1,4 +1,4 @@
-from .environment import AgentMode
+from .environment import DropperExecutionMode
 from .i_linux_agent_command_builder import (
     LinuxDownloadMethod,
     LinuxDownloadOptions,
