@@ -90,7 +90,7 @@ const LoginPage = () => {
                         value={loginFormValues.username}
                         onChange={handleLoginFormValueChange}
                         autoFocus
-                        style={{ background: theme.palette.background.default }}
+                        sx={{ bgcolor: 'background.default' }}
                     />
                     <TextField
                         margin="normal"
@@ -103,7 +103,7 @@ const LoginPage = () => {
                         autoComplete="current-password"
                         value={loginFormValues.password}
                         onChange={handleLoginFormValueChange}
-                        style={{ background: theme.palette.background.default }}
+                        sx={{ bgcolor: 'background.default' }}
                     />
                     <Button
                         type="submit"
