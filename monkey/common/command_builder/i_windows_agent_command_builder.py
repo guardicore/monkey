@@ -27,7 +27,7 @@ class WindowsDownloadOptions(InfectionMonkeyBaseModel):
 class WindowsRunOptions(InfectionMonkeyBaseModel):
     agent_destination_path: PureWindowsPath
     dropper_execution_mode: DropperExecutionMode
-    shell: WindowsShell  # TODO: Make this to not OPTIONAL
+    shell: WindowsShell
     dropper_destination_path: Optional[PureWindowsPath] = None
 
     # TODO: Validation rule that
