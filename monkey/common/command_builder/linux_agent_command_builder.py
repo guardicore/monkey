@@ -1,10 +1,11 @@
 from pathlib import PurePath
-from typing import Optional, Sequence
+from typing import Sequence
 
 from agentpluginapi import IAgentOTPProvider
 from monkeytypes import AgentID
 
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
+from infection_monkey.utils.commands import build_monkey_commandline_parameters
 
 from .environment import DropperExecutionMode
 from .i_linux_agent_command_builder import (
@@ -76,30 +77,13 @@ class LinuxAgentCommandBuilder(ILinuxAgentCommandBuilder):
                 else run_options.agent_destination_path
             )
 
-        agent_arguments = self._build_agent_command_line_arguments(destination_path)
+        agent_arguments = build_monkey_commandline_parameters(
+            parent=self._agent_id,
+            servers=self._servers,
+            depth=self._current_depth,
+            location=destination_path,
+        )
         return f"{agent_arg} {' '.join(agent_arguments)}"
-
-    def _build_agent_command_line_arguments(
-        self, destination_path: Optional[PurePath]
-    ) -> list[str]:
-        commandline = []
-
-        # NOTE: We might want to add the argument here.
-
-        if self._agent_id is not None:
-            commandline.append("-p")
-            commandline.append(str(self._agent_id))
-        if self._servers:
-            commandline.append("-s")
-            commandline.append(",".join(self._servers))
-        if self._current_depth is not None:
-            commandline.append("-d")
-            commandline.append(str(self._current_depth))
-        if destination_path is not None:
-            commandline.append("-l")
-            commandline.append(str(destination_path))
-
-        return commandline
 
     def get_command(self) -> str:
         return self._command
