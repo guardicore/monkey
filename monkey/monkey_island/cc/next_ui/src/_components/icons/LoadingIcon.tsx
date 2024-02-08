@@ -1,9 +1,9 @@
 import Autorenew from '@mui/icons-material/Autorenew';
 import React from 'react';
-import classes from './LoadingIcon.module.scss';
+import { loadingIcon } from '@/_components/icons/style';
 
 const LoadingIcon = (props) => {
-    return <Autorenew {...props} id={classes['loading-icon']} />;
+    return <Autorenew {...props} sx={loadingIcon} />;
 };
 
 export default LoadingIcon;

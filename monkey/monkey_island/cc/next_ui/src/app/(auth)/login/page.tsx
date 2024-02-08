@@ -113,9 +113,9 @@ const LoginPage = () => {
                         {renderSubmitButtonContent()}
                     </Button>
 
-                            {isError && Array.isArray(error) && (
-                                <ErrorList errors={error} />
-                            )}
+                    {isError && Array.isArray(error) && (
+                        <ErrorList errors={error} />
+                    )}
 
                     <Grid container>
                         <Grid item xs>
