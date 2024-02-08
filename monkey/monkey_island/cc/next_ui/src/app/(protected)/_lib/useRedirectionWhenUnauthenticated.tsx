@@ -8,7 +8,7 @@ import { useRegistrationStatusQuery } from '@/redux/features/api/authentication/
 export default function useRedirectionWhenUnauthenticated() {
     const router = useRouter();
     const { data: registrationStatus, isLoading } =
-        useRegistrationStatusQuery(null);
+        useRegistrationStatusQuery();
 
     useEffect(() => {
         if (isLoading) {

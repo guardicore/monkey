@@ -33,13 +33,12 @@ const LoginPage = () => {
         password: ''
     });
     const [login, { isError, error }] = useLoginMutation();
-    const [serverError, setServerError] = useState(null);
+    const [serverError, setServerError] = useState<Error | null>(null);
 
     useRedirectToRegistration();
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        // @ts-ignore
         const loginResponse:
             | { data: SuccessfulAuthenticationResponse }
             | { error: ErrorResponse | Error } = await login(loginFormValues);
@@ -49,7 +48,6 @@ const LoginPage = () => {
             setAuthenticationTimer();
             router.push(PATHS.ROOT);
         } else if (instanceOfError(loginResponse.error)) {
-            // @ts-ignore
             setServerError(loginResponse.error);
         }
     };

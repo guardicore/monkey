@@ -32,15 +32,13 @@ const RegisterPage = () => {
         password: ''
     });
     const [register, { isError, error }] = useRegisterMutation();
-    const [serverError, setServerError] = useState(null);
-    const { refetch: refetchRegistrationNeeded } =
-        useRegistrationStatusQuery(null);
+    const [serverError, setServerError] = useState<Error | null>(null);
+    const { refetch: refetchRegistrationNeeded } = useRegistrationStatusQuery();
 
     useRedirectToLogin();
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        // @ts-ignore
         const registrationResponse:
             | { data: SuccessfulAuthenticationResponse }
             | { error: ErrorResponse | Error } =
@@ -52,7 +50,6 @@ const RegisterPage = () => {
             await refetchRegistrationNeeded();
             router.push(PATHS.ROOT);
         } else if (instanceOfError(registrationResponse.error)) {
-            // @ts-ignore
             setServerError(registrationResponse.error);
         }
     };

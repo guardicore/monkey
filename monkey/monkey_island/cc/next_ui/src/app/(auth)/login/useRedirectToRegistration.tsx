@@ -6,7 +6,7 @@ import { PATHS } from '@/constants/paths.constants';
 const useRedirectToRegistration = () => {
     const router = useRouter();
     const { data: registrationStatus, isLoading: isRegistrationStatusLoading } =
-        useRegistrationStatusQuery(null);
+        useRegistrationStatusQuery();
 
     useEffect(() => {
         if (
