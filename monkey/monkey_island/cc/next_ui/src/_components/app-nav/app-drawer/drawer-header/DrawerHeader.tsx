@@ -1,26 +1,21 @@
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
-import classes from './drawerHeader.module.scss';
 import IconButton from '@mui/material/IconButton';
 import MonkeyHeadSvg from '@/assets/svg-components/MonkeyHead.svg';
 import SvgIcon from '@mui/material/SvgIcon';
 import React from 'react';
 import { styled } from '@mui/material/styles';
+import {
+    drawerHeader,
+    logoIcon,
+    logoWrapper
+} from '@/_components/app-nav/app-drawer/drawer-header/style';
 
 export interface DrawerHeaderProps {
     onClose?: () => void;
 }
 
-const ThemedCloseIcon = styled(CloseIcon)(({ theme }) => ({
-    color: theme.palette.primary.contrastText
-}));
-
-const DrawerHeaderStyled = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText
-}));
+const DrawerHeaderStyled = styled('div')(({ theme }) => drawerHeader(theme));
 
 const DrawerHeader = ({ onClose }: DrawerHeaderProps) => {
     const handleDrawerClose = () => {
@@ -28,15 +23,15 @@ const DrawerHeader = ({ onClose }: DrawerHeaderProps) => {
     };
 
     return (
-        <DrawerHeaderStyled id={classes['app-drawer-header']}>
-            <Box className="logo-icon-wrapper">
-                <SvgIcon inheritViewBox={true} className={'logo-icon'}>
+        <DrawerHeaderStyled>
+            <Box sx={logoWrapper}>
+                <SvgIcon inheritViewBox={true} sx={logoIcon}>
                     <MonkeyHeadSvg />
                 </SvgIcon>
             </Box>
-            <Box className="drawer-header-close">
+            <Box>
                 <IconButton onClick={handleDrawerClose} size="small">
-                    <ThemedCloseIcon />
+                    <CloseIcon sx={{ color: 'primary.contrastText' }} />
                 </IconButton>
             </Box>
         </DrawerHeaderStyled>
