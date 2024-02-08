@@ -22,7 +22,6 @@ class WindowsDownloadOptions(InfectionMonkeyBaseModel):
     agent_destination_path: PureWindowsPath
     download_method: WindowsDownloadMethod
     download_url: str
-    shell: WindowsShell  # TODO: Remove this
 
 
 class WindowsRunOptions(InfectionMonkeyBaseModel):

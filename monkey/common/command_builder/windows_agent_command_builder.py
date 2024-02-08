@@ -38,11 +38,9 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
         if download_options.download_method == WindowsDownloadMethod.WEB_CLIENT:
             download_command_func = self._build_download_command_webclient
 
-        if download_options.shell == WindowsShell.CMD:
-            self._command += "cmd.exe /c "
-
-        if download_options.shell == WindowsShell.POWERSHELL:
-            self._command += "powershell "
+        # We always download using powershell since CMD doesn't have
+        # or it is really hard to set a download command
+        self._command += "powershell "
 
         self._command += download_command_func(
             download_options.download_url, download_options.agent_destination_path
