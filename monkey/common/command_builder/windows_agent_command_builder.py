@@ -33,7 +33,8 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
         self._command = ""
 
     def build_download_command(self, download_options: WindowsDownloadOptions):
-        download_command_func = self._build_download_command_webrequest
+        if download_options.download_method == WindowsDownloadMethod.WEB_REQUEST:
+            download_command_func = self._build_download_command_webrequest
         if download_options.download_method == WindowsDownloadMethod.WEB_CLIENT:
             download_command_func = self._build_download_command_webclient
 
@@ -67,8 +68,9 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
         if self._command != "":
             if run_options.shell == WindowsShell.CMD:
                 self._command += "cmd.exe /c"
-        set_otp = self._set_otp_powershell
-        # TODO: Make this explicit
+
+        if run_options.shell == WindowsShell.POWERSHELL:
+            set_otp = self._set_otp_powershell
         if run_options.shell == WindowsShell.CMD:
             set_otp = self._set_otp_cmd
 
