@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Sequence
 
 from agentpluginapi import IAgentOTPProvider
 from monkeytypes import AgentID
@@ -14,8 +15,11 @@ class IAgentCommandBuilderFactory(ABC):
     def create_linux_agent_command_builder(
         self,
     ) -> ILinuxAgentCommandBuilder:
+        # TODO: Add return type
         """
         Builds an ILinuxAgentCommandBuilder that construct the Agent command
+
+        :return: An ILinuxAgentCommandBuilder instance
         """
 
     @abstractmethod
@@ -24,6 +28,8 @@ class IAgentCommandBuilderFactory(ABC):
     ) -> IWindowsAgentCommandBuilder:
         """
         Builds an IWindowsAgentCommandBuilder that construct the Agent command
+
+        :return: An IWindowsAgentCommandBuilder instance
         """
 
 
@@ -31,7 +37,7 @@ class AgentCommandBuilderFactory(IAgentCommandBuilderFactory):
     def __init__(
         self,
         agent_id: AgentID,
-        servers: list[str],
+        servers: Sequence[str],
         otp_provider: IAgentOTPProvider,
         agent_otp_environment_variable: str,
         current_depth: int = 0,
