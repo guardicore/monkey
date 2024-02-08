@@ -14,9 +14,6 @@ const MonkeyLogo = (props) => {
             className={classes.monkeyLogo}
             direction="row"
             useFlexGap
-            style={{
-                marginBottom: '25px'
-            }}
             {...props}>
             <MonkeyHeadSvg className={classes.logo} color={color} />
             <MonkeNameSvg className={classes.name} color={color} />
