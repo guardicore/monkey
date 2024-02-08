@@ -6,7 +6,7 @@ export enum THEME_APPEARANCE {
     SYSTEM_MODE = 'system'
 }
 
-export const roboto = Roboto({
+const roboto = Roboto({
     weight: ['300', '400', '500', '700'],
     subsets: ['latin'],
     display: 'swap'
