@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
-import MonkeyHeadSvg from '@/assets/svg-components/MonkeyHead.svg';
+import MonkeyIconSvg from '@/assets/svg-components/MonkeyIconSvg';
 import SvgIcon from '@mui/material/SvgIcon';
 import React from 'react';
 import { styled } from '@mui/material/styles';
@@ -26,7 +26,7 @@ const DrawerHeader = ({ onClose }: DrawerHeaderProps) => {
         <DrawerHeaderStyled>
             <Box sx={logoWrapper}>
                 <SvgIcon inheritViewBox={true} sx={logoIcon}>
-                    <MonkeyHeadSvg />
+                    <MonkeyIconSvg />
                 </SvgIcon>
             </Box>
             <Box>

@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import AppAvatar from '@/_components/app-nav/app-avatar/AppAvatar';
 import AppDrawerOpener from '@/_components/app-nav/app-drawer-opener/AppDrawerOpener';
 import AppMenu from '@/_components/app-nav/app-menu/AppMenu';
-import MonkeyHeadSvg from '@/assets/svg-components/MonkeyHead.svg';
+import MonkeyIconSvg from '@/assets/svg-components/MonkeyIconSvg';
 import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
 import { PATHS } from '@/constants/paths.constants';
 import { useRouter } from 'next/navigation';
@@ -56,7 +56,7 @@ const MonkeyAppBar = (
                             <SvgIcon
                                 sx={{ fontSize: '2.5rem' }}
                                 onClick={() => handleRouteClick(PATHS.ROOT)}>
-                                <MonkeyHeadSvg />
+                                <MonkeyIconSvg />
                             </SvgIcon>
                         </Box>
                         {!screenIsSmall && <AppMenu orientation="horizontal" />}
