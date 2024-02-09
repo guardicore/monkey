@@ -14,7 +14,19 @@ const roboto = Roboto({
 
 const themeOptions = {
     palette: {
-        mode: THEME_APPEARANCE.LIGHT_MODE
+        mode: THEME_APPEARANCE.LIGHT_MODE,
+        primary: {
+            main: '#FFCC00',
+            light: '#FFCD38',
+            dark: '#B28704',
+            contrastText: '#000'
+        },
+        secondary: {
+            main: '#0F63A4',
+            light: '#3F82B6',
+            dark: '#0A4572',
+            contrastText: '#FFF'
+        }
     },
     typography: {
         fontFamily: roboto.style.fontFamily

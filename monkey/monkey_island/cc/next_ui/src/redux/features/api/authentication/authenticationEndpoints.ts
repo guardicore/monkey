@@ -11,6 +11,19 @@ enum BackendEndpoints {
     REGISTRATION_STATUS = '/registration-status'
 }
 
+interface apiLoginResponse {
+    response?: {
+        user: {
+            authentication_token: string;
+            token_ttl_sec: number;
+        };
+    };
+    data?: {
+        response: {
+            errors: string[];
+        };
+    };
+}
 export type ErrorResponse = string[];
 export interface SuccessfulAuthenticationResponse {
     authenticationToken: string;
@@ -32,7 +45,9 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
                 },
                 body: JSON.stringify(loginValues)
             }),
-            transformResponse: (response): SuccessfulAuthenticationResponse => {
+            transformResponse: (
+                response: apiLoginResponse
+            ): SuccessfulAuthenticationResponse => {
                 const authData = response.response?.user;
                 if (!authData) {
                     throw new Error(
