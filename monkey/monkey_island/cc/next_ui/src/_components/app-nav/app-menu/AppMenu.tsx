@@ -3,13 +3,16 @@ import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
 
-const MenuLinks = [
+const MenuLinksLeft = [
     { path: PATHS.CONFIGURE, label: 'Configure' },
     { path: PATHS.RUN, label: 'Run' },
     { path: PATHS.NETWORK_MAP, label: 'Network Map' },
     { path: PATHS.REPORT, label: 'Report' }
 ];
+
+const MenuLinksRight = [{ path: PATHS.ABOUT, label: 'About' }];
 
 export interface MenuProps {
     onClose?: () => void;
@@ -27,6 +30,7 @@ const getTabValue = (path) => {
 const AppMenu = ({ orientation, onClose }: MenuProps) => {
     const router = useRouter();
     const path = usePathname();
+    const { screenIsSmall } = useSmallScreenCheck();
 
     const handleRouteClick = (event: React.SyntheticEvent, value: any) => {
         router.push(value);
@@ -37,16 +41,19 @@ const AppMenu = ({ orientation, onClose }: MenuProps) => {
         <Tabs
             orientation={orientation}
             value={getTabValue(path)}
-            className="menu-links"
             onChange={handleRouteClick}
             textColor="inherit"
-            indicatorColor="secondary">
-            {MenuLinks.map((link) => (
+            indicatorColor="secondary"
+            sx={{ width: '100%' }}>
+            {MenuLinksLeft.map((link) => (
+                <Tab key={link.label} label={link.label} value={link.path} />
+            ))}
+            {MenuLinksRight.map((link, index) => (
                 <Tab
                     key={link.label}
-                    className={'app-route-link'}
                     label={link.label}
                     value={link.path}
+                    sx={index === 0 && !screenIsSmall ? { ml: 'auto' } : {}}
                 />
             ))}
         </Tabs>

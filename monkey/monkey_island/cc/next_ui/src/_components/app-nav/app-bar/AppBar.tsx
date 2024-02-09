@@ -3,11 +3,8 @@ import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import HomeIcon from '@mui/icons-material/Home';
-import MenuItem from '@mui/material/MenuItem';
 import SvgIcon from '@mui/material/SvgIcon';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import AppAvatar from '@/_components/app-nav/app-avatar/AppAvatar';
 import AppDrawerOpener from '@/_components/app-nav/app-drawer-opener/AppDrawerOpener';
 import AppMenu from '@/_components/app-nav/app-menu/AppMenu';
@@ -17,7 +14,6 @@ import { PATHS } from '@/constants/paths.constants';
 import { useRouter } from 'next/navigation';
 import {
     appBar,
-    appRouterLink,
     etcContainer,
     logoWrapper,
     logoAndDrawerContainer,
@@ -25,8 +21,6 @@ import {
     muiContainerRoot,
     muiToolbarRoot
 } from '@/_components/app-nav/app-bar/style';
-
-const AboutLink = { path: PATHS.ABOUT, label: 'About', icon: <HomeIcon /> };
 
 export interface MenuProps {
     onClose?: () => void;
@@ -63,12 +57,6 @@ const MonkeyAppBar = (
                         {!screenIsSmall && <AppMenu orientation="horizontal" />}
                     </Box>
                     <Box sx={etcContainer}>
-                        <MenuItem
-                            key={AboutLink.label}
-                            sx={appRouterLink}
-                            onClick={() => handleRouteClick(AboutLink.path)}>
-                            <Typography>{AboutLink.label}</Typography>
-                        </MenuItem>
                         <AppAvatar />
                     </Box>
                 </Toolbar>

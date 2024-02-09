@@ -1,7 +1,6 @@
 export const appBarHeight = '64px';
 export const appBar = {
-    display: 'flex',
-    justifyContent: 'space-between'
+    display: 'flex'
 };
 
 export const muiContainerRoot = {
@@ -19,7 +18,8 @@ export const muiToolbarRoot = {
 export const logoAndMenuContainer = {
     display: 'flex',
     gap: '1rem',
-    alignItems: 'center'
+    alignItems: 'center',
+    width: '100%'
 };
 
 export const logoAndDrawerContainer = {
