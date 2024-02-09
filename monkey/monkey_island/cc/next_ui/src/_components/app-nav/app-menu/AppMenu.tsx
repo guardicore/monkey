@@ -1,44 +1,62 @@
 import { PATHS } from '@/constants/paths.constants';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import classes from './appMenu.module.scss';
-import HomeIcon from '@mui/icons-material/Home';
-import HubIcon from '@mui/icons-material/Hub';
-import EventNoteIcon from '@mui/icons-material/EventNote';
+import { usePathname, useRouter } from 'next/navigation';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
 
-const MenuLinks = [
-    { path: PATHS.HOME, label: 'Home', icon: <HomeIcon /> },
-    { path: PATHS.MAP, label: 'Map', icon: <HubIcon /> },
-    { path: PATHS.EVENTS, label: 'Events', icon: <EventNoteIcon /> }
+const MenuLinksLeft = [
+    { path: PATHS.CONFIGURE, label: 'Configure' },
+    { path: PATHS.RUN, label: 'Run' },
+    { path: PATHS.NETWORK_MAP, label: 'Network Map' },
+    { path: PATHS.REPORT, label: 'Report' }
 ];
+
+const MenuLinksRight = [{ path: PATHS.ABOUT, label: 'About' }];
 
 export interface MenuProps {
     onClose?: () => void;
+    orientation?: 'vertical' | 'horizontal';
 }
 
-const AppMenu = ({ onClose }: MenuProps) => {
-    const router = useRouter();
+const getTabValue = (path) => {
+    if (path === PATHS.ROOT) {
+        return false;
+    } else {
+        return path;
+    }
+};
 
-    const handleRouteClick = (path: string) => {
-        router.push(path);
+const AppMenu = ({ orientation, onClose }: MenuProps) => {
+    const router = useRouter();
+    const path = usePathname();
+    const { screenIsSmall } = useSmallScreenCheck();
+
+    const handleRouteClick = (event: React.SyntheticEvent, value: any) => {
+        router.push(value);
         onClose && onClose();
     };
 
     return (
-        <Box className={classes['app-menu']}>
-            <Box className="menu-links">
-                {MenuLinks.map((link) => (
-                    <div
-                        key={link.label}
-                        className={'app-route-link'}
-                        onClick={() => handleRouteClick(link.path)}>
-                        <Typography>{link.label}</Typography>
-                    </div>
-                ))}
-            </Box>
-        </Box>
+        <Tabs
+            orientation={orientation}
+            value={getTabValue(path)}
+            onChange={handleRouteClick}
+            textColor="inherit"
+            indicatorColor="secondary"
+            sx={{ width: '100%' }}>
+            {MenuLinksLeft.map((link) => (
+                <Tab key={link.label} label={link.label} value={link.path} />
+            ))}
+            {MenuLinksRight.map((link, index) => (
+                <Tab
+                    key={link.label}
+                    label={link.label}
+                    value={link.path}
+                    sx={index === 0 && !screenIsSmall ? { ml: 'auto' } : {}}
+                />
+            ))}
+        </Tabs>
     );
 };
 

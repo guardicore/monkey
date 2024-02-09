@@ -9,10 +9,7 @@ export const cardStyle = (theme: Theme) => {
             theme.palette.background.default,
             theme,
             0.3
-        ),
-        '& .logo': {
-            height: '50px'
-        }
+        )
     };
 };
 

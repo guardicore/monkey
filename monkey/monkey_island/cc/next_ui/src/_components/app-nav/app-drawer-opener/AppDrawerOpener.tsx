@@ -1,7 +1,7 @@
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import classes from './appDrawerOpener.module.scss';
 import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
+import { appDrawerOpener } from '@/_components/app-nav/app-drawer-opener/style';
 
 const AppDrawerOpener = ({ onClick }: { onClick: object }) => {
     const { screenIsSmall } = useSmallScreenCheck();
@@ -17,12 +17,11 @@ const AppDrawerOpener = ({ onClick }: { onClick: object }) => {
 
     return (
         <IconButton
-            id={classes['app-drawer-opener']}
+            sx={appDrawerOpener}
             size="large"
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2 }}
             onClick={handleClick}>
             <MenuIcon />
         </IconButton>

@@ -4,23 +4,10 @@
   height: 100%;
 }
 
-:root {
-
-}
-
 html {
   @include html-body;
 
   body {
     @include html-body;
-
-    .app-drawer-paper {
-      min-width: 10rem;
-
-      .menu-links {
-        flex-direction: column;
-      }
-    }
   }
 }
-
