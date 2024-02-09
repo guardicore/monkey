@@ -1,12 +1,13 @@
-export const monkeyLogo = {
+export const brandHeader = {
     display: 'flex',
     alignItems: 'center',
     gap: '5%',
 
-    '& .logo': {
+    '& .app-icon': {
         height: '100%'
     },
-    '& .name': {
+
+    '& .app-title': {
         height: '70%'
     }
 };

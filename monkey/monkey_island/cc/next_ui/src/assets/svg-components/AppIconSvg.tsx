@@ -1,18 +1,16 @@
 interface SvgProps {
     className?: string;
     color?: string;
-    height?: string;
 }
 
-const MonkeyIconSvg = (props: SvgProps) => (
+const AppIconSvg = (props: SvgProps) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         id="Layer_1"
         data-name="Layer 1"
         viewBox="0 0 22.468 24.614"
         className={props.className}
-        color={props.color}
-        height={props.height}>
+        color={props.color}>
         <defs>
             <style>{'.cls-1{fill:currentColor}'}</style>
         </defs>
@@ -30,4 +28,4 @@ const MonkeyIconSvg = (props: SvgProps) => (
     </svg>
 );
 
-export default MonkeyIconSvg;
+export default AppIconSvg;

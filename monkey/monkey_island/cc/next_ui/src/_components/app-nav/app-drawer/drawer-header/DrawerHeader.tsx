@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
-import MonkeyIconSvg from '@/assets/svg-components/MonkeyIconSvg';
+import AppIconSvg from '@/assets/svg-components/AppIconSvg';
 import SvgIcon from '@mui/material/SvgIcon';
 import React from 'react';
 import { styled } from '@mui/material/styles';
@@ -35,7 +35,7 @@ const DrawerHeader = ({ onClose }: DrawerHeaderProps) => {
                         router.push(PATHS.ROOT);
                         handleDrawerClose();
                     }}>
-                    <MonkeyIconSvg />
+                    <AppIconSvg />
                 </SvgIcon>
             </Box>
             <Box>

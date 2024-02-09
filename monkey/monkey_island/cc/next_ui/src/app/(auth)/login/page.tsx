@@ -22,7 +22,7 @@ import { instanceOfError } from '@/lib/typeChecks';
 import useRedirectToRegistration from '@/app/(auth)/login/useRedirectToRegistration';
 import ErrorList from '@/_components/errors/ErrorList';
 import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
-import MonkeyLogo from '@/_components/icons/monkey-logo/MonkeyLogo';
+import BrandHeader from '@/_components/icons/monkey-logo/BrandHeader';
 import { useTheme } from '@mui/material/styles';
 import { cardStyle, containerStyle } from '@/app/(auth)/login/style';
 
@@ -77,7 +77,7 @@ const LoginPage = () => {
     const renderFormCard = () => {
         return (
             <Card variant="outlined" sx={cardStyle(theme)}>
-                <MonkeyLogo className={'logo'} />
+                <BrandHeader sx={{ height: '50px' }} />
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
