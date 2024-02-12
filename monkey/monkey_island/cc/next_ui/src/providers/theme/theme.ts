@@ -2,8 +2,7 @@ import { Roboto } from 'next/font/google';
 
 export enum THEME_APPEARANCE {
     DARK_MODE = 'dark',
-    LIGHT_MODE = 'light',
-    SYSTEM_MODE = 'system'
+    LIGHT_MODE = 'light'
 }
 
 const roboto = Roboto({
@@ -14,18 +13,12 @@ const roboto = Roboto({
 
 const themeOptions = {
     palette: {
-        mode: THEME_APPEARANCE.LIGHT_MODE,
+        mode: THEME_APPEARANCE.DARK_MODE,
         primary: {
-            main: '#FFCC00',
-            light: '#FFCD38',
-            dark: '#B28704',
-            contrastText: '#000'
+            main: '#FFCC00'
         },
         secondary: {
-            main: '#0F63A4',
-            light: '#3F82B6',
-            dark: '#0A4572',
-            contrastText: '#FFF'
+            main: '#8976ff'
         }
     },
     typography: {
