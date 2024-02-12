@@ -1,4 +1,4 @@
-from pathlib import PurePath
+from pathlib import PurePosixPath
 from typing import Sequence
 
 from agentpluginapi import IAgentOTPProvider
@@ -41,19 +41,23 @@ class LinuxAgentCommandBuilder(ILinuxAgentCommandBuilder):
             download_options.download_url, download_options.agent_destination_path
         )
 
-    def _build_download_command_wget(self, download_url: str, destination_path: PurePath) -> str:
+    def _build_download_command_wget(
+        self, download_url: str, destination_path: PurePosixPath
+    ) -> str:
         return (
             f"wget -qO {destination_path} {download_url}; "
             f"{self._set_permissions_command(destination_path)} ; "
         )
 
-    def _build_download_command_curl(self, download_url: str, destination_path: PurePath) -> str:
+    def _build_download_command_curl(
+        self, download_url: str, destination_path: PurePosixPath
+    ) -> str:
         return (
             f"curl -so {destination_path} {download_url}; "
             f"{self._set_permissions_command(destination_path)} ; "
         )
 
-    def _set_permissions_command(self, destination_path: PurePath) -> str:
+    def _set_permissions_command(self, destination_path: PurePosixPath) -> str:
         return f"chmod +x {destination_path}"
 
     def build_run_command(self, run_options: LinuxRunOptions):
