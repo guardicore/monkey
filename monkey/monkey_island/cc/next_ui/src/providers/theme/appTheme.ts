@@ -1,4 +1,5 @@
 import { Roboto } from 'next/font/google';
+import { createTheme, ThemeOptions } from '@mui/material/styles';
 
 export enum THEME_APPEARANCE {
     DARK_MODE = 'dark',
@@ -11,7 +12,7 @@ const roboto = Roboto({
     display: 'swap'
 });
 
-const themeOptions = {
+const themeOptions: ThemeOptions = {
     palette: {
         mode: THEME_APPEARANCE.DARK_MODE,
         primary: {
@@ -23,8 +24,9 @@ const themeOptions = {
     },
     typography: {
         fontFamily: roboto.style.fontFamily
-    },
-    components: {}
+    }
 };
 
-export default themeOptions;
+const appTheme = createTheme(themeOptions);
+
+export default appTheme;
