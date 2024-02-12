@@ -66,7 +66,7 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
     def build_run_command(self, run_options: WindowsRunOptions):
         if self._command != "":
             if run_options.shell == WindowsShell.CMD:
-                self._command += "cmd.exe /c"
+                self._command += "cmd.exe /c "
 
         if run_options.shell == WindowsShell.POWERSHELL:
             set_otp = self._set_otp_powershell
@@ -79,10 +79,10 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
             self._command += self._build_agent_run_arguments(run_options)
 
     def _set_otp_powershell(self) -> str:
-        return f"$env:{self._agent_otp_environment_variable}='{self._otp_provider.get_otp()}' ; "
+        return f"$env:{self._agent_otp_environment_variable}='{self._otp_provider.get_otp()}' ;"
 
     def _set_otp_cmd(self) -> str:
-        return f"set {self._agent_otp_environment_variable}={self._otp_provider.get_otp()}& "
+        return f"set {self._agent_otp_environment_variable}={self._otp_provider.get_otp()}&"
 
     def _build_agent_run_arguments(self, run_options: WindowsRunOptions) -> str:
         agent_arg = MONKEY_ARG
