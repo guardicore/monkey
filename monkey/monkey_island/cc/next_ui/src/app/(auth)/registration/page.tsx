@@ -84,10 +84,10 @@ const RegisterPage = () => {
             <Card variant="outlined" sx={cardStyle(theme)}>
                 <BrandHeader sx={{ height: '50px' }} />
                 <Typography
-                    sx={{ fontSize: 14, mt: '20px' }}
+                    sx={{ mt: '20px' }}
                     color="text.secondary"
                     gutterBottom>
-                    Create a new account
+                    Create a new account:
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <TextField
