@@ -1,13 +1,9 @@
 'use client';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import * as React from 'react';
 import { useState } from 'react';
-import Avatar from '@mui/material/Avatar';
-import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths.constants';
@@ -22,16 +18,24 @@ import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthT
 import { instanceOfError } from '@/lib/typeChecks';
 import useRedirectToLogin from '@/app/(auth)/registration/useRedirectToLogin';
 import ErrorList from '@/_components/errors/ErrorList';
+import Card from '@mui/material/Card';
+import BrandHeader from '@/_components/icons/monkey-logo/BrandHeader';
+import Stack from '@mui/material/Stack';
+import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
+import { useTheme } from '@mui/material/styles';
+import { cardStyle, containerStyle } from '@/app/(auth)/registration/style';
 
 const RegisterPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const router = useRouter();
+    const theme = useTheme();
 
     const [registerFormValues, setRegisterFormValues] = useState({
         username: '',
         password: ''
     });
-    const [register, { isError, error }] = useRegisterMutation();
+    const [register, { isError, error, isLoading, isSuccess }] =
+        useRegisterMutation();
     const [serverError, setServerError] = useState<Error | null>(null);
     const { refetch: refetchRegistrationNeeded } = useRegistrationStatusQuery();
 
@@ -67,65 +71,74 @@ const RegisterPage = () => {
         }
         return (
             <>
-                <Container component="main" maxWidth="xs">
-                    <CssBaseline />
-                    <Box
-                        sx={{
-                            marginTop: 8,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center'
-                        }}>
-                        <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-                            <LockOutlinedIcon />
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
-                            Register
-                        </Typography>
-                        <Box
-                            component="form"
-                            onSubmit={handleSubmit}
-                            sx={{ mt: 1 }}>
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="username"
-                                label="username"
-                                name="username"
-                                autoComplete="username"
-                                value={registerFormValues.username}
-                                onChange={handleRegisterFormValueChange}
-                                autoFocus
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                                value={registerFormValues.password}
-                                onChange={handleRegisterFormValueChange}
-                            />
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2 }}>
-                                Register
-                            </Button>
-                            {/* @ts-ignore */}
-                            {isError && Array.isArray(error) && (
-                                <ErrorList errors={error} />
-                            )}
-                        </Box>
-                    </Box>
+                <Container component="main" maxWidth="xs" sx={containerStyle}>
+                    <Stack direction="column" alignItems={'center'} spacing={2}>
+                        {renderFormCard()}
+                    </Stack>
                 </Container>
             </>
         );
+    };
+    const renderFormCard = () => {
+        return (
+            <Card variant="outlined" sx={cardStyle(theme)}>
+                <BrandHeader sx={{ height: '50px' }} />
+                <Typography
+                    sx={{ mt: '20px' }}
+                    color="text.secondary"
+                    gutterBottom>
+                    Create a new account:
+                </Typography>
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="username"
+                        label="Username"
+                        name="username"
+                        autoComplete="username"
+                        value={registerFormValues.username}
+                        onChange={handleRegisterFormValueChange}
+                        autoFocus
+                        sx={{ bgcolor: 'background.default', mt: 0 }}
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                        value={registerFormValues.password}
+                        onChange={handleRegisterFormValueChange}
+                        sx={{ bgcolor: 'background.default' }}
+                    />
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}>
+                        {renderSubmitButtonContent()}
+                    </Button>
+
+                    {isError && Array.isArray(error) && (
+                        <ErrorList errors={error} />
+                    )}
+                </Box>
+            </Card>
+        );
+    };
+
+    const renderSubmitButtonContent = () => {
+        if (isLoading) {
+            return <LoadingIcon />;
+        } else if (isSuccess) {
+            return 'Success!';
+        }
+        return 'Register';
     };
 
     return renderRegisterForm();
