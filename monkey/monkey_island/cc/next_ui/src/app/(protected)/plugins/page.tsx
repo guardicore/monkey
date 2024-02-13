@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useGetAvailablePluginsQuery } from '@/redux/features/api/plugins/pluginsEndpoints';
+import { useGetAvailablePluginsQuery } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
 import React from 'react';
 
 export default function Plugins() {

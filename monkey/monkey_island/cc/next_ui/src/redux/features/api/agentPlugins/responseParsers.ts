@@ -1,7 +1,7 @@
 import {
     AvailablePlugin,
     PluginMetadataResponse
-} from '@/redux/features/api/plugins/types';
+} from '@/redux/features/api/agentPlugins/types';
 
 export const generatePluginId = (
     name: string,

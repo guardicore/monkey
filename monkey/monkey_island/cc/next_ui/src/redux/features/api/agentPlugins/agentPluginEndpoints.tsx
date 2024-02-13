@@ -4,8 +4,8 @@ import { islandApiSlice } from '@/redux/features/api/islandApiSlice';
 import {
     AvailablePlugin,
     PluginMetadataResponse
-} from '@/redux/features/api/plugins/types';
-import { parsePluginMetadataResponse } from '@/redux/features/api/plugins/responseParsers';
+} from '@/redux/features/api/agentPlugins/types';
+import { parsePluginMetadataResponse } from '@/redux/features/api/agentPlugins/responseParsers';
 
 enum BackendEndpoints {
     PLUGIN_INDEX = '/agent-plugins/available/index',
@@ -14,7 +14,7 @@ enum BackendEndpoints {
     PLUGIN_MANIFESTS = '/api/agent-plugins/installed/manifests'
 }
 
-export const pluginEndpoints = islandApiSlice.injectEndpoints({
+export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
     endpoints: (builder: EndpointBuilder<any, any, any>) => ({
         getAvailablePlugins: builder.query<AvailablePlugin[], void>({
             query: () => ({
@@ -31,4 +31,4 @@ export const pluginEndpoints = islandApiSlice.injectEndpoints({
     })
 });
 
-export const { useGetAvailablePluginsQuery } = pluginEndpoints;
+export const { useGetAvailablePluginsQuery } = agentPluginEndpoints;
