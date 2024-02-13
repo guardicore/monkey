@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
+import { appTabsContainer } from '@/_components/app-nav/app-menu/style';
 
 const MenuLinksLeft = [
     { path: PATHS.CONFIGURE, label: 'Configure' },
@@ -44,7 +45,7 @@ const AppMenu = ({ orientation, onClose }: MenuProps) => {
             onChange={handleRouteClick}
             textColor="inherit"
             indicatorColor="secondary"
-            sx={{ width: '100%' }}>
+            sx={appTabsContainer}>
             {MenuLinksLeft.map((link) => (
                 <Tab key={link.label} label={link.label} value={link.path} />
             ))}

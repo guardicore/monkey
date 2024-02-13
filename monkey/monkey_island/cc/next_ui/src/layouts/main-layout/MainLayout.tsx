@@ -23,9 +23,7 @@ export default function MainLayout({
 
     return (
         <MainLayout>
-            <div>
-                <MonkeyAppBar setIsDrawerOpen={setIsDrawerOpen} />
-            </div>
+            <MonkeyAppBar setIsDrawerOpen={setIsDrawerOpen} />
             <AppDrawer open={isDrawerOpen} onClose={closeAppDrawer} />
             <AppContentWrapper>{children}</AppContentWrapper>
         </MainLayout>
