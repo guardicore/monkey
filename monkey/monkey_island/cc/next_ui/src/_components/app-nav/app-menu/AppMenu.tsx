@@ -10,7 +10,8 @@ const MenuLinksLeft = [
     { path: PATHS.CONFIGURE, label: 'Configure' },
     { path: PATHS.RUN, label: 'Run' },
     { path: PATHS.NETWORK_MAP, label: 'Network Map' },
-    { path: PATHS.REPORT, label: 'Report' }
+    { path: PATHS.REPORT, label: 'Report' },
+    { path: PATHS.PLUGINS, label: 'Plugins' }
 ];
 
 const MenuLinksRight = [{ path: PATHS.ABOUT, label: 'About' }];

@@ -5,6 +5,7 @@ export enum PATHS {
     NETWORK_MAP = '/network-map',
     REGISTRATION = '/registration',
     REPORT = '/report',
+    PLUGINS = '/plugins',
     ROOT = '/',
     RUN = '/run'
 }
