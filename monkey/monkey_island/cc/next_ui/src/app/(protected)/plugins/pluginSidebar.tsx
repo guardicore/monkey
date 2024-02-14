@@ -14,7 +14,7 @@ export default function PluginSidebar() {
         <SidebarItem
             key={PluginPages.AvailablePlugins}
             icon={<ExtensionIcon />}
-            name={'Available Plugins'}
+            name={'Available'}
             onClick={() =>
                 router.push(`/plugins/${PluginPages.AvailablePlugins}`)
             }
@@ -23,7 +23,7 @@ export default function PluginSidebar() {
         <SidebarItem
             key={PluginPages.InstalledPlugins}
             icon={<DownloadDoneIcon />}
-            name={'Installed Plugins'}
+            name={'Installed'}
             onClick={() =>
                 router.push(`/plugins/${PluginPages.InstalledPlugins}`)
             }

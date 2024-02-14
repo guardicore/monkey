@@ -2,6 +2,7 @@ import React from 'react';
 import Paper from '@mui/material/Paper';
 import MenuList from '@mui/material/MenuList';
 import Divider from '@mui/material/Divider';
+import { SidebarStyle } from '@/_components/app-nav/app-sidebar/style';
 
 type sidebarProps = {
     items: React.JSX.Element[];
@@ -16,7 +17,7 @@ export default function AppSidebar(props: sidebarProps) {
         displayItems.push(props.items[i]);
     }
     return (
-        <Paper sx={{ width: '100%', height: '100%' }}>
+        <Paper sx={SidebarStyle}>
             <MenuList>{displayItems}</MenuList>
         </Paper>
     );
