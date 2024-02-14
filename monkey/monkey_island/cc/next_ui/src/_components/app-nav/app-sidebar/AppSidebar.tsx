@@ -10,7 +10,6 @@ type sidebarProps = {
 export default function AppSidebar(props: sidebarProps) {
     const displayItems: React.JSX.Element[] = [];
     for (let i = 0; i < props.items.length; i++) {
-        // @ts-ignore
         if (props.items[i].props.prependDivider) {
             displayItems.push(<Divider key={`sidebar-divider-${i}`} />);
         }

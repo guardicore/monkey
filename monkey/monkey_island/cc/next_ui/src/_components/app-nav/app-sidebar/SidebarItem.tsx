@@ -2,20 +2,24 @@ import React from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import { MenuItemProps } from '@mui/base';
 
-type SidebarItemProps = {
+type SidebarItemProps = MenuItemProps & {
     name: string;
     onClick?: () => void;
     icon?: React.ReactNode | null;
     rightContent?: React.ReactNode | null;
-    // This is used by the Sidebar component
+    selected?: boolean;
+    // Used by AppSidebar to add a divider before this item
     prependDivider?: boolean;
 };
 
 const SidebarItem = (props: SidebarItemProps) => {
-    const { name, icon, rightContent, onClick } = props;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { prependDivider, name, icon, rightContent, onClick, ...rest } =
+        props;
     return (
-        <MenuItem onClick={onClick}>
+        <MenuItem onClick={onClick} {...rest}>
             <ListItemIcon>{icon}</ListItemIcon>
             <ListItemText>{name}</ListItemText>
             {rightContent}
