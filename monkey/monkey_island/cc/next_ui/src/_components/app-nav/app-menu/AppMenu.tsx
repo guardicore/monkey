@@ -1,6 +1,6 @@
 import { PATHS } from '@/constants/paths.constants';
 import React from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter, useSelectedLayoutSegments } from 'next/navigation';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import useSmallScreenCheck from '@/hooks/useSmallScreenCheck';
@@ -21,18 +21,18 @@ export interface MenuProps {
     orientation?: 'vertical' | 'horizontal';
 }
 
-const getTabValue = (path) => {
-    if (path === PATHS.ROOT) {
+const getTabValue = (segments) => {
+    if (segments.length === 0) {
         return false;
     } else {
-        return path;
+        return '/' + segments[0];
     }
 };
 
 const AppMenu = ({ orientation, onClose }: MenuProps) => {
     const router = useRouter();
-    const path = usePathname();
     const { screenIsSmall } = useSmallScreenCheck();
+    const urlSegments = useSelectedLayoutSegments();
 
     const handleRouteClick = (event: React.SyntheticEvent, value: any) => {
         router.push(value);
@@ -42,7 +42,7 @@ const AppMenu = ({ orientation, onClose }: MenuProps) => {
     return (
         <Tabs
             orientation={orientation}
-            value={getTabValue(path)}
+            value={getTabValue(urlSegments)}
             onChange={handleRouteClick}
             textColor="inherit"
             indicatorColor="secondary"
