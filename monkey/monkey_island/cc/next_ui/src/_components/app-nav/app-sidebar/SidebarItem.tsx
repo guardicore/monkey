@@ -5,6 +5,7 @@ import ListItemText from '@mui/material/ListItemText';
 
 type SidebarItemProps = {
     name: string;
+    onClick?: () => void;
     icon?: React.ReactNode | null;
     rightContent?: React.ReactNode | null;
     // This is used by the Sidebar component
@@ -12,9 +13,9 @@ type SidebarItemProps = {
 };
 
 const SidebarItem = (props: SidebarItemProps) => {
-    const { name, icon, rightContent } = props;
+    const { name, icon, rightContent, onClick } = props;
     return (
-        <MenuItem>
+        <MenuItem onClick={onClick}>
             <ListItemIcon>{icon}</ListItemIcon>
             <ListItemText>{name}</ListItemText>
             {rightContent}
