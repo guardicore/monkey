@@ -9,6 +9,7 @@ from agentpluginapi import (
 from monkeytypes import AgentID
 
 from .linux_agent_command_builder import LinuxAgentCommandBuilder
+from .windows_agent_command_builder import WindowsAgentCommandBuilder
 
 
 class AgentCommandBuilderFactory(IAgentCommandBuilderFactory):
@@ -40,4 +41,10 @@ class AgentCommandBuilderFactory(IAgentCommandBuilderFactory):
     def create_windows_agent_command_builder(
         self,
     ) -> IWindowsAgentCommandBuilder:
-        pass
+        return WindowsAgentCommandBuilder(
+            self._agent_id,
+            self._servers,
+            self._otp_provider,
+            self._agent_otp_environment_variable,
+            self._current_depth,
+        )

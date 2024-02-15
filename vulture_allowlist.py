@@ -23,6 +23,11 @@ from common.agent_plugins import (
     AgentPluginMetadata,
     AgentPluginRepositoryIndex,
 )
+from infection_monkey.command_builders import (
+    AgentCommandBuilderFactory,
+    LinuxAgentCommandBuilder,
+    WindowsAgentCommandBuilder,
+)
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
@@ -174,3 +179,12 @@ RDPIOSettings.video_out_format
 RDPIOSettings.clipboard_use_pyperclip
 
 AgentPluginService.install_agent_plugin_from_repository
+
+# TODO: Remove after used
+AgentCommandBuilderFactory
+AgentCommandBuilderFactory.create_linux_agent_command_builder
+AgentCommandBuilderFactory.create_windows_agent_command_builder
+LinuxAgentCommandBuilder.get_command
+LinuxAgentCommandBuilder.reset_command
+LinuxAgentCommandBuilder.get_command
+LinuxAgentCommandBuilder.reset_command
