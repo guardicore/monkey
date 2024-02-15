@@ -40,9 +40,6 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
             query: (loginValues) => ({
                 url: BackendEndpoints.LOGIN,
                 method: HTTP_METHODS.POST,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify(loginValues)
             }),
             transformResponse: (
@@ -70,9 +67,6 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
             query: (loginValues) => ({
                 url: BackendEndpoints.REGISTER,
                 method: HTTP_METHODS.POST,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify(loginValues)
             }),
             transformResponse: (response): SuccessfulAuthenticationResponse => {
@@ -94,10 +88,7 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
         logout: builder.mutation<void, void>({
             query: () => ({
                 url: BackendEndpoints.LOGOUT,
-                method: HTTP_METHODS.POST,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                method: HTTP_METHODS.POST
             }),
             async onQueryStarted(_, { dispatch }) {
                 dispatch(AuthenticationActions.logout);
@@ -106,10 +97,7 @@ export const authenticationEndpoints = islandApiSlice.injectEndpoints({
         registrationStatus: builder.query<RegistrationStatusResponse, void>({
             query: () => ({
                 url: BackendEndpoints.REGISTRATION_STATUS,
-                method: HTTP_METHODS.GET,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                method: HTTP_METHODS.GET
             }),
             transformResponse: (response): RegistrationStatusResponse => {
                 return { registrationNeeded: response.needs_registration };
