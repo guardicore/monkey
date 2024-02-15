@@ -8,6 +8,8 @@ from agentpluginapi import (
 )
 from monkeytypes import AgentID
 
+from .linux_agent_command_builder import LinuxAgentCommandBuilder
+
 
 class AgentCommandBuilderFactory(IAgentCommandBuilderFactory):
     def __init__(
@@ -27,7 +29,13 @@ class AgentCommandBuilderFactory(IAgentCommandBuilderFactory):
     def create_linux_agent_command_builder(
         self,
     ) -> ILinuxAgentCommandBuilder:
-        pass
+        return LinuxAgentCommandBuilder(
+            self._agent_id,
+            self._servers,
+            self._otp_provider,
+            self._agent_otp_environment_variable,
+            self._current_depth,
+        )
 
     def create_windows_agent_command_builder(
         self,
