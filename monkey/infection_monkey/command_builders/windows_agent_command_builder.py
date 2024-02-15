@@ -52,7 +52,7 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
     ) -> str:
         return (
             f"Invoke-WebRequest -Uri '{download_url}' "
-            f"-OutFile '{destination_path}' -UseBasicParsing ; "
+            f"-OutFile '{destination_path}' -UseBasicParsing; "
         )
 
     def _build_download_command_webclient(
@@ -60,10 +60,12 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
     ) -> str:
         return (
             "(new-object System.Net.WebClient)"
-            f".DownloadFile(^''{download_url}^'' , ^''{destination_path}^'') ; "
+            f".DownloadFile(^''{download_url}^'' , ^''{destination_path}^''); "
         )
 
     def build_run_command(self, run_options: WindowsRunOptions):
+        # Note: Downloading a file in Windows is always PowerShell
+        # so this is how we switch to CMD for the run command
         if self._command != "":
             if run_options.shell == WindowsShell.CMD:
                 self._command += "cmd.exe /c "
@@ -79,7 +81,7 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
             self._command += self._build_agent_run_arguments(run_options)
 
     def _set_otp_powershell(self) -> str:
-        return f"$env:{self._agent_otp_environment_variable}='{self._otp_provider.get_otp()}' ;"
+        return f"$env:{self._agent_otp_environment_variable}='{self._otp_provider.get_otp()}';"
 
     def _set_otp_cmd(self) -> str:
         return f"set {self._agent_otp_environment_variable}={self._otp_provider.get_otp()}&"

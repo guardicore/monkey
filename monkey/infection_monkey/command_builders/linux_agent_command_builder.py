@@ -46,7 +46,7 @@ class LinuxAgentCommandBuilder(ILinuxAgentCommandBuilder):
     ) -> str:
         return (
             f"wget -qO {destination_path} {download_url}; "
-            f"{self._set_permissions_command(destination_path)} ; "
+            f"{self._set_permissions_command(destination_path)}; "
         )
 
     def _build_download_command_curl(
@@ -54,7 +54,7 @@ class LinuxAgentCommandBuilder(ILinuxAgentCommandBuilder):
     ) -> str:
         return (
             f"curl -so {destination_path} {download_url}; "
-            f"{self._set_permissions_command(destination_path)} ; "
+            f"{self._set_permissions_command(destination_path)}; "
         )
 
     def _set_permissions_command(self, destination_path: PurePosixPath) -> str:
