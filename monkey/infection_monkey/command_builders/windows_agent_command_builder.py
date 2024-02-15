@@ -12,9 +12,7 @@ from agentpluginapi import (
 )
 from monkeytypes import AgentID
 
-from infection_monkey.utils.commands import build_monkey_commandline_parameters
-
-from .utils import get_agent_argument, get_agent_location
+from .utils import build_monkey_commandline_parameters, get_agent_argument, get_agent_location
 
 
 class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):

@@ -1,9 +1,10 @@
 from pathlib import PurePath
-from typing import List, Optional, Sequence, Union
+from typing import List, Sequence, Union
 
 from agentpluginapi import TargetHost
 from monkeytypes import OTP, AgentID, OperatingSystem
 
+from infection_monkey.command_builders import build_monkey_commandline_parameters
 from infection_monkey.exploit.tools.helpers import get_agent_dst_path, get_dropper_script_dst_path
 from infection_monkey.model import CMD_CARRY_OUT, CMD_EXE, MONKEY_ARG
 
@@ -109,30 +110,6 @@ def build_monkey_commandline(
             location,
         )
     )
-
-
-def build_monkey_commandline_parameters(
-    parent: Optional[AgentID] = None,
-    servers: Optional[List[str]] = None,
-    depth: Optional[int] = None,
-    location: Union[str, PurePath, None] = None,
-) -> List[str]:
-    cmdline = []
-
-    if parent is not None:
-        cmdline.append("-p")
-        cmdline.append(str(parent))
-    if servers:
-        cmdline.append("-s")
-        cmdline.append(",".join(servers))
-    if depth is not None:
-        cmdline.append("-d")
-        cmdline.append(str(depth))
-    if location is not None:
-        cmdline.append("-l")
-        cmdline.append(str(location))
-
-    return cmdline
 
 
 def get_monkey_commandline_windows(destination_path: str, monkey_cmd_args: List[str]) -> List[str]:
