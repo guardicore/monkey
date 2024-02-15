@@ -1,9 +1,10 @@
 'use client';
 
-import classes from './mainLayout.module.scss';
 import MonkeyAppBar from '@/_components/app-nav/app-bar/AppBar';
 import AppDrawer from '@/_components/app-nav/app-drawer/appDrawer';
 import React, { useState } from 'react';
+import { styled } from '@mui/material/styles';
+import { appContentWrapper, mainLayout } from './style';
 
 export default function MainLayout({
     children
@@ -16,13 +17,15 @@ export default function MainLayout({
         setIsDrawerOpen(false);
     };
 
+    // @ts-ignore
+    const MainLayout = styled('main')(mainLayout);
+    const AppContentWrapper = styled('main')(appContentWrapper);
+
     return (
-        <main id={classes['main-layout']}>
-            <div id="app-bar-wrapper">
-                <MonkeyAppBar setIsDrawerOpen={setIsDrawerOpen} />
-            </div>
+        <MainLayout>
+            <MonkeyAppBar setIsDrawerOpen={setIsDrawerOpen} />
             <AppDrawer open={isDrawerOpen} onClose={closeAppDrawer} />
-            <main id="app-content-wrapper">{children}</main>
-        </main>
+            <AppContentWrapper>{children}</AppContentWrapper>
+        </MainLayout>
     );
 }

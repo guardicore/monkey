@@ -5,7 +5,8 @@ export const appBar = {
 
 export const muiContainerRoot = {
     width: '100%',
-    maxWidth: '100% !important'
+    maxWidth: '100% !important',
+    height: '100%'
 };
 
 export const muiToolbarRoot = {
@@ -19,7 +20,8 @@ export const logoAndMenuContainer = {
     display: 'flex',
     gap: '1rem',
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
+    height: '100%'
 };
 
 export const logoAndDrawerContainer = {
