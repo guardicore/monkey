@@ -71,4 +71,4 @@ If you haven't downloaded Infection Monkey yet you can do so `from our homepage 
 Support and community
 =====================
 
-If you need help or want to talk all things Monkey, you can `join our public Slack workspace <https://join.slack.com/t/infectionmonkey/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU>`_ or `contact us via Email <mailto:support@infectionmonkey.com>`_.
+If you need help or want to talk all things Monkey, you can `join our public Slack workspace <https://join.slack.com/t/infectionmonkey/shared_invite/zt-2cm5qiayf-yiEg5RPau0zQhki9xTlORA>`_ or `contact us via Email <mailto:support@infectionmonkey.com>`_.
