@@ -32,13 +32,3 @@ def test_build_monkey_commandline_parameters_arguments():
     )
 
     assert expected == actual
-
-
-def test_build_monkey_commandline_parameters_depth_condition_greater():
-    expected = [
-        "-d",
-        "50",
-    ]
-    actual = build_monkey_commandline_parameters(depth=50)
-
-    assert expected == actual
