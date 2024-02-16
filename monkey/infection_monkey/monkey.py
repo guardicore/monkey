@@ -49,6 +49,7 @@ from infection_monkey.agent_event_handlers import (
     add_stolen_credentials_to_propagation_credentials_repository,
     notify_relay_on_propagation,
 )
+from infection_monkey.command_builders import AgentCommandBuilderFactory
 from infection_monkey.exploit import (
     CachingAgentBinaryRepository,
     IslandAPIAgentOTPProvider,
@@ -382,7 +383,7 @@ class InfectionMonkey:
         return agent_event_serializer_registry
 
     def _build_master(self, servers: Sequence[str], operating_system: OperatingSystem) -> IMaster:
-        puppet = self._build_puppet(operating_system)
+        puppet = self._build_puppet(servers, operating_system)
 
         return AutomatedMaster(
             self._current_depth,
@@ -401,7 +402,7 @@ class InfectionMonkey:
 
         return list(ordered_servers.keys())
 
-    def _build_puppet(self, operating_system: OperatingSystem) -> IPuppet:
+    def _build_puppet(self, servers: Sequence[str], operating_system: OperatingSystem) -> IPuppet:
         create_secure_directory(self._plugin_dir)
         # SECURITY: Don't log the plugin directory name before it's created! This could introduce a
         #           race condition where the attacker may tail the log and create the directory with
@@ -426,6 +427,14 @@ class InfectionMonkey:
             http_agent_binary_server
         )
 
+        agent_command_builder_factory = AgentCommandBuilderFactory(
+            self._agent_id,
+            servers,
+            otp_provider,
+            AGENT_OTP_ENVIRONMENT_VARIABLE,
+            self._current_depth + 1,
+        )
+
         plugin_factories = {
             AgentPluginType.CREDENTIALS_COLLECTOR: CredentialsCollectorPluginFactory(
                 self._agent_id, self._agent_event_publisher, self._local_machine_info, create_plugin
@@ -440,6 +449,7 @@ class InfectionMonkey:
                 otp_provider,
                 AGENT_OTP_ENVIRONMENT_VARIABLE,
                 self._local_machine_info,
+                agent_command_builder_factory,
                 create_plugin,
             ),
             AgentPluginType.PAYLOAD: PayloadPluginFactory(
