@@ -12,9 +12,9 @@ from pathlib import PosixPath, WindowsPath
 from monkeytoolbox import get_os
 from monkeytypes import OperatingSystem
 
+from infection_monkey.command_builders import build_monkey_commandline_parameters
 from infection_monkey.utils.argparse_types import positive_int
 from infection_monkey.utils.commands import (
-    build_monkey_commandline_parameters,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
