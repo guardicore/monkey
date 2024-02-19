@@ -30,7 +30,7 @@ export default function AvailablePluginsPage() {
         setFilters((prevState) => {
             return { ...prevState, installed: filterInstalledPlugins };
         });
-    }, []);
+    }, [availablePluginRows]);
 
     const filterInstalledPlugins = (row: PluginRow) => {
         return true;
