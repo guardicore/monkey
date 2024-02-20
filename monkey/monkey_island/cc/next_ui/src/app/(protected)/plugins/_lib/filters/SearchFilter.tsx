@@ -3,7 +3,7 @@ import { PluginRow } from '@/app/(protected)/plugins/_lib/PluginTable';
 import MonkeySearchBar from '@/_components/search-bar/MonkeySearchBar';
 
 type SearchFilterProps = {
-    setFilters: (filters: any) => void;
+    setFiltersCallback: (filters: any) => void;
     searchableColumns: string[];
 };
 
@@ -18,11 +18,12 @@ const SearchFilter = (props: SearchFilterProps) => {
             }
         };
 
-        const noOp = (query) => true;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const noOp = (_) => true;
 
         const filter = query === '' ? noOp : filterOnText;
 
-        props.setFilters((prevState) => {
+        props.setFiltersCallback((prevState) => {
             return { ...prevState, text: filter };
         });
     };
