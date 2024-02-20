@@ -9,6 +9,7 @@ import PluginTable, {
 } from '@/app/(protected)/plugins/_lib/PluginTable';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { GridActionsCellItem } from '@mui/x-data-grid';
+import AvailablePluginFilters from '@/app/(protected)/plugins/available/AvailablePluginFilters';
 
 export default function AvailablePluginsPage() {
     const {
@@ -79,6 +80,12 @@ export default function AvailablePluginsPage() {
 
     return (
         <Stack spacing={2}>
+            <AvailablePluginFilters
+                availablePlugins={availablePlugins}
+                setFiltersCallback={setFilters}
+                pluginInstallationCallback={onInstallClick}
+                refreshPluginsCallback={() => {}}
+            />
             <PluginTable
                 rows={displayedRows}
                 columns={generatePluginsTableColumns(getRowActions)}
