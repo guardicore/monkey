@@ -82,7 +82,7 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
                         item
                         sx={{ alignItems: 'flex-end', display: 'flex' }}>
                         <TypeFilter
-                            setFilters={() => {}}
+                            setFiltersCallback={setFilters}
                             allRows={allPluginRows}
                         />
                     </Grid>

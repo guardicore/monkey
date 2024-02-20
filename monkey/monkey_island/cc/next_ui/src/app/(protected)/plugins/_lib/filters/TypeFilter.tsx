@@ -4,7 +4,7 @@ import MonkeySelect, { SelectVariant } from '@/_components/select/MonkeySelect';
 
 type TypeFilterProps = {
     allRows: PluginRow[];
-    setFilters: (filters: (prevState) => any) => void;
+    setFiltersCallback: (filters: (prevState) => any) => void;
 };
 
 type SelectOption = {
@@ -14,7 +14,7 @@ type SelectOption = {
 
 const anyTypeOption: SelectOption = { value: '', label: 'All' };
 
-const TypeFilter = ({ allRows, setFilters }: TypeFilterProps) => {
+const TypeFilter = ({ allRows, setFiltersCallback }: TypeFilterProps) => {
     const [selectedType, setSelectedType] = useState(anyTypeOption);
     const [typeFilters, setTypeFilters] = useState([]);
 
@@ -28,10 +28,10 @@ const TypeFilter = ({ allRows, setFilters }: TypeFilterProps) => {
     }, [allRows]);
 
     useEffect(() => {
-        setFilters((prevState) => {
+        setFiltersCallback((prevState) => {
             return { ...prevState, pluginType: getFilterForType(selectedType) };
         });
-    }, [selectedType]);
+    }, [selectedType, setFiltersCallback]);
 
     const selectOptionFromValue = (value): SelectOption => {
         return { value: value, label: value };
