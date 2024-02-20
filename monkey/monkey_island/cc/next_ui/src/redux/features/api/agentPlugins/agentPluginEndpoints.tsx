@@ -24,7 +24,6 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
             transformResponse: (response: {
                 plugins: PluginMetadataResponse;
             }): AvailablePlugin[] => {
-                console.log('response', response);
                 return parsePluginMetadataResponse(response.plugins);
             }
         })
