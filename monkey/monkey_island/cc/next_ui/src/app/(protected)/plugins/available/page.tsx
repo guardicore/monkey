@@ -20,22 +20,6 @@ export default function AvailablePluginsPage() {
         isSuccess
     } = useGetAvailablePluginsQuery();
     const [displayedRows, setDisplayedRows] = React.useState([]);
-    const [filters, setFilters] = useState({});
-
-    const availablePluginRows: PluginRow[] = useMemo(() => {
-        return generatePluginsTableRows(availablePlugins);
-    }, [availablePlugins]);
-
-    useEffect(() => {
-        setDisplayedRows(availablePluginRows);
-        setFilters((prevState) => {
-            return { ...prevState, installed: filterInstalledPlugins };
-        });
-    }, [availablePluginRows]);
-
-    const filterInstalledPlugins = (row: PluginRow) => {
-        return true;
-    };
 
     const onInstallClick = (
         pluginId: string,
@@ -81,10 +65,7 @@ export default function AvailablePluginsPage() {
     return (
         <Stack spacing={2}>
             <AvailablePluginFilters
-                availablePlugins={availablePlugins}
-                setFiltersCallback={setFilters}
-                pluginInstallationCallback={onInstallClick}
-                refreshPluginsCallback={() => {}}
+                setDisplayedRowsCallback={setDisplayedRows}
             />
             <PluginTable
                 rows={displayedRows}
