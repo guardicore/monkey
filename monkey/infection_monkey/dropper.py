@@ -14,13 +14,15 @@ from monkeytoolbox import get_os
 from monkeytypes import OperatingSystem
 
 from infection_monkey.command_builders import build_monkey_commandline_parameters
-from infection_monkey.model import CMD_CARRY_OUT, CMD_EXE, MONKEY_ARG
+from infection_monkey.model import MONKEY_ARG
 from infection_monkey.utils.argparse_types import positive_int
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 
 logger = logging.getLogger(__name__)
 
 MOVEFILE_DELAY_UNTIL_REBOOT = 4
+CMD_EXE = "cmd.exe"
+CMD_CARRY_OUT = "/c"
 
 
 def file_exists_at_destination(source_path, destination_path) -> bool:
