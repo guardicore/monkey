@@ -8,21 +8,21 @@ import subprocess
 import sys
 import time
 from pathlib import PosixPath, WindowsPath
+from typing import Sequence
 
 from monkeytoolbox import get_os
 from monkeytypes import OperatingSystem
 
 from infection_monkey.command_builders import build_monkey_commandline_parameters
+from infection_monkey.model import MONKEY_ARG
 from infection_monkey.utils.argparse_types import positive_int
-from infection_monkey.utils.commands import (
-    get_monkey_commandline_linux,
-    get_monkey_commandline_windows,
-)
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 
 logger = logging.getLogger(__name__)
 
 MOVEFILE_DELAY_UNTIL_REBOOT = 4
+CMD_EXE = "cmd.exe"
+CMD_CARRY_OUT = "/c"
 
 
 def file_exists_at_destination(source_path, destination_path) -> bool:
@@ -135,7 +135,9 @@ class MonkeyDrops(object):
         if get_os() == OperatingSystem.WINDOWS:
             from win32process import DETACHED_PROCESS
 
-            monkey_commandline = get_monkey_commandline_windows(destination_path, monkey_options)
+            monkey_commandline = self._get_monkey_commandline_windows(
+                destination_path, monkey_options
+            )
 
             monkey_process = subprocess.Popen(
                 monkey_commandline,
@@ -149,7 +151,9 @@ class MonkeyDrops(object):
             # In Linux, we need to change the directory first, which is done
             # using thw `cwd` argument in `subprocess.Popen` below
 
-            monkey_commandline = get_monkey_commandline_linux(destination_path, monkey_options)
+            monkey_commandline = self._get_monkey_commandline_linux(
+                destination_path, monkey_options
+            )
 
             monkey_process = subprocess.Popen(
                 monkey_commandline,
@@ -165,6 +169,22 @@ class MonkeyDrops(object):
             f"with command line: {' '.join(monkey_commandline)}"
         )
         return monkey_process
+
+    def _get_monkey_commandline_windows(
+        self, destination_path: str, monkey_cmd_args: Sequence[str]
+    ) -> Sequence[str]:
+        monkey_cmdline = [CMD_EXE, CMD_CARRY_OUT, destination_path, MONKEY_ARG]
+        monkey_cmdline.extend(monkey_cmd_args)
+
+        return monkey_cmdline
+
+    def _get_monkey_commandline_linux(
+        self, destination_path: str, monkey_cmd_args: Sequence[str]
+    ) -> Sequence[str]:
+        monkey_cmdline = [destination_path, MONKEY_ARG]
+        monkey_cmdline.extend(monkey_cmd_args)
+
+        return monkey_cmdline
 
     def cleanup(self):
         logger.info("Cleaning up the dropper")

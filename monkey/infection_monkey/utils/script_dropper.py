@@ -1,5 +1,4 @@
 from pathlib import PurePath
-from typing import Sequence
 
 DROPPER_SCRIPT = """#!/bin/bash
 umask 077
@@ -14,18 +13,13 @@ chmod u+x "$AGENT_DST_PATH"
 
 rm "$DROPPER_SCRIPT_PATH"
 
-nohup "$AGENT_DST_PATH" %(agent_args)s &>/dev/null &
+nohup env %(run_command)s &>/dev/null &
 
 exit 0
 __PAYLOAD_BEGINS__
 """
 
 
-def build_bash_dropper(
-    agent_dst_path: PurePath, agent_args: Sequence[str], agent_binary: bytes
-) -> bytes:
-    dropper_script = DROPPER_SCRIPT % {
-        "agent_dst_path": agent_dst_path,
-        "agent_args": " ".join(f'"{arg}"' for arg in agent_args),
-    }
+def build_bash_dropper(agent_dst_path: PurePath, run_command: str, agent_binary: bytes) -> bytes:
+    dropper_script = DROPPER_SCRIPT % {"agent_dst_path": agent_dst_path, "run_command": run_command}
     return dropper_script.encode() + agent_binary
