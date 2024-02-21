@@ -19,6 +19,10 @@ type AvailablePluginFiltersProps = {
     setDisplayedRowsCallback: (rows: PluginRow[]) => void;
 };
 
+export type FilterProps = {
+    setFiltersCallback: (filters: any) => void;
+};
+
 export const defaultSearchableColumns = [
     'name',
     'pluginType',
@@ -29,31 +33,10 @@ export const defaultSearchableColumns = [
 const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
     const { setDisplayedRowsCallback } = props;
 
-    const {
-        data: availablePlugins,
-        error,
-        isLoading,
-        isError,
-        isSuccess
-    } = useGetAvailablePluginsQuery();
+    const { data: availablePlugins } = useGetAvailablePluginsQuery();
     // TODO get installed plugins
     const [isSpinning, setIsSpinning] = useState(false);
     const [filters, setFilters] = useState({});
-
-    const allPluginRows: PluginRow[] = useMemo(() => {
-        return generatePluginsTableRows(availablePlugins);
-    }, [availablePlugins]);
-
-    useEffect(() => {
-        if (allPluginRows) {
-            const filteredRows = filterRows(allPluginRows);
-            setDisplayedRowsCallback(filteredRows);
-        }
-    }, [allPluginRows]);
-
-    useEffect(() => {
-        setDisplayedRowsCallback(filterRows(allPluginRows));
-    }, [filters]);
 
     const filterRows = (rows): PluginRow[] => {
         let filteredRows = _.cloneDeep(rows);
@@ -63,6 +46,21 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
         }
         return filteredRows;
     };
+    const allPluginRows: PluginRow[] = useMemo(() => {
+        if (!availablePlugins) return [];
+        return generatePluginsTableRows(availablePlugins);
+    }, [availablePlugins]);
+
+    useEffect(() => {
+        if (allPluginRows) {
+            const filteredRows = filterRows(allPluginRows);
+            setDisplayedRowsCallback(filteredRows);
+        }
+    }, [allPluginRows, filterRows, setDisplayedRowsCallback]);
+
+    useEffect(() => {
+        setDisplayedRowsCallback(filterRows(allPluginRows));
+    }, [allPluginRows, filterRows, filters, setDisplayedRowsCallback]);
 
     if (availablePlugins && availablePlugins.length > 0) {
         return (
