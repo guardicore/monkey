@@ -31,6 +31,7 @@
     // react rules
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
+    "react-hooks/exhaustive-deps": "off",
     // prettier errors results in eslint errors
     "prettier/prettier":[
       "error"
