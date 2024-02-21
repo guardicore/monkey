@@ -1,5 +1,7 @@
 import {
     AvailablePlugin,
+    InstalledPlugin,
+    PluginManifestResponse,
     PluginMetadata,
     PluginMetadataResponse
 } from '@/redux/features/api/agentPlugins/types';
@@ -44,4 +46,34 @@ const parsePluginFromResponse = (
         resourcePath: unparsedPlugin.resource_path,
         sha256: unparsedPlugin.sha256
     };
+};
+
+export const parsePluginManifestResponse = (
+    response: PluginManifestResponse
+): InstalledPlugin[] => {
+    const plugins: InstalledPlugin[] = [];
+    for (const pluginType in response) {
+        for (const pluginName in response[pluginType]) {
+            const installedVersion =
+                response[pluginType][pluginName]['version'];
+            const unparsedPlugin = response[pluginType][pluginName];
+            const installedPlugin: InstalledPlugin = {
+                id: generatePluginId(pluginName, pluginType, installedVersion),
+                name: pluginName,
+                pluginType: pluginType,
+                description: unparsedPlugin['description'],
+                safe: unparsedPlugin['safe'],
+                version: installedVersion,
+                title: unparsedPlugin['title'],
+                supportedOperatingSystems:
+                    unparsedPlugin['supported_operating_systems'],
+                targetOperatingSystems:
+                    unparsedPlugin['target_operating_systems'],
+                linkToDocumentation: unparsedPlugin['link_to_documentation'],
+                remediationSuggestion: unparsedPlugin['remediation_suggestion']
+            };
+            plugins.push(installedPlugin);
+        }
+    }
+    return plugins;
 };
