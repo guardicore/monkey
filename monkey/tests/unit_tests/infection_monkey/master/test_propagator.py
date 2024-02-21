@@ -214,7 +214,7 @@ def test_scan_target_generation(mock_ip_scanner, default_agent_configuration):
         subnets=["10.0.0.0/29", "172.10.20.30"],
     )
     propagation_config = get_propagation_config(default_agent_configuration, targets)
-    p.propagate(propagation_config, 1, SERVERS, Event())
+    p.propagate(propagation_config, Event())
 
     expected_ip_scan_list = [
         "10.0.0.0",
@@ -248,7 +248,7 @@ def scan_host(ip: str, ip_scanner, default_agent_configuration) -> TargetHost:
     )
     targets = ScanTargetConfiguration(subnets=[ip])
     propagation_config = get_propagation_config(default_agent_configuration, targets)
-    p.propagate(propagation_config, 1, SERVERS, Event())
+    p.propagate(propagation_config, Event())
 
     args, _ = mock_exploiter.exploit_hosts.call_args
     hosts = args[1]

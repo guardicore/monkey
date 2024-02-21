@@ -387,7 +387,6 @@ class InfectionMonkey:
 
         return AutomatedMaster(
             self._current_depth,
-            servers,
             puppet,
             self._island_api_client,
             self._local_machine_info.network_interfaces,
@@ -446,8 +445,6 @@ class InfectionMonkey:
                 self._agent_event_publisher,
                 self._propagation_credentials_repository,
                 self._tcp_port_selector,
-                otp_provider,
-                AGENT_OTP_ENVIRONMENT_VARIABLE,
                 self._local_machine_info,
                 agent_command_builder_factory,
                 create_plugin,
