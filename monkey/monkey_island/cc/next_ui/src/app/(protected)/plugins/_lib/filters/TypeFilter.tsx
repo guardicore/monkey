@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { PluginRow } from './PluginTable';
 import MonkeySelect, { SelectVariant } from '@/_components/select/MonkeySelect';
+import { FilterProps } from '@/app/(protected)/plugins/available/AvailablePluginFilters';
+import { PluginRow } from '@/app/(protected)/plugins/_lib/PluginTable';
 
-type TypeFilterProps = {
+type TypeFilterProps = FilterProps & {
     allRows: PluginRow[];
-    setFiltersCallback: (filters: (prevState) => any) => void;
 };
 
 type SelectOption = {
@@ -16,15 +16,17 @@ const anyTypeOption: SelectOption = { value: '', label: 'All' };
 
 const TypeFilter = ({ allRows, setFiltersCallback }: TypeFilterProps) => {
     const [selectedType, setSelectedType] = useState(anyTypeOption);
-    const [typeFilters, setTypeFilters] = useState([]);
+    const [typeFilters, setTypeFilters] = useState<SelectOption[]>([]);
 
     useEffect(() => {
-        let allTypes = [];
+        let allTypes: string[] = [];
         allTypes = allRows.map((row) => row.pluginType);
         allTypes = [...new Set(allTypes)];
-        allTypes = allTypes.map(selectOptionFromValue);
-        allTypes.unshift(anyTypeOption);
-        setTypeFilters(allTypes);
+        const selectOptions: SelectOption[] = allTypes.map(
+            selectOptionFromValue
+        );
+        selectOptions.unshift(anyTypeOption);
+        setTypeFilters(selectOptions);
     }, [allRows]);
 
     useEffect(() => {
