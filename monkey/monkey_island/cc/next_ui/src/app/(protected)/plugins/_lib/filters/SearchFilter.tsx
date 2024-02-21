@@ -1,9 +1,9 @@
 import React from 'react';
 import { PluginRow } from '@/app/(protected)/plugins/_lib/PluginTable';
 import MonkeySearchBar from '@/_components/search-bar/MonkeySearchBar';
+import { FilterProps } from '@/app/(protected)/plugins/available/AvailablePluginFilters';
 
-type SearchFilterProps = {
-    setFiltersCallback: (filters: any) => void;
+type SearchFilterProps = FilterProps & {
     searchableColumns: string[];
 };
 
@@ -16,6 +16,7 @@ const SearchFilter = (props: SearchFilterProps) => {
                     return true;
                 }
             }
+            return false;
         };
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
