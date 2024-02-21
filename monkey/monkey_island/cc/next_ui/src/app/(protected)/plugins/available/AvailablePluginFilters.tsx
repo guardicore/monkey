@@ -14,6 +14,7 @@ import {
     PluginRow
 } from '@/app/(protected)/plugins/_lib/PluginTable';
 import _ from 'lodash';
+import InstalledPluginFilter from '@/app/(protected)/plugins/_lib/filters/InstalledPluginFilter';
 
 type AvailablePluginFiltersProps = {
     setDisplayedRowsCallback: (rows: PluginRow[]) => void;
@@ -56,15 +57,12 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
             const filteredRows = filterRows(allPluginRows);
             setDisplayedRowsCallback(filteredRows);
         }
-    }, [allPluginRows, filterRows, setDisplayedRowsCallback]);
-
-    useEffect(() => {
-        setDisplayedRowsCallback(filterRows(allPluginRows));
-    }, [allPluginRows, filterRows, filters, setDisplayedRowsCallback]);
+    }, [allPluginRows, filters]);
 
     if (availablePlugins && availablePlugins.length > 0) {
         return (
             <>
+                <InstalledPluginFilter setFiltersCallback={setFilters} />
                 <Grid container spacing={2}>
                     <Grid
                         xs={4}
