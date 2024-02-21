@@ -1,10 +1,9 @@
 'use client';
 import { useGetAvailablePluginsQuery } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import Stack from '@mui/material/Stack';
 import PluginTable, {
     generatePluginsTableColumns,
-    generatePluginsTableRows,
     PluginRow
 } from '@/app/(protected)/plugins/_lib/PluginTable';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -14,12 +13,10 @@ import AvailablePluginFilters from '@/app/(protected)/plugins/available/Availabl
 export default function AvailablePluginsPage() {
     const {
         data: availablePlugins,
-        error,
         isLoading,
-        isError,
-        isSuccess
+        isError
     } = useGetAvailablePluginsQuery();
-    const [displayedRows, setDisplayedRows] = React.useState([]);
+    const [displayedRows, setDisplayedRows] = React.useState<PluginRow[]>([]);
 
     const onInstallClick = (
         pluginId: string,
@@ -32,6 +29,7 @@ export default function AvailablePluginsPage() {
 
     const getRowActions = (row) => {
         const plugin = availablePlugins?.find((plugin) => plugin.id === row.id);
+        if (!plugin) return [];
 
         return [
             <GridActionsCellItem
