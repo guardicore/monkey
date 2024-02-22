@@ -12,7 +12,16 @@ const nextConfig = {
     compiler: {
         removeConsole: keepConsoleErrors
     },
-    output: 'standalone'
+    output: 'standalone',
+    async redirects() {
+        return [
+            {
+                source: '/plugins',
+                destination: '/plugins/available',
+                permanent: true
+            }
+        ];
+    }
 };
 
 //eslint-disable-next-line no-undef
