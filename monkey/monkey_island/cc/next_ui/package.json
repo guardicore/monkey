@@ -57,9 +57,13 @@
     "http-proxy": "^1.18.1",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "msw-storybook-addon": "^2.0.0--canary.122.06f0c92.0",
     "prettier": "^3.1.0",
     "redux-logger": "^3.0.6",
     "storybook": "^7.6.17",
     "ts-node": "^10.9.2"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
