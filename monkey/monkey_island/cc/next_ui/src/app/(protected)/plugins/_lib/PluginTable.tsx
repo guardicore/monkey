@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import XDataGrid from './XDataGrid';
+import MonkeyDataGrid from './MonkeyDataGrid';
 import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import _ from 'lodash';
@@ -179,7 +179,7 @@ const PluginTable = (props) => {
             {isLoadingPlugins ? (
                 loadingMessage
             ) : (
-                <XDataGrid
+                <MonkeyDataGrid
                     columns={columns}
                     rows={[...rows]}
                     showToolbar={false}
