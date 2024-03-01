@@ -6,7 +6,7 @@ import {
     GridToolbarContainer
 } from '@mui/x-data-grid';
 import _ from 'lodash';
-import CustomNoRowsOverlay from '@/app/(protected)/plugins/_lib/GridNoRowsOverlay';
+import CustomNoRowsOverlay from '@/app/(protected)/plugins/_lib/no-rows-overlay/GridNoRowsOverlay';
 import MonkeyTooltip from '@/_components/tooltips/MonkeyTooltip';
 
 const X_DATA_GRID_CLASS = 'x-data-grid';
@@ -45,7 +45,7 @@ const setColumnClass = (column, classToAppend) => {
 };
 
 const prepareColsClasses = (columns, setFlex) => {
-    let updatedColumns = _.cloneDeep(columns) || [];
+    const updatedColumns = _.cloneDeep(columns) || [];
     updatedColumns?.forEach((col) => {
         if (col[MAX_WIDTH] === Infinity) {
             setColumnClass(col, X_DATA_GRID_CLASSES.MAX_WIDTH_NONE);
@@ -68,7 +68,7 @@ const prepareColsClasses = (columns, setFlex) => {
 
 const prepareColsWidth = (columns, columnWidth, setColWidth) => {
     const colWidth = getColumnWidth(columnWidth);
-    let updatedColumns = _.cloneDeep(columns) || [];
+    const updatedColumns = _.cloneDeep(columns) || [];
     if (setColWidth) {
         updatedColumns?.forEach((col) => {
             if (!(WIDTH in col)) {
@@ -87,7 +87,7 @@ const prepareColsWidth = (columns, columnWidth, setColWidth) => {
 };
 
 const prepareColsCustomTooltip = (columns) => {
-    let updatedColumns = _.cloneDeep(columns) || [];
+    const updatedColumns = _.cloneDeep(columns) || [];
     updatedColumns?.forEach((col) => {
         if (col[IS_TEXTUAL]) {
             // eslint-disable-next-line react/display-name
@@ -105,7 +105,7 @@ const prepareColsCustomTooltip = (columns) => {
 };
 
 const prepareSlots = (toolbar, showToolbar) => {
-    let slotsObj = {
+    const slotsObj = {
         noRowsOverlay: CustomNoRowsOverlay,
         noResultsOverlay: CustomNoRowsOverlay,
         baseTooltip: MonkeyTooltip
