@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
-import { gridOverlay } from '@/app/(protected)/plugins/_lib/style';
+import { gridOverlay } from '@/app/(protected)/plugins/_lib/no-rows-overlay/style';
 
 const DEFAULT_MESSAGE = 'No Rows';
 
