@@ -9,6 +9,13 @@ import PluginTable, {
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import AvailablePluginFilters from '@/app/(protected)/plugins/available/AvailablePluginFilters';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import InstallAllSafePluginsButton from '@/app/(protected)/plugins/_lib/InstallAllSafePluginsButton';
+import MonkeyButton, {
+    ButtonVariant
+} from '@/_components/buttons/MonkeyButton';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 export default function AvailablePluginsPage() {
     const {
@@ -63,10 +70,31 @@ export default function AvailablePluginsPage() {
 
     return (
         <Stack spacing={2}>
-            <AvailablePluginFilters
-                setDisplayedRowsCallback={setDisplayedRows}
-                setIsFilteringCallback={setIsFiltering}
-            />
+            <Grid container spacing={2}>
+                <Grid xs={7} md={6}>
+                    <AvailablePluginFilters
+                        setDisplayedRowsCallback={setDisplayedRows}
+                        setIsFilteringCallback={setIsFiltering}
+                    />
+                </Grid>
+                <Grid item justifyContent={'flex-end'} xs={5} md={4} lg={5}>
+                    <Box
+                        display="flex"
+                        justifyContent="flex-end"
+                        sx={{ mr: '10px' }}>
+                        <InstallAllSafePluginsButton
+                            onInstallClick={() => {}}
+                        />
+                    </Box>
+                </Grid>
+                <Grid item xs={1} md={2} lg={1}>
+                    <MonkeyButton
+                        onClick={() => {}}
+                        variant={ButtonVariant.Contained}>
+                        <RefreshIcon />
+                    </MonkeyButton>
+                </Grid>
+            </Grid>
             <PluginTable
                 rows={displayedRows}
                 columns={generatePluginsTableColumns(getRowActions)}
