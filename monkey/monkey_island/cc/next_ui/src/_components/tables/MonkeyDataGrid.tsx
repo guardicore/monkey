@@ -129,7 +129,7 @@ const getColumnWidth = (columnWidth) => {
     return colWidth;
 };
 
-const XDataGrid = (props) => {
+const MonkeyDataGrid = (props) => {
     const {
         columns = [],
         rows = [],
@@ -241,7 +241,7 @@ const XDataGrid = (props) => {
     );
 };
 
-export default XDataGrid;
+export default MonkeyDataGrid;
 
 export const X_DATA_GRID_DENSITY = {
     COMPACT: 'compact',
