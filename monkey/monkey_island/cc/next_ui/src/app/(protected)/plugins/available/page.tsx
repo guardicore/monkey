@@ -17,6 +17,7 @@ export default function AvailablePluginsPage() {
         isError
     } = useGetAvailablePluginsQuery();
     const [displayedRows, setDisplayedRows] = React.useState<PluginRow[]>([]);
+    const [isFiltering, setIsFiltering] = React.useState(false);
 
     const onInstallClick = (
         pluginId: string,
@@ -64,11 +65,13 @@ export default function AvailablePluginsPage() {
         <Stack spacing={2}>
             <AvailablePluginFilters
                 setDisplayedRowsCallback={setDisplayedRows}
+                setIsFilteringCallback={setIsFiltering}
             />
             <PluginTable
                 rows={displayedRows}
                 columns={generatePluginsTableColumns(getRowActions)}
                 loadingMessage="Loading all available plugins..."
+                loading={isFiltering}
                 noRowsOverlayMessage={getOverlayMessage()}
             />
         </Stack>

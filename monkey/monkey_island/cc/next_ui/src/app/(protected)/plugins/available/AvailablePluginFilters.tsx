@@ -18,6 +18,7 @@ import InstalledPluginFilter from '@/app/(protected)/plugins/_lib/filters/Instal
 
 type AvailablePluginFiltersProps = {
     setDisplayedRowsCallback: (rows: PluginRow[]) => void;
+    setIsFilteringCallback: (isFiltering: boolean) => void;
 };
 
 export type FilterProps = {
@@ -32,21 +33,24 @@ export const defaultSearchableColumns = [
 ];
 
 const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
-    const { setDisplayedRowsCallback } = props;
+    const { setDisplayedRowsCallback, setIsFilteringCallback } = props;
 
     const { data: availablePlugins } = useGetAvailablePluginsQuery();
     // TODO get installed plugins
     const [isSpinning, setIsSpinning] = useState(false);
     const [filters, setFilters] = useState({});
 
-    const filterRows = (rows): PluginRow[] => {
+    const filterRows = (rows: PluginRow[]): PluginRow[] => {
+        setIsFilteringCallback(true);
         let filteredRows = _.cloneDeep(rows);
         for (const filter of Object.values(filters)) {
             // @ts-ignore
             filteredRows = filteredRows.filter(filter);
         }
+        setIsFilteringCallback(false);
         return filteredRows;
     };
+
     const allPluginRows: PluginRow[] = useMemo(() => {
         if (!availablePlugins) return [];
         return generatePluginsTableRows(availablePlugins);
