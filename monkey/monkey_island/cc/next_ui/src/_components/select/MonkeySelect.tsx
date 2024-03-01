@@ -30,7 +30,7 @@ type SelectProps = Omit<MUISelectProps, 'variant'> & {
     variant: SelectVariant;
 };
 
-const MonkeySelectStyled = styled(Input)(({ theme }) => ({
+const MonkeySelectStyled = styled(Input)(() => ({
     '& .MuiInputBase-input': {
         paddingLeft: '10px'
     }

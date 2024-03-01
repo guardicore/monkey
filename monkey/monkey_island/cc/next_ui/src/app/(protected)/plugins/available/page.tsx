@@ -32,7 +32,13 @@ export default function AvailablePluginsPage() {
         pluginType: string,
         pluginVersion: string
     ) => {
-        console.log('Install plugin', pluginId);
+        console.log(
+            'Install plugin',
+            pluginId,
+            pluginName,
+            pluginType,
+            pluginVersion
+        );
     };
 
     const getRowActions = (row) => {

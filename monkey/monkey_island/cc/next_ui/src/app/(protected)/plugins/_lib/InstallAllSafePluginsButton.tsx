@@ -16,6 +16,8 @@ type InstallAllSafePluginsButtonProps = {
 const InstallAllSafePluginsButton = (
     props: InstallAllSafePluginsButtonProps
 ) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { onInstallClick, pluginsInInstallationProcess } = props;
     return (
         <MonkeyButton variant={ButtonVariant.Contained}>
             All Safe Plugins
