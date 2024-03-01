@@ -1,13 +1,7 @@
 import Grid from '@mui/material/Grid';
 import React, { useEffect, useMemo, useState } from 'react';
-import Box from '@mui/material/Box';
-import MonkeyButton, {
-    ButtonVariant
-} from '@/_components/buttons/MonkeyButton';
 import SearchFilter from '@/app/(protected)/plugins/_lib/filters/SearchFilter';
 import TypeFilter from '@/app/(protected)/plugins/_lib/filters/TypeFilter';
-import InstallAllSafePluginsButton from '@/app/(protected)/plugins/_lib/InstallAllSafePluginsButton';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import { useGetAvailablePluginsQuery } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
 import {
     generatePluginsTableRows,
@@ -36,8 +30,6 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
     const { setDisplayedRowsCallback, setIsFilteringCallback } = props;
 
     const { data: availablePlugins } = useGetAvailablePluginsQuery();
-    // TODO get installed plugins
-    const [isSpinning, setIsSpinning] = useState(false);
     const [filters, setFilters] = useState({});
 
     const filterRows = (rows: PluginRow[]): PluginRow[] => {
@@ -65,46 +57,27 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
 
     if (availablePlugins && availablePlugins.length > 0) {
         return (
-            <>
+            <Grid container spacing={2} sx={{ margin: 0 }}>
                 <InstalledPluginFilter setFiltersCallback={setFilters} />
-                <Grid container spacing={2}>
-                    <Grid
-                        xs={4}
-                        item
-                        sx={{ alignItems: 'flex-end', display: 'flex' }}>
-                        <SearchFilter
-                            setFiltersCallback={setFilters}
-                            searchableColumns={defaultSearchableColumns}
-                        />
-                    </Grid>
-                    <Grid
-                        xs={3}
-                        item
-                        sx={{ alignItems: 'flex-end', display: 'flex' }}>
-                        <TypeFilter
-                            setFiltersCallback={setFilters}
-                            allRows={allPluginRows}
-                        />
-                    </Grid>
-                    <Grid xs={1} item />
-                    <Grid xs={3} item>
-                        <Box display="flex" justifyContent="flex-end">
-                            <InstallAllSafePluginsButton
-                                onInstallClick={() => {}}
-                            />
-                        </Box>
-                    </Grid>
-                    <Grid xs={1} item>
-                        <MonkeyButton
-                            onClick={() => {}}
-                            variant={ButtonVariant.Contained}>
-                            <RefreshIcon
-                                className={`${isSpinning && 'spinning-icon'}`}
-                            />
-                        </MonkeyButton>
-                    </Grid>
+                <Grid
+                    xs={4}
+                    item
+                    sx={{ alignItems: 'flex-end', display: 'flex' }}>
+                    <SearchFilter
+                        setFiltersCallback={setFilters}
+                        searchableColumns={defaultSearchableColumns}
+                    />
                 </Grid>
-            </>
+                <Grid
+                    xs={3}
+                    item
+                    sx={{ alignItems: 'flex-end', display: 'flex' }}>
+                    <TypeFilter
+                        setFiltersCallback={setFilters}
+                        allRows={allPluginRows}
+                    />
+                </Grid>
+            </Grid>
         );
     }
     return null;
