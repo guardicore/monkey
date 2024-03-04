@@ -14,7 +14,7 @@ describe('Register Process', () => {
 
     describe('on successful registration', () => {
         it('brings the user to home page', () => {
-            cy.visit('https://localhost:8443');
+            cy.visit('/');
             cy.location('pathname', { timeout: 10000 }).should(
                 'eq',
                 Endpoint.REGISTER
@@ -32,7 +32,7 @@ describe('Register Process', () => {
 
 describe('Login', () => {
     beforeEach(() => {
-        cy.visit('https://localhost:8443');
+        cy.visit('/');
     });
 
     it('prevents unregistered user from logging in', () => {
