@@ -16,6 +16,7 @@ from agent_plugins.payloads.ransomware.src.typedef import (
     ReadmeDropperCallable,
     WallpaperChangerCallable,
 )
+from agentpluginapi import IAgentEventPublisher
 from monkeyevents import AbstractAgentEvent, FileEncryptionEvent
 from monkeytypes import AgentID, Event
 from tests.unit_tests.agent_plugins.payloads.ransomware.ransomware_target_files import (
@@ -25,7 +26,7 @@ from tests.unit_tests.agent_plugins.payloads.ransomware.ransomware_target_files 
 )
 from tests.utils import is_user_admin
 
-from common.event_queue import AgentEventSubscriber, IAgentEventPublisher
+from common.event_queue import AgentEventSubscriber
 
 BuildRansomwareCallable: TypeAlias = Callable[
     [

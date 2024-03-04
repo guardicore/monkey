@@ -2,12 +2,11 @@ import logging
 from pathlib import Path
 from typing import Iterable
 
+from agentpluginapi import IAgentEventPublisher
 from monkeyevents import DefacementEvent, FileEncryptionEvent
 from monkeyevents.tags import DATA_ENCRYPTED_FOR_IMPACT_T1486_TAG, DEFACEMENT_T1491_TAG
 from monkeytoolbox import interruptible_function, interruptible_iter
 from monkeytypes import AgentID, Event
-
-from common.event_queue import IAgentEventPublisher
 
 from .consts import README_FILE_NAME, README_SRC
 from .internal_ransomware_options import InternalRansomwareOptions

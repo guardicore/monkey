@@ -1,9 +1,8 @@
 import logging
 from pprint import pformat
 
+from agentpluginapi import IAgentEventPublisher
 from monkeytypes import AgentID, OperatingSystem
-
-from common.event_queue import IAgentEventPublisher
 
 from .bit_manipulators import flip_bits
 from .file_selectors import ProductionSafeTargetFileSelector
