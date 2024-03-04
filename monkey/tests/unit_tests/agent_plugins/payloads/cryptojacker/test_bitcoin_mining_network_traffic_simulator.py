@@ -6,10 +6,9 @@ import requests_mock
 from agent_plugins.payloads.cryptojacker.src.bitcoin_mining_network_traffic_simulator import (
     BitcoinMiningNetworkTrafficSimulator,
 )
+from agentpluginapi import IAgentEventPublisher
 from monkeytypes import SocketAddress
 from requests.exceptions import ConnectionError, ConnectTimeout, ReadTimeout
-
-from common.event_queue import IAgentEventPublisher
 
 SERVER = SocketAddress(ip="127.0.0.1", port=9999)
 SERVER_URL = f"http://{SERVER}"

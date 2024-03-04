@@ -2,10 +2,9 @@ from ipaddress import IPv4Address
 from unittest.mock import MagicMock
 
 import pytest
-from agentpluginapi import TargetHost
+from agentpluginapi import IAgentEventPublisher, TargetHost
 from monkeyevents import ExploitationEvent, PasswordRestorationEvent
 
-from common.event_queue import IAgentEventPublisher
 from infection_monkey.utils.ids import get_agent_id
 
 NETBIOS_NAME = "NetBIOS Name"

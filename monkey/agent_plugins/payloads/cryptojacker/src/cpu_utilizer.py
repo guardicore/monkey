@@ -6,12 +6,11 @@ from random import randbytes  # noqa: DUO102 (this isn't for cryptographic use)
 from typing import Optional
 
 import psutil
+from agentpluginapi import IAgentEventPublisher
 from monkeyevents import CPUConsumptionEvent
 from monkeyevents.tags import RESOURCE_HIJACKING_T1496_TAG
 from monkeytoolbox import create_daemon_thread
 from monkeytypes import AgentID, NonNegativeFloat, OperatingSystem, PercentLimited
-
-from common.event_queue import IAgentEventPublisher
 
 from .consts import CRYPTOJACKER_PAYLOAD_TAG
 

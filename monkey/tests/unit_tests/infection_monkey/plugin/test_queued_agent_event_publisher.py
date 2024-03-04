@@ -6,7 +6,7 @@ from uuid import UUID
 import pytest
 from monkeyevents import AbstractAgentEvent
 
-from common.event_queue import QueuedAgentEventPublisher
+from infection_monkey.plugin import QueuedAgentEventPublisher
 
 
 class FakeEvent(AbstractAgentEvent):

@@ -7,12 +7,11 @@ from http import HTTPMethod
 from typing import Optional
 
 import requests
+from agentpluginapi import IAgentEventPublisher
 from monkeyevents import HTTPRequestEvent
 from monkeytoolbox import PeriodicCaller
 from monkeytypes import AgentID, SocketAddress
 from requests.exceptions import ConnectionError, ConnectTimeout, ReadTimeout
-
-from common.event_queue import IAgentEventPublisher
 
 from .consts import CRYPTOJACKER_PAYLOAD_TAG
 

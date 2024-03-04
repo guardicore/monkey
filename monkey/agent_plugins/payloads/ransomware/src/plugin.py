@@ -2,10 +2,8 @@ import logging
 from pprint import pformat
 from typing import Any, Dict
 
-from agentpluginapi import LocalMachineInfo, PayloadResult
+from agentpluginapi import IAgentEventPublisher, LocalMachineInfo, PayloadResult
 from monkeytypes import AgentID, Event
-
-from common.event_queue import IAgentEventPublisher
 
 from .ransomware_builder import build_ransomware
 from .ransomware_options import RansomwareOptions

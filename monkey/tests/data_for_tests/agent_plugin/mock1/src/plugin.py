@@ -8,14 +8,13 @@ import mock_dependency
 from agentpluginapi import (
     ExploiterResult,
     IAgentBinaryRepository,
+    IAgentEventPublisher,
     IPropagationCredentialsRepository,
     TargetHost,
 )
 from monkeyevents import ExploitationEvent, PropagationEvent
 from monkeytoolbox import interruptible_iter
 from monkeytypes import AgentID
-
-from common.event_queue import IAgentEventPublisher
 
 logger = logging.getLogger(__name__)
 

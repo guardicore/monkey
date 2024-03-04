@@ -4,7 +4,7 @@ import time
 from pathlib import PosixPath
 from typing import Any, Dict, Iterable, Mapping, Optional, Sequence
 
-from agentpluginapi import LocalMachineInfo
+from agentpluginapi import IAgentEventPublisher, LocalMachineInfo
 from monkeyevents import CredentialsStolenEvent
 from monkeyevents.tags import (
     DATA_FROM_LOCAL_SYSTEM_T1005_TAG,
@@ -12,8 +12,6 @@ from monkeyevents.tags import (
     UNSECURED_CREDENTIALS_T1552_TAG,
 )
 from monkeytypes import AgentID, Credentials, Event, SSHKeypair, Username
-
-from common.event_queue import IAgentEventPublisher
 
 # The maximum RSA keysize is 2048 bytes. Our maximum supported key file size is 4x to future proof
 # our detection algorithm.

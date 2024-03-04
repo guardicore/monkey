@@ -3,9 +3,8 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
+from agentpluginapi import IAgentEventPublisher
 from monkeytypes import AgentID, Credentials, SSHKeypair, Username
-
-from common.event_queue import IAgentEventPublisher
 
 pwd = pytest.importorskip("pwd")
 # we need to check if `pwd` can be imported before importing `Plugin`

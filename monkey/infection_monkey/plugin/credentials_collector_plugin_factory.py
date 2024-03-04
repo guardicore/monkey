@@ -1,10 +1,8 @@
 from typing import Callable
 
-from agentpluginapi import LocalMachineInfo
+from agentpluginapi import IAgentEventPublisher, LocalMachineInfo
 from monkeytypes import AgentID
 from serpentarium import SingleUsePlugin
-
-from common.event_queue import IAgentEventPublisher
 
 from .i_plugin_factory import IPluginFactory
 

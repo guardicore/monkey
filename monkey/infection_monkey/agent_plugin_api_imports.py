@@ -6,6 +6,7 @@ from agentpluginapi import (  # noqa: F401
     FingerprintData,
     IAgentBinaryRepository,
     IAgentCommandBuilderFactory,
+    IAgentEventPublisher,
     IAgentOTPProvider,
     IHTTPAgentBinaryServerRegistrar,
     ILinuxAgentCommandBuilder,

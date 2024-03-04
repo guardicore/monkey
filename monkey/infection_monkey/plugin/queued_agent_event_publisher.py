@@ -1,8 +1,7 @@
 from multiprocessing import Queue
 
+from agentpluginapi import IAgentEventPublisher
 from monkeyevents import AbstractAgentEvent
-
-from . import IAgentEventPublisher
 
 
 class QueuedAgentEventPublisher(IAgentEventPublisher):

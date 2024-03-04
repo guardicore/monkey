@@ -5,10 +5,9 @@ from unittest.mock import MagicMock
 import agent_plugins.payloads.ransomware.src.ransomware_builder as ransomware_builder
 import pytest
 from agent_plugins.payloads.ransomware.src.ransomware_options import RansomwareOptions
+from agentpluginapi import IAgentEventPublisher
 from monkeytoolbox import get_os
 from monkeytypes import AgentID, OperatingSystem
-
-from common.event_queue import IAgentEventPublisher
 
 AGENT_ID = AgentID("0442ca83-10ce-495f-9c1c-92b4e1f5c39c")
 

@@ -4,11 +4,10 @@ from threading import Event, current_thread
 from typing import Any, Dict, Sequence
 
 import mock_dependency
+from agentpluginapi import IAgentEventPublisher
 from monkeyevents import CredentialsStolenEvent
 from monkeytoolbox import interruptible_iter
 from monkeytypes import AgentID, Credentials, Password, Username
-
-from common.event_queue import IAgentEventPublisher
 
 logger = logging.getLogger(__name__)
 
