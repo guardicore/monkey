@@ -1,10 +1,8 @@
 import logging
 from typing import Any, Mapping, Sequence
 
-from agentpluginapi import LocalMachineInfo
+from agentpluginapi import IAgentEventPublisher, LocalMachineInfo
 from monkeytypes import AgentID, Credentials, Event
-
-from common.event_queue import IAgentEventPublisher
 
 from .chrome_credentials_collector_builder import build_chrome_credentials_collector
 
