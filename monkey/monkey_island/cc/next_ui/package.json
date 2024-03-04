@@ -4,9 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "node server-dev.js",
+    "prod": "cross-env SSL_CERT_PATH=../server.crt SSL_KEY_PATH=../server.key NEXT_PUBLIC_JAVASCRIPT_RUNTIME_PORT=8443 node server-prod.js",
     "build": "node build-standalone.js",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "prod:e2e": "npm run build && npm run prod",
+    "e2e": "cross-env START_SERVER_AND_TEST_INSECURE=1 start-server-and-test prod:e2e https://localhost:8443 cypress:run_e2e",
+    "component": "cypress run --component",
+    "cypress:open": "cross-env DEBUG=cypress:webpack cypress open",
+    "cypress:run_e2e": "cypress run --e2e"
   },
   "dependencies": {
     "@mui/icons-material": "^5.14.18",
@@ -38,6 +44,8 @@
     "@types/jest": "^29.5.11",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
+    "cross-env": "^7.0.3",
+    "cypress": "^13.6.3",
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
@@ -48,6 +56,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.1.0",
     "redux-logger": "^3.0.6",
+    "start-server-and-test": "^2.0.3",
     "ts-node": "^10.9.2"
   }
 }
