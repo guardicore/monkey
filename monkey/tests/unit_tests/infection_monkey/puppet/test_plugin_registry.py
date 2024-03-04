@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from agentpluginapi import (
     IAgentBinaryRepository,
+    IAgentEventPublisher,
     IAgentOTPProvider,
     IPropagationCredentialsRepository,
     ITCPPortSelector,
@@ -12,7 +13,6 @@ from monkeytypes import AgentID, AgentPluginManifest, AgentPluginType, Operating
 from serpentarium import MultiprocessingPlugin, PluginLoader, SingleUsePlugin
 
 from common.agent_plugins import AgentPlugin
-from common.event_queue import IAgentEventPublisher
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import (
     IIslandAPIClient,

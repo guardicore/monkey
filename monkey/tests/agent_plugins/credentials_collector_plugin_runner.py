@@ -13,11 +13,10 @@ sys.path.insert(0, monkey_path)
 
 # Change this import to use this script with different plugins
 from agent_plugins.credentials_collectors.chrome.src.plugin import Plugin  # noqa: E402
+from agentpluginapi import IAgentEventPublisher  # noqa: E402
 from agentpluginapi import TargetHost  # noqa: E402
 from monkeytypes import OperatingSystem  # noqa: E402
 from monkeytypes import Credentials, Password, Username  # noqa: E402
-
-from common.event_queue import IAgentEventPublisher  # noqa: E402
 
 logging.basicConfig(level=logging.DEBUG)
 
