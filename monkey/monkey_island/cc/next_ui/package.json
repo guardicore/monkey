@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "node server-dev.js",
-    "prod": "SSL_CERT_PATH=../server.crt SSL_KEY_PATH=../server.key NEXT_PUBLIC_JAVASCRIPT_RUNTIME_PORT=8443 node server-prod.js",
+    "prod": "cross-env SSL_CERT_PATH=../server.crt SSL_KEY_PATH=../server.key NEXT_PUBLIC_JAVASCRIPT_RUNTIME_PORT=8443 node server-prod.js",
     "build": "node build-standalone.js",
     "lint": "next lint",
     "test": "jest",
     "prod:e2e": "npm run build && npm run prod",
-    "e2e": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test prod:e2e https://localhost:8443 cypress:run_e2e",
+    "e2e": "cross-env START_SERVER_AND_TEST_INSECURE=1 start-server-and-test prod:e2e https://localhost:8443 cypress:run_e2e",
     "component": "cypress run --component",
-    "cypress:open": "DEBUG=cypress:webpack cypress open",
+    "cypress:open": "cross-env DEBUG=cypress:webpack cypress open",
     "cypress:run_e2e": "cypress run --e2e"
   },
   "dependencies": {
@@ -44,6 +44,7 @@
     "@types/jest": "^29.5.11",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
+    "cross-env": "^7.0.3",
     "cypress": "^13.6.3",
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
