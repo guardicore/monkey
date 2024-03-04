@@ -43,7 +43,7 @@ from common.agent_events import (
 )
 from common.agent_registration_data import AgentRegistrationData
 from common.common_consts import AGENT_OTP_ENVIRONMENT_VARIABLE
-from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
+from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
     add_stolen_credentials_to_propagation_credentials_repository,
@@ -83,6 +83,7 @@ from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprint
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
 from infection_monkey.network_scanning.smb_fingerprinter import SMBFingerprinter
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
+from infection_monkey.plugin import QueuedAgentEventPublisher
 from infection_monkey.plugin.credentials_collector_plugin_factory import (
     CredentialsCollectorPluginFactory,
 )
