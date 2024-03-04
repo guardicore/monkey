@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Box, IconButton, InputAdornment, TextField } from '@mui/material';
+import {
+    Box,
+    IconButton,
+    InputAdornment,
+    TextField,
+    TextFieldProps
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import { nanoid } from 'nanoid';
@@ -8,7 +14,11 @@ const EMPTY_STRING = '';
 const DEFAULT_VARIANT = 'standard';
 const DEFAULT_PLACEHOLDER = 'Search';
 
-const MonkeySearchBar = (props) => {
+type SearchBarProps = TextFieldProps & {
+    setQuery?: (query: string) => void;
+};
+
+const MonkeySearchBar = (props: SearchBarProps) => {
     const {
         variant = DEFAULT_VARIANT,
         placeholder = DEFAULT_PLACEHOLDER,
