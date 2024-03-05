@@ -5,7 +5,7 @@ import { gridOverlay } from '@/app/(protected)/plugins/_lib/no-rows-overlay/styl
 
 const DEFAULT_MESSAGE = 'No Rows';
 
-const StyledGridOverlay = styled('div')(gridOverlay);
+const StyledGridOverlay = styled('div')(gridOverlay as any);
 
 type CustomNoRowsOverlayProps = {
     message?: string;

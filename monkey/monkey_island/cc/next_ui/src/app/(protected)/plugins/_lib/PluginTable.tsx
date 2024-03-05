@@ -109,7 +109,7 @@ const renderSafetyCell = (params) => {
 };
 
 const DescriptionCell = (params) => {
-    const ref = useRef();
+    const ref = useRef(null);
     const [isOverflowing, setIsOverflowing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
 

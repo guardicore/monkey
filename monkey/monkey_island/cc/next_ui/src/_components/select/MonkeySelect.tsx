@@ -69,7 +69,7 @@ const MonkeySelect = ({
                             <MonkeyTooltip
                                 isOverflow={true}
                                 title={option.label}>
-                                {option.label}
+                                <span>{option.label}</span>
                             </MonkeyTooltip>
                         </MenuItem>
                     );
