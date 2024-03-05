@@ -17,7 +17,7 @@
   "dependencies": {
     "@mui/icons-material": "^5.14.18",
     "@mui/material": "^5.14.18",
-    "@mui/x-data-grid": "^6.19.4",
+    "@mui/x-data-grid": "^6.19.6",
     "@reduxjs/toolkit": "^1.9.7",
     "@squarecloud/http-proxy": "^0.1.7",
     "@tsparticles/engine": "^3.2.1",
