@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     IconButton,
@@ -28,17 +28,15 @@ const MonkeySearchBar = (props: SearchBarProps) => {
     } = { ...props };
     const [currentValue, setCurrentValue] = useState(EMPTY_STRING);
 
-    useEffect(() => {
-        setQuery && setQuery(currentValue);
-    }, [currentValue]);
-
-    const handleValueChange = (e) => {
-        const currentValue = e?.target?.value?.trim() || EMPTY_STRING;
-        setCurrentValue(currentValue);
+    const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newSearchQuery = e?.target?.value?.trim() || EMPTY_STRING;
+        setCurrentValue(newSearchQuery);
+        setQuery && setQuery(newSearchQuery);
     };
 
     const clearValue = () => {
         setCurrentValue(EMPTY_STRING);
+        setQuery && setQuery(EMPTY_STRING);
     };
 
     return (
@@ -50,6 +48,7 @@ const MonkeySearchBar = (props: SearchBarProps) => {
                 label={label}
                 value={currentValue}
                 placeholder={placeholder}
+                type={'search'}
                 onChange={handleValueChange}
                 InputProps={{
                     startAdornment: (
