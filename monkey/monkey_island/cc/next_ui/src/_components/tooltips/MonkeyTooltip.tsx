@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
 import Zoom from '@mui/material/Zoom';
-import { Tooltip } from '@mui/material';
+import { Tooltip, TooltipProps } from '@mui/material';
 import { tooltipStyle, tooltipTextStyle } from '@/_components/tooltips/style';
 import Box from '@mui/material/Box';
 
-export const TOOLTIP_POSITION = {
-    TOP: 'top',
-    BOTTOM: 'bottom',
-    LEFT: 'left',
-    RIGHT: 'right'
+export enum TooltipPlacement {
+    TOP = 'top',
+    BOTTOM = 'bottom',
+    LEFT = 'left',
+    RIGHT = 'right'
+}
+
+type MonkeyTooltipProps = TooltipProps & {
+    placement?: TooltipProps['placement'];
+    isOverflow?: boolean;
+    children?: any;
 };
 
-const MonkeyTooltip = (props) => {
-    const { placement, isOverflow = false, children, ...rest } = { ...props };
+const MonkeyTooltip = (props: MonkeyTooltipProps) => {
+    const {
+        placement = undefined,
+        isOverflow = false,
+        children = [],
+        ...rest
+    } = { ...props };
 
     const [tooltipEnabled, setTooltipEnabled] = useState(false);
 
@@ -25,7 +36,7 @@ const MonkeyTooltip = (props) => {
     const forwardedProps = Object.assign(
         { ...rest },
         {
-            placement: placement || TOOLTIP_POSITION.TOP,
+            placement: placement || TooltipPlacement.TOP,
             TransitionComponent: Zoom
         }
     );
