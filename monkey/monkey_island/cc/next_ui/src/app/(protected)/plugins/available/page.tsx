@@ -90,6 +90,7 @@ export default function AvailablePluginsPage() {
                         sx={{ mr: '10px' }}>
                         <InstallAllSafePluginsButton
                             onInstallClick={() => {}}
+                            pluginsInInstallationProcess={[]}
                         />
                     </Box>
                 </Grid>

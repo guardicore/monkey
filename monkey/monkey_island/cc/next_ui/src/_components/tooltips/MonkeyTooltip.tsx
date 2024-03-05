@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import Zoom from '@mui/material/Zoom';
 import { Tooltip, TooltipProps } from '@mui/material';
 import { tooltipStyle, tooltipTextStyle } from '@/_components/tooltips/style';
@@ -14,14 +14,14 @@ export enum TooltipPlacement {
 type MonkeyTooltipProps = TooltipProps & {
     placement?: TooltipProps['placement'];
     isOverflow?: boolean;
-    children?: any;
+    children?: ReactElement;
 };
 
 const MonkeyTooltip = (props: MonkeyTooltipProps) => {
     const {
         placement = undefined,
         isOverflow = false,
-        children = [],
+        children,
         ...rest
     } = { ...props };
 
