@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import MonkeyDataGrid from './MonkeyDataGrid';
+import MonkeyDataGrid from '../../../../_components/tables/MonkeyDataGrid';
 import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import _ from 'lodash';

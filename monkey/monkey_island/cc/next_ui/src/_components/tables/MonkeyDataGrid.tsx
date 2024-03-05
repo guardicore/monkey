@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
     DataGrid,
+    DataGridProps,
+    GridDensity,
     gridFilteredTopLevelRowCountSelector,
     GridToolbar,
     GridToolbarContainer
@@ -35,7 +37,7 @@ const gridInitialState = {
     pagination: { paginationModel: { pageSize: DEFAULT_PAGE_SIZE } }
 };
 
-const setColumnClass = (column, classToAppend) => {
+const setColumnClass = (column: any, classToAppend: string) => {
     column[HEADER_CLASS_NAME] = column[HEADER_CLASS_NAME]
         ? `${column[HEADER_CLASS_NAME]} ${classToAppend}`
         : classToAppend;
@@ -44,7 +46,7 @@ const setColumnClass = (column, classToAppend) => {
         : classToAppend;
 };
 
-const prepareColsClasses = (columns, setFlex) => {
+const prepareColsClasses = (columns: any[], setFlex: boolean) => {
     const updatedColumns = _.cloneDeep(columns) || [];
     updatedColumns?.forEach((col) => {
         if (col[MAX_WIDTH] === Infinity) {
@@ -66,7 +68,11 @@ const prepareColsClasses = (columns, setFlex) => {
     return updatedColumns;
 };
 
-const prepareColsWidth = (columns, columnWidth, setColWidth) => {
+const prepareColsWidth = (
+    columns: any,
+    setColWidth?: boolean,
+    columnWidth?: ColumnWidth
+) => {
     const colWidth = getColumnWidth(columnWidth);
     const updatedColumns = _.cloneDeep(columns) || [];
     if (setColWidth) {
@@ -86,7 +92,7 @@ const prepareColsWidth = (columns, columnWidth, setColWidth) => {
     return updatedColumns;
 };
 
-const prepareColsCustomTooltip = (columns) => {
+const prepareColsCustomTooltip = (columns: any) => {
     const updatedColumns = _.cloneDeep(columns) || [];
     updatedColumns?.forEach((col) => {
         if (col[IS_TEXTUAL]) {
@@ -104,9 +110,14 @@ const prepareColsCustomTooltip = (columns) => {
     return updatedColumns;
 };
 
-const prepareSlots = (toolbar, showToolbar) => {
+const prepareSlots = (
+    toolbar: any,
+    showToolbar: boolean,
+    noRowsOverlayMessage?: string
+) => {
     const slotsObj = {
-        noRowsOverlay: CustomNoRowsOverlay,
+        noRowsOverlay: () =>
+            CustomNoRowsOverlay({ message: noRowsOverlayMessage }),
         noResultsOverlay: CustomNoRowsOverlay,
         baseTooltip: MonkeyTooltip
     };
@@ -129,13 +140,35 @@ const getColumnWidth = (columnWidth) => {
     return colWidth;
 };
 
-const MonkeyDataGrid = (props) => {
+type ColumnWidth = { min: number; max: number };
+
+type MonkeyDataGridProps = DataGridProps & {
+    toolbar?: React.ReactNode;
+    density?: GridDensity;
+    showToolbar?: boolean;
+    disableColumnFilter?: boolean;
+    disableDensitySelector?: boolean;
+    disableColumnMenu?: boolean;
+    hideHeaders?: boolean;
+    setColWidth?: boolean;
+    setFlex?: boolean;
+    sortingOrder?: string[];
+    height?: string;
+    maxHeight?: string;
+    rowHeight?: string;
+    columnWidth?: ColumnWidth;
+    className?: string;
+    needCustomWorkaround?: boolean;
+    noRowsOverlayMessage?: string;
+};
+
+const MonkeyDataGrid = (props: MonkeyDataGridProps) => {
     const {
         columns = [],
         rows = [],
         initialState = _.cloneDeep(gridInitialState),
-        toolbar,
-        density = X_DATA_GRID_DENSITY.STANDARD,
+        toolbar = null,
+        density = DataGridDensity.STANDARD,
         showToolbar = true,
         disableColumnFilter = false,
         disableDensitySelector = true,
@@ -171,14 +204,14 @@ const MonkeyDataGrid = (props) => {
         const mutatedColumns = prepareColsCustomTooltip(columns);
         return needCustomWorkaround
             ? prepareColsClasses(
-                  prepareColsWidth(mutatedColumns, columnWidth, setColWidth),
+                  prepareColsWidth(mutatedColumns, setColWidth, columnWidth),
                   setFlex
               )
             : mutatedColumns;
     }, [columns]);
 
     useEffect(() => {
-        setSlots(prepareSlots(toolbar, showToolbar));
+        setSlots(prepareSlots(toolbar, showToolbar, noRowsOverlayMessage));
         prepareInitialState();
     }, []);
 
@@ -230,10 +263,6 @@ const MonkeyDataGrid = (props) => {
                     columnHeaders: isDataEmpty || hideHeaders ? HIDDEN : '',
                     toolbarContainer: isDataEmpty ? HIDE_TOOLBAR_ACTIONS : ''
                 }}
-                slotProps={{
-                    toolbar: { printOptions: { disableToolbarButton: true } },
-                    noRowsOverlay: { message: noRowsOverlayMessage }
-                }}
                 sx={sx}
                 {...rest}
             />
@@ -243,11 +272,11 @@ const MonkeyDataGrid = (props) => {
 
 export default MonkeyDataGrid;
 
-export const X_DATA_GRID_DENSITY = {
-    COMPACT: 'compact',
-    STANDARD: 'standard',
-    COMFORTABLE: 'comfortable'
-};
+export enum DataGridDensity {
+    COMPACT = 'compact',
+    STANDARD = 'standard',
+    COMFORTABLE = 'comfortable'
+}
 
 export const X_DATA_GRID_CLASSES = {
     MAX_WIDTH_NONE: 'max-width-none',

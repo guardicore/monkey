@@ -7,7 +7,11 @@ const DEFAULT_MESSAGE = 'No Rows';
 
 const StyledGridOverlay = styled('div')(gridOverlay);
 
-const CustomNoRowsOverlay = ({ message }) => {
+type CustomNoRowsOverlayProps = {
+    message?: string;
+};
+
+const CustomNoRowsOverlay = ({ message }: CustomNoRowsOverlayProps) => {
     return (
         <StyledGridOverlay>
             <svg
