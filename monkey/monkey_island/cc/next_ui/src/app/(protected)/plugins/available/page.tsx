@@ -105,8 +105,7 @@ export default function AvailablePluginsPage() {
             <PluginTable
                 rows={displayedRows}
                 columns={generatePluginsTableColumns(getRowActions)}
-                loadingMessage="Loading all available plugins..."
-                loading={isFiltering}
+                loading={isFiltering || isLoading}
                 noRowsOverlayMessage={getOverlayMessage()}
             />
         </Stack>

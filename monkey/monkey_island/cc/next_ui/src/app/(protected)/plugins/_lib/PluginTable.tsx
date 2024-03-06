@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import MonkeyDataGrid from '../../../../_components/tables/MonkeyDataGrid';
+import MonkeyDataGrid, {
+    MonkeyDataGridProps
+} from '../../../../_components/tables/MonkeyDataGrid';
 import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import _ from 'lodash';
@@ -10,8 +12,8 @@ import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import MonkeyTooltip from '@/_components/tooltips/MonkeyTooltip';
 import MonkeyButton from '@/_components/buttons/MonkeyButton';
+import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
 
-const DEFAULT_LOADING_MESSAGE = 'Loading plugins...';
 const HEADER_SUFFIX = '--header';
 
 const initialState = {
@@ -164,20 +166,21 @@ export const generatePluginsTableRows = (
     return plugins || [];
 };
 
-const PluginTable = (props) => {
-    const {
-        rows = [],
-        columns = [],
-        loadingMessage = DEFAULT_LOADING_MESSAGE,
-        ...rest
-    } = { ...props };
+type PluginTableProps = MonkeyDataGridProps & {
+    rows?: PluginRow[];
+    columns?: any[];
+    loading?: boolean;
+};
 
-    const [isLoadingPlugins] = useState(false);
+const PluginTable = (props: PluginTableProps) => {
+    const { rows = [], columns = [], loading = false, ...rest } = { ...props };
 
     return (
-        <Box minHeight={0}>
-            {isLoadingPlugins ? (
-                loadingMessage
+        <Box>
+            {loading ? (
+                <Box sx={{ textAlign: 'center' }}>
+                    <LoadingIcon sx={{ height: '50px', width: '50px' }} />
+                </Box>
             ) : (
                 <MonkeyDataGrid
                     columns={columns}
