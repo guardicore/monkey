@@ -183,8 +183,6 @@ const PluginTable = (props) => {
                     columns={columns}
                     rows={[...rows]}
                     showToolbar={false}
-                    height={'100%'}
-                    minHeight={0}
                     className="marketplace-plugins-list"
                     initialState={initialState}
                     needCustomWorkaround={false}

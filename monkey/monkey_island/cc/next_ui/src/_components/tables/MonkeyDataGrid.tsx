@@ -3,7 +3,6 @@ import {
     DataGrid,
     DataGridProps,
     GridDensity,
-    gridFilteredTopLevelRowCountSelector,
     GridToolbar,
     GridToolbarContainer
 } from '@mui/x-data-grid';
@@ -11,7 +10,6 @@ import _ from 'lodash';
 import CustomNoRowsOverlay from '@/app/(protected)/plugins/_lib/no-rows-overlay/GridNoRowsOverlay';
 import MonkeyTooltip from '@/_components/tooltips/MonkeyTooltip';
 
-const X_DATA_GRID_CLASS = 'x-data-grid';
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 const DEFAULT_MIN_WIDTH = 150;
@@ -142,7 +140,7 @@ const getColumnWidth = (columnWidth) => {
 
 type ColumnWidth = { min: number; max: number };
 
-type MonkeyDataGridProps = DataGridProps & {
+export type MonkeyDataGridProps = DataGridProps & {
     toolbar?: React.ReactNode;
     density?: GridDensity;
     showToolbar?: boolean;
@@ -153,11 +151,10 @@ type MonkeyDataGridProps = DataGridProps & {
     setColWidth?: boolean;
     setFlex?: boolean;
     sortingOrder?: string[];
-    height?: string;
-    maxHeight?: string;
+    style?: object;
+    initialState?: any;
     rowHeight?: string;
     columnWidth?: ColumnWidth;
-    className?: string;
     needCustomWorkaround?: boolean;
     noRowsOverlayMessage?: string;
 };
@@ -177,28 +174,19 @@ const MonkeyDataGrid = (props: MonkeyDataGridProps) => {
         setColWidth = true,
         setFlex = true,
         sortingOrder = ['asc', 'desc'],
-        height,
-        maxHeight,
         rowHeight,
         columnWidth,
-        className,
         needCustomWorkaround = true,
         noRowsOverlayMessage,
+        style: sx,
         ...rest
     } = { ...props };
 
     const [updatedInitialState, setUpdatedInitialState] =
         useState(initialState);
     const [slots, setSlots] = useState({});
-    const [gridVisibleFilteredRowsCount, setGridVisibleFilteredRowsCount] =
-        useState(0);
     const [hidePagination, setHidePagination] = useState(false);
     const [isDataEmpty, setIsDataEmpty] = useState(false);
-
-    const gridWrapperClassName = className
-        ? `${X_DATA_GRID_CLASS} ${className}`
-        : X_DATA_GRID_CLASS;
-    const sx = { maxHeight: maxHeight || height || 'auto' };
 
     const updatedColumns = useMemo(() => {
         const mutatedColumns = prepareColsCustomTooltip(columns);
@@ -226,25 +214,11 @@ const MonkeyDataGrid = (props: MonkeyDataGridProps) => {
         );
     };
 
-    const handleGridState = (state) => {
-        const visibleFilteredRowsCount = state
-            ? gridFilteredTopLevelRowCountSelector(state) || 0
-            : 0;
-        setGridVisibleFilteredRowsCount(visibleFilteredRowsCount);
-    };
+    const height = rows.length === 0 ? '300px' : 'auto';
 
     return (
-        <div
-            className={gridWrapperClassName}
-            style={{
-                height: `${
-                    !rows?.length || !gridVisibleFilteredRowsCount
-                        ? '300px'
-                        : height || 'auto'
-                }`
-            }}>
+        <div style={{ height: height }}>
             <DataGrid
-                onStateChange={handleGridState}
                 columns={updatedColumns}
                 rows={[...rows]}
                 initialState={{ ...updatedInitialState }}
@@ -269,8 +243,6 @@ const MonkeyDataGrid = (props: MonkeyDataGridProps) => {
         </div>
     );
 };
-
-export default MonkeyDataGrid;
 
 export enum DataGridDensity {
     COMPACT = 'compact',
@@ -297,3 +269,5 @@ export const XDataGridTitle = ({ title, showDataActionsToolbar = false }) => {
         </GridToolbarContainer>
     );
 };
+
+export default MonkeyDataGrid;
