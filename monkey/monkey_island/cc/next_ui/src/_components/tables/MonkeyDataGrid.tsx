@@ -3,8 +3,7 @@ import {
     DataGrid,
     DataGridProps,
     GridDensity,
-    GridToolbar,
-    GridToolbarContainer
+    GridToolbar
 } from '@mui/x-data-grid';
 import _ from 'lodash';
 import CustomNoRowsOverlay from '@/app/(protected)/plugins/_lib/no-rows-overlay/GridNoRowsOverlay';
@@ -253,21 +252,6 @@ export enum DataGridDensity {
 export const X_DATA_GRID_CLASSES = {
     MAX_WIDTH_NONE: 'max-width-none',
     HIDDEN_LAST_EMPTY_CELL: 'last-empty-cell-hidden'
-};
-
-export const XDataGridTitle = ({ title, showDataActionsToolbar = false }) => {
-    return (
-        <GridToolbarContainer>
-            <div className="x-data-grid-title-wrapper">
-                {title && <div className="x-data-grid-title">{title}</div>}
-                {showDataActionsToolbar && (
-                    <div className="x-grid-actions-toolbar-wrapper">
-                        <GridToolbar />
-                    </div>
-                )}
-            </div>
-        </GridToolbarContainer>
-    );
 };
 
 export default MonkeyDataGrid;
