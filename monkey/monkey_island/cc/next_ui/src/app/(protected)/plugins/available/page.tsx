@@ -77,7 +77,7 @@ export default function AvailablePluginsPage() {
     return (
         <Stack spacing={2}>
             <Grid container spacing={2}>
-                <Grid xs={7} md={6}>
+                <Grid item xs={7} md={6}>
                     <AvailablePluginFilters
                         setDisplayedRowsCallback={setDisplayedRows}
                         setIsFilteringCallback={setIsFiltering}
