@@ -13,6 +13,7 @@ import Box from '@mui/material/Box';
 import MonkeyTooltip from '@/_components/tooltips/MonkeyTooltip';
 import MonkeyButton from '@/_components/buttons/MonkeyButton';
 import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
+import { GridAlignment } from '@mui/x-data-grid';
 
 const HEADER_SUFFIX = '--header';
 
@@ -66,7 +67,7 @@ export const generatePluginsTableColumns = (
     {
         headerName: 'Safety',
         field: 'safe',
-        headerAlign: 'center',
+        headerAlign: 'center' as GridAlignment,
         sortable: true,
         filterable: false,
         flex: 0.1,
