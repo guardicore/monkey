@@ -4,6 +4,7 @@ import { islandApiSlice } from '@/redux/features/api/islandApiSlice';
 import {
     AvailablePlugin,
     InstalledPlugin,
+    PluginInfo,
     PluginManifestResponse,
     PluginMetadataResponse
 } from '@/redux/features/api/agentPlugins/types';
@@ -42,9 +43,23 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
             ): InstalledPlugin[] => {
                 return parsePluginManifestResponse(response);
             }
+        }),
+        installPlugin: builder.mutation<any, PluginInfo>({
+            query: (pluginInfo: PluginInfo) => ({
+                url: BackendEndpoints.PLUGIN_INSTALL,
+                method: HTTP_METHODS.PUT,
+                body: {
+                    plugin_type: pluginInfo.pluginType,
+                    name: pluginInfo.pluginName,
+                    version: pluginInfo.pluginVersion
+                }
+            })
         })
     })
 });
 
-export const { useGetAvailablePluginsQuery, useGetInstalledPluginsQuery } =
-    agentPluginEndpoints;
+export const {
+    useGetAvailablePluginsQuery,
+    useGetInstalledPluginsQuery,
+    useInstallPluginMutation
+} = agentPluginEndpoints;
