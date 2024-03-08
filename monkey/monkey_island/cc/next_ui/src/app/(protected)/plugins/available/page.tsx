@@ -6,8 +6,6 @@ import PluginTable, {
     generatePluginsTableColumns,
     PluginRow
 } from '@/app/(protected)/plugins/_lib/PluginTable';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { GridActionsCellItem } from '@mui/x-data-grid';
 import AvailablePluginFilters from '@/app/(protected)/plugins/available/AvailablePluginFilters';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -16,6 +14,7 @@ import MonkeyButton, {
     ButtonVariant
 } from '@/_components/buttons/MonkeyButton';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import PluginInstallationButton from '@/app/(protected)/plugins/available/PluginInstallationButton';
 
 export default function AvailablePluginsPage() {
     const {
@@ -26,40 +25,17 @@ export default function AvailablePluginsPage() {
     const [displayedRows, setDisplayedRows] = React.useState<PluginRow[]>([]);
     const [isLoadingRows, setIsLoadingRows] = React.useState(false);
 
-    const onInstallClick = (
-        pluginId: string,
-        pluginName: string,
-        pluginType: string,
-        pluginVersion: string
-    ) => {
-        console.log(
-            'Install plugin',
-            pluginId,
-            pluginName,
-            pluginType,
-            pluginVersion
-        );
-    };
-
     const getRowActions = (row) => {
         const plugin = availablePlugins?.find((plugin) => plugin.id === row.id);
         if (!plugin) return [];
 
         return [
-            <GridActionsCellItem
+            <PluginInstallationButton
                 key={plugin.id}
-                icon={<FileDownloadIcon />}
-                label="Download"
-                className="textPrimary"
-                onClick={() =>
-                    onInstallClick(
-                        plugin.id,
-                        plugin.name,
-                        plugin.pluginType,
-                        plugin.version
-                    )
-                }
-                color="inherit"
+                pluginType={plugin.pluginType}
+                pluginName={plugin.name}
+                pluginVersion={plugin.version}
+                pluginId={plugin.id}
             />
         ];
     };
