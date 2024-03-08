@@ -20,11 +20,11 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 export default function AvailablePluginsPage() {
     const {
         data: availablePlugins,
-        isLoading,
+        isLoading: isLoadingAvailablePlugins,
         isError
     } = useGetAvailablePluginsQuery();
     const [displayedRows, setDisplayedRows] = React.useState<PluginRow[]>([]);
-    const [isFiltering, setIsFiltering] = React.useState(false);
+    const [isLoadingRows, setIsLoadingRows] = React.useState(false);
 
     const onInstallClick = (
         pluginId: string,
@@ -68,7 +68,7 @@ export default function AvailablePluginsPage() {
         if (isError) {
             return 'Failed to load available plugins';
         }
-        if (isLoading) {
+        if (isLoadingAvailablePlugins) {
             return 'Loading all available plugins...';
         }
         return 'No available plugins';
@@ -80,7 +80,7 @@ export default function AvailablePluginsPage() {
                 <Grid item xs={7} md={6}>
                     <AvailablePluginFilters
                         setDisplayedRowsCallback={setDisplayedRows}
-                        setIsFilteringCallback={setIsFiltering}
+                        setIsFilteringCallback={setIsLoadingRows}
                     />
                 </Grid>
                 <Grid item justifyContent={'flex-end'} xs={5} md={4} lg={5}>
@@ -105,7 +105,7 @@ export default function AvailablePluginsPage() {
             <PluginTable
                 rows={displayedRows}
                 columns={generatePluginsTableColumns(getRowActions)}
-                loading={isFiltering || isLoading}
+                loading={isLoadingRows || isLoadingRows}
                 noRowsOverlayMessage={getOverlayMessage()}
             />
         </Stack>
