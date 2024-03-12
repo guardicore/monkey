@@ -2,6 +2,7 @@ import React from 'react';
 import MonkeyButton, {
     ButtonVariant
 } from '@/_components/buttons/MonkeyButton';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 type InstallAllSafePluginsButtonProps = {
     onInstallClick: (
@@ -10,16 +11,16 @@ type InstallAllSafePluginsButtonProps = {
         pluginType: string,
         version: string
     ) => void;
-    pluginsInInstallationProcess: string[];
 };
 
 const InstallAllSafePluginsButton = (
     props: InstallAllSafePluginsButtonProps
 ) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { onInstallClick, pluginsInInstallationProcess } = props;
+    const { onInstallClick } = props;
     return (
         <MonkeyButton variant={ButtonVariant.Contained}>
+            <FileDownloadIcon sx={{ mr: '5px' }} />
             All Safe Plugins
         </MonkeyButton>
     );
