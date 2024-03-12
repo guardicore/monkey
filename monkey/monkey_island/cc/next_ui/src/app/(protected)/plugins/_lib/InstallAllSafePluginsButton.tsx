@@ -3,23 +3,19 @@ import MonkeyButton, {
     ButtonVariant
 } from '@/_components/buttons/MonkeyButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { useGetAvailablePluginsQuery } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
 
-type InstallAllSafePluginsButtonProps = {
-    onInstallClick: (
-        id: string,
-        name: string,
-        pluginType: string,
-        version: string
-    ) => void;
-};
+type InstallAllSafePluginsButtonProps = {};
 
 const InstallAllSafePluginsButton = (
     props: InstallAllSafePluginsButtonProps
 ) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { onInstallClick } = props;
+    const { data: availablePlugins, isLoading: isLoadingAvailablePlugins } =
+        useGetAvailablePluginsQuery();
+
+    const isDisabled = isLoadingAvailablePlugins || !availablePlugins;
     return (
-        <MonkeyButton variant={ButtonVariant.Contained}>
+        <MonkeyButton variant={ButtonVariant.Contained} disabled={isDisabled}>
             <FileDownloadIcon sx={{ mr: '5px' }} />
             All Safe Plugins
         </MonkeyButton>

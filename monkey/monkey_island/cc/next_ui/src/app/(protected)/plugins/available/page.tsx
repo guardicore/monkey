@@ -64,9 +64,7 @@ export default function AvailablePluginsPage() {
                         display="flex"
                         justifyContent="flex-end"
                         sx={{ mr: '10px' }}>
-                        <InstallAllSafePluginsButton
-                            onInstallClick={() => {}}
-                        />
+                        <InstallAllSafePluginsButton />
                     </Box>
                 </Grid>
                 <Grid item xs={1} md={2} lg={1}>
