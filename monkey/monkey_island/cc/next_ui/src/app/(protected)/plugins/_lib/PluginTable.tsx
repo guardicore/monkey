@@ -138,14 +138,7 @@ const DescriptionCell = (params) => {
     );
 };
 
-export type PluginRow = {
-    id: string;
-    name: string;
-    version: string;
-    pluginType: string;
-    description: any;
-    safe: boolean;
-};
+export type PluginRow = AgentPlugin;
 
 export const generatePluginsTableRows = (
     pluginsList: AgentPlugin[]
