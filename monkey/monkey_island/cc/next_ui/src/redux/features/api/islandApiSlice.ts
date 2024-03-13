@@ -8,7 +8,7 @@ import { getApiPath } from '@/constants/paths.constants';
 import { getToken, tokenIsStored } from '@/lib/authenticationToken';
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
 
-export const DEFAULT_QUERY_TIMEOUT: number = 60 * 1000; // 60 seconds
+export const DEFAULT_QUERY_TIMEOUT: number = 2 * 60 * 1000; // 2 minutes
 export const AUTHENTICATION_TOKEN_HEADER: string = 'authentication-token';
 
 const baseQuery: BaseQueryFn = fetchBaseQuery({
