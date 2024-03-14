@@ -174,8 +174,6 @@ class StubExploiter:
         self,
         exploiters_to_run,
         hosts_to_exploit,
-        current_depth,
-        servers,
         results_callback,
         scan_completed,
         stop,
