@@ -54,7 +54,7 @@ const MonkeySelect = ({
             </InputLabel>
             <Select
                 variant={variant}
-                defaultValue={selectedOption.value}
+                value={selectedOption.value}
                 input={<MonkeySelectStyled />}
                 onChange={onChange}
                 displayEmpty={true}
