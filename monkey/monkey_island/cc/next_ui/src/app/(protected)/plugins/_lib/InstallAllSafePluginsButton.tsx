@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MonkeyButton, {
     ButtonVariant
 } from '@/_components/buttons/MonkeyButton';
@@ -10,6 +10,7 @@ import {
 } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
 import { filterOutInstalledPlugins } from '@/app/(protected)/plugins/_lib/filters/InstalledPluginFilter';
 import { filterOutDangerousPlugins } from '@/app/(protected)/plugins/_lib/filters/SafetyFilter';
+import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
 
 const InstallAllSafePluginsButton = () => {
     const { data: availablePlugins, isLoading: isLoadingAvailablePlugins } =
@@ -17,22 +18,32 @@ const InstallAllSafePluginsButton = () => {
     const { data: installedPlugins, isLoading: isLoadingInstalledPlugins } =
         useGetInstalledPluginsQuery();
     const [installPlugin] = useInstallPluginMutation();
+    const [loading, setLoading] = useState(false);
 
-    const installAllSafePlugins = () => {
+    const installAllSafePlugins = async () => {
         if (availablePlugins === undefined || installedPlugins === undefined)
             throw new Error('Available or installed plugins are undefined');
+
+        setLoading(true);
         const installablePlugins = filterOutInstalledPlugins(
             availablePlugins,
             installedPlugins
         );
         const safePlugins = filterOutDangerousPlugins(installablePlugins);
+        const installationPromises = [];
         safePlugins.forEach((plugin) => {
-            installPlugin({
-                pluginVersion: plugin.version,
-                pluginName: plugin.name,
-                pluginType: plugin.pluginType
-            });
+            installationPromises.push(
+                // @ts-ignore
+                installPlugin({
+                    pluginVersion: plugin.version,
+                    pluginName: plugin.name,
+                    pluginType: plugin.pluginType,
+                    pluginId: plugin.id
+                })
+            );
         });
+        await Promise.all(installationPromises);
+        setLoading(false);
     };
 
     const isDisabled =
@@ -40,12 +51,18 @@ const InstallAllSafePluginsButton = () => {
         isLoadingInstalledPlugins ||
         !availablePlugins;
 
+    const buttonIcon = loading ? (
+        <LoadingIcon sx={{ mr: '5px' }} />
+    ) : (
+        <FileDownloadIcon sx={{ mr: '5px' }} />
+    );
+
     return (
         <MonkeyButton
             variant={ButtonVariant.Contained}
             disabled={isDisabled}
             onClick={installAllSafePlugins}>
-            <FileDownloadIcon sx={{ mr: '5px' }} />
+            {buttonIcon}
             All Safe Plugins
         </MonkeyButton>
     );

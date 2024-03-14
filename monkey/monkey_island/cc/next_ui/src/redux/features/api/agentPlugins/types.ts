@@ -55,4 +55,5 @@ export type PluginInfo = {
     pluginType: string;
     pluginName: string;
     pluginVersion: string;
+    pluginId: string;
 };
