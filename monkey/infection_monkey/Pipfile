@@ -12,9 +12,9 @@ psutil = ">=5.7.0"
 requests = ">=2.24"
 urllib3 = "==1.26.5"
 "WinSys-3.x" = "*"
-pywin32-ctypes = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
-pywin32 = {version = "*", sys_platform = "== 'win32'"} # Lock file is not created with sys_platform win32 requirement if not explicitly specified
-pefile = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
+pywin32-ctypes = {version = "*", markers = "sys_platform == 'win32'"} # Pyinstaller requirement on windows
+pywin32 = {version = "*", markers = "sys_platform == 'win32'"} # Lock file is not created with sys_platform win32 requirement if not explicitly specified
+pefile = {version = "*", markers = "sys_platform == 'win32'"} # Pyinstaller requirement on windows
 pypubsub = "*"
 pydantic = "==2.5.*"
 egg-timer = "*"
