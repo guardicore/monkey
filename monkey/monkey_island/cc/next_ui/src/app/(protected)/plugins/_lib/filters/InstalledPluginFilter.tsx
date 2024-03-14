@@ -15,9 +15,7 @@ const InstalledPluginFilter = (props: InstalledPluginFilterProps) => {
         return !installedPlugin;
     };
     useEffect(() => {
-        props.setFiltersCallback((prevState) => {
-            return { ...prevState, installed: filter };
-        });
+        props.setFiltersCallback({ installed: filter });
     }, [installedPlugins]);
 
     return null;

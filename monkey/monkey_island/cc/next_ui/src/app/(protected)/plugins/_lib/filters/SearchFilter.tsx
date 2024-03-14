@@ -24,9 +24,7 @@ const SearchFilter = (props: SearchFilterProps) => {
 
         const filter = query === '' ? noOp : filterOnText;
 
-        props.setFiltersCallback((prevState) => {
-            return { ...prevState, text: filter };
-        });
+        props.setFiltersCallback({ text: filter });
     };
 
     return <MonkeySearchBar setQuery={onSearchChanged} />;

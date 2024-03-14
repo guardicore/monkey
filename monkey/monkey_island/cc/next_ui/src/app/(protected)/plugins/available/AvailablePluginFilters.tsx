@@ -1,18 +1,13 @@
 import Grid from '@mui/material/Grid';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import SearchFilter from '@/app/(protected)/plugins/_lib/filters/SearchFilter';
 import TypeFilter from '@/app/(protected)/plugins/_lib/filters/TypeFilter';
-import { useGetAvailablePluginsQuery } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
-import {
-    generatePluginsTableRows,
-    PluginRow
-} from '@/app/(protected)/plugins/_lib/PluginTable';
-import _ from 'lodash';
 import InstalledPluginFilter from '@/app/(protected)/plugins/_lib/filters/InstalledPluginFilter';
+import { PluginRow } from '@/app/(protected)/plugins/_lib/PluginTable';
 
 type AvailablePluginFiltersProps = {
-    setDisplayedRowsCallback: (rows: PluginRow[]) => void;
-    setIsFilteringCallback: (isFiltering: boolean) => void;
+    allPluginRows: PluginRow[];
+    filtersChanged: (filters: { [key: string]: number }) => void;
 };
 
 export type FilterProps = {
@@ -27,60 +22,32 @@ export const defaultSearchableColumns = [
 ];
 
 const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
-    const { setDisplayedRowsCallback, setIsFilteringCallback } = props;
-
-    const { data: availablePlugins } = useGetAvailablePluginsQuery();
+    const { allPluginRows, filtersChanged } = props;
     const [filters, setFilters] = useState({});
 
-    const filterRows = (rows: PluginRow[]): PluginRow[] => {
-        setIsFilteringCallback(true);
-        let filteredRows = _.cloneDeep(rows);
-        for (const filter of Object.values(filters)) {
-            // @ts-ignore
-            filteredRows = filteredRows.filter(filter);
-        }
-        setIsFilteringCallback(false);
-        return filteredRows;
+    const setFiltersCallback = (updatedFilters: any) => {
+        const newFilters = { ...filters, ...updatedFilters };
+        setFilters(newFilters);
+        filtersChanged(newFilters);
     };
 
-    const allPluginRows: PluginRow[] = useMemo(() => {
-        if (!availablePlugins) return [];
-        return generatePluginsTableRows(availablePlugins);
-    }, [availablePlugins]);
-
-    useEffect(() => {
-        if (allPluginRows) {
-            const filteredRows = filterRows(allPluginRows);
-            setDisplayedRowsCallback(filteredRows);
-        }
-    }, [allPluginRows, filters]);
-
-    if (availablePlugins && availablePlugins.length > 0) {
-        return (
-            <Grid container spacing={2} sx={{ margin: 0 }}>
-                <InstalledPluginFilter setFiltersCallback={setFilters} />
-                <Grid
-                    xs={4}
-                    item
-                    sx={{ alignItems: 'flex-end', display: 'flex' }}>
-                    <SearchFilter
-                        setFiltersCallback={setFilters}
-                        searchableColumns={defaultSearchableColumns}
-                    />
-                </Grid>
-                <Grid
-                    xs={3}
-                    item
-                    sx={{ alignItems: 'flex-end', display: 'flex' }}>
-                    <TypeFilter
-                        setFiltersCallback={setFilters}
-                        allRows={allPluginRows}
-                    />
-                </Grid>
+    return (
+        <Grid container spacing={2} sx={{ margin: 0 }}>
+            <InstalledPluginFilter setFiltersCallback={setFiltersCallback} />
+            <Grid xs={4} item sx={{ alignItems: 'flex-end', display: 'flex' }}>
+                <SearchFilter
+                    setFiltersCallback={setFiltersCallback}
+                    searchableColumns={defaultSearchableColumns}
+                />
             </Grid>
-        );
-    }
-    return null;
+            <Grid xs={3} item sx={{ alignItems: 'flex-end', display: 'flex' }}>
+                <TypeFilter
+                    setFiltersCallback={setFiltersCallback}
+                    allRows={allPluginRows}
+                />
+            </Grid>
+        </Grid>
+    );
 };
 
 export default AvailablePluginFilters;
