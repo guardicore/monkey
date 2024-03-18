@@ -12,10 +12,6 @@ import {
     parsePluginManifestResponse,
     parsePluginMetadataResponse
 } from '@/redux/features/api/agentPlugins/responseParsers';
-import {
-    InstallationStatus,
-    setPluginInstallationStatus
-} from '@/redux/features/api/agentPlugins/pluginInstallationStatusSlice';
 
 enum BackendEndpoints {
     PLUGIN_INDEX = '/agent-plugins/available/index',
@@ -57,24 +53,7 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
                     name: pluginInfo.pluginName,
                     version: pluginInfo.pluginVersion
                 }
-            }),
-            async onQueryStarted(pluginInfo, { dispatch, queryFulfilled }) {
-                dispatch(
-                    setPluginInstallationStatus({
-                        pluginId: pluginInfo.pluginId,
-                        status: InstallationStatus.PENDING
-                    })
-                );
-                const result = await queryFulfilled;
-                dispatch(
-                    setPluginInstallationStatus({
-                        pluginId: pluginInfo.pluginId,
-                        status: result.meta.response.ok
-                            ? InstallationStatus.SUCCESS
-                            : InstallationStatus.FAILURE
-                    })
-                );
-            }
+            })
         })
     })
 });

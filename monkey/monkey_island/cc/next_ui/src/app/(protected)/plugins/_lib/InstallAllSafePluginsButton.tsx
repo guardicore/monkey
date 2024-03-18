@@ -4,21 +4,22 @@ import MonkeyButton, {
 } from '@/_components/buttons/MonkeyButton';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import {
+    agentPluginEndpoints,
     useGetAvailablePluginsQuery,
-    useGetInstalledPluginsQuery,
-    useInstallPluginMutation
+    useGetInstalledPluginsQuery
 } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
 import { filterOutInstalledPlugins } from '@/app/(protected)/plugins/_lib/filters/InstalledPluginFilter';
 import { filterOutDangerousPlugins } from '@/app/(protected)/plugins/_lib/filters/SafetyFilter';
 import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
+import { useDispatch } from 'react-redux';
 
 const InstallAllSafePluginsButton = () => {
     const { data: availablePlugins, isLoading: isLoadingAvailablePlugins } =
         useGetAvailablePluginsQuery();
     const { data: installedPlugins, isLoading: isLoadingInstalledPlugins } =
         useGetInstalledPluginsQuery();
-    const [installPlugin] = useInstallPluginMutation();
     const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
 
     const installAllSafePlugins = async () => {
         if (availablePlugins === undefined || installedPlugins === undefined)
@@ -34,12 +35,18 @@ const InstallAllSafePluginsButton = () => {
         safePlugins.forEach((plugin) => {
             installationPromises.push(
                 // @ts-ignore
-                installPlugin({
-                    pluginVersion: plugin.version,
-                    pluginName: plugin.name,
-                    pluginType: plugin.pluginType,
-                    pluginId: plugin.id
-                })
+                dispatch(
+                    // @ts-ignore
+                    agentPluginEndpoints.endpoints.installPlugin.initiate(
+                        {
+                            pluginVersion: plugin.version,
+                            pluginName: plugin.name,
+                            pluginType: plugin.pluginType,
+                            pluginId: plugin.id
+                        },
+                        { fixedCacheKey: plugin.id }
+                    )
+                )
             );
         });
         await Promise.all(installationPromises);
