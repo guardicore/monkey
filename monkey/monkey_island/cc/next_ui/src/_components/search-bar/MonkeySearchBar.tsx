@@ -48,7 +48,6 @@ const MonkeySearchBar = (props: SearchBarProps) => {
                 label={label}
                 value={currentValue}
                 placeholder={placeholder}
-                type={'search'}
                 onChange={handleValueChange}
                 InputProps={{
                     startAdornment: (
