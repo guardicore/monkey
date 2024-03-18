@@ -4,12 +4,6 @@ import React from 'react';
 import { useInstallPluginMutation } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
 import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
-import {
-    InstallationStatus,
-    selectStatusByPluginId
-} from '@/redux/features/api/agentPlugins/pluginInstallationStatusSlice';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
 
 type PluginInstallationButtonProps = {
     pluginType: string;
@@ -21,10 +15,9 @@ type PluginInstallationButtonProps = {
 const PluginInstallationButton = (props: PluginInstallationButtonProps) => {
     const { pluginType, pluginName, pluginVersion, pluginId } = props;
 
-    const [installPlugin] = useInstallPluginMutation();
-    const installationStatus = useSelector((state: RootState) =>
-        selectStatusByPluginId(state, pluginId)
-    );
+    const [installPlugin, installationResult] = useInstallPluginMutation({
+        fixedCacheKey: pluginId
+    });
 
     const onInstallClick = () => {
         installPlugin({
@@ -35,9 +28,9 @@ const PluginInstallationButton = (props: PluginInstallationButtonProps) => {
         });
     };
 
-    if (installationStatus === InstallationStatus.PENDING) {
+    if (installationResult.isLoading) {
         return InstallationInProgressButton(pluginId);
-    } else if (installationStatus === InstallationStatus.SUCCESS) {
+    } else if (installationResult.isSuccess) {
         return DownloadDoneButton(pluginId);
     } else {
         return InstallationReadyButton(pluginId, onInstallClick);
