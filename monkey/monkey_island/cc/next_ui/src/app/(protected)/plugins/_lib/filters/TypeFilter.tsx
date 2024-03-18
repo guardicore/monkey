@@ -14,7 +14,7 @@ type SelectOption = {
 
 const anyTypeOption: SelectOption = { value: '', label: 'All' };
 
-const TypeFilter = ({ allRows, setFiltersCallback }: TypeFilterProps) => {
+const TypeFilter = ({ allRows, setFilterCallback }: TypeFilterProps) => {
     const [selectedType, setSelectedType] = useState(anyTypeOption);
     const selectOptionFromValue = (value): SelectOption => {
         return { value: value, label: value };
@@ -29,12 +29,7 @@ const TypeFilter = ({ allRows, setFiltersCallback }: TypeFilterProps) => {
     const handleTypeChange = (event) => {
         const selectOptionChosen = selectOptionFromValue(event.target.value);
         setSelectedType(selectOptionChosen);
-        setFiltersCallback((prevState) => {
-            return {
-                ...prevState,
-                pluginType: getFilterForType(selectOptionChosen)
-            };
-        });
+        setFilterCallback('pluginType', getFilterForType(selectOptionChosen));
     };
 
     const getFilterForType = (typeOption: SelectOption) => {

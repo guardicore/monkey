@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 type InstalledPluginFilterProps = FilterProps;
 
 const InstalledPluginFilter = (props: InstalledPluginFilterProps) => {
+    const { setFilterCallback } = props;
     const { data: installedPlugins } = useGetInstalledPluginsQuery();
     const filter = (pluginRow: PluginRow): boolean => {
         if (!installedPlugins) return true;
@@ -14,10 +15,9 @@ const InstalledPluginFilter = (props: InstalledPluginFilterProps) => {
         );
         return !installedPlugin;
     };
+
     useEffect(() => {
-        props.setFiltersCallback((prevState) => {
-            return { ...prevState, installed: filter };
-        });
+        setFilterCallback('installed', filter);
     }, [installedPlugins]);
 
     return null;

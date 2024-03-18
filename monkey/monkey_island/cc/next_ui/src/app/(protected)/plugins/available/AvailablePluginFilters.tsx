@@ -15,8 +15,13 @@ type AvailablePluginFiltersProps = {
     setIsFilteringCallback: (isFiltering: boolean) => void;
 };
 
+type PluginFilterFunc = (row: PluginRow) => boolean;
+
 export type FilterProps = {
-    setFiltersCallback: (filters: any) => void;
+    setFilterCallback: (
+        filterName: string,
+        filterFunc: PluginFilterFunc
+    ) => void;
 };
 
 export const defaultSearchableColumns = [
@@ -31,6 +36,15 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
 
     const { data: availablePlugins } = useGetAvailablePluginsQuery();
     const [filters, setFilters] = useState({});
+
+    const setFilterCallback = (
+        filterName: string,
+        filterFunc: PluginFilterFunc
+    ) => {
+        setFilters((prevState) => {
+            return { ...prevState, [filterName]: filterFunc };
+        });
+    };
 
     const filterRows = (rows: PluginRow[]): PluginRow[] => {
         setIsFilteringCallback(true);
@@ -58,13 +72,13 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
     if (availablePlugins && availablePlugins.length > 0) {
         return (
             <Grid container spacing={2} sx={{ margin: 0 }}>
-                <InstalledPluginFilter setFiltersCallback={setFilters} />
+                <InstalledPluginFilter setFilterCallback={setFilterCallback} />
                 <Grid
                     xs={4}
                     item
                     sx={{ alignItems: 'flex-end', display: 'flex' }}>
                     <SearchFilter
-                        setFiltersCallback={setFilters}
+                        setFilterCallback={setFilterCallback}
                         searchableColumns={defaultSearchableColumns}
                     />
                 </Grid>
@@ -73,7 +87,7 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
                     item
                     sx={{ alignItems: 'flex-end', display: 'flex' }}>
                     <TypeFilter
-                        setFiltersCallback={setFilters}
+                        setFilterCallback={setFilterCallback}
                         allRows={allPluginRows}
                     />
                 </Grid>

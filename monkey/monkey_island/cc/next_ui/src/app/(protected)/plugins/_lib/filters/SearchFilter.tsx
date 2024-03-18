@@ -8,9 +8,11 @@ type SearchFilterProps = FilterProps & {
 };
 
 const SearchFilter = (props: SearchFilterProps) => {
+    const { searchableColumns, setFilterCallback } = props;
+
     const onSearchChanged = (query: string) => {
         const filterOnText = (pluginRow: PluginRow): boolean => {
-            for (const field of props.searchableColumns) {
+            for (const field of searchableColumns) {
                 const fieldValue = pluginRow[field];
                 if (fieldValue?.toLowerCase()?.includes(query?.toLowerCase())) {
                     return true;
@@ -24,9 +26,7 @@ const SearchFilter = (props: SearchFilterProps) => {
 
         const filter = query === '' ? noOp : filterOnText;
 
-        props.setFiltersCallback((prevState) => {
-            return { ...prevState, text: filter };
-        });
+        setFilterCallback('text', filter);
     };
 
     return <MonkeySearchBar setQuery={onSearchChanged} />;
