@@ -24,7 +24,7 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
     endpoints: (builder: EndpointBuilder<any, any, any>) => ({
         getAvailablePlugins: builder.query<AvailablePlugin[], void>({
             query: () => ({
-                url: BackendEndpoints.PLUGIN_INDEX,
+                url: BackendEndpoints.PLUGIN_INDEX_FORCE_REFRESH,
                 method: HTTP_METHODS.GET
             }),
             transformResponse: (response: {

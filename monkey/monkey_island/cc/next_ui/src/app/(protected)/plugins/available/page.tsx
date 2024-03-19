@@ -13,14 +13,16 @@ import InstallAllSafePluginsButton from '@/app/(protected)/plugins/_lib/InstallA
 import MonkeyButton, {
     ButtonVariant
 } from '@/_components/buttons/MonkeyButton';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import PluginInstallationButton from '@/app/(protected)/plugins/available/PluginInstallationButton';
+import MonkeyRefreshIcon from '@/_components/icons/MonkeyRefreshIcon';
 
 export default function AvailablePluginsPage() {
     const {
         data: availablePlugins,
         isLoading: isLoadingAvailablePlugins,
-        isError
+        isError,
+        refetch: refreshAvailablePlugins,
+        isFetching: isFetchingAvailablePlugins
     } = useGetAvailablePluginsQuery();
     const [displayedRows, setDisplayedRows] = React.useState<PluginRow[]>([]);
     const [isLoadingRows, setIsLoadingRows] = React.useState(false);
@@ -79,9 +81,11 @@ export default function AvailablePluginsPage() {
                         </Grid>
                         <Grid item xs={2} md={4} lg={1}>
                             <MonkeyButton
-                                onClick={() => {}}
+                                onClick={refreshAvailablePlugins}
                                 variant={ButtonVariant.Contained}>
-                                <RefreshIcon />
+                                <MonkeyRefreshIcon
+                                    isSpinning={isFetchingAvailablePlugins}
+                                />
                             </MonkeyButton>
                         </Grid>
                     </Grid>
@@ -90,7 +94,7 @@ export default function AvailablePluginsPage() {
             <PluginTable
                 rows={displayedRows}
                 columns={generatePluginsTableColumns(getRowActions)}
-                loading={isLoadingRows || isLoadingRows}
+                loading={isFetchingAvailablePlugins || isLoadingRows}
                 noRowsOverlayMessage={getOverlayMessage()}
             />
         </Stack>
