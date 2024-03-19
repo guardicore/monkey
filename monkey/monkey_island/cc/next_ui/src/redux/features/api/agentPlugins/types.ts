@@ -50,3 +50,10 @@ export type PluginMetadata = {
 export type PluginMetadataResponse = {
     [key: string]: { [key: string]: PluginMetadata[] };
 };
+
+export type PluginInfo = {
+    pluginType: string;
+    pluginName: string;
+    pluginVersion: string;
+    pluginId: string;
+};

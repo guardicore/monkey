@@ -21,7 +21,7 @@ import handleAuthToken from '@/redux/features/api/authentication/lib/handleAuthT
 import { instanceOfError } from '@/lib/typeChecks';
 import useRedirectToRegistration from '@/app/(auth)/login/useRedirectToRegistration';
 import ErrorList from '@/_components/errors/ErrorList';
-import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
+import MonkeyLoadingIcon from '@/_components/icons/MonkeyLoadingIcon';
 import BrandHeader from '@/_components/icons/monkey-logo/BrandHeader';
 import { useTheme } from '@mui/material/styles';
 import { cardStyle, containerStyle } from '@/app/(auth)/login/style';
@@ -133,7 +133,7 @@ const LoginPage = () => {
 
     const renderSubmitButtonContent = () => {
         if (isLoading) {
-            return <LoadingIcon />;
+            return <MonkeyLoadingIcon />;
         } else if (isSuccess) {
             return 'Success!';
         }
