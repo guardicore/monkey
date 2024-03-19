@@ -26,7 +26,8 @@ email-validator = "*"
 monkey-types = "*"
 monkeyevents = "*"
 monkeytoolbox = "*"
-monkey-agentpluginapi = ">=0.6.0"
+qmonkey-agentpluginapi = ">=0.6.0"
+monkey-plugintoolbox = "*"
 
 [dev-packages]
 mypy = "*"
