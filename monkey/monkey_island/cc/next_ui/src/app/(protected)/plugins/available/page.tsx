@@ -1,5 +1,8 @@
 'use client';
-import { useGetAvailablePluginsQuery } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
+import {
+    useGetAvailablePluginsQuery,
+    useGetInstalledPluginsQuery
+} from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
 import React from 'react';
 import Stack from '@mui/material/Stack';
 import PluginTable, {
@@ -24,6 +27,10 @@ export default function AvailablePluginsPage() {
         refetch: refreshAvailablePlugins,
         isFetching: isFetchingAvailablePlugins
     } = useGetAvailablePluginsQuery();
+    const {
+        refetch: refreshInstalledPlugins,
+        isFetching: isFetchingInstalledPlugins
+    } = useGetInstalledPluginsQuery();
     const [displayedRows, setDisplayedRows] = React.useState<PluginRow[]>([]);
     const [isLoadingRows, setIsLoadingRows] = React.useState(false);
 
@@ -81,7 +88,10 @@ export default function AvailablePluginsPage() {
                         </Grid>
                         <Grid item xs={2} md={4} lg={1}>
                             <MonkeyButton
-                                onClick={refreshAvailablePlugins}
+                                onClick={() => {
+                                    refreshAvailablePlugins();
+                                    refreshInstalledPlugins();
+                                }}
                                 variant={ButtonVariant.Contained}>
                                 <MonkeyRefreshIcon
                                     isSpinning={isFetchingAvailablePlugins}
@@ -94,7 +104,11 @@ export default function AvailablePluginsPage() {
             <PluginTable
                 rows={displayedRows}
                 columns={generatePluginsTableColumns(getRowActions)}
-                loading={isFetchingAvailablePlugins || isLoadingRows}
+                loading={
+                    isFetchingAvailablePlugins ||
+                    isLoadingRows ||
+                    isFetchingInstalledPlugins
+                }
                 noRowsOverlayMessage={getOverlayMessage()}
             />
         </Stack>
