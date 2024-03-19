@@ -60,7 +60,7 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
             <Grid container spacing={2} sx={{ margin: 0 }}>
                 <InstalledPluginFilter setFiltersCallback={setFilters} />
                 <Grid
-                    xs={4}
+                    xs={7}
                     item
                     sx={{ alignItems: 'flex-end', display: 'flex' }}>
                     <SearchFilter
@@ -69,7 +69,7 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
                     />
                 </Grid>
                 <Grid
-                    xs={3}
+                    xs={5}
                     item
                     sx={{ alignItems: 'flex-end', display: 'flex' }}>
                     <TypeFilter
