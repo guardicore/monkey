@@ -53,26 +53,38 @@ export default function AvailablePluginsPage() {
     return (
         <Stack spacing={2}>
             <Grid container spacing={2}>
-                <Grid item xs={7} md={6}>
+                <Grid item xs={7} md={6} sm={5} lg={3}>
                     <AvailablePluginFilters
                         setDisplayedRowsCallback={setDisplayedRows}
                         setIsFilteringCallback={setIsLoadingRows}
                     />
                 </Grid>
-                <Grid item justifyContent={'flex-end'} xs={5} md={4} lg={5}>
-                    <Box
-                        display="flex"
-                        justifyContent="flex-end"
-                        sx={{ mr: '10px' }}>
-                        <InstallAllSafePluginsButton />
-                    </Box>
-                </Grid>
-                <Grid item xs={1} md={2} lg={1}>
-                    <MonkeyButton
-                        onClick={() => {}}
-                        variant={ButtonVariant.Contained}>
-                        <RefreshIcon />
-                    </MonkeyButton>
+                <Grid
+                    item
+                    xs={5}
+                    md={6}
+                    sm={7}
+                    lg={9}
+                    sx={{ alignItems: 'flex-end', display: 'flex' }}>
+                    <Grid container spacing={2}>
+                        <Grid
+                            item
+                            xs={10}
+                            md={8}
+                            lg={11}
+                            sx={{ textAlign: 'right' }}>
+                            <Box sx={{ mr: '10px' }}>
+                                <InstallAllSafePluginsButton />
+                            </Box>
+                        </Grid>
+                        <Grid item xs={2} md={4} lg={1}>
+                            <MonkeyButton
+                                onClick={() => {}}
+                                variant={ButtonVariant.Contained}>
+                                <RefreshIcon />
+                            </MonkeyButton>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
             <PluginTable
