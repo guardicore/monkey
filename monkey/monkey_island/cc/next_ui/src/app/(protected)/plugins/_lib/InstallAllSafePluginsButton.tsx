@@ -10,7 +10,7 @@ import {
 } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
 import { filterOutInstalledPlugins } from '@/app/(protected)/plugins/_lib/filters/InstalledPluginFilter';
 import { filterOutDangerousPlugins } from '@/app/(protected)/plugins/_lib/filters/SafetyFilter';
-import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
+import MonkeyLoadingIcon from '@/_components/icons/MonkeyLoadingIcon';
 import { useDispatch } from 'react-redux';
 
 const InstallAllSafePluginsButton = () => {
@@ -59,7 +59,7 @@ const InstallAllSafePluginsButton = () => {
         !availablePlugins;
 
     const buttonIcon = loading ? (
-        <LoadingIcon sx={{ mr: '5px' }} />
+        <MonkeyLoadingIcon sx={{ mr: '5px' }} />
     ) : (
         <FileDownloadIcon sx={{ mr: '5px' }} />
     );

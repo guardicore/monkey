@@ -12,7 +12,7 @@ import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import MonkeyTooltip from '@/_components/tooltips/MonkeyTooltip';
 import MonkeyButton from '@/_components/buttons/MonkeyButton';
-import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
+import MonkeyLoadingIcon from '@/_components/icons/MonkeyLoadingIcon';
 import { GridAlignment } from '@mui/x-data-grid';
 
 const HEADER_SUFFIX = '--header';
@@ -173,7 +173,7 @@ const PluginTable = (props: PluginTableProps) => {
         <Box>
             {loading ? (
                 <Box sx={{ textAlign: 'center' }}>
-                    <LoadingIcon sx={{ height: '50px', width: '50px' }} />
+                    <MonkeyLoadingIcon sx={{ height: '50px', width: '50px' }} />
                 </Box>
             ) : (
                 <MonkeyDataGrid

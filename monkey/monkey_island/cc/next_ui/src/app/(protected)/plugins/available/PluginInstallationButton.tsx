@@ -2,7 +2,7 @@ import { GridActionsCellItem } from '@mui/x-data-grid';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import React from 'react';
 import { useInstallPluginMutation } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
-import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
+import MonkeyLoadingIcon from '@/_components/icons/MonkeyLoadingIcon';
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone';
 
 type PluginInstallationButtonProps = {
@@ -57,7 +57,7 @@ const InstallationInProgressButton = (pluginId: string) => {
     return (
         <GridActionsCellItem
             key={pluginId}
-            icon={<LoadingIcon />}
+            icon={<MonkeyLoadingIcon />}
             label="Downloading"
             className="textPrimary"
             color="inherit"
