@@ -49,7 +49,7 @@ virtualenv = "==20.16.2" # Pinned to 20.16.2 due to importlib-metadat/flake8 iss
 mongomock = "==4.1.2"
 pytest = ">=5.4"
 requests-mock = "==1.8.0"
-black = "==23.9.1"
+black = "==24.3.0"
 dlint = "==0.14.1"
 importlib-metadata = "==4.2.0" # Required by Flake8 on Python3.7. See https://github.com/python/importlib_metadata/issues/406
 flake8 = "==6.1.0"
