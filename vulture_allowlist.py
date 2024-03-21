@@ -180,11 +180,5 @@ RDPIOSettings.clipboard_use_pyperclip
 
 AgentPluginService.install_agent_plugin_from_repository
 
-# TODO: Remove after used
-AgentCommandBuilderFactory
-AgentCommandBuilderFactory.create_linux_agent_command_builder
-AgentCommandBuilderFactory.create_windows_agent_command_builder
-LinuxAgentCommandBuilder.get_command
-LinuxAgentCommandBuilder.reset_command
-LinuxAgentCommandBuilder.get_command
-LinuxAgentCommandBuilder.reset_command
+# TODO: Remove after we move the plugins to separate repos
+execute_agent
