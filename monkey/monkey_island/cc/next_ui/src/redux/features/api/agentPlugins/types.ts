@@ -57,3 +57,5 @@ export type PluginInfo = {
     pluginVersion: string;
     pluginId: string;
 };
+
+export type PluginTar = BinaryType;
