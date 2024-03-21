@@ -15,17 +15,16 @@ type PluginInstallationButtonProps = {
 const PluginInstallationButton = (props: PluginInstallationButtonProps) => {
     const { pluginType, pluginName, pluginVersion, pluginId } = props;
 
-    const [installPlugin, installationResult] = useInstallPluginMutation();
+    const [installPlugin, installationResult] = useInstallPluginMutation({
+        fixedCacheKey: pluginId
+    });
 
-    const onInstallClick = (
-        pluginName: string,
-        pluginType: string,
-        pluginVersion: string
-    ) => {
+    const onInstallClick = () => {
         installPlugin({
             pluginVersion: pluginVersion,
             pluginName: pluginName,
-            pluginType: pluginType
+            pluginType: pluginType,
+            pluginId: pluginId
         });
     };
 
@@ -33,17 +32,22 @@ const PluginInstallationButton = (props: PluginInstallationButtonProps) => {
         return InstallationInProgressButton(pluginId);
     } else if (installationResult.isSuccess) {
         return DownloadDoneButton(pluginId);
+    } else {
+        return InstallationReadyButton(pluginId, onInstallClick);
     }
+};
 
+const InstallationReadyButton = (
+    pluginId: string,
+    onInstallClick: () => void
+) => {
     return (
         <GridActionsCellItem
             key={pluginId}
             icon={<FileDownloadIcon />}
             label="Download"
             className="textPrimary"
-            onClick={() =>
-                onInstallClick(pluginName, pluginType, pluginVersion)
-            }
+            onClick={onInstallClick}
             color="inherit"
         />
     );
