@@ -6,7 +6,8 @@ import {
     InstalledPlugin,
     PluginInfo,
     PluginManifestResponse,
-    PluginMetadataResponse
+    PluginMetadataResponse,
+    PluginTar
 } from '@/redux/features/api/agentPlugins/types';
 import {
     parsePluginManifestResponse,
@@ -53,6 +54,16 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
                     name: pluginInfo.pluginName,
                     version: pluginInfo.pluginVersion
                 }
+            })
+        }),
+        uploadPlugin: builder.mutation<any, PluginTar>({
+            query: (pluginTar: PluginTar) => ({
+                url: BackendEndpoints.PLUGIN_INSTALL,
+                method: HTTP_METHODS.PUT,
+                headers: {
+                    'Content-Type': 'application/x-tar'
+                },
+                body: { pluginTar }
             })
         })
     })
