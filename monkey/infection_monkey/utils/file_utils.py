@@ -1,34 +1,10 @@
 import ctypes
 import logging
-from pathlib import Path, WindowsPath
-from typing import Callable, Iterable, Set
-
-from monkeytoolbox import apply_filters
+from pathlib import WindowsPath
 
 logger = logging.getLogger(__name__)
 
 MOVEFILE_DELAY_UNTIL_REBOOT = 4
-
-
-def filter_files(
-    files: Iterable[Path], file_filters: Iterable[Callable[[Path], bool]]
-) -> Iterable[Path]:
-    return apply_filters(file_filters, files)
-
-
-def file_extension_filter(file_extensions: Set) -> Callable[[Path], bool]:
-    def inner_filter(f: Path) -> bool:
-        return f.suffix in file_extensions
-
-    return inner_filter
-
-
-def is_not_symlink_filter(f: Path) -> bool:
-    return not f.is_symlink()
-
-
-def is_not_shortcut_filter(f: Path) -> bool:
-    return f.suffix != ".lnk"
 
 
 def mark_file_for_deletion_on_windows(file_path: WindowsPath):
@@ -39,9 +15,9 @@ def mark_file_for_deletion_on_windows(file_path: WindowsPath):
     )
 
     if mark_file_response == 0:
-        error_message = ctypes.FormatError(
-            ctypes.windll.kernel32.GetLastError()
-        )  # type: ingore [attr-defined]
+        error_message = ctypes.FormatError(  # type: ignore [attr-defined]
+            ctypes.windll.kernel32.GetLastError()  # type: ignore [attr-defined]
+        )
         logger.debug(f"Error marking file {file_path} for deletion on next boot: {error_message}")
         return
 
