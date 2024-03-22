@@ -18,8 +18,7 @@ from agentpluginapi import (
     TargetHostPorts,
 )
 from monkeytypes import OperatingSystem, PortStatus
-
-from infection_monkey.exploit.tools import BruteForceExploiter
+from plugintoolbox import BruteForceExploiter
 
 POWERSHELL_PORTS = [POWERSHELL_NO_SSL_PORT, POWERSHELL_SSL_PORT]
 

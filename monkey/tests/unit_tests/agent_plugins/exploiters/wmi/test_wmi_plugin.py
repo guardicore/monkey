@@ -14,8 +14,7 @@ from agentpluginapi import (
     TargetHostPorts,
 )
 from monkeytypes import OperatingSystem, PortStatus
-
-from infection_monkey.exploit.tools import BruteForceExploiter
+from plugintoolbox import BruteForceExploiter
 
 AGENT_ID = UUID("5c145d4e-ec61-44f7-998e-17477112f50f")
 BAD_WMI_OPTIONS_DICT = {"blah": "blah"}
