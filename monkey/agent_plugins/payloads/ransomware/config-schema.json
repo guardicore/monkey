@@ -5,33 +5,33 @@
             "type": "string",
             "pattern": "^(\\.[A-Za-z0-9_]+)?$",
             "description": "The file extension that the Infection Monkey will use for the encrypted file.",
-            "default": ".m0nk3y",
+            "default": ".m0nk3y"
         },
         "linux_target_dir": {
             "title": "Linux target directory",
             "type": ["null", "string"],
             "pattern": "^$|^/|^\\$|^~",
             "description": "A path to a directory on Linux systems that contains files you will allow Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
-            "default": "",
+            "default": ""
         },
         "windows_target_dir": {
             "title": "Windows target directory",
             "type": ["null", "string"],
             "pattern": "^$|^([A-Za-z]:(\\\\|/))|^%([A-Za-z#$'()*+,\\-\\.?@[\\]_`\\{\\}~ ]+([A-Za-z#$'()*+,\\-\\.?@[\\]_`\\{\\}~ ]|\\d)*)%|^\\\\{2}",
             "description": "A path to a directory on Windows systems that contains files you will allow Infection Monkey to encrypt. If no directory is specified, no files will be encrypted.",
-            "default": "",
+            "default": ""
         },
         "leave_readme": {
             "title": "Leave a ransom note",
             "type": "boolean",
             "description": "If enabled, Infection Monkey will leave a ransom note in the target directory.",
-            "default": true,
+            "default": true
         },
         "change_wallpaper": {
-            "default": false,
-            "description": "If enabled, Infection Monkey will change the desktop wallpaper on Windows systems",
             "title": "Change Desktop Wallpaper",
             "type": "boolean",
-        },
+            "description": "If enabled, Infection Monkey will change the desktop wallpaper on Windows systems",
+            "default": false
+        }
     }
 }
