@@ -4,9 +4,7 @@ from pathlib import Path
 from typing import Iterable, Set
 
 from monkeytoolbox import get_all_regular_files_in_directory
-
-# These will go to the AgentPluginUtils repo
-from infection_monkey.utils.file_utils import (
+from plugintoolbox import (
     file_extension_filter,
     filter_files,
     is_not_shortcut_filter,
@@ -46,7 +44,7 @@ class ProductionSafeTargetFileSelector:
         ]
 
         all_files = get_all_regular_files_in_directory(target_dir)
-        return filter_files(all_files, file_filters)
+        return filter_files(file_filters, all_files)
 
 
 def _is_not_ransomware_readme_filter(filepath: Path) -> bool:
