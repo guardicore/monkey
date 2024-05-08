@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  mongo:
+    container_name: mongo
+    hostname: mongo
+    image: mongo:6.0
+    ports:
+      - 27017:27017
+    volumes:
+      - db:/data/db
+  monkey-island:
+    container_name: monkey-island
+    hostname: monkey-island
+    image: infectionmonkey/monkey-island
+    environment:
+      - MONKEY_MONGO_HOST=mongo
+      - MONKEY_MONGO_URL=mongodb://mongo:27017/monkey_island_test
+    ports:
+      - 443:443
+    depends_on:
+      - mongo
+  hello:
+    container_name: hello
+    hostname: hello
+    image: infectionmonkey/ssh1
+    command: 'sh -c "trap : TERM INT; tail -f /dev/null & wait"'
+volumes:
+  db:
