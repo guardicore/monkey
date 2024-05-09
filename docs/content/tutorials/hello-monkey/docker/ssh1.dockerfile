@@ -5,8 +5,10 @@ RUN apt-get update && apt-get install -y openssh-server \
     && rm -rf /var/lib/apt/lists/*
 # Enable password authentication
 RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
-# # Remove sshguard
-# RUN apt-get remove -y sshguard
 # Add user
-RUN useradd -m -s /bin/bash user -p j688yq\pB{5=
-USER user
+RUN useradd -m -s /bin/bash user -p "$(openssl passwd -1 j688yq/pB{5=)" \
+    && mkdir -p /home/user/.ssh \
+    && chown user /home/user/.ssh
+RUN service ssh start
+EXPOSE 22
+CMD ["/usr/sbin/sshd","-D"]

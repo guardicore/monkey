@@ -9,10 +9,12 @@ tags: ["tutorials", "hello-monkey"]
 
 ## Hello Monkey
 
-Note: Build the docker container (run build.sh)
-Note: What are the learning objectives?
-
-In this tutorial, we will use the Infection Monkey to exploit a simple vulnerability. We will configure Infection Monkey to exploit the vulnerability, and then run the Monkey to observe that it is able to gain access to the machine. You'll learn how to start Infection Monkey, configure it, and run it.
+In this tutorial, we will use the Infection Monkey to exploit a simple vulnerability. We will configure Infection Monkey to exploit the vulnerability, and then run the Monkey to observe that it is able to gain access to the machine. You'll learn how to start Infection Monkey, configure it, and run the Monkey against a network. Specifically, you'll learn how to:
+- Install plugins
+- Specify targets for Infection Monkey to exploit in the network
+- Tell Infection Monkey what exploits to attempt against machines on the network
+- Provide Infection Monkey with credentials it can use when attempting to exploit machines
+- Run the Monkey and observe its progress
 
 ### Prerequisites
 First, make sure that you have the following prerequisites installed:
@@ -38,38 +40,71 @@ Now we'll need to configure Infection Monkey to exploit the vulnerable container
 Before the Monkey can do anything useful, it needs to be configured. Otherwise, it won't know what exploits to attempt, or what machine(s) to attempt to breach.
 
 {{% notice note %}}
-The Infection Monkey will only attempt to breach the machines that you've explicitly configured it to target.
+The Infection Monkey will only attempt to breach the machines that you've explicitly configured it to target. This helps to ensure that the Monkey doesn't run amok on your network.
 {{% /notice %}}
+
 
 #### Tell the Monkey what machines to target
 In our case, we know that the target machine has the hostname `hello`. In order to tell the Monkey to target that hostname, starting from the **Configuration** page, ensure that **Propagation** tab is selected, and then select the **Network analysis** subtab. Then, under the "Scan target list" section, click the "+" button to add a target to scan. Enter our target hostname, `hello`, into the input field. Finally, make sure to scroll to the bottom and click **Submit** in order to save the configuration.
 
 TODO: Screenshots of configuration page(s)
 
+{{% notice note %}}
+You should see a notice indicating that the configuration was submitted successfully.
+{{% /notice %}}
 
-Great, the Monkey knows what machine to target. What happens if we run it? Select **1. Run Monkey** in the navigation sidebar to bring up the Run Monkey page. We'll choose the **From Island** option, which will start the Monkey from the Island machine.
+Great, the Monkey knows what machine to target. What happens if we run it? Select **1. Run Monkey** in the navigation sidebar to bring up the Run Monkey page. We'll choose the **From Island** option, which will start the Monkey from the Island machine. Go ahead and do that now.
+
+Observe that a checkmark appears next to **1. Run Monkey** in the navigation sidebar. This indicates that the Monkey agent has started.
+
+Select **2. Infection Map** in the navigation sidebar. This brings up a network view (from the Monkey's perspective). You should notice and arrow appear between the `monkey-island` machine and the vulnerable container. If you look at the legend, you'll notice that this is indicates that the Monkey scanned the container.
+
+You should also observe a checkmark appear next to both **2. Infection Map** and **3. Security Reports** in the navigation sidebar. This indicates that the assessment has completed. Also note that while the Monkey was able to scan the container, it was not able to exploit it. In fact, if you select the vulnerable container in the **Infection Map** view, you'll see that it _hasn't even attempted_ to exploit it. This is because we haven't configured the Monkey with any exploiters. We'll do that next.
 
 
 #### Tell the Monkey what exploiters to use
-- Install SSH Exploiter plugin
-- Configure Username/Password for exploitation
+Now we're going to configure the Monkey to use an exploiter. In order to do that, select **Configuration** in the navigation sidebar. Select the **Propagation** tab, and the **Exploiters** subtab. You should see a list of _Enabled exploiters_, which you'll notice, is empty. This is because we haven't installed any exploiters yet. Thankfully, the _Enabled exploiters_ list provides a link to a page where we can download exploiters, so let's follow that link and install an exploiter.
 
-### Run the Monkey
-With the Monkey configured, all's that's left to do is run it!
-
-TODO: Screenshot of the run page
+TODO: Add screenshot of empty exploiters list
 
 {{% notice note %}}
-Test
+Infection Monkey does not come with exploiters pre-installed. However, it provides an easy way to download and install them.
 {{% /notice %}}
+
+You should now be at the **Plugins** page. Under the _Available Plugins_ tab you'll see a list of all the plugins that can be installed. Infection Monkey has several types of plugins. Since we're interested in installing an exploiter, let's filter this list to only show us exploiters. Select the _Type_ dropdown, and choose **Exploiter**. You should now see that the _Type_ column only has Exploiter.
+
+For this tutorial we're going to install the _SSH Exploiter_. Type "ssh" into the search field, and you should see an exploiter named **SSH**. Click the download button to install that exploiter. The button will change into a loading indicator to show that it's installing, and then to a checkmark when the plugin is installed. You can go to the _Installed Plugins_ tab and see that a plugin named **SSH** of type **Exploiter** is installed.
+
+Great! We've installed the SSH Exploiter, but we still need to tell the Monkey to use it. Navigate back to the **Configuration** page, and notice that the _Enabled exploiters_ list now shows _SSH Exploiter_ as an option. Check the box next to _SSH Exploiter_ and then **Submit** the configuration.
+
+Now that we've told Infection Monkey what exploiter to use, let's try running again. Go navigate to **1. Run Monkey** and select _From Island_ again. Then, let's have another look at the _Infection Map_:
 
 TODO: Screenshot of the map
 
-{{% notice tip %}}
-Test
-{{% /notice %}}
+Hmm. No change. It _still_ didn't attempt to exploit.
+
+This is because the SSH Exploiter requires credentials in order to run, and we haven't provided any. Let's do that now.
+
+
+#### Tell the Monkey what credentials to use
+Navigate once again to the **Configuration** page. Select the **Propagation** tab, then the **Credentials** subtab.
+
+Enter `user` into the **Identity** field, and `j688yq/pB{5=` in the **Password** field, and hit the _Save_ button. Then **Submit** the configuration once again.
+
+Okay, let's give it one more go. Navigate to the _Run Monkey_ page, and run the Monkey _From Island_. Then, switch to the _Infection Map_ and observe the Monkey's progress:
+
+TODO: Show an image of the map with a successful run
+
+Huzzah! We've succeeded!
+
+
+### Review
+Let's take a moment to review what you've learned:
+- You now know that the Monkey does not come with exploiters out of the box, but they can be installed easily. You also know how to get to the Plugins page and install exploiters.
+- You've learned how to tell the Monkey which machines to target, which exploiters to use, as well as how to provide credentials to the Monkey.
+- You've learned how to run the Monkey and observe it's progress.
+
 
 ### Next steps
 - Secure the vulnerable machine and try again?
--
 - ...

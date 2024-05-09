@@ -5,7 +5,6 @@ services:
     container_name: mongo
     hostname: mongo
     image: mongo:6.0
-    network_mode: host
     ports:
       - 27017:27017
     volumes:
@@ -13,10 +12,9 @@ services:
   monkey-island:
     container_name: monkey-island
     hostname: monkey-island
-    image: infectionmonkey/monkey-island
-    network_mode: host
-    # environment:
-    #   - MONKEY_MONGO_URL=mongodb://mongo:27017/monkey_island_test
+    image: infectionmonkey/monkey-island:e7c59c79d
+    environment:
+      - MONKEY_MONGO_URL=mongodb://mongo:27017/monkey_island_test
     ports:
       - 5000:5000
     depends_on:
@@ -25,7 +23,6 @@ services:
     container_name: hello
     hostname: hello
     image: infectionmonkey/ssh1
-    network_mode: host
-    command: 'sh -c "trap : TERM INT; tail -f /dev/null & wait"'
+    command: '/usr/sbin/sshd -D && sh -c "trap : TERM INT; tail -f /dev/null & wait"'
 volumes:
   db:
