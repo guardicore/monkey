@@ -1,13 +1,11 @@
 ---
-title: "Tutorial 1: Hello Monkey"
+title: "Tutorial 1: Hello, Monkey"
 date: 2020-05-26T20:57:10+03:00
 draft: false
 pre: '<i class="fab fa-graduation-cap"></i> '
 weight: 2
 tags: ["tutorials", "hello-monkey"]
 ---
-
-## Hello Monkey
 
 In this tutorial, we will use Infection Monkey to exploit a simple vulnerability. We will configure Infection Monkey to exploit the vulnerability and target a specific machine, and then run it to observe that it is able to gain access to the machine. You'll learn how to start Infection Monkey, configure it, and run it against a network. Specifically, you'll learn how to:
 - Install plugins
