@@ -44,7 +44,7 @@
     "babel-plugin-emotion": "^11.0.0",
     "copyfiles": "^2.4.1",
     "css-loader": "^6.8.1",
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-webpack-plugin": "^4.0.1",
     "fork-ts-checker-webpack-plugin": "^8.0.0",
