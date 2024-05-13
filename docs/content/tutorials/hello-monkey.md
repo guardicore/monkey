@@ -9,7 +9,7 @@ tags: ["tutorials", "hello-monkey"]
 
 ## Hello Monkey
 
-In this tutorial, we will use the Infection Monkey to exploit a simple vulnerability. We will configure Infection Monkey to exploit the vulnerability, and then run the Monkey to observe that it is able to gain access to the machine. You'll learn how to start Infection Monkey, configure it, and run the Monkey against a network. Specifically, you'll learn how to:
+In this tutorial, we will use Infection Monkey to exploit a simple vulnerability. We will configure Infection Monkey to exploit the vulnerability and target a certain machine, and then run it to observe that it is able to gain access to the machine. You'll learn how to start Infection Monkey, configure it, and run it against a network. Specifically, you'll learn how to:
 - Install plugins
 - Specify targets for Infection Monkey to exploit in the network
 - Tell Infection Monkey what exploits to attempt against machines on the network
@@ -69,7 +69,7 @@ Great, the Monkey knows what machine to target. What happens if we run it? Selec
 
 Observe that a checkmark appears next to **1. Run Monkey** in the navigation sidebar. This indicates that a Monkey Agent has started.
 
-You can also see the Monkey's progress by selecting **2. Infection Map** in the navigation sidebar. This brings up a network view (from the Monkey's perspective). You should see an arrow appear between the `monkey-island` machine and the vulnerable container. If you look at the legend, you'll notice that this indicates that the Monkey scanned the container.
+You can see the Monkey's progress by selecting **2. Infection Map** in the navigation sidebar. This brings up a network view (from the Monkey's perspective). You should see an arrow appear between the `monkey-island` machine and the vulnerable container. If you look at the legend, you'll notice that this indicates that the Monkey scanned the container.
 
 ![Network map](../../images/tutorials/hello-monkey/8-map-scanned.jpg)
 
@@ -79,7 +79,7 @@ You should also observe a checkmark appear next to both **2. Infection Map** and
 
 
 #### Tell the Monkey which exploiters to use
-Now we're going to configure the Monkey to use an exploiter. In order to do that, select **Configuration** in the navigation sidebar. Select the **Propagation** tab, and the **Exploiters** subtab. You should see a list of _Enabled exploiters_, which you'll notice, is empty. This is because we haven't installed any exploiters yet. Thankfully, the _Enabled exploiters_ list provides a link to a page where we can download exploiters, so let's follow that link and install an exploiter.
+Now we're going to configure the Monkey to use an exploiter. In order to do that, select **Configuration** in the navigation sidebar. Select the **Propagation** tab, and the **Exploiters** subtab. You should see a list of _Enabled exploiters_, which you'll notice, is empty. This is because we haven't installed any exploiters yet. Thankfully, the _Enabled exploiters_ list provides a link to a page where we can download and install exploiter plugins, so let's follow that link and install an exploiter.
 
 ![Empty exploiters list](../../images/tutorials/hello-monkey/10-empty-exploiter-list.jpg)
 
@@ -128,7 +128,7 @@ Huzzah! We've succeeded!
 
 ### Review
 Let's take a moment to review what you've learned:
-- You now know that the Monkey does not come with exploiters out of the box, but they can be installed easily. You also know how to get to the Plugins page and install exploiters.
+- You now know that the Monkey does not come with exploiters out of the box, but they can be installed easily. You also know how to get to the Plugins page and install plugins.
 - You've learned how to tell the Monkey which machines to target, which exploiters to use, as well as how to provide credentials to the Monkey.
 - You've learned how to run the Monkey and observe its progress.
 
