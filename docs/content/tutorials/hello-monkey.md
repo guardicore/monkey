@@ -106,7 +106,7 @@ This is because the SSH Exploiter requires credentials in order to run, and we h
 #### Tell the Monkey which credentials to use
 Navigate once again to the **Configuration** page. Select the **Propagation** tab, then the **Credentials** subtab.
 
-Enter `user` into the **Identity** field, and `j688yq/pB{5=` in the **Password** field, and hit the _Save_ button.
+Enter `user` into the **Identity** field, and `password` in the **Password** field, and hit the _Save_ button.
 
 ![Credentials entered](../../images/tutorials/hello-monkey/13-credentials-input.jpg)
 
