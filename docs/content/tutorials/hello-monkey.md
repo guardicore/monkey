@@ -9,7 +9,7 @@ tags: ["tutorials", "hello-monkey"]
 
 ## Hello Monkey
 
-In this tutorial, we will use Infection Monkey to exploit a simple vulnerability. We will configure Infection Monkey to exploit the vulnerability and target a certain machine, and then run it to observe that it is able to gain access to the machine. You'll learn how to start Infection Monkey, configure it, and run it against a network. Specifically, you'll learn how to:
+In this tutorial, we will use Infection Monkey to exploit a simple vulnerability. We will configure Infection Monkey to exploit the vulnerability and target a specific machine, and then run it to observe that it is able to gain access to the machine. You'll learn how to start Infection Monkey, configure it, and run it against a network. Specifically, you'll learn how to:
 - Install plugins
 - Specify targets for Infection Monkey to exploit in the network
 - Tell Infection Monkey what exploits to attempt against machines on the network
@@ -47,7 +47,7 @@ The Infection Monkey will only attempt to breach the machines that you've explic
 
 
 #### Tell the Monkey which machines to target
-In our case, we know that the target machine has the hostname `hello`. In order to tell the Monkey to target that hostname, starting from the **Configuration** page, ensure that **Propagation** tab is selected, and then select the **Network analysis** subtab.
+In our case, we know that the target machine has the hostname `hello`. In order to tell the Monkey to target that hostname, starting from the **Configuration** page, ensure that the **Propagation** tab is selected, and then select the **Network analysis** subtab.
 
 ![Network analysis configuration](../../images/tutorials/hello-monkey/4-network-analysis.jpg)
 
@@ -56,14 +56,11 @@ Then, under the "Scan target list" section, click the "+" button to add a target
 ![Scan target list in the Network Analysis configuration](../../images/tutorials/hello-monkey/5-scan-target-list.jpg)
 
 Finally, make sure to scroll to the bottom and click **Submit** in order to save the configuration.
+You should see a notice indicating that the configuration was submitted successfully.
 
 ![Submit button](../../images/tutorials/hello-monkey/6-submit-button.jpg)
 
-{{% notice note %}}
-You should see a notice indicating that the configuration was submitted successfully.
-{{% /notice %}}
-
-Great, the Monkey knows what machine to target. What happens if we run it? Select **1. Run Monkey** in the navigation sidebar to bring up the Run Monkey page. We'll choose the **From Island** option, which will start the Monkey from the Island machine. Go ahead and do that now.
+Great, the Monkey now knows which machine to target. What happens if we run it? Select **1. Run Monkey** in the navigation sidebar to bring up the Run Monkey page. We'll choose the **From Island** option, which will start the Monkey from the Island machine. Go ahead and do that now.
 
 ![Run Monkey page](../../images/tutorials/hello-monkey/7-run-monkey.jpg)
 
@@ -84,7 +81,7 @@ Now we're going to configure the Monkey to use an exploiter. In order to do that
 ![Empty exploiters list](../../images/tutorials/hello-monkey/10-empty-exploiter-list.jpg)
 
 {{% notice note %}}
-Infection Monkey does not come with exploiters pre-installed. However, it provides an easy way to download and install them.
+Infection Monkey does not come with exploiters pre-installed. However, it provides an easy way to download and install them from within the Island web interface.
 {{% /notice %}}
 
 You should now be at the **Plugins** page. Under the _Available Plugins_ tab you'll see a list of all the plugins that can be installed. Infection Monkey has several types of plugins. Since we're interested in installing an exploiter, let's filter this list to only show us exploiters. Select the _Type_ dropdown, and choose **Exploiter**. You should now see that the _Type_ column only has Exploiter.
@@ -111,11 +108,11 @@ Navigate once again to the **Configuration** page. Select the **Propagation** ta
 
 Enter `user` into the **Identity** field, and `j688yq/pB{5=` in the **Password** field, and hit the _Save_ button.
 
-![Credentails entered](../../images/tutorials/hello-monkey/13-credentials-input.jpg)
+![Credentials entered](../../images/tutorials/hello-monkey/13-credentials-input.jpg)
 
 You should see a new entry appear in the _Saved Credentials_ list:
 
-![Credentails saved](../../images/tutorials/hello-monkey/14-saved-credentials.jpg)
+![Credentials saved](../../images/tutorials/hello-monkey/14-saved-credentials.jpg)
 
 Make sure you **Submit** the configuration so that the credentials are saved.
 
