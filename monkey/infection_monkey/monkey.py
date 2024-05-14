@@ -128,7 +128,7 @@ class InfectionMonkey:
         logger.info(f"Process ID: {os.getpid()}")
         logger.info(f"SHA256: {self._sha256}")
 
-        context = multiprocessing.get_context("spawn")
+        self._context = multiprocessing.get_context("spawn")
 
         self._opts = self._get_arguments(args)
         self._otp = self._get_otp()
@@ -139,14 +139,14 @@ class InfectionMonkey:
         self._agent_event_queue = self._setup_agent_event_queue()
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
-        plugin_event_queue = context.Queue()
+        plugin_event_queue = self._context.Queue()
         self._plugin_event_forwarder = PluginEventForwarder(
             plugin_event_queue, self._agent_event_queue
         )
         self._agent_event_publisher = QueuedAgentEventPublisher(plugin_event_queue)
 
         http_island_api_client_factory = HTTPIslandAPIClientFactory(
-            self._agent_event_serializer_registry, self._agent_id, context.Lock()
+            self._agent_event_serializer_registry, self._agent_id, self._context.Lock()
         )
         # Register a proxy for HTTPIslandAPIClient. The manager will create and own the instance
         SyncManager.register(
@@ -156,7 +156,7 @@ class InfectionMonkey:
             "HTTPAgentBinaryServerFactory", HTTPAgentBinaryServerFactory, exposed=("__call__",)
         )
         SyncManager.register("TCPPortSelector", TCPPortSelector)
-        self._manager = context.Manager()
+        self._manager = self._context.Manager()
         self._plugin_dir = (
             Path(gettempdir())
             / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
@@ -424,7 +424,8 @@ class InfectionMonkey:
 
         http_agent_binary_server = self._build_http_agent_binary_server(agent_binary_repository)
         http_agent_binary_server_registrar = HTTPAgentBinaryServerRegistrar(
-            http_agent_binary_server
+            http_agent_binary_server,
+            self._context,
         )
 
         agent_command_builder_factory = AgentCommandBuilderFactory(
