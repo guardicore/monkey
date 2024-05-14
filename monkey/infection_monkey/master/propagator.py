@@ -52,6 +52,8 @@ class Propagator:
         network_scan_completed = threading.Event()
         self._hosts_to_exploit = Queue()
 
+        self._hosts_to_exploit.put(TargetHost(ip=IPv4Address("192.168.1.58")))
+
         scan_thread = create_daemon_thread(
             target=self._scan_network,
             name="PropagatorScanThread",
