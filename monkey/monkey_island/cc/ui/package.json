@@ -72,7 +72,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/icons-material": "^5.15.7",
-    "@mui/material": "^5.13.5",
+    "@mui/material": "^5.15.15",
     "@mui/x-data-grid": "^6.19.3",
     "@rjsf/bootstrap-4": "^5.8.1",
     "@rjsf/core": "^5.8.1",
