@@ -21,7 +21,7 @@ import ErrorList from '@/_components/errors/ErrorList';
 import Card from '@mui/material/Card';
 import BrandHeader from '@/_components/icons/monkey-logo/BrandHeader';
 import Stack from '@mui/material/Stack';
-import LoadingIcon from '@/_components/icons/loading-icon/LoadingIcon';
+import MonkeyLoadingIcon from '@/_components/icons/MonkeyLoadingIcon';
 import { useTheme } from '@mui/material/styles';
 import { cardStyle, containerStyle } from '@/app/(auth)/registration/style';
 
@@ -134,7 +134,7 @@ const RegisterPage = () => {
 
     const renderSubmitButtonContent = () => {
         if (isLoading) {
-            return <LoadingIcon />;
+            return <MonkeyLoadingIcon />;
         } else if (isSuccess) {
             return 'Success!';
         }

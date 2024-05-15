@@ -1,4 +1,4 @@
-export const loadingIcon = {
+export const spinningIcon = {
     animation: 'rotate 0.75s infinite',
     display: 'inline-block',
 

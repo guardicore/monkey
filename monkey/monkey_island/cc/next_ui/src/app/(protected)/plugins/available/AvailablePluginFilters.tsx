@@ -2,13 +2,12 @@ import Grid from '@mui/material/Grid';
 import React, { useEffect, useMemo, useState } from 'react';
 import SearchFilter from '@/app/(protected)/plugins/_lib/filters/SearchFilter';
 import TypeFilter from '@/app/(protected)/plugins/_lib/filters/TypeFilter';
-import { useGetAvailablePluginsQuery } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
 import {
     generatePluginsTableRows,
     PluginRow
 } from '@/app/(protected)/plugins/_lib/PluginTable';
 import _ from 'lodash';
-import InstalledPluginFilter from '@/app/(protected)/plugins/_lib/filters/InstalledPluginFilter';
+import useInstallablePlugins from '@/app/(protected)/plugins/_lib/useInstallablePlugins';
 
 type AvailablePluginFiltersProps = {
     setDisplayedRowsCallback: (rows: PluginRow[]) => void;
@@ -34,7 +33,7 @@ export const defaultSearchableColumns = [
 const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
     const { setDisplayedRowsCallback, setIsFilteringCallback } = props;
 
-    const { data: availablePlugins } = useGetAvailablePluginsQuery();
+    const installablePlugins = useInstallablePlugins();
     const [filters, setFilters] = useState({});
 
     const setFilterCallback = (
@@ -58,9 +57,9 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
     };
 
     const allPluginRows: PluginRow[] = useMemo(() => {
-        if (!availablePlugins) return [];
-        return generatePluginsTableRows(availablePlugins);
-    }, [availablePlugins]);
+        if (installablePlugins === undefined) return [];
+        return generatePluginsTableRows(installablePlugins);
+    }, [installablePlugins]);
 
     useEffect(() => {
         if (allPluginRows) {
@@ -69,12 +68,11 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
         }
     }, [allPluginRows, filters]);
 
-    if (availablePlugins && availablePlugins.length > 0) {
+    if (installablePlugins !== undefined) {
         return (
             <Grid container spacing={2} sx={{ margin: 0 }}>
-                <InstalledPluginFilter setFilterCallback={setFilterCallback} />
                 <Grid
-                    xs={4}
+                    xs={7}
                     item
                     sx={{ alignItems: 'flex-end', display: 'flex' }}>
                     <SearchFilter
@@ -83,7 +81,7 @@ const AvailablePluginFilters = (props: AvailablePluginFiltersProps) => {
                     />
                 </Grid>
                 <Grid
-                    xs={3}
+                    xs={5}
                     item
                     sx={{ alignItems: 'flex-end', display: 'flex' }}>
                     <TypeFilter

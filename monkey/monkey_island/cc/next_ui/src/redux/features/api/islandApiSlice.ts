@@ -8,7 +8,7 @@ import { getApiPath } from '@/constants/paths.constants';
 import { getToken, tokenIsStored } from '@/lib/authenticationToken';
 import { AuthenticationActions } from '@/redux/features/api/authentication/authenticationActions';
 
-export const DEFAULT_QUERY_TIMEOUT: number = 10000;
+export const DEFAULT_QUERY_TIMEOUT: number = 5 * 60 * 1000; // 5 minutes
 export const AUTHENTICATION_TOKEN_HEADER: string = 'authentication-token';
 
 const baseQuery: BaseQueryFn = fetchBaseQuery({
@@ -18,7 +18,9 @@ const baseQuery: BaseQueryFn = fetchBaseQuery({
         if (token) {
             headers.set(AUTHENTICATION_TOKEN_HEADER, token);
         }
-        headers.set('Content-Type', 'application/json');
+        if (!headers.has('Content-Type')) {
+            headers.set('Content-Type', 'application/json');
+        }
         return headers;
     },
     timeout: DEFAULT_QUERY_TIMEOUT

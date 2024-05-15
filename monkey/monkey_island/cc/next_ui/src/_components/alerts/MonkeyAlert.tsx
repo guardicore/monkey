@@ -1,8 +1,8 @@
 import React from 'react';
+import { useTheme } from '@mui/material/styles';
+import MUIAlert, { AlertProps as MUIAlertProps } from '@mui/material/Alert';
 import { Severity } from '@/_components/lib/severity';
 import { Variant } from '@/_components/lib/variant';
-import MUIAlert from '@mui/material/Alert';
-import { AlertProps as MUIAlertProps } from '@mui/material/Alert';
 
 export interface AlertProps extends MUIAlertProps {
     children: React.ReactNode;
@@ -12,10 +12,13 @@ export interface AlertProps extends MUIAlertProps {
     title?: string;
 }
 
-const Alert = (props: AlertProps) => {
+const MonkeyAlert = (props: AlertProps) => {
+    const theme = useTheme();
     const {
         children,
-        variant = Variant.STANDARD,
+        variant = theme.palette.mode === 'light'
+            ? Variant.STANDARD
+            : Variant.OUTLINED,
         severity = Severity.INFO,
         ...rest
     } = props;
@@ -26,4 +29,4 @@ const Alert = (props: AlertProps) => {
     );
 };
 
-export default Alert;
+export default MonkeyAlert;

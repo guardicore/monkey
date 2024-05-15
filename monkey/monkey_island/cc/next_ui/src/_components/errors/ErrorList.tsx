@@ -1,5 +1,5 @@
 import React from 'react';
-import Alert from '@/_components/alerts/Alert';
+import MonkeyAlert from '@/_components/alerts/MonkeyAlert';
 import { Severity } from '@/_components/lib/severity';
 
 export interface ErrorAlertsProps {
@@ -10,9 +10,9 @@ const ErrorList = (props: ErrorAlertsProps) => {
     const { errors } = props;
 
     return errors.map((error, index) => (
-        <Alert key={index} severity={Severity.ERROR} sx={{ mb: '10px' }}>
+        <MonkeyAlert key={index} severity={Severity.ERROR} sx={{ mb: '10px' }}>
             {error}
-        </Alert>
+        </MonkeyAlert>
     ));
 };
 

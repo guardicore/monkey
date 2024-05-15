@@ -6,7 +6,8 @@ import {
     InstalledPlugin,
     PluginInfo,
     PluginManifestResponse,
-    PluginMetadataResponse
+    PluginMetadataResponse,
+    PluginTar
 } from '@/redux/features/api/agentPlugins/types';
 import {
     parsePluginManifestResponse,
@@ -24,7 +25,7 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
     endpoints: (builder: EndpointBuilder<any, any, any>) => ({
         getAvailablePlugins: builder.query<AvailablePlugin[], void>({
             query: () => ({
-                url: BackendEndpoints.PLUGIN_INDEX,
+                url: BackendEndpoints.PLUGIN_INDEX_FORCE_REFRESH,
                 method: HTTP_METHODS.GET
             }),
             transformResponse: (response: {
@@ -54,6 +55,14 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
                     version: pluginInfo.pluginVersion
                 }
             })
+        }),
+        uploadPlugin: builder.mutation<any, PluginTar>({
+            query: (pluginTar: PluginTar) => ({
+                url: BackendEndpoints.PLUGIN_INSTALL,
+                method: HTTP_METHODS.PUT,
+                headers: { 'Content-Type': 'application/octet-stream' },
+                body: pluginTar
+            })
         })
     })
 });
@@ -61,5 +70,6 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
 export const {
     useGetAvailablePluginsQuery,
     useGetInstalledPluginsQuery,
-    useInstallPluginMutation
+    useInstallPluginMutation,
+    useUploadPluginMutation
 } = agentPluginEndpoints;

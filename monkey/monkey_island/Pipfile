@@ -26,7 +26,7 @@ pywin32-ctypes = {version = "*", markers = "sys_platform == 'win32'"} # Pyinstal
 pywin32 = {version = "*", markers = "sys_platform == 'win32'"} # Lock file is not created with sys_platform win32 requirement if not explicitly specified
 pefile = {version = "*", markers = "sys_platform == 'win32'"} # Pyinstaller requirement on windows
 readerwriterlock = "*"
-pymongo = "*"
+pymongo = ">=4.6.3"
 cryptography = "*"
 semantic-version = "*"
 pypubsub = "*"

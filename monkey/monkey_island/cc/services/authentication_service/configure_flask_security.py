@@ -2,6 +2,7 @@ import json
 import secrets
 from pathlib import Path
 from typing import Any, Dict
+from urllib.parse import urlparse
 
 from flask.sessions import SecureCookieSessionInterface
 from flask_mongoengine import MongoEngine
@@ -9,7 +10,7 @@ from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Securi
 from monkeytoolbox import open_new_securely_permissioned_file
 from wtforms import StringField
 
-from monkey_island.cc.mongo_consts import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT, MONGO_URL
+from monkey_island.cc.mongo_consts import MONGO_URL
 
 from . import AccountRole
 from .role import Role
@@ -71,11 +72,12 @@ def configure_flask_security(app, data_dir: Path) -> Security:
 
 def _setup_flask_mongo(app):
     app.config["MONGO_URI"] = MONGO_URL
+    url = urlparse(MONGO_URL)
     app.config["MONGODB_SETTINGS"] = [
         {
-            "db": MONGO_DB_NAME,
-            "host": MONGO_DB_HOST,
-            "port": MONGO_DB_PORT,
+            "db": url.path.strip("/"),
+            "host": url.hostname,
+            "port": url.port,
         }
     ]
 

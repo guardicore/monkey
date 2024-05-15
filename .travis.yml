@@ -49,7 +49,7 @@ jobs:
         - nvm --version
         - nvm install 20
         - nvm use node
-        - npm i -g eslint
+        - npm -g i eslint-cli
         - node --version
         - npm --version
 
