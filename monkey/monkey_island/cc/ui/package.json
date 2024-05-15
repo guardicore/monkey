@@ -105,7 +105,7 @@
     "react-dropzone": "^14.2.3",
     "react-json-tree": "^0.18.0",
     "react-markdown": "^8.0.7",
-    "react-router-dom": "^6.15.0",
+    "react-router-dom": "^6.22.0",
     "react-spinners": "^0.13.8",
     "react-timer-hook": "^3.0.6",
     "react-tsparticles": "^2.10.1",
