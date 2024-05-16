@@ -74,7 +74,7 @@
     "@mui/icons-material": "^5.15.7",
     "@mui/material": "^5.13.5",
     "@mui/x-data-grid": "^6.19.3",
-    "@rjsf/bootstrap-4": "^5.8.1",
+    "@rjsf/bootstrap-4": "^5.18.2",
     "@rjsf/core": "^5.8.1",
     "@rjsf/utils": "^5.8.1",
     "@rjsf/validator-ajv8": "^5.8.1",
