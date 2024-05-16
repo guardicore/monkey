@@ -1,5 +1,7 @@
+export type PluginId = string;
+
 export type AgentPlugin = {
-    id: string;
+    id: PluginId;
     name: string;
     pluginType: string;
     description: string;
@@ -55,7 +57,7 @@ export type PluginInfo = {
     pluginType: string;
     pluginName: string;
     pluginVersion: string;
-    pluginId: string;
+    pluginId: PluginId;
 };
 
 export type PluginTar = Uint8Array;

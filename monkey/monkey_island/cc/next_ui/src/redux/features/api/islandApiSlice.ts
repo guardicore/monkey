@@ -49,6 +49,7 @@ const getIslandBaseQuery = async (
 
 export const islandApiSlice = createApi({
     reducerPath: 'islandApi',
+    tagTypes: ['InstalledAgentPlugins'],
     baseQuery: getIslandBaseQuery,
     endpoints: () => ({})
 });

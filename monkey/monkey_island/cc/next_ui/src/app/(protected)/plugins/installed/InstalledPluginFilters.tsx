@@ -9,13 +9,11 @@ import {
 } from '@/app/(protected)/plugins/_lib/PluginTable';
 import _ from 'lodash';
 
+type PluginFilterFunc = (row: PluginRow) => boolean;
+
 type InstalledPluginFilterProps = {
     setDisplayedRowsCallback: (rows: PluginRow[]) => void;
     setIsFilteringCallback: (isFiltering: boolean) => void;
-};
-
-export type FilterProps = {
-    setFiltersCallback: (filters: any) => void;
 };
 
 export const defaultSearchableColumns = [
@@ -30,6 +28,15 @@ const InstalledPluginFilters = (props: InstalledPluginFilterProps) => {
 
     const { data: installedPlugins } = useGetInstalledPluginsQuery();
     const [filters, setFilters] = useState({});
+
+    const setFilterCallback = (
+        filterName: string,
+        filterFunc: PluginFilterFunc
+    ) => {
+        setFilters((prevState) => {
+            return { ...prevState, [filterName]: filterFunc };
+        });
+    };
 
     const filterRows = (rows: PluginRow[]): PluginRow[] => {
         setIsFilteringCallback(true);
@@ -62,7 +69,7 @@ const InstalledPluginFilters = (props: InstalledPluginFilterProps) => {
                     item
                     sx={{ alignItems: 'flex-end', display: 'flex' }}>
                     <SearchFilter
-                        setFiltersCallback={setFilters}
+                        setFilterCallback={setFilterCallback}
                         searchableColumns={defaultSearchableColumns}
                     />
                 </Grid>
@@ -71,7 +78,7 @@ const InstalledPluginFilters = (props: InstalledPluginFilterProps) => {
                     item
                     sx={{ alignItems: 'flex-end', display: 'flex' }}>
                     <TypeFilter
-                        setFiltersCallback={setFilters}
+                        setFilterCallback={setFilterCallback}
                         allRows={allPluginRows}
                     />
                 </Grid>

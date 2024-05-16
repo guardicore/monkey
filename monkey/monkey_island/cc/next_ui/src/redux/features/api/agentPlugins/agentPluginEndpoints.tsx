@@ -10,6 +10,7 @@ import {
     PluginTar
 } from '@/redux/features/api/agentPlugins/types';
 import {
+    parsePluginFromResponse,
     parsePluginManifestResponse,
     parsePluginMetadataResponse
 } from '@/redux/features/api/agentPlugins/responseParsers';
@@ -34,6 +35,27 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
                 return parsePluginMetadataResponse(response.plugins);
             }
         }),
+        getLatestPluginVersion: builder.query<
+            string,
+            { pluginType: string; pluginName: string }
+        >({
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            query: ({ pluginType, pluginName }) => ({
+                url: BackendEndpoints.PLUGIN_INDEX,
+                method: HTTP_METHODS.GET
+            }),
+            transformResponse: (
+                response: {
+                    plugins: PluginMetadataResponse;
+                },
+                _,
+                { pluginType, pluginName }
+            ): string => {
+                const pluginFromResponse =
+                    response.plugins[pluginType][pluginName].slice(-1)[0];
+                return parsePluginFromResponse(pluginFromResponse)['version'];
+            }
+        }),
         getInstalledPlugins: builder.query<InstalledPlugin[], void>({
             query: () => ({
                 url: BackendEndpoints.PLUGIN_MANIFESTS,
@@ -43,7 +65,8 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
                 response: PluginManifestResponse
             ): InstalledPlugin[] => {
                 return parsePluginManifestResponse(response);
-            }
+            },
+            providesTags: ['InstalledAgentPlugins']
         }),
         installPlugin: builder.mutation<any, PluginInfo>({
             query: (pluginInfo: PluginInfo) => ({
@@ -54,7 +77,8 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
                     name: pluginInfo.pluginName,
                     version: pluginInfo.pluginVersion
                 }
-            })
+            }),
+            invalidatesTags: ['InstalledAgentPlugins']
         }),
         uploadPlugin: builder.mutation<any, PluginTar>({
             query: (pluginTar: PluginTar) => ({
@@ -62,7 +86,20 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
                 method: HTTP_METHODS.PUT,
                 headers: { 'Content-Type': 'application/octet-stream' },
                 body: pluginTar
-            })
+            }),
+            invalidatesTags: ['InstalledAgentPlugins']
+        }),
+        upgradePlugin: builder.mutation<any, PluginInfo>({
+            query: (pluginInfo: PluginInfo) => ({
+                url: BackendEndpoints.PLUGIN_INSTALL,
+                method: HTTP_METHODS.PUT,
+                body: {
+                    plugin_type: pluginInfo.pluginType,
+                    name: pluginInfo.pluginName,
+                    version: pluginInfo.pluginVersion
+                }
+            }),
+            invalidatesTags: ['InstalledAgentPlugins']
         })
     })
 });
@@ -71,5 +108,6 @@ export const {
     useGetAvailablePluginsQuery,
     useGetInstalledPluginsQuery,
     useInstallPluginMutation,
-    useUploadPluginMutation
+    useUploadPluginMutation,
+    useGetLatestPluginVersionQuery
 } = agentPluginEndpoints;

@@ -13,14 +13,15 @@ import MonkeyFileUpload, {
 } from '@/_components/file-upload/MonkeyFileUpload';
 import { useUploadPluginMutation } from '@/redux/features/api/agentPlugins/agentPluginEndpoints';
 import MonkeyAlert from '@/_components/alerts/MonkeyAlert';
+import { Severity } from '@/_components/lib/severity';
 
 const UploadNewPlugin = () => {
     const [upload, { isError, error, isLoading, isSuccess }] =
         useUploadPluginMutation();
-    const [plugin, setPlugin] = useState(null);
+    const [plugin, setPlugin] = useState<null | Uint8Array>(null);
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [pluginName, setPluginName] = useState('');
-    const [errors, setErrors] = useState([]);
+    const [errors, setErrors] = useState<any[]>([]);
 
     const uploadStatus = useMemo(() => {
         if (plugin !== null) {
@@ -56,8 +57,10 @@ const UploadNewPlugin = () => {
         if (acceptedPlugin?.length) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                if (e.target.readyState === FileReader.DONE) {
-                    const binaryPlugin = new Uint8Array(e.target.result);
+                if (e.target?.readyState === FileReader.DONE) {
+                    const binaryPlugin = new Uint8Array(
+                        e.target.result as ArrayBuffer
+                    );
                     setPlugin(binaryPlugin);
                     setPluginName(Object.assign(acceptedPlugin?.[0]).name);
                 }
@@ -123,7 +126,7 @@ const UploadNewPlugin = () => {
             <Box sx={{ mt: '10px', mb: '10px' }}>
                 {showSuccessAlert && (
                     <MonkeyAlert
-                        severity="success"
+                        severity={Severity.SUCCESS}
                         onClose={() => setShowSuccessAlert(false)}>
                         <AlertTitle>
                             &apos;{pluginName}&apos; was successfully installed!
@@ -131,7 +134,9 @@ const UploadNewPlugin = () => {
                     </MonkeyAlert>
                 )}
                 {showErrors && (
-                    <MonkeyAlert severity="error" onClose={() => setErrors([])}>
+                    <MonkeyAlert
+                        severity={Severity.ERROR}
+                        onClose={() => setErrors([])}>
                         <AlertTitle>Error uploading Plugin Tar</AlertTitle>
                         <ul id="circle-list">
                             {errors.map((error, index) => (

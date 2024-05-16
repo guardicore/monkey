@@ -9,6 +9,7 @@ import PluginTable, {
 import Grid from '@mui/material/Grid';
 import { InstalledPlugin } from '@/redux/features/api/agentPlugins/types';
 import InstalledPluginFilters from '@/app/(protected)/plugins/installed/InstalledPluginFilters';
+import PluginUpgradeButton from '@/app/(protected)/plugins/installed/PluginUpgradeButton';
 
 export default function InstalledPluginsPage() {
     const {
@@ -19,9 +20,15 @@ export default function InstalledPluginsPage() {
     const [displayedRows, setDisplayedRows] = React.useState<PluginRow[]>([]);
     const [isLoadingRows, setIsLoadingRows] = React.useState(false);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getUpgradeAction = (plugin: InstalledPlugin) => {
-        return [];
+        return (
+            <PluginUpgradeButton
+                pluginType={plugin.pluginType}
+                pluginName={plugin.name}
+                pluginVersion={plugin.version}
+                pluginId={plugin.id}
+            />
+        );
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,7 +42,7 @@ export default function InstalledPluginsPage() {
             (installedPlugin) => installedPlugin.id === row.id
         );
         if (!plugin) return [];
-        return [...getUpgradeAction(plugin), ...getUninstallAction(plugin)];
+        return [getUpgradeAction(plugin)];
     };
 
     const getOverlayMessage = () => {

@@ -29,7 +29,7 @@ export const parsePluginMetadataResponse = (
     return plugins;
 };
 
-const parsePluginFromResponse = (
+export const parsePluginFromResponse = (
     unparsedPlugin: PluginMetadata
 ): AvailablePlugin => {
     return {
