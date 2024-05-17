@@ -73,7 +73,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/icons-material": "^5.15.7",
     "@mui/material": "^5.15.15",
-    "@mui/x-data-grid": "^6.19.3",
+    "@mui/x-data-grid": "^6.19.11",
     "@rjsf/bootstrap-4": "^5.18.2",
     "@rjsf/core": "^5.8.1",
     "@rjsf/utils": "^5.8.1",
