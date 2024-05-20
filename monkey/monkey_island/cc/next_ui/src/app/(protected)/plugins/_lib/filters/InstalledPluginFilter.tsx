@@ -9,7 +9,10 @@ export const filterOutInstalledPlugins = (
 ) => {
     return plugins.filter((plugin) => {
         return !installedPlugins.find((installedPlugin) => {
-            return installedPlugin.id === plugin.id;
+            return (
+                installedPlugin.name === plugin.name &&
+                installedPlugin.pluginType === plugin.pluginType
+            );
         });
     });
 };

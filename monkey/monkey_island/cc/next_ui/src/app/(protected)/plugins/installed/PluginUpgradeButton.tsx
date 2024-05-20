@@ -19,7 +19,7 @@ const PluginUpgradeButton = (props: PluginInfo) => {
             isSuccess: isUpgradeSuccessful,
             reset: resetUpgradePlugin
         }
-    ] = useInstallPluginMutation({ fixedCacheKey: pluginName + pluginType });
+    ] = useInstallPluginMutation();
     const { data: latestPluginVersion, isLoading: isLoadingLatestVersion } =
         useGetLatestPluginVersionQuery({
             pluginType: pluginType,

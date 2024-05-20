@@ -34,7 +34,7 @@ const InstallAllSafePluginsButton = () => {
                             pluginType: plugin.pluginType,
                             pluginId: plugin.id
                         },
-                        { fixedCacheKey: plugin.id }
+                        { fixedCacheKey: plugin.name + plugin.pluginType }
                     )
                 )
             );

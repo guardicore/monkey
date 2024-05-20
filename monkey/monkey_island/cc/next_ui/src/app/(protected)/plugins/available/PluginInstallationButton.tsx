@@ -16,7 +16,7 @@ const PluginInstallationButton = (props: PluginInstallationButtonProps) => {
     const { pluginType, pluginName, pluginVersion, pluginId } = props;
 
     const [installPlugin, installationResult] = useInstallPluginMutation({
-        fixedCacheKey: pluginId
+        fixedCacheKey: pluginName + pluginType
     });
 
     const onInstallClick = () => {

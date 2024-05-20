@@ -27,10 +27,7 @@ export default function AvailablePluginsPage() {
         refetch: refreshAvailablePlugins,
         isFetching: isFetchingAvailablePlugins
     } = useGetAvailablePluginsQuery();
-    const {
-        refetch: refreshInstalledPlugins,
-        isFetching: isFetchingInstalledPlugins
-    } = useGetInstalledPluginsQuery();
+    const { refetch: refreshInstalledPlugins } = useGetInstalledPluginsQuery();
     const [displayedRows, setDisplayedRows] = React.useState<PluginRow[]>([]);
     const [isLoadingRows, setIsLoadingRows] = React.useState(false);
 
@@ -104,11 +101,7 @@ export default function AvailablePluginsPage() {
             <PluginTable
                 rows={displayedRows}
                 columns={generatePluginsTableColumns(getRowActions)}
-                loading={
-                    isFetchingAvailablePlugins ||
-                    isLoadingRows ||
-                    isFetchingInstalledPlugins
-                }
+                loading={isLoadingRows}
                 noRowsOverlayMessage={getOverlayMessage()}
             />
         </Stack>
