@@ -6,7 +6,7 @@
     "dev": "node server-dev.js",
     "prod": "cross-env SSL_CERT_PATH=../server.crt SSL_KEY_PATH=../server.key NEXT_PUBLIC_JAVASCRIPT_RUNTIME_PORT=8443 node server-prod.js",
     "build": "node build-standalone.js",
-    "lint": "next lint",
+    "lint": "next lint && npx tsc",
     "test": "jest",
     "prod:e2e": "npm run build && npm run prod",
     "e2e": "cross-env START_SERVER_AND_TEST_INSECURE=1 start-server-and-test prod:e2e https://localhost:8443 cypress:run_e2e",
