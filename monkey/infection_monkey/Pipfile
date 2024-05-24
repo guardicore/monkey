@@ -26,11 +26,12 @@ email-validator = "*"
 monkey-types = "*"
 monkeyevents = "*"
 monkeytoolbox = "*"
-monkey-agentpluginapi = ">=0.6.0"
+monkey-agentpluginapi = ">=0.7.0"
 
 [dev-packages]
 mypy = "*"
 pytest-freezer = "*"
+monkey-plugintoolbox = "*"
 
 [requires]
 python_version = "3.11"
