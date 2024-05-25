@@ -15,7 +15,7 @@
     "cypress:run_e2e": "cypress run --e2e"
   },
   "dependencies": {
-    "@mui/icons-material": "^5.14.18",
+    "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.14.18",
     "@mui/x-data-grid": "^6.19.6",
     "@reduxjs/toolkit": "^1.9.7",
