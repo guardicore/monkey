@@ -16,6 +16,7 @@ from .i_otp_repository import IOTPRepository
 from .user import User
 
 OTP_EXPIRATION_TIME = 2 * 60  # 2 minutes
+OTP_LENGTH = 16
 
 
 class AuthenticationFacade:
@@ -87,7 +88,9 @@ class AuthenticationFacade:
 
         The generated OTP is saved to the `IOTPRepository`
         """
-        otp = OTP(secure_generate_random_string(32, string.ascii_letters + string.digits + "._-"))
+        otp = OTP(
+            secure_generate_random_string(OTP_LENGTH, string.ascii_letters + string.digits + "._-")
+        )
         expiration_time = time.monotonic() + OTP_EXPIRATION_TIME
         self._otp_repository.insert_otp(otp, expiration_time)
 
