@@ -9,7 +9,8 @@ tags = ["setup"]
 
 # Setting up Infection Monkey
 
-Setting up the Infection Monkey is easy! First, you need to {{% button href="https://infectionmonkey.com/" icon="fas fa-download" %}}Download the Infection Monkey{{% /button %}}.
+Setting up the Infection Monkey is easy! First, you need to
+{{% button href="https://github.com/guardicore/monkey/releases/latest" icon="fas fa-download" %}}Download the Infection Monkey{{% /button %}}.
 
 Once you've downloaded an installer, follow the relevant guide for your environment:
 

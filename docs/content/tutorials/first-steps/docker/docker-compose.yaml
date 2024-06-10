@@ -8,7 +8,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - db:/data/db
+      - monkey-tutorial-db:/data/db
   monkey-island:
     container_name: monkey-island
     hostname: monkey-island
@@ -25,4 +25,4 @@ services:
     image: infectionmonkey/ssh1
     command: '/usr/sbin/sshd -D && sh -c "trap : TERM INT; tail -f /dev/null & wait"'
 volumes:
-  db:
+  monkey-tutorial-db:

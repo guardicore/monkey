@@ -1,7 +1,7 @@
 ---
 title: "Credentials Collectors"
 date: 2023-09-13T16:35:19+05:30
-weight: 100
+weight: 20
 chapter: true
 pre: '<i class="fas fa-key"></i> '
 tags: ["reference", "credentials collectors"]

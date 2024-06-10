@@ -3,7 +3,7 @@ title: "Agent propagation"
 date: 2022-06-03T13:17:22+05:30
 draft: false
 pre: '<i class="fas fa-user-secret"></i> '
-weight: 2
+weight: 10
 tags: ["agent", "propagation", "reference"]
 ---
 

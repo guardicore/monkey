@@ -38,7 +38,7 @@ any MongoDB containers or volumes associated with the previous version.
     sudo docker run \
         --name monkey-mongo \
         --network=host \
-        --volume db:/data/db \
+        --volume monkey-db:/data/db \
         --detach \
         mongo:6.0
     ```

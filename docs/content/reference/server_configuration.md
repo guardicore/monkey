@@ -3,7 +3,7 @@ title: "Server configuration"
 date: 2021-11-26T12:00:19+02:00
 draft: true
 pre: '<i class="fas fa-cogs"></i> '
-weight: 1
+weight: 70
 ---
 
 ## Configuring the Monkey Island

@@ -16,7 +16,7 @@ infection. Infection Monkey will help you validate existing security solutions
 and will provide a view of the internal network from an attacker's perspective.
 
 Infection Monkey is free and can be downloaded from [our
-homepage](https://www.akamai.com/infectionmonkey).
+download page](https://github.com/guardicore/monkey/releases/latest).
 
 ![Infection Monkey Documentation Hub
 Logo](/images/monkey-teacher.svg?height=400px "Infection Monkey Documentation
@@ -52,10 +52,10 @@ documentation page]({{< ref "/reports" >}}).
 ## Getting Started
 
 If you haven't downloaded Infection Monkey yet you can do so [from our
-homepage](https://www.akamai.com/infectionmonkey#download). After downloading
-the Monkey, install it using one of our [setup guides]({{< ref "/setup" >}}),
-and read our [getting started guide]({{< ref "/usage/getting-started" >}}) for
-a quick-start on Monkey!
+download page](https://github.com/guardicore/monkey/releases/latest). After
+downloading the Monkey, install it using one of our [setup guides]({{< ref
+"/setup" >}}), and read our [getting started guide]({{< ref
+"/usage/getting-started" >}}) for a quick-start on Monkey!
 
 ## Support and community
 
