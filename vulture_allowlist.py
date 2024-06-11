@@ -182,3 +182,5 @@ AgentPluginService.install_agent_plugin_from_repository
 
 # TODO: Remove after we move the plugins to separate repos
 execute_agent
+LinuxAgentCommandBuilder.get_command_list
+WindowsAgentCommandBuilder.get_command_list

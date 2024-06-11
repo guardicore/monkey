@@ -1,5 +1,5 @@
 from pathlib import PureWindowsPath
-from typing import Sequence
+from typing import List, Sequence
 
 from agentpluginapi import (
     DropperExecutionMode,
@@ -29,20 +29,25 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
         self._otp_provider = otp_provider
         self._agent_otp_environment_variable = agent_otp_environment_variable
         self._current_depth = current_depth
-        self._command = ""
+        self._commands = []
 
     def build_download_command(self, download_options: WindowsDownloadOptions):
         if download_options.download_method == WindowsDownloadMethod.WEB_REQUEST:
             download_command_func = self._build_download_command_webrequest
-        if download_options.download_method == WindowsDownloadMethod.WEB_CLIENT:
+        elif download_options.download_method == WindowsDownloadMethod.WEB_CLIENT:
             download_command_func = self._build_download_command_webclient
+        else:
+            raise NotImplementedError(
+                f"Download method {download_options.download_method} " f"is not implemented"
+            )
 
         # We always download using powershell since CMD doesn't have
         # or it is really hard to set a download command
-        self._command += "powershell "
-
-        self._command += download_command_func(
-            download_options.download_url, download_options.agent_destination_path
+        self._commands.append(
+            "powershell "
+            + download_command_func(
+                download_options.download_url, download_options.agent_destination_path
+            )
         )
 
     def _build_download_command_webrequest(
@@ -50,7 +55,7 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
     ) -> str:
         return (
             f"Invoke-WebRequest -Uri '{download_url}' "
-            f"-OutFile '{destination_path}' -UseBasicParsing; "
+            f"-OutFile '{destination_path}' -UseBasicParsing"
         )
 
     def _build_download_command_webclient(
@@ -58,25 +63,29 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
     ) -> str:
         return (
             "(new-object System.Net.WebClient)"
-            f".DownloadFile(^''{download_url}^'' , ^''{destination_path}^''); "
+            f".DownloadFile(^''{download_url}^'' , ^''{destination_path}^'')"
         )
 
     def build_run_command(self, run_options: WindowsRunOptions):
         # Note: Downloading a file in Windows is always PowerShell
         # so this is how we switch to CMD for the run command
-        if self._command != "":
-            if run_options.shell == WindowsShell.CMD:
-                self._command += "cmd.exe /c "
+        command = ""
+        if run_options.shell == WindowsShell.CMD:
+            command = "cmd.exe /c "
 
         if run_options.shell == WindowsShell.POWERSHELL:
             set_otp = self._set_otp_powershell
-        if run_options.shell == WindowsShell.CMD:
+        elif run_options.shell == WindowsShell.CMD:
             set_otp = self._set_otp_cmd
+        else:
+            raise NotImplementedError(f"Shell {run_options.shell} not implemented")
 
-        self._command += f"{set_otp()} {str(run_options.agent_destination_path)} "
+        command += f"{set_otp()} {str(run_options.agent_destination_path)} "
 
         if run_options.dropper_execution_mode != DropperExecutionMode.SCRIPT:
-            self._command += self._build_agent_run_arguments(run_options)
+            command += self._build_agent_run_arguments(run_options)
+
+        self._commands.append(command)
 
     def _set_otp_powershell(self) -> str:
         return f"$env:{self._agent_otp_environment_variable}='{self._otp_provider.get_otp()}';"
@@ -94,7 +103,10 @@ class WindowsAgentCommandBuilder(IWindowsAgentCommandBuilder):
         return f"{get_agent_argument(run_options)} {' '.join(agent_arguments)}"
 
     def get_command(self) -> str:
-        return self._command
+        return ";".join(self._commands)
 
-    def reset_command(self):
-        self._command = ""
+    def get_command_list(self) -> List[str]:
+        return self._commands
+
+    def reset(self):
+        self._commands = []

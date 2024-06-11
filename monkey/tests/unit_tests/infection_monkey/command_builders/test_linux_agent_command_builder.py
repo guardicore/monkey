@@ -135,5 +135,5 @@ def test_command_reset(linux_agent_command_builder: ILinuxAgentCommandBuilder):
     linux_agent_command_builder.build_download_command(linux_download_options)
     assert len(linux_agent_command_builder.get_command()) > 0
 
-    linux_agent_command_builder.reset_command()
+    linux_agent_command_builder.reset()
     assert linux_agent_command_builder.get_command() == ""

@@ -195,5 +195,5 @@ def test_command_reset(windows_agent_command_builder: IWindowsAgentCommandBuilde
     windows_agent_command_builder.build_download_command(windows_download_options)
     assert len(windows_agent_command_builder.get_command()) > 0
 
-    windows_agent_command_builder.reset_command()
+    windows_agent_command_builder.reset()
     assert windows_agent_command_builder.get_command() == ""
