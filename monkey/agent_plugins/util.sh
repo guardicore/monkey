@@ -52,6 +52,17 @@ get_plugin_manifest_filename() {
     echo $manifest_filename
 }
 
+get_plugin_build_config_filename() {
+    build_config_filename=build.yaml
+    _plugin_path=${1:-"."}
+
+    if [ ! -f "${_plugin_path}/${build_config_filename}" ]; then
+        build_config_filename=build.yml
+    fi
+
+    echo $build_config_filename
+}
+
 get_plugin_name() {
     _manifest_file_path=$1
 
