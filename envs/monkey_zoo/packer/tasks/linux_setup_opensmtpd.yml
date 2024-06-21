@@ -1,0 +1,103 @@
+---
+- name: Install OpenSMTPD 6.6.1
+  shell: |
+    sudo apt update
+    sudo apt install -y git nano wget
+    sudo apt build-dep openssl
+    git clone https://github.com/libressl-portable/portable.git libressl
+    cd libressl
+    git tag
+    git checkout v3.4.1
+    sh autogen.sh
+    ./configure --prefix="/opt/libressl"
+    make -j4
+    sudo make install
+    sudo echo '/opt/libressl/lib' | sudo tee /etc/ld.so.conf.d/libressl.conf
+    ldconfig
+    cd ~
+    sudo apt build-dep opensmtpd
+
+    wget -qO ./opensmtdp.tar.gz https://www.exploit-db.com/apps/f88f1c1fa4c7c321004398da02e885fd-opensmtpd-6.6.1p1.tar.gz
+    tar xf opensmtpd.tar.gz
+    cd ./opensmtpd-6.6.1p1
+
+    LDFLAGS="-L/opt/libressl/lib" CFLAGS="-I/opt/libressl/include" ./configure \
+        --with-gnu-ld \
+        --with-auth-pam \
+        --with-libssl="/opt/libressl/lib" \
+        --with-path-CAfile="/etc/ssl/certs/ca-certificates.crt" \
+        --with-path-empty="/var/lib/opensmtpd/empty" \
+        --sysconfdir="/etc/smtpd" \
+        --sbindir="/usr/sbin" \
+        --libexecdir="/usr/lib/opensmtpd" \
+        --with-path-mbox="/var/mail" \
+        --with-table-db \
+        --with-user-smtpd="smtpd" \
+        --with-user-queue="smtpq" \
+        --with-group-queue="smtpq"
+
+    make -j4
+    make install
+    cd /usr/sbin
+
+    sudo ln -s /usr/sbin/smtpctl /usr/sbin/sendmail
+    sudo ln -s /usr/sbin/smtpctl /usr/sbin/makemap
+    sudo ln -s /usr/sbin/smtpctl /usr/sbin/newaliases
+    sudo ln -s /usr/sbin/smtpctl /usr/sbin/mailq
+
+    sudo mkdir /etc/mail
+
+    aliases="
+      # Enter mail aliases below in the format described by aliases(5)
+
+      # RFC 2142 NETWORK OPERATIONS MAILBOX NAMES
+      abuse:      root
+      noc:        root
+      security:   root
+
+      # RFC 2142 SUPPORT MAILBOX NAMES FOR SPECIFIC INTERNET SERVICES
+      postmaster: root
+      hostmaster: root
+      # usenet:   root
+      # news:     usenet
+      webmaster:  root
+      www:        webmaster
+      # uucp:     root
+      ftp:        root"
+    sudo echo "$aliases" > /etc/mail/aliases
+    sudo mkdir -p /var/lib/opensmtpd/empty
+    for name in smtpd smtpq; do
+      id -g ${name} > /dev/null 2>&1 || sudo addgroup --system ${name};
+    done
+
+    systemd_unit="
+      [Unit]
+      Description=OpenSMTPD SMTP server
+      Documentation=man:smtpd(8)
+      After=network.target
+
+      [Service]
+      Type=forking
+      ExecStart=/usr/sbin/smtpd
+      ExecStop=/bin/kill -15 $MAINPID
+
+      [Install]
+      WantedBy=multi-user.target"
+    echo "$systemd_unit" > /etc/systemd/system/smtpd.service
+    smtp_config='
+      # This is the smtpd server system-wide configuration file. See smtpd.conf(5) for more information.
+
+      table aliases file:/etc/mail/aliases
+
+      # To accept external mail, replace with: listen on all
+      #
+      listen on 0.0.0.0 port 2525
+
+      action "local" mbox alias <aliases>
+      action "relay" relay
+
+      # Uncomment the following to accept external mail for domain "example.org"
+      #
+      match from any for domain "opensmtpd-68.c.guardicore-22050661.internal" action "local"'
+    systemctl enable smtpd
+    systemctl start smtpd

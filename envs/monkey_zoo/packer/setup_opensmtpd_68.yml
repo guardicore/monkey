@@ -1,0 +1,15 @@
+---
+- name: Configure OpenSMTPD-68
+  hosts: all
+  remote_user: root
+
+  tasks:
+    - name: Add m0nk3y user
+      user:
+        name: m0nk3y
+        password: "{{ 'b6ZtPyHP' | password_hash('sha512') }}"
+        groups:
+          - sudo
+        append: yes
+      become: yes
+    - import_tasks: tasks/linux_setup_opensmtpd.yml
