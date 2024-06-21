@@ -1,0 +1,17 @@
+---
+default_context:
+  plugin_name: Blah
+  plugin_type: Exploiter
+  plugin_options: false
+  project_name: Blah-Exploiter
+  platform: github
+  org: guardicode
+  url: "https://{{ cookiecutter.platform }}.com/{{ cookiecutter.org }}/{{ cookiecutter.project_name }}"
+  license: null
+  versioning_scheme: semver
+  project_short_description: A simple plugin
+  python_major_version: 3
+  python_minor_version: 11
+  support_type_checking: false
+  hook_shellcheck: false
+  exclude_these_file_in_flake8: vulture_allowlist.py
