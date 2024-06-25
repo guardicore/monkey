@@ -7,13 +7,17 @@ tags: ["usage", "polymorphism"]
 
 
 ## Description
-Polymorphic malware, or metamorphic malware, is a kind of malware that repeatedly
-modifies its appearance or signature. As a result, no two copies of the malware share
-the same hash. This helps the malware evade detection.
 
-Infection Monkey is not truly metamorphic, but it has the ability to emulate this
-property by adding random bytes to each Agent before propagation.
+Polymorphic and metamorphic malware are types of malware that modify themselves
+during replication. As a result, no two copies of the malware are exactly the
+same, which helps the malware evade signature-based detection techniques.
 
-## Using Polymorphism
+While Infection Monkey is not truly metamorphic, it does have a nifty feature
+to emulate an important property of polymorphic and metamorphic malware.
+Because each copy of the malware is different, no two copies share the same
+hash. By modifying each Agent binary to include some randomized data, the
+Infection Monkey Agent can appear polymorphic to some signature-based detection
+techniques.
+
 
 ![Polymorphism Configuration](/images/island/configuration-page/polymorphism-configuration.png "Polymorphism configuration")
