@@ -2,7 +2,7 @@
 - name: Configure OpenSMTPD-68
   hosts: all
   remote_user: root
-
+  become: yes
   tasks:
     - name: Add m0nk3y user
       user:
@@ -12,4 +12,21 @@
           - sudo
         append: yes
       become: yes
-    - import_tasks: tasks/linux_setup_opensmtpd.yml
+
+    - name: Update apt package list
+      apt:
+        update_cache: yes
+
+    - name: Autoremove unnecessary packages
+      apt:
+        autoremove: yes
+        autoclean: yes  # Optionally clean up cache after autoremove
+
+    - name: Set a shorter hostname
+      hostname:
+        name: opensmtpd-68
+
+    - name: Install OpenSMTPD with preseeded answers
+      apt:
+        name: opensmtpd=6.0.3p1-1build1
+        state: present
