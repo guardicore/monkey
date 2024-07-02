@@ -33,10 +33,6 @@ The duration (in seconds) for which the cryptojacking simulation should run on e
 
 * cannot be null
 
-#### duration Type
-
-`number`
-
 #### duration Constraints
 
 **minimum**: the value of this number must greater than or equal to: `0`
@@ -60,10 +56,6 @@ The percentage of CPU to use on a machine. The cryptojacker will use this percen
 * Type: `number`
 
 * cannot be null
-
-#### cpu\_utilization Type
-
-`number`
 
 #### cpu\_utilization Constraints
 
@@ -91,10 +83,6 @@ The percentage of memory to use on a machine. An internal safeguard prevents mor
 
 * cannot be null
 
-#### memory\_utilization Type
-
-`number`
-
 #### memory\_utilization Constraints
 
 **maximum**: the value of this number must smaller than or equal to: `100`
@@ -120,7 +108,3 @@ If enabled, the Agent will periodically send `getblocktemplate` requests used in
 * Type: `boolean`
 
 * cannot be null
-
-#### simulate\_bitcoin\_mining\_network\_traffic Type
-
-`boolean`
