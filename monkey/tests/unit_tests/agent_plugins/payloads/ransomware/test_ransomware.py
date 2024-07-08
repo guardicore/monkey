@@ -1,7 +1,7 @@
 import os
 import threading
 from pathlib import Path, PurePosixPath
-from typing import Callable, Type, TypeAlias
+from typing import Callable, TypeAlias
 from unittest.mock import MagicMock
 
 import pytest
@@ -26,8 +26,6 @@ from tests.unit_tests.agent_plugins.payloads.ransomware.ransomware_target_files 
 )
 from tests.utils import is_user_admin
 
-from common.event_queue import AgentEventSubscriber
-
 BuildRansomwareCallable: TypeAlias = Callable[
     [
         InternalRansomwareOptions,
@@ -43,17 +41,6 @@ BuildRansomwareCallable: TypeAlias = Callable[
 class AgentEventPublisherSpy(IAgentEventPublisher):
     def __init__(self):
         self.events = []
-
-    def subscribe_all_events(self, subscriber: AgentEventSubscriber):
-        pass
-
-    def subscribe_type(
-        self, event_type: Type[AbstractAgentEvent], subscriber: AgentEventSubscriber
-    ):
-        pass
-
-    def subscribe_tag(self, tag: str, subscriber: AgentEventSubscriber):
-        pass
 
     def publish(self, event: AbstractAgentEvent):
         self.events.append(event)
