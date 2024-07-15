@@ -87,6 +87,9 @@ A more in-depth description of reports generated can be found in the
 If you're completely new to Infection Monkey, you can work through the
 [tutorials](/tutorials/) to get your feet wet.
 
+If you'd like to learn about Infection Monkey's capabilities, you can read
+about its [features](/features/) and [use cases](/usage).
+
 If you have a basic understanding of Infection Monkey, you can download it
 [from our download page](https://github.com/guardicore/monkey/releases/latest).
 After downloading the Monkey, install it using one of our
