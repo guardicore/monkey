@@ -2,7 +2,6 @@ from aardwolf.commons.iosettings import RDPIOSettings
 from agent_plugins.credentials_collectors.chrome.utils import BrowserCredentialsDatabasePath
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
 from agent_plugins.exploiters.rdp.in_memory_file_provider import InMemoryFileProvider
-from agent_plugins.exploiters.smb.plugin import Plugin as SMBPlugin
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
 from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
 from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
@@ -119,7 +118,6 @@ AgentPlugin.supported_operating_systems
 BrowserCredentialsDatabasePath.database_file_path
 
 HadoopPlugin
-SMBPlugin
 WMIPlugin
 
 HostExploiter.add_vuln_url
