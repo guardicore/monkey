@@ -34,6 +34,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - WMI exploiter plugin. #4254
 - MSSQL exploiter plugin. #4255
 - PowerShell exploiter plugin. #4256
+- Log4Shell exploiter plugin. #4257
 
 ### Security
 

@@ -23,7 +23,6 @@ from infection_monkey.command_builders import (
     LinuxAgentCommandBuilder,
     WindowsAgentCommandBuilder,
 )
-from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
@@ -56,7 +55,6 @@ AgentPluginManifest.target_operating_systems
 AgentPluginManifest.supported_operating_systems
 
 # Used by third party library
-LDAPServerFactory.buildProtocol
 NetrServerPasswordSet.structure
 NetrServerPasswordSetResponse.structure
 NetrServerPasswordSet.opnum
@@ -160,6 +158,8 @@ AgentPluginRepositoryIndex.use_enum_values
 AgentPluginRepositoryIndex._convert_str_type_to_enum
 
 AgentPluginService.install_agent_plugin_from_repository
+
+AgentCommandBuilderFactory.create_windows_agent_command_builder
 
 # TODO: Remove after we move the plugins to separate repos
 execute_agent
