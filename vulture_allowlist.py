@@ -1,8 +1,11 @@
 from agent_plugins.credentials_collectors.chrome.utils import BrowserCredentialsDatabasePath
+from agent_plugins.exploiters.powershell.src.powershell_remote_access_client import (
+    PowerShellRemoteAccessClient,
+)
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
-from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
 from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
 from agent_plugins.payloads.cryptojacker.src import cpu_utilizer, cryptojacker, memory_utilizer
+from agent_plugins.payloads.ransomware.src.plugin import Plugin as RansomwarePlugin
 from agent_plugins.payloads.ransomware.src.ransomware_options import (
     EncryptionBehavior,
     RansomwareOptions,
@@ -113,8 +116,6 @@ AgentPlugin.supported_operating_systems
 
 BrowserCredentialsDatabasePath.database_file_path
 
-WMIPlugin
-
 HostExploiter.add_vuln_url
 
 EncryptionBehavior.validate_file_extension
@@ -166,3 +167,7 @@ AgentPluginService.install_agent_plugin_from_repository
 # TODO: Remove after we move the plugins to separate repos
 execute_agent
 LinuxAgentCommandBuilder.build_permission_change_command
+
+RansomwarePlugin
+
+PowerShellRemoteAccessClient.get_writable_paths

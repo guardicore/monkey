@@ -31,6 +31,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fingerprinter configuration from UI. #3769, #3826
 - RDP exploiter plugin. #4252
 - Hadoop exploiter plugin. #4253
+- WMI exploiter plugin. #4254
 
 ### Security
 
