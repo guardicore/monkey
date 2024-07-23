@@ -1,7 +1,4 @@
 from agent_plugins.credentials_collectors.chrome.utils import BrowserCredentialsDatabasePath
-from agent_plugins.exploiters.powershell.src.powershell_remote_access_client import (
-    PowerShellRemoteAccessClient,
-)
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
 from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
 from agent_plugins.payloads.cryptojacker.src import cpu_utilizer, cryptojacker, memory_utilizer
@@ -169,5 +166,3 @@ execute_agent
 LinuxAgentCommandBuilder.build_permission_change_command
 
 RansomwarePlugin
-
-PowerShellRemoteAccessClient.get_writable_paths
