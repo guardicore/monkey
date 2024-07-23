@@ -1,7 +1,5 @@
-from aardwolf.commons.iosettings import RDPIOSettings
 from agent_plugins.credentials_collectors.chrome.utils import BrowserCredentialsDatabasePath
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
-from agent_plugins.exploiters.rdp.in_memory_file_provider import InMemoryFileProvider
 from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
 from agent_plugins.exploiters.wmi.plugin import Plugin as WMIPlugin
 from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
@@ -12,7 +10,6 @@ from agent_plugins.payloads.ransomware.src.ransomware_options import (
     linux_target_dir,
     windows_target_dir,
 )
-from asyauth.monkeytypes import UniCredential
 from flask_security import Security
 
 from common.agent_configuration import ScanTargetConfiguration
@@ -165,16 +162,6 @@ AgentPluginRepositoryIndex._infection_monkey_version_parser
 AgentPluginRepositoryIndex._sort_plugins_by_version
 AgentPluginRepositoryIndex.use_enum_values
 AgentPluginRepositoryIndex._convert_str_type_to_enum
-
-# RDP
-InMemoryFileProvider.get_file_data
-InMemoryFileProvider.get_file_size
-UniCredential.stype
-RDPIOSettings.video_width
-RDPIOSettings.video_height
-RDPIOSettings.video_bpp_max
-RDPIOSettings.video_out_format
-RDPIOSettings.clipboard_use_pyperclip
 
 AgentPluginService.install_agent_plugin_from_repository
 

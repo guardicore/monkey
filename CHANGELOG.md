@@ -29,6 +29,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 - Fingerprinter configuration from UI. #3769, #3826
+- RDP exploiter plugin. #4252
 
 ### Security
 
