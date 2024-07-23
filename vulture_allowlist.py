@@ -1,8 +1,4 @@
 from agent_plugins.credentials_collectors.chrome.utils import BrowserCredentialsDatabasePath
-<<<<<<< HEAD
-=======
-from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
->>>>>>> 37c928076 (WMI: Remove WMI plugin)
 from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
 from agent_plugins.exploiters.zerologon.src.plugin import Plugin as ZerologonPlugin
 from agent_plugins.payloads.cryptojacker.src import cpu_utilizer, cryptojacker, memory_utilizer
