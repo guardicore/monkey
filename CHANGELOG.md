@@ -35,6 +35,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - MSSQL exploiter plugin. #4255
 - PowerShell exploiter plugin. #4256
 - Log4Shell exploiter plugin. #4257
+- SNMP exploiter plugin. #4258
 
 ### Security
 

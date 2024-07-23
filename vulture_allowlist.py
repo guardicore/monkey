@@ -1,6 +1,6 @@
 from agent_plugins.credentials_collectors.chrome.utils import BrowserCredentialsDatabasePath
-from agent_plugins.exploiters.snmp.src.snmp_exploit_client import SNMPResult
 from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
+from agent_plugins.exploiters.zerologon.src.plugin import Plugin as ZerologonPlugin
 from agent_plugins.payloads.cryptojacker.src import cpu_utilizer, cryptojacker, memory_utilizer
 from agent_plugins.payloads.ransomware.src.plugin import Plugin as RansomwarePlugin
 from agent_plugins.payloads.ransomware.src.ransomware_options import (
@@ -27,6 +27,7 @@ from infection_monkey.exploit.tools import secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFirewall
+from infection_monkey.propagation_credentials_repository import PropagationCredentialsRepository
 from infection_monkey.utils import commands
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Machine
@@ -112,6 +113,9 @@ AgentPlugin.supported_operating_systems
 BrowserCredentialsDatabasePath.database_file_path
 
 HostExploiter.add_vuln_url
+HostExploiter._publish_propagation_event
+
+ZerologonPlugin._plugin_name
 
 EncryptionBehavior.validate_file_extension
 EncryptionBehavior.validate_linux_target_dir
@@ -132,9 +136,6 @@ User.email
 identity_type_filter
 secret_type_filter
 
-SNMPResult.errorIndex
-SNMPResult.varBinds
-
 commands.build_agent_deploy_command
 commands.build_agent_download_command
 commands.build_command_windows_powershell
@@ -142,6 +143,8 @@ commands.build_download_command_linux_curl
 commands.build_dropper_script_download_command
 commands.build_download_command_windows_powershell_webclient
 commands.build_download_command_windows_powershell_webrequest
+
+PropagationCredentialsRepository.get_credentials
 
 # Remove after the plugin interface is in place
 AgentPluginMetadata.resource_path
@@ -160,6 +163,18 @@ AgentPluginRepositoryIndex._convert_str_type_to_enum
 AgentPluginService.install_agent_plugin_from_repository
 
 AgentCommandBuilderFactory.create_windows_agent_command_builder
+AgentCommandBuilderFactory.create_linux_agent_command_builder
+
+LinuxAgentCommandBuilder.build_download_command
+LinuxAgentCommandBuilder.build_set_permissions_command
+LinuxAgentCommandBuilder.build_run_command
+LinuxAgentCommandBuilder.get_command
+LinuxAgentCommandBuilder.reset_command
+
+WindowsAgentCommandBuilder.build_download_command
+WindowsAgentCommandBuilder.build_run_command
+WindowsAgentCommandBuilder.get_command
+WindowsAgentCommandBuilder.reset_command
 
 # TODO: Remove after we move the plugins to separate repos
 execute_agent
