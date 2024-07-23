@@ -1,6 +1,4 @@
 from agent_plugins.credentials_collectors.chrome.utils import BrowserCredentialsDatabasePath
-from agent_plugins.exploiters.zerologon.src.HostExploiter import HostExploiter
-from agent_plugins.exploiters.zerologon.src.plugin import Plugin as ZerologonPlugin
 from agent_plugins.payloads.cryptojacker.src import cpu_utilizer, cryptojacker, memory_utilizer
 from agent_plugins.payloads.ransomware.src.plugin import Plugin as RansomwarePlugin
 from agent_plugins.payloads.ransomware.src.ransomware_options import (
@@ -24,8 +22,6 @@ from infection_monkey.command_builders import (
     WindowsAgentCommandBuilder,
 )
 from infection_monkey.exploit.tools import secret_type_filter
-from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
-from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.network.firewall import FirewallApp, WinAdvFirewall, WinFirewall
 from infection_monkey.propagation_credentials_repository import PropagationCredentialsRepository
 from infection_monkey.utils import commands
@@ -55,22 +51,12 @@ AgentPluginManifest.remediation_suggestion
 AgentPluginManifest.target_operating_systems
 AgentPluginManifest.supported_operating_systems
 
-# Used by third party library
-NetrServerPasswordSet.structure
-NetrServerPasswordSetResponse.structure
-NetrServerPasswordSet.opnum
-
 # Passed to Popen from agent
 dwFlags  # \infection_monkey\monkey\infection_monkey\monkey.py:490:
 wShowWindow  # \infection_monkey\monkey\infection_monkey\monkey.py:491:
 
 # Attribute used by pydantic errors
 msg_template
-
-# Zerologon uses this to restore password:
-RemoteShell.do_get
-RemoteShell.do_exit
-prompt
 
 FirewallApp.listen_allowed
 WinAdvFirewall.listen_allowed
@@ -111,11 +97,6 @@ AgentPlugin.dump_source_archive
 AgentPlugin.supported_operating_systems
 
 BrowserCredentialsDatabasePath.database_file_path
-
-HostExploiter.add_vuln_url
-HostExploiter._publish_propagation_event
-
-ZerologonPlugin._plugin_name
 
 EncryptionBehavior.validate_file_extension
 EncryptionBehavior.validate_linux_target_dir
