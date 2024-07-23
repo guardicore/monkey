@@ -32,7 +32,6 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - RDP exploiter plugin. #4252
 - Hadoop exploiter plugin. #4253
 - WMI exploiter plugin. #4254
-- MSSQL exploiter plugin. #4255
 
 ### Security
 
