@@ -1,7 +1,7 @@
 ---
 title: "Server configuration"
 draft: false
-description: "Reference material for the server configuration"
+description: "Reference material for the server_config.json file"
 pre: "<i class='fa fa-cogs'></i> "
 ---
 {{< table_of_contents >}}
@@ -14,13 +14,12 @@ through https://github.com/adobe/jsonschema2md. It was then modified by hand to
 remove extraneous information.
 -->
 
-<!-- TODO -->
 | Property                             | Type      | Required | Nullable       |
 | :----------------------------------- | :-------- | :------- | :------------- |
 | [data\_dir](#data_dir)               | `string`  | Optional | cannot be null |
 | [log\_level](#log_level)             | `string`  | Optional | cannot be null |
-| [mongodb](#mongodb)                  | Merged    | Optional | cannot be null |
-| [ssl\_certificate](#ssl_certificate) | Merged    | Optional | cannot be null |
+| [mongodb](#mongodb)                  | `object`  | Optional | cannot be null |
+| [ssl\_certificate](#ssl_certificate) | `object`  | Optional | cannot be null |
 | [island\_port](#island_port)         | `integer` | Optional | cannot be null |
 
 ### data\_dir
@@ -81,10 +80,30 @@ The MongoDB configuration for the Island server.
 
 * is optional
 
-<!-- TODO -->
-* Type: merged type ([Details](island_config_options-properties-mongodb.md))
+* Type: `object`
 
 * cannot be null
+
+#### mongodb Properties
+**_start\_mongodb_**
+
+If enabled, the MongoDB server will be started automatically with the Island.
+
+`start_mongodb`
+
+* is optional
+
+* Type: `boolean`
+
+* cannot be null
+
+_start\_mongodb Default Value_
+
+The default value is:
+
+```json
+true
+```
 
 #### mongodb Default Value
 
@@ -104,10 +123,58 @@ The SSL certificates configuration for the Island server.
 
 * is optional
 
-<!-- TODO -->
-* Type: merged type ([Details](island_config_options-properties-ssl_certificate.md))
+* Type: `object`
 
 * cannot be null
+
+#### ssl\_certificate Properties
+**_ssl\_certificate\_file_**
+
+The path to the SSL certificate file that the Island server will use.
+
+`ssl_certificate_file`
+
+* is optional
+
+* Type: `string`
+
+* cannot be null
+
+_ssl\_certificate\_file Constraints_
+
+The value of this string must be a valid path.
+
+_ssl\_certificate\_file Default Value_
+
+The default value is:
+
+```json
+"<infection_monkey_installation_path>\\monkey_island\\cc\\server.crt"
+```
+
+**_ssl\_certificate\_key\_file_**
+
+The path to the SSL certificate key file that the Island server will use.
+
+`ssl_certificate_key_file`
+
+* is optional
+
+* Type: `string`
+
+* cannot be null
+
+_ssl\_certificate\_key\_file Constraints_
+
+The value of this string must be a valid path.
+
+_ssl\_certificate\_key\_file Default Value_
+
+The default value is:
+
+```json
+"<infection_monkey_installation_path>\\monkey_island\\cc\\server.key"
+```
 
 #### ssl\_certificate Default Value
 
@@ -115,8 +182,8 @@ The default value is:
 
 ```json
 {
-  "ssl_certificate_file": "C:\\Users\\smalviya\\Desktop\\monkey-ecosystem\\infection_monkey\\monkey_island\\cc\\server.crt",
-  "ssl_certificate_key_file": "C:\\Users\\smalviya\\Desktop\\monkey-ecosystem\\infection_monkey\\monkey_island\\cc\\server.key"
+  "ssl_certificate_file": "<infection_monkey_installation_path>\\monkey_island\\cc\\server.crt",
+  "ssl_certificate_key_file": "<infection_monkey_installation_path>\\monkey_island\\cc\\server.key"
 }
 ```
 
