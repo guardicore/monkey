@@ -54,7 +54,7 @@ The default value for Linux is:
 
 ### log\_level
 
-The threshold for the Island logger.
+The log level for the Island's logger.
 
 `log_level`
 
