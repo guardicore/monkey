@@ -84,8 +84,7 @@ The MongoDB configuration for the Island server.
 
 * cannot be null
 
-#### mongodb Properties
-**_start\_mongodb_**
+#### start\_mongodb
 
 If enabled, the MongoDB server will be started automatically with the Island.
 
@@ -97,7 +96,7 @@ If enabled, the MongoDB server will be started automatically with the Island.
 
 * cannot be null
 
-_start\_mongodb Default Value_
+**start\_mongodb Default Value**
 
 The default value is:
 
@@ -127,8 +126,7 @@ The SSL certificates configuration for the Island server.
 
 * cannot be null
 
-#### ssl\_certificate Properties
-**_ssl\_certificate\_file_**
+#### ssl\_certificate\_file
 
 The path to the SSL certificate file that the Island server will use.
 
@@ -140,11 +138,11 @@ The path to the SSL certificate file that the Island server will use.
 
 * cannot be null
 
-_ssl\_certificate\_file Constraints_
+**ssl\_certificate\_file Constraints**
 
 The value of this string must be a valid path.
 
-_ssl\_certificate\_file Default Value_
+**ssl\_certificate\_file Default Value**
 
 The default value is:
 
@@ -152,7 +150,7 @@ The default value is:
 "<infection_monkey_installation_path>\\monkey_island\\cc\\server.crt"
 ```
 
-**_ssl\_certificate\_key\_file_**
+#### ssl\_certificate\_key\_file
 
 The path to the SSL certificate key file that the Island server will use.
 
@@ -164,11 +162,11 @@ The path to the SSL certificate key file that the Island server will use.
 
 * cannot be null
 
-_ssl\_certificate\_key\_file Constraints_
+**ssl\_certificate\_key\_file Constraints**
 
 The value of this string must be a valid path.
 
-_ssl\_certificate\_key\_file Default Value_
+**ssl\_certificate\_key\_file Default Value**
 
 The default value is:
 
