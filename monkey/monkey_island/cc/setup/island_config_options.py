@@ -55,7 +55,7 @@ class IslandConfigOptions(InfectionMonkeyBaseModel):
         BeforeValidator(expand_path),
     ]
     log_level: str = Field(
-        default=DEFAULT_LOG_LEVEL, description="The threshold for the Island logger."
+        default=DEFAULT_LOG_LEVEL, description="The log level for the Island's logger."
     )
     mongodb: MongoDBConfig = Field(
         default=MongoDBConfig(), description="The MongoDB configuration for the Island server."
