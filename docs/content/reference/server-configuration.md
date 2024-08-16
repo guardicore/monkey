@@ -183,3 +183,20 @@ The default value is:
 ```json
 443
 ```
+
+### `server_config.json` example
+
+```
+{
+    "data_dir": "/home/user/.monkey_island",
+    "log_level": "INFO",
+    "mongodb": {
+      "start_mongodb": true
+    },
+    "ssl_certificate": {
+        "ssl_certificate_file": "/home/user/infection_monkey_installation/monkey_island/cc/server.crt",
+        "ssl_certificate_key_file": "/home/user/infection_monkey_installation/monkey_island/cc/server.crt",
+    },
+    "island_port": 443
+}
+```
