@@ -104,16 +104,6 @@ The default value is:
 true
 ```
 
-#### mongodb Default Value
-
-The default value is:
-
-```json
-{
-  "start_mongodb": true
-}
-```
-
 ### ssl\_certificate
 
 The SSL certificates configuration for the Island server.
@@ -172,17 +162,6 @@ The default value is:
 
 ```json
 "<infection_monkey_installation_path>\\monkey_island\\cc\\server.key"
-```
-
-#### ssl\_certificate Default Value
-
-The default value is:
-
-```json
-{
-  "ssl_certificate_file": "<infection_monkey_installation_path>\\monkey_island\\cc\\server.crt",
-  "ssl_certificate_key_file": "<infection_monkey_installation_path>\\monkey_island\\cc\\server.key"
-}
 ```
 
 ### island\_port
