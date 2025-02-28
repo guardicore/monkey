@@ -15,4 +15,4 @@ The Infection Monkey is a versatile breach and attack simulation tool. Choosing 
 
 Below are some examples with instructions on how to configure them.
 
-{{% children description=True style="p"%}}
+{{% children description=True style="p" /%}}

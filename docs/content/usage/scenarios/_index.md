@@ -26,4 +26,4 @@ To exit a scenario and select another one, click on "Start Over".
 
 ## Section contents
 
-{{% children description=True style="p"%}}
+{{% children description=True style="p" /%}}

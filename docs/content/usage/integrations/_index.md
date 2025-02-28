@@ -11,4 +11,4 @@ pre: "<i class='fas fa-directions'></i> "
 
 The Infection Monkey likes working together! See these documentation pages for information on each integration the Infection Monkey currently offers:
 
-{{% children description=true style="p"%}}
+{{% children description=true style="p" /%}}

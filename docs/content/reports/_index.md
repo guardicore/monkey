@@ -10,4 +10,4 @@ pre = "<i class='fas fa-scroll'></i> "
 
 The Infection Monkey offers three reports:
 
-{{% children description=true style="p"%}}
+{{% children description=true style="p" /%}}
