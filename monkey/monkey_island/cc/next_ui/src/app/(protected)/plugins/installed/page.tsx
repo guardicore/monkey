@@ -10,6 +10,7 @@ import Grid from '@mui/material/Grid';
 import { InstalledPlugin } from '@/redux/features/api/agentPlugins/types';
 import InstalledPluginFilters from '@/app/(protected)/plugins/installed/InstalledPluginFilters';
 import PluginUpgradeButton from '@/app/(protected)/plugins/installed/PluginUpgradeButton';
+import PluginUninstallButton from '@/app/(protected)/plugins/installed/PluginUninstallButton';
 
 export default function InstalledPluginsPage() {
     const {
@@ -31,9 +32,15 @@ export default function InstalledPluginsPage() {
         );
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getUninstallAction = (plugin: InstalledPlugin) => {
-        return [];
+        return (
+            <PluginUninstallButton
+                pluginType={plugin.pluginType}
+                pluginName={plugin.name}
+                pluginVersion={plugin.version}
+                pluginId={plugin.id}
+            />
+        );
     };
 
     const getRowActions = (row: PluginRow) => {
@@ -42,7 +49,7 @@ export default function InstalledPluginsPage() {
             (installedPlugin) => installedPlugin.id === row.id
         );
         if (!plugin) return [];
-        return [getUpgradeAction(plugin)];
+        return [getUpgradeAction(plugin), getUninstallAction(plugin)];
     };
 
     const getOverlayMessage = () => {

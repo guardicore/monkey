@@ -19,6 +19,7 @@ enum BackendEndpoints {
     PLUGIN_INDEX = '/agent-plugins/available/index',
     PLUGIN_INDEX_FORCE_REFRESH = `${BackendEndpoints.PLUGIN_INDEX}?force_refresh=true`,
     PLUGIN_INSTALL = '/install-agent-plugin',
+    PLUGIN_UNINSTALL = '/uninstall-agent-plugin',
     PLUGIN_MANIFESTS = '/agent-plugins/installed/manifests'
 }
 
@@ -100,6 +101,17 @@ export const agentPluginEndpoints = islandApiSlice.injectEndpoints({
                 }
             }),
             invalidatesTags: ['InstalledAgentPlugins']
+        }),
+        uninstallPlugin: builder.mutation<any, PluginInfo>({
+            query: (pluginInfo: PluginInfo) => ({
+                url: BackendEndpoints.PLUGIN_UNINSTALL,
+                method: HTTP_METHODS.POST,
+                body: {
+                    plugin_type: pluginInfo.pluginType,
+                    name: pluginInfo.pluginName
+                }
+            }),
+            invalidatesTags: ['InstalledAgentPlugins']
         })
     })
 });
@@ -109,5 +121,6 @@ export const {
     useGetInstalledPluginsQuery,
     useInstallPluginMutation,
     useUploadPluginMutation,
-    useGetLatestPluginVersionQuery
+    useGetLatestPluginVersionQuery,
+    useUninstallPluginMutation
 } = agentPluginEndpoints;
