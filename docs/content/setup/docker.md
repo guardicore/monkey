@@ -30,12 +30,17 @@ If you are upgrading Infection Monkey to a new version, be sure to remove
 any MongoDB containers or volumes associated with the previous version.
 {{% /notice %}}
 
+{{% notice warning %}}
+Warning: The MongoDB server used by Monkey Island is **unsecured (no authentication enabled)**.
+It listens only on the **localhost**, but it is strongly recommended to run Infection Monkey on a **dedicated host or VM** to avoid any potential security risks.
+{{% /notice %}}
+
 1. Start a MongoDB Docker container:
 
     ```bash
     sudo docker run \
         --name monkey-mongo \
-        --network=host \
+        -p 127.0.0.1:27017:27017 \
         --volume monkey-db:/data/db \
         --detach \
         mongo:6.0
@@ -48,6 +53,11 @@ enterprise or other security-sensitive environments, it is recommended that the
 user [provide Infection Monkey with a
 certificate](#start-monkey-island-with-user-provided-certificate) that has
 been signed by a private certificate authority.
+
+{{% notice warning %}}
+Warning: The MongoDB server used by Monkey Island is **unsecured (no authentication enabled)**.
+It listens only on the **localhost**, but it is strongly recommended to run Infection Monkey on a **dedicated host or VM** to avoid any potential security risks.
+{{% /notice %}}
 
 1. Run the Monkey Island Server
     ```bash
@@ -66,6 +76,11 @@ After the Monkey Island docker container starts, you can access Monkey Island by
 Once you have access to the Monkey Island server, check out the [getting started page](/usage/getting-started).
 
 ## Configuring the server
+
+{{% notice warning %}}
+Warning: The MongoDB server used by Monkey Island is **unsecured (no authentication enabled)**.
+It listens only on the **localhost**, but it is strongly recommended to run Infection Monkey on a **dedicated host or VM** to avoid any potential security risks.
+{{% /notice %}}
 
 You can configure the server by mounting a volume and specifying a
  [server configuration file](../../reference/server-configuration):
