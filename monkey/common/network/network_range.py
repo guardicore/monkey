@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class InvalidNetworkRangeError(Exception):
-    """Raise when invalid network range is provided"""
+    """Raised when an invalid network range is provided"""
 
 
 class NetworkRange(object, metaclass=ABCMeta):
