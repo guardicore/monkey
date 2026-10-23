@@ -129,7 +129,7 @@ class AutomatedMaster(IMaster):
             ),
         )
         # We don't need to use multithreading here, but it's likely that in the
-        # future we'll like to run other tasks while credentials are being collected
+        # future we'd like to run other tasks while credentials are being collected
         credentials_collector_thread.start()
         credentials_collector_thread.join()
 

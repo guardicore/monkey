@@ -104,7 +104,7 @@ class AgentPluginService(IAgentPluginService):
         plugin_archive = response.content
         if not self._validate_plugin_hash(plugin_metadata, plugin_archive):
             raise PluginInstallationError(
-                f'Error occured installing plugin with type "{plugin_type}", name "{plugin_name}",'
+                f'Error occurred installing plugin with type "{plugin_type}", name "{plugin_name}",'
                 f' and version "{plugin_version}" from plugin repository: Invalid hashes.'
             )
 
